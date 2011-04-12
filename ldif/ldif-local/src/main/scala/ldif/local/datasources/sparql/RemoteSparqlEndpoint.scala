@@ -5,39 +5,32 @@ import java.util.logging.{Level, Logger}
 import io.Source
 import java.io.IOException
 import java.net._
+import ldif.datasources.sparql.EndpointConfig
 
 /**
  * Executes queries on a remote SPARQL endpoint.
  *
- * @param uri The URI of the endpoint
- * @param login The login required by the endpoint for authentication
- * @param pageSize The number of solutions to be retrieved per SPARQL query (default: 1000)
- * @param pauseTime The minimum number of milliseconds between two queries
- * @param retryCount The number of retries if a query fails
- * @param initialRetryPause The pause in milliseconds before a query is retried. For each subsequent retry the pause is doubled.
+ * @param endpoint The configuration of the endpoint
  */
-class RemoteSparqlEndpoint(val uri : URI,
-                           login : Option[(String, String)] = None,
-                           val pageSize : Int = 1000, val pauseTime : Int = 0,
-                           val retryCount : Int = 3, val initialRetryPause : Int = 1000) extends SparqlEndpoint
+class RemoteSparqlEndpoint(endpoint : EndpointConfig) extends SparqlEndpoint
 {
   private val logger = Logger.getLogger(classOf[RemoteSparqlEndpoint].getName)
 
   private var lastQueryTime = 0L
 
-  override def toString = "SparqlEndpoint(" + uri + ")"
+  override def toString = "SparqlEndpoint(" + endpoint.uri + ")"
 
   override def query(sparql : String, limit : Int) : Traversable[Map[String, Node]] = new ResultTraversable(sparql, limit)
 
   private class ResultTraversable(sparql : String, limit : Int) extends Traversable[Map[String, Node]]
   {
-    override def foreach[U](f : Map[String, Node] => U) : Unit =
+    override def foreach[U](f : Map[String, Node] => U)
     {
       var blankNodeCount = 0
 
-      for(offset <- 0 until limit by pageSize)
+      for(offset <- 0 until limit by endpoint.pageSize)
       {
-        val xml = executeQuery(sparql + " OFFSET " + offset + " LIMIT " + math.min(pageSize, limit - offset))
+        val xml = executeQuery(sparql + " OFFSET " + offset + " LIMIT " + math.min(endpoint.pageSize, limit - offset))
 
         val resultsXml = xml \ "results" \ "result"
 
@@ -45,7 +38,7 @@ class RemoteSparqlEndpoint(val uri : URI,
         {
           val values = for(binding <- resultXml \ "binding"; node <- binding \ "_") yield node.label match
           {
-            case "uri" => (binding \ "@name" text, Resource(node.text))
+            case "uri" => (binding \ "@name" text, ResourceNode(node.text))
             case "literal" => (binding \ "@name" text, Literal(node.text))
             case "bnode" =>
             {
@@ -57,7 +50,7 @@ class RemoteSparqlEndpoint(val uri : URI,
           f(values.toMap)
         }
 
-        if(resultsXml.size < pageSize) return
+        if(resultsXml.size < endpoint.pageSize) return
       }
     }
 
@@ -72,21 +65,20 @@ class RemoteSparqlEndpoint(val uri : URI,
       //Wait until pause time is elapsed since last query
       synchronized
       {
-        while(System.currentTimeMillis < lastQueryTime + pauseTime) Thread.sleep(pauseTime / 10)
+        while(System.currentTimeMillis < lastQueryTime + endpoint.pauseTime) Thread.sleep(endpoint.pauseTime / 10)
         lastQueryTime = System.currentTimeMillis
       }
 
       //Execute query
-      if(logger.isLoggable(Level.FINE)) logger.fine("Executing query on " + uri +"\n" + query)
+      if(logger.isLoggable(Level.FINE)) logger.fine("Executing query on " + endpoint.uri +"\n" + query)
 
-      val url = new URL(uri + "?format=application/sparql-results+xml&query=" + URLEncoder.encode(query, "UTF-8"))
+      val url = new URL(endpoint.uri + "?format=application/sparql-results+xml&query=" + URLEncoder.encode(query, "UTF-8"))
 
       var result : Elem = null
       var retries = 0
-      var retryPause = initialRetryPause
       while(result == null)
       {
-        val httpConnection = RemoteSparqlEndpoint.openConnection(url, login)
+        val httpConnection = RemoteSparqlEndpoint.openConnection(url, endpoint.login)
 
         try
         {
@@ -97,7 +89,7 @@ class RemoteSparqlEndpoint(val uri : URI,
           case ex : IOException =>
           {
             retries += 1
-            if(retries > retryCount)
+            if(retries > endpoint.retryCount)
             {
               throw ex
             }
@@ -108,21 +100,19 @@ class RemoteSparqlEndpoint(val uri : URI,
               if(errorStream != null)
               {
                 val errorMessage = Source.fromInputStream(errorStream).getLines.mkString("\n")
-                logger.info("Query on " + uri + " failed. Error Message: '" + errorMessage + "'.\nRetrying in " + retryPause + " ms. (" + retries + "/" + retryCount + ")")
+                logger.info("Query on " + endpoint.uri + " failed. Error Message: '" + errorMessage + "'.\nRetrying in " + endpoint.retryPause + " ms. (" + retries + "/" + endpoint.retryCount + ")")
               }
               else
               {
-                logger.info("Query on " + uri + " failed:\n" + query + "\nRetrying in " + retryPause + " ms. (" + retries + "/" + retryCount + ")")
+                logger.info("Query on " + endpoint.uri + " failed:\n" + query + "\nRetrying in " + endpoint.retryPause + " ms. (" + retries + "/" + endpoint.retryCount + ")")
               }
             }
 
-            Thread.sleep(retryPause)
-            //Double the retry pause up to a maximum of 1 hour
-            //retryPause = math.min(retryPause * 2, 60 * 60 * 1000)
+            Thread.sleep(endpoint.retryPause)
           }
           case ex : Exception =>
           {
-            logger.log(Level.SEVERE, "Could not execute query on " + uri + ":\n" + query, ex)
+            logger.log(Level.SEVERE, "Could not execute query on " + endpoint.uri + ":\n" + query, ex)
             throw ex
           }
         }
@@ -141,14 +131,14 @@ private object RemoteSparqlEndpoint
    * Opens a new HTTP connection to the endpoint.
    * This method is synchronized to avoid race conditions as the Authentication is set globally in Java.
    */
-  private def openConnection(url : URL, login : Option[(String, String)]) : HttpURLConnection = synchronized
+  private def openConnection(url : URL, login : Option[EndpointConfig.Login]) : HttpURLConnection = synchronized
   {
     //Set authentication
-    for((user, password) <- login)
+    for(l <- login)
     {
       Authenticator.setDefault(new Authenticator()
       {
-        override def getPasswordAuthentication = new PasswordAuthentication(user, password.toCharArray)
+        override def getPasswordAuthentication = new PasswordAuthentication(l.user, l.password.toCharArray)
       })
     }
 

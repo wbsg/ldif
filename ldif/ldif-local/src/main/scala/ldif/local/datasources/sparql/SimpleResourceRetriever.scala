@@ -127,13 +127,13 @@ class SimpleResourceRetriever(endpoint : SparqlEndpoint, pageSize : Int = 1000, 
    */
   private class ResourceTraversable(sparqlResults : Traversable[Map[String, Node]], resourceFormat : ResourceFormat, subject : Option[String]) extends Traversable[Resource]
   {
-    override def foreach[U](f : Resource => U) : Unit =
+    override def foreach[U](f : Resource => U)
     {
       //Remember current subject
       var curSubject : Option[String] = subject
 
       //Collect values of the current subject
-      var values = Array.fill(resourceFormat.paths.size)(Traversable[Factum]())
+      var values = Array.fill(resourceFormat.paths.size)(Seq[Factum]())
 
       for(result <- sparqlResults)
       {
@@ -155,7 +155,7 @@ class SimpleResourceRetriever(endpoint : SparqlEndpoint, pageSize : Int = 1000, 
             }
 
             curSubject = resultSubject
-            values = Array.fill(resourceFormat.paths.size)(Traversable[Factum]())
+            values = Array.fill(resourceFormat.paths.size)(Seq[Factum]())
           }
         }
 
@@ -166,7 +166,7 @@ class SimpleResourceRetriever(endpoint : SparqlEndpoint, pageSize : Int = 1000, 
           {
             val id = variable.substring(varPrefix.length).toInt
 
-            values(id) += new Factum(Seq(node.value))
+            values(id) = values(id) :+ new Factum(Seq(node.value))
           }
         }
       }

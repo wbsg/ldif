@@ -14,7 +14,7 @@ trait ResourceRetriever
    * @param instances The URIs of the instances to be retrieved. If empty, all instances will be retrieved.
    * @return The retrieved instances
    */
-  def retrieve(resourceFormat : ResourceFormat, instances : Seq[String]) : Traversable[Resource]
+  def retrieve(resourceFormat : ResourceFormat, instances : Seq[String] = Seq.empty) : Traversable[Resource]
 }
 
 /**
