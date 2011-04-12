@@ -1,5 +1,5 @@
 package ldif.resource
 
-class ResourceFormat(val paths : Seq[Path])
+case class ResourceFormat(restrictions : Restriction, paths : Seq[Path])
 {
 }
