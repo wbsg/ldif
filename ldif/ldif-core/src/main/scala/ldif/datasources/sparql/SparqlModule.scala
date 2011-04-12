@@ -17,13 +17,20 @@ class SparqlModule extends Module
   /**
    * The configuration of this module
    */
-  override def config = new SparqlConfig() //dummy
+  override def config =
+  {
+    //TODO dummy
+    SparqlConfig(EndpointConfig("http://www4.wiwiss.fu-berlin.de/drugbank/sparql") :: Nil)
+  }
 
   /**
    * Retrieves the tasks in this module.
    */
-  override val tasks : Traversable[TaskType] =
+  override val tasks : Traversable[SparqlTask] =
   {
-    null
+    for((endpoint, index) <- config.endpoints.toSeq.zipWithIndex) yield
+    {
+      new SparqlTask("Sparql" + index, endpoint)
+    }
   }
 }

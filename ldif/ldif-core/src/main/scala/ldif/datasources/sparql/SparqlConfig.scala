@@ -2,7 +2,6 @@ package ldif.datasources.sparql
 
 import ldif.module.ModuleConfig
 
-class SparqlConfig extends ModuleConfig
+case class SparqlConfig(endpoints : Traversable[EndpointConfig]) extends ModuleConfig
 {
-  val endpoints : Traversable[EndpointConfig] = EndpointConfig("http://www4.wiwiss.fu-berlin.de/drugbank/sparql") :: Nil
 }
