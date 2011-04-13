@@ -1,8 +1,8 @@
 package ldif.local.datasources.sparql
 
 import ldif.datasources.sparql.SparqlTask
-import ldif.local.runtime.{CacheWriter, DynamicInstanceFormat, NoDataFormat}
 import ldif.module.Executor
+import ldif.local.runtime.{DynamicEntityFormat, CacheWriter, NoDataFormat}
 
 /**
  * Executor for the SPARQL data source.
@@ -11,7 +11,7 @@ class SparqlExecutor() extends Executor
 {
   type TaskType = SparqlTask
   type InputFormat = NoDataFormat
-  type OutputFormat = DynamicInstanceFormat
+  type OutputFormat = DynamicEntityFormat
 
   /**
    * Determines the accepted input format of a specific task.
@@ -21,7 +21,7 @@ class SparqlExecutor() extends Executor
   /**
    * Determines the output format of a specific task.
    */
-  override def output(task : SparqlTask) : DynamicInstanceFormat = DynamicInstanceFormat()
+  override def output(task : SparqlTask) : DynamicEntityFormat = DynamicEntityFormat()
 
   /**
    * Executes a specific task.
