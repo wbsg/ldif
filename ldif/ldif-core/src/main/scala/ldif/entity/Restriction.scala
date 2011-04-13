@@ -1,16 +1,13 @@
-package ldif.resource
+package ldif.entity
 
 import xml.Elem
 
-case class Restriction(operator : Restriction.Operator)
+case class Restriction(operator : Option[Restriction.Operator])
 {
-  //TODO
-  def toSparql = ""
-
   def toXml =
   {
     <Restriction>
-      { operator.toXml }
+      { for(op <- operator) yield op.toXml }
     </Restriction>
   }
 }
@@ -50,4 +47,6 @@ object Restriction
   {
     def toXml = <And>{children.map(_.toXml)}</And>
   }
+
+  //TODO add Or
 }

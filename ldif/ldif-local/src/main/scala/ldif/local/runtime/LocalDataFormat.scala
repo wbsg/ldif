@@ -1,7 +1,7 @@
 package ldif.local.runtime
 
 import ldif.module.DataFormat
-import ldif.resource.ResourceFormat
+import ldif.entity.EntityDescription
 
 trait LocalDataFormat extends DataFormat
 
@@ -24,7 +24,7 @@ case class GraphFormat() extends LocalDataFormat
 }
 
 /**
- * The dynamic resource format structures the data in buckets of resources, where the format of the resource is dynamic
+ * The dynamic entity description structures the data in buckets of resources, where the format of the resource is dynamic
  * i.e. the task can process/output any format requested by the runtime.
  */
 case class DynamicInstanceFormat() extends LocalDataFormat
@@ -34,10 +34,10 @@ case class DynamicInstanceFormat() extends LocalDataFormat
 }
 
 /**
- * The static resource format structures the data in buckets of resources, where the format of the resources is defined statically by the concrete task.
- * The Runtime transforms the input data to the specified resource format prior to providing it to the task.
+ * The static entity description structures the data in buckets of resources, where the format of the resources is defined statically by the concrete task.
+ * The Runtime transforms the input data to the specified entity description prior to providing it to the task.
  */
-case class StaticInstanceFormat(resourceFormats : Seq[ResourceFormat]) extends LocalDataFormat
+case class StaticInstanceFormat(entityDescriptions : Seq[EntityDescription]) extends LocalDataFormat
 {
   type Reader = Seq[CacheReader]
   type Writer = Seq[CacheWriter]

@@ -39,21 +39,3 @@ trait Executor
    */
   def execute(task : TaskType, reader : InputFormat#Reader, writer : OutputFormat#Writer)
 }
-
-//class SilkExecutor extends Executor
-//{
-//  type TaskType = ModuleTask
-//
-//  type InputFormat = StaticInstanceFormat
-//
-//  type OutputFormat = StaticInstanceFormat
-//
-//  def input(task : ModuleTask) = StaticInstanceFormat(null)
-//
-//  def output(task : ModuleTask) = StaticInstanceFormat(null)
-//
-//  def execute(task : ModuleTask, reader : Seq[CacheReader], writer : Seq[CacheWriter])
-//  {
-//
-//  }
-//}

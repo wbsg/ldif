@@ -1,37 +1,37 @@
 package ldif.local.datasources.sparql
 
 import collection.mutable.SynchronizedQueue
-import ldif.resource.{Factum, Resource, Path, ResourceFormat}
+import ldif.entity.{Factum, Entity, Path, EntityDescription}
 
 /**
- * ResourceRetriever which executes multiple SPARQL queries (one for each property path) in parallel and merges the results into single resources.
+ * EntityRetriever which executes multiple SPARQL queries (one for each property path) in parallel and merges the results into single entities.
  */
-class ParallelResourceRetriever(endpoint : SparqlEndpoint, pageSize : Int = 1000, graphUri : Option[String] = None) extends ResourceRetriever
+class ParallelEntityRetriever(endpoint : SparqlEndpoint, pageSize : Int = 1000, graphUri : Option[String] = None) extends EntityRetriever
 {
   private val varPrefix = "v"
 
   private val maxQueueSize = 1000
 
   /**
-   * Retrieves resources with a given resource format.
+   * Retrieves resources with a given entity description.
    *
-   * @param resourceFormat The resource format
-   * @param resources The URIs of the resources to be retrieved. If empty, all resources will be retrieved.
-   * @return The retrieved resources
+   * @param entityDescription The entity description
+   * @param resources The URIs of the entities to be retrieved. If empty, all entities will be retrieved.
+   * @return The retrieved entities
    */
-  override def retrieve(resourceFormat : ResourceFormat, resources : Seq[String]) : Traversable[Resource] =
+  override def retrieve(entityDescription : EntityDescription, resources : Seq[String]) : Traversable[Entity] =
   {
-    new ResourceTraversable(resourceFormat, resources)
+    new EntityTraversable(entityDescription, resources)
   }
 
   /**
    * Wraps a Traversable of SPARQL results and retrieves resources from them.
    */
-  private class ResourceTraversable(resourceFormat : ResourceFormat, resourceUris : Seq[String]) extends Traversable[Resource]
+  private class EntityTraversable(entityDescription : EntityDescription, resourceUris : Seq[String]) extends Traversable[Entity]
   {
-    override def foreach[U](f : Resource => U) : Unit =
+    override def foreach[U](f : Entity => U) : Unit =
     {
-      val pathRetrievers = for(path <- resourceFormat.paths) yield new PathRetriever(resourceUris, resourceFormat, path)
+      val pathRetrievers = for(path <- entityDescription.paths) yield new PathRetriever(resourceUris, entityDescription, path)
 
       pathRetrievers.foreach(_.start())
 
@@ -39,12 +39,12 @@ class ParallelResourceRetriever(endpoint : SparqlEndpoint, pageSize : Int = 1000
       {
         val pathValues = for(pathRetriever <- pathRetrievers) yield pathRetriever.next()
 
-        f(new Resource(pathValues.head.uri, pathValues.map(_.values.map(value => new Factum(Seq(value)))).toIndexedSeq, resourceFormat))
+        f(new Entity(pathValues.head.uri, pathValues.map(_.values.map(value => new Factum(Seq(value)))).toIndexedSeq, entityDescription))
       }
     }
   }
 
-  private class PathRetriever(resourceUris : Seq[String], resourceFormat : ResourceFormat, path : Path) extends Thread
+  private class PathRetriever(entityUris : Seq[String], entityDescription : EntityDescription, path : Path) extends Thread
   {
     private val queue = new SynchronizedQueue[PathValues]()
 
@@ -69,14 +69,14 @@ class ParallelResourceRetriever(endpoint : SparqlEndpoint, pageSize : Int = 1000
       //Throw exceptions which occurred during querying
       if(exception != null) throw exception
 
-      queue.dequeue
+      queue.dequeue()
     }
 
     override def run()
     {
       try
       {
-        if(resourceUris.isEmpty)
+        if(entityUris.isEmpty)
         {
           //Query for all resources
           val sparqlResults = queryPath()
@@ -85,7 +85,7 @@ class ParallelResourceRetriever(endpoint : SparqlEndpoint, pageSize : Int = 1000
         else
         {
           //Query for a list of resources
-          for(resourceUri <- resourceUris)
+          for(resourceUri <- entityUris)
           {
             val sparqlResults = queryPath(Some(resourceUri))
             parseResults(sparqlResults, Some(resourceUri))
@@ -117,12 +117,12 @@ class ParallelResourceRetriever(endpoint : SparqlEndpoint, pageSize : Int = 1000
       {
         case Some(subjectUri) =>
         {
-          sparql += SparqlPathBuilder(path :: Nil, "<" + subjectUri + ">", "?" + varPrefix)
+          sparql += PathSparqlBuilder(path :: Nil, "<" + subjectUri + ">", "?" + varPrefix)
         }
         case None =>
         {
-          sparql += resourceFormat.restrictions.toSparql + "\n"
-          sparql += SparqlPathBuilder(path :: Nil, "?s", "?" + varPrefix)
+          sparql += RestrictionSparqlBuilder(entityDescription.restrictions) + "\n"
+          sparql += PathSparqlBuilder(path :: Nil, "?s", "?" + varPrefix)
         }
       }
       sparql += "}"

@@ -1,12 +1,12 @@
 package ldif.local.datasources.sparql
 
-import ldif.resource._
+import ldif.entity._
 import ldif.util.Prefixes
 
 /**
  * Builds a SPARQL pattern from Paths.
  */
-object SparqlPathBuilder
+object PathSparqlBuilder
 {
   /**
    * Builds a SPARQL pattern from Paths.

@@ -1,45 +1,45 @@
 package ldif.local.datasources.sparql
 
-import ldif.resource.{Factum, Resource, Path, ResourceFormat}
+import ldif.entity.{Factum, Entity, Path, EntityDescription}
 
 /**
- * ResourceRetriever which executes a single SPARQL query to retrieve the resources.
+ * EntityRetriever which executes a single SPARQL query to retrieve the resources.
  */
-class SimpleResourceRetriever(endpoint : SparqlEndpoint, pageSize : Int = 1000, graphUri : Option[String] = None) extends ResourceRetriever
+class SimpleEntityRetriever(endpoint : SparqlEndpoint, pageSize : Int = 1000, graphUri : Option[String] = None) extends EntityRetriever
 {
   private val varPrefix = "v"
 
   /**
-   * Retrieves resources with a given resource format.
+   * Retrieves resources with a given entity description.
    *
-   * @param resourceFormat The resource format
+   * @param entityDescription The entity description
    * @param resourceUris The URIs of the resources to be retrieved. If empty, all resources will be retrieved.
    * @return The retrieved resources
    */
-  override def retrieve(resourceFormat : ResourceFormat, resourceUris : Seq[String]) : Traversable[Resource] =
+  override def retrieve(entityDescription : EntityDescription, resourceUris : Seq[String]) : Traversable[Entity] =
   {
     if(resourceUris.isEmpty)
     {
-      retrieveAll(resourceFormat)
+      retrieveAll(entityDescription)
     }
     else
     {
-      retrieveList(resourceUris, resourceFormat)
+      retrieveList(resourceUris, entityDescription)
     }
   }
 
   /**
-   * Retrieves all resources with a given resource format.
+   * Retrieves all resources with a given entity description.
    *
-   * @param resourceFormat The resource format
+   * @param entityDescription The entity description
    * @return The retrieved resources
    */
-  private def retrieveAll(resourceFormat : ResourceFormat) : Traversable[Resource] =
+  private def retrieveAll(entityDescription : EntityDescription) : Traversable[Entity] =
   {
     //Select
     var sparql = "SELECT DISTINCT "
     sparql += "?s "
-    for(i <- 0 until resourceFormat.paths.size)
+    for(i <- 0 until entityDescription.paths.size)
     {
       sparql += "?" + varPrefix + i + " "
     }
@@ -50,55 +50,55 @@ class SimpleResourceRetriever(endpoint : SparqlEndpoint, pageSize : Int = 1000, 
 
     //Body
     sparql += "WHERE {\n"
-    if(resourceFormat.restrictions.toSparql.isEmpty && resourceFormat.paths.isEmpty)
+    if(entityDescription.restrictions.operator.isEmpty && entityDescription.paths.isEmpty)
     {
       sparql += "?s ?" + varPrefix + "_p ?" + varPrefix + "_o "
     }
     else
     {
-      sparql += resourceFormat.restrictions.toSparql + "\n"
-      sparql += SparqlPathBuilder(resourceFormat.paths, "?s", "?" + varPrefix)
+      sparql += RestrictionSparqlBuilder(entityDescription.restrictions) + "\n"
+      sparql += PathSparqlBuilder(entityDescription.paths, "?s", "?" + varPrefix)
     }
     sparql += "}"
 
     val sparqlResults = endpoint.query(sparql)
 
-    new ResourceTraversable(sparqlResults, resourceFormat, None)
+    new EntityTraversable(sparqlResults, entityDescription, None)
   }
 
   /**
    * Retrieves a list of resources.
    *
    * @param resourceUris The URIs of the resources
-   * @param resourceFormat The resource format
+   * @param entityDescription The entity description
    * @return A sequence of the retrieved resources. If a resource is not in the store, it wont be included in the returned sequence.
    */
-  private def retrieveList(resourceUris : Seq[String], resourceFormat : ResourceFormat) : Seq[Resource] =
+  private def retrieveList(resourceUris : Seq[String], entityDescription : EntityDescription) : Seq[Entity] =
   {
-    resourceUris.view.flatMap(resourceUri => retrieveResource(resourceUri, resourceFormat))
+    resourceUris.view.flatMap(resourceUri => retrieveEntity(resourceUri, entityDescription))
   }
 
   /**
    * Retrieves a single resource.
    *
    * @param resourceUri The URI of the resource
-   * @param resourceFormat The resource format
+   * @param entityDescription The entity description
    * @return Some(resource), if a resource with the given uri is in the Store
    *         None, if no resource with the given uri is in the Store
    */
-  def retrieveResource(resourceUri : String, resourceFormat : ResourceFormat) : Option[Resource] =
+  def retrieveEntity(resourceUri : String, entityDescription : EntityDescription) : Option[Entity] =
   {
     //Query only one path at once and combine the result into one
     val sparqlResults =
     {
-      for((path, pathIndex) <- resourceFormat.paths.zipWithIndex;
+      for((path, pathIndex) <- entityDescription.paths.zipWithIndex;
            results <- retrievePaths(resourceUri, Seq(path))) yield
       {
         results map { case (variable, node) => (varPrefix + pathIndex, node) }
       }
     }
 
-    new ResourceTraversable(sparqlResults, resourceFormat, Some(resourceUri)).headOption
+    new EntityTraversable(sparqlResults, entityDescription, Some(resourceUri)).headOption
   }
 
   private def retrievePaths(resourceUri : String, paths : Seq[Path]) =
@@ -116,7 +116,7 @@ class SimpleResourceRetriever(endpoint : SparqlEndpoint, pageSize : Int = 1000, 
 
     //Body
     sparql += "WHERE {\n"
-    sparql += SparqlPathBuilder(paths, "<" + resourceUri + ">", "?" + varPrefix)
+    sparql += PathSparqlBuilder(paths, "<" + resourceUri + ">", "?" + varPrefix)
     sparql += "}"
 
     endpoint.query(sparql)
@@ -125,15 +125,15 @@ class SimpleResourceRetriever(endpoint : SparqlEndpoint, pageSize : Int = 1000, 
   /**
    * Wraps a Traversable of SPARQL results and retrieves resources from them.
    */
-  private class ResourceTraversable(sparqlResults : Traversable[Map[String, Node]], resourceFormat : ResourceFormat, subject : Option[String]) extends Traversable[Resource]
+  private class EntityTraversable(sparqlResults : Traversable[Map[String, Node]], entityDescription : EntityDescription, subject : Option[String]) extends Traversable[Entity]
   {
-    override def foreach[U](f : Resource => U)
+    override def foreach[U](f : Entity => U)
     {
       //Remember current subject
       var curSubject : Option[String] = subject
 
       //Collect values of the current subject
-      var values = Array.fill(resourceFormat.paths.size)(Seq[Factum]())
+      var values = Array.fill(entityDescription.paths.size)(Seq[Factum]())
 
       for(result <- sparqlResults)
       {
@@ -151,11 +151,11 @@ class SimpleResourceRetriever(endpoint : SparqlEndpoint, pageSize : Int = 1000, 
           {
             for(curSubjectUri <- curSubject)
             {
-              f(new Resource(curSubjectUri, values, resourceFormat))
+              f(new Entity(curSubjectUri, values, entityDescription))
             }
 
             curSubject = resultSubject
-            values = Array.fill(resourceFormat.paths.size)(Seq[Factum]())
+            values = Array.fill(entityDescription.paths.size)(Seq[Factum]())
           }
         }
 
@@ -173,7 +173,7 @@ class SimpleResourceRetriever(endpoint : SparqlEndpoint, pageSize : Int = 1000, 
 
       for(curSubjectUri <- curSubject)
       {
-        f(new Resource(curSubjectUri, values, resourceFormat))
+        f(new Entity(curSubjectUri, values, entityDescription))
       }
     }
   }

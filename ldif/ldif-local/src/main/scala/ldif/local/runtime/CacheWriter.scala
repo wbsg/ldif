@@ -1,10 +1,10 @@
 package ldif.local.runtime
 
-import ldif.resource.{Resource, ResourceFormat}
+import ldif.entity.{Entity, EntityDescription}
 
 trait CacheWriter
 {
-  val resourceFormat : ResourceFormat
+  val entityDescription : EntityDescription
 
-  def write(resource : Resource)
+  def write(resource : Entity)
 }

@@ -1,4 +1,4 @@
-package ldif.resource
+package ldif.entity
 
 import ldif.util.{Uri, Prefixes}
 

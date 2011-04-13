@@ -34,9 +34,9 @@ class SparqlExecutor() extends Executor
   {
     val endpoint = new RemoteSparqlEndpoint(task.endpoint)
 
-    val resourceRetriever = ResourceRetriever(endpoint, task.endpoint.pageSize, task.endpoint.graph)
+    val resourceRetriever = EntityRetriever(endpoint, task.endpoint.pageSize, task.endpoint.graph)
 
-    val resources = resourceRetriever.retrieve(writer.resourceFormat)
+    val resources = resourceRetriever.retrieve(writer.entityDescription)
 
     for(resource <- resources)
     {

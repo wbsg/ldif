@@ -1,12 +1,12 @@
 package ldif.local.runtime
 
-import ldif.resource.{Resource, ResourceFormat}
+import ldif.entity.{Entity, EntityDescription}
 
 trait CacheReader
 {
-  val resourceFormat : ResourceFormat
+  val entityDescription : EntityDescription
 
   val bucketCount : Int
 
-  def readBucket(index : Int) : Array[Resource]
+  def readBucket(index : Int) : Array[Entity]
 }
