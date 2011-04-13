@@ -48,5 +48,11 @@ object Restriction
     def toXml = <And>{children.map(_.toXml)}</And>
   }
 
-  //TODO add Or
+  /**
+   * Evaluates to true if at least one of the provided operators evaluate to true.
+   */
+  case class Or(children : Traversable[Operator]) extends Operator
+  {
+    def toXml = <Or>{children.map(_.toXml)}</Or>
+  }
 }
