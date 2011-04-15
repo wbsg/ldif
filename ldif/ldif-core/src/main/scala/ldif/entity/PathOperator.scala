@@ -5,7 +5,7 @@ import ldif.util.{Uri, Prefixes}
 /**
  * Represents an operator in an RDF path.
  */
-sealed abstract class PathOperator
+sealed trait PathOperator
 {
   /**
    * Serializes this operator using the Silk RDF path language.
