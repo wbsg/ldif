@@ -1,7 +1,6 @@
 package ldif.entity
 
-//TODO hide factums implementation
-class Entity(val uri : String, val factums : IndexedSeq[Traversable[Factum]], entityDescription : EntityDescription)
+class Entity(val uri : String, factums : IndexedSeq[Traversable[Factum]], entityDescription : EntityDescription)
 {
-  //TODO def factum(pathId : Int) : Traversable[Factum]
+  def factum(pathId : Int) : Traversable[Factum] = factums(pathId)
 }
