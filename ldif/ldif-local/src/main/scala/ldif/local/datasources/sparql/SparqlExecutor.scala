@@ -30,7 +30,7 @@ class SparqlExecutor() extends Executor
    * @param reader The reader of the input data
    * @param writer The writer of the output data
    */
-  override def execute(task : SparqlTask, reader : Nothing, writer : CacheWriter)
+  override def execute(task : SparqlTask, reader : Null, writer : CacheWriter)
   {
     val endpoint = new RemoteSparqlEndpoint(task.endpoint)
 

@@ -10,8 +10,8 @@ trait LocalDataFormat extends DataFormat
  */
 case class NoDataFormat() extends LocalDataFormat
 {
-  type Reader = Nothing
-  type Writer = Nothing
+  type Reader = Null
+  type Writer = Null
 }
 
 /**
