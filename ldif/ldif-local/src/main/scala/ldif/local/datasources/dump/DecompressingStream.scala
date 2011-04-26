@@ -85,10 +85,10 @@ class DecompressingStream(inputStream:InputStream, fileName:String) extends Inpu
   private def getWrappedStream(inputStream:InputStream, compressionType:Option[CompressionType.Value]):InputStream =
     compressionType match {
         case None => inputStream
-        case CompressionType.DEFLATE => new DeflaterInputStream(inputStream)
-        case CompressionType.GZIP => new GZIPInputStream(inputStream)
+        case Some(CompressionType.DEFLATE) => new DeflaterInputStream(inputStream)
+        case Some(CompressionType.GZIP) => new GZIPInputStream(inputStream)
         // TODO requires a lib dependency (bzip2) which is not in the maven repository
-        // case CompressionType.BZIP2 => {
+        // case Some(CompressionType.BZIP2) => {
         //   /* CBZip2InputStream expects the magic number to be consumed */
         //   inputStream.read()
         //   inputStream.read()
