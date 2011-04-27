@@ -2,6 +2,6 @@ package ldif.datasources.dump
 
 import ldif.module.ModuleConfig
 
-case class DumpConfig (dataLocationUrls : Traversable[String]) extends ModuleConfig
+case class DumpConfig (sourceLocations : Traversable[String]) extends ModuleConfig
 
 

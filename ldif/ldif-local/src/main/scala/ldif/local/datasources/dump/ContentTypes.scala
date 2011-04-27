@@ -18,6 +18,11 @@ object ContentTypes {
   val langNTriple = "N-TRIPLE"
   val langN3 = "N3"
   val langTurtle = "TURTLE"
+
+  val HTTP_ACCEPT_CONTENT_TYPES =  "text/plain;q=1," +  /* N-TRIPLE */
+          "text/n3;q=0.9,application/n3;q=0.9,text/rdf+n3;q=0.9,"+  /* N3 */
+          "text/turtle;q=0.9,application/x-turtle;q=0.9,application/turtle;q=0.9," +  /* TURTLE */
+          "application/rdf+xml;q=0.7,text/rdf+xml;q=0.7,application/xml;q=0.5,text/xml;q=0.5";  /* RDF/XML */
   
   private def check(needle:String, haystack:Traversable[String]) = {
 		var result:Boolean = false

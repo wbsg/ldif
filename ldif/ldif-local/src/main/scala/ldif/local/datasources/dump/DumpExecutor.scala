@@ -34,7 +34,7 @@ class DumpExecutor() extends Executor
    */
   override def execute(task : DumpTask, reader : Null, writer : QuadWriter)
   {
-    val inputStream = new DumpLoader(task.dataLocationUrl).getStream
+    val inputStream = new DumpLoader(task.sourceLocation).getStream
 
     val nxp:NxParser = new NxParser(inputStream)
     while (nxp.hasNext) {

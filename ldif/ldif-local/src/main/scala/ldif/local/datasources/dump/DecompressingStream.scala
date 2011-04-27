@@ -44,16 +44,16 @@ class DecompressingStream(inputStream:InputStream, fileName:String) extends Inpu
   private def detectByContentType(contentType:String) =
 		contentTypeToCompressionType.get(contentType)
 
-  // private def detectByEncoding(contentEncoding:Header) = detectByEncoding(contentEncoding.getValue())
+  // private def detectByEncoding(contentEncoding:Header) = detectByEncoding(contentEncoding.getValue)
 
-	// private def detectByContentType(contentType:Header) = detectByContentType(contentType.getValue())
+	// private def detectByContentType(contentType:Header) = detectByContentType(contentType.getValue)
 
 
   private def detectByContentExtension(fileName:String) = {
 		var result:Option[CompressionType.Value] = None
     if (fileName != null) {
 			for (e <- extensionToCompressionType.keySet) {
-			  if (fileName.toLowerCase().endsWith(e)) {
+			  if (fileName.toLowerCase.endsWith(e)) {
 		  		result = extensionToCompressionType.get(e)
 		  	}
       }
@@ -90,8 +90,8 @@ class DecompressingStream(inputStream:InputStream, fileName:String) extends Inpu
         // TODO requires a lib dependency (bzip2) which is not in the maven repository
         // case Some(CompressionType.BZIP2) => {
         //   /* CBZip2InputStream expects the magic number to be consumed */
-        //   inputStream.read()
-        //   inputStream.read()
+        //   inputStream.read
+        //   inputStream.read
         //   new CBZip2InputStream(inputStream)
         // }
     }
@@ -104,7 +104,7 @@ class DecompressingStream(inputStream:InputStream, fileName:String) extends Inpu
 
   @throws(classOf[IOException])
 	def this(file:File) {
-    this(new FileInputStream(file), file.getName())
+    this(new FileInputStream(file), file.getName)
   }
 
   //  @throws(classOf[IOException])

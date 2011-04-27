@@ -19,9 +19,9 @@ class DumpModule (override val config : DumpConfig)  extends Module
    */
   override val tasks : Traversable[DumpTask] =
   {
-    for((dataLocationUrl, index) <- config.dataLocationUrls.toSeq.zipWithIndex) yield
+    for((sourceLocation, index) <- config.sourceLocations.toSeq.zipWithIndex) yield
     {
-      new DumpTask("Dump" + index, dataLocationUrl)
+      new DumpTask("Dump" + index, sourceLocation)
     }
   }
 }
