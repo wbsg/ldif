@@ -1,4 +1,3 @@
 package ldif.entity
 
-//TODO rename to EntityDescription
-case class EntityDescription(restrictions : Restriction, paths : Seq[Path])
+case class EntityDescription(restrictions : Restriction, patterns : IndexedSeq[IndexedSeq[Path]])

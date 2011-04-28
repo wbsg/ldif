@@ -1,6 +1,19 @@
 package ldif.entity
 
-class Entity(val uri : String, factums : IndexedSeq[Traversable[Factum]], entityDescription : EntityDescription)
+trait Entity
 {
-  def factum(pathId : Int) : Traversable[Factum] = factums(pathId)
+  def uri : String
+
+  def entityDescription : EntityDescription
+
+  def factum(patternId : Int) : FactumTable
+}
+
+trait FactumTable extends IndexedSeq[FactumRow]
+{
+
+}
+
+trait FactumRow extends IndexedSeq[Factum]
+{
 }
