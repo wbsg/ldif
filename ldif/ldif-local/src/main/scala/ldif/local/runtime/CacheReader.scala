@@ -9,7 +9,4 @@ trait CacheReader
   def size : Int
 
   def readEntity(index : Int) : Entity
-
-  def read : Entity
-
 }
