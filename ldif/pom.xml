@@ -21,6 +21,7 @@
     <module>ldif-core</module>
     <module>ldif-local</module>
     <module>ldif-hadoop</module>
+    <module>ldif-modules</module>
   </modules>
 
   <build>
