@@ -2,5 +2,8 @@ package ldif.local.runtime
 
 trait QuadReader
 {
-  def read() : Quad
+
+  //TODO consider hasNext and getNext methods
+  def size : Int
+  def read : Quad
 }

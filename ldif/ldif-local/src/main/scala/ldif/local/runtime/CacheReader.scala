@@ -6,7 +6,10 @@ trait CacheReader
 {
   val entityDescription : EntityDescription
 
-  val bucketCount : Int
+  def size : Int
 
-  def readBucket(index : Int) : Array[Entity]
+  def readEntity(index : Int) : Entity
+
+  def read : Entity
+
 }

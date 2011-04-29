@@ -1,6 +1,6 @@
 package ldif.entity
 
-class Factum private(val value : String, datatypeOrLanguage : String, val nodeType : Factum.NodeType, graph : String)
+class Factum private(val value : String, datatypeOrLanguage : String, val nodeType : Factum.NodeType, val graph : String)
 {
   def datatype = nodeType match
   {
