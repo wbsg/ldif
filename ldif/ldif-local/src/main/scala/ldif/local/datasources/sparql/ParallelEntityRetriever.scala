@@ -31,16 +31,17 @@ class ParallelEntityRetriever(endpoint : SparqlEndpoint, pageSize : Int = 1000, 
   {
     override def foreach[U](f : Entity => U) : Unit =
     {
-      val pathRetrievers = for(path <- entityDescription.paths) yield new PathRetriever(resourceUris, entityDescription, path)
-
-      pathRetrievers.foreach(_.start())
-
-      while(pathRetrievers.forall(_.hasNext))
-      {
-        val pathValues = for(pathRetriever <- pathRetrievers) yield pathRetriever.next()
-
-        f(new Entity(pathValues.head.uri, pathValues.map(_.values.map(value => new Factum(Seq(value)))).toIndexedSeq, entityDescription))
-      }
+//      val pathRetrievers = for(path <- entityDescription.paths) yield new PathRetriever(resourceUris, entityDescription, path)
+//
+//      pathRetrievers.foreach(_.start())
+//
+//      while(pathRetrievers.forall(_.hasNext))
+//      {
+//        val pathValues = for(pathRetriever <- pathRetrievers) yield pathRetriever.next()
+//
+//        f(new Entity(pathValues.head.uri, pathValues.map(_.values.map(value => new Factum(Seq(value)))).toIndexedSeq, entityDescription))
+//      }
+      null
     }
   }
 
