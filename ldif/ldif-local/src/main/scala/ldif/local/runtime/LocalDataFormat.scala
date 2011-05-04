@@ -37,7 +37,7 @@ case class DynamicEntityFormat() extends LocalDataFormat
  * The static entity format structures the data in entities of resources, where the format of the resources is defined statically by the concrete task.
  * The Runtime transforms the input data to the specified entity description prior to providing it to the task.
  */
-case class StaticEntityFormat(entityDescriptions : EntityDescription) extends LocalDataFormat
+case class StaticEntityFormat(entityDescriptions : Seq[EntityDescription]) extends LocalDataFormat
 {
   type Reader = Seq[EntityReader]
   type Writer = Seq[EntityWriter]
