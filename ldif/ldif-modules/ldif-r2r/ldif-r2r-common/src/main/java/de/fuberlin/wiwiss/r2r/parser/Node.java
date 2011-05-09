@@ -71,15 +71,22 @@ public class Node {
   	if(this==other)	return true;
   	if(!(other instanceof Node)) return false;
   	Node otherNode = (Node) other;
-    return (otherNode.nodeType==this.nodeType) &&
-           (this.datatypeOrLanguage.equals(otherNode.datatypeOrLanguage)) &&
+    return (otherNode.nodeType==nodeType) &&
+           compareDTorLang(this.datatypeOrLanguage,otherNode.datatypeOrLanguage) &&
            (this.value.equals(otherNode.value));
+  }
+
+  private boolean compareDTorLang(String v1, String v2) {
+    if(v1==null)
+      return v2==null;
+    else
+      return v1.equals(v2);
   }
 
   public int hashCode() {
   	int hash = 1;
   	hash = hash*31 + value.hashCode();
-  	hash = hash*31 + datatypeOrLanguage==null ? 0 : datatypeOrLanguage.hashCode();
+  	hash = hash*31 + (datatypeOrLanguage==null ? 0 : datatypeOrLanguage.hashCode());
   	hash = hash*31 + nodeType.hashCode();
   	return hash;
   }

@@ -33,6 +33,17 @@ object Restriction
   }
 
   /**
+   * The Exists Operator evaluates to true if the provided path contains at least one value.
+   */
+  case class Exists(path : Path) extends Operator
+  {
+    def toXml =
+    {
+      <Condition path={path.toString} />
+    }
+  }
+
+  /**
    * Negates the provided operator.
    */
   case class Not(op : Operator)
