@@ -1,6 +1,7 @@
 package ldif.entity
 
 import xml.Elem
+import ldif.util.Prefixes
 
 case class Restriction(operator : Option[Restriction.Operator])
 {
@@ -14,6 +15,25 @@ case class Restriction(operator : Option[Restriction.Operator])
 
 object Restriction
 {
+  /**
+   * Reads a restriction from XML.
+   */
+  def fromXML(xml : scala.xml.Node)(implicit prefixes : Prefixes = Prefixes.empty) =
+  {
+    Restriction((xml \ "_").headOption.map(readOperator))
+  }
+
+  /**
+   * Reads an operator from XML.
+   */
+  private def readOperator(xml : scala.xml.Node)(implicit prefixes : Prefixes) : Operator = xml match
+  {
+    case <Condition>{nodes @ _ *}</Condition> => Condition(Path.parse(xml \ "@path" text), (xml \ "Value").map(_.text).toSet)
+    case <Not>{node}</Not> => Not(readOperator(node))
+    case <And>{nodes @ _ *}</And> => And(nodes.map(readOperator))
+    case <Or>{nodes @ _ *}</Or> => Or(nodes.map(readOperator))
+  }
+
   sealed trait Operator
   {
     def toXml : Elem
@@ -46,7 +66,7 @@ object Restriction
   /**
    * Negates the provided operator.
    */
-  case class Not(op : Operator)
+  case class Not(op : Operator) extends Operator
   {
     def toXml = <Not>{op.toXml}</Not>
   }

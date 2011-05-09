@@ -11,4 +11,9 @@ trait ModuleTask
    * The unique name of this task.
    */
   val name : Identifier
+
+  /**
+   * Default toString method.
+   */
+  override def toString = getClass.getSimpleName + "(" + name + ")"
 }

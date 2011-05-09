@@ -10,8 +10,8 @@
 
   <modules>
     <module>ldif-r2r</module>
+    <module>ldif-silk</module>
   </modules>
-
 
 	<artifactId>ldif-modules</artifactId>
 	<version>0.1-SNAPSHOT</version>
