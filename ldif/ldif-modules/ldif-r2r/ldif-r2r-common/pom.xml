@@ -1,0 +1,46 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+    <parent>
+      <groupId>ldif</groupId>
+      <artifactId>ldif-r2r</artifactId>
+      <version>0.1-SNAPSHOT</version>
+    </parent>
+
+	<artifactId>ldif-r2r-common</artifactId>
+	<packaging>jar</packaging>
+	<version>0.1-SNAPSHOT</version>
+	<name>LDIF R2R Module Common</name>
+
+	<properties>
+		<scala.version>2.8.1</scala.version>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+	</properties>
+
+	<repositories>
+		<repository>
+			<id>scala-tools.org</id>
+			<name>Scala-tools Maven2 repository</name>
+			<url>http://scala-tools.org/repo-releases</url>
+		</repository>
+	</repositories>
+
+	<pluginRepositories>
+		<pluginRepository>
+			<id>scala-tools.org</id>
+			<name>Scala-tools Maven2 Repository</name>
+			<url>http://scala-tools.org/repo-releases</url>
+		</pluginRepository>
+	</pluginRepositories>
+
+	<dependencies>
+        <dependency>
+            <groupId>r2rApi</groupId>
+            <artifactId>r2rApi</artifactId>
+            <version>0.2.2</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/lib/r2rApi-0.2.2.jar</systemPath>
+        </dependency>
+	</dependencies>
+</project>

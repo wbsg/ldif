@@ -17,10 +17,14 @@
       <sourceFolder url="file://$MODULE_DIR$/src/main/java" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/main/scala" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/test/java" isTestSource="true" />
-      <excludeFolder url="file://$MODULE_DIR$/target" />
+      <sourceFolder url="file://$MODULE_DIR$/target/generated-sources/annotations" isTestSource="false" />
+      <excludeFolder url="file://$MODULE_DIR$/target/classes" />
+      <excludeFolder url="file://$MODULE_DIR$/target/maven-archiver" />
+      <excludeFolder url="file://$MODULE_DIR$/target/test-classes" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="library" name="Maven: r2rApi:r2rApi:0.2.2" level="project" />
     <orderEntry type="library" name="Maven: org.scala-lang:scala-library:2.8.1" level="project" />
     <orderEntry type="library" name="Maven: org.antlr:antlr:3.2" level="project" />
     <orderEntry type="library" name="Maven: org.antlr:antlr-runtime:3.2" level="project" />
@@ -39,7 +43,6 @@
     <orderEntry type="library" name="Maven: org.apache.lucene:lucene-core:2.3.1" level="project" />
     <orderEntry type="library" name="Maven: junit:junit:4.5" level="project" />
     <orderEntry type="library" name="Maven: commons-logging:commons-logging:1.1.1" level="project" />
-    <orderEntry type="library" name="Maven: r2rApi:r2rApi:0.2.2" level="project" />
     <orderEntry type="module" module-name="ldif-core" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: org.scala-lang:scala-compiler:2.8.1" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: org.scalatest:scalatest:1.2" level="project" />
