@@ -5,7 +5,7 @@ import ldif.util.{Uri, Prefixes}
 /**
  * Represents an operator in an RDF path.
  */
-sealed trait PathOperator
+sealed abstract class PathOperator
 {
   /**
    * Serializes this operator using the Silk RDF path language.
@@ -53,3 +53,4 @@ case class PropertyFilter(property : String, operator : String, value : String) 
 {
   override def serialize(implicit prefixes : Prefixes) = "[" + property + " " + operator + " " + value + "]"
 }
+

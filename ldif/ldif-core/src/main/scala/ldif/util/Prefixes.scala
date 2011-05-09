@@ -10,8 +10,23 @@ class Prefixes(private val prefixMap : Map[String, String])
   override def toString = "Prefixes(" + prefixMap.toString + ")"
 
   /**
-   * Serializes all prefixes as XML.
+   * Combines two prefix objects.
    */
+  def ++(prefixes : Prefixes) =
+  {
+    new Prefixes(prefixMap ++ prefixes.prefixMap)
+  }
+
+  def resolve(qualifiedName : String) = qualifiedName.split(":", 2) match
+  {
+    case Array(prefix, suffix) => prefixMap.get(prefix) match
+    {
+      case Some(resolvedPrefix) => resolvedPrefix + suffix
+      case None => throw new IllegalArgumentException("Unknown prefix: " + prefix)
+    }
+    case _ => throw new IllegalArgumentException("No prefix found in " + qualifiedName)
+  }
+
   def toXML =
   {
     <Prefixes>
@@ -24,9 +39,6 @@ class Prefixes(private val prefixMap : Map[String, String])
     </Prefixes>
   }
 
-  /**
-   * Serializes all prefixes as SPARQL.
-   */
   def toSparql =
   {
     var sparql = ""
@@ -36,11 +48,11 @@ class Prefixes(private val prefixMap : Map[String, String])
        }
     sparql
   }
+
 }
 
 object Prefixes
 {
-  /** Empty prefixes */
   val empty = new Prefixes(Map.empty)
 
   implicit def fromMap(map : Map[String, String]) = new Prefixes(map)

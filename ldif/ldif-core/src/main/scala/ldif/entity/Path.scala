@@ -1,6 +1,7 @@
 package ldif.entity
 
 import collection.mutable.{SynchronizedMap, WeakHashMap}
+import ldif.util.Prefixes
 
 /**
  * Represents an RDF path.
@@ -10,7 +11,9 @@ case class Path(variable : String, operators : List[PathOperator])
   /**
    * Serializes this path using the Silk RDF path language.
    */
-  override def toString = "?" + variable + operators.mkString
+  def serialize(implicit prefixes : Prefixes = Prefixes.empty) = "?" + variable + operators.map(_.serialize).mkString
+
+  override def toString = serialize(Prefixes.empty)
 
   /**
    * Tests if this path equals another path
@@ -28,7 +31,7 @@ object Path
    * Parses a path string.
    * May return a cached copy.
    */
-  def parse(pathStr : String, prefixes : Map[String, String] = Map.empty) =
+  def parse(pathStr : String)(implicit prefixes : Prefixes = Prefixes.empty) =
   {
     //Try to retrieve a cached copy. If not found, parse the path
     pathCache.getOrElseUpdate(pathStr, new PathParser(prefixes).parse(pathStr))

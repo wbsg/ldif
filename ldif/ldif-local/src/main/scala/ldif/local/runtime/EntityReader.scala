@@ -7,5 +7,5 @@ trait EntityReader
   val entityDescription : EntityDescription
   def size : Int
   def isEmpty : Boolean
-  def read : Entity
+  def read() : Entity
 }
