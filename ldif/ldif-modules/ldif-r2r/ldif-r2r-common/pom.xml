@@ -38,9 +38,9 @@
         <dependency>
             <groupId>r2rApi</groupId>
             <artifactId>r2rApi</artifactId>
-            <version>0.2.2</version>
+            <version>0.2.3-SNAPSHOT</version>
             <scope>system</scope>
-            <systemPath>${project.basedir}/lib/r2rApi-0.2.2.jar</systemPath>
+            <systemPath>${project.basedir}/lib/r2rApi-0.2.3-SNAPSHOT.jar</systemPath>
         </dependency>
 	</dependencies>
 </project>

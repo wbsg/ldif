@@ -38,10 +38,6 @@ object SourcePatternToEntityDescriptionTransformer {
     var restriction = Restriction(None)
     if(operators.size>0)
       restriction = Restriction(Some(And(operators)))
-    println("\nPaths:")
-    pattern.foreach(path => println(path))
-    println("\nRestrictions:")
-    println(restriction)
     (EntityDescription(restriction, IndexedSeq(pattern.toIndexedSeq)), variableToIndexMap)
   }
 
@@ -76,7 +72,6 @@ object SourcePatternToEntityDescriptionTransformer {
             return
           val visitedNew = visited + nextNode
 
-          println(node.getNode.value + " " + propertyNode.value + " " + nextNode.getNode.value)//TODO: remove
           if(backward)
             recursiveConstruct(nextNode, path ++ List(BackwardOperator(propertyNode.value)), visitedNew)
           else
