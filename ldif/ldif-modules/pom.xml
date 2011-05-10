@@ -11,11 +11,12 @@
   <modules>
     <module>ldif-r2r</module>
     <module>ldif-silk</module>
+    <module>ldif-entitybuilder</module>
   </modules>
 
 	<artifactId>ldif-modules</artifactId>
 	<version>0.1-SNAPSHOT</version>
-  <packaging>pom</packaging>
+    <packaging>pom</packaging>
 	<name>LDIF Modules</name>
 
 	<properties>
