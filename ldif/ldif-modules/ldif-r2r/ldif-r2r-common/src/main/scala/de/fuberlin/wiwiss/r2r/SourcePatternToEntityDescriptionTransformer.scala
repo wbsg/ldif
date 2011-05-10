@@ -21,11 +21,21 @@ import collection.immutable.List._
 
 object SourcePatternToEntityDescriptionTransformer {
   def main(args: Array[String]) : Unit = {
-    transform("?SUBJ <p1> [ <pp1> 'blah'@en ; <pp2> ?value; <pp3> [<ppp1> 'fsds'^^xsd:Int ;<ppp2> <fd>]; <pp4> ?whocares; <pp5> _:nobody]", List("value"))
+    val (entityDescription, variableToIndexMap) = transform(args(0), args.slice(1,args.length).toList, new PrefixMapper)
+    printEntityDescription(entityDescription)
   }
 
-  def transform(sourcePattern: String, variableDependencies: List[String]): (EntityDescription, Map[String, Int]) = {
-    val triples: List[NodeTriple] =  Sparql2NodeTripleParser.parse(sourcePattern).toList
+  def printEntityDescription(entityDescription: EntityDescription) {
+    println("Paths:")
+    for(pattern <- entityDescription.patterns(0)) {
+      println("  " + pattern)
+    }
+    println("Restrictions:")
+    println("  " + entityDescription.restriction)
+  }
+
+  def transform(sourcePattern: String, variableDependencies: List[String], prefixMapper: PrefixMapper): (EntityDescription, Map[String, Int]) = {
+    val triples: List[NodeTriple] =  Sparql2NodeTripleParser.parse(sourcePattern, prefixMapper).toList
     val (paths, operators) = constructPathsAndRestrictions(triples, variableDependencies)
     var index = 0
     var variableToIndexMap: Map[String, Int] = Map()
@@ -47,6 +57,7 @@ object SourcePatternToEntityDescriptionTransformer {
     var restrictions: List[Operator] = List()
 
     val subjRoot = constructTree(triples)
+    if(subjRoot==null) throw new R2RException("No SUBJ variable in Source Pattern")
 
     def recursiveConstruct(node: TreeNode, path: List[PathOperator], visited: Set[TreeNode]) {
       val parsedNode = node.getNode

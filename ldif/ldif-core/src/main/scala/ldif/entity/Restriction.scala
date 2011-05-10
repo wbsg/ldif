@@ -32,6 +32,7 @@ object Restriction
     case <Not>{node}</Not> => Not(readOperator(node))
     case <And>{nodes @ _ *}</And> => And(nodes.map(readOperator))
     case <Or>{nodes @ _ *}</Or> => Or(nodes.map(readOperator))
+    case <Exists/> => Exists(Path.parse(xml \ "@path" text))
   }
 
   sealed trait Operator
@@ -59,7 +60,7 @@ object Restriction
   {
     def toXml =
     {
-      <Condition path={path.toString} />
+      <Exists path={path.toString} />
     }
   }
 

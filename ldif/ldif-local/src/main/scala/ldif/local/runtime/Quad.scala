@@ -1,5 +1,7 @@
 package ldif.local.runtime
 
+import ldif.entity.Node
+
 /**
  * An RDF quad.
  */

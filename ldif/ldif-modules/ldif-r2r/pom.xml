@@ -80,6 +80,11 @@
           <artifactId>ldif-core</artifactId>
           <version>${ldif.version}</version>
         </dependency>
+        <dependency>
+          <groupId>ldif</groupId>
+          <artifactId>ldif-local</artifactId>
+          <version>${ldif.version}</version>
+        </dependency>
 	</dependencies>
 
 	<build>
