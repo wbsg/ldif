@@ -67,6 +67,10 @@ public class Node {
   	return new Node(value, null, NodeType.CONSTANTLITERAL);
   }
 
+  public static Node createUnknownLexicalNode(String value) {
+      return new Node(value, null, NodeType.UNKNOWNLEXICALVALUE);
+  }
+
   public boolean equals(Object other) {
   	if(this==other)	return true;
   	if(!(other instanceof Node)) return false;

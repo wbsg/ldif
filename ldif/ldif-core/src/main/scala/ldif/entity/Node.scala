@@ -15,6 +15,12 @@ final case class Node protected(val value : String, datatypeOrLanguage : String,
     case _ => null
   }
 
+  def isResource = {
+    if(nodeType==Node.UriNode || nodeType==Node.BlankNode)
+      true
+    else
+      false
+  }
 }
 
 object Node

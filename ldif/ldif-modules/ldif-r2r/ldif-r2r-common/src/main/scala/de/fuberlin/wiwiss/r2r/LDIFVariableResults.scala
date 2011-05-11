@@ -33,4 +33,8 @@ class LDIFVariableResults(factumRow: FactumRow) {
 	def getResults(varName: String): Option[List[Node]] = {
 		variableValues.get(varName)
 	}
+
+  def getLexicalResults(varName: String): List[String] = {
+    for(node <- variableValues(varName)) yield node.value
+  }
 }
