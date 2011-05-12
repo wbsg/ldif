@@ -65,7 +65,6 @@ class EntityBuilder (entityDescriptions : IndexedSeq[EntityDescription], reader 
      val startTime = now
 
      for (ed <- entityDescriptions){
-       //TODO if already in PHT, set value to BOTH (in case)
 
        // analyse restriction
        addRestrictionProperties(ed.restriction.operator)
@@ -75,8 +74,8 @@ class EntityBuilder (entityDescriptions : IndexedSeq[EntityDescription], reader 
          for (pattern <- patterns)
            for (op <- pattern.operators)
             op match {
-               case op:ForwardOperator => PHT.put(op.property.toString, PropertyType.FORW)
-               case op:BackwardOperator => PHT.put(op.property.toString, PropertyType.BACK)
+               case op:ForwardOperator => updatePHT(op.property.toString, PropertyType.FORW)
+               case op:BackwardOperator => updatePHT(op.property.toString, PropertyType.BACK)
                case _ =>
             }
      }
@@ -112,30 +111,46 @@ class EntityBuilder (entityDescriptions : IndexedSeq[EntityDescription], reader 
      //log.info(" [ BHT ] \n > keySet = ("+BHT.keySet.size.toString+")\n   - " + BHT.keySet.map(a => Pair.unapply(a).get._2 + " "+Pair.unapply(a).get._1.value).mkString("\n   - "))
   }
 
-  // Find all properties in a given operator and add those to the property hash table
+  // Find all properties from a given operator and add those to the property hash table
   private def addRestrictionProperties(operator : Option[Operator]) {
-        operator match {
-          case Some(cond:Condition) =>
-            for (op <- cond.path.operators){
-              op match {
-                case op:ForwardOperator => PHT.put(op.property.toString, PropertyType.BACK)
-                case op:BackwardOperator => PHT.put(op.property.toString, PropertyType.FORW)
-                case _ =>
-              }
-            }
-          case Some(and:And) =>  {
-            for (child <- and.children)
-              addRestrictionProperties(Some(child))
+    operator match {
+      case Some(cond:Condition) =>
+        for (op <- cond.path.operators){
+          op match {
+            case op:ForwardOperator => updatePHT(op.property.toString, PropertyType.BACK)
+            case op:BackwardOperator => updatePHT(op.property.toString, PropertyType.FORW)
+            case _ =>
           }
-          case Some(or:Or) =>  {
-            for (child <- or.children)
-              addRestrictionProperties(Some(child))
-          }
-          case Some(not:Not) =>
-          case Some(exists:Exists) =>
-          case None =>
         }
+      case Some(and:And) =>  {
+        for (child <- and.children)
+          addRestrictionProperties(Some(child))
       }
+      case Some(or:Or) =>  {
+        for (child <- or.children)
+          addRestrictionProperties(Some(child))
+      }
+      case Some(not:Not) =>
+      case Some(exists:Exists) =>
+      case None =>
+    }
+  }
+
+  private def updatePHT(property :String, propertyType : PropertyType.Value ){
+    if (propertyType != PropertyType.BOTH){
+      PHT.get(property) match {
+              case Some(PropertyType.FORW) =>
+                if (propertyType==PropertyType.BACK)
+                  PHT.put(property, PropertyType.BOTH)
+                else PHT.put(property, propertyType)
+              case Some(PropertyType.BACK) =>
+                if (propertyType==PropertyType.FORW)
+                  PHT.put(property, PropertyType.BOTH)
+                else PHT.put(property, propertyType)
+              case None => PHT.put(property, propertyType)
+            }
+    }
+  }
 
   // Build the subject set from a given operator
   private def getSubjSet(operator : Option[Operator]) : Set[Node] = {
@@ -236,19 +251,17 @@ class EntityBuilder (entityDescriptions : IndexedSeq[EntityDescription], reader 
 
   // Build the result table, given the seed/entity Uri and a sequence of paths
   private def getFactums(entityUri : String, paths : IndexedSeq[Path]) : Traversable[IndexedSeq[Node]]  = {
-    var valuesTable : Traversable[IndexedSeq[Node]] = null
+    // init structures
     val prev = new ArraySeq[ArrayBuffer[Node]](paths.size)
     val next = new ArraySeq[ArrayBuffer[Traversable[Node]]](paths.size)
     val treeStructure = getTreeStructure(paths)
-
-    // init structures
     val entityNode = Node.createUriNode(entityUri,null)
     val initRow = for (j <- 0 to paths.size-1) yield {
       prev(j) = ArrayBuffer(entityNode)
       next(j) = new ArrayBuffer[Traversable[Node]]
       entityNode  
     }
-    valuesTable = Set(initRow)
+    var valuesTable:Traversable[IndexedSeq[Node]] = Set(initRow)
 
     for (i <- 0 to maxPathSize(paths)-1){
       // for each level
