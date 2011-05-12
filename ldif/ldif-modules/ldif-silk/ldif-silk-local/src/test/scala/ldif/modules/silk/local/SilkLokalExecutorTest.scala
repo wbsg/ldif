@@ -8,11 +8,14 @@ import de.fuberlin.wiwiss.silk.config.{Configuration}
 import ldif.util.Prefixes
 import ldif.entity.EntityDescription
 import xml.XML
+import org.scalatest.junit.JUnitRunner
+import org.junit.runner.RunWith
 
 /**
  * Unit Test for the SilkLokalExecutor.
  */
 //TODO check for more cases
+@RunWith(classOf[JUnitRunner])
 class SilkLokalExecutorTest extends FlatSpec with ShouldMatchers
 {
   DefaultImplementations.register()

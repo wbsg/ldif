@@ -11,11 +11,14 @@ import ldif.local.runtime.impl.{QuadQueue, EntityQueue}
 import ldif.local.datasources.dump.DumpExecutor
 import de.fuberlin.wiwiss.ldif.{EntityBuilderModule, EntityBuilderConfig}
 import ldif.util.{Prefixes, Uri}
+import org.scalatest.junit.JUnitRunner
+import org.junit.runner.RunWith
 
 /**
  * Unit Test for the Entity Builder Module Local.
  */
 
+@RunWith(classOf[JUnitRunner])
 class EBLocalTest extends FlatSpec with ShouldMatchers
 {
   // context

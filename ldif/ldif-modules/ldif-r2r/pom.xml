@@ -70,11 +70,6 @@
 			<version>1.1.1</version>
 			<scope>compile</scope>
 		</dependency>
-		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<version>4.5</version>
-		</dependency>
         <dependency>
           <groupId>ldif</groupId>
           <artifactId>ldif-core</artifactId>
