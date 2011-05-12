@@ -1,0 +1,12 @@
+<EntityDescription>
+  <Restriction>
+    <Condition path="?a/rdf:type">
+      <Value>http://brain-map.org/gene/0.1#gene</Value>
+    </Condition>
+  </Restriction>
+  <Patterns>
+    <Pattern>
+      <Path>?a/http://brain-map.org/gene/0.1#geneid</Path>
+    </Pattern>
+  </Patterns>
+</EntityDescription>
