@@ -1,5 +1,7 @@
 package ldif.entity
 
+import Node._
+
 
 final case class Node protected(val value : String, datatypeOrLanguage : String, val nodeType : Node.NodeType, val graph : String)
 {
@@ -20,6 +22,14 @@ final case class Node protected(val value : String, datatypeOrLanguage : String,
       true
     else
       false
+  }
+
+  override def toString = nodeType match {
+    case Literal => "\"" + value + "\""
+    case TypedLiteral => "\"" + value + "\"^^<" + datatypeOrLanguage + ">"
+    case LanguageLiteral => "\"" + value + "\"@" + datatypeOrLanguage
+    case BlankNode => value
+    case UriNode => "<" + value + ">"
   }
 }
 

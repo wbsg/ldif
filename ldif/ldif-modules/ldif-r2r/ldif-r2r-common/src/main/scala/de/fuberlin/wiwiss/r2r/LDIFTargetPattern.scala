@@ -9,29 +9,65 @@ package de.fuberlin.wiwiss.r2r
  */
 
 import ldif.entity.{EntityDescription, FactumRow, Entity, Node}
-import ldif.local.runtime.QuadWriter
+import ldif.local.runtime.{Quad, QuadWriter}
 import de.fuberlin.wiwiss.r2r.TripleElement.Type
 import scala.collection.JavaConversions._
+import de.fuberlin.wiwiss.r2r.functions.HelperFunctions
 
 class LDIFTargetPattern(path: java.util.List[Triple]) extends TargetPattern(path) {
 
   def writeQuads(results: LDIFVariableResults, quadWriter: QuadWriter) {
     for(triple <- path) {
       val subjects = getSubjects(triple.getSubject, results)
-      val predicates = getPredicate(triple.getVerb)
-
+      val predicate = getPredicate(triple.getVerb)
+      val objects = getObjects(triple.getObject, results)
+      for(s <- subjects)
+        for(o <- objects) yield Quad(s.toString, predicate.toString, o.toString, "default")
     }
   }
 
   private def getObjects(tripleElement: TripleElement, results: LDIFVariableResults): Iterable[Node] = {
     val elemType = tripleElement.getType
-    var objects = List[Node]()
     val lexValue = tripleElement.getValue(0)
-    elemType match {
-      case Type.IRI=> objects = Node.createUriNode(lexValue, "") :: objects
-      case Type.IRIVARIABLE => objects = for(uri <- results.getLexicalResults(lexValue)) yield Node.createUriNode(uri, "")
+    val objects: List[Node] = elemType match {
+      case Type.IRI=> List(Node.createUriNode(lexValue, ""))
+      case Type.IRIVARIABLE => for(uri <- results.getLexicalResults(lexValue)) yield Node.createUriNode(uri, "")
+      case Type.DATATYPEVARIABLE => getDataTypeVariableValues(tripleElement,results)
+      case Type.DATATYPESTRING => List(Node.createTypedLiteral(lexValue, tripleElement.getValue(1), ""))
+      case Type.STRING => List(Node.createLiteral(lexValue, ""))
+      case Type.STRINGVARIABLE => results.getResults(tripleElement.getValue(0)).get
+      case Type.LANGTAGVARIABLE => for(value <- results.getResults(tripleElement.getValue(0)).get)
+                                      yield Node.createLanguageLiteral(value.value, tripleElement.getValue(1), "")
+      case Type.LANGTAGSTRING => List(Node.createLanguageLiteral(lexValue, tripleElement.getValue(1), ""))
+      case Type.VARIABLE => results.getResults(tripleElement.getValue(0)).get
+      case Type.BLANKNODE => List(Node.createBlankNode(lexValue, ""))
+      case _ => {
+        val dataType = elemType match {
+          case Type.BOOLEAN => "http://www.w3.org/2001/XMLSchema#boolean"
+          case Type.DECIMAL => "http://www.w3.org/2001/XMLSchema#decimal"
+          case Type.INTEGER => "http://www.w3.org/2001/XMLSchema#integer"
+          case Type.DOUBLE => "http://www.w3.org/2001/XMLSchema#double"
+        }
+        List(Node.createTypedLiteral(lexValue, dataType, ""))
+      }
     }
     objects
+  }
+
+  private def getDataTypeVariableValues(element: TripleElement, results: LDIFVariableResults): List[Node] = {
+    val varName = element.getValue(0)
+    var values = results.getResults(varName).get
+    val hint = getHints.get(varName)
+
+    if(HelperFunctions.getWorkingDataTypeOfDataTypeString(hint)!=null) {
+      var convertedValues = List[Node]()
+      for(node <- values) {
+        val convertedVal = Node.createTypedLiteral(HelperFunctions.convertValueToDataType(node.value, hint), hint, "")
+        convertedValues = convertedVal :: convertedValues
+      }
+      values = convertedValues
+    }
+    values
   }
 
   private def getPredicate(tripleElement: TripleElement): Node = {
