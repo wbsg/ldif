@@ -105,6 +105,14 @@
       <scope>test</scope>
     </dependency>
 
+    <dependency>
+        <groupId>org.scalatest</groupId>
+        <artifactId>scalatest</artifactId>
+        <version>1.3</version>
+        <scope>test</scope>
+    </dependency>
+
+
   </dependencies>
 
   <repositories>
@@ -114,6 +122,13 @@
       <name>Scala-tools Maven2 Repository</name>
       <url>http://scala-tools.org/repo-releases/</url>
     </repository>
+
+    <repository>
+      <id>scala-tools.org releases</id>
+      <name>Scala-tools Maven2 Releases Snapshots Repository</name>
+      <url>http://scala-tools.org/repo-snapshots</url>
+    </repository>
+
 
   </repositories>
 

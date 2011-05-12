@@ -19,6 +19,7 @@ class Prefixes(private val prefixMap : Map[String, String])
 
   def resolve(qualifiedName : String) = qualifiedName.split(":", 2) match
   {
+    case Array("http", rest) if rest.startsWith("//") => qualifiedName
     case Array(prefix, suffix) => prefixMap.get(prefix) match
     {
       case Some(resolvedPrefix) => resolvedPrefix + suffix
@@ -65,4 +66,12 @@ object Prefixes
   {
     new Prefixes((xml \ "Prefix").map(n => (n \ "@id" text, n \ "@namespace" text)).toMap)
   }
+
+  val stdPrefixes = new Prefixes(Map(
+    "xsd" -> "http://www.w3.org/2001/XMLSchema#",
+    "rdf" -> "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+    "rdfs" -> "http://www.w3.org/2000/01/rdf-schema#"
+  ))
+
+  def resolveStandardQName(qName: String) = stdPrefixes.resolve(qName)
 }
