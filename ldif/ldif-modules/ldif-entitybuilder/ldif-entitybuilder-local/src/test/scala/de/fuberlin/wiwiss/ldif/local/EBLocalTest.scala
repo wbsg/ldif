@@ -22,7 +22,7 @@ import org.junit.runner.RunWith
 class EBLocalTest extends FlatSpec with ShouldMatchers
 {
   // context
-  val source = "ldif-modules/ldif-entitybuilder/ldif-entitybuilder-local/src/test/resources/aba.nt"
+  val source = "src/test/resources/aba.nt"
   val eds = IndexedSeq(ed1,ed2,ed3)
 
   // init queue structures

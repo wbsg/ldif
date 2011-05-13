@@ -152,3 +152,5 @@ object SourcePatternToEntityDescriptionTransformer {
     makeTreeNodesWithLinks
   }
 }
+
+object stdPrefixMapper
