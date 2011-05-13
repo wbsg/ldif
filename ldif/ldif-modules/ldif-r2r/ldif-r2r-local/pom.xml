@@ -129,4 +129,12 @@
 			</plugin>
 		</plugins>
 	</build>
+
+    <dependencies>
+        <dependency>
+            <groupId>ldif</groupId>
+            <artifactId>ldif-r2r-common</artifactId>
+            <version>0.1-SNAPSHOT</version>
+        </dependency>
+	</dependencies>
 </project>
