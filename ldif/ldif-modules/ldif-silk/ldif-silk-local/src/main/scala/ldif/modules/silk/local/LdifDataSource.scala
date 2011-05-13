@@ -7,7 +7,7 @@ import ldif.local.runtime.EntityReader
 /**
  * Silk DataSource which reads the entities from an EntityReader.
  */
-class LdifDataSource(reader : EntityReader) extends DataSource
+case class LdifDataSource(reader : EntityReader) extends DataSource
 {
   override def retrieve(instanceSpec : InstanceSpecification, instances : Seq[String] = Seq.empty) = new Traversable[Instance]
   {
