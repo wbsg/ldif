@@ -12,7 +12,7 @@ class Uri(val uri : String)
    * - dbpedia:Berlin
    * - <http://dbpedia.org/resource/Berlin>
    */
-  def toTurtle(implicit prefixes : Prefixes) : String =
+  def toTurtle(implicit prefixes : Prefixes = Prefixes.empty) : String =
   {
     for((id, namespace) <- prefixes if uri.startsWith(namespace))
     {

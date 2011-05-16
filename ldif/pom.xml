@@ -22,6 +22,7 @@
     <module>ldif-local</module>
     <module>ldif-hadoop</module>
     <module>ldif-modules</module>
+    <module>ldif-singlemachine</module>
   </modules>
 
   <build>
@@ -106,13 +107,6 @@
     </dependency>
 
     <dependency>
-        <groupId>org.scalatest</groupId>
-        <artifactId>scalatest</artifactId>
-        <version>1.3</version>
-        <scope>test</scope>
-    </dependency>
-
-    <dependency>
 		<groupId>junit</groupId>
 		<artifactId>junit</artifactId>
 		<version>4.5</version>
@@ -132,7 +126,6 @@
       <name>Scala-tools Maven2 Releases Snapshots Repository</name>
       <url>http://scala-tools.org/repo-snapshots</url>
     </repository>
-
 
   </repositories>
 

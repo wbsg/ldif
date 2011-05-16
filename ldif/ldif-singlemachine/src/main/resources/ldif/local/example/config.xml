@@ -1,0 +1,5 @@
+<LDIF>
+  <Sources>sources</Sources>
+  <LinkSpecifications>linkSpecs</LinkSpecifications>
+  <Output>output</Output>
+</LDIF>
