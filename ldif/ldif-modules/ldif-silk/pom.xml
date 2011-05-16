@@ -24,11 +24,6 @@
       <artifactId>ldif-core</artifactId>
       <version>${ldif.version}</version>
     </dependency>
-    <dependency>
-      <groupId>com.thoughtworks.paranamer</groupId>
-      <artifactId>paranamer</artifactId>
-      <version>2.3</version>
-    </dependency>
   </dependencies>
 
 </project>

@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  
+  <modelVersion>4.0.0</modelVersion>
+  
+  <parent>
+    <groupId>ldif</groupId>
+    <artifactId>ldif</artifactId>
+    <version>0.1-SNAPSHOT</version>
+  </parent>
+
+  <artifactId>ldif-singlemachine</artifactId>
+  <packaging>jar</packaging>
+  <name>LDIF Single Machine</name>
+
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+  </properties>
+
+  <build>
+		<plugins>
+			<plugin>
+				<groupId>org.scala-tools</groupId>
+				<artifactId>maven-scala-plugin</artifactId>
+        <version>${scala.plugin.version}</version>
+        <configuration>
+          <launchers>
+            <launcher>
+              <id>Run</id>
+              <mainClass>ldif.local.Main</mainClass>
+              <jvmArgs>
+
+                <jvmArg>-Xmx1024m</jvmArg>
+              </jvmArgs>
+            </launcher>
+          </launchers>
+        </configuration>
+			</plugin>
+    </plugins>
+  </build>
+
+	<dependencies>
+
+    <dependency>
+      <groupId>ldif</groupId>
+      <artifactId>ldif-local</artifactId>
+      <version>${ldif.version}</version>
+    </dependency>
+	
+    <dependency>
+      <groupId>ldif</groupId>
+      <artifactId>ldif-entitybuilder-local</artifactId>
+      <version>${ldif.version}</version>
+    </dependency>
+	
+    <dependency>
+      <groupId>ldif</groupId>
+      <artifactId>ldif-r2r-local</artifactId>
+      <version>${ldif.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>ldif</groupId>
+      <artifactId>ldif-silk-common</artifactId>
+      <version>${ldif.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>ldif</groupId>
+      <artifactId>ldif-silk-local</artifactId>
+      <version>${ldif.version}</version>
+    </dependency>
+
+    </dependencies>
+
+</project>
