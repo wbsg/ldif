@@ -15,7 +15,7 @@ object LdifConfiguration
     LdifConfiguration(
       sourceDir = new File(baseDir + "/" + (xml \ "Sources" text)),
       linkSpecDir = new File(baseDir + "/" + (xml \ "LinkSpecifications" text)),
-      outputFile = new File(baseDir + "/" + (xml \ "Output" text))
+      outputFile = new File(xml \ "Output" text)
     )
   }
 }
