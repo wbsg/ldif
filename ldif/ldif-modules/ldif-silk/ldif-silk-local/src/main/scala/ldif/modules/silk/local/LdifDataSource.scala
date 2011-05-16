@@ -3,6 +3,7 @@ package ldif.modules.silk.local
 import de.fuberlin.wiwiss.silk.datasource.DataSource
 import de.fuberlin.wiwiss.silk.instance.{Instance, InstanceSpecification}
 import ldif.local.runtime.EntityReader
+import ldif.modules.silk.LdifInstance
 
 /**
  * Silk DataSource which reads the entities from an EntityReader.
@@ -15,11 +16,7 @@ case class LdifDataSource(reader : EntityReader) extends DataSource
     {
       while(!reader.isEmpty)
       {
-        val entity = reader.read()
-
-        val values = IndexedSeq.tabulate(instanceSpec.paths.size)(i => entity.factums(i).map(_.head.value).toSet)
-
-        f(new Instance(entity.uri, values, instanceSpec))
+        f(new LdifInstance(reader.read(), instanceSpec))
       }
     }
   }

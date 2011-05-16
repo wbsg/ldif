@@ -1,15 +1,16 @@
 package ldif.modules.silk.local
 
 import ldif.module.Executor
-import ldif.local.runtime.{QuadWriter, EntityReader, GraphFormat, StaticEntityFormat}
 import ldif.modules.silk.{CreateEntityDescriptions, SilkTask}
+import ldif.modules.silk.LdifInstance.toEntity
 import de.fuberlin.wiwiss.silk.util.{Future, SourceTargetPair}
 import de.fuberlin.wiwiss.silk.instance.{Instance, MemoryInstanceCache, FileInstanceCache, InstanceSpecification}
 import de.fuberlin.wiwiss.silk.datasource.Source
 import de.fuberlin.wiwiss.silk.impl.writer.MemoryWriter
 import de.fuberlin.wiwiss.silk.{OutputTask, FilterTask, MatchTask, LoadTask}
 import de.fuberlin.wiwiss.silk.output.Output
-import ldif.entity.{FactumRow, FactumTable, EntityDescription, Entity}
+import ldif.entity._
+import ldif.local.runtime._
 
 /**
  * Executes Silk on a local machine.
@@ -62,12 +63,8 @@ class SilkLocalExecutor extends Executor
     val filteredLinks = filterTask()
 
     //Write links
-    val writer = new MemoryWriter()
-
-    val outputTask = new OutputTask(filteredLinks, linkSpec.linkType, Output(writer) :: Nil)
+    val linkWriter = new LdifLinkWriter(writer)
+    val outputTask = new OutputTask(filteredLinks, linkSpec.linkType, Output(linkWriter) :: Nil)
     outputTask()
-
-    //Write output
-    val linkMap = writer.links.map(link => (link.targetUri, link.sourceUri)).toMap
   }
 }
