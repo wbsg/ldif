@@ -39,9 +39,9 @@ class DumpExecutor() extends Executor
     val nxp:NxParser = new NxParser(inputStream)
     while (nxp.hasNext) {
       val ns:Array[Node] = nxp.next
-      val subj = ns(0).toN3
-      val prop = ns(1).toN3
-      val obj = ns(2).toN3
+      val subj = ns(0).toString
+      val prop = ns(1).toString
+      val obj = ns(2).toString
       writer.write(new Quad(subj,prop,obj,task.name))
     }
   }
