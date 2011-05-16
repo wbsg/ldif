@@ -22,7 +22,7 @@ import org.junit.runner.RunWith
 class EBLocalTest extends FlatSpec with ShouldMatchers
 {
   // context
-  val source = "src/test/resources/aba.nt"
+  val source = getClass.getClassLoader.getResource("aba.nt")
   val eds = IndexedSeq(ed1,ed2,ed3)
 
   // init queue structures
@@ -76,7 +76,7 @@ class EBLocalTest extends FlatSpec with ShouldMatchers
   }
 
   private lazy val loadQuads =  {
-    val dlc = new DumpConfig(List(source))
+    val dlc = new DumpConfig(List(source.toString))
     val dlm = new DumpModule(dlc)
     val dle = new DumpExecutor
     for (dlt <- dlm.tasks)
