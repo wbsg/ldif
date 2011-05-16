@@ -22,7 +22,7 @@ class LDIFTargetPattern(path: java.util.List[Triple]) extends TargetPattern(path
       val predicate = getPredicate(triple.getVerb)
       val objects = getObjects(triple.getObject, results)
       for(s <- subjects)
-        for(o <- objects) yield Quad(s.toString, predicate.toString, o.toString, "default")
+        for(o <- objects) quadWriter.write(Quad(s.toString, predicate.toString, o.toString, "default"))
     }
   }
 

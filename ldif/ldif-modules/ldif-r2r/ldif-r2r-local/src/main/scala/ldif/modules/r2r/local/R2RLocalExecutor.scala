@@ -9,8 +9,12 @@ package ldif.modules.r2r.local
  */
 
 import ldif.module.Executor
-import de.fuberlin.wiwiss.r2r
+import de.fuberlin.wiwiss.r2r._
+import ldif.modules.r2r._
+import ldif.local.runtime.{GraphFormat, DynamicEntityFormat, QuadReader, EntityReader}
 
-abstract class R2RLocalExecutor extends Executor {
-
+class R2RLocalExecutor extends Executor {
+  type TaskType = R2RTask
+  type InputType = GraphForm
+  type OutputType = GraphFormat
 }

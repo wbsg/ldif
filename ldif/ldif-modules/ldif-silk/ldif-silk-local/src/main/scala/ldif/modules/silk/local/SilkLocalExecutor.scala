@@ -17,6 +17,7 @@ import ldif.entity.{FactumRow, FactumTable, EntityDescription, Entity}
 class SilkLocalExecutor extends Executor
 {
   private val numThreads = 4
+  Runtime.getRuntime.availableProcessors
 
   type TaskType = SilkTask
 

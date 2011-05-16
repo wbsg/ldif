@@ -11,7 +11,7 @@ import ldif.entity.{Node, FactumRow}
  * To change this template use File | Settings | File Templates.
  */
 
-class LDIFVariableResults(factumRow: FactumRow) {
+class LDIFVariableResults() {
 	private val variableValues: Map[String, List[Node]] = Map()
 
 	def addVariableResult(varName: String, results: List[Node]): Boolean = {
