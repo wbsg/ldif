@@ -35,9 +35,9 @@ class LDIFTargetPatternTest extends FlatSpec with ShouldMatchers {
     val results = new LDIFVariableResults
     results.addVariableResult("SUBJ", Node.createUriNode("subjectTest1", ""))
     results.addVariableResult("o", Node.createLiteral("literalValueTest1", "someGraphTest1"))
-    val targetPattern = new LDIFTargetPattern(TargetPattern.parseTargetPattern("?SUBJ <outputPropertyTest1> ?o", new PrefixMapper, new java.util.HashSet[String]).getPath())
-    targetPattern.writeQuads(results, quadWriter)
+    val targetPattern = TargetPattern.parseTargetPattern("?SUBJ <outputPropertyTest1> ?o", new PrefixMapper, new java.util.HashSet[String])
+    val ldiftargetPattern = new LDIFTargetPattern(targetPattern)
+    ldiftargetPattern.writeQuads(results, quadWriter)
     (quadWriter.count) should equal (1)
   }
 }
-//writeQuads(results: LDIFVariableResults, quadWriter: QuadWriter) {
