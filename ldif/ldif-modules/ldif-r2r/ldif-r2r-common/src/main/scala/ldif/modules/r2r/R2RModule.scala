@@ -8,5 +8,13 @@ package ldif.modules.r2r
  * To change this template use File | Settings | File Templates.
  */
 import ldif.module.Module
+import de.fuberlin.wiwiss.r2r._
+import scala.collection.JavaConversions._
 
-abstract class R2RModule extends Module
+class R2RModule(val config: R2RConfig) extends Module {
+  type ConfigType = R2RConfig
+
+  type TaskType = R2RTask
+
+  def tasks: Traversable[R2RTask] = { for(mapping <- config.repository.getMappings.values.toIterable) yield new R2RTask(LDIFMapping(mapping))}
+}

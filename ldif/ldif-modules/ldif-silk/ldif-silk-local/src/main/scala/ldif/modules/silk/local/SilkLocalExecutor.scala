@@ -18,6 +18,7 @@ import ldif.local.runtime._
 class SilkLocalExecutor extends Executor
 {
   private val numThreads = 4
+//  private val numThreads = Runtime.getRuntime.availableProcessors
 
   type TaskType = SilkTask
 

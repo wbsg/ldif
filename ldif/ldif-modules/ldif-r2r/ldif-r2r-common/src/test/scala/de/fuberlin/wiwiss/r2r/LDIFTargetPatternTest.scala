@@ -11,45 +11,33 @@ package de.fuberlin.wiwiss.r2r
 
 import org.scalatest.junit.JUnitRunner
 import org.junit.runner.RunWith
-import org.scalatest.Spec
-import org.scalatest.FunSuite
+import org.scalatest.FlatSpec
 import org.scalatest.matchers.ShouldMatchers
+import ldif.entity._
+import ldif.local.runtime.{QuadWriter, Quad}
 
 /**
  * Unit Test for the LDIFTargetPattern
  */
 
 @RunWith(classOf[JUnitRunner])
-class LDIFTargetPatternTest extends FunSuite {
-  test("test") {
-    assert(1===1)
+class LDIFTargetPatternTest extends FlatSpec with ShouldMatchers {
+  behavior of "an LDIFTargetPattern"
+
+  val quadWriter = new QuadWriter {
+    var count = 0
+    override def write(quad: Quad) {
+      count = count + 1
+    }
+  }
+
+  it should "generate quads out of LDIFVariableResults" in {
+    val results = new LDIFVariableResults
+    results.addVariableResult("SUBJ", Node.createUriNode("subjectTest1", ""))
+    results.addVariableResult("o", Node.createLiteral("literalValueTest1", "someGraphTest1"))
+    val targetPattern = TargetPattern.parseTargetPattern("?SUBJ <outputPropertyTest1> ?o", new PrefixMapper, new java.util.HashSet[String])
+    val ldiftargetPattern = new LDIFTargetPattern(targetPattern)
+    ldiftargetPattern.writeQuads(results, quadWriter)
+    (quadWriter.count) should equal (1)
   }
 }
-//  DefaultImplementations.register()
-//
-//  val executor = new SilkLocalExecutor()
-//
-//  "SilkLokalExecutor" should "return the correct entity descriptions" in
-//  {
-//    executor.input(task).entityDescriptions.head should equal (entityDescription)
-//  }
-//
-//  private lazy val task =
-//  {
-//    val configStream = getClass.getClassLoader.getResourceAsStream("ldif/modules/silk/local/PharmGKB.xml")
-//
-//    val config = Configuration.load(configStream)
-//
-//    val module = new SilkModule(new SilkConfig(config))
-//
-//    module.tasks.head
-//  }
-//
-//  private lazy val entityDescription =
-//  {
-//    implicit val prefixes = Prefixes(task.silkConfig.prefixes)
-//
-//    val stream = getClass.getClassLoader.getResourceAsStream("ldif/modules/silk/local/PharmGKB_EntityDescription.xml")
-//
-//    EntityDescription.fromXML(XML.load(stream))
-//  }

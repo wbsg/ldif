@@ -9,5 +9,6 @@ package ldif.modules.r2r
  */
 
 import ldif.module.ModuleConfig
+import de.fuberlin.wiwiss.r2r._
 
-class R2RConfig extends ModuleConfig
+class R2RConfig(val repository: Repository) extends ModuleConfig

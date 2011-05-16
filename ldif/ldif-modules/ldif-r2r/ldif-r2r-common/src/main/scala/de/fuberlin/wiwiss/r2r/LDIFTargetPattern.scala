@@ -14,15 +14,15 @@ import de.fuberlin.wiwiss.r2r.TripleElement.Type
 import scala.collection.JavaConversions._
 import de.fuberlin.wiwiss.r2r.functions.HelperFunctions
 
-class LDIFTargetPattern(path: java.util.List[Triple]) extends TargetPattern(path) {
+class LDIFTargetPattern(targetPattern: TargetPattern) extends TargetPattern(targetPattern.getPath) {
 
   def writeQuads(results: LDIFVariableResults, quadWriter: QuadWriter) {
-    for(triple <- path) {
+    for(triple <- getPath) {
       val subjects = getSubjects(triple.getSubject, results)
       val predicate = getPredicate(triple.getVerb)
       val objects = getObjects(triple.getObject, results)
       for(s <- subjects)
-        for(o <- objects) yield Quad(s.toString, predicate.toString, o.toString, "default")
+        for(o <- objects) quadWriter.write(Quad(s.toString, predicate.toString, o.toString, "default"))
     }
   }
 
@@ -32,7 +32,8 @@ class LDIFTargetPattern(path: java.util.List[Triple]) extends TargetPattern(path
     val objects: List[Node] = elemType match {
       case Type.IRI=> List(Node.createUriNode(lexValue, ""))
       case Type.IRIVARIABLE => for(uri <- results.getLexicalResults(lexValue)) yield Node.createUriNode(uri, "")
-      case Type.DATATYPEVARIABLE => getDataTypeVariableValues(tripleElement,results)
+      case Type.DATATYPEVARIABLE => for(value <- getDataTypeVariableValues(tripleElement,results))
+                                        yield Node.createTypedLiteral(value.value, getHints.get(tripleElement.getValue(0)), "")
       case Type.DATATYPESTRING => List(Node.createTypedLiteral(lexValue, tripleElement.getValue(1), ""))
       case Type.STRING => List(Node.createLiteral(lexValue, ""))
       case Type.STRINGVARIABLE => results.getResults(tripleElement.getValue(0)).get
@@ -97,10 +98,20 @@ class LDIFTargetPattern(path: java.util.List[Triple]) extends TargetPattern(path
     }
     subjects
   }
+
+  override def getHints = targetPattern.getHints
+
+  override def getClasses = targetPattern.getClasses
+
+  override def getPath = targetPattern.getPath
+
+  override def getProperties = targetPattern.getProperties
+
+  override def getVariableDependencies = targetPattern.getVariableDependencies
 }
 
 object LDIFTargetPattern {
   def apply(targetPattern: TargetPattern): LDIFTargetPattern = {
-    new LDIFTargetPattern(targetPattern.getPath)
+    new LDIFTargetPattern(targetPattern)
   }
 }

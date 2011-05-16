@@ -8,5 +8,9 @@ package ldif.modules.r2r
  * To change this template use File | Settings | File Templates.
  */
 import ldif.module.ModuleTask
+import de.fuberlin.wiwiss.r2r._
+import ldif.util.Identifier
 
-abstract class R2RTask extends ModuleTask
+class R2RTask(val mapping: LDIFMapping) extends ModuleTask{
+  val name: Identifier = mapping.mapping.getUri
+}

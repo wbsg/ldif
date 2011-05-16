@@ -5,7 +5,7 @@ import ldif.local.runtime.QuadWriter
 import java.util.ArrayList
 import scala.collection.JavaConversions._
 
-class LDIFMapping(mapping: Mapping, entityDescription: EntityDescription, variableToResultIndexMap: Map[String, Int]) {
+class LDIFMapping(val mapping: Mapping, val entityDescription: EntityDescription, variableToResultIndexMap: Map[String, Int]) {
   // Convert Target Patterns
   var targetPatterns = List[LDIFTargetPattern]()
   for(tp <- mapping.getTargetPatterns)
@@ -15,6 +15,7 @@ class LDIFMapping(mapping: Mapping, entityDescription: EntityDescription, variab
     val results = entity.factums(0)
     for(row <- results) {
       val variableResults = getResults(row)
+      variableResults.addVariableResult("SUBJ", Node.createUriNode(entity.uri, ""))
       executeAllFunctions(variableResults)
       executeTargetPatterns(variableResults, quadWriter)
     }
@@ -26,7 +27,7 @@ class LDIFMapping(mapping: Mapping, entityDescription: EntityDescription, variab
   }
 
   def getResults(row: FactumRow): LDIFVariableResults = {
-    val results = new LDIFVariableResults(row)
+    val results = new LDIFVariableResults()
     for((variableName, index) <- variableToResultIndexMap)
       results.addVariableResult(variableName, row.get(index))
     results
