@@ -57,20 +57,20 @@ class EBLocalTest extends FlatSpec with ShouldMatchers
     }
     while(!eqs(1).reader.isEmpty){
       val entity = eqs(1).reader.read
-      if (entity.uri == "<http://brain-map.org/mouse/brain/Chrna4.xml>")
+      if (entity.uri == "http://brain-map.org/mouse/brain/Chrna4.xml")
         entity.factums(0).size should equal (5)
-      if (entity.uri == "<http://brain-map.org/mouse/brain/Chrnb2.xml>")
+      if (entity.uri == "http://brain-map.org/mouse/brain/Chrnb2.xml")
         entity.factums(0).size should equal (5)
-      if (entity.uri == "<http://brain-map.org/mouse/brain/Chrna7.xml>")
+      if (entity.uri == "http://brain-map.org/mouse/brain/Chrna7.xml")
         entity.factums(0).size should equal (3)
     }
     while(!eqs(2).reader.isEmpty){
       val entity = eqs(2).reader.read
-      if (entity.uri == "<http://brain-map.org/mouse/brain/Chrna4.xml>")
+      if (entity.uri == "http://brain-map.org/mouse/brain/Chrna4.xml")
         entity.factums(0).size should equal (3)
-      if (entity.uri == "<http://brain-map.org/mouse/brain/Chrnb2.xml>")
+      if (entity.uri == "http://brain-map.org/mouse/brain/Chrnb2.xml")
         entity.factums(0).size should equal (3)
-      if (entity.uri == "<http://brain-map.org/mouse/brain/Chrna7.xml>")
+      if (entity.uri == "http://brain-map.org/mouse/brain/Chrna7.xml")
         entity.factums(0).size should equal (2)
     }
   }
@@ -111,11 +111,11 @@ class EBLocalTest extends FlatSpec with ShouldMatchers
          r2r:sourcePattern 	"?SUBJ aba:geneid ?x";
          r2r:targetPattern	"?SUBJ smwprop:AbaGeneId ?'x'^^xsd:string";	*/
 
-    val pathRest = Path("SUBJ",List(ForwardOperator(new Uri("<http://www.w3.org/1999/02/22-rdf-syntax-ns#type>"))))
-    val cond = Some(Condition(pathRest,Set("<http://brain-map.org/gene/0.1#gene>")))
+    val pathRest = Path("SUBJ",List(ForwardOperator(new Uri("http://www.w3.org/1999/02/22-rdf-syntax-ns#type"))))
+    val cond = Some(Condition(pathRest,Set("http://brain-map.org/gene/0.1#gene")))
     val rest = Restriction(cond)
 
-    val pathValue = Path ("SUBJ",List(ForwardOperator(new Uri("<http://brain-map.org/gene/0.1#geneid>"))))
+    val pathValue = Path ("SUBJ",List(ForwardOperator(new Uri("http://brain-map.org/gene/0.1#geneid"))))
 
     new EntityDescription(rest,IndexedSeq(IndexedSeq(pathValue)))
   }
@@ -126,17 +126,17 @@ class EBLocalTest extends FlatSpec with ShouldMatchers
        // +  Pattern path: ?SUBJ aba:genename ?x
        // +  Pattern path: ?SUBJ aba:gene-aliases ?x . ?x aba:aliassymbol ?s
 
-    val pathCond1 = Path("SUBJ",List(ForwardOperator(new Uri("<http://www.w3.org/1999/02/22-rdf-syntax-ns#type>"))))
-    val cond1 = Condition(pathCond1,Set("<http://brain-map.org/gene/0.1#gene>"))
-    val pathCond2 = Path("SUBJ",List(ForwardOperator(new Uri("<http://brain-map.org/gene/0.1#projectname>"))))
-    val cond2 = Condition(pathCond2,Set("\"0310\""))
+    val pathCond1 = Path("SUBJ",List(ForwardOperator(new Uri("http://www.w3.org/1999/02/22-rdf-syntax-ns#type"))))
+    val cond1 = Condition(pathCond1,Set("http://brain-map.org/gene/0.1#gene"))
+    val pathCond2 = Path("SUBJ",List(ForwardOperator(new Uri("http://brain-map.org/gene/0.1#projectname"))))
+    val cond2 = Condition(pathCond2,Set("0310"))
     val and = Some(And(Seq(cond1,cond2)))
     val rest = Restriction(and)
 
-    val pathValue1 = Path ("SUBJ",List(ForwardOperator(new Uri("<http://brain-map.org/gene/0.1#geneid>"))))
-    val pathValue2 = Path ("SUBJ",List(ForwardOperator(new Uri("<http://brain-map.org/gene/0.1#genename>"))))
+    val pathValue1 = Path ("SUBJ",List(ForwardOperator(new Uri("http://brain-map.org/gene/0.1#geneid"))))
+    val pathValue2 = Path ("SUBJ",List(ForwardOperator(new Uri("http://brain-map.org/gene/0.1#genename"))))
     //val pathValue3 = Path.parse("?SUBJ/<http://brain-map.org/gene/0.1#gene-aliases>")
-    val pathValue3 = Path ("SUBJ",List(ForwardOperator(new Uri("<http://brain-map.org/gene/0.1#gene-aliases>")),ForwardOperator(new Uri("<http://brain-map.org/gene/0.1#aliassymbol>"))))
+    val pathValue3 = Path ("SUBJ",List(ForwardOperator(new Uri("http://brain-map.org/gene/0.1#gene-aliases")),ForwardOperator(new Uri("http://brain-map.org/gene/0.1#aliassymbol"))))
 
     new EntityDescription(rest,IndexedSeq(IndexedSeq(pathValue1,pathValue2,pathValue3)))
   }
@@ -147,13 +147,13 @@ class EBLocalTest extends FlatSpec with ShouldMatchers
        // +	Pattern path: ?SUBJ aba:image-series ?x . ?x aba:riboprobename ?b
 
    // Path.parse
-    val pathCond1 = Path("SUBJ",List(ForwardOperator(new Uri("<http://www.w3.org/1999/02/22-rdf-syntax-ns#type>"))))
-    val cond = Some(Condition(pathCond1,Set("<http://brain-map.org/gene/0.1#gene>")))
+    val pathCond1 = Path("SUBJ",List(ForwardOperator(new Uri("http://www.w3.org/1999/02/22-rdf-syntax-ns#type"))))
+    val cond = Some(Condition(pathCond1,Set("http://brain-map.org/gene/0.1#gene")))
     val rest = Restriction(cond)
 
-    val pathValue1 = Path ("SUBJ",List(ForwardOperator(new Uri("<http://brain-map.org/gene/0.1#geneid>"))))
-    val pathValue2 = Path ("SUBJ",List(ForwardOperator(new Uri("<http://brain-map.org/gene/0.1#image-series>")),ForwardOperator(new Uri("<http://brain-map.org/gene/0.1#imageseriesid>"))))
-    val pathValue3 = Path ("SUBJ",List(ForwardOperator(new Uri("<http://brain-map.org/gene/0.1#image-series>")),ForwardOperator(new Uri("<http://brain-map.org/gene/0.1#riboprobename>"))))
+    val pathValue1 = Path ("SUBJ",List(ForwardOperator(new Uri("http://brain-map.org/gene/0.1#geneid"))))
+    val pathValue2 = Path ("SUBJ",List(ForwardOperator(new Uri("http://brain-map.org/gene/0.1#image-series")),ForwardOperator(new Uri("http://brain-map.org/gene/0.1#imageseriesid"))))
+    val pathValue3 = Path ("SUBJ",List(ForwardOperator(new Uri("http://brain-map.org/gene/0.1#image-series")),ForwardOperator(new Uri("http://brain-map.org/gene/0.1#riboprobename"))))
 
     new EntityDescription(rest,IndexedSeq(IndexedSeq(pathValue1, pathValue2, pathValue3)))
   }

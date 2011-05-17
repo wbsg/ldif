@@ -24,7 +24,6 @@
       <artifactId>ldif-silk-common</artifactId>
       <version>${ldif.version}</version>
     </dependency>
-
   </dependencies>
 
 </project>
