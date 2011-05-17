@@ -22,26 +22,6 @@ import collection.mutable.HashSet
 class R2RLocalExecutorTest extends FlatSpec with ShouldMatchers {
   val executor = new R2RLocalExecutor
   val repository = new Repository(new FileOrURISource("ldif.modules.r2r/testMapping.ttl"))
-  val mapping = LDIFMapping(repository.getMappingOfUri("http://mappings.dbpedia.org/r2r/testMapping"))
-  val entityQueue = new EntityQueue(mapping.entityDescription)
-  val quadQueue = new QuadQueue
-
-  entityQueue.writer.write(new Entity{
-    val uri = "TestURI1"
-    override def factums(patternID: Int) : FactumTable = {
-      val table = new HashSet[FactumRow] with FactumTable
-      val row = new FactumRow {
-        def length = 1
-
-        def apply(idx: Int) = Node.createLiteral("testValue", "default")
-      }
-//      row += Node.createLiteral("testValue", "default")
-      table.add(row)
-      table
-    }
-
-    def entityDescription = mapping.entityDescription
-  })
 
   val task = {
     val config = new R2RConfig(repository)
@@ -50,7 +30,44 @@ class R2RLocalExecutorTest extends FlatSpec with ShouldMatchers {
   }
 
   it should "write the expected Quads to the Quad Writer" in {
+    val executor = new R2RLocalExecutor
+    val mapping =  getMapping("http://mappings.dbpedia.org/r2r/testMapping", repository)
+    val entityQueue = createEntityQueue(mapping.entityDescription)
+    val entity = createEntity("TestURI1", mapping)
+    entity.addFactumRow(Node.createLiteral("testValue", "default"))
+    entityQueue.writer.write(entity)
+    val quadQueue = new QuadQueue
     executor.execute(task, Seq(entityQueue.reader), quadQueue.writer)
     (quadQueue.reader.read.toString) should equal ("Quad(<TestURI1>,<p2>,\"testValue\"^^<bla>,default)")
+  }
+
+  private def createEntityQueue(entityDescription: EntityDescription): EntityQueue = {
+    new EntityQueue(entityDescription)
+  }
+
+  private def addEntityToEntityQueue(entity: Entity, entityQueue: EntityQueue) {
+    entityQueue.writer.write(entity)
+  }
+
+  private def createEntity(entityUri: String, mapping: LDIFMapping): MutableEntity = {
+    new MutableEntity(entityUri, mapping)
+  }
+
+  private def getMapping(mappingURI: String, repository: Repository): LDIFMapping = {
+    LDIFMapping(repository.getMappingOfUri(mappingURI))
+  }
+}
+
+class MutableEntity(entityUri: String, mapping: LDIFMapping) extends Entity {
+  val uri = entityUri
+  val resultTable = new HashSet[FactumRow] with FactumTable
+  override def factums(patternID: Int) : FactumTable = resultTable
+  def entityDescription = mapping.entityDescription
+  def addFactumRow(nodes: Node*) {
+    val row = new FactumRow {
+      def length = nodes.length
+      def apply(idx: Int) = nodes(idx)
+    }
+    resultTable.add(row)
   }
 }

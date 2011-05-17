@@ -1,7 +1,8 @@
-.idea/
-ldif-core/ldif-core.iml
-ldif-core/target/
-ldif-hadoop/ldif-hadoop.iml
-ldif-local/ldif-local.iml
-ldif-modules/target/
-ldif.iml
+# ignore all target folders
+*/target
+*/**/target
+*/*/*/target
+*.iml
+.idea
+output
+ldif-modules/ldif-r2r/ldif-r2r-common/*.sh
