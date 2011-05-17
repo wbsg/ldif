@@ -6,7 +6,7 @@
   </Restriction>
   <Patterns>
     <Pattern>
-      <Path>?a/http://brain-map.org/gene/0.1#geneid</Path>
+      <Path>?a/aba:geneid</Path>
     </Pattern>
   </Patterns>
 </EntityDescription>
