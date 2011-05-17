@@ -1,13 +1,6 @@
 <EntityDescription>
   <Restriction>
-    <And>
-      <Condition path="?a/rdf:type">
-        <Value>http://brain-map.org/gene/0.1#gene</Value>
-      </Condition>
-      <Condition path="?a/aba:projectname">
-        <Value>0310</Value>
-      </Condition>
-    </And>
+      <And><Condition path="?a/rdf:type"><Value>http://brain-map.org/gene/0.1#gene</Value></Condition><Condition path="?a/aba:projectname"><Value>0310</Value></Condition></And>
   </Restriction>
   <Patterns>
     <Pattern>
