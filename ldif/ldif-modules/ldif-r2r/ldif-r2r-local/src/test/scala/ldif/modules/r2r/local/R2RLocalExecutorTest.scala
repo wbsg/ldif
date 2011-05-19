@@ -6,10 +6,10 @@ import org.scalatest.matchers.ShouldMatchers
 import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner
 import de.fuberlin.wiwiss.r2r._
-import ldif.local.runtime.impl.{QuadQueue, EntityQueue}
+import ldif.local.runtime.impl.{QuadQueue, EntityQueue, NoEntitiesLeft}
 import ldif.entity._
 import collection.mutable.HashSet
-import TestHelperFunctions._
+import HelperFunctions._
 
 /**
  * Created by IntelliJ IDEA.
@@ -37,6 +37,7 @@ class R2RLocalExecutorTest extends FlatSpec with ShouldMatchers {
     val entity = createEntity("TestURI1", mapping)
     entity.addFactumRow(Node.createLiteral("testValue", "default"))
     entityQueue.write(entity)
+    entityQueue.finish
     val quadQueue = new QuadQueue
     executor.execute(task, Seq(entityQueue), quadQueue)
     (quadQueue.read.toString) should equal ("Quad(<TestURI1>,<p2>,\"testValue\"^^<bla>,default)")

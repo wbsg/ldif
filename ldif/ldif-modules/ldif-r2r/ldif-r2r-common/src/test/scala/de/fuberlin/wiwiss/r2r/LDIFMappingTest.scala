@@ -17,10 +17,13 @@ import de.fuberlin.wiwiss.r2r._
 import ldif.local.runtime.impl.{QuadQueue, EntityQueue}
 import ldif.entity._
 import collection.mutable.HashSet
-import TestHelperFunctions._
+import HelperFunctions._
 
 @RunWith(classOf[JUnitRunner])
 class LDIFMappingTest extends FlatSpec with ShouldMatchers {
-  val repository = new Repository(new FileOrURISource("ldif.modules.r2r/testMapping.ttl"))
+  val repository = new Repository(new FileOrURISource("ldif/modules/r2r/testMapping.ttl"))
 
+  it should "" in {
+    (1) should equal (1)
+  }
 }
