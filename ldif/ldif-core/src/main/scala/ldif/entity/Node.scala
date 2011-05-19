@@ -24,6 +24,10 @@ final case class Node protected(val value : String, datatypeOrLanguage : String,
       false
   }
 
+  def isUriNode = {
+    nodeType==Node.UriNode
+  }
+
   override def toString = nodeType match {
     case Literal => "\"" + value + "\""
     case TypedLiteral => "\"" + value + "\"^^<" + datatypeOrLanguage + ">"
@@ -47,7 +51,11 @@ object Node
 
   def fromString(value: String, graph : String) = {
     //TODO analyse value and create the proper node 
-    createUriNode(value,null)
+    if (value.startsWith("_:"))
+      createBlankNode(value,null)
+    else if (value.startsWith("http://"))
+      createUriNode(value,null)
+    else createLiteral(value,null)
   }
   
   sealed trait NodeType

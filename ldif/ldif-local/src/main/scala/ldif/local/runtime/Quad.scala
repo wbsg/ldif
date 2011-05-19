@@ -5,5 +5,5 @@ import ldif.entity.Node
 /**
  * An RDF quad.
  */
-case class Quad(subject : String, predicate : String, value : String, graph : String)
+case class Quad(subject : Node, predicate : String, value : Node, graph : String)
 

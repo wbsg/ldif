@@ -39,10 +39,11 @@ class DumpExecutor() extends Executor
     val nxp:NxParser = new NxParser(inputStream)
     while (nxp.hasNext) {
       val ns:Array[Node] = nxp.next
-      val subj = ns(0).toString
+      val graph = "<default>"
+      val subj = ldif.entity.Node.fromString(ns(0).toString,graph)
       val prop = ns(1).toString
-      val obj = ns(2).toString
-      writer.write(new Quad(subj,prop,obj,task.name))
+      val obj = ldif.entity.Node.fromString(ns(2).toString,graph)
+      writer.write(new Quad(subj,prop,obj,graph))
     }
   }
 }

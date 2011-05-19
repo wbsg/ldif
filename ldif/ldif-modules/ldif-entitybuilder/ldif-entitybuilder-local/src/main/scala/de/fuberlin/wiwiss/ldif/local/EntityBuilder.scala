@@ -23,6 +23,9 @@ class EntityBuilder (entityDescriptions : IndexedSeq[EntityDescription], reader 
   // Backward HT - Contains connections from quads which are going to be explored reverse/backward
   val BHT:MultiMap[Pair[Node,String], Node] = new HashMap[Pair[Node,String], Set[Node]] with MultiMap[Pair[Node,String], Node]
 
+  // if no restriction is defined, build an entity for each resource
+  var allUriNodes : Set[Node] = null
+
   init
 
   // Build entities and write those in the EntityWriter
@@ -98,13 +101,22 @@ class EntityBuilder (entityDescriptions : IndexedSeq[EntityDescription], reader 
 
        val prop = new Uri(quad.predicate).toString
 
+       if(allUriNodes!=null){
+        if (quad.subject.isUriNode) {
+          allUriNodes += quad.subject
+        }
+        if (quad.value.isUriNode){
+          allUriNodes += quad.value
+        }
+       }
+
        val v = PHT.get(prop)
 
        if (v == Some(PropertyType.FORW) || v == Some(PropertyType.BOTH))  {
-          FHT.addBinding(Pair(Node.fromString(quad.subject,quad.graph), prop), Node.fromString(quad.value,quad.graph))
+          FHT.addBinding(Pair(quad.subject, prop), quad.value)
        }
        if (v == Some(PropertyType.BACK) || v == Some(PropertyType.BOTH))  {
-          BHT.addBinding(Pair(Node.fromString(quad.value,quad.graph), prop), Node.fromString(quad.subject,quad.graph))
+          BHT.addBinding(Pair(quad.value, prop), quad.subject)
        }
      }
 
@@ -134,7 +146,9 @@ class EntityBuilder (entityDescriptions : IndexedSeq[EntityDescription], reader 
       }
       case Some(not:Not) =>
       case Some(exists:Exists) =>
-      case None =>
+      case None => {
+        allUriNodes = new HashSet[Node]
+      }
     }
   }
 
@@ -162,7 +176,7 @@ class EntityBuilder (entityDescriptions : IndexedSeq[EntityDescription], reader 
           case Some(x:Or) => getSubjSet(x)
           case Some(x:Not) => new HashSet[Node]  //TODO support Not operator - after M1
           case Some(x:Exists) => new HashSet[Node]  //TODO support Exists operator - after M1
-          case None => new HashSet[Node]
+          case None => allUriNodes
         }
   }
 
@@ -197,7 +211,7 @@ class EntityBuilder (entityDescriptions : IndexedSeq[EntityDescription], reader 
       }
     }
     // filter out blank nodes
-    tmpSet(cond.path.operators.size-1).filter(x => x.nodeType!=Node.BlankNode )
+    tmpSet(cond.path.operators.size-1).filter(_.isUriNode)
   }
   
   /**

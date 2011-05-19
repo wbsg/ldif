@@ -22,8 +22,9 @@ import org.junit.runner.RunWith
 class EBLocalTest extends FlatSpec with ShouldMatchers
 {
   // context
+  //val source = getClass.getClassLoader.getResource("aba.nt")
   val source = getClass.getClassLoader.getResource("aba.nt")
-  val eds = IndexedSeq(ed("aba_ed_1.xml"),ed("aba_ed_2.xml"),ed("aba_ed_3.xml"))
+  val eds = IndexedSeq(ed("aba_ed_1.xml"),ed("aba_ed_2.xml"),ed("aba_ed_3.xml"),ed("aba_ed_4.xml"))
 
   // init queue structures
   val qq = new QuadQueue
@@ -48,6 +49,10 @@ class EBLocalTest extends FlatSpec with ShouldMatchers
     eqs(2).size should equal (5)
   }
 
+  "EBLocal" should "create the correct number of entities - empty restriction" in  {
+    eqs(3).size should equal (9)
+  }
+
   "EBLocal" should "retrieve the correct number of factum rows" in  {
     while(eqs(0).hasNext){
       eqs(0).read.factums(0).size should equal (1)
@@ -69,6 +74,11 @@ class EBLocalTest extends FlatSpec with ShouldMatchers
         entity.factums(0).size should equal (3)
       if (entity.uri == "http://brain-map.org/mouse/brain/Chrna7.xml")
         entity.factums(0).size should equal (2)
+    }
+    while(eqs(3).hasNext){
+      val entity = eqs(3).read
+      if (entity.uri == "http://brain-map.org/gene/0.1#gene")
+        entity.factums(0).size should equal (0)
     }
   }
 
