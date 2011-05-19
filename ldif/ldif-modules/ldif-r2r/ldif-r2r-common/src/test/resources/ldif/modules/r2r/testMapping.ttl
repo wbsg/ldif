@@ -1,0 +1,16 @@
+@prefix mappings: <http://mappings.dbpedia.org/r2r/> .
+@prefix r2r: <http://www4.wiwiss.fu-berlin.de/bizer/r2r/> .
+@prefix dc: <http://purl.org/dc/elements/1.1/> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+# Mappings for R2RLocalExecutorTest
+
+   mappings:propertyRenamingDatatypeModifierMapping
+      a r2r:Mapping ;
+      r2r:sourcePattern "?SUBJ <p1> ?o" ;
+      r2r:targetPattern "?SUBJ <p2> ?'o'^^<bla>" .
+
+   mappings:blankNodeAndPathMapping
+      a r2r:Mapping ;
+      r2r:sourcePattern "?SUBJ rdfs:label ?label" ;
+      r2r:targetPattern "?SUBJ <metaDataOfResource> _:bn rdfs:label ?label" .
