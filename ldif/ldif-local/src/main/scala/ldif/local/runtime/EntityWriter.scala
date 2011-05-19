@@ -6,5 +6,5 @@ trait EntityWriter
 {
   val entityDescription : EntityDescription
   def write(entity : Entity)
-  def hasNext(bool : Boolean)
+  def isWriting(bool : Boolean)
 }

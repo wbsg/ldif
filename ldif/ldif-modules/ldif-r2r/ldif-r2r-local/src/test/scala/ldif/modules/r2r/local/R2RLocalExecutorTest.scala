@@ -26,7 +26,7 @@ class R2RLocalExecutorTest extends FlatSpec with ShouldMatchers {
   val entityQueue = new EntityQueue(mapping.entityDescription)
   val quadQueue = new QuadQueue
 
-  entityQueue.writer.write(new Entity{
+  entityQueue.write(new Entity{
     val uri = "TestURI1"
     override def factums(patternID: Int) : FactumTable = {
       val table = new HashSet[FactumRow] with FactumTable
@@ -50,7 +50,7 @@ class R2RLocalExecutorTest extends FlatSpec with ShouldMatchers {
   }
 
   it should "write the expected Quads to the Quad Writer" in {
-    executor.execute(task, Seq(entityQueue.reader), quadQueue.writer)
-    (quadQueue.reader.read.toString) should equal ("Quad(<TestURI1>,<p2>,\"testValue\"^^<bla>,default)")
+    executor.execute(task, Seq(entityQueue), quadQueue)
+    (quadQueue.read.toString) should equal ("Quad(<TestURI1>,<p2>,\"testValue\"^^<bla>,default)")
   }
 }
