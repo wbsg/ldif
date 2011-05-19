@@ -43,33 +43,33 @@ class EBLocalTest extends FlatSpec with ShouldMatchers
 //  }
 
   "EBLocal" should "create the correct number of entities" in  {
-//    eqs(0).reader.size should equal (5)
-//    eqs(1).reader.size should equal (4)
-//    eqs(2).reader.size should equal (5)
+    eqs(0).size should equal (5)
+    eqs(1).size should equal (4)
+    eqs(2).size should equal (5)
   }
 
   "EBLocal" should "retrieve the correct number of factum rows" in  {
-//    while(eqs(0).reader.hasNext){
-//      eqs(0).reader.read.factums(0).size should equal (1)
-//    }
-//    while(eqs(1).reader.hasNext){
-//      val entity = eqs(1).reader.read
-//      if (entity.uri == "http://brain-map.org/mouse/brain/Chrna4.xml")
-//        entity.factums(0).size should equal (5)
-//      if (entity.uri == "http://brain-map.org/mouse/brain/Chrnb2.xml")
-//        entity.factums(0).size should equal (5)
-//      if (entity.uri == "http://brain-map.org/mouse/brain/Chrna7.xml")
-//        entity.factums(0).size should equal (3)
-//    }
-//    while(eqs(2).reader.hasNext){
-//      val entity = eqs(2).reader.read
-//      if (entity.uri == "http://brain-map.org/mouse/brain/Chrna4.xml")
-//        entity.factums(0).size should equal (3)
-//      if (entity.uri == "http://brain-map.org/mouse/brain/Chrnb2.xml")
-//        entity.factums(0).size should equal (3)
-//      if (entity.uri == "http://brain-map.org/mouse/brain/Chrna7.xml")
-//        entity.factums(0).size should equal (2)
-//    }
+    while(eqs(0).hasNext){
+      eqs(0).read.factums(0).size should equal (1)
+    }
+    while(eqs(1).hasNext){
+      val entity = eqs(1).read
+      if (entity.uri == "http://brain-map.org/mouse/brain/Chrna4.xml")
+        entity.factums(0).size should equal (5)
+      if (entity.uri == "http://brain-map.org/mouse/brain/Chrnb2.xml")
+        entity.factums(0).size should equal (5)
+      if (entity.uri == "http://brain-map.org/mouse/brain/Chrna7.xml")
+        entity.factums(0).size should equal (3)
+    }
+    while(eqs(2).hasNext){
+      val entity = eqs(2).read
+      if (entity.uri == "http://brain-map.org/mouse/brain/Chrna4.xml")
+        entity.factums(0).size should equal (3)
+      if (entity.uri == "http://brain-map.org/mouse/brain/Chrnb2.xml")
+        entity.factums(0).size should equal (3)
+      if (entity.uri == "http://brain-map.org/mouse/brain/Chrna7.xml")
+        entity.factums(0).size should equal (2)
+    }
   }
 
   private lazy val loadQuads =  {
