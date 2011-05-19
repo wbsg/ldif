@@ -1,8 +1,10 @@
-package de.fuberlin.wiwiss.r2r
+package ldif.modules.r2r.local
 
 import ldif.local.runtime.impl.EntityQueue
 import collection.mutable.HashSet
 import ldif.entity._
+import de.fuberlin.wiwiss.r2r.{Repository, LDIFMapping}
+import de.fuberlin.wiwiss.r2r.LDIFMapping._
 
 /**
  * Created by IntelliJ IDEA.
@@ -12,7 +14,7 @@ import ldif.entity._
  * To change this template use File | Settings | File Templates.
  */
 
-object HelperFunctions {
+object CreatorHelperFunctions {
   def createEntityQueue(entityDescription: EntityDescription): EntityQueue = {
     new EntityQueue(entityDescription)
   }

@@ -17,13 +17,29 @@ import de.fuberlin.wiwiss.r2r._
 import ldif.local.runtime.impl.{QuadQueue, EntityQueue}
 import ldif.entity._
 import collection.mutable.HashSet
-import HelperFunctions._
+import CreatorHelperFunctions._
 
 @RunWith(classOf[JUnitRunner])
 class LDIFMappingTest extends FlatSpec with ShouldMatchers {
   val repository = new Repository(new FileOrURISource("ldif/modules/r2r/testMapping.ttl"))
 
-  it should "" in {
-    (1) should equal (1)
+  it should "be able to rename properties" in {
+    val mapping =  getMapping("http://mappings.dbpedia.org/r2r/propertyRenamingMapping", repository)
+    val entityQueue = createEntityQueue(mapping.entityDescription)
+    val entity = createEntity("TestURI1", mapping)
+    entity.addFactumRow(Node.createLiteral("testValue", "default"))
+    val quadQueue = new QuadQueue
+    mapping.executeMapping(entity, quadQueue)
+    quadQueue.read.toString should equal ("Quad(<TestURI1>,<p2>,\"testValue\",<default>)")
+  }
+
+  it should "be able to convert URIs to Literals" in {
+    val mapping =  getMapping("http://mappings.dbpedia.org/r2r/whateverToLiteralMapping", repository)
+    val entityQueue = createEntityQueue(mapping.entityDescription)
+    val entity = createEntity("TestURI1", mapping)
+    entity.addFactumRow(Node.createUriNode("testValue", "default"))
+    val quadQueue = new QuadQueue
+    mapping.executeMapping(entity, quadQueue)
+    quadQueue.read.toString should equal ("Quad(<TestURI1>,<p2>,\"testValue\",<default>)")
   }
 }

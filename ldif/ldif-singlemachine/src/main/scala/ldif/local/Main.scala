@@ -7,9 +7,14 @@ import ldif.modules.silk.SilkModule
 import ldif.datasources.dump.{DumpModule, DumpConfig}
 import ldif.modules.silk.local.SilkLocalExecutor
 import de.fuberlin.wiwiss.ldif.local.EntityBuilderExecutor
-import ldif.entity.EntityDescription
 import de.fuberlin.wiwiss.ldif.{EntityBuilderModule, EntityBuilderConfig}
 import java.io.{FileWriter, File}
+import de.fuberlin.wiwiss.r2r._
+import ldif.modules.r2r.local.R2RLocalExecutor
+import ldif.modules.r2r._
+
+import ldif.entity.{Node, EntityDescription}
+
 
 object Main
 {
@@ -20,8 +25,9 @@ object Main
     val config = LdifConfiguration.load(configFile)
 
     val dumpReader = loadDump(config.sourceDir)
-    val linkReader = generateLinks(config.linkSpecDir, dumpReader)
-    writeOutput(config.outputFile, linkReader)
+//    val r2rReader = mapQuads(config.mappingFile, dumpReader)
+//    val linkReader = generateLinks(config.linkSpecDir, dumpReader)
+    writeOutput(config.outputFile, dumpReader)
   }
 
   /**
@@ -43,6 +49,29 @@ object Main
     }
 
     dumpQuadQueue
+  }
+
+  /**
+   * Transforms the Quads
+   */
+  def mapQuads(mappingFile: File, reader: QuadReader) : QuadReader = {
+    val repository = new Repository(new FileOrURISource(mappingFile.getAbsolutePath))
+    val executor = new R2RLocalExecutor
+    val config = new R2RConfig(repository)
+    val module = new R2RModule(config)
+
+    val entityDescriptions = for(task <- module.tasks) yield task.mapping.entityDescription
+    val entityReaders = buildEntities(reader, entityDescriptions.toSeq)
+
+    val outputQueue = new QuadQueue
+
+    runInBackground
+    {
+      for((r2rTask, reader) <- module.tasks.toList zip entityReaders)
+        executor.execute(r2rTask, Seq(reader), outputQueue)
+    }
+
+    outputQueue
   }
 
   /**
@@ -117,10 +146,8 @@ object Main
 //    }
 //
 //    thread.start()
-//
-//    while(thread.isAlive && !waitFor) Thread.sleep(100)
 
-    //TODO at the moment everything is run sequential because there is no way to detect if a queue is still being written
+
     function
   }
 }

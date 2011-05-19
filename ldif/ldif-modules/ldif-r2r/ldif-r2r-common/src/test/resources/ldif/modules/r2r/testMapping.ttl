@@ -5,10 +5,16 @@
 
 # Mappings for R2RLocalExecutorTest
 
-   mappings:propertyRenamingDatatypeModifierMapping
+   mappings:propertyRenamingMapping
       a r2r:Mapping ;
       r2r:sourcePattern "?SUBJ <p1> ?o" ;
-      r2r:targetPattern "?SUBJ <p2> ?'o'^^<bla>" .
+      r2r:targetPattern "?SUBJ <p2> ?o" .
+
+   mappings:whateverToLiteralMapping
+      a r2r:Mapping ;
+      r2r:sourcePattern "?SUBJ <p1> ?o" ;
+      r2r:targetPattern "?SUBJ <p2> ?'o'" .
+
 
    mappings:blankNodeAndPathMapping
       a r2r:Mapping ;

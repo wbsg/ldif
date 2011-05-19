@@ -1,0 +1,11 @@
+@prefix mappings: <http://mappings.dbpedia.org/r2r/> .
+@prefix r2r: <http://www4.wiwiss.fu-berlin.de/bizer/r2r/> .
+@prefix dc: <http://purl.org/dc/elements/1.1/> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix testNamespace: <http://testNamespace/> .
+
+mappings:renamePropertyMapping
+   a r2r:Mapping ;
+   r2r:sourcePattern "?SUBJ <http://testNamespace/oldP> ?o. ?SUBJ a <http://testNamespace/someOldClass>" ;
+   r2r:targetPattern "?SUBJ <http://testNamespace/newP> ?o" ;
+   r2r:targetPattern "?SUBJ a <http://testNamespace/someNewClass>" .

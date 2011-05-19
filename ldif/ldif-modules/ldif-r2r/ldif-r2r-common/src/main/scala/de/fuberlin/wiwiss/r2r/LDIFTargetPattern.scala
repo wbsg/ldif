@@ -21,14 +21,17 @@ class LDIFTargetPattern(targetPattern: TargetPattern) extends TargetPattern(targ
       val subjects = getSubjects(triple.getSubject, results)
       val predicate = getPredicate(triple.getVerb)
       val objects = getObjects(triple.getObject, results)
-      for(s <- subjects)
-        for(o <- objects) quadWriter.write(Quad(s.toString, predicate.toString, o.toString, "default"))
+      for(s <- subjects) {
+        for(o <- objects)
+          quadWriter.write(Quad(s.toString, predicate.toString, o.toString, "<default>"))
+      }
     }
   }
 
   private def getObjects(tripleElement: TripleElement, results: LDIFVariableResults): Iterable[Node] = {
     val elemType = tripleElement.getType
     val lexValue = tripleElement.getValue(0)
+    for(result <- results.getResults(lexValue)) println(result)
     val objects: List[Node] = elemType match {
       case Type.IRI=> List(Node.createUriNode(lexValue, ""))
       case Type.IRIVARIABLE => for(uri <- results.getLexicalResults(lexValue)) yield Node.createUriNode(uri, "")
@@ -36,7 +39,7 @@ class LDIFTargetPattern(targetPattern: TargetPattern) extends TargetPattern(targ
                                         yield Node.createTypedLiteral(value.value, getHints.get(tripleElement.getValue(0)), "")
       case Type.DATATYPESTRING => List(Node.createTypedLiteral(lexValue, tripleElement.getValue(1), ""))
       case Type.STRING => List(Node.createLiteral(lexValue, ""))
-      case Type.STRINGVARIABLE => results.getResults(tripleElement.getValue(0)).get
+      case Type.STRINGVARIABLE => convertNodesToLiteralNodes(results.getResults(tripleElement.getValue(0)).get)
       case Type.LANGTAGVARIABLE => for(value <- results.getResults(tripleElement.getValue(0)).get)
                                       yield Node.createLanguageLiteral(value.value, tripleElement.getValue(1), "")
       case Type.LANGTAGSTRING => List(Node.createLanguageLiteral(lexValue, tripleElement.getValue(1), ""))
@@ -53,6 +56,22 @@ class LDIFTargetPattern(targetPattern: TargetPattern) extends TargetPattern(targ
       }
     }
     objects
+  }
+
+  private def convertToLiteral(element: Node): Node = {
+    Node.createLiteral(element.value, element.graph)
+  }
+
+  private def convertToUri(element: Node): Node = {
+    Node.createUriNode(element.value, element.graph)
+  }
+
+  private def convertNodesToUriNodes(nodes: List[Node]): List[Node] = {
+    nodes map convertToUri
+  }
+
+  private def convertNodesToLiteralNodes(nodes: List[Node]): List[Node] = {
+    nodes map convertToLiteral
   }
 
   private def getDataTypeVariableValues(element: TripleElement, results: LDIFVariableResults): List[Node] = {
