@@ -14,7 +14,7 @@ case class LdifDataSource(reader : EntityReader) extends DataSource
   {
     def foreach[U](f : Instance => U)
     {
-      while(!reader.isEmpty)
+      while(reader.hasNext)
       {
         f(new LdifInstance(reader.read(), instanceSpec))
       }

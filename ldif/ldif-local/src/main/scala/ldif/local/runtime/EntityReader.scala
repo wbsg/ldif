@@ -6,6 +6,6 @@ trait EntityReader
 {
   val entityDescription : EntityDescription
   def size : Int
-  def read : Entity
+  def read() : Entity
   def hasNext : Boolean 
 }

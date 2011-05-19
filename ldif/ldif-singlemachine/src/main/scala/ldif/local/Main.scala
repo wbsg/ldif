@@ -33,17 +33,16 @@ object Main
     val dumpExecutor = new DumpExecutor
 
     val dumpQuadQueue = new QuadQueue
-    val reader = dumpQuadQueue.reader
 
-    runInBackground(!reader.isEmpty)
+    runInBackground
     {
       for(task <- dumpModule.tasks)
       {
-        dumpExecutor.execute(task, null, dumpQuadQueue.writer)
+        dumpExecutor.execute(task, null, dumpQuadQueue)
       }
     }
 
-    reader
+    dumpQuadQueue
   }
 
   /**
@@ -58,17 +57,16 @@ object Main
     val entityReaders = buildEntities(reader, entityDescriptions)
 
     val outputQueue = new QuadQueue
-    val outputReader = outputQueue.reader
 
-    runInBackground(!outputReader.isEmpty)
+    runInBackground
     {
       for((silkTask, readers) <- silkModule.tasks.toList zip entityReaders.grouped(2).toList)
       {
-        silkExecutor.execute(silkTask, readers, outputQueue.writer)
+        silkExecutor.execute(silkTask, readers, outputQueue)
       }
     }
 
-    outputReader
+    outputQueue
   }
 
   //TODO we don't have an output module yet...
@@ -91,25 +89,24 @@ object Main
   def buildEntities(reader : QuadReader, entityDescriptions : Seq[EntityDescription]) : Seq[EntityReader] =
   {
     val entityQueues = entityDescriptions.map(new EntityQueue(_))
-    val readers = entityQueues.map(_.reader)
 
-    runInBackground(readers.exists(!_.isEmpty))
+    runInBackground
     {
       val entityBuilderConfig = new EntityBuilderConfig(entityDescriptions.toIndexedSeq)
       val entityBuilderModule = new EntityBuilderModule(entityBuilderConfig)
       val entityBuilderTask = entityBuilderModule.tasks.head
       val entityBuilderExecutor = new EntityBuilderExecutor
 
-      entityBuilderExecutor.execute(entityBuilderTask, reader, entityQueues.map(_.writer))
+      entityBuilderExecutor.execute(entityBuilderTask, reader, entityQueues)
     }
 
-    readers
+    entityQueues
   }
 
   /**
    * Evaluates an expression in the background.
    */
-  private def runInBackground(waitFor : => Boolean)(function : => Unit)
+  private def runInBackground(function : => Unit)
   {
 //    val thread = new Thread
 //    {
