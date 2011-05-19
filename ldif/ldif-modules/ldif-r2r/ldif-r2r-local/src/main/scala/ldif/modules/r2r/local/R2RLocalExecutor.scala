@@ -27,8 +27,8 @@ class R2RLocalExecutor extends Executor {
     val mapping = task.mapping
     val inputQueue = reader.head
 
-    while(!inputQueue.isEmpty) {
-      val entity = reader.head.read()
+    while(inputQueue.hasNext) {
+      val entity = reader.head.read
       mapping.executeMapping(entity, writer)
     }
   }

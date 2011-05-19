@@ -5,17 +5,25 @@ import ldif.local.runtime.{EntityWriter, EntityReader}
 import ldif.entity.{EntityDescription, Entity}
 
 class EntityQueue(val entityDescription : EntityDescription) {
-    val qq = new Queue[Entity]
-    def reader = new EntityQueueReader(qq, entityDescription)
-    def writer = new EntityQueueWriter(qq, entityDescription)
+    var hasNext = false
+    val qq = new Queue[Entity]    
+    def reader = new EntityQueueReader(this)
+    def writer = new EntityQueueWriter(this)
 }
 
-class EntityQueueReader(qq:Queue[Entity], val entityDescription : EntityDescription) extends EntityReader{
-  override def size = qq.size
-  override def isEmpty = qq.isEmpty
-  override def read = qq.dequeue
+class EntityQueueReader(eq:EntityQueue) extends EntityReader{
+  val entityDescription = eq.entityDescription
+  override def size = eq.qq.size
+  override def read = eq.qq.dequeue       
+  override def hasNext = {
+    while (eq.qq.isEmpty && eq.hasNext)
+      Thread.sleep(50)
+    !eq.qq.isEmpty
+  }
 }
 
-class EntityQueueWriter(qq:Queue[Entity], val entityDescription : EntityDescription) extends EntityWriter{
-  override def write(elem:Entity) = qq.enqueue(elem)
+class EntityQueueWriter(eq:EntityQueue) extends EntityWriter{
+  val entityDescription = eq.entityDescription
+  override def write(elem:Entity) { eq.qq.enqueue(elem) }
+  override def hasNext(bool:Boolean) { eq.hasNext = bool }
 }

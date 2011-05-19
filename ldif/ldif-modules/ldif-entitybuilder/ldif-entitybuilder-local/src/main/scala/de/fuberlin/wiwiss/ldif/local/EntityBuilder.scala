@@ -33,10 +33,15 @@ class EntityBuilder (entityDescriptions : IndexedSeq[EntityDescription], reader 
     // entityNodes <- combination (as in the restriction pattern) of all the subjSets
     val entityNodes = getSubjSet(ed.restriction.operator)
 
+    writer.hasNext(true)
+
     for (e <- entityNodes) {
       val entity = new EntityLocal(e.value, ed, this)
       writer.write(entity)
     }
+
+    writer.hasNext(false)
+    
     log.info("Total time: " + ((now - startTime) / 1000.0) + " seconds")
   }
 

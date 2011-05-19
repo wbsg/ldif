@@ -49,10 +49,10 @@ class EBLocalTest extends FlatSpec with ShouldMatchers
   }
 
   "EBLocal" should "retrieve the correct number of factum rows" in  {
-    while(!eqs(0).reader.isEmpty){
+    while(eqs(0).reader.hasNext){
       eqs(0).reader.read.factums(0).size should equal (1)
     }
-    while(!eqs(1).reader.isEmpty){
+    while(eqs(1).reader.hasNext){
       val entity = eqs(1).reader.read
       if (entity.uri == "http://brain-map.org/mouse/brain/Chrna4.xml")
         entity.factums(0).size should equal (5)
@@ -61,7 +61,7 @@ class EBLocalTest extends FlatSpec with ShouldMatchers
       if (entity.uri == "http://brain-map.org/mouse/brain/Chrna7.xml")
         entity.factums(0).size should equal (3)
     }
-    while(!eqs(2).reader.isEmpty){
+    while(eqs(2).reader.hasNext){
       val entity = eqs(2).reader.read
       if (entity.uri == "http://brain-map.org/mouse/brain/Chrna4.xml")
         entity.factums(0).size should equal (3)
