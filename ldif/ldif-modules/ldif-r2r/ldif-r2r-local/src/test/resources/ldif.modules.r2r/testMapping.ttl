@@ -3,9 +3,14 @@
 @prefix dc: <http://purl.org/dc/elements/1.1/> .
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 
-# DBpedia - Musicbrainz: relevant mappings
+# Mappings for R2RLocalExecutorTest
 
-   mappings:testMapping
+   mappings:propertyRenamingDatatypeModifierMapping
       a r2r:Mapping ;
       r2r:sourcePattern "?SUBJ <p1> ?o" ;
       r2r:targetPattern "?SUBJ <p2> ?'o'^^<bla>" .
+
+   mappings:blankNodeAndPathMapping
+      a r2r:Mapping ;
+      r2r:sourcePattern "?SUBJ rdfs:label ?label" ;
+      r2r:targetPattern "?SUBJ <metaDataOfResource> _:bn rdfs:label ?label" .

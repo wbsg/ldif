@@ -9,6 +9,7 @@ import de.fuberlin.wiwiss.r2r._
 import ldif.local.runtime.impl.{QuadQueue, EntityQueue}
 import ldif.entity._
 import collection.mutable.HashSet
+import TestHelperFunctions._
 
 /**
  * Created by IntelliJ IDEA.
@@ -29,9 +30,9 @@ class R2RLocalExecutorTest extends FlatSpec with ShouldMatchers {
     module.tasks.head
   }
 
-  it should "write the expected Quads to the Quad Writer" in {
+  it should "write the expected Quads of the mapping to the Quad Writer" in {
     val executor = new R2RLocalExecutor
-    val mapping =  getMapping("http://mappings.dbpedia.org/r2r/testMapping", repository)
+    val mapping =  getMapping("http://mappings.dbpedia.org/r2r/propertyRenamingDatatypeModifierMapping", repository)
     val entityQueue = createEntityQueue(mapping.entityDescription)
     val entity = createEntity("TestURI1", mapping)
     entity.addFactumRow(Node.createLiteral("testValue", "default"))
@@ -40,34 +41,7 @@ class R2RLocalExecutorTest extends FlatSpec with ShouldMatchers {
     executor.execute(task, Seq(entityQueue.reader), quadQueue.writer)
     (quadQueue.reader.read.toString) should equal ("Quad(<TestURI1>,<p2>,\"testValue\"^^<bla>,default)")
   }
-
-  private def createEntityQueue(entityDescription: EntityDescription): EntityQueue = {
-    new EntityQueue(entityDescription)
-  }
-
-  private def addEntityToEntityQueue(entity: Entity, entityQueue: EntityQueue) {
-    entityQueue.writer.write(entity)
-  }
-
-  private def createEntity(entityUri: String, mapping: LDIFMapping): MutableEntity = {
-    new MutableEntity(entityUri, mapping)
-  }
-
-  private def getMapping(mappingURI: String, repository: Repository): LDIFMapping = {
-    LDIFMapping(repository.getMappingOfUri(mappingURI))
-  }
 }
 
-class MutableEntity(entityUri: String, mapping: LDIFMapping) extends Entity {
-  val uri = entityUri
-  val resultTable = new HashSet[FactumRow] with FactumTable
-  override def factums(patternID: Int) : FactumTable = resultTable
-  def entityDescription = mapping.entityDescription
-  def addFactumRow(nodes: Node*) {
-    val row = new FactumRow {
-      def length = nodes.length
-      def apply(idx: Int) = nodes(idx)
-    }
-    resultTable.add(row)
-  }
-}
+
+
