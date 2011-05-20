@@ -1,0 +1,11 @@
+<EntityDescription>
+  <Restriction>     
+  </Restriction>
+  <Patterns>
+    <Pattern>
+      <Path>?a/aba:geneid</Path>
+      <Path>?a/aba:image-series/aba:riboprobename</Path>
+      <Path>?a/aba:image-series/aba:imageseriesid</Path>
+    </Pattern>
+  </Patterns>
+</EntityDescription>
