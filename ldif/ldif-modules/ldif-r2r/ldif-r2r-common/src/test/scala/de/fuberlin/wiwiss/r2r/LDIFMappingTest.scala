@@ -30,7 +30,7 @@ class LDIFMappingTest extends FlatSpec with ShouldMatchers {
     entity.addFactumRow(Node.createLiteral("testValue", "default"))
     val quadQueue = new QuadQueue
     mapping.executeMapping(entity, quadQueue)
-    quadQueue.read.toString should equal ("Quad(<TestURI1>,<p2>,\"testValue\",<default>)")
+    quadQueue.read.toString should equal ("Quad(<TestURI1>,p2,\"testValue\",default)")
   }
 
   it should "be able to convert URIs to Literals" in {
@@ -40,6 +40,6 @@ class LDIFMappingTest extends FlatSpec with ShouldMatchers {
     entity.addFactumRow(Node.createUriNode("testValue", "default"))
     val quadQueue = new QuadQueue
     mapping.executeMapping(entity, quadQueue)
-    quadQueue.read.toString should equal ("Quad(<TestURI1>,<p2>,\"testValue\",<default>)")
+    quadQueue.read.toString should equal ("Quad(<TestURI1>,p2,\"testValue\",default)")
   }
 }

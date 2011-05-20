@@ -23,7 +23,7 @@ class LDIFTargetPattern(targetPattern: TargetPattern) extends TargetPattern(targ
       val objects = getObjects(triple.getObject, results)
       for(s <- subjects) {
         for(o <- objects)
-          quadWriter.write(Quad(s, predicate.toString, o, "<default>"))
+          quadWriter.write(Quad(s, predicate.value, o, "default"))
       }
     }
   }

@@ -40,7 +40,7 @@ class R2RLocalExecutorTest extends FlatSpec with ShouldMatchers {
     entityQueue.finish
     val quadQueue = new QuadQueue
     executor.execute(task, Seq(entityQueue), quadQueue)
-    (quadQueue.read.toString) should equal ("Quad(<TestURI1>,<p2>,\"testValue\"^^<bla>,<default>)")
+    (quadQueue.read.toString) should equal ("Quad(<TestURI1>,p2,\"testValue\"^^<bla>,default)")
   }
 }
 

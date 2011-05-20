@@ -4,7 +4,7 @@
   </Restriction>
   <Patterns>
     <Pattern>
-      <Path>?a/aba:geneid</Path>        
+      <Path>?a/aba:geneid</Path>
       <Path>?a/aba:genename</Path>
       <Path>?a/aba:gene-aliases/aba:aliassymbol</Path>
     </Pattern>

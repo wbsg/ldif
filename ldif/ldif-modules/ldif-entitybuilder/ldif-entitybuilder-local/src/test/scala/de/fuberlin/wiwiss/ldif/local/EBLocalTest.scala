@@ -32,10 +32,10 @@ class EBLocalTest extends FlatSpec with ShouldMatchers
 
   val eqs = new Array[EntityQueue](eds.size)
   for ((ed, i) <- eds.zipWithIndex)
-     eqs(i) = new EntityQueue(ed)  
+     eqs(i) = new EntityQueue(ed)
 
   val ebe = new EntityBuilderExecutor
-  
+
   ebe.execute(task, qq, eqs)
 
 //  "DumpLoader" should "read the correct number of quads" in {

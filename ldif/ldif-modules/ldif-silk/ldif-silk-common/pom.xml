@@ -19,7 +19,7 @@
       <artifactId>silk-core</artifactId>
       <version>2.4-SNAPSHOT</version>
       <scope>system</scope>
-      <systemPath>${basedir}/lib/silk-core-2.4-SNAPSHOT.jar</systemPath>
+      <systemPath>${project.basedir}/lib/silk-core-2.4-SNAPSHOT.jar</systemPath>
     </dependency>
 
     <dependency>
