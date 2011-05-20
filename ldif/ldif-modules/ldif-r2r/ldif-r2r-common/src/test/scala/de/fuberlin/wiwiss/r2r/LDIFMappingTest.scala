@@ -42,4 +42,14 @@ class LDIFMappingTest extends FlatSpec with ShouldMatchers {
     mapping.executeMapping(entity, quadQueue)
     quadQueue.read.toString should equal ("Quad(<TestURI1>,p2,\"testValue\",default)")
   }
+
+  it should "should pick the correct graph uri from the value nodes" in {
+    val mapping =  getMapping("http://mappings.dbpedia.org/r2r/whateverToLiteralMapping", repository)
+    val entityQueue = createEntityQueue(mapping.entityDescription)
+    val entity = createEntity("TestURI1", mapping)
+    entity.addFactumRow(Node.createUriNode("testValue", "myNameSpace"))
+    val quadQueue = new QuadQueue
+    mapping.executeMapping(entity, quadQueue)
+    quadQueue.read.toString should equal ("Quad(<TestURI1>,p2,\"testValue\",myNameSpace)")
+  }
 }

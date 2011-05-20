@@ -22,8 +22,14 @@ class LDIFTargetPattern(targetPattern: TargetPattern) extends TargetPattern(targ
       val predicate = getPredicate(triple.getVerb)
       val objects = getObjects(triple.getObject, results)
       for(s <- subjects) {
-        for(o <- objects)
-          quadWriter.write(Quad(s, predicate.value, o, "default"))
+        for(o <- objects) {
+          var graph: String = "default"
+          if(o.graph!=null && o.graph!="default" && o.graph!="")
+            graph = o.graph
+          else if (s.graph!=null && s.graph!="default" && s.graph!="")
+            graph = s.graph
+          quadWriter.write(Quad(s, predicate.value, o, graph))
+        }
       }
     }
   }
@@ -31,20 +37,20 @@ class LDIFTargetPattern(targetPattern: TargetPattern) extends TargetPattern(targ
   private def getObjects(tripleElement: TripleElement, results: LDIFVariableResults): Iterable[Node] = {
     val elemType = tripleElement.getType
     val lexValue = tripleElement.getValue(0)
-    for(result <- results.getResults(lexValue)) println(result)
+
     val objects: List[Node] = elemType match {
-      case Type.IRI=> List(Node.createUriNode(lexValue, ""))
-      case Type.IRIVARIABLE => for(uri <- results.getLexicalResults(lexValue)) yield Node.createUriNode(uri, "")
+      case Type.IRI=> List(Node.createUriNode(lexValue, "default"))
+      case Type.IRIVARIABLE => for(Node(uri, _, _, graph) <- results.getResults(lexValue).get) yield Node.createUriNode(uri, graph)
       case Type.DATATYPEVARIABLE => for(value <- getDataTypeVariableValues(tripleElement,results))
                                         yield Node.createTypedLiteral(value.value, getHints.get(tripleElement.getValue(0)), "")
       case Type.DATATYPESTRING => List(Node.createTypedLiteral(lexValue, tripleElement.getValue(1), ""))
       case Type.STRING => List(Node.createLiteral(lexValue, ""))
       case Type.STRINGVARIABLE => convertNodesToLiteralNodes(results.getResults(tripleElement.getValue(0)).get)
-      case Type.LANGTAGVARIABLE => for(value <- results.getResults(tripleElement.getValue(0)).get)
-                                      yield Node.createLanguageLiteral(value.value, tripleElement.getValue(1), "")
-      case Type.LANGTAGSTRING => List(Node.createLanguageLiteral(lexValue, tripleElement.getValue(1), ""))
+      case Type.LANGTAGVARIABLE => for(Node(value, _, _, graph) <- results.getResults(tripleElement.getValue(0)).get)
+                                      yield Node.createLanguageLiteral(value, tripleElement.getValue(1), graph)
+      case Type.LANGTAGSTRING => List(Node.createLanguageLiteral(lexValue, tripleElement.getValue(1), "default"))
       case Type.VARIABLE => results.getResults(tripleElement.getValue(0)).get
-      case Type.BLANKNODE => List(Node.createBlankNode(lexValue, ""))
+      case Type.BLANKNODE => List(Node.createBlankNode(lexValue, ""))  //TODO
       case _ => {
         val dataType = elemType match {
           case Type.BOOLEAN => "http://www.w3.org/2001/XMLSchema#boolean"
@@ -52,7 +58,7 @@ class LDIFTargetPattern(targetPattern: TargetPattern) extends TargetPattern(targ
           case Type.INTEGER => "http://www.w3.org/2001/XMLSchema#integer"
           case Type.DOUBLE => "http://www.w3.org/2001/XMLSchema#double"
         }
-        List(Node.createTypedLiteral(lexValue, dataType, ""))
+        List(Node.createTypedLiteral(lexValue, dataType, "default"))
       }
     }
     objects
