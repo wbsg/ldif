@@ -91,7 +91,8 @@ class LDIFTargetPattern(targetPattern: TargetPattern) extends TargetPattern(targ
         convertedValues = convertedVal :: convertedValues
       }
       values = convertedValues
-    }
+    }else
+      values = for(node <- values) yield Node.createTypedLiteral(node.value, hint, node.graph)
     values
   }
 
