@@ -5,8 +5,8 @@ import java.util.logging.Logger
 import ldif.util.Uri
 import ldif.local.runtime.{EntityWriter, QuadReader}
 import ldif.entity.Restriction._
-import collection.mutable.{ArraySeq, ArrayBuffer, MultiMap, HashMap, Set, HashSet}
-//import collection.mutable.{ArraySeq, ArrayBuffer, MultiMap, HashMap, Set, HashSet}
+import collection.mutable.{ArraySeq, ArrayBuffer, HashMap, Set, HashSet}
+//import collection.mutable.{ArraySeq, ArrayBuffer, HashMap, Set, HashSet}
 
 class EntityBuilder (entityDescriptions : IndexedSeq[EntityDescription], reader : QuadReader) extends FactumBuilder {
 
@@ -19,9 +19,11 @@ class EntityBuilder (entityDescriptions : IndexedSeq[EntityDescription], reader 
   // Property HT - Describes all the properties used in the Entity Description
   val PHT = new HashMap[String, PropertyType.Value]
   // Forward HT - Contains connections which are going to be explored straight/forward
-  val FHT:MultiMap[Pair[Node,String], Node] = new HashMap[Pair[Node,String], Set[Node]] with MultiMap[Pair[Node,String], Node]
+  val FHT:HashTable = new MemHashTable
+  //val FHT:HashTable = new VoldermortHashTable("fht")
   // Backward HT - Contains connections from quads which are going to be explored reverse/backward
-  val BHT:MultiMap[Pair[Node,String], Node] = new HashMap[Pair[Node,String], Set[Node]] with MultiMap[Pair[Node,String], Node]
+  val BHT:HashTable = new MemHashTable
+  //val BHT:HashTable = new VoldermortHashTable("bht")
 
   // if no restriction is defined, build an entity for each resource
   var allUriNodes : Set[Node] = null
@@ -30,7 +32,6 @@ class EntityBuilder (entityDescriptions : IndexedSeq[EntityDescription], reader 
 
   // Build entities and write those in the EntityWriter
   def buildEntities (ed : EntityDescription, writer : EntityWriter) {
-    log.info("\n--------------------------------\n Build Entities \n--------------------------------")
     val startTime = now
 
     // entityNodes <- combination (as in the restriction pattern) of all the subjSets
@@ -42,7 +43,7 @@ class EntityBuilder (entityDescriptions : IndexedSeq[EntityDescription], reader 
     }
     writer.finish
     
-    log.info("Total time: " + ((now - startTime) / 1000.0) + " seconds")
+    log.info("Build Entities took " + ((now - startTime)) + " ms")
   }
 
   // Build a factum table from a given resource uri and an entity description
@@ -66,7 +67,6 @@ class EntityBuilder (entityDescriptions : IndexedSeq[EntityDescription], reader 
   // Build the property hash table
   private def buildPHT {
      PHT.clear
-     log.info("\n--------------------------------\n Analyse Entity Descriptions \n--------------------------------")
      val startTime = now
 
      for (ed <- entityDescriptions){
@@ -85,7 +85,7 @@ class EntityBuilder (entityDescriptions : IndexedSeq[EntityDescription], reader 
             }
      }
 
-     log.info("Total time: " + ((now - startTime) / 1000.0) + " seconds")
+     log.info("Analyse Entity Descriptions took " + ((now - startTime)) + " ms")
      //log.info(" [ PHT ] \n > keySet = ("+PHT.size.toString +") \n   - "+ PHT.mkString("\n   - "))
   }
 
@@ -93,7 +93,6 @@ class EntityBuilder (entityDescriptions : IndexedSeq[EntityDescription], reader 
   private def buildHTs {
      FHT.clear
      BHT.clear
-     log.info("\n--------------------------------\n Read in Quads \n--------------------------------")
      val startTime = now
 
      while (!reader.isEmpty){
@@ -113,14 +112,14 @@ class EntityBuilder (entityDescriptions : IndexedSeq[EntityDescription], reader 
        val v = PHT.get(prop)
 
        if (v == Some(PropertyType.FORW) || v == Some(PropertyType.BOTH))  {
-          FHT.addBinding(Pair(quad.subject, prop), quad.value)
+          FHT.put(Pair(quad.subject, prop), quad.value)
        }
        if (v == Some(PropertyType.BACK) || v == Some(PropertyType.BOTH))  {
-          BHT.addBinding(Pair(quad.value, prop), quad.subject)
+          BHT.put(Pair(quad.value, prop), quad.subject)
        }
      }
 
-     log.info("Total time: " + ((now - startTime) / 1000.0) + " seconds")
+     log.info("Read in Quads took " + ((now - startTime)) + " ms")
      //log.info(" [ FHT ] \n > keySet = ("+FHT.keySet.size.toString+")")
      //log.info(" [ BHT ] \n > keySet = ("+BHT.keySet.size.toString+")\n   - " + BHT.keySet.map(a => Pair.unapply(a).get._2 + " "+Pair.unapply(a).get._1.value).mkString("\n   - "))
   }
