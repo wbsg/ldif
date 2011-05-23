@@ -260,7 +260,7 @@ class EntityBuilder (entityDescriptions : IndexedSeq[EntityDescription], reader 
   private def evaluateOperator(op : PathOperator, values : collection.immutable.Set[String]) : Set[Node] =   {
     //TODO values could be nodes (instead of String)
     val srcNodes = new HashSet[Node]
-    values.foreach(x => srcNodes += Node.fromString(x,null))
+    values.foreach(srcNodes += Node.fromString(_,null))
     evaluateOperator(op, srcNodes, false)
   }
 
