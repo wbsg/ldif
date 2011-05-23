@@ -4,7 +4,7 @@
 		<Prefix id="rdf" namespace="http://www.w3.org/1999/02/22-rdf-syntax-ns#"/>
 		<Prefix id="rdfs" namespace="http://www.w3.org/2000/01/rdf-schema#"/>
 		<Prefix id="owl" namespace="http://www.w3.org/2002/07/owl#"/>
-		<Prefix id="test" namespace="http://testNamespace#"/>
+		<Prefix id="test" namespace="http://testNamespace/"/>
 	</Prefixes>
 
 	<DataSources>

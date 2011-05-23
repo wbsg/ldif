@@ -26,8 +26,12 @@ object Main
 
     val dumpReader = loadDump(config.sourceDir)
     println("Number of triples after loading the dump: " + dumpReader.size)
+//    writeOutput(config.outputFile, dumpReader)
+
     val r2rReader = mapQuads(config.mappingFile, dumpReader)
     println("Number of triples after mapping the input dump: " + r2rReader.size)
+//    writeOutput(config.outputFile, r2rReader)
+
     val linkReader = generateLinks(config.linkSpecDir, r2rReader)
     println("Number of triples after linking entities: " + linkReader.size)
     writeOutput(config.outputFile, linkReader)
@@ -121,6 +125,8 @@ object Main
   def buildEntities(reader : QuadReader, entityDescriptions : Seq[EntityDescription]) : Seq[EntityReader] =
   {
     val entityQueues = entityDescriptions.map(new EntityQueue(_))
+//    for(ed <- entityDescriptions) println(ed)
+    println(reader.size)
 
     runInBackground
     {
