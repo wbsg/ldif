@@ -15,6 +15,7 @@ import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner
 import de.fuberlin.wiwiss.r2r._
 import ldif.local.runtime.impl.{QuadQueue, EntityQueue}
+import ldif.local.runtime.Quad
 import ldif.entity._
 import collection.mutable.HashSet
 import CreatorHelperFunctions._
@@ -43,7 +44,7 @@ class LDIFMappingTest extends FlatSpec with ShouldMatchers {
     quadQueue.read.toString should equal ("Quad(<TestURI1>,p2,\"testValue\",default)")
   }
 
-  it should "should pick the correct graph uri from the value nodes" in {
+  it should "pick the correct graph uri from the value nodes" in {
     val mapping =  getMapping("http://mappings.dbpedia.org/r2r/whateverToLiteralMapping", repository)
     val entityQueue = createEntityQueue(mapping.entityDescription)
     val entity = createEntity("TestURI1", mapping)
@@ -51,5 +52,20 @@ class LDIFMappingTest extends FlatSpec with ShouldMatchers {
     val quadQueue = new QuadQueue
     mapping.executeMapping(entity, quadQueue)
     quadQueue.read.toString should equal ("Quad(<TestURI1>,p2,\"testValue\",myNameSpace)")
+  }
+
+  it should "generate blank nodes for the target graph" in {
+    val mapping =  getMapping("http://mappings.dbpedia.org/r2r/blankNodeAndPathMapping", repository)
+    val entityQueue = createEntityQueue(mapping.entityDescription)
+    val entity = createEntity("TestURI1", mapping)
+    entity.addFactumRow(Node.createLiteral("testValue", "myNameSpace"))
+    val quadQueue = new QuadQueue
+    mapping.executeMapping(entity, quadQueue)
+    quadQueue.size should equal (2)
+    val bn1 = quadQueue.read match{
+      case Quad(_, _, bn, _) => bn }
+    val bn2 = quadQueue.read match{
+      case Quad(bn, _, _, _) => bn }
+    bn1 should equal (bn2)
   }
 }

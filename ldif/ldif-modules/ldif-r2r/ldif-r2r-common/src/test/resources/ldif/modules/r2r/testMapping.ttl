@@ -15,8 +15,7 @@
       r2r:sourcePattern "?SUBJ <p1> ?o" ;
       r2r:targetPattern "?SUBJ <p2> ?'o'" .
 
-
    mappings:blankNodeAndPathMapping
       a r2r:Mapping ;
-      r2r:sourcePattern "?SUBJ rdfs:label ?label" ;
+      r2r:sourcePattern "?SUBJ <p1> ?label" ;
       r2r:targetPattern "?SUBJ <metaDataOfResource> _:bn rdfs:label ?label" .

@@ -14,3 +14,4 @@
       a r2r:Mapping ;
       r2r:sourcePattern "?SUBJ rdfs:label ?label" ;
       r2r:targetPattern "?SUBJ <metaDataOfResource> _:bn rdfs:label ?label" .
+

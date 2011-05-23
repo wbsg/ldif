@@ -41,16 +41,15 @@ class LDIFTargetPattern(targetPattern: TargetPattern) extends TargetPattern(targ
     val objects: List[Node] = elemType match {
       case Type.IRI=> List(Node.createUriNode(lexValue, "default"))
       case Type.IRIVARIABLE => for(Node(uri, _, _, graph) <- results.getResults(lexValue).get) yield Node.createUriNode(uri, graph)
-      case Type.DATATYPEVARIABLE => for(value <- getDataTypeVariableValues(tripleElement,results))
-                                        yield Node.createTypedLiteral(value.value, getHints.get(tripleElement.getValue(0)), "")
-      case Type.DATATYPESTRING => List(Node.createTypedLiteral(lexValue, tripleElement.getValue(1), ""))
-      case Type.STRING => List(Node.createLiteral(lexValue, ""))
+      case Type.DATATYPEVARIABLE => getDataTypeVariableValues(tripleElement,results)
+      case Type.DATATYPESTRING => List(Node.createTypedLiteral(lexValue, tripleElement.getValue(1), "default"))
+      case Type.STRING => List(Node.createLiteral(lexValue, "default"))
       case Type.STRINGVARIABLE => convertNodesToLiteralNodes(results.getResults(tripleElement.getValue(0)).get)
       case Type.LANGTAGVARIABLE => for(Node(value, _, _, graph) <- results.getResults(tripleElement.getValue(0)).get)
                                       yield Node.createLanguageLiteral(value, tripleElement.getValue(1), graph)
       case Type.LANGTAGSTRING => List(Node.createLanguageLiteral(lexValue, tripleElement.getValue(1), "default"))
       case Type.VARIABLE => results.getResults(tripleElement.getValue(0)).get
-      case Type.BLANKNODE => List(Node.createBlankNode(lexValue, ""))  //TODO
+      case Type.BLANKNODE => List(results.getBlankNode(lexValue, "default"))
       case _ => {
         val dataType = elemType match {
           case Type.BOOLEAN => "http://www.w3.org/2001/XMLSchema#boolean"
@@ -88,7 +87,7 @@ class LDIFTargetPattern(targetPattern: TargetPattern) extends TargetPattern(targ
     if(HelperFunctions.getWorkingDataTypeOfDataTypeString(hint)!=null) {
       var convertedValues = List[Node]()
       for(node <- values) {
-        val convertedVal = Node.createTypedLiteral(HelperFunctions.convertValueToDataType(node.value, hint), hint, "")
+        val convertedVal = Node.createTypedLiteral(HelperFunctions.convertValueToDataType(node.value, hint), hint, node.graph)
         convertedValues = convertedVal :: convertedValues
       }
       values = convertedValues
@@ -106,7 +105,7 @@ class LDIFTargetPattern(targetPattern: TargetPattern) extends TargetPattern(targ
 
     elemType match {
       case Type.IRI => subjects = Node.createUriNode(tripleElement.getValue(0), "") :: subjects
-      case Type.BLANKNODE => subjects = Node.createBlankNode("_:BN","") :: subjects //TODO: Generate blank nodes
+      case Type.BLANKNODE => subjects = results.getBlankNode(tripleElement.getValue(0), "default") :: subjects
       case Type.VARIABLE => {
         val varName = tripleElement.getValue(0)
         val nodes = results.getResults(varName)
