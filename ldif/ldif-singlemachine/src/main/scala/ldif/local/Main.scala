@@ -25,9 +25,12 @@ object Main
     val config = LdifConfiguration.load(configFile)
 
     val dumpReader = loadDump(config.sourceDir)
-//    val r2rReader = mapQuads(config.mappingFile, dumpReader)
-//    val linkReader = generateLinks(config.linkSpecDir, dumpReader)
-    writeOutput(config.outputFile, dumpReader)
+    println("Number of triples after loading the dump: " + dumpReader.size)
+    val r2rReader = mapQuads(config.mappingFile, dumpReader)
+    println("Number of triples after mapping the input dump: " + r2rReader.size)
+    val linkReader = generateLinks(config.linkSpecDir, r2rReader)
+    println("Number of triples after linking entities: " + linkReader.size)
+    writeOutput(config.outputFile, linkReader)
   }
 
   /**
