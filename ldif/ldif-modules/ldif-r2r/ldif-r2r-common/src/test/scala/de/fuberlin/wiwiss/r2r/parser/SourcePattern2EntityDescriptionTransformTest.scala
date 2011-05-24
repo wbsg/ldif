@@ -30,6 +30,6 @@ class SourcePattern2EntityDescriptionTransformTest extends FlatSpec with ShouldM
 
   it should "create Restrictions from constant value paths" in {
     val sourcePattern = "?SUBJ a <someClass>"
-    transform(sourcePattern, List("friend"), prefixMapper).toString should equal ("(EntityDescription(Restriction(Some(And(List(Condition(?SUBJ/<http://www.w3.org/1999/02/22-rdf-syntax-ns#type>,Set(someClass)))))),Vector(Vector())),Map())")
+    (transform(sourcePattern, List("friend"), prefixMapper).toString) should equal ("(EntityDescription(Restriction(Some(And(List(Condition(?SUBJ/<http://www.w3.org/1999/02/22-rdf-syntax-ns#type>,Set(<someClass>)))))),Vector(Vector())),Map())")
   }
 }

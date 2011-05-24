@@ -28,7 +28,7 @@ object Restriction
    */
   private def readOperator(xml : scala.xml.Node)(implicit prefixes : Prefixes) : Operator = xml match
   {
-    case <Condition>{nodes @ _ *}</Condition> => Condition(Path.parse(xml \ "@path" text), (xml child).map(Node.fromXML(_)).toSet)
+    case <Condition>{nodes @ _ *}</Condition> => Condition(Path.parse(xml \ "@path" text),(for(node <- nodes if node.text.trim!="") yield Node.fromXML(node)).toSet)
     case <Not>{node}</Not> => Not(readOperator(node))
     case <And>{nodes @ _ *}</And> => And(nodes.map(readOperator))
     case <Or>{nodes @ _ *}</Or> => Or(nodes.map(readOperator))

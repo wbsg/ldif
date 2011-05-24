@@ -61,9 +61,9 @@ final case class Node protected(val value : String, datatypeOrLanguage : String,
   def toXML =  nodeType match {
     //TODO Literal language and datatype not supported in M1
       case Literal => <Literal>{value}</Literal>
-      case TypedLiteral => <Literal>{value}</Literal> 
+      case TypedLiteral => <Literal>{value}</Literal>
       case LanguageLiteral =>  <Literal>{value}</Literal>
-      case BlankNode => <BlankNode>{value}</BlankNode>     
+      case BlankNode => <BlankNode>{value}</BlankNode>
       case UriNode => <Uri>{value}</Uri>
   }
 
@@ -121,9 +121,9 @@ object Node
   // Build node from an XML node
   def fromXML(xml : scala.xml.Node) : Node = xml match  {
     //TODO Literal language and datatype not supported in M1
-    case <Uri/> => createUriNode(xml.text,defaultGraph)
-    case <Literal/> => createLiteral(xml.text,defaultGraph)
-    case <BlankNode/> => createBlankNode(xml.text,defaultGraph)
+    case <Uri>{value @ _*}</Uri> => createUriNode(value.text,defaultGraph)
+    case <Literal>{value @ _*}</Literal> => createLiteral(value.text,defaultGraph)
+    case <BlankNode>{value @ _*}</BlankNode> => createBlankNode(value.text,defaultGraph)
   }
 
   sealed trait NodeType

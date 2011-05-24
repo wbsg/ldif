@@ -1,7 +1,7 @@
 <EntityDescription>
   <Restriction>
     <Condition path="?a/rdf:type">
-      <Value>http://mywiki/resource/category/Gene</Value>
+        <Uri>http://mywiki/resource/category/Gene</Uri>
     </Condition>
   </Restriction>
   <Patterns>

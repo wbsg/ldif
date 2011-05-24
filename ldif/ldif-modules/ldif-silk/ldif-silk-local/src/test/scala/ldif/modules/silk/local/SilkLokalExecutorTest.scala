@@ -24,7 +24,7 @@ class SilkLokalExecutorTest extends FlatSpec with ShouldMatchers
 
   "SilkLokalExecutor" should "return the correct entity descriptions" in
   {
-    executor.input(task).entityDescriptions.head should equal (entityDescription)
+    (executor.input(task).entityDescriptions.head) should equal (entityDescription)
   }
 
   private lazy val task =

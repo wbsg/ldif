@@ -125,7 +125,7 @@ object Main
 
     while(!reader.isEmpty)
     {
-      writer.write(reader.read + "\n")
+      writer.write(reader.read + " .\n")
       count += 1
     }
 

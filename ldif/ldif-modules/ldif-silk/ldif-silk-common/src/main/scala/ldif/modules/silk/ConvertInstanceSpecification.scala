@@ -2,7 +2,7 @@ package ldif.modules.silk
 
 import de.fuberlin.wiwiss.silk.instance.InstanceSpecification
 import ldif.entity.Restriction._
-import ldif.entity.{Restriction, Path, EntityDescription}
+import ldif.entity.{Restriction, Path, EntityDescription, Node}
 
 /**
  * Converts a Silk InstanceSpecification to a LDFI EntityDescription.
@@ -25,7 +25,7 @@ object ConvertInstanceSpecification extends (InstanceSpecification => EntityDesc
             val path = Path.parse(variable + "/" + predicate)
             val cleanValue =  value.trim.stripPrefix("<").stripSuffix(">.")
 
-            Restriction(Some(Condition(path, Set(cleanValue))))
+            Restriction(Some(Condition(path, Set(Node.createUriNode(cleanValue, "")))))
           }
           case _ => throw new IllegalArgumentException("Unsupported restriction pattern")
         }
