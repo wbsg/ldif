@@ -20,7 +20,7 @@ object Main
 {
   def main(args : Array[String])
   {
-    val configUrl = getClass.getClassLoader.getResource("ldif/local/example/config.xml")
+    val configUrl = getClass.getClassLoader.getResource("ldif/local/example/test2/config.xml")
     val configFile = new File(configUrl.toString.stripPrefix("file:"))
     val config = LdifConfiguration.load(configFile)
 

@@ -1,0 +1,6 @@
+<LDIF>
+  <Sources>sources</Sources>
+  <LinkSpecifications>linkSpecs</LinkSpecifications>
+  <Mappings>mappings/ABA-to-Wiki.r2r.ttl</Mappings>
+  <Output>output</Output>
+</LDIF>

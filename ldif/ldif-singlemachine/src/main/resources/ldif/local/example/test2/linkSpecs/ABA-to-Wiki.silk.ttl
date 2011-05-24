@@ -1,0 +1,60 @@
+<Silk>
+	<Prefixes>
+		<Prefix id="rdf" namespace="http://www.w3.org/1999/02/22-rdf-syntax-ns#" />
+		<Prefix id="rdfs" namespace="http://www.w3.org/2000/01/rdf-schema#" />
+		<Prefix id="owl" namespace="http://www.w3.org/2002/07/owl#" />
+		<Prefix id="genes" namespace="http://wiking.vulcan.com/neurobase/kegg_genes/resource/vocab/" />
+		<Prefix id="smwprop" namespace="http://mywiki/resource/property/" />
+		<Prefix id="smwcat" namespace="http://mywiki/resource/category/" />
+		<Prefix id="wiki" namespace="http://www.example.com/smw#" />
+	</Prefixes>
+
+	<DataSources>
+		<DataSource id="SOURCE" type="sparqlEndpoint">
+			<Param name="endpointURI" value="http://localhost:8890/sparql"/>
+			<Param name="graph" value="http://localhost:8890/wiki/"/>
+		</DataSource>
+		<DataSource id="TARGET" type="sparqlEndpoint">
+			<Param name="endpointURI" value="http://localhost:8890/sparql"/>
+			<Param name="graph" value="http://localhost:8890/pharmgkb/"/>
+		</DataSource>
+	</DataSources>
+
+	<Blocking/>
+	
+	<Interlinks>
+		<Interlink id="genes">
+			<LinkType>owl:sameAs</LinkType>
+
+			<SourceDataset dataSource="SOURCE" var="b">
+				<RestrictTo>?b rdf:type smwcat:Gene</RestrictTo>
+			</SourceDataset>
+
+			<TargetDataset dataSource="TARGET" var="a">
+				<RestrictTo>?a rdf:type smwcat:Gene</RestrictTo>
+			</TargetDataset>
+
+			<LinkCondition>
+			<Aggregate type="max">
+					<Compare metric="equality">
+						<Input path="?a/smwprop:AbaGeneId" />
+						<Input path="?b/smwprop:AbaGeneId" />
+					</Compare>
+					<Compare metric="equality">
+						<Input path="?a/smwprop:EntrezGeneId" />
+						<Input path="?b/smwprop:EntrezGeneId" />
+					</Compare>
+					<Compare metric="equality">
+						<Input path="?a/smwprop:MgiMarkerAccessionId" />
+						<Input path="?b/smwprop:MgiMarkerAccessionId" />
+					</Compare>
+			</Aggregate>
+			</LinkCondition>
+
+			<Filter threshold="1.0" />
+
+		</Interlink>
+
+	</Interlinks>
+	
+</Silk>

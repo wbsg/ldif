@@ -1,6 +1,0 @@
-<LDIF>
-  <Sources>sources</Sources>
-  <LinkSpecifications>linkSpecs</LinkSpecifications>
-  <Mappings>mappings/mappings.ttl</Mappings>
-  <Output>output</Output>
-</LDIF>

@@ -39,7 +39,7 @@ class DumpExecutor() extends Executor
     val nxp:NxParser = new NxParser(inputStream)
     while (nxp.hasNext) {
       val ns:Array[Node] = nxp.next
-      val graph = null
+      val graph = "default"
       val subj = mapNode(ns(0),graph)
       val prop = ns(1).toString
       val obj = mapNode(ns(2),graph)

@@ -1,0 +1,71 @@
+# ABA to Wiki mapping
+# translates instances of the aba:gene class to wiki:gene instances with their properties. Scope for SFN demo.
+# Last revision: 2010-10-29 (mer)
+
+
+@prefix r2r: <http://www4.wiwiss.fu-berlin.de/bizer/r2r/> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix mp: <http://www.example.org/smw-lde/smwTransformations/> .
+
+###
+# Gene
+###
+mp:Gene
+   a r2r:ClassMapping;
+   r2r:prefixDefinitions	"""smwcat: <http://mywiki/resource/category/> .
+   							 smwprop: <http://mywiki/resource/property/> .
+   							 aba: <http://brain-map.org/gene/0.1#> .
+   							 uniprot: <http://purl.uniprot.org/core/> .
+   							 skos: <http://www.w3.org/2004/02/skos/core#> .
+   							 rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+							 xsd: <http://www.w3.org/2001/XMLSchema#>""";
+   r2r:sourcePattern 	"?SUBJ a aba:gene";
+   r2r:targetPattern	"?SUBJ a smwcat:Gene";
+   .
+
+# Properties of Gene
+mp:Geneid
+   a r2r:PropertyMapping;
+   r2r:mappingRef    mp:Gene;
+   r2r:sourcePattern 	"?SUBJ aba:geneid ?x";
+   r2r:targetPattern	"?SUBJ smwprop:AbaGeneId ?'x'^^xsd:string";	###MER: actually we must translate from unsignedInt to string here
+   .
+
+mp:Entrezgeneid
+   a r2r:PropertyMapping;
+   r2r:mappingRef    	mp:Gene;
+   r2r:sourcePattern 	"?SUBJ aba:entrezgeneid ?x";
+   r2r:targetPattern	"?SUBJ smwprop:EntrezGeneId ?'x'^^xsd:int";	###MER: actually we must translate from int to string here
+   .
+   
+mp:Genename
+   a r2r:PropertyMapping;
+   r2r:mappingRef    	mp:Gene;
+   r2r:sourcePattern 	"?SUBJ aba:genename ?x";
+   r2r:targetPattern	"?SUBJ smwprop:Label ?'x'^^xsd:string";
+   .
+   
+mp:Genesymbol
+   a r2r:PropertyMapping;
+   r2r:mappingRef    	mp:Gene;
+   r2r:sourcePattern 	"?SUBJ aba:genesymbol ?x";
+   r2r:targetPattern	"?SUBJ smwprop:GeneSymbol ?'x'^^xsd:string";
+   .
+
+mp:Mgimarkeraccessionid
+   a r2r:PropertyMapping;
+   r2r:mappingRef    	mp:Gene;
+   r2r:sourcePattern 	"?SUBJ aba:mgimarkeraccessionid ?x";
+   r2r:targetPattern	"?SUBJ smwprop:MgiMarkerAccessionId ?'x'^^xsd:string";
+   .
+   
+###
+# GeneAlias
+###
+mp:Genealias
+   a r2r:PropertyMapping;
+   r2r:mappingRef    	mp:Gene;
+   r2r:sourcePattern	"?SUBJ aba:gene-aliases ?x . ?x aba:aliassymbol ?s";
+   r2r:targetPattern	"?SUBJ smwprop:AlternativeLabel ?'s'^^xsd:string";
+   .
