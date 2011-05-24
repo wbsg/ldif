@@ -42,7 +42,7 @@ class EntityBuilder (entityDescriptions : IndexedSeq[EntityDescription], reader 
       writer.write(entity)
     }
     writer.finish
-    
+
     log.info("Build Entities took " + ((now - startTime)) + " ms")
   }
 
@@ -212,7 +212,7 @@ class EntityBuilder (entityDescriptions : IndexedSeq[EntityDescription], reader 
     // filter out blank nodes
     tmpSet(cond.path.operators.size-1).filter(_.isUriNode)
   }
-  
+
   /**
    * Evaluate a path operator
    * @param op : path operator to evaluate
@@ -250,17 +250,15 @@ class EntityBuilder (entityDescriptions : IndexedSeq[EntityDescription], reader 
               case None =>
             }
         }
-      case pf:PropertyFilter =>  //TODO support PropertFilter - after M1
+      case pf:PropertyFilter =>  //TODO support PropertyFilter - after M1
       case lf:LanguageFilter =>  //TODO support LanguageFilter - after M1
     }
     nodes
   }
 
-  // Helper method: analyse the operator for a set of String values
-  private def evaluateOperator(op : PathOperator, values : collection.immutable.Set[String]) : Set[Node] =   {
-    //TODO values could be nodes (instead of String)
-    val srcNodes = new HashSet[Node]
-    values.foreach(srcNodes += Node.fromString(_,"default"))
+  // Helper method: analyse the operator for an immutable set of nodes
+  private def evaluateOperator(op : PathOperator, values : collection.immutable.Set[Node]) : Set[Node] =   {
+    val srcNodes = HashSet(values.toArray:_*)  //from immutable to mutable
     evaluateOperator(op, srcNodes, false)
   }
 
@@ -274,7 +272,7 @@ class EntityBuilder (entityDescriptions : IndexedSeq[EntityDescription], reader 
     val initRow = for (j <- 0 to paths.size-1) yield {
       prev(j) = ArrayBuffer(entityNode)
       next(j) = new ArrayBuffer[Traversable[Node]]
-      entityNode  
+      entityNode
     }
     var valuesTable:Traversable[IndexedSeq[Node]] = Set(initRow)
 
@@ -289,7 +287,7 @@ class EntityBuilder (entityDescriptions : IndexedSeq[EntityDescription], reader 
 
         val k = getEqualPath(treeStructure,j,i)
         if (k>0)
-          valuesTable = mergeCopy(valuesTable,k-1,j)   
+          valuesTable = mergeCopy(valuesTable,k-1,j)
         else
           valuesTable = merge(valuesTable,prev(j),next(j),j)
         prev(j).clear
@@ -364,6 +362,6 @@ class EntityBuilder (entityDescriptions : IndexedSeq[EntityDescription], reader 
   }
 
   private def min(a:Int , b:Int) =  if (a<b) a else b
-  
+
   private def now = System.currentTimeMillis
 }

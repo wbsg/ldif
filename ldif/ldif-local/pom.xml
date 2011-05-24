@@ -28,13 +28,6 @@
       <version>${ldif.version}</version>
     </dependency>
 
-
-    <dependency>
-      <groupId>nxparser</groupId>
-      <artifactId>nxparser</artifactId>
-      <version>1.1</version>
-    </dependency>
-
     <!--
     <dependency>
       <groupId>org.apache.httpcomponents</groupId>
@@ -89,48 +82,5 @@
     <!-- end of voldermort dependecies -->
 
     </dependencies>
-
-
-    <build>
-        <plugins>
-            <!--plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-dependency-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>copy-dependencies</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>copy-dependencies</goal>
-                        </goals>
-                        <configuration>
-                            <outputDirectory>${project.build.directory}/lib</outputDirectory>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin-->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-install-plugin</artifactId>
-                <version>2.3.1</version>
-                <executions>
-                    <execution>
-                        <id>install-nxparser-jar</id>
-                        <phase>generate-resources</phase>
-                        <goals>
-                            <goal>install-file</goal>
-                        </goals>
-                        <configuration>
-                            <groupId>nxparser</groupId>
-                            <artifactId>nxparser</artifactId>
-                            <version>1.1</version>
-                            <packaging>jar</packaging>
-                            <file>${project.basedir}/lib/nxparser-1.1.jar</file>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-        </plugins>
-    </build>
-
+    
 </project>

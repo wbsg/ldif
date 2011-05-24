@@ -82,7 +82,7 @@ object SourcePatternToEntityDescriptionTransformer {
             node = entity.Node.createUriNode(parsedNode.value, "")
           else
             node = entity.Node.createLiteral(parsedNode.value, "")
-          restrictions = Condition(Path("SUBJ",path), Set(node) :: restrictions
+          restrictions = Condition(Path("SUBJ",path), Set(node)) :: restrictions
         }
       } else {
         links.foreach{case (propertyNode, nextNode, backward) =>

@@ -1,7 +1,7 @@
 <EntityDescription>
   <Restriction>
       <Condition path="?a/rdf:type">
-        <Value>http://brain-map.org/gene/0.1#gene</Value>
+        <Uri>http://brain-map.org/gene/0.1#gene</Uri>
       </Condition>
   </Restriction>
   <Patterns>

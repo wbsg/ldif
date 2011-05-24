@@ -1,41 +1,45 @@
 package ldif.entity
 
 import Node._
-
+import org.semanticweb.yars.nx.parser.NxParser
 
 final case class Node protected(val value : String, datatypeOrLanguage : String, val nodeType : Node.NodeType, val graph : String)
 {
   def datatype = nodeType match
   {
-    case Node.TypedLiteral => datatypeOrLanguage
+    case TypedLiteral => datatypeOrLanguage
     case _ => null
   }
 
   def language = nodeType match
   {
-    case Node.LanguageLiteral => datatypeOrLanguage
+    case LanguageLiteral => datatypeOrLanguage
     case _ => null
   }
 
   def isResource = {
-    if(nodeType==Node.UriNode || nodeType==Node.BlankNode)
+    if(nodeType==UriNode || nodeType==BlankNode)
       true
     else
       false
   }
 
   def isUriNode = {
-    nodeType==Node.UriNode
+    nodeType==UriNode
   }
 
   override def equals(other: Any): Boolean = {
-    if (this.asInstanceOf[AnyRef] eq other.asInstanceOf[AnyRef]) true
-    if (!(other.isInstanceOf[Node])) false
-    var otherNode: Node = other.asInstanceOf[Node]
-    var result = (otherNode.nodeType == nodeType) && compareDTorLang(this.datatypeOrLanguage, otherNode.datatypeOrLanguage) && (this.value.equals(otherNode.value))
-    if(nodeType== BlankNode)
-      result = result && (graph == otherNode.graph)
-    result
+    if (this.asInstanceOf[AnyRef] eq other.asInstanceOf[AnyRef])
+      true
+    if (!(other.isInstanceOf[Node]))
+      false
+    else {
+      var otherNode: Node = other.asInstanceOf[Node]
+      var result = (otherNode.nodeType == nodeType) && compareDTorLang(this.datatypeOrLanguage, otherNode.datatypeOrLanguage) && (this.value.equals(otherNode.value))
+      if(nodeType== BlankNode)
+        result = result && (graph == otherNode.graph)
+      result
+    }
   }
 
   private def compareDTorLang(v1: String, v2: String): Boolean = {
@@ -54,6 +58,14 @@ final case class Node protected(val value : String, datatypeOrLanguage : String,
     hash
   }
 
+  def toXML =  nodeType match {
+    //TODO Literal language and datatype not supported in M1
+      case Literal => <Literal>{value}</Literal>
+      case TypedLiteral => <Literal>{value}</Literal> 
+      case LanguageLiteral =>  <Literal>{value}</Literal>
+      case BlankNode => <BlankNode>{value}</BlankNode>     
+      case UriNode => <Uri>{value}</Uri>
+  }
 
   override def toString = nodeType match {
     case Literal => "\"" + value + "\""
@@ -66,6 +78,8 @@ final case class Node protected(val value : String, datatypeOrLanguage : String,
 
 object Node
 {
+  val defaultGraph : String = "default"
+
   def createLiteral(value : String, graph : String) = new Node(value, null, Literal, graph)
 
   def createTypedLiteral(value : String, datatype : String, graph : String) = new Node(value, datatype, TypedLiteral, graph)
@@ -76,15 +90,42 @@ object Node
 
   def createUriNode(value : String, graph : String) = new Node(value, null, UriNode, graph)
 
-  def fromString(value: String, graph : String) = {
-    //TODO analyse value and create the proper node 
-    if (value.startsWith("_:"))
-      createBlankNode(value,"default")
-    else if (value.startsWith("http://"))
-      createUriNode(value,"default")
-    else createLiteral(value,"default")
+  def fromString(value : String, graph : String) = {
+    val nxNode = NxParser.parseNode(value)
+    fromNxNode(nxNode,graph)
   }
-  
+
+  def fromString(value : String) : Node = fromString(value,defaultGraph)
+
+  def fromNxNode(nxNode : org.semanticweb.yars.nx.Node, graph : String) = {
+     nxNode match {
+      case lit:org.semanticweb.yars.nx.Literal => {
+        val dt = lit.getDatatype
+        val lang = lit.getLanguageTag
+        val value = lit.getData
+        if (dt!=null)
+          ldif.entity.Node.createTypedLiteral(value,dt.toString,graph)
+        else if (lang!=null)
+          ldif.entity.Node.createLanguageLiteral(value,lang,graph)
+        else ldif.entity.Node.createLiteral(value,graph)
+      }
+      case bno:org.semanticweb.yars.nx.BNode =>
+        ldif.entity.Node.createBlankNode(bno.toString,graph)
+      case res:org.semanticweb.yars.nx.Resource =>
+        ldif.entity.Node.createUriNode(res.toString,graph)
+    }
+  }
+
+  def fromNxNode(nxNode : org.semanticweb.yars.nx.Node) : Node = fromNxNode(nxNode,defaultGraph)
+
+  // Build node from an XML node
+  def fromXML(xml : scala.xml.Node) : Node = xml match  {
+    //TODO Literal language and datatype not supported in M1
+    case <Uri/> => createUriNode(xml.text,defaultGraph)
+    case <Literal/> => createLiteral(xml.text,defaultGraph)
+    case <BlankNode/> => createBlankNode(xml.text,defaultGraph)
+  }
+
   sealed trait NodeType
 
   case object Literal extends NodeType
@@ -96,6 +137,4 @@ object Node
   case object BlankNode extends NodeType
 
   case object UriNode extends NodeType
-
-
 }

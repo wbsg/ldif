@@ -28,7 +28,7 @@ object Restriction
    */
   private def readOperator(xml : scala.xml.Node)(implicit prefixes : Prefixes) : Operator = xml match
   {
-    case <Condition>{nodes @ _ *}</Condition> => Condition(Path.parse(xml \ "@path" text), (xml \ "Value").map(_.text).toSet)
+    case <Condition>{nodes @ _ *}</Condition> => Condition(Path.parse(xml \ "@path" text), (xml child).map(Node.fromXML(_)).toSet)
     case <Not>{node}</Not> => Not(readOperator(node))
     case <And>{nodes @ _ *}</And> => And(nodes.map(readOperator))
     case <Or>{nodes @ _ *}</Or> => Or(nodes.map(readOperator))
@@ -43,12 +43,12 @@ object Restriction
   /**
    * A condition which evaluates to true if the provided path contains at least one of the given values.
    */
-  case class Condition(path : Path, values : Set[String]) extends Operator
+  case class Condition(path : Path, values : Set[ldif.entity.Node]) extends Operator
   {
     def toXml =
     {
       <Condition path={path.toString}>
-        { values.map(v => <Value>{v}</Value>) }
+        { values.map(_.toXML) }
       </Condition>
     }
   }
