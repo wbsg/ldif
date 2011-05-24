@@ -33,8 +33,6 @@
       <groupId>nxparser</groupId>
       <artifactId>nxparser</artifactId>
       <version>1.1</version>
-      <scope>system</scope>
-      <systemPath>${project.basedir}/lib/nxparser-1.1.jar</systemPath>
     </dependency>
 
     <!--
@@ -95,7 +93,7 @@
 
     <build>
         <plugins>
-            <plugin>
+            <!--plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-dependency-plugin</artifactId>
                 <executions>
@@ -107,6 +105,27 @@
                         </goals>
                         <configuration>
                             <outputDirectory>${project.build.directory}/lib</outputDirectory>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin-->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-install-plugin</artifactId>
+                <version>2.3.1</version>
+                <executions>
+                    <execution>
+                        <id>install-nxparser-jar</id>
+                        <phase>generate-resources</phase>
+                        <goals>
+                            <goal>install-file</goal>
+                        </goals>
+                        <configuration>
+                            <groupId>nxparser</groupId>
+                            <artifactId>nxparser</artifactId>
+                            <version>1.1</version>
+                            <packaging>jar</packaging>
+                            <file>${project.basedir}/lib/nxparser-1.1.jar</file>
                         </configuration>
                     </execution>
                 </executions>

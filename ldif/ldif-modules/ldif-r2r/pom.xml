@@ -84,15 +84,41 @@
             <groupId>r2rApi</groupId>
             <artifactId>r2rApi</artifactId>
             <version>0.2.3-SNAPSHOT</version>
+        </dependency>
+        <!--dependency>
+            <groupId>r2rApi</groupId>
+            <artifactId>r2rApi</artifactId>
+            <version>0.2.3-SNAPSHOT</version>
             <scope>system</scope>
             <systemPath>${project.basedir}/lib/r2rApi-0.2.3-SNAPSHOT.jar</systemPath>
-        </dependency>
+        </dependency-->
 
 	</dependencies>
 
 	<build>
 		<pluginManagement>
 			<plugins>
+              <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-install-plugin</artifactId>
+                <version>2.3.1</version>
+                <executions>
+                    <execution>
+                        <id>install-r2rApi-jar</id>
+                        <phase>generate-resources</phase>
+                        <goals>
+                            <goal>install-file</goal>
+                        </goals>
+                        <configuration>
+                            <groupId>r2rApi</groupId>
+                            <artifactId>r2rApi</artifactId>
+                            <version>0.2.3-SNAPSHOT</version>
+                            <packaging>jar</packaging>
+                            <file>${project.basedir}/lib/r2rApi-0.2.3-SNAPSHOT.jar</file>
+                        </configuration>
+                    </execution>
+                </executions>
+              </plugin>
 				<plugin>
 					<groupId>org.scala-tools</groupId>
 					<artifactId>maven-scala-plugin</artifactId>

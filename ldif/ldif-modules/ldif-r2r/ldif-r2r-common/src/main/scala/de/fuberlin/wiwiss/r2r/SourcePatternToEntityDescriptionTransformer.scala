@@ -9,6 +9,7 @@ import ldif.util.Uri
 import scala.collection.JavaConversions._
 import java.util.HashMap
 import collection.immutable.List._
+import ldif.entity
 
 /**
  * Created by IntelliJ IDEA.
@@ -75,8 +76,14 @@ object SourcePatternToEntityDescriptionTransformer {
       if(!linked) {
         if((nodeType==VARIABLENODE && !added) || nodeType==BLANKNODE)
           restrictions = Exists(Path("SUBJ",path)) :: restrictions
-        else if(!added)//TODO: Have to differentiate between different types (lang literal, datatype literal etc.)
-          restrictions = Condition(Path("SUBJ",path), Set(parsedNode.value)) :: restrictions
+        else if(!added) {
+          var node: entity.Node = null
+          if(parsedNode.nodeType==URINODE)
+            node = entity.Node.createUriNode(parsedNode.value, "")
+          else
+            node = entity.Node.createLiteral(parsedNode.value, "")
+          restrictions = Condition(Path("SUBJ",path), Set(node) :: restrictions
+        }
       } else {
         links.foreach{case (propertyNode, nextNode, backward) =>
           if(visited.contains(nextNode))

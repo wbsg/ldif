@@ -20,19 +20,31 @@ object Main
 {
   def main(args : Array[String])
   {
-    val configUrl = getClass.getClassLoader.getResource("ldif/local/example/test2/config.xml")
-    val configFile = new File(configUrl.toString.stripPrefix("file:"))
+    if(args.length<1) {
+      println("No configuration file given.")
+      System.exit(1)
+    }
+
+//    val configUrl = getClass.getClassLoader.getResource("ldif/local/example/test2/config.xml")
+//    val configUrl = getClass.getClassLoader.getResource(args(0))
+//    val configFile = new File(configUrl.toString.stripPrefix("file:"))
+    val configFile = new File(args(0))
+    stopWatch.getTimeSpanInSeconds
     val config = LdifConfiguration.load(configFile)
+    println("Time needed to load config file: " + stopWatch.getTimeSpanInSeconds + "s")
 
     val dumpReader = loadDump(config.sourceDir)
+    println("Time needed to load dump: " + stopWatch.getTimeSpanInSeconds + "s")
     println("Number of triples after loading the dump: " + dumpReader.size)
 //    writeOutput(config.outputFile, dumpReader)
 
     val r2rReader = mapQuads(config.mappingFile, dumpReader)
+    println("Time needed to build entities and map data: " + stopWatch.getTimeSpanInSeconds + "s")
     println("Number of triples after mapping the input dump: " + r2rReader.size)
 //    writeOutput(config.outputFile, r2rReader)
 
     val linkReader = generateLinks(config.linkSpecDir, r2rReader)
+    println("Time needed to build entities and link data: " + stopWatch.getTimeSpanInSeconds + "s")
     println("Number of triples after linking entities: " + linkReader.size)
     writeOutput(config.outputFile, linkReader)
   }
@@ -158,5 +170,16 @@ object Main
 
 
     function
+  }
+}
+
+object stopWatch {
+  private var lastTime = System.currentTimeMillis
+
+  def getTimeSpanInSeconds(): Double = {
+    val newTime = System.currentTimeMillis
+    val span = newTime - lastTime
+    lastTime = newTime
+    span / 1000.0
   }
 }
