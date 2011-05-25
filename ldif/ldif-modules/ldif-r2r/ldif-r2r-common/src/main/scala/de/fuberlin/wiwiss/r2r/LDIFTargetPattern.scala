@@ -87,7 +87,6 @@ class LDIFTargetPattern(targetPattern: TargetPattern) extends TargetPattern(targ
     if(HelperFunctions.getWorkingDataTypeOfDataTypeString(hint)!=null) {
       var convertedValues = List[Node]()
       for(node <- values) {
-        println(hint)
         var convertedVal: Node = null
         try {
           convertedVal = Node.createTypedLiteral(HelperFunctions.convertValueToDataType(node.value, hint), hint, node.graph)
