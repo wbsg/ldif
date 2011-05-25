@@ -1,0 +1,182 @@
+# KEGG GENES to Wiki mapping
+# translates instances of kegg:gene, kegg:disease and kegg:pathway to the wiki (incl their properties and relations). Scope for SFN demo.
+# Last revision: 2010-10-29 (maggi)
+
+@prefix r2r: <http://www4.wiwiss.fu-berlin.de/bizer/r2r/> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix mp: <http://www.example.org/smw-lde/smwTransformations/> .
+   
+###
+# Gene
+###
+mp:Gene
+   a r2r:ClassMapping;
+   r2r:prefixDefinitions	"""smwcat: <http://halowiki/ob/category#> .
+   							 smwprop: <http://halowiki/ob/property#> .
+   							 pathway: <http://wiking.vulcan.com/neurobase/kegg_pathway/resource/vocab/> .
+   							 genes: <http://wiking.vulcan.com/neurobase/kegg_genes/resource/vocab/> .""";
+   r2r:sourcePattern 	"?SUBJ a genes:gene";
+   r2r:targetPattern	"?SUBJ a smwcat:Gene";
+   .
+
+# Properties of Gene
+mp:GeneID
+   a r2r:PropertyMapping;
+   r2r:mappingRef    	mp:Gene;
+   r2r:sourcePattern 	"?SUBJ genes:GeneId ?x";
+   r2r:targetPattern	"?SUBJ smwprop:KeggGeneId ?x";
+   .
+mp:GeneDefinition
+   a r2r:PropertyMapping;
+   r2r:mappingRef    	mp:Gene;
+   r2r:sourcePattern 	"?SUBJ genes:definition ?x";
+   r2r:targetPattern	"?SUBJ smwprop:Description ?x";
+   .
+mp:GeneName
+   a r2r:PropertyMapping;
+   r2r:mappingRef    	mp:Gene;
+   r2r:sourcePattern 	"?SUBJ genes:name ?x";
+   r2r:targetPattern	"?SUBJ smwprop:Label ?x";
+   .
+mp:hasPathway
+	a r2r:PropertyMapping;
+	r2r:mappingRef    	mp:Gene;
+	r2r:sourcePattern 	"?SUBJ genes:hasPathway ?x";
+	r2r:targetPattern	"?SUBJ smwprop:IsInvolvedIn ?x . ?x smwprop:Involves ?SUBJ";
+	.
+mp:hasDisease
+	a r2r:PropertyMapping;
+	r2r:mappingRef    	mp:Gene;
+	r2r:sourcePattern 	"?SUBJ genes:hasDisease ?x";
+	r2r:targetPattern	"?SUBJ smwprop:Causes ?x . ?x smwprop:IsCausedBy ?SUBJ";
+	.
+# external Links
+mp:GeneLinkUniProt
+   a r2r:PropertyMapping;
+   r2r:mappingRef    mp:Gene;
+   r2r:sourcePattern 	"?SUBJ genes:externalLink ?x";
+   r2r:transformation "?id = regexToList('UniProt:(.+)', ?x)";
+   r2r:targetPattern
+   		"?SUBJ smwprop:UniProtId ?'id'^^xsd:int";
+   .
+mp:GeneLinkMGI
+   a r2r:PropertyMapping;
+   r2r:mappingRef    mp:Gene;
+   r2r:sourcePattern 	"?SUBJ genes:externalLink ?x";
+   r2r:transformation "?id = regexToList('MGI:(.+)', ?x)";
+   r2r:targetPattern
+   		"?SUBJ smwprop:MgiMarkerAccessionId ?'id'^^xsd:string";
+   .
+mp:GeneLinkEnsembl
+   a r2r:PropertyMapping;
+   r2r:mappingRef    mp:Gene;
+   r2r:sourcePattern 	"?SUBJ genes:externalLink ?x";
+   r2r:transformation "?id = regexToList('Ensembl:(.+)', ?x)";
+   r2r:targetPattern
+   		"?SUBJ smwprop:EnsemblId ?'id'^^xsd:string";
+   .
+mp:GeneLinkHGNC
+   a r2r:PropertyMapping;
+   r2r:mappingRef    mp:Gene;
+   r2r:sourcePattern 	"?SUBJ genes:externalLink ?x";
+   r2r:transformation "?id = regexToList('HGNC:(.+)', ?x)";
+   r2r:targetPattern
+   		"?SUBJ smwprop:HGNCId ?'id'^^xsd:int";
+   .
+mp:GeneLinkHPRD
+   a r2r:PropertyMapping;
+   r2r:mappingRef    mp:Gene;
+   r2r:sourcePattern 	"?SUBJ genes:externalLink ?x";
+   r2r:transformation "?id = regexToList('HPRD:(.+)', ?x)";
+   r2r:targetPattern
+   		"?SUBJ smwprop:HPRDId ?'id'^^xsd:int";
+   .
+mp:GeneLinkNCBIGI
+   a r2r:PropertyMapping;
+   r2r:mappingRef    mp:Gene;
+   r2r:sourcePattern 	"?SUBJ genes:externalLink ?x";
+   r2r:transformation "?id = regexToList('NCBI-GI:(.+)', ?x)";
+   r2r:targetPattern
+   		"?SUBJ smwprop:NCBIGIId ?'id'^^xsd:int";
+   .
+mp:GeneLinkNCBIGeneID
+   a r2r:PropertyMapping;
+   r2r:mappingRef    mp:Gene;
+   r2r:sourcePattern 	"?SUBJ genes:externalLink ?x";
+   r2r:transformation "?id = regexToList('NCBI-GeneID:(.+)', ?x)";
+   r2r:targetPattern
+   		"?SUBJ smwprop:NCBIGeneId ?'id'^^xsd:int";
+   .
+mp:GeneLinkOMIM
+   a r2r:PropertyMapping;
+   r2r:mappingRef    mp:Gene;
+   r2r:sourcePattern 	"?SUBJ genes:externalLink ?x";
+   r2r:transformation "?id = regexToList('OMIM:(.+)', ?x)";
+   r2r:targetPattern
+   		"?SUBJ smwprop:OMIMId ?'id'^^xsd:int";
+   . 
+mp:GeneLinkIMGT
+   a r2r:PropertyMapping;
+   r2r:mappingRef    mp:Gene;
+   r2r:sourcePattern 	"?SUBJ genes:externalLink ?x";
+   r2r:transformation "?id = regexToList('IMGT:(.+)', ?x)";
+   r2r:targetPattern
+   		"?SUBJ smwprop:IMGTId ?'id'^^xsd:string";
+   .
+
+###
+# Disease
+###
+mp:Disease
+   a r2r:ClassMapping;
+   r2r:prefixDefinitions	"""smwcat: <http://halowiki/ob/category#> .
+   							 smwprop: <http://halowiki/ob/property#> .
+   							 pathway: <http://wiking.vulcan.com/neurobase/kegg_pathway/resource/vocab/> .
+   							 genes: <http://wiking.vulcan.com/neurobase/kegg_genes/resource/vocab/> .""";
+   r2r:sourcePattern 	"?SUBJ a genes:disease";
+   r2r:targetPattern	"?SUBJ a smwcat:Disease";
+   .
+
+# Properties of Disease
+mp:DiseaseID
+   a r2r:PropertyMapping;
+   r2r:mappingRef    	mp:Disease;
+   r2r:sourcePattern 	"?SUBJ genes:id ?x";
+   r2r:targetPattern	"?SUBJ smwprop:KeggDiseaseId ?x";
+   .
+
+mp:DiseaseLabel
+   a r2r:PropertyMapping;
+   r2r:mappingRef    	mp:Disease;
+   r2r:sourcePattern 	"?SUBJ rdfs:label ?x";
+   r2r:targetPattern	"?SUBJ smwprop:Label ?x";
+   .
+
+###
+# Pathway
+###
+mp:Pathway
+   a r2r:ClassMapping;
+   r2r:prefixDefinitions	"""smwcat: <http://halowiki/ob/category#> .
+   							 smwprop: <http://halowiki/ob/property#> .
+   							 pathway: <http://wiking.vulcan.com/neurobase/kegg_pathway/resource/vocab/> .
+   							 genes: <http://wiking.vulcan.com/neurobase/kegg_genes/resource/vocab/> .""";
+   r2r:sourcePattern 	"?SUBJ a genes:pathway";
+   r2r:targetPattern	"?SUBJ a smwcat:Pathway";
+   .
+   
+# Properties of Pathway
+mp:PathwayID
+   a r2r:PropertyMapping;
+   r2r:mappingRef    	mp:Pathway;
+   r2r:sourcePattern 	"?SUBJ genes:id ?x";
+   r2r:targetPattern	"?SUBJ smwprop:KeggPathwayId ?x";
+   .
+
+mp:PathwayLabel
+   a r2r:PropertyMapping;
+   r2r:mappingRef    	mp:Pathway;
+   r2r:sourcePattern 	"?SUBJ rdfs:label ?x";
+   r2r:targetPattern	"?SUBJ smwprop:Label ?x";
+   .
