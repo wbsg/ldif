@@ -1,0 +1,95 @@
+# Uniprot to ABA+Uniprot mapping
+# Current scope: uniprot:Gene => aba:Gene, uniprot:Tissue => aba:Structure and uniprot:isolatedFrom => aba:GeneExpression
+# Last revision: 19/07/2010
+
+@prefix r2r: <http://www4.wiwiss.fu-berlin.de/bizer/r2r/> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix mp: <http://www.example.org/smw-lde/smwTransformations/> .
+
+# Uniprot:Gene => aba:Gene
+mp:Gene
+   a r2r:ClassMapping;
+   r2r:prefixDefinitions	"""smwcat: <http://mywiki/resource/category/> .
+							 smwprop: <http://mywiki/resource/property/> .
+							 uniprot: <http://purl.uniprot.org/core/> .
+							 skos: <http://www.w3.org/2004/02/skos/core#> .
+							 rdfs: <http://www.w3.org/2000/01/rdf-schema#> .""";
+   r2r:sourcePattern 	"?SUBJ a uniprot:Gene";
+   r2r:targetPattern	"?SUBJ a smwcat:Gene";
+   .
+   
+mp:GeneName
+   a r2r:PropertyMapping;
+   r2r:mappingRef    mp:Gene;
+   r2r:sourcePattern      "?SUBJ skos:prefLabel ?o";
+   r2r:targetPattern	"?SUBJ smwprop:GeneSymbol ?'o'^^xsd:string";
+   .   
+
+# Uniprot:Protein (encodedBy uniprot:Gene) -> organism -> commonName => aba:Gene -> organism
+#mp:Organism
+#   a r2r:PropertyMapping;
+#   r2r:classMappingRef	mp:Gene;
+#   r2r:sourcePattern	"?protein uniprot:encodedBy ?SUBJ . ?protein uniprot:organism ?organism . ?organism uniprot:commonName ?commonName";
+#   r2r:targetPattern 	"?SUBJ smwprop:Organism ?commonName";
+#   .
+
+# Uniprot:Protein (encodedBy uniprot:Gene) -> rdfs:seeAlso  | database = GeneID: http://purl.uniprot.org/geneid/XXXXX => Gene -> entrezgeneid = XXXXX
+mp:EntrezGeneId
+   a r2r:PropertyMapping;
+   r2r:mappingRef	mp:Gene;
+   r2r:sourcePattern	"?protein uniprot:encodedBy ?SUBJ . ?protein rdfs:seeAlso ?dbentry . ?dbentry uniprot:database 'GeneID'";
+   r2r:transformation "?id = regexToList('http://purl.uniprot.org/geneid/(.+)', ?dbentry)";
+   r2r:targetPattern 	"?SUBJ smwprop:EntrezGeneId ?'id'^^xsd:int";
+   .
+
+# Uniprot:Protein (encodedBy uniprot:Gene) -> rdfs:seeAlso  | database = MGI : http://purl.uniprot.org/mgi/XXXXX => Gene: mgimarkeraccessionid = MGI:XXXXX
+mp:MGIMarkerAccessionId
+   a r2r:PropertyMapping;
+   r2r:mappingRef	mp:Gene;
+   r2r:sourcePattern	"?protein uniprot:encodedBy ?SUBJ . ?protein rdfs:seeAlso ?dbentry . ?dbentry uniprot:database 'MGI'";
+   r2r:transformation "?id = regexToList('http://purl.uniprot.org/mgi/(.+)', ?dbentry)";
+   r2r:targetPattern 	"?SUBJ smwprop:MgiMarkerAccessionId ?'id'^^xsd:string";
+   .
+
+mp:UniprotId
+   a r2r:PropertyMapping;
+   r2r:mappingRef	mp:Gene;
+   r2r:sourcePattern	"?protein uniprot:encodedBy ?SUBJ" ;
+   r2r:transformation "?id = regexToList('http://purl.uniprot.org/uniprot/(.+)', ?protein)";
+   r2r:targetPattern 	"?SUBJ smwprop:UniprotId ?'id'^^xsd:string";
+   .
+   
+# Uniprot:Tissue => aba:Structure
+#mp:Structure
+#   a r2r:ClassMapping;
+#   r2r:prefixDefinitions	"smwcat: <http://mywiki/resource/category/> . smwprop: <http://mywiki/resource/property/> . aba: <http://brain-map.org/gene/0.1#> . uniprot: <http://purl.uniprot.org/core/> . skos: <http://www.w3.org/2004/02/skos/core#> . rdfs: <http://www.w3.org/2000/01/rdf-schema#>";
+#   r2r:sourcePattern 	"?SUBJ a uniprot:Tissue";
+#   r2r:targetPattern	"?SUBJ a smwcat:Structure";
+#   .
+
+#mp:StructureName
+#   a r2r:PropertyMapping;
+#   r2r:classMappingRef	mp:Structure;
+#   r2r:sourcePattern	"?SUBJ rdfs:label ?label .";
+#   r2r:targetPattern	"?SUBJ smwprop:Structurename ?'label'^^xsd:string";
+#   .
+   
+# Uniprot:Protein (encodedBy uniprot:Gene) -> uniprot:isolatedFrom => aba:GeneExpression
+#mp:GeneExpression
+#   a r2r:ClassMapping;
+#   r2r:prefixDefinitions	"smwcat: <http://mywiki/resource/category/> . smwprop: <http://mywiki/resource/property/> . aba: <http://brain-map.org/gene/0.1#> . uniprot: <http://purl.uniprot.org/core/> . skos: <http://www.w3.org/2004/02/skos/core#> . rdfs: <http://www.w3.org/2000/01/rdf-schema#>";
+#   r2r:sourcePattern 	"?protein uniprot:encodedBy ?SUBJ . ?protein uniprot:isolatedFrom ?tissue";
+#   r2r:targetPattern	"<_:#1> a smwcat:GeneExpression",
+#   						"<_:#1> smwprop:Gene ?SUBJ",
+#   						"<_:#1> smwprop:Structure ?tissue";
+#   .
+
+# Uniprot:Protein (encodedBy uniprot:Gene) -> rdfs:seeAlso  | database = KEGG: http://purl.uniprot.org/kegg/XXXXX => Gene -> smwprop:KeggGeneId = XXXXX
+mp:KeggGeneId
+   a r2r:PropertyMapping;
+   r2r:mappingRef	mp:Gene;
+   r2r:sourcePattern	"?protein uniprot:encodedBy ?SUBJ . ?protein rdfs:seeAlso ?dbentry . ?dbentry uniprot:database 'KEGG'";
+   r2r:transformation "?id = regexToList('http://purl.uniprot.org/kegg/(.+)', ?dbentry)";
+   r2r:targetPattern 	"?SUBJ smwprop:KeggGeneId ?'id'^^xsd:string";
+   .

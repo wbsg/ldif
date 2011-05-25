@@ -29,7 +29,6 @@ object Main
 //      debug = true
 
     val configUrl = getClass.getClassLoader.getResource("ldif/local/example/test2/config.xml")
-//    val configUrl = getClass.getClassLoader.getResource(args(0))
     val configFile = new File(configUrl.toString.stripPrefix("file:"))
 //    val configFile = new File(args(args.length-1))
 

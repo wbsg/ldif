@@ -58,7 +58,7 @@ mp:GeneLinkUniProt
    r2r:sourcePattern 	"?SUBJ genes:externalLink ?x";
    r2r:transformation "?id = regexToList('UniProt:(.+)', ?x)";
    r2r:targetPattern
-   		"?SUBJ smwprop:UniProtId ?'id'^^xsd:int";
+   		"?SUBJ smwprop:UniProtId ?'id'^^xsd:string";
    .
 mp:GeneLinkMGI
    a r2r:PropertyMapping;
