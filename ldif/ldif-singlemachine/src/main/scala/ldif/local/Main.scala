@@ -20,15 +20,18 @@ object Main
 {
   def main(args : Array[String])
   {
+    var debug = false
     if(args.length<1) {
       println("No configuration file given.")
       System.exit(1)
     }
+    else if(args.length>=2 && args(0)=="--debug")
+      debug = true
 
 //    val configUrl = getClass.getClassLoader.getResource("ldif/local/example/test2/config.xml")
 //    val configUrl = getClass.getClassLoader.getResource(args(0))
 //    val configFile = new File(configUrl.toString.stripPrefix("file:"))
-    val configFile = new File(args(0))
+    val configFile = new File(args(args.length-1))
     stopWatch.getTimeSpanInSeconds
     val config = LdifConfiguration.load(configFile)
     println("Time needed to load config file: " + stopWatch.getTimeSpanInSeconds + "s")
@@ -36,12 +39,16 @@ object Main
     val dumpReader = loadDump(config.sourceDir)
     println("Time needed to load dump: " + stopWatch.getTimeSpanInSeconds + "s")
     println("Number of triples after loading the dump: " + dumpReader.size)
-//    writeOutput(config.outputFile, dumpReader)
+
+    if(debug==true)
+      writeDebugOutput("dump", config.outputFile, dumpReader)
 
     val r2rReader = mapQuads(config.mappingFile, dumpReader)
     println("Time needed to build entities and map data: " + stopWatch.getTimeSpanInSeconds + "s")
     println("Number of triples after mapping the input dump: " + r2rReader.size)
-//    writeOutput(config.outputFile, r2rReader)
+
+    if(debug==true)
+      writeDebugOutput("r2r", config.outputFile, r2rReader)
 
     val linkReader = generateLinks(config.linkSpecDir, r2rReader)
     println("Time needed to build entities and link data: " + stopWatch.getTimeSpanInSeconds + "s")
@@ -125,13 +132,21 @@ object Main
 
     while(!reader.isEmpty)
     {
-      writer.write(reader.read + " .\n")
+      writer.write(reader.read.toNQuadFormat + " .\n")
       count += 1
     }
 
     writer.close()
 
     println(count + " Quads written")
+  }
+
+  def writeDebugOutput(phase: String, outputFile: File, reader: QuadReader) {
+    val newOutputFile = new File(outputFile.getAbsolutePath + "." + phase)
+    if(!reader.isInstanceOf[QuadQueue])
+      return
+    val clonedReader = reader.asInstanceOf[QuadQueue].clone
+    writeOutput(newOutputFile, clonedReader)
   }
 
   def buildEntities(reader : QuadReader, entityDescriptions : Seq[EntityDescription]) : Seq[EntityReader] =

@@ -1,8 +1,8 @@
 package ldif.local.datasources.dump
 
 import java.net.URL
-import java.io.{FileNotFoundException, InputStream, File}
 import java.util.logging.Logger
+import java.io.{BufferedInputStream, FileNotFoundException, InputStream, File}
 
 //import org.apache.http.{HttpEntity, HttpResponse}
 //import org.apache.http.client.methods.HttpGet
@@ -70,7 +70,7 @@ class DumpLoader(sourceLocation:String) {
           throw e
         }
     }
-    inputStream
+    new BufferedInputStream(inputStream)
   }
 
 
@@ -125,6 +125,6 @@ class DumpLoader(sourceLocation:String) {
     //				}
     //    }
     
-    inputStream
+    new BufferedInputStream(inputStream)
   }
 }
