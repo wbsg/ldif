@@ -9,12 +9,17 @@
 # KEGG GENES mappings
 #####################################################################################################
 
+   
+###
+# Gene
+###
 mp:Gene
    a r2r:ClassMapping;
-   r2r:prefixDefinitions	"""smwcat: <http://halowiki/ob/category#> .
-   							 smwprop: <http://halowiki/ob/property#> .
+   r2r:prefixDefinitions	"""smwcat: <http://mywiki/resource/category/> .
+   							 smwprop: <http://mywiki/resource/property/> .
    							 pathway: <http://wiking.vulcan.com/neurobase/kegg_pathway/resource/vocab/> .
-   							 genes: <http://wiking.vulcan.com/neurobase/kegg_genes/resource/vocab/> .""";
+   							 genes: <http://wiking.vulcan.com/neurobase/kegg_genes/resource/vocab/> .
+							 xsd: <http://www.w3.org/2001/XMLSchema#> .""";
    r2r:sourcePattern 	"?SUBJ a genes:gene";
    r2r:targetPattern	"?SUBJ a smwcat:Gene";
    .
@@ -24,19 +29,19 @@ mp:GeneID
    a r2r:PropertyMapping;
    r2r:mappingRef    	mp:Gene;
    r2r:sourcePattern 	"?SUBJ genes:GeneId ?x";
-   r2r:targetPattern	"?SUBJ smwprop:KeggGeneId ?x";
+   r2r:targetPattern	"?SUBJ smwprop:KeggGeneId ?'x'^^xsd:string";
    .
 mp:GeneDefinition
    a r2r:PropertyMapping;
    r2r:mappingRef    	mp:Gene;
    r2r:sourcePattern 	"?SUBJ genes:definition ?x";
-   r2r:targetPattern	"?SUBJ smwprop:Description ?x";
+   r2r:targetPattern	"?SUBJ smwprop:Description ?'x'^^xsd:string";
    .
 mp:GeneName
    a r2r:PropertyMapping;
    r2r:mappingRef    	mp:Gene;
    r2r:sourcePattern 	"?SUBJ genes:name ?x";
-   r2r:targetPattern	"?SUBJ smwprop:Label ?x";
+   r2r:targetPattern	"?SUBJ smwprop:Label ?'x'^^xsd:string";
    .
 mp:hasPathway
 	a r2r:PropertyMapping;
@@ -57,7 +62,7 @@ mp:GeneLinkUniProt
    r2r:sourcePattern 	"?SUBJ genes:externalLink ?x";
    r2r:transformation "?id = regexToList('UniProt:(.+)', ?x)";
    r2r:targetPattern
-   		"?SUBJ smwprop:UniProtId ?'id'^^xsd:string";
+   		"?SUBJ smwprop:UniprotId ?'id'^^xsd:string";
    .
 mp:GeneLinkMGI
    a r2r:PropertyMapping;
@@ -81,7 +86,7 @@ mp:GeneLinkHGNC
    r2r:sourcePattern 	"?SUBJ genes:externalLink ?x";
    r2r:transformation "?id = regexToList('HGNC:(.+)', ?x)";
    r2r:targetPattern
-   		"?SUBJ smwprop:HGNCId ?'id'^^xsd:int";
+   		"?SUBJ smwprop:HGNCId ?'id'^^xsd:string";
    .
 mp:GeneLinkHPRD
    a r2r:PropertyMapping;
@@ -89,7 +94,7 @@ mp:GeneLinkHPRD
    r2r:sourcePattern 	"?SUBJ genes:externalLink ?x";
    r2r:transformation "?id = regexToList('HPRD:(.+)', ?x)";
    r2r:targetPattern
-   		"?SUBJ smwprop:HPRDId ?'id'^^xsd:int";
+   		"?SUBJ smwprop:HPRDId ?'id'^^xsd:string";
    .
 mp:GeneLinkNCBIGI
    a r2r:PropertyMapping;
@@ -97,7 +102,7 @@ mp:GeneLinkNCBIGI
    r2r:sourcePattern 	"?SUBJ genes:externalLink ?x";
    r2r:transformation "?id = regexToList('NCBI-GI:(.+)', ?x)";
    r2r:targetPattern
-   		"?SUBJ smwprop:NCBIGIId ?'id'^^xsd:int";
+   		"?SUBJ smwprop:NCBIGIId ?'id'^^xsd:string";
    .
 mp:GeneLinkNCBIGeneID
    a r2r:PropertyMapping;
@@ -105,7 +110,7 @@ mp:GeneLinkNCBIGeneID
    r2r:sourcePattern 	"?SUBJ genes:externalLink ?x";
    r2r:transformation "?id = regexToList('NCBI-GeneID:(.+)', ?x)";
    r2r:targetPattern
-   		"?SUBJ smwprop:NCBIGeneId ?'id'^^xsd:int";
+   		"?SUBJ smwprop:NCBIGeneId ?'id'^^xsd:string";
    .
 mp:GeneLinkOMIM
    a r2r:PropertyMapping;
@@ -113,7 +118,7 @@ mp:GeneLinkOMIM
    r2r:sourcePattern 	"?SUBJ genes:externalLink ?x";
    r2r:transformation "?id = regexToList('OMIM:(.+)', ?x)";
    r2r:targetPattern
-   		"?SUBJ smwprop:OMIMId ?'id'^^xsd:int";
+   		"?SUBJ smwprop:OMIMId ?'id'^^xsd:string";
    . 
 mp:GeneLinkIMGT
    a r2r:PropertyMapping;
@@ -129,10 +134,11 @@ mp:GeneLinkIMGT
 ###
 mp:Disease
    a r2r:ClassMapping;
-   r2r:prefixDefinitions	"""smwcat: <http://halowiki/ob/category#> .
-   							 smwprop: <http://halowiki/ob/property#> .
+   r2r:prefixDefinitions	"""smwcat: <http://mywiki/resource/category/> .
+   							 smwprop: <http://mywiki/resource/property/> .
    							 pathway: <http://wiking.vulcan.com/neurobase/kegg_pathway/resource/vocab/> .
-   							 genes: <http://wiking.vulcan.com/neurobase/kegg_genes/resource/vocab/> .""";
+   							 genes: <http://wiking.vulcan.com/neurobase/kegg_genes/resource/vocab/> .
+							 xsd: <http://www.w3.org/2001/XMLSchema#> .""";
    r2r:sourcePattern 	"?SUBJ a genes:disease";
    r2r:targetPattern	"?SUBJ a smwcat:Disease";
    .
@@ -142,14 +148,14 @@ mp:DiseaseID
    a r2r:PropertyMapping;
    r2r:mappingRef    	mp:Disease;
    r2r:sourcePattern 	"?SUBJ genes:id ?x";
-   r2r:targetPattern	"?SUBJ smwprop:KeggDiseaseId ?x";
+   r2r:targetPattern	"?SUBJ smwprop:KeggDiseaseId ?'x'^^xsd:string";
    .
 
 mp:DiseaseLabel
    a r2r:PropertyMapping;
    r2r:mappingRef    	mp:Disease;
    r2r:sourcePattern 	"?SUBJ rdfs:label ?x";
-   r2r:targetPattern	"?SUBJ smwprop:Label ?x";
+   r2r:targetPattern	"?SUBJ smwprop:Label ?'x'^^xsd:string";
    .
 
 ###
@@ -157,10 +163,11 @@ mp:DiseaseLabel
 ###
 mp:Pathway
    a r2r:ClassMapping;
-   r2r:prefixDefinitions	"""smwcat: <http://halowiki/ob/category#> .
-   							 smwprop: <http://halowiki/ob/property#> .
+   r2r:prefixDefinitions	"""smwcat: <http://mywiki/resource/category/> .
+   							 smwprop: <http://mywiki/resource/property/> .
    							 pathway: <http://wiking.vulcan.com/neurobase/kegg_pathway/resource/vocab/> .
-   							 genes: <http://wiking.vulcan.com/neurobase/kegg_genes/resource/vocab/> .""";
+   							 genes: <http://wiking.vulcan.com/neurobase/kegg_genes/resource/vocab/> .
+							 xsd: <http://www.w3.org/2001/XMLSchema#> .""";
    r2r:sourcePattern 	"?SUBJ a genes:pathway";
    r2r:targetPattern	"?SUBJ a smwcat:Pathway";
    .
@@ -170,22 +177,23 @@ mp:PathwayID
    a r2r:PropertyMapping;
    r2r:mappingRef    	mp:Pathway;
    r2r:sourcePattern 	"?SUBJ genes:id ?x";
-   r2r:targetPattern	"?SUBJ smwprop:KeggPathwayId ?x";
+   r2r:targetPattern	"?SUBJ smwprop:KeggPathwayId ?'x'^^xsd:string";
    .
 
 mp:PathwayLabel
    a r2r:PropertyMapping;
    r2r:mappingRef    	mp:Pathway;
    r2r:sourcePattern 	"?SUBJ rdfs:label ?x";
-   r2r:targetPattern	"?SUBJ smwprop:Label ?x";
-    .
-
+   r2r:targetPattern	"?SUBJ smwprop:Label ?'x'^^xsd:string";
+   .
 
 #####################################################################################################
 # ABA mappings
 #####################################################################################################
 
-
+###
+# Gene
+###
 mp:GeneABA
    a r2r:ClassMapping;
    r2r:prefixDefinitions	"""smwcat: <http://mywiki/resource/category/> .
@@ -197,7 +205,7 @@ mp:GeneABA
 							 xsd: <http://www.w3.org/2001/XMLSchema#>""";
    r2r:sourcePattern 	"?SUBJ a aba:gene";
    r2r:targetPattern	"?SUBJ a smwcat:Gene";
-.
+   .
 
 # Properties of Gene
 mp:GeneidABA
@@ -214,7 +222,7 @@ mp:EntrezgeneidABA
    r2r:targetPattern	"?SUBJ smwprop:EntrezGeneId ?'x'^^xsd:int";	###MER: actually we must translate from int to string here
    .
    
-mp:GenenameABA
+mp:Genename
    a r2r:PropertyMapping;
    r2r:mappingRef    	mp:GeneABA;
    r2r:sourcePattern 	"?SUBJ aba:genename ?x";
@@ -250,6 +258,7 @@ mp:GenealiasABA
 # UNIPROT mappings
 #####################################################################################################
   
+
 # Uniprot:Gene => aba:Gene
 mp:GeneUNIPROT
    a r2r:ClassMapping;
@@ -269,14 +278,6 @@ mp:GeneNameUNIPROT
    r2r:targetPattern	"?SUBJ smwprop:GeneSymbol ?'o'^^xsd:string";
    .   
 
-# Uniprot:Protein (encodedBy uniprot:Gene) -> organism -> commonName => aba:Gene -> organism
-#mp:OrganismUNIPROT
-#   a r2r:PropertyMapping;
-#   r2r:classMappingRef	mp:GeneUNIPROT;
-#   r2r:sourcePattern	"?protein uniprot:encodedBy ?SUBJ . ?protein uniprot:organism ?organism . ?organism uniprot:commonName ?commonName";
-#   r2r:targetPattern 	"?SUBJ smwprop:Organism ?commonName";
-#   .
-
 # Uniprot:Protein (encodedBy uniprot:Gene) -> rdfs:seeAlso  | database = GeneID: http://purl.uniprot.org/geneid/XXXXX => Gene -> entrezgeneid = XXXXX
 mp:EntrezGeneIdUNIPROT
    a r2r:PropertyMapping;
@@ -295,39 +296,14 @@ mp:MGIMarkerAccessionIdUNIPROT
    r2r:targetPattern 	"?SUBJ smwprop:MgiMarkerAccessionId ?'id'^^xsd:string";
    .
 
-mp:UniprotId
+mp:UniprotIdUNIPROT
    a r2r:PropertyMapping;
    r2r:mappingRef	mp:GeneUNIPROT;
    r2r:sourcePattern	"?protein uniprot:encodedBy ?SUBJ" ;
    r2r:transformation "?id = regexToList('http://purl.uniprot.org/uniprot/(.+)', ?protein)";
    r2r:targetPattern 	"?SUBJ smwprop:UniprotId ?'id'^^xsd:string";
    .
-   
-# Uniprot:Tissue => aba:Structure
-#mp:Structure
-#   a r2r:ClassMapping;
-#   r2r:prefixDefinitions	"smwcat: <http://mywiki/resource/category/> . smwprop: <http://mywiki/resource/property/> . aba: <http://brain-map.org/gene/0.1#> . uniprot: <http://purl.uniprot.org/core/> . skos: <http://www.w3.org/2004/02/skos/core#> . rdfs: <http://www.w3.org/2000/01/rdf-schema#>";
-#   r2r:sourcePattern 	"?SUBJ a uniprot:Tissue";
-#   r2r:targetPattern	"?SUBJ a smwcat:Structure";
-#   .
-
-#mp:StructureName
-#   a r2r:PropertyMapping;
-#   r2r:classMappingRef	mp:Structure;
-#   r2r:sourcePattern	"?SUBJ rdfs:label ?label .";
-#   r2r:targetPattern	"?SUBJ smwprop:Structurename ?'label'^^xsd:string";
-#   .
-   
-# Uniprot:Protein (encodedBy uniprot:Gene) -> uniprot:isolatedFrom => aba:GeneExpression
-#mp:GeneExpression
-#   a r2r:ClassMapping;
-#   r2r:prefixDefinitions	"smwcat: <http://mywiki/resource/category/> . smwprop: <http://mywiki/resource/property/> . aba: <http://brain-map.org/gene/0.1#> . uniprot: <http://purl.uniprot.org/core/> . skos: <http://www.w3.org/2004/02/skos/core#> . rdfs: <http://www.w3.org/2000/01/rdf-schema#>";
-#   r2r:sourcePattern 	"?protein uniprot:encodedBy ?SUBJ . ?protein uniprot:isolatedFrom ?tissue";
-#   r2r:targetPattern	"<_:#1> a smwcat:GeneExpression",
-#   						"<_:#1> smwprop:Gene ?SUBJ",
-#   						"<_:#1> smwprop:Structure ?tissue";
-#   .
-
+ 
 # Uniprot:Protein (encodedBy uniprot:Gene) -> rdfs:seeAlso  | database = KEGG: http://purl.uniprot.org/kegg/XXXXX => Gene -> smwprop:KeggGeneId = XXXXX
 mp:KeggGeneIdUNIPROT
    a r2r:PropertyMapping;
@@ -338,61 +314,60 @@ mp:KeggGeneIdUNIPROT
    .
 
 
-
-
-
 #####################################################################################################
-# Pharm mappings
+# PHARMGKB mappings
 #####################################################################################################
+
 
 ###
 # Pathway
 ###
-mp:PathwayPharm
+mp:PathwayPHARMGKB
    a r2r:ClassMapping;
-   r2r:prefixDefinitions	"""smwcat: <http://halowiki/ob/category#> .
-   							 smwprop: <http://halowiki/ob/property#> .
-   							 pharmgkb: <http://chem2bio2rdf.org/pharmgkb/resource/> .""";
+   r2r:prefixDefinitions	"""smwcat: <http://mywiki/resource/category/> .
+   							 smwprop: <http://mywiki/resource/property/> .
+   							 pharmgkb: <http://chem2bio2rdf.org/pharmgkb/resource/> .
+							 xsd:     <http://www.w3.org/2001/XMLSchema#> .""";
    r2r:sourcePattern 	"?SUBJ a pharmgkb:PharmGKB_Pathways";
    r2r:targetPattern	"?SUBJ a smwcat:Pathway";
    .
    
 # Properties of Pathway
-mp:PathwayIDPharm
+mp:PathwayIDPHARMGKB
    a r2r:PropertyMapping;
-   r2r:mappingRef    	mp:PathwayPharm;
+   r2r:mappingRef    	mp:PathwayPHARMGKB;
    r2r:sourcePattern 	"?SUBJ pharmgkb:PharmGKB_Accession_Id ?x";
-   r2r:targetPattern	"?SUBJ smwprop:PharmGKBId ?x";
+   r2r:targetPattern	"?SUBJ smwprop:PharmGKBId ?'x'^^xsd:string";
    .
 
-mp:PathwayLabelPharm
+mp:PathwayLabelPHARMGKB
    a r2r:PropertyMapping;
-   r2r:mappingRef    	mp:PathwayPharm;
+   r2r:mappingRef    	mp:PathwayPHARMGKB;
    r2r:sourcePattern 	"?SUBJ pharmgkb:Name ?x";
-   r2r:targetPattern	"?SUBJ smwprop:Label ?x";
+   r2r:targetPattern	"?SUBJ smwprop:Label ?'x'^^xsd:string";
    .
    
-mp:PathwayHasDiseasePharm
+mp:PathwayHasDiseasePHARMGKB
    a r2r:PropertyMapping;
-   r2r:mappingRef    	mp:PathwayPharm;
+   r2r:mappingRef    	mp:PathwayPHARMGKB;
    r2r:sourcePattern 	"""?rel rdf:type pharmgkb:PharmGKB_Relationships .
    						?rel pharmgkb:Related_Pathways ?SUBJ .
    						?rel pharmgkb:c2b2r_Related_Diseases ?x""";
    r2r:targetPattern	"?SUBJ smwprop:IsDisruptedBy ?x";
    .
    
-mp:PathwayHasDrugPharm
+mp:PathwayHasDrugPHARMGKB
    a r2r:PropertyMapping;
-   r2r:mappingRef    	mp:PathwayPharm;
+   r2r:mappingRef    	mp:PathwayPHARMGKB;
    r2r:sourcePattern 	"""?rel rdf:type pharmgkb:PharmGKB_Relationships .
    						?rel pharmgkb:Related_Pathways ?SUBJ .
    						?rel pharmgkb:Related_Drugs ?x""";
    r2r:targetPattern	"?SUBJ smwprop:IsTargetedBy ?x";
    .
 
-mp:PathwayHasGenePharm
+mp:PathwayHasGenePHARMGKB
    a r2r:PropertyMapping;
-   r2r:mappingRef    	mp:PathwayPharm;
+   r2r:mappingRef    	mp:PathwayPHARMGKB;
    r2r:sourcePattern 	"""?rel rdf:type pharmgkb:PharmGKB_Relationships .
    						?rel pharmgkb:Related_Pathways ?SUBJ .
    						?rel pharmgkb:Related_Genes ?x""";
@@ -402,67 +377,68 @@ mp:PathwayHasGenePharm
 ###
 # Disease
 ###
-mp:DiseasePharm
+mp:DiseasePHARMGKB
    a r2r:ClassMapping;
-   r2r:prefixDefinitions	"""smwcat: <http://halowiki/ob/category#> .
-   							 smwprop: <http://halowiki/ob/property#> .
-   							 pharmgkb: <http://chem2bio2rdf.org/pharmgkb/resource/> .""";
+   r2r:prefixDefinitions	"""smwcat: <http://mywiki/resource/category/> .
+   							 smwprop: <http://mywiki/resource/property/> .
+   							 pharmgkb: <http://chem2bio2rdf.org/pharmgkb/resource/> .
+							 xsd:     <http://www.w3.org/2001/XMLSchema#> .""";
    r2r:sourcePattern 	"?SUBJ a pharmgkb:PharmGKB_Diseases";
    r2r:targetPattern	"?SUBJ a smwcat:Disease";
    .
 
 # Properties of Disease
-mp:DiseaseIDPharm
+mp:DiseaseIDPHARMGKB
    a r2r:PropertyMapping;
-   r2r:mappingRef    	mp:DiseasePharm;
+   r2r:mappingRef    	mp:DiseasePHARMGKB;
    r2r:sourcePattern 	"?SUBJ pharmgkb:PharmGKB_Accession_Id ?x";
-   r2r:targetPattern	"?SUBJ smwprop:PharmGKBId ?x";
+   r2r:targetPattern	"?SUBJ smwprop:PharmGKBId ?'x'^^xsd:string";
    .
    
-mp:DiseaseMeSHIDPharm
+mp:DiseaseMeSHIDPHARMGKB
    a r2r:PropertyMapping;
-   r2r:mappingRef    	mp:DiseasePharm;
+   r2r:mappingRef    	mp:DiseasePHARMGKB;
    r2r:sourcePattern 	"?SUBJ pharmgkb:MeSH_Id ?x";
-   r2r:targetPattern	"?SUBJ smwprop:MeSHId ?x";
+   r2r:targetPattern	"?SUBJ smwprop:MeSHId ?'x'^^xsd:string";
    .
 
-mp:DiseaseLabelPharm
+mp:DiseaseLabelPHARMGKB
    a r2r:PropertyMapping;
-   r2r:mappingRef    	mp:DiseasePharm;
+   r2r:mappingRef    	mp:DiseasePHARMGKB;
    r2r:sourcePattern 	"?SUBJ pharmgkb:Name ?x";
-   r2r:targetPattern	"?SUBJ smwprop:Label ?x";
+   r2r:targetPattern	"?SUBJ smwprop:Label ?'x'^^xsd:string";
    .
    
 # FIXME doesn't work
-#mp:DiseaseAlternativeLabel
-#   a r2r:PropertyMapping;
-#   r2r:mappingRef    	mp:Disease;
-#   r2r:sourcePattern 	"?SUBJ pharmgkb:Alternate_Names ?x";
-#   r2r:transformation 	"""?labels = regexToList('"(.+)"', ?x)""";
-#   r2r:targetPattern	"?SUBJ smwprop:AlternativeLabel ?labels";
-#   .
-   
-mp:DiseaseHasPathwayPharm
+mp:DiseaseAlternativeLabelPHARMGKB
    a r2r:PropertyMapping;
-   r2r:mappingRef    	mp:DiseasePharm;
+   r2r:mappingRef    	mp:DiseasePHARMGKB;
+   r2r:sourcePattern 	"?SUBJ pharmgkb:Alternate_Names ?x";
+   r2r:transformation 	"""?labels = itRegexToList('"(.+?)"', ?x)""";
+   r2r:targetPattern	"?SUBJ smwprop:AlternativeLabel ?'labels'^^xsd:string";
+   .
+   
+mp:DiseaseHasPathwayPHARMGKB
+   a r2r:PropertyMapping;
+   r2r:mappingRef    	mp:DiseasePHARMGKB;
    r2r:sourcePattern 	"""?rel rdf:type pharmgkb:PharmGKB_Relationships .
    						?rel pharmgkb:c2b2r_Related_Diseases ?SUBJ .
    						?rel pharmgkb:Related_Pathways ?x""";
    r2r:targetPattern	"?SUBJ smwprop:Disrupts ?x";
    .
    
-mp:DiseaseHasDrugPharm
+mp:DiseaseHasDrugPHARMGKB
    a r2r:PropertyMapping;
-   r2r:mappingRef    	mp:DiseasePharm;
+   r2r:mappingRef    	mp:DiseasePHARMGKB;
    r2r:sourcePattern 	"""?rel rdf:type pharmgkb:PharmGKB_Relationships .
    						?rel pharmgkb:c2b2r_Related_Diseases ?SUBJ .
    						?rel pharmgkb:Related_Drugs ?x""";
    r2r:targetPattern	"?SUBJ smwprop:IsTreatedBy ?x";
    .
 
-mp:DiseaseHasGenePharm
+mp:DiseaseHasGenePHARMGKB
    a r2r:PropertyMapping;
-   r2r:mappingRef    	mp:DiseasePharm;
+   r2r:mappingRef    	mp:DiseasePHARMGKB;
    r2r:sourcePattern 	"""?rel rdf:type pharmgkb:PharmGKB_Relationships .
    						?rel pharmgkb:c2b2r_Related_Diseases ?SUBJ .
    						?rel pharmgkb:Related_Genes ?x""";
@@ -472,69 +448,70 @@ mp:DiseaseHasGenePharm
 ###
 # Drug
 ###
-mp:DrugPharm
+mp:DrugPHARMGKB
    a r2r:ClassMapping;
-   r2r:prefixDefinitions	"""smwcat: <http://halowiki/ob/category#> .
-   							 smwprop: <http://halowiki/ob/property#> .
-   							 pharmgkb: <http://chem2bio2rdf.org/pharmgkb/resource/> .""";
+   r2r:prefixDefinitions	"""smwcat: <http://mywiki/resource/category/> .
+   							 smwprop: <http://mywiki/resource/property/> .
+   							 pharmgkb: <http://chem2bio2rdf.org/pharmgkb/resource/> .
+							 xsd:     <http://www.w3.org/2001/XMLSchema#> .""";
    r2r:sourcePattern 	"?SUBJ a pharmgkb:pharmGKB_Drugs";
    r2r:targetPattern	"?SUBJ a smwcat:Drug";
    .
 
 # Properties of Drug
-mp:DrugIDPharm
+mp:DrugIDPHARMGKB
    a r2r:PropertyMapping;
-   r2r:mappingRef    	mp:DrugPharm;
+   r2r:mappingRef    	mp:DrugPHARMGKB;
    r2r:sourcePattern 	"?SUBJ pharmgkb:PharmGKB_Accession_Id ?x";
-   r2r:targetPattern	"?SUBJ smwprop:PharmGKBId ?x";
+   r2r:targetPattern	"?SUBJ smwprop:PharmGKBId ?'x'^^xsd:string";
    .
 
 # Properties of Drug
-mp:DrugDrugbankIDPharm
+mp:DrugDrugbankIDPHARMGKB
    a r2r:PropertyMapping;
-   r2r:mappingRef    	mp:DrugPharm;
+   r2r:mappingRef    	mp:DrugPHARMGKB;
    r2r:sourcePattern 	"?SUBJ pharmgkb:DrugBank_Id ?x";
-   r2r:transformation "?id = regexToList('http://chem2bio2rdf.org/drugbank/resource/drugbank_drug/(.+)', ?x)";
-   r2r:targetPattern	"?SUBJ smwprop:DrugBankId ?id";
+   r2r:transformation "?id = regexToList('http://chem2bio2rdf.org/drugbank/resource/drugbank_drug/(.+?)', ?x)";
+   r2r:targetPattern	"?SUBJ smwprop:DrugBankId ?'id'^^xsd:string";
    .
 
-mp:DrugLabelPharm
+mp:DrugLabelPHARMGKB
    a r2r:PropertyMapping;
-   r2r:mappingRef    	mp:DrugPharm;
+   r2r:mappingRef    	mp:DrugPHARMGKB;
    r2r:sourcePattern 	"?SUBJ pharmgkb:Name ?x";
-   r2r:targetPattern	"?SUBJ smwprop:Label ?x";
+   r2r:targetPattern	"?SUBJ smwprop:Label ?'x'^^xsd:string";
    .
 
 # FIXME doesn't work
-#mp:DrugAlternativeLabel
-#   a r2r:PropertyMapping;
-#   r2r:mappingRef    	mp:Drug;
-#   r2r:sourcePattern 	"?SUBJ pharmgkb:Alternate_Names ?x";
-#   r2r:transformation 	"""?labels = regexToList('"(.+)"', ?x)""";
-#   r2r:targetPattern	"?SUBJ smwprop:AlternativeLabel ?labels";
-#   .
-
-mp:DrugHasPathwayPharm
+mp:DrugAlternativeLabelPHARMGKB
    a r2r:PropertyMapping;
-   r2r:mappingRef    	mp:DrugPharm;
+   r2r:mappingRef    	mp:DrugPHARMGKB;
+   r2r:sourcePattern 	"?SUBJ pharmgkb:Alternate_Names ?x";
+   r2r:transformation 	"""?labels = itRegexToList('"(.+?)"', ?x)""";
+   r2r:targetPattern	"?SUBJ smwprop:AlternativeLabel ?'labels'^^xsd:string";
+   .
+
+mp:DrugHasPathwayPHARMGKB
+   a r2r:PropertyMapping;
+   r2r:mappingRef    	mp:DrugPHARMGKB;
    r2r:sourcePattern 	"""?rel rdf:type pharmgkb:PharmGKB_Relationships .
    						?rel pharmgkb:Related_Drugs ?SUBJ .
    						?rel pharmgkb:Related_Pathways ?x""";
    r2r:targetPattern	"?SUBJ smwprop:Targets ?x";
    .
    
-mp:DrugHasDiseasePharm
+mp:DrugHasDiseasePHARMGKB
    a r2r:PropertyMapping;
-   r2r:mappingRef    	mp:DrugPharm;
+   r2r:mappingRef    	mp:DrugPHARMGKB;
    r2r:sourcePattern 	"""?rel rdf:type pharmgkb:PharmGKB_Relationships .
    						?rel pharmgkb:Related_Drugs ?SUBJ .
    						?rel pharmgkb:c2b2r_Related_Diseases ?x""";
    r2r:targetPattern	"?SUBJ smwprop:Treats ?x";
    .
 
-mp:DrugHasGenePharm
+mp:DrugHasGenePHARMGKB
    a r2r:PropertyMapping;
-   r2r:mappingRef    	mp:DrugPharm;
+   r2r:mappingRef    	mp:DrugPHARMGKB;
    r2r:sourcePattern 	"""?rel rdf:type pharmgkb:PharmGKB_Relationships .
    						?rel pharmgkb:Related_Drugs ?SUBJ .
    						?rel pharmgkb:Related_Genes ?x""";
@@ -546,76 +523,80 @@ mp:DrugHasGenePharm
 ###
 # Gene
 ###
-mp:GenePharm
+mp:GenePHARMGKB
    a r2r:ClassMapping;
-   r2r:prefixDefinitions	"""smwcat: <http://halowiki/ob/category#> .
-   							 smwprop: <http://halowiki/ob/property#> .
-   							 pharmgkb: <http://chem2bio2rdf.org/pharmgkb/resource/> .""";
+   r2r:prefixDefinitions	"""smwcat: <http://mywiki/resource/category/> .
+   							 smwprop: <http://mywiki/resource/property/> .
+   							 pharmgkb: <http://chem2bio2rdf.org/pharmgkb/resource/> .
+							 xsd:     <http://www.w3.org/2001/XMLSchema#> .""";
    r2r:sourcePattern 	"?SUBJ a pharmgkb:PharmGKB_Genes";
    r2r:targetPattern	"?SUBJ a smwcat:Gene";
    .
 
 # Properties of Gene
-mp:GeneIDPharm
+mp:GeneIDPHARMGKB
    a r2r:PropertyMapping;
-   r2r:mappingRef    	mp:GenePharm;
+   r2r:mappingRef    	mp:GenePHARMGKB;
    r2r:sourcePattern 	"?SUBJ pharmgkb:PharmGKB_Accession_Id ?x";
-   r2r:targetPattern	"?SUBJ smwprop:PharmGKBId ?x";
+   r2r:targetPattern	"?SUBJ smwprop:PharmGKBId ?'x'^^xsd:string";
    .
 
-mp:GeneLabelPharm
+mp:GeneLabelPHARMGKB
    a r2r:PropertyMapping;
-   r2r:mappingRef    	mp:GenePharm;
+   r2r:mappingRef    	mp:GenePHARMGKB;
    r2r:sourcePattern 	"?SUBJ pharmgkb:Name ?x";
-   r2r:targetPattern	"?SUBJ smwprop:Label ?x";
+   r2r:targetPattern	"?SUBJ smwprop:Label ?'x'^^xsd:string";
    .
 
-mp:GeneEntrezGeneIDPharm
+mp:GeneEntrezGeneIDPHARMGKB
    a r2r:PropertyMapping;
-   r2r:mappingRef    	mp:GenePharm;
+   r2r:mappingRef    	mp:GenePHARMGKB;
    r2r:sourcePattern 	"?SUBJ pharmgkb:Entrez_Id ?x";
-   r2r:transformation "?id = regexToList('http://bio2rdf.org/geneid:(.+)', ?x)";
+   r2r:transformation "?id = regexToList('http://bio2rdf.org/geneid:(.+?)', ?x)";
    r2r:targetPattern	"?SUBJ smwprop:EntrezGeneId ?'id'^^xsd:int";
    .
 
-mp:GeneSymbolPharm
+mp:GeneSymbolPHARMGKB
    a r2r:PropertyMapping;
-   r2r:mappingRef    	mp:GenePharm;
+   r2r:mappingRef    	mp:GenePHARMGKB;
    r2r:sourcePattern 	"?SUBJ pharmgkb:Symbol ?x";
-   r2r:transformation "?id = regexToList('http://chem2bio2rdf.org/uniprot/resource/gene/(.+)', ?x)";
-   r2r:targetPattern	"?SUBJ smwprop:GeneSymbol ?id";
+   r2r:transformation "?id = regexToList('http://chem2bio2rdf.org/uniprot/resource/gene/(.+?)', ?x)";
+   r2r:targetPattern	"?SUBJ smwprop:GeneSymbol ?'id'^^xsd:string";
    .
 
 # TBD
-#mp:GeneAlternativeSymbols
-#   a r2r:PropertyMapping;
-#   r2r:mappingRef    	mp:Gene;
-#   r2r:sourcePattern 	"?SUBJ pharmgkb:Alternate_Symbols ?x";
-#   r2r:transformation 	"""?labels = regexToList('"(.+)"', ?x)""";
-#   r2r:targetPattern	"?SUBJ smwprop:AlternativeLabel ?labels";
-#   .
+mp:GeneAlternativeSymbolsPHARMGKB
+   a r2r:PropertyMapping;
+   r2r:mappingRef    	mp:GenePHARMGKB;
+   r2r:sourcePattern 	"?SUBJ pharmgkb:Alternate_Symbols ?x";
+   r2r:transformation 	"""?labels = itRegexToList('"(.+?)"', ?x)""";
+   r2r:targetPattern	"?SUBJ smwprop:AlternativeLabel ?'labels'^^xsd:string";
+   .
 
 # FIXME doesn't work
-#mp:GeneAlternativeLabel
-#   a r2r:PropertyMapping;
-#   r2r:mappingRef    	mp:Gene;
-#   r2r:sourcePattern 	"?SUBJ pharmgkb:Alternate_Names ?x";
-#   r2r:transformation 	"""?labels = regexToList('"(.+)"', ?x)""";
-#   r2r:targetPattern	"?SUBJ smwprop:AlternativeLabel ?labels";
-#   .
-
-mp:GeneUniProtIDPharm
+mp:GeneAlternativeLabelPHARMGKB
    a r2r:PropertyMapping;
-   r2r:mappingRef    	mp:GenePharm;
+   r2r:mappingRef    	mp:GenePHARMGKB;
+   r2r:sourcePattern 	"?SUBJ pharmgkb:Alternate_Names ?x";
+   r2r:transformation 	"""?labels = itRegexToList('"(.+?)"', ?x)""";
+   r2r:targetPattern	"?SUBJ smwprop:AlternativeLabel ?'labels'^^xsd:string";
+   .
+
+mp:GeneUniProtIDPHARMGKB
+   a r2r:PropertyMapping;
+   r2r:mappingRef    	mp:GenePHARMGKB;
    r2r:sourcePattern 	"?SUBJ pharmgkb:UniProt_Id ?x";
-   r2r:transformation "?id = regexToList('http://chem2bio2rdf.org/uniprot/resource/uniprot/(.+)', ?x)";
-   r2r:targetPattern	"?SUBJ smwprop:UniProtId ?id";
+   r2r:transformation "?id = regexToList('http://chem2bio2rdf.org/uniprot/resource/uniprot/(.+?)', ?x)";
+   r2r:targetPattern	"?SUBJ smwprop:UniprotId  ?'id'^^xsd:string";
    .
 
-mp:GeneEnsemblIDPharm
+mp:GeneEnsemblIDPHARMGKB
    a r2r:PropertyMapping;
-   r2r:mappingRef    	mp:GenePharm;
+   r2r:mappingRef    	mp:GenePHARMGKB;
    r2r:sourcePattern 	"?SUBJ pharmgkb:Ensembl_Id ?x";
-   r2r:targetPattern	"?SUBJ smwprop:EnsemblId ?x";
+   r2r:targetPattern	"?SUBJ smwprop:EnsemblId  ?'x'^^xsd:string";
    .
+
+
+
 

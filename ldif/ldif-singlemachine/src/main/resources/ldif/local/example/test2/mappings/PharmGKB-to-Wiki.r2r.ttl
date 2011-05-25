@@ -18,9 +18,10 @@
 ###
 mp:Pathway
    a r2r:ClassMapping;
-   r2r:prefixDefinitions	"""smwcat: <http://halowiki/ob/category#> .
-   							 smwprop: <http://halowiki/ob/property#> .
-   							 pharmgkb: <http://chem2bio2rdf.org/pharmgkb/resource/> .""";
+   r2r:prefixDefinitions	"""smwcat: <http://mywiki/resource/category/> .
+   							 smwprop: <http://mywiki/resource/property/> .
+   							 pharmgkb: <http://chem2bio2rdf.org/pharmgkb/resource/> .
+							 xsd:     <http://www.w3.org/2001/XMLSchema#> .""";
    r2r:sourcePattern 	"?SUBJ a pharmgkb:PharmGKB_Pathways";
    r2r:targetPattern	"?SUBJ a smwcat:Pathway";
    .
@@ -30,14 +31,14 @@ mp:PathwayID
    a r2r:PropertyMapping;
    r2r:mappingRef    	mp:Pathway;
    r2r:sourcePattern 	"?SUBJ pharmgkb:PharmGKB_Accession_Id ?x";
-   r2r:targetPattern	"?SUBJ smwprop:PharmGKBId ?x";
+   r2r:targetPattern	"?SUBJ smwprop:PharmGKBId ?'x'^^xsd:string";
    .
 
 mp:PathwayLabel
    a r2r:PropertyMapping;
    r2r:mappingRef    	mp:Pathway;
    r2r:sourcePattern 	"?SUBJ pharmgkb:Name ?x";
-   r2r:targetPattern	"?SUBJ smwprop:Label ?x";
+   r2r:targetPattern	"?SUBJ smwprop:Label ?'x'^^xsd:string";
    .
    
 mp:PathwayHasDisease
@@ -72,9 +73,10 @@ mp:PathwayHasGene
 ###
 mp:Disease
    a r2r:ClassMapping;
-   r2r:prefixDefinitions	"""smwcat: <http://halowiki/ob/category#> .
-   							 smwprop: <http://halowiki/ob/property#> .
-   							 pharmgkb: <http://chem2bio2rdf.org/pharmgkb/resource/> .""";
+   r2r:prefixDefinitions	"""smwcat: <http://mywiki/resource/category/> .
+   							 smwprop: <http://mywiki/resource/property/> .
+   							 pharmgkb: <http://chem2bio2rdf.org/pharmgkb/resource/> .
+							 xsd:     <http://www.w3.org/2001/XMLSchema#> .""";
    r2r:sourcePattern 	"?SUBJ a pharmgkb:PharmGKB_Diseases";
    r2r:targetPattern	"?SUBJ a smwcat:Disease";
    .
@@ -84,31 +86,31 @@ mp:DiseaseID
    a r2r:PropertyMapping;
    r2r:mappingRef    	mp:Disease;
    r2r:sourcePattern 	"?SUBJ pharmgkb:PharmGKB_Accession_Id ?x";
-   r2r:targetPattern	"?SUBJ smwprop:PharmGKBId ?x";
+   r2r:targetPattern	"?SUBJ smwprop:PharmGKBId ?'x'^^xsd:string";
    .
    
 mp:DiseaseMeSHID
    a r2r:PropertyMapping;
    r2r:mappingRef    	mp:Disease;
    r2r:sourcePattern 	"?SUBJ pharmgkb:MeSH_Id ?x";
-   r2r:targetPattern	"?SUBJ smwprop:MeSHId ?x";
+   r2r:targetPattern	"?SUBJ smwprop:MeSHId ?'x'^^xsd:string";
    .
 
 mp:DiseaseLabel
    a r2r:PropertyMapping;
    r2r:mappingRef    	mp:Disease;
    r2r:sourcePattern 	"?SUBJ pharmgkb:Name ?x";
-   r2r:targetPattern	"?SUBJ smwprop:Label ?x";
+   r2r:targetPattern	"?SUBJ smwprop:Label ?'x'^^xsd:string";
    .
    
 # FIXME doesn't work
-#mp:DiseaseAlternativeLabel
-#   a r2r:PropertyMapping;
-#   r2r:mappingRef    	mp:Disease;
-#   r2r:sourcePattern 	"?SUBJ pharmgkb:Alternate_Names ?x";
-#   r2r:transformation 	"""?labels = regexToList('"(.+)"', ?x)""";
-#   r2r:targetPattern	"?SUBJ smwprop:AlternativeLabel ?labels";
-#   .
+mp:DiseaseAlternativeLabel
+   a r2r:PropertyMapping;
+   r2r:mappingRef    	mp:Disease;
+   r2r:sourcePattern 	"?SUBJ pharmgkb:Alternate_Names ?x";
+   r2r:transformation 	"""?labels = itRegexToList('"(.+?)"', ?x)""";
+   r2r:targetPattern	"?SUBJ smwprop:AlternativeLabel ?'labels'^^xsd:string";
+   .
    
 mp:DiseaseHasPathway
    a r2r:PropertyMapping;
@@ -142,9 +144,10 @@ mp:DiseaseHasGene
 ###
 mp:Drug
    a r2r:ClassMapping;
-   r2r:prefixDefinitions	"""smwcat: <http://halowiki/ob/category#> .
-   							 smwprop: <http://halowiki/ob/property#> .
-   							 pharmgkb: <http://chem2bio2rdf.org/pharmgkb/resource/> .""";
+   r2r:prefixDefinitions	"""smwcat: <http://mywiki/resource/category/> .
+   							 smwprop: <http://mywiki/resource/property/> .
+   							 pharmgkb: <http://chem2bio2rdf.org/pharmgkb/resource/> .
+							 xsd:     <http://www.w3.org/2001/XMLSchema#> .""";
    r2r:sourcePattern 	"?SUBJ a pharmgkb:pharmGKB_Drugs";
    r2r:targetPattern	"?SUBJ a smwcat:Drug";
    .
@@ -154,7 +157,7 @@ mp:DrugID
    a r2r:PropertyMapping;
    r2r:mappingRef    	mp:Drug;
    r2r:sourcePattern 	"?SUBJ pharmgkb:PharmGKB_Accession_Id ?x";
-   r2r:targetPattern	"?SUBJ smwprop:PharmGKBId ?x";
+   r2r:targetPattern	"?SUBJ smwprop:PharmGKBId ?'x'^^xsd:string";
    .
 
 # Properties of Drug
@@ -162,25 +165,25 @@ mp:DrugDrugbankID
    a r2r:PropertyMapping;
    r2r:mappingRef    	mp:Drug;
    r2r:sourcePattern 	"?SUBJ pharmgkb:DrugBank_Id ?x";
-   r2r:transformation "?id = regexToList('http://chem2bio2rdf.org/drugbank/resource/drugbank_drug/(.+)', ?x)";
-   r2r:targetPattern	"?SUBJ smwprop:DrugBankId ?id";
+   r2r:transformation "?id = regexToList('http://chem2bio2rdf.org/drugbank/resource/drugbank_drug/(.+?)', ?x)";
+   r2r:targetPattern	"?SUBJ smwprop:DrugBankId ?'id'^^xsd:string";
    .
 
 mp:DrugLabel
    a r2r:PropertyMapping;
    r2r:mappingRef    	mp:Drug;
    r2r:sourcePattern 	"?SUBJ pharmgkb:Name ?x";
-   r2r:targetPattern	"?SUBJ smwprop:Label ?x";
+   r2r:targetPattern	"?SUBJ smwprop:Label ?'x'^^xsd:string";
    .
 
 # FIXME doesn't work
-#mp:DrugAlternativeLabel
-#   a r2r:PropertyMapping;
-#   r2r:mappingRef    	mp:Drug;
-#   r2r:sourcePattern 	"?SUBJ pharmgkb:Alternate_Names ?x";
-#   r2r:transformation 	"""?labels = regexToList('"(.+)"', ?x)""";
-#   r2r:targetPattern	"?SUBJ smwprop:AlternativeLabel ?labels";
-#   .
+mp:DrugAlternativeLabel
+   a r2r:PropertyMapping;
+   r2r:mappingRef    	mp:Drug;
+   r2r:sourcePattern 	"?SUBJ pharmgkb:Alternate_Names ?x";
+   r2r:transformation 	"""?labels = itRegexToList('"(.+?)"', ?x)""";
+   r2r:targetPattern	"?SUBJ smwprop:AlternativeLabel ?'labels'^^xsd:string";
+   .
 
 mp:DrugHasPathway
    a r2r:PropertyMapping;
@@ -216,9 +219,10 @@ mp:DrugHasGene
 ###
 mp:Gene
    a r2r:ClassMapping;
-   r2r:prefixDefinitions	"""smwcat: <http://halowiki/ob/category#> .
-   							 smwprop: <http://halowiki/ob/property#> .
-   							 pharmgkb: <http://chem2bio2rdf.org/pharmgkb/resource/> .""";
+   r2r:prefixDefinitions	"""smwcat: <http://mywiki/resource/category/> .
+   							 smwprop: <http://mywiki/resource/property/> .
+   							 pharmgkb: <http://chem2bio2rdf.org/pharmgkb/resource/> .
+							 xsd:     <http://www.w3.org/2001/XMLSchema#> .""";
    r2r:sourcePattern 	"?SUBJ a pharmgkb:PharmGKB_Genes";
    r2r:targetPattern	"?SUBJ a smwcat:Gene";
    .
@@ -228,21 +232,21 @@ mp:GeneID
    a r2r:PropertyMapping;
    r2r:mappingRef    	mp:Gene;
    r2r:sourcePattern 	"?SUBJ pharmgkb:PharmGKB_Accession_Id ?x";
-   r2r:targetPattern	"?SUBJ smwprop:PharmGKBId ?x";
+   r2r:targetPattern	"?SUBJ smwprop:PharmGKBId ?'x'^^xsd:string";
    .
 
 mp:GeneLabel
    a r2r:PropertyMapping;
    r2r:mappingRef    	mp:Gene;
    r2r:sourcePattern 	"?SUBJ pharmgkb:Name ?x";
-   r2r:targetPattern	"?SUBJ smwprop:Label ?x";
+   r2r:targetPattern	"?SUBJ smwprop:Label ?'x'^^xsd:string";
    .
 
 mp:GeneEntrezGeneID
    a r2r:PropertyMapping;
    r2r:mappingRef    	mp:Gene;
    r2r:sourcePattern 	"?SUBJ pharmgkb:Entrez_Id ?x";
-   r2r:transformation "?id = regexToList('http://bio2rdf.org/geneid:(.+)', ?x)";
+   r2r:transformation "?id = regexToList('http://bio2rdf.org/geneid:(.+?)', ?x)";
    r2r:targetPattern	"?SUBJ smwprop:EntrezGeneId ?'id'^^xsd:int";
    .
 
@@ -250,41 +254,41 @@ mp:GeneSymbol
    a r2r:PropertyMapping;
    r2r:mappingRef    	mp:Gene;
    r2r:sourcePattern 	"?SUBJ pharmgkb:Symbol ?x";
-   r2r:transformation "?id = regexToList('http://chem2bio2rdf.org/uniprot/resource/gene/(.+)', ?x)";
-   r2r:targetPattern	"?SUBJ smwprop:GeneSymbol ?id";
+   r2r:transformation "?id = regexToList('http://chem2bio2rdf.org/uniprot/resource/gene/(.+?)', ?x)";
+   r2r:targetPattern	"?SUBJ smwprop:GeneSymbol ?'id'^^xsd:string";
    .
 
 # TBD
-#mp:GeneAlternativeSymbols
-#   a r2r:PropertyMapping;
-#   r2r:mappingRef    	mp:Gene;
-#   r2r:sourcePattern 	"?SUBJ pharmgkb:Alternate_Symbols ?x";
-#   r2r:transformation 	"""?labels = regexToList('"(.+)"', ?x)""";
-#   r2r:targetPattern	"?SUBJ smwprop:AlternativeLabel ?labels";
-#   .
+mp:GeneAlternativeSymbols
+   a r2r:PropertyMapping;
+   r2r:mappingRef    	mp:Gene;
+   r2r:sourcePattern 	"?SUBJ pharmgkb:Alternate_Symbols ?x";
+   r2r:transformation 	"""?labels = itRegexToList('"(.+?)"', ?x)""";
+   r2r:targetPattern	"?SUBJ smwprop:AlternativeLabel ?'labels'^^xsd:string";
+   .
 
 # FIXME doesn't work
-#mp:GeneAlternativeLabel
-#   a r2r:PropertyMapping;
-#   r2r:mappingRef    	mp:Gene;
-#   r2r:sourcePattern 	"?SUBJ pharmgkb:Alternate_Names ?x";
-#   r2r:transformation 	"""?labels = regexToList('"(.+)"', ?x)""";
-#   r2r:targetPattern	"?SUBJ smwprop:AlternativeLabel ?labels";
-#   .
+mp:GeneAlternativeLabel
+   a r2r:PropertyMapping;
+   r2r:mappingRef    	mp:Gene;
+   r2r:sourcePattern 	"?SUBJ pharmgkb:Alternate_Names ?x";
+   r2r:transformation 	"""?labels = itRegexToList('"(.+?)"', ?x)""";
+   r2r:targetPattern	"?SUBJ smwprop:AlternativeLabel ?'labels'^^xsd:string";
+   .
 
 mp:GeneUniProtID
    a r2r:PropertyMapping;
    r2r:mappingRef    	mp:Gene;
    r2r:sourcePattern 	"?SUBJ pharmgkb:UniProt_Id ?x";
-   r2r:transformation "?id = regexToList('http://chem2bio2rdf.org/uniprot/resource/uniprot/(.+)', ?x)";
-   r2r:targetPattern	"?SUBJ smwprop:UniProtId ?id";
+   r2r:transformation "?id = regexToList('http://chem2bio2rdf.org/uniprot/resource/uniprot/(.+?)', ?x)";
+   r2r:targetPattern	"?SUBJ smwprop:UniprotId  ?'id'^^xsd:string";
    .
 
 mp:GeneEnsemblID
    a r2r:PropertyMapping;
    r2r:mappingRef    	mp:Gene;
    r2r:sourcePattern 	"?SUBJ pharmgkb:Ensembl_Id ?x";
-   r2r:targetPattern	"?SUBJ smwprop:EnsemblId ?x";
+   r2r:targetPattern	"?SUBJ smwprop:EnsemblId  ?'x'^^xsd:string";
    .
 
 # skipped: Has_Variant_Annotation, Is_GenoTyped, Is_VIP, PD, PK
