@@ -12,10 +12,11 @@
 ###
 mp:Gene
    a r2r:ClassMapping;
-   r2r:prefixDefinitions	"""smwcat: <http://halowiki/ob/category#> .
-   							 smwprop: <http://halowiki/ob/property#> .
+   r2r:prefixDefinitions	"""smwcat: <http://mywiki/resource/category/> .
+   							 smwprop: <http://mywiki/resource/property/> .
    							 pathway: <http://wiking.vulcan.com/neurobase/kegg_pathway/resource/vocab/> .
-   							 genes: <http://wiking.vulcan.com/neurobase/kegg_genes/resource/vocab/> .""";
+   							 genes: <http://wiking.vulcan.com/neurobase/kegg_genes/resource/vocab/> .
+							 xsd: <http://www.w3.org/2001/XMLSchema#> .""";
    r2r:sourcePattern 	"?SUBJ a genes:gene";
    r2r:targetPattern	"?SUBJ a smwcat:Gene";
    .
@@ -25,19 +26,19 @@ mp:GeneID
    a r2r:PropertyMapping;
    r2r:mappingRef    	mp:Gene;
    r2r:sourcePattern 	"?SUBJ genes:GeneId ?x";
-   r2r:targetPattern	"?SUBJ smwprop:KeggGeneId ?x";
+   r2r:targetPattern	"?SUBJ smwprop:KeggGeneId ?'x'^^xsd:string";
    .
 mp:GeneDefinition
    a r2r:PropertyMapping;
    r2r:mappingRef    	mp:Gene;
    r2r:sourcePattern 	"?SUBJ genes:definition ?x";
-   r2r:targetPattern	"?SUBJ smwprop:Description ?x";
+   r2r:targetPattern	"?SUBJ smwprop:Description ?'x'^^xsd:string";
    .
 mp:GeneName
    a r2r:PropertyMapping;
    r2r:mappingRef    	mp:Gene;
    r2r:sourcePattern 	"?SUBJ genes:name ?x";
-   r2r:targetPattern	"?SUBJ smwprop:Label ?x";
+   r2r:targetPattern	"?SUBJ smwprop:Label ?'x'^^xsd:string";
    .
 mp:hasPathway
 	a r2r:PropertyMapping;
@@ -58,7 +59,7 @@ mp:GeneLinkUniProt
    r2r:sourcePattern 	"?SUBJ genes:externalLink ?x";
    r2r:transformation "?id = regexToList('UniProt:(.+)', ?x)";
    r2r:targetPattern
-   		"?SUBJ smwprop:UniProtId ?'id'^^xsd:string";
+   		"?SUBJ smwprop:UniprotId ?'id'^^xsd:string";
    .
 mp:GeneLinkMGI
    a r2r:PropertyMapping;
@@ -82,7 +83,7 @@ mp:GeneLinkHGNC
    r2r:sourcePattern 	"?SUBJ genes:externalLink ?x";
    r2r:transformation "?id = regexToList('HGNC:(.+)', ?x)";
    r2r:targetPattern
-   		"?SUBJ smwprop:HGNCId ?'id'^^xsd:int";
+   		"?SUBJ smwprop:HGNCId ?'id'^^xsd:string";
    .
 mp:GeneLinkHPRD
    a r2r:PropertyMapping;
@@ -90,7 +91,7 @@ mp:GeneLinkHPRD
    r2r:sourcePattern 	"?SUBJ genes:externalLink ?x";
    r2r:transformation "?id = regexToList('HPRD:(.+)', ?x)";
    r2r:targetPattern
-   		"?SUBJ smwprop:HPRDId ?'id'^^xsd:int";
+   		"?SUBJ smwprop:HPRDId ?'id'^^xsd:string";
    .
 mp:GeneLinkNCBIGI
    a r2r:PropertyMapping;
@@ -98,7 +99,7 @@ mp:GeneLinkNCBIGI
    r2r:sourcePattern 	"?SUBJ genes:externalLink ?x";
    r2r:transformation "?id = regexToList('NCBI-GI:(.+)', ?x)";
    r2r:targetPattern
-   		"?SUBJ smwprop:NCBIGIId ?'id'^^xsd:int";
+   		"?SUBJ smwprop:NCBIGIId ?'id'^^xsd:string";
    .
 mp:GeneLinkNCBIGeneID
    a r2r:PropertyMapping;
@@ -106,7 +107,7 @@ mp:GeneLinkNCBIGeneID
    r2r:sourcePattern 	"?SUBJ genes:externalLink ?x";
    r2r:transformation "?id = regexToList('NCBI-GeneID:(.+)', ?x)";
    r2r:targetPattern
-   		"?SUBJ smwprop:NCBIGeneId ?'id'^^xsd:int";
+   		"?SUBJ smwprop:NCBIGeneId ?'id'^^xsd:string";
    .
 mp:GeneLinkOMIM
    a r2r:PropertyMapping;
@@ -114,7 +115,7 @@ mp:GeneLinkOMIM
    r2r:sourcePattern 	"?SUBJ genes:externalLink ?x";
    r2r:transformation "?id = regexToList('OMIM:(.+)', ?x)";
    r2r:targetPattern
-   		"?SUBJ smwprop:OMIMId ?'id'^^xsd:int";
+   		"?SUBJ smwprop:OMIMId ?'id'^^xsd:string";
    . 
 mp:GeneLinkIMGT
    a r2r:PropertyMapping;
@@ -130,10 +131,11 @@ mp:GeneLinkIMGT
 ###
 mp:Disease
    a r2r:ClassMapping;
-   r2r:prefixDefinitions	"""smwcat: <http://halowiki/ob/category#> .
-   							 smwprop: <http://halowiki/ob/property#> .
+   r2r:prefixDefinitions	"""smwcat: <http://mywiki/resource/category/> .
+   							 smwprop: <http://mywiki/resource/property/> .
    							 pathway: <http://wiking.vulcan.com/neurobase/kegg_pathway/resource/vocab/> .
-   							 genes: <http://wiking.vulcan.com/neurobase/kegg_genes/resource/vocab/> .""";
+   							 genes: <http://wiking.vulcan.com/neurobase/kegg_genes/resource/vocab/> .
+							 xsd: <http://www.w3.org/2001/XMLSchema#> .""";
    r2r:sourcePattern 	"?SUBJ a genes:disease";
    r2r:targetPattern	"?SUBJ a smwcat:Disease";
    .
@@ -143,14 +145,14 @@ mp:DiseaseID
    a r2r:PropertyMapping;
    r2r:mappingRef    	mp:Disease;
    r2r:sourcePattern 	"?SUBJ genes:id ?x";
-   r2r:targetPattern	"?SUBJ smwprop:KeggDiseaseId ?x";
+   r2r:targetPattern	"?SUBJ smwprop:KeggDiseaseId ?'x'^^xsd:string";
    .
 
 mp:DiseaseLabel
    a r2r:PropertyMapping;
    r2r:mappingRef    	mp:Disease;
    r2r:sourcePattern 	"?SUBJ rdfs:label ?x";
-   r2r:targetPattern	"?SUBJ smwprop:Label ?x";
+   r2r:targetPattern	"?SUBJ smwprop:Label ?'x'^^xsd:string";
    .
 
 ###
@@ -158,10 +160,11 @@ mp:DiseaseLabel
 ###
 mp:Pathway
    a r2r:ClassMapping;
-   r2r:prefixDefinitions	"""smwcat: <http://halowiki/ob/category#> .
-   							 smwprop: <http://halowiki/ob/property#> .
+   r2r:prefixDefinitions	"""smwcat: <http://mywiki/resource/category/> .
+   							 smwprop: <http://mywiki/resource/property/> .
    							 pathway: <http://wiking.vulcan.com/neurobase/kegg_pathway/resource/vocab/> .
-   							 genes: <http://wiking.vulcan.com/neurobase/kegg_genes/resource/vocab/> .""";
+   							 genes: <http://wiking.vulcan.com/neurobase/kegg_genes/resource/vocab/> .
+							 xsd: <http://www.w3.org/2001/XMLSchema#> .""";
    r2r:sourcePattern 	"?SUBJ a genes:pathway";
    r2r:targetPattern	"?SUBJ a smwcat:Pathway";
    .
@@ -171,12 +174,12 @@ mp:PathwayID
    a r2r:PropertyMapping;
    r2r:mappingRef    	mp:Pathway;
    r2r:sourcePattern 	"?SUBJ genes:id ?x";
-   r2r:targetPattern	"?SUBJ smwprop:KeggPathwayId ?x";
+   r2r:targetPattern	"?SUBJ smwprop:KeggPathwayId ?'x'^^xsd:string";
    .
 
 mp:PathwayLabel
    a r2r:PropertyMapping;
    r2r:mappingRef    	mp:Pathway;
    r2r:sourcePattern 	"?SUBJ rdfs:label ?x";
-   r2r:targetPattern	"?SUBJ smwprop:Label ?x";
+   r2r:targetPattern	"?SUBJ smwprop:Label ?'x'^^xsd:string";
    .
