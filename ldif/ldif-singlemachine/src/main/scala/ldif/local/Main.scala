@@ -105,7 +105,7 @@ object Main
    */
   def generateLinks(linkSpecDir : File, reader : QuadReader) : QuadReader =
   {
-    val silkModule = SilkModule.load(linkSpecDir.listFiles.head)
+    val silkModule = SilkModule.load(linkSpecDir)
     val silkExecutor = new SilkLocalExecutor
 
     val entityDescriptions = silkModule.tasks.toIndexedSeq.map(silkExecutor.input).flatMap{ case StaticEntityFormat(ed) => ed }

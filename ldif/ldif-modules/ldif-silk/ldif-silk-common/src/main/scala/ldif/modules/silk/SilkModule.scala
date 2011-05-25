@@ -26,13 +26,22 @@ object SilkModule
   {
     DefaultImplementations.register()
 
+    new SilkModule(new SilkConfig(loadConfig(file)))
+  }
+
+  def loadConfig(file : File) : Configuration =
+  {
     if(file.isFile)
     {
-      new SilkModule(new SilkConfig(Configuration.load(file)))
+      Configuration.load(file)
+    }
+    else if(file.isDirectory)
+    {
+      file.listFiles.map(loadConfig).reduceLeft(_ merge _)
     }
     else
     {
-      throw new UnsupportedOperationException("Loading link specifications from a directory not supported yet")
+      Configuration.empty
     }
   }
 }
