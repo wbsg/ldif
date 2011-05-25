@@ -152,19 +152,19 @@ class EntityBuilder (entityDescriptions : IndexedSeq[EntityDescription], reader 
   }
 
   private def updatePHT(property :String, propertyType : PropertyType.Value ){
-    if (propertyType != PropertyType.BOTH){
-      PHT.get(property) match {
-              case Some(PropertyType.FORW) =>
-                if (propertyType==PropertyType.BACK)
-                  PHT.put(property, PropertyType.BOTH)
-                else PHT.put(property, propertyType)
-              case Some(PropertyType.BACK) =>
-                if (propertyType==PropertyType.FORW)
-                  PHT.put(property, PropertyType.BOTH)
-                else PHT.put(property, propertyType)
-              case None => PHT.put(property, propertyType)
-            }
+    PHT.get(property) match {
+      case Some(PropertyType.BOTH) =>
+      case Some(PropertyType.FORW) =>
+        if (propertyType==PropertyType.BACK)
+          PHT.put(property, PropertyType.BOTH)
+        else PHT.put(property, propertyType)
+      case Some(PropertyType.BACK) =>
+        if (propertyType==PropertyType.FORW)
+          PHT.put(property, PropertyType.BOTH)
+        else PHT.put(property, propertyType)
+      case None => PHT.put(property, propertyType)
     }
+
   }
 
   // Build the subject set from a given operator
