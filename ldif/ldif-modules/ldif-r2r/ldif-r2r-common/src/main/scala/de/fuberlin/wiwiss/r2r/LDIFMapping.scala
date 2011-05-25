@@ -12,12 +12,16 @@ class LDIFMapping(val mapping: Mapping, val entityDescription: EntityDescription
     targetPatterns = LDIFTargetPattern(tp) :: targetPatterns
 
   def executeMapping(entity: Entity, quadWriter: QuadWriter): Unit = {
-    val results = entity.factums(0)
-    for(row <- results) {
-      val variableResults = getResults(row)
-      variableResults.addVariableResult("SUBJ", Node.createUriNode(entity.uri, ""))
-      executeAllFunctions(variableResults)
-      executeTargetPatterns(variableResults, quadWriter)
+    try {
+      val results = entity.factums(0)
+      for(row <- results) {
+        val variableResults = getResults(row)
+        variableResults.addVariableResult("SUBJ", Node.createUriNode(entity.uri, ""))
+        executeAllFunctions(variableResults)
+        executeTargetPatterns(variableResults, quadWriter)
+      }
+    } catch {
+      case e: Exception => throw new R2RException("Error in executing mapping <" + mapping.getUri + ">", e)
     }
   }
 

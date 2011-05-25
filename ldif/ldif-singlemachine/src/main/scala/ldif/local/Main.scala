@@ -21,17 +21,18 @@ object Main
   def main(args : Array[String])
   {
     var debug = false
-    if(args.length<1) {
-      println("No configuration file given.")
-      System.exit(1)
-    }
-    else if(args.length>=2 && args(0)=="--debug")
-      debug = true
+//    if(args.length<1) {
+//      println("No configuration file given.")
+//      System.exit(1)
+//    }
+//    else if(args.length>=2 && args(0)=="--debug")
+//      debug = true
 
-//    val configUrl = getClass.getClassLoader.getResource("ldif/local/example/test2/config.xml")
+    val configUrl = getClass.getClassLoader.getResource("ldif/local/example/test2/config.xml")
 //    val configUrl = getClass.getClassLoader.getResource(args(0))
-//    val configFile = new File(configUrl.toString.stripPrefix("file:"))
-    val configFile = new File(args(args.length-1))
+    val configFile = new File(configUrl.toString.stripPrefix("file:"))
+//    val configFile = new File(args(args.length-1))
+
     stopWatch.getTimeSpanInSeconds
     val config = LdifConfiguration.load(configFile)
     println("Time needed to load config file: " + stopWatch.getTimeSpanInSeconds + "s")

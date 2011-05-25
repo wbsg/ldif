@@ -87,7 +87,13 @@ class LDIFTargetPattern(targetPattern: TargetPattern) extends TargetPattern(targ
     if(HelperFunctions.getWorkingDataTypeOfDataTypeString(hint)!=null) {
       var convertedValues = List[Node]()
       for(node <- values) {
-        val convertedVal = Node.createTypedLiteral(HelperFunctions.convertValueToDataType(node.value, hint), hint, node.graph)
+        println(hint)
+        var convertedVal: Node = null
+        try {
+          convertedVal = Node.createTypedLiteral(HelperFunctions.convertValueToDataType(node.value, hint), hint, node.graph)
+        } catch {
+          case e: Exception => throw new R2RException("Error: Could not parse value: " + node.value + " to datatype: " + hint)
+        }
         convertedValues = convertedVal :: convertedValues
       }
       values = convertedValues
