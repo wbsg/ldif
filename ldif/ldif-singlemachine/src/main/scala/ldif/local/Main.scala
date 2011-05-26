@@ -8,13 +8,12 @@ import ldif.datasources.dump.{DumpModule, DumpConfig}
 import ldif.modules.silk.local.SilkLocalExecutor
 import de.fuberlin.wiwiss.ldif.local.EntityBuilderExecutor
 import de.fuberlin.wiwiss.ldif.{EntityBuilderModule, EntityBuilderConfig}
-import java.io.{FileWriter, File}
 import de.fuberlin.wiwiss.r2r._
 import ldif.modules.r2r.local.R2RLocalExecutor
 import ldif.modules.r2r._
 
 import ldif.entity.{Node, EntityDescription}
-
+import java.io.{FileWriter, File}
 
 object Main
 {
@@ -28,7 +27,7 @@ object Main
 //    else if(args.length>=2 && args(0)=="--debug")
 //      debug = true
 
-    val configUrl = getClass.getClassLoader.getResource("ldif/local/example/test2/config.xml")
+    val configUrl = getClass.getClassLoader.getResource("ldif/local/example/test1/config.xml")
     val configFile = new File(configUrl.toString.stripPrefix("file:"))
 //    val configFile = new File(args(args.length-1))
 
@@ -50,10 +49,14 @@ object Main
     if(debug==true)
       writeDebugOutput("r2r", config.outputFile, r2rReader)
 
-    val linkReader = generateLinks(config.linkSpecDir, r2rReader)
+    val r2rOutputQueue = new QuadQueue
+    val linkReader = generateLinks(config.linkSpecDir, new WriteReader(r2rReader, r2rOutputQueue))
     println("Time needed to build entities and link data: " + stopWatch.getTimeSpanInSeconds + "s")
     println("Number of triples after linking entities: " + linkReader.size)
-    writeOutput(config.outputFile, linkReader)
+
+    val linkMap = Traversable.fill(linkReader.size)(linkReader.read).map(quad => (quad.subject.value, quad.value.value)).toMap
+
+    writeOutput(r2rOutputQueue, config.outputFile, linkMap)
   }
 
   /**
@@ -124,15 +127,30 @@ object Main
     outputQueue
   }
 
-  //TODO we don't have an output module yet...
-  def writeOutput(outputFile : File, reader : QuadReader)
+  def writeOutput(reader : QuadReader, outputFile : File, uriMap : Map[String, String] = Map.empty)
   {
     val writer = new FileWriter(outputFile)
     var count = 0
 
     while(!reader.isEmpty)
     {
-      writer.write(reader.read.toNQuadFormat + " .\n")
+      //Read quad
+      var quad = reader.read
+
+      //Replace subject
+      for(newUri <- uriMap.get(quad.subject.value))
+      {
+        quad = quad.copy(subject = Node.createUriNode(newUri, quad.subject.graph))
+      }
+
+      //Replace object
+      for(newUri <- uriMap.get(quad.value.value))
+      {
+        quad = quad.copy(value = Node.createUriNode(newUri, quad.value.graph))
+      }
+
+      //Write quad
+      writer.write(quad.toNQuadFormat + " .\n")
       count += 1
     }
 
@@ -146,7 +164,7 @@ object Main
     if(!reader.isInstanceOf[QuadQueue])
       return
     val clonedReader = reader.asInstanceOf[QuadQueue].clone
-    writeOutput(newOutputFile, clonedReader)
+    writeOutput(clonedReader, newOutputFile)
   }
 
   def buildEntities(reader : QuadReader, entityDescriptions : Seq[EntityDescription]) : Seq[EntityReader] =
@@ -183,8 +201,26 @@ object Main
 //
 //    thread.start()
 
-
     function
+  }
+}
+
+/**
+ * A reader which writes each read quad to a separate writer.
+ */
+class WriteReader(reader : QuadReader, writer : QuadWriter) extends QuadReader
+{
+  def size = reader.size
+
+  def isEmpty = reader.isEmpty
+
+  def read() : Quad =
+  {
+    val quad = reader.read()
+
+    writer.write(quad)
+
+    quad
   }
 }
 
