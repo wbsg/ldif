@@ -47,13 +47,21 @@ object Main
     println("Time needed to build entities and map data: " + stopWatch.getTimeSpanInSeconds + "s")
     println("Number of triples after mapping the input dump: " + r2rReader.size)
 
+    val clonedR2rReader = cloneQuadQueue(r2rReader)
+
     if(debug==true)
       writeDebugOutput("r2r", config.outputFile, r2rReader)
 
     val linkReader = generateLinks(config.linkSpecDir, r2rReader)
     println("Time needed to build entities and link data: " + stopWatch.getTimeSpanInSeconds + "s")
     println("Number of triples after linking entities: " + linkReader.size)
-    writeOutput(config.outputFile, linkReader)
+
+    if(debug==true)
+      writeDebugOutput("silk", config.outputFile, linkReader)
+
+    val integratedReader = URITranslator.translateQuads(clonedR2rReader, linkReader)
+
+    writeOutput(config.outputFile, integratedReader)
   }
 
   /**
@@ -75,6 +83,14 @@ object Main
     }
 
     dumpQuadQueue
+  }
+
+  // Only clone QuadQueue implementation of QuadReader
+  def cloneQuadQueue(queue: QuadReader) = {
+    if(queue.isInstanceOf[QuadQueue])
+      queue.asInstanceOf[QuadQueue].clone
+    else
+      null
   }
 
   /**
@@ -145,7 +161,7 @@ object Main
     val newOutputFile = new File(outputFile.getAbsolutePath + "." + phase)
     if(!reader.isInstanceOf[QuadQueue])
       return
-    val clonedReader = reader.asInstanceOf[QuadQueue].clone
+    val clonedReader = cloneQuadQueue(reader)
     writeOutput(newOutputFile, clonedReader)
   }
 
