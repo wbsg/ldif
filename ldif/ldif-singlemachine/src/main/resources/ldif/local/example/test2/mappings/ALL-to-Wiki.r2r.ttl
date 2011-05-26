@@ -600,3 +600,142 @@ mp:GeneEnsemblIDPHARMGKB
 
 
 
+
+#####################################################################################################
+# KEGGPATH mappings
+#####################################################################################################
+
+###
+# Pathway
+###
+mp:PathwayKEGGPATH
+   a r2r:ClassMapping;
+   r2r:prefixDefinitions	"""smwcat: <http://mywiki/resource/category/> .
+   							 smwprop: <http://mywiki/resource/property/> .
+   							 pathway: <http://wiking.vulcan.com/neurobase/kegg_pathway/resource/vocab/> .
+							 xsd: <http://www.w3.org/2001/XMLSchema#> .""";
+   r2r:sourcePattern 	"?SUBJ a pathway:pathway";
+   r2r:targetPattern	"?SUBJ a smwcat:Pathway";
+   .
+   
+# Properties of Pathway
+mp:PathwayIDKEGGPATH
+   a r2r:PropertyMapping;
+   r2r:mappingRef    	mp:PathwayKEGGPATH;
+   r2r:sourcePattern 	"?SUBJ pathway:id ?x";
+   r2r:targetPattern	"?SUBJ smwprop:KeggPathwayId ?x";
+   .
+
+mp:PathwayLabelKEGGPATH
+   a r2r:PropertyMapping;
+   r2r:mappingRef    	mp:PathwayKEGGPATH;
+   r2r:sourcePattern 	"?SUBJ rdfs:label ?x";
+   r2r:targetPattern	"?SUBJ smwprop:Label ?x";
+   .
+   
+mp:PathwayDescriptionKEGGPATH
+   a r2r:PropertyMapping;
+   r2r:mappingRef    	mp:PathwayKEGGPATH;
+   r2r:sourcePattern 	"?SUBJ pathway:description ?x";
+   r2r:targetPattern	"?SUBJ smwprop:Description ?'x'^^xsd:string";
+   .
+
+mp:PathwayHasDiseaseKEGGPATH
+   a r2r:PropertyMapping;
+   r2r:mappingRef    	mp:PathwayKEGGPATH;
+   r2r:sourcePattern 	"?SUBJ pathway:hasDisease ?x";
+   r2r:targetPattern	"?SUBJ smwprop:IsDisruptedBy ?x . ?x smwprop:Disrupts ?SUBJ";
+   .
+   
+mp:PathwayHasDrugKEGGPATH
+   a r2r:PropertyMapping;
+   r2r:mappingRef    	mp:PathwayKEGGPATH;
+   r2r:sourcePattern 	"?SUBJ pathway:hasDrug ?x";
+   r2r:targetPattern	"?x smwprop:IsTargetedBy ?SUBJ . ?x smwprop:Targets ?SUBJ";
+   .
+
+mp:PathwayHasGeneKEGGPATH
+   a r2r:PropertyMapping;
+   r2r:mappingRef    	mp:PathwayKEGGPATH;
+   r2r:sourcePattern 	"?SUBJ pathway:hasGene ?x";
+   r2r:targetPattern	"?SUBJ smwprop:Involves ?x . ?x smwprop:IsInvolvedIn ?SUBJ";
+   .
+
+###
+# Disease
+###
+mp:DiseaseKEGGPATH
+   a r2r:ClassMapping;
+   r2r:prefixDefinitions	"""smwcat: <http://mywiki/resource/category/> .
+   							 smwprop: <http://mywiki/resource/property/> .
+   							 pathway: <http://wiking.vulcan.com/neurobase/kegg_pathway/resource/vocab/> .
+							 xsd: <http://www.w3.org/2001/XMLSchema#> .""";
+   r2r:sourcePattern 	"?SUBJ a pathway:disease";
+   r2r:targetPattern	"?SUBJ a smwcat:Disease";
+   .
+
+# Properties of Disease
+mp:DiseaseIDKEGGPATH
+   a r2r:PropertyMapping;
+   r2r:mappingRef    	mp:DiseaseKEGGPATH;
+   r2r:sourcePattern 	"?SUBJ pathway:id ?x";
+   r2r:targetPattern	"?SUBJ smwprop:KeggDiseaseId ?'x'^^xsd:string";
+   .
+
+mp:DiseaseLabelKEGGPATH
+   a r2r:PropertyMappingKEGGPATH;
+   r2r:mappingRef    	mp:Disease;
+   r2r:sourcePattern 	"?SUBJ rdfs:label ?x";
+   r2r:targetPattern	"?SUBJ smwprop:Label ?'x'^^xsd:string";
+   .
+   
+
+###
+# Drug
+###
+mp:DrugKEGGPATH
+   a r2r:ClassMapping;
+   r2r:prefixDefinitions	"""smwcat: <http://mywiki/resource/category/> .
+   							 smwprop: <http://mywiki/resource/property/> .
+   							 pathway: <http://wiking.vulcan.com/neurobase/kegg_pathway/resource/vocab/> .
+							 xsd: <http://www.w3.org/2001/XMLSchema#> .""";
+   r2r:sourcePattern 	"?SUBJ a pathway:drug";
+   r2r:targetPattern	"?SUBJ a smwcat:Drug";
+   .
+
+# Properties of Drug
+mp:DrugIDKEGGPATH
+   a r2r:PropertyMapping;
+   r2r:mappingRef    	mp:DrugKEGGPATH;
+   r2r:sourcePattern 	"?SUBJ pathway:id ?x";
+   r2r:targetPattern	"?SUBJ smwprop:KeggDrugId ?'x'^^xsd:string";
+   .
+
+mp:DrugLabelKEGGPATH
+   a r2r:PropertyMapping;
+   r2r:mappingRef    	mp:DrugKEGGPATH;
+   r2r:sourcePattern 	"?SUBJ rdfs:label ?x";
+   r2r:targetPattern	"?SUBJ smwprop:Label ?'x'^^xsd:string";
+   .
+   
+###
+# Gene
+###
+mp:GeneKEGGPATH
+   a r2r:ClassMapping;
+   r2r:prefixDefinitions	"""smwcat: <http://mywiki/resource/category/> .
+   							 smwprop: <http://mywiki/resource/property/> .
+   							 pathway: <http://wiking.vulcan.com/neurobase/kegg_pathway/resource/vocab/> .
+							 xsd: <http://www.w3.org/2001/XMLSchema#> .""";
+   r2r:sourcePattern 	"?SUBJ a pathway:gene";
+   r2r:targetPattern	"?SUBJ a smwcat:Gene";
+   .
+# Properties of Gene
+mp:GeneIDKEGGPATH
+   a r2r:PropertyMapping;
+   r2r:mappingRef    	mp:GeneKEGGPATH;
+   r2r:sourcePattern 	"?SUBJ pathway:id ?x";
+   r2r:targetPattern	"?SUBJ smwprop:KeggGeneId ?'x'^^xsd:string";
+   .
+
+
