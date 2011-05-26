@@ -29,7 +29,7 @@ object SilkModule
     new SilkModule(new SilkConfig(loadConfig(file)))
   }
 
-  def loadConfig(file : File) : Configuration =
+  private def loadConfig(file : File) : Configuration =
   {
     if(file.isFile)
     {
