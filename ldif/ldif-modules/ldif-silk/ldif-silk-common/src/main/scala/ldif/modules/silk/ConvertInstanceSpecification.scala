@@ -1,39 +1,41 @@
 package ldif.modules.silk
 
-import de.fuberlin.wiwiss.silk.instance.InstanceSpecification
 import ldif.entity.Restriction._
 import ldif.entity.{Restriction, Path, EntityDescription, Node}
+import de.fuberlin.wiwiss.silk.util.convert.RestrictionConverter
+import de.fuberlin.wiwiss.silk.instance.InstanceSpecification
+import de.fuberlin.wiwiss.silk.instance.{Restriction => SilkRestriction}
+import de.fuberlin.wiwiss.silk.config.Prefixes
 
 /**
  * Converts a Silk InstanceSpecification to a LDFI EntityDescription.
  */
-object ConvertInstanceSpecification extends (InstanceSpecification => EntityDescription)
+object ConvertInstanceSpecification
 {
-  def apply(instanceSpec : InstanceSpecification) : EntityDescription =
+  def apply(instanceSpec : InstanceSpecification)(implicit prefixes : Prefixes) : EntityDescription =
   {
-    val restriction =
-      if(instanceSpec.restrictions.toSparql.trim == ".")
-      {
-        Restriction(None)
-      }
-      else
-      {
-        instanceSpec.restrictions.toSparql.split(" ") match
-        {
-          case Array(variable, predicate, value) =>
-          {
-            val path = Path.parse(variable + "/" + predicate)
-            val cleanValue =  value.trim.stripPrefix("<").stripSuffix(">.")
+    implicit val ldifPrefixes : ldif.util.Prefixes = prefixes.prefixMap
 
-            Restriction(Some(Condition(path, Set(Node.createUriNode(cleanValue, "")))))
-          }
-          case _ => throw new IllegalArgumentException("Unsupported restriction pattern")
-        }
-      }
+    val restriction = retrieveRestriction(instanceSpec)
 
     val paths = instanceSpec.paths.map(_.serialize).map(Path.parse).map(IndexedSeq(_)).toIndexedSeq
 
     EntityDescription(restriction, paths)
+  }
 
+  private def retrieveRestriction(instanceSpec : InstanceSpecification)(implicit prefixes : Prefixes) =
+  {
+    val restrictionConverter = new RestrictionConverter
+
+    val silkRestriction = restrictionConverter(instanceSpec.variable, instanceSpec.restrictions)
+
+    Restriction(silkRestriction.operator.map(convertOperator))
+  }
+
+  private def convertOperator(silkOperator : SilkRestriction.Operator)(implicit prefixes : Prefixes) : Restriction.Operator = silkOperator match
+  {
+    case SilkRestriction.Condition(path, values) => Restriction.Condition(Path.parse(path.toString), values.map(value => Node.createUriNode(value, "")))
+    case SilkRestriction.And(ops) => Restriction.And(ops.map(convertOperator))
+    case SilkRestriction.Or(ops) => Restriction.Or(ops.map(convertOperator))
   }
 }

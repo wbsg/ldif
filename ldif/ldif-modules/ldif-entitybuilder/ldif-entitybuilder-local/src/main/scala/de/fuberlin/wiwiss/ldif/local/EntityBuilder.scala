@@ -180,7 +180,7 @@ class EntityBuilder (entityDescriptions : IndexedSeq[EntityDescription], reader 
   }
 
   private def getSubjSet(and : And) : Set[Node] = {
-    var subjSet:Set[Node] = null
+    var subjSet : Set[Node] = new HashSet[Node]
     for ((child,i) <- and.children.toSeq.zipWithIndex){
       val tmpSubjSet = getSubjSet(Some(child))
       if (i>0)
@@ -191,7 +191,7 @@ class EntityBuilder (entityDescriptions : IndexedSeq[EntityDescription], reader 
   }
 
   private def getSubjSet(or : Or) : Set[Node] = {
-    var subjSet:Set[Node] = null
+    var subjSet : Set[Node] = new HashSet[Node]
     for ((child,i) <- or.children.toSeq.zipWithIndex){
       val tmpSubjSet = getSubjSet(Some(child))
       subjSet = subjSet | tmpSubjSet

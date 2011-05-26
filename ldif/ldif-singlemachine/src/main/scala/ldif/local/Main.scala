@@ -20,7 +20,7 @@ object Main
 {
   def main(args : Array[String])
   {
-    var debug = false
+    var debug = true
 //    if(args.length<1) {
 //      println("No configuration file given.")
 //      System.exit(1)
@@ -121,7 +121,7 @@ object Main
    */
   def generateLinks(linkSpecDir : File, reader : QuadReader) : QuadReader =
   {
-    val silkModule = SilkModule.load(linkSpecDir.listFiles.head)
+    val silkModule = SilkModule.load(linkSpecDir)
     val silkExecutor = new SilkLocalExecutor
 
     val entityDescriptions = silkModule.tasks.toIndexedSeq.map(silkExecutor.input).flatMap{ case StaticEntityFormat(ed) => ed }

@@ -26,7 +26,13 @@ class SilkLocalExecutor extends Executor
 
   type OutputFormat = GraphFormat
 
-  def input(task : SilkTask) = new StaticEntityFormat(CreateEntityDescriptions(task.linkSpec))
+  def input(task : SilkTask) =
+  {
+    implicit val prefixes = task.silkConfig.prefixes
+    val entityDescriptions = CreateEntityDescriptions(task.linkSpec)
+
+    new StaticEntityFormat(entityDescriptions)
+  }
 
   def output(task : SilkTask) = new GraphFormat()
 

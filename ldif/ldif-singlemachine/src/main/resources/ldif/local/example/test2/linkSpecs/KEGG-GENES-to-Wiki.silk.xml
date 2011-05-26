@@ -15,7 +15,7 @@
 			<Param name="endpointURI" value="http://localhost:2020/sparql/read" />
 		</DataSource>
 
-		<DataSource id="ABA" type="sparqlEndpoint">
+		<DataSource id="KEGG_GENES" type="sparqlEndpoint">
 			<Param name="endpointURI" value="http://localhost:2020/sparql/read" />
 			<Param name="graph" value="REPLACED_BY_ENGINE" />
 		</DataSource>
@@ -26,16 +26,20 @@
 			<LinkType>owl:sameAs</LinkType>
 
 			<!-- a dummy dataset, the real dataset is defined at runtime -->
-			<SourceDataset dataSource="ABA" var="b">
-				<RestrictTo>?b rdf:type smwcat:Gene</RestrictTo>
+			<SourceDataset dataSource="KEGG_GENES" var="b">
+				<RestrictTo>{ ?b rdf:type smwcat:Gene } UNION { ?b rdf:type smwcat:Disease }	UNION { ?b rdf:type smwcat:Pathway }	</RestrictTo>
 			</SourceDataset>
 
 			<TargetDataset dataSource="Wiki" var="a">
-				<RestrictTo>?a rdf:type smwcat:Gene</RestrictTo>
+				<RestrictTo> 	{ ?a rdf:type smwcat:Gene }	UNION { ?a rdf:type smwcat:Disease }	UNION { ?a rdf:type smwcat:Pathway }	</RestrictTo>
 			</TargetDataset>
 
 			<LinkCondition>
 			<Aggregate type="max">
+					<Compare metric="equality">
+						<Input path="?a/smwprop:UniprotId" />
+						<Input path="?b/smwprop:UniprotId" />
+					</Compare>
 					<Compare metric="equality">
 						<Input path="?a/smwprop:EntrezGeneId" />
 						<Input path="?b/smwprop:EntrezGeneId" />
@@ -43,6 +47,14 @@
 					<Compare metric="equality">
 						<Input path="?a/smwprop:MgiMarkerAccessionId" />
 						<Input path="?b/smwprop:MgiMarkerAccessionId" />
+					</Compare>
+					<Compare metric="equality">
+						<Input path="?a/smwprop:KeggDiseaseId" />
+						<Input path="?b/smwprop:KeggDiseaseId" />
+					</Compare>
+					<Compare metric="equality">
+						<Input path="?a/smwprop:KeggPathwayId" />
+						<Input path="?b/smwprop:KeggPathwayId" />
 					</Compare>
 			</Aggregate>
 			</LinkCondition>
