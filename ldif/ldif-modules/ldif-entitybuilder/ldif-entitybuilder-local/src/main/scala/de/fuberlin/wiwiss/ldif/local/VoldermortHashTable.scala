@@ -11,8 +11,7 @@ class VoldermortHashTable (storeName : String) extends HashTable {
 
   override def put(key : Pair[Node,String], value: Node) {
     val keyAsList = convertKey(key)
-    //TODO encode graph info
-    val newValue = value.value.asInstanceOf[java.lang.String]
+    val newValue = convertValue(value)
 
     val prev = store.getValue(keyAsList)
     if (prev!=null){
@@ -35,7 +34,7 @@ class VoldermortHashTable (storeName : String) extends HashTable {
       val it = values.iterator
       while(it.hasNext())  {
         //TODO decode graph info
-        result += Node.fromString(it.next,null)
+        result += Node.fromString(it.next)
       }
     }
     if (result.isEmpty)
@@ -50,9 +49,18 @@ class VoldermortHashTable (storeName : String) extends HashTable {
 
   private def convertKey (key : Pair[Node,String]) = {
     val keyAsList = new ArrayList[String]
+    //TODO add graph name if blankNode
     keyAsList.add( Pair.unapply(key).get._1.value )
     keyAsList.add( Pair.unapply(key).get._2 )
     keyAsList
   }
+
+  private def convertValue (node : Node) = {
+    //TODO encode graph info
+    node.toString.asInstanceOf[java.lang.String]    
+  }
+
+
+
 
 }
