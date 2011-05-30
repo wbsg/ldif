@@ -11,8 +11,12 @@ package ldif.local.runtime
 import scala.collection.mutable.{Map, HashMap, HashSet, Set}
 import ldif.local.runtime.impl.QuadQueue
 import ldif.entity._
+import java.util.logging.Logger
 
 object URITranslator {
+
+  private val log = Logger.getLogger(getClass.getName)
+
   private def translateQuadURIs(s: Node, o: Node, uriMap: Map[String, String]): (Node, Node) = {
     var sNew = s
     var oNew = o
@@ -27,8 +31,16 @@ object URITranslator {
     val uriMap = generateUriMap(linkReader)
 
     val quadOutput = new QuadQueue
+    val overAllCount = quadsReader.size
+    var counter = 0
+    var percentCounter = 1
 
     while(!quadsReader.isEmpty) {
+      counter += 1
+      if(10*counter/overAllCount > percentCounter/10) {
+        log.info("Amount of quads translated: " + percentCounter + "%")
+        percentCounter = 100*counter/overAllCount
+      }
       quadsReader.read match {
         case Quad(s, p, o, g) => {
           val (sNew, oNew) = translateQuadURIs(s, o, uriMap)
@@ -56,7 +68,7 @@ object URITranslator {
     val entityToClusterMap: Map[String, EntityCluster] = createEntityCluster(linkReader)
 
     for((fromURI, toURICluster) <- entityToClusterMap) {
-      uriMap.put(fromURI, toURICluster.entity)
+      uriMap.put(fromURI, toURICluster.getGlobalEntity)
     }
 
     uriMap
@@ -65,7 +77,16 @@ object URITranslator {
   private def createEntityCluster(linkReader: QuadReader): Map[String, EntityCluster] = {
     val entityToClusterMap = new HashMap[String, EntityCluster]()
 
+    val overAllCount = linkReader.size
+    var counter = 0
+    var percentCounter = 1
+
     while (!linkReader.isEmpty) {
+      counter += 1
+      if(10*counter/overAllCount > percentCounter/10) {
+        log.info("URITranslator: Links read: " + percentCounter + "%")
+        percentCounter = 100*counter/overAllCount
+      }
       val (entity1, entity2) = extractEntityStrings(linkReader.read)
       val clusterOfEntity1 = entityToClusterMap.get(entity1)
       val clusterOfEntity2 = entityToClusterMap.get(entity2)
@@ -79,10 +100,9 @@ object URITranslator {
         case (None, Some(cluster2)) => cluster2.integrateEntity(entity1, entityToClusterMap)
         case (Some(cluster1), None) => cluster1.integrateEntity(entity2, entityToClusterMap)
         case (Some(cluster1), Some(cluster2)) => {
-          if (cluster1.size < cluster2.size)
-            cluster2.integrateCluster(cluster1, entityToClusterMap)
-          else
-            cluster1.integrateCluster(cluster2, entityToClusterMap)
+          val globalCluster1 = cluster1.getGlobalCluster
+          if (globalCluster1 != cluster2.getGlobalCluster)
+            globalCluster1.integrateCluster(cluster2, entityToClusterMap)
         }
       }
     }
@@ -94,23 +114,34 @@ object URITranslator {
 
 case class EntityCluster(entity: String, entitySet: Set[String]) {
 
+  var parentCluster: EntityCluster = null
+
   def this(entity: String) = this(entity, HashSet(entity))
 
   def addEntites(entities: Traversable[String]) = { entitySet ++= entities}
 
   // Moves all the entities to this cluster, making the other cluster obsolete
   def integrateCluster(other: EntityCluster, entityToClusterMap: Map[String, EntityCluster]) {
-    this.entitySet += other.entity
-    this.entitySet ++= other.entitySet
-
-    for(entity <- other.entitySet)
-      entityToClusterMap.put(entity, this)
-    entityToClusterMap.put(other.entity, this)
+    other.parentCluster = this
   }
 
   def integrateEntity(entity: String, entityToClusterMap: Map[String, EntityCluster]) {
     entitySet += entity
     entityToClusterMap.put(entity, this)
+  }
+
+  def getGlobalEntity(): String = {
+    parentCluster match {
+      case null => entity
+      case parent => parent.getGlobalEntity
+    }
+  }
+
+  def getGlobalCluster(): EntityCluster = {
+    parentCluster match {
+      case null => this
+      case parent => parent.getGlobalCluster
+    }
   }
 
   def size = entitySet.size
