@@ -20,17 +20,17 @@ object Main
 {
   def main(args : Array[String])
   {
-    var debug = true
-//    if(args.length<1) {
-//      println("No configuration file given.")
-//      System.exit(1)
-//    }
-//    else if(args.length>=2 && args(0)=="--debug")
-//      debug = true
+    var debug = false
+    if(args.length<1) {
+      println("No configuration file given.")
+      System.exit(1)
+    }
+    else if(args.length>=2 && args(0)=="--debug")
+      debug = true
 
-    val configUrl = getClass.getClassLoader.getResource("ldif/local/example/test2/config.xml")
-    val configFile = new File(configUrl.toString.stripPrefix("file:"))
-//    val configFile = new File(args(args.length-1))
+//    val configUrl = getClass.getClassLoader.getResource("ldif/local/example/test2/config.xml")
+//    val configFile = new File(configUrl.toString.stripPrefix("file:"))
+    val configFile = new File(args(args.length-1))
 
     stopWatch.getTimeSpanInSeconds
     val config = LdifConfiguration.load(configFile)
@@ -148,7 +148,7 @@ object Main
 
     while(!reader.isEmpty)
     {
-      writer.write(reader.read.toNQuadFormat + " .\n")
+      writer.write(reader.read().toNQuadFormat + " .\n")
       count += 1
     }
 
@@ -169,7 +169,6 @@ object Main
   {
     val entityQueues = entityDescriptions.map(new EntityQueue(_))
 //    for(ed <- entityDescriptions) println(ed)
-    println(reader.size)
 
     runInBackground
     {
