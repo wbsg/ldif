@@ -7,7 +7,7 @@ import collection.mutable.HashSet
 // Voldermort adapter
 
 class VoldermortHashTable (storeName : String) extends HashTable {
-  val store = VoldermortStoreFactory.getStore(storeName.asInstanceOf[java.lang.String])
+  val store = VoldermortStoreFactory.getStore(storeName)
 
   override def put(key : Pair[Node,String], value: Node) {
     val keyAsList = convertKey(key)
@@ -33,8 +33,7 @@ class VoldermortHashTable (storeName : String) extends HashTable {
     if(values!=null){
       val it = values.iterator
       while(it.hasNext())  {
-        //TODO decode graph info
-        result += Node.fromString(it.next)
+        result += decodeGraphVal(it.next)
       }
     }
     if (result.isEmpty)
@@ -49,17 +48,28 @@ class VoldermortHashTable (storeName : String) extends HashTable {
 
   private def convertKey (key : Pair[Node,String]) = {
     val keyAsList = new ArrayList[String]
-    //TODO add graph name if blankNode
-    keyAsList.add( Pair.unapply(key).get._1.value )
+    val node = Pair.unapply(key).get._1
+    // add graph name if blankNode
+    if(node.isBlankNode)
+      keyAsList.add(encodeGraphVal(node))
+    else
+      keyAsList.add( node.value )
     keyAsList.add( Pair.unapply(key).get._2 )
     keyAsList
   }
 
   private def convertValue (node : Node) = {
-    //TODO encode graph info
-    node.toString.asInstanceOf[java.lang.String]    
+    encodeGraphVal(node)
   }
 
+  private def encodeGraphVal (node : Node) = {
+    node.toString +"@^" + node.graph
+  }
+
+  private def decodeGraphVal (nodeStr : String) = {
+    val i = nodeStr.lastIndexOf("@^")
+    Node.fromString(nodeStr.substring(0,i),nodeStr.substring(i+2))
+  }
 
 
 
