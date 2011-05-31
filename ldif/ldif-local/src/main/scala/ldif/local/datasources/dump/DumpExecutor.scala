@@ -39,8 +39,7 @@ class DumpExecutor() extends Executor
     val nxp:NxParser = new NxParser(inputStream)
     while (nxp.hasNext) {
       val ns:Array[org.semanticweb.yars.nx.Node] = nxp.next
-      //TODO set a proper graph value
-      val graph = "default"
+      val graph = task.name
       val subj = Node.fromNxNode(ns(0),graph)
       val prop = ns(1).toString
       val obj = Node.fromNxNode(ns(2),graph)

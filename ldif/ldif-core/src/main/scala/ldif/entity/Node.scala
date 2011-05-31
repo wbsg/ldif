@@ -71,7 +71,7 @@ final case class Node protected(val value : String, datatypeOrLanguage : String,
     case Literal => "\"" + value + "\""
     case TypedLiteral => "\"" + value + "\"^^<" + datatypeOrLanguage + ">"
     case LanguageLiteral => "\"" + value + "\"@" + datatypeOrLanguage
-    case BlankNode => value
+    case BlankNode => "_:"+ value
     case UriNode => "<" + value + ">"
   }
 }
