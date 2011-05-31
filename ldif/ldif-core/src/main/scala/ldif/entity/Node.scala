@@ -28,6 +28,10 @@ final case class Node protected(val value : String, datatypeOrLanguage : String,
     nodeType==UriNode
   }
 
+  def isBlankNode = {
+    nodeType==BlankNode
+  }
+
   override def equals(other: Any): Boolean = {
     if (this.asInstanceOf[AnyRef] eq other.asInstanceOf[AnyRef])
       true
