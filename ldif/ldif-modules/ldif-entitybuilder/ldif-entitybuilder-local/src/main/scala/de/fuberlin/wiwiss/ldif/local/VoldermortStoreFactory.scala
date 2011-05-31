@@ -18,7 +18,7 @@ object VoldermortStoreFactory {
 
   def getStore(storeId: String) = {
     try {
-      adminClient.truncate(0,storeId)
+      //adminClient.truncate(0,storeId)
       factory.getStoreClient[List[String],List[String]](storeId)
     }
     catch {
@@ -33,8 +33,8 @@ object VoldermortStoreFactory {
 
     val definition = new StoreDefinitionBuilder().setName(storeId)
             .setType(BdbStorageConfiguration.TYPE_NAME)        // persistence backend used
-            .setKeySerializer(new SerializerDefinition("json"))
-            .setValueSerializer(new SerializerDefinition("json"))
+            .setKeySerializer(new SerializerDefinition("json","[\"string\"]"))
+            .setValueSerializer(new SerializerDefinition("json","[\"string\"]"))
             .setRoutingPolicy(RoutingTier.CLIENT)
             .setRoutingStrategyType(RoutingStrategyType.CONSISTENT_STRATEGY)
             .setReplicationFactor(1)        // number of times the data is stored
