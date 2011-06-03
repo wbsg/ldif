@@ -61,7 +61,7 @@ class SilkLocalExecutor extends Executor
     val loader = loadTask.runInBackground()
 
     //Execute matching
-    val matchTask = new MatchTask(linkSpec, caches, numThreads)
+    val matchTask = new MatchTask(linkSpec, caches, numThreads, true)
     val links = matchTask()
 
     //Filter links
