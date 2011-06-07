@@ -13,6 +13,9 @@ import ldif.local.runtime._
 import ldif.local.runtime.impl.QuadQueue
 import ldif.entity._
 import java.io.{FileReader, BufferedReader}
+import scala.actors.Actor
+import scala.actors.Actor._
+import java.util.concurrent.atomic.AtomicInteger
 
 class NTFileParser extends JavaTokenParsers {
    override val skipWhitespace = false
@@ -76,6 +79,23 @@ class NTFileParser extends JavaTokenParsers {
 
 object NTFileParser {
   val p = new NTFileParser
+  val counter = new AtomicInteger
+
+  val parserActor = actor {
+    loop {
+      receive {
+          case line: String => parseNTLine(line) match {
+            case quad: Quad => writerActor ! quad
+            case null => println("Found non-quad line")
+          }
+          case null => println("End..."); writerActor ! null; exit()
+      }
+    }
+  }
+
+  parserActor.start()
+
+  var writerActor: Actor = null
 
   def parseNTLine(line: String): Quad = {
     p.parseAll(p.line, line) match {
@@ -85,7 +105,10 @@ object NTFileParser {
   }
 
   def readQuads(input: BufferedReader, quadQueue: QuadWriter) {
+    writerActor = new WriterActor(quadQueue)
+    writerActor.start()
     var line: String = null
+
     var loop = true
 
     while(loop) {
@@ -94,11 +117,15 @@ object NTFileParser {
       if(line==null)
         loop = false
       else {
-        val quad = parseNTLine(line)
-        if(quad!=null) {
-          quadQueue.write(quad) }
+        globalCounter.inc;
+        parserActor ! line
+
+//        val quad = parseNTLine(line)
+//        if(quad!=null) {
+//          quadQueue.write(quad) }
       }
     }
+    parserActor ! null
   }
 
   def main(args: Array[String]) {
@@ -111,7 +138,9 @@ object NTFileParser {
     readQuads(reader, queue)
 
     reader.close
+    Thread.sleep(40000)
     println(stopWatch.getTimeSpanInSeconds + "s")
+    println("Counter: " + globalCounter.get)
     println("Queue size: " + queue.size)
   }
 }
@@ -125,4 +154,28 @@ object stopWatch {
     lastTime = newTime
     span / 1000.0
   }
+}
+
+class WriterActor(quadQueue: QuadWriter) extends Actor {
+  def act() = {
+    loop {
+      receive {
+        case quad: Quad =>  quadQueue.write(quad)
+        case null => exit()
+      }
+    }
+  }
+}
+
+object globalCounter {
+  val counter = new AtomicInteger
+  var finished = false
+
+  def inc() = counter.incrementAndGet
+
+  def get = counter.get
+
+  def setFinished = true
+
+  def getFinished = finished
 }

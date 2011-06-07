@@ -6,6 +6,7 @@ import ldif.util.Uri
 import ldif.local.runtime.{EntityWriter, QuadReader}
 import ldif.entity.Restriction._
 import collection.mutable.{ArraySeq, ArrayBuffer, HashMap, Set, HashSet}
+
 //import collection.mutable.{ArraySeq, ArrayBuffer, HashMap, Set, HashSet}
 
 class EntityBuilder (entityDescriptions : IndexedSeq[EntityDescription], reader : QuadReader) extends FactumBuilder {
@@ -20,10 +21,10 @@ class EntityBuilder (entityDescriptions : IndexedSeq[EntityDescription], reader 
   val PHT = new HashMap[String, PropertyType.Value]
   // Forward HT - Contains connections which are going to be explored straight/forward
   val FHT:HashTable = new MemHashTable
-  //val FHT:HashTable = new VoldermortHashTable("fht")
+//  val FHT:HashTable = new VoldermortHashTable("fht")
   // Backward HT - Contains connections from quads which are going to be explored reverse/backward
   val BHT:HashTable = new MemHashTable
-  //val BHT:HashTable = new VoldermortHashTable("bht")
+//  val BHT:HashTable = new VoldermortHashTable("bht")
 
   // if no restriction is defined, build an entity for each resource
   var allUriNodes : Set[Node] = null
