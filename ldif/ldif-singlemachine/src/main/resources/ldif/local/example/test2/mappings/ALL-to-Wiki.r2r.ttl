@@ -194,65 +194,67 @@ mp:PathwayLabel
 ###
 # Gene
 ###
-mp:GeneABA
+mp:Gene
    a r2r:ClassMapping;
-   r2r:prefixDefinitions	"""smwcat: <http://mywiki/resource/category/> .
-   							 smwprop: <http://mywiki/resource/property/> .
-   							 aba: <http://brain-map.org/gene/0.1#> .
-   							 uniprot: <http://purl.uniprot.org/core/> .
-   							 skos: <http://www.w3.org/2004/02/skos/core#> .
-   							 rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
-							 xsd: <http://www.w3.org/2001/XMLSchema#>""";
-   r2r:sourcePattern 	"?SUBJ a aba:gene";
-   r2r:targetPattern	"?SUBJ a smwcat:Gene";
+   r2r:prefixDefinitions        """smwcat: <http://mywiki/resource/category/> .
+                                                         smwprop: <http://mywiki/resource/property/> .
+                                                         aba: <http://brain-map.org/gene/0.1#> .
+                                                         uniprot: <http://purl.uniprot.org/core/> .
+                                                         skos: <http://www.w3.org/2004/02/skos/core#> .
+                                                         rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+                                                         xsd: <http://www.w3.org/2001/XMLSchema#>""";
+   r2r:sourcePattern    "?SUBJ a aba:gene";
+   r2r:targetPattern    "?SUBJ a smwcat:Gene";
    .
 
 # Properties of Gene
-mp:GeneidABA
+mp:Geneid
    a r2r:PropertyMapping;
-   r2r:mappingRef    mp:GeneABA;
-   r2r:sourcePattern 	"?SUBJ aba:geneid ?x";
-   r2r:targetPattern	"?SUBJ smwprop:AbaGeneId ?'x'^^xsd:string";	###MER: actually we must translate from unsignedInt to string here
+   r2r:mappingRef    mp:Gene;
+   r2r:transformation "?newX = [2 < strlen(?x) ? ?x : list()]" ; # only values of len > 2 are mapped (because of empty strings)
+   r2r:sourcePattern    "?SUBJ aba:geneid ?x";
+   r2r:targetPattern    "?SUBJ smwprop:AbaGeneId ?'newX'^^xsd:string";  ###MER: actually we must translate from unsignedInt to string here
    .
 
-mp:EntrezgeneidABA
+mp:Entrezgeneid
    a r2r:PropertyMapping;
-   r2r:mappingRef    	mp:GeneABA;
-   r2r:sourcePattern 	"?SUBJ aba:entrezgeneid ?x";
-   r2r:targetPattern	"?SUBJ smwprop:EntrezGeneId ?'x'^^xsd:int";	###MER: actually we must translate from int to string here
+   r2r:mappingRef       mp:Gene;
+   r2r:transformation "?newX = [strlen(?x) > 2 ? ?x : list()]" ; # only values of len > 2 are mapped (because of empty strings)
+   r2r:sourcePattern    "?SUBJ aba:entrezgeneid ?x";
+   r2r:targetPattern    "?SUBJ smwprop:EntrezGeneId ?'newX'^^xsd:int";  ###MER: actually we must translate from int to string here
    .
-   
+
 mp:Genename
    a r2r:PropertyMapping;
-   r2r:mappingRef    	mp:GeneABA;
-   r2r:sourcePattern 	"?SUBJ aba:genename ?x";
-   r2r:targetPattern	"?SUBJ smwprop:Label ?'x'^^xsd:string";
-   .
-   
-mp:GenesymbolABA
-   a r2r:PropertyMapping;
-   r2r:mappingRef    	mp:GeneABA;
-   r2r:sourcePattern 	"?SUBJ aba:genesymbol ?x";
-   r2r:targetPattern	"?SUBJ smwprop:GeneSymbol ?'x'^^xsd:string";
+   r2r:mappingRef       mp:Gene;
+   r2r:sourcePattern    "?SUBJ aba:genename ?x";
+   r2r:targetPattern    "?SUBJ smwprop:Label ?'x'^^xsd:string";
    .
 
-mp:MgimarkeraccessionidABA
+mp:Genesymbol
    a r2r:PropertyMapping;
-   r2r:mappingRef    	mp:GeneABA;
-   r2r:sourcePattern 	"?SUBJ aba:mgimarkeraccessionid ?x";
-   r2r:targetPattern	"?SUBJ smwprop:MgiMarkerAccessionId ?'x'^^xsd:string";
+   r2r:mappingRef       mp:Gene;
+   r2r:sourcePattern    "?SUBJ aba:genesymbol ?x";
+   r2r:targetPattern    "?SUBJ smwprop:GeneSymbol ?'x'^^xsd:string";
    .
-   
+
+mp:Mgimarkeraccessionid
+   a r2r:PropertyMapping;
+   r2r:mappingRef       mp:Gene;
+   r2r:transformation "?newX = [strlen(?x) > 2 ? ?x : list()]" ; # only values of len > 2 are mapped (because of empty strings)
+   r2r:sourcePattern    "?SUBJ aba:mgimarkeraccessionid ?x";
+   r2r:targetPattern    "?SUBJ smwprop:MgiMarkerAccessionId ?'newX'^^xsd:string";
+   .
+
 ###
 # GeneAlias
 ###
-mp:GenealiasABA
+mp:Genealias
    a r2r:PropertyMapping;
-   r2r:mappingRef    	mp:GeneABA;
-   r2r:sourcePattern	"?SUBJ aba:gene-aliases ?x . ?x aba:aliassymbol ?s";
-   r2r:targetPattern	"?SUBJ smwprop:AlternativeLabel ?'s'^^xsd:string";
+   r2r:mappingRef       mp:Gene;
+   r2r:sourcePattern    "?SUBJ aba:gene-aliases ?x . ?x aba:aliassymbol ?s";
+   r2r:targetPattern    "?SUBJ smwprop:AlternativeLabel ?'s'^^xsd:string";
    .
-
 
 #####################################################################################################
 # UNIPROT mappings
