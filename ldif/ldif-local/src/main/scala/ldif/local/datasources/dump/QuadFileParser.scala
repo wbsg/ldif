@@ -8,10 +8,10 @@ import java.util.concurrent.atomic.AtomicInteger
 import java.io.{CharConversionException, FileReader, BufferedReader}
 import ldif.util.NTriplesStringConverter
 
-class NTFileParser extends JavaTokenParsers {
+class QuadFileParser extends JavaTokenParsers {
    override val skipWhitespace = false
 
-  def line = rep(ws) ~ opt(comment | triple) ^^ {
+  def line = rep(ws) ~ opt(comment | triple | quad) ^^ {
     case _~Some(quad) => quad
     case _ => null
   }
@@ -20,8 +20,12 @@ class NTFileParser extends JavaTokenParsers {
 
   val COMMENT = "#[\u0020-\u007E]*".r  ^^ { case _ => null }
 
+  def quad = subject ~ rep1(ws) ~ predicate ~ rep1(ws) ~ obj ~ rep1(ws) ~ graph ~ rep1(ws) ~ "." ~ rep(ws) ^^ {
+    case subject~_~predicate~_~obj~_~graph~_~"."~_ => Quad(subject, predicate.value, obj, graph.value)
+  }
+
   def triple = subject ~ rep1(ws) ~ predicate ~ rep1(ws) ~ obj ~ rep1(ws) ~ "." ~ rep(ws) ^^ {
-    case subject~_~predicate~_~obj~_~"."~_ => Quad(subject, predicate.value, obj, "default")
+    case subject~_~predicate~_~obj~_~"."~_ => Quad(subject, predicate.value, obj, null)
   }
 
   def subject = uriref | namedNode
@@ -30,21 +34,23 @@ class NTFileParser extends JavaTokenParsers {
 
   def obj = uriref | namedNode | lit
 
-  def uriref = "<" ~ absoluteUri ~ ">" ^^ { case "<"~uri~">" => LocalNode.createUriNode(uri, "default")}
+  def graph = uriref
 
-  def namedNode = "_:" ~ name ^^ { case "_:"~name => LocalNode.createBlankNode(name, "default")
+  def uriref = "<" ~ absoluteUri ~ ">" ^^ { case "<"~uri~">" => LocalNode.createUriNode(uri, null)}
+
+  def namedNode = "_:" ~ name ^^ { case "_:"~name => LocalNode.createBlankNode(name, null)
 
   }
 
   def lit = langString | datatypeString
 
   def langString = "\"" ~ characterString ~ "\"" ~ opt("@" ~ language) ^^ {
-    case "\"" ~ characters ~ "\"" ~ Some("@" ~ language) => LocalNode.createLanguageLiteral(characters, language, "default")
-    case "\"" ~ characters ~ "\"" ~ None => LocalNode.createLiteral(characters, "default")
+    case "\"" ~ characters ~ "\"" ~ Some("@" ~ language) => LocalNode.createLanguageLiteral(characters, language, null)
+    case "\"" ~ characters ~ "\"" ~ None => LocalNode.createLiteral(characters, null)
   }
 
   def datatypeString = "\"" ~ characterString ~ "\"^^" ~ uriref ^^ {
-    case "\"" ~ characters ~ "\"^^" ~ uri => LocalNode.createTypedLiteral(characters, uri.value, "default")
+    case "\"" ~ characters ~ "\"^^" ~ uri => LocalNode.createTypedLiteral(characters, uri.value, null)
   }
 
   val language = "[a-z]+(-[a-z0-9]+)*".r
@@ -70,11 +76,18 @@ class NTFileParser extends JavaTokenParsers {
                     { case str => NTriplesStringConverter.convertFromEscapedString(str) }
 }
 
-object NTFileParser {
-  val p = new NTFileParser
+object QuadFileParser {
+  val p = new QuadFileParser
   val counter = new AtomicInteger
 
   def parseNTLine(line: String): Quad = {
+    p.parseAll(p.line, line) match {
+      case p.Success(quad, _) => quad
+      case _ => null
+    }
+  }
+
+  def parseQuadLine(line: String): Quad = {
     p.parseAll(p.line, line) match {
       case p.Success(quad, _) => quad
       case _ => null
