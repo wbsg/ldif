@@ -1,6 +1,7 @@
 package ldif.local.runtime
 
 import ldif.entity.Node
+import ldif.util.NTriplesStringConverter
 
 /**
  * An RDF quad.
@@ -8,13 +9,13 @@ import ldif.entity.Node
 case class Quad(subject : Node, predicate : String, value : Node, graph : String) {
   def toNQuadFormat = {
     val sb = new StringBuilder
-    sb ++= subject.toString
+    sb ++= subject.toNTriplesFormat
     sb ++= " <"
-    sb ++= predicate
+    sb ++= NTriplesStringConverter.convertToEscapedString(predicate)
     sb ++= "> "
-    sb ++= value.toString
+    sb ++= value.toNTriplesFormat
     sb ++= " <"
-    sb ++= graph
+    sb ++= NTriplesStringConverter.convertToEscapedString(graph)
     sb ++= ">"
     sb.toString
   }

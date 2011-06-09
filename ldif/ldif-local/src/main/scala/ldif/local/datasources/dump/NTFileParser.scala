@@ -12,10 +12,9 @@ import scala.util.parsing.combinator._
 import ldif.local.runtime._
 import ldif.local.runtime.impl.QuadQueue
 import ldif.entity._
-import java.io.{FileReader, BufferedReader}
-import scala.actors.Actor
-import scala.actors.Actor._
 import java.util.concurrent.atomic.AtomicInteger
+import java.io.{CharConversionException, FileReader, BufferedReader}
+import ldif.util.NTriplesStringConverter
 
 class NTFileParser extends JavaTokenParsers {
    override val skipWhitespace = false
@@ -68,34 +67,20 @@ class NTFileParser extends JavaTokenParsers {
 
   val lf = "\u000A"
 
-  val characterString = "[\u0020-\u0021\u0023-\u007E]*".r
+  val characterString = """(?:[\u0020\u0021\u0023-\[\]-\u007E]|\\(["nt\\r]|u[0-9a-fA-F]{4}|U[0-9a-fA-F]{8}))*""".r ^^
+                        { case str => NTriplesStringConverter.convertFromEscapedString(str) }
 
   val tab = "\u0009"
 
   val name = """[A-Za-z][A-Za-z0-9]*""".r
 
-  val absoluteUri = "[\u0021-\u003B=\u003F-\u007E]+".r
+  val absoluteUri = """(?:[\u0021-\u003B=\u003F-\[\]-\u007E]|\\(["nt\\r]|u[0-9a-fA-F]{4}|U[0-9a-fA-F]{8}))+""".r ^^
+                    { case str => NTriplesStringConverter.convertFromEscapedString(str) }
 }
 
 object NTFileParser {
   val p = new NTFileParser
   val counter = new AtomicInteger
-
-  val parserActor = actor {
-    loop {
-      receive {
-          case line: String => parseNTLine(line) match {
-            case quad: Quad => writerActor ! quad
-            case null => println("Found non-quad line")
-          }
-          case null => println("End..."); writerActor ! null; exit()
-      }
-    }
-  }
-
-  parserActor.start()
-
-  var writerActor: Actor = null
 
   def parseNTLine(line: String): Quad = {
     p.parseAll(p.line, line) match {
@@ -105,8 +90,6 @@ object NTFileParser {
   }
 
   def readQuads(input: BufferedReader, quadQueue: QuadWriter) {
-    writerActor = new WriterActor(quadQueue)
-    writerActor.start()
     var line: String = null
 
     var loop = true
@@ -117,31 +100,29 @@ object NTFileParser {
       if(line==null)
         loop = false
       else {
-        globalCounter.inc;
-        parserActor ! line
-
-//        val quad = parseNTLine(line)
-//        if(quad!=null) {
-//          quadQueue.write(quad) }
+        val quad = parseNTLine(line)
+        if(quad!=null) {
+          quadQueue.write(quad) }
       }
     }
-    parserActor ! null
   }
 
   def main(args: Array[String]) {
-//    val reader = new BufferedReader(new FileReader("/home/andreas/test2.nt"))
-    val reader = new BufferedReader(new FileReader("/home/andreas/test.nt"))
+    val reader = new BufferedReader(new FileReader("/home/andreas/minimaltest.nt"))
+//    val reader = new BufferedReader(new FileReader("/home/andreas/test.nt"))
     val queue = new QuadQueue
 
+    println("Starting to read file...")
     stopWatch.getTimeSpanInSeconds
 
     readQuads(reader, queue)
 
     reader.close
-    Thread.sleep(40000)
+
     println(stopWatch.getTimeSpanInSeconds + "s")
-    println("Counter: " + globalCounter.get)
     println("Queue size: " + queue.size)
+    while(!queue.isEmpty)
+      println(queue.read.toNQuadFormat)
   }
 }
 
@@ -156,26 +137,4 @@ object stopWatch {
   }
 }
 
-class WriterActor(quadQueue: QuadWriter) extends Actor {
-  def act() = {
-    loop {
-      receive {
-        case quad: Quad =>  quadQueue.write(quad)
-        case null => exit()
-      }
-    }
-  }
-}
 
-object globalCounter {
-  val counter = new AtomicInteger
-  var finished = false
-
-  def inc() = counter.incrementAndGet
-
-  def get = counter.get
-
-  def setFinished = true
-
-  def getFinished = finished
-}

@@ -2,6 +2,7 @@ package ldif.entity
 
 import Node._
 import org.semanticweb.yars.nx.parser.NxParser
+import ldif.util.NTriplesStringConverter
 
 final case class Node protected(val value : String, datatypeOrLanguage : String, val nodeType : Node.NodeType, val graph : String)
 {
@@ -78,6 +79,15 @@ final case class Node protected(val value : String, datatypeOrLanguage : String,
     case BlankNode => "_:"+ value
     case UriNode => "<" + value + ">"
   }
+
+  def toNTriplesFormat = nodeType match {
+    case Literal => "\"" + NTriplesStringConverter.convertToEscapedString(value) + "\""
+    case TypedLiteral => "\"" + NTriplesStringConverter.convertToEscapedString(value) + "\"^^<" + NTriplesStringConverter.convertToEscapedString(datatypeOrLanguage) + ">"
+    case LanguageLiteral => "\"" + NTriplesStringConverter.convertToEscapedString(value) + "\"@" + datatypeOrLanguage
+    case BlankNode => "_:"+ value
+    case UriNode => "<" + NTriplesStringConverter.convertToEscapedString(value) + ">"
+  }
+
 }
 
 object Node
