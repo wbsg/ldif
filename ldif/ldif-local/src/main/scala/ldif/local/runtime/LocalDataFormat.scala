@@ -19,7 +19,7 @@ case class NoDataFormat() extends LocalDataFormat
  */
 case class GraphFormat() extends LocalDataFormat
 {
-  type Reader = QuadReader
+  type Reader = Seq[QuadReader]
   type Writer = QuadWriter
 }
 
