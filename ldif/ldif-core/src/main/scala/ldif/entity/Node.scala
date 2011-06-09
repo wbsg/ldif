@@ -33,6 +33,10 @@ final case class Node protected(val value : String, datatypeOrLanguage : String,
     nodeType==BlankNode
   }
 
+  def modifyGraph(graph: String): Node = {
+    new Node(this.value, this.datatypeOrLanguage, this.nodeType, graph)
+  }
+
   override def equals(other: Any): Boolean = {
     if (this.asInstanceOf[AnyRef] eq other.asInstanceOf[AnyRef])
       true

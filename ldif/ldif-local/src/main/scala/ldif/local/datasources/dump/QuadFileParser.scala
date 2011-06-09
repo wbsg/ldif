@@ -7,9 +7,18 @@ import ldif.entity._
 import java.util.concurrent.atomic.AtomicInteger
 import java.io.{CharConversionException, FileReader, BufferedReader}
 import ldif.util.NTriplesStringConverter
+import ldif.local.util.StringPool
 
-class QuadFileParser extends JavaTokenParsers {
-   override val skipWhitespace = false
+/**
+ * A Quad file parser that currently only allows URIs as context
+ */
+class QuadFileParser(val graphURI: String) extends JavaTokenParsers {
+
+  def this() {
+    this("default")
+  }
+
+  override val skipWhitespace = false
 
   def line = rep(ws) ~ opt(comment | triple | quad) ^^ {
     case _~Some(quad) => quad
@@ -21,11 +30,11 @@ class QuadFileParser extends JavaTokenParsers {
   val COMMENT = "#[\u0020-\u007E]*".r  ^^ { case _ => null }
 
   def quad = subject ~ rep1(ws) ~ predicate ~ rep1(ws) ~ obj ~ rep1(ws) ~ graph ~ rep1(ws) ~ "." ~ rep(ws) ^^ {
-    case subject~_~predicate~_~obj~_~graph~_~"."~_ => Quad(subject, predicate.value, obj, graph.value)
+    case subject~_~predicate~_~obj~_~graph~_~"."~_ => Quad(subject.modifyGraph(graph.value), predicate.value, obj.modifyGraph(graph.value), graph.value)
   }
 
   def triple = subject ~ rep1(ws) ~ predicate ~ rep1(ws) ~ obj ~ rep1(ws) ~ "." ~ rep(ws) ^^ {
-    case subject~_~predicate~_~obj~_~"."~_ => Quad(subject, predicate.value, obj, null)
+    case subject~_~predicate~_~obj~_~"."~_ => Quad(subject.modifyGraph(graphURI), predicate.value, obj.modifyGraph(graphURI), graphURI)
   }
 
   def subject = uriref | namedNode
@@ -113,8 +122,8 @@ object QuadFileParser {
   }
 
   def main(args: Array[String]) {
-    val reader = new BufferedReader(new FileReader("/home/andreas/minimaltest.nt"))
-//    val reader = new BufferedReader(new FileReader("/home/andreas/test.nt"))
+//    val reader = new BufferedReader(new FileReader("/home/andreas/minimaltest.nt"))
+    val reader = new BufferedReader(new FileReader("/home/andreas/test.nt"))
     val queue = new QuadQueue
 
     println("Starting to read file...")
@@ -126,8 +135,6 @@ object QuadFileParser {
 
     println(stopWatch.getTimeSpanInSeconds + "s")
     println("Queue size: " + queue.size)
-    while(!queue.isEmpty)
-      println(queue.read.toNQuadFormat)
   }
 }
 
