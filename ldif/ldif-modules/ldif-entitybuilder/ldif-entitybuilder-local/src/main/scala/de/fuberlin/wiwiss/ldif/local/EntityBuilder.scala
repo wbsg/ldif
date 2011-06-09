@@ -3,11 +3,9 @@ package de.fuberlin.wiwiss.ldif.local
 import ldif.entity._
 import java.util.logging.Logger
 import ldif.util.Uri
-import ldif.local.runtime.{EntityWriter, QuadReader}
 import ldif.entity.Restriction._
 import collection.mutable.{ArraySeq, ArrayBuffer, HashMap, Set, HashSet}
-
-//import collection.mutable.{ArraySeq, ArrayBuffer, HashMap, Set, HashSet}
+import ldif.local.runtime.{LocalNode, EntityWriter, QuadReader}
 
 class EntityBuilder (entityDescriptions : IndexedSeq[EntityDescription], reader : QuadReader) extends FactumBuilder {
 
@@ -21,10 +19,10 @@ class EntityBuilder (entityDescriptions : IndexedSeq[EntityDescription], reader 
   val PHT = new HashMap[String, PropertyType.Value]
   // Forward HT - Contains connections which are going to be explored straight/forward
   val FHT:HashTable = new MemHashTable
-//  val FHT:HashTable = new VoldermortHashTable("fht")
+  // val FHT:HashTable = new VoldermortHashTable("fht")
   // Backward HT - Contains connections from quads which are going to be explored reverse/backward
   val BHT:HashTable = new MemHashTable
-//  val BHT:HashTable = new VoldermortHashTable("bht")
+  // val BHT:HashTable = new VoldermortHashTable("bht")
 
   // if no restriction is defined, build an entity for each resource
   var allUriNodes : Set[Node] = null
@@ -96,7 +94,7 @@ class EntityBuilder (entityDescriptions : IndexedSeq[EntityDescription], reader 
      BHT.clear
      val startTime = now
 
-     while (!reader.isEmpty){
+     while (reader.hasNext){
        val quad = reader.read
 
        val prop = new Uri(quad.predicate).toString
@@ -269,7 +267,7 @@ class EntityBuilder (entityDescriptions : IndexedSeq[EntityDescription], reader 
     val prev = new ArraySeq[ArrayBuffer[Node]](paths.size)
     val next = new ArraySeq[ArrayBuffer[Traversable[Node]]](paths.size)
     val treeStructure = getTreeStructure(paths)
-    val entityNode = Node.createUriNode(entityUri,null)
+    val entityNode = LocalNode.createUriNode(entityUri,null)
     val initRow = for (j <- 0 to paths.size-1) yield {
       prev(j) = ArrayBuffer(entityNode)
       next(j) = new ArrayBuffer[Traversable[Node]]

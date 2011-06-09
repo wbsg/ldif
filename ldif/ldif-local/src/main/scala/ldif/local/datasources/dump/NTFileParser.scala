@@ -1,13 +1,5 @@
 package ldif.local.datasources.dump
 
-/**
- * Created by IntelliJ IDEA.
- * User: andreas
- * Date: 26.05.11
- * Time: 17:12
- * To change this template use File | Settings | File Templates.
- */
-
 import scala.util.parsing.combinator._
 import ldif.local.runtime._
 import ldif.local.runtime.impl.QuadQueue
@@ -38,21 +30,21 @@ class NTFileParser extends JavaTokenParsers {
 
   def obj = uriref | namedNode | lit
 
-  def uriref = "<" ~ absoluteUri ~ ">" ^^ { case "<"~uri~">" => Node.createUriNode(uri, "default")}
+  def uriref = "<" ~ absoluteUri ~ ">" ^^ { case "<"~uri~">" => LocalNode.createUriNode(uri, "default")}
 
-  def namedNode = "_:" ~ name ^^ { case "_:"~name => Node.createBlankNode(name, "default")
+  def namedNode = "_:" ~ name ^^ { case "_:"~name => LocalNode.createBlankNode(name, "default")
 
   }
 
   def lit = langString | datatypeString
 
   def langString = "\"" ~ characterString ~ "\"" ~ opt("@" ~ language) ^^ {
-    case "\"" ~ characters ~ "\"" ~ Some("@" ~ language) => Node.createLanguageLiteral(characters, language, "default")
-    case "\"" ~ characters ~ "\"" ~ None => Node.createLiteral(characters, "default")
+    case "\"" ~ characters ~ "\"" ~ Some("@" ~ language) => LocalNode.createLanguageLiteral(characters, language, "default")
+    case "\"" ~ characters ~ "\"" ~ None => LocalNode.createLiteral(characters, "default")
   }
 
   def datatypeString = "\"" ~ characterString ~ "\"^^" ~ uriref ^^ {
-    case "\"" ~ characters ~ "\"^^" ~ uri => Node.createTypedLiteral(characters, uri.value, "default")
+    case "\"" ~ characters ~ "\"^^" ~ uri => LocalNode.createTypedLiteral(characters, uri.value, "default")
   }
 
   val language = "[a-z]+(-[a-z0-9]+)*".r

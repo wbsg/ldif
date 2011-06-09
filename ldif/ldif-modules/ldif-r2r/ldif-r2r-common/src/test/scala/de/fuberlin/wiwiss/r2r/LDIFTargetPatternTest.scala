@@ -15,6 +15,7 @@ import org.scalatest.FlatSpec
 import org.scalatest.matchers.ShouldMatchers
 import ldif.entity._
 import ldif.local.runtime.{QuadWriter, Quad}
+import ldif.local.runtime.impl.QuadQueue
 
 /**
  * Unit Test for the LDIFTargetPattern
@@ -24,7 +25,7 @@ import ldif.local.runtime.{QuadWriter, Quad}
 class LDIFTargetPatternTest extends FlatSpec with ShouldMatchers {
   behavior of "an LDIFTargetPattern"
 
-  val quadWriter = new QuadWriter {
+  val quadWriter = new QuadQueue {
     var count = 0
     override def write(quad: Quad) {
       count = count + 1

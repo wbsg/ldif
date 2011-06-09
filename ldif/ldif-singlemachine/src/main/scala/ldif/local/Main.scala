@@ -2,7 +2,7 @@ package ldif.local
 
 import datasources.dump.DumpExecutor
 import runtime._
-import runtime.impl.{EntityQueue, QuadQueue}
+import impl.{BlockingQuadQueue, EntityQueue, QuadQueue}
 import ldif.modules.silk.SilkModule
 import ldif.datasources.dump.{DumpModule, DumpConfig}
 import ldif.modules.silk.local.SilkLocalExecutor
@@ -12,8 +12,7 @@ import java.io.{FileWriter, File}
 import de.fuberlin.wiwiss.r2r._
 import ldif.modules.r2r.local.R2RLocalExecutor
 import ldif.modules.r2r._
-
-import ldif.entity.{Node, EntityDescription}
+import ldif.entity.EntityDescription
 
 
 object Main
@@ -28,8 +27,8 @@ object Main
     else if(args.length>=2 && args(0)=="--debug")
       debug = true
 
-//    val configUrl = getClass.getClassLoader.getResource("ldif/local/example/test2/config.xml")
-//    val configFile = new File(configUrl.toString.stripPrefix("file:"))
+    //val configUrl = getClass.getClassLoader.getResource("ldif/local/example/test2/config.xml")
+    //val configFile = new File(configUrl.toString.stripPrefix("file:"))
     val configFile = new File(args(args.length-1))
 
     stopWatch.getTimeSpanInSeconds
@@ -37,8 +36,8 @@ object Main
     println("Time needed to load config file: " + stopWatch.getTimeSpanInSeconds + "s")
 
     val dumpReader = loadDump(config.sourceDir)
-    println("Time needed to load dump: " + stopWatch.getTimeSpanInSeconds + "s")
-    println("Number of triples after loading the dump: " + dumpReader.size)
+    //println("Time needed to load dump: " + stopWatch.getTimeSpanInSeconds + "s")
+    //println("Number of triples after loading the dump: " + dumpReader.size)
 
     if(debug==true)
       writeDebugOutput("dump", config.outputFile, dumpReader)
@@ -63,6 +62,8 @@ object Main
 
     println("Time needed to translate URIs: " + stopWatch.getTimeSpanInSeconds + "s")
 
+    //OutputValidator.compare(cloneQuadQueue(integratedReader),new File(configFile.getParent+"/../results/all-mes.nt"))
+
     writeOutput(config.outputFile, integratedReader)
   }
 
@@ -74,25 +75,21 @@ object Main
     val dumpModule = new DumpModule(new DumpConfig(dumpDir.listFiles.map(_.getCanonicalPath)))
     val dumpExecutor = new DumpExecutor
 
-    val dumpQuadQueue = new QuadQueue
+    val dumpQuadQueue = new BlockingQuadQueue
 
     runInBackground
-    {
-      for(task <- dumpModule.tasks)
       {
-        dumpExecutor.execute(task, null, dumpQuadQueue)
+        for(task <- dumpModule.tasks)
+        {
+          dumpExecutor.execute(task, null, dumpQuadQueue)
+        }
+        dumpQuadQueue.finish
+
+        println("Time needed to load dump: " + stopWatch.getTimeSpanInSeconds + "s")
+        println("Number of triples after loading the dump: " + (dumpQuadQueue.totalSize-1))
       }
-    }
 
     dumpQuadQueue
-  }
-
-  // Only clone QuadQueue implementation of QuadReader
-  def cloneQuadQueue(queue: QuadReader) = {
-    if(queue.isInstanceOf[QuadQueue])
-      queue.asInstanceOf[QuadQueue].clone
-    else
-      null
   }
 
   /**
@@ -110,7 +107,7 @@ object Main
 
     val outputQueue = new QuadQueue
 
-    runInBackground
+    //runInBackground
     {
       for((r2rTask, reader) <- module.tasks.toList zip entityReaders)
         executor.execute(r2rTask, Seq(reader), outputQueue)
@@ -133,7 +130,7 @@ object Main
 
     val outputQueue = new QuadQueue
 
-    runInBackground
+    //runInBackground
     {
       for((silkTask, readers) <- silkModule.tasks.toList zip entityReaders.grouped(2).toList)
       {
@@ -144,37 +141,14 @@ object Main
     outputQueue
   }
 
-  //TODO we don't have an output module yet...
-  def writeOutput(outputFile : File, reader : QuadReader)
-  {
-    val writer = new FileWriter(outputFile)
-    var count = 0
-
-    while(!reader.isEmpty)
-    {
-      writer.write(reader.read().toNQuadFormat + " .\n")
-      count += 1
-    }
-
-    writer.close()
-
-    println(count + " Quads written")
-  }
-
-  def writeDebugOutput(phase: String, outputFile: File, reader: QuadReader) {
-    val newOutputFile = new File(outputFile.getAbsolutePath + "." + phase)
-    if(!reader.isInstanceOf[QuadQueue])
-      return
-    val clonedReader = cloneQuadQueue(reader)
-    writeOutput(newOutputFile, clonedReader)
-  }
-
+  /**
+   * Build Entities.
+   */
   def buildEntities(reader : QuadReader, entityDescriptions : Seq[EntityDescription]) : Seq[EntityReader] =
   {
     val entityQueues = entityDescriptions.map(new EntityQueue(_))
-//    for(ed <- entityDescriptions) println(ed)
 
-    runInBackground
+    //runInBackground
     {
       val entityBuilderConfig = new EntityBuilderConfig(entityDescriptions.toIndexedSeq)
       val entityBuilderModule = new EntityBuilderModule(entityBuilderConfig)
@@ -190,20 +164,43 @@ object Main
   /**
    * Evaluates an expression in the background.
    */
-  private def runInBackground(function : => Unit)
-  {
-//    val thread = new Thread
-//    {
-//      override def run()
-//      {
-//        function
-//      }
-//    }
-//
-//    thread.start()
+  private def runInBackground(function : => Unit) {
+    val thread = new Thread {
+      override def run() {
+        function
+      }
+    }
+    thread.start()
+  }
 
+  //TODO we don't have an output module yet...
+  def writeOutput(outputFile : File, reader : QuadReader)    {
+    val writer = new FileWriter(outputFile)
+    var count = 0
 
-    function
+    while(!reader.isEmpty) {
+      writer.write(reader.read().toNQuadFormat + " .\n")
+      count += 1
+    }
+
+    writer.close()
+    println(count + " Quads written")
+  }
+
+  def writeDebugOutput(phase: String, outputFile: File, reader: QuadReader) {
+    if(reader.isInstanceOf[QuadQueue] && !reader.isInstanceOf[BlockingQuadQueue]) {
+      val newOutputFile = new File(outputFile.getAbsolutePath + "." + phase)
+      val clonedReader = cloneQuadQueue(reader)
+      writeOutput(newOutputFile, clonedReader)
+    }
+  }
+
+  // Only clone QuadQueue implementation of QuadReader
+  def cloneQuadQueue(queue: QuadReader) = {
+    if(queue.isInstanceOf[QuadQueue])
+      queue.asInstanceOf[QuadQueue].clone
+    else
+      null
   }
 }
 
