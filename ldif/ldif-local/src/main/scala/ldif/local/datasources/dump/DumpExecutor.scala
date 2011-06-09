@@ -45,7 +45,7 @@ class DumpExecutor() extends Executor
       val obj = LocalNode.fromNxNode(ns(2),graph)
       writer.write(new Quad(subj,prop,obj,graph))
     }
-
-    //writer.finish
+    
+    writer.finish
   }
 }

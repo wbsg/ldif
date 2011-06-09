@@ -35,14 +35,12 @@ object Main
     val config = LdifConfiguration.load(configFile)
     println("Time needed to load config file: " + stopWatch.getTimeSpanInSeconds + "s")
 
-    val dumpReader = loadDump(config.sourceDir)
-    //println("Time needed to load dump: " + stopWatch.getTimeSpanInSeconds + "s")
-    //println("Number of triples after loading the dump: " + dumpReader.size)
+    val quadReaders = loadDump(config.sourceDir)
 
-    if(debug==true)
-      writeDebugOutput("dump", config.outputFile, dumpReader)
+    //if(debug==true)
+    //  writeDebugOutput("dump", config.outputFile, dumpReader)
 
-    val r2rReader = mapQuads(config.mappingFile, dumpReader)
+    val r2rReader = mapQuads(config.mappingFile, quadReaders)
     println("Time needed to map data: " + stopWatch.getTimeSpanInSeconds + "s")
     println("Number of triples after mapping the input dump: " + r2rReader.size)
 
@@ -70,40 +68,35 @@ object Main
   /**
    * Loads the dump files.
    */
-  def loadDump(dumpDir : File) : QuadReader =
+  def loadDump(dumpDir : File) : Seq[QuadReader] =
   {
     val dumpModule = new DumpModule(new DumpConfig(dumpDir.listFiles.map(_.getCanonicalPath)))
     val dumpExecutor = new DumpExecutor
 
-    val dumpQuadQueue = new BlockingQuadQueue
+    val quadQueues = for (i <- 0 to dumpModule.tasks.size) yield new BlockingQuadQueue
 
-    runInBackground
-      {
-        for(task <- dumpModule.tasks)
+    for((dumpTask, writer) <- dumpModule.tasks.toList zip quadQueues){
+      runInBackground
         {
-          dumpExecutor.execute(task, null, dumpQuadQueue)
+          dumpExecutor.execute(dumpTask, null, writer)
         }
-        dumpQuadQueue.finish
-
-        println("Time needed to load dump: " + stopWatch.getTimeSpanInSeconds + "s")
-        println("Number of triples after loading the dump: " + (dumpQuadQueue.totalSize-1))
-      }
-
-    dumpQuadQueue
+    }
+    quadQueues.toSeq
   }
 
   /**
    * Transforms the Quads
    */
-  def mapQuads(mappingFile: File, reader: QuadReader) : QuadReader = {
+  def mapQuads(mappingFile: File, readers: Seq[QuadReader]) : QuadReader = {
     val repository = new Repository(new FileOrURISource(mappingFile.getAbsolutePath))
     val executor = new R2RLocalExecutor
     val config = new R2RConfig(repository)
     val module = new R2RModule(config)
 
     val entityDescriptions = for(task <- module.tasks) yield task.mapping.entityDescription
-    val entityReaders = buildEntities(reader, entityDescriptions.toSeq)
-    println("Time needed to build entities for mapping phase: " + stopWatch.getTimeSpanInSeconds + "s")
+    val entityReaders = buildEntities(readers, entityDescriptions.toSeq)
+    println("Time needed to load dump and build entities for mapping phase: " + stopWatch.getTimeSpanInSeconds + "s")
+    //println("Number of triples after loading the dump: " + (quadReaders.foldLeft(0)(_ + _.totalSize)))
 
     val outputQueue = new QuadQueue
 
@@ -125,7 +118,7 @@ object Main
     val silkExecutor = new SilkLocalExecutor
 
     val entityDescriptions = silkModule.tasks.toIndexedSeq.map(silkExecutor.input).flatMap{ case StaticEntityFormat(ed) => ed }
-    val entityReaders = buildEntities(reader, entityDescriptions)
+    val entityReaders = buildEntities(Seq(reader), entityDescriptions)
     println("Time needed to build entities for linking phase: " + stopWatch.getTimeSpanInSeconds + "s")
 
     val outputQueue = new QuadQueue
@@ -144,7 +137,7 @@ object Main
   /**
    * Build Entities.
    */
-  def buildEntities(reader : QuadReader, entityDescriptions : Seq[EntityDescription]) : Seq[EntityReader] =
+  def buildEntities(readers : Seq[QuadReader], entityDescriptions : Seq[EntityDescription]) : Seq[EntityReader] =
   {
     val entityQueues = entityDescriptions.map(new EntityQueue(_))
 
@@ -155,7 +148,7 @@ object Main
       val entityBuilderTask = entityBuilderModule.tasks.head
       val entityBuilderExecutor = new EntityBuilderExecutor
 
-      entityBuilderExecutor.execute(entityBuilderTask, reader, entityQueues)
+      entityBuilderExecutor.execute(entityBuilderTask, readers, entityQueues)
     }
 
     entityQueues

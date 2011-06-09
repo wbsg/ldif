@@ -6,8 +6,10 @@ import ldif.util.Uri
 import ldif.entity.Restriction._
 import collection.mutable.{ArraySeq, ArrayBuffer, HashMap, Set, HashSet}
 import ldif.local.runtime.{LocalNode, EntityWriter, QuadReader}
+import actors.{Future, Futures}
+import ldif.local.util.Const
 
-class EntityBuilder (entityDescriptions : IndexedSeq[EntityDescription], reader : QuadReader) extends FactumBuilder {
+class EntityBuilder (entityDescriptions : IndexedSeq[EntityDescription], readers : Seq[QuadReader]) extends FactumBuilder {
 
   private val log = Logger.getLogger(getClass.getName)
 
@@ -94,31 +96,36 @@ class EntityBuilder (entityDescriptions : IndexedSeq[EntityDescription], reader 
      BHT.clear
      val startTime = now
 
-     while (reader.hasNext){
-       val quad = reader.read
+     //TODO multithread-safe hashtables are required to fork here
+     //forkAll( for (reader <- readers) yield Futures.future {
+     for (reader <- readers) {
+           while (reader.hasNext){
+             val quad = reader.read
 
-       val prop = new Uri(quad.predicate).toString
+             val prop = new Uri(quad.predicate).toString
 
-       if(allUriNodes!=null){
-        if (quad.subject.isUriNode) {
-          allUriNodes += quad.subject
+             if(allUriNodes!=null){
+              if (quad.subject.isUriNode) {
+                allUriNodes += quad.subject
+              }
+              if (quad.value.isUriNode){
+                allUriNodes += quad.value
+              }
+             }
+
+             val v = PHT.get(prop)
+
+             if (v == Some(PropertyType.FORW) || v == Some(PropertyType.BOTH))  {
+                FHT.put(Pair(quad.subject, prop), quad.value)
+             }
+             if (v == Some(PropertyType.BACK) || v == Some(PropertyType.BOTH))  {
+                BHT.put(Pair(quad.value, prop), quad.subject)
+             }
+           }
         }
-        if (quad.value.isUriNode){
-          allUriNodes += quad.value
-        }
-       }
+     //)
 
-       val v = PHT.get(prop)
-
-       if (v == Some(PropertyType.FORW) || v == Some(PropertyType.BOTH))  {
-          FHT.put(Pair(quad.subject, prop), quad.value)
-       }
-       if (v == Some(PropertyType.BACK) || v == Some(PropertyType.BOTH))  {
-          BHT.put(Pair(quad.value, prop), quad.subject)
-       }
-     }
-
-     log.info("Read in Quads took " + ((now - startTime)) + " ms")
+     //log.info("Read in Quads took " + ((now - startTime)) + " ms")
      //log.info(" [ FHT ] \n > keySet = ("+FHT.keySet.size.toString+")")
      //log.info(" [ BHT ] \n > keySet = ("+BHT.keySet.size.toString+")\n   - " + BHT.keySet.map(a => Pair.unapply(a).get._2 + " "+Pair.unapply(a).get._1.value).mkString("\n   - "))
   }
@@ -358,6 +365,10 @@ class EntityBuilder (entityDescriptions : IndexedSeq[EntityDescription], reader 
       if (size > max)
         max = size
     max
+  }
+
+  private def forkAll(futures: Seq[Future[Any]]) {
+    Futures.awaitAll(Const.MAX_WAITING_TIME, futures: _*)
   }
 
   private def min(a:Int , b:Int) =  if (a<b) a else b

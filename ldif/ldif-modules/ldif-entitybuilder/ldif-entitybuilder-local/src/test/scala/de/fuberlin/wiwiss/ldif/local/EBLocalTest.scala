@@ -3,16 +3,14 @@ package de.fuberlin.wiwiss.ldif.local
 import org.scalatest.FlatSpec
 import org.scalatest.matchers.ShouldMatchers
 import xml.XML
-import ldif.entity.ForwardOperator
 import ldif.entity._
 import ldif.datasources.dump.{DumpModule, DumpConfig}
-import ldif.entity.Restriction.{And, Condition}
-import ldif.local.runtime.impl.{QuadQueue, EntityQueue}
 import ldif.local.datasources.dump.DumpExecutor
 import de.fuberlin.wiwiss.ldif.{EntityBuilderModule, EntityBuilderConfig}
-import ldif.util.{Prefixes, Uri}
+import ldif.util.Prefixes
 import org.scalatest.junit.JUnitRunner
 import org.junit.runner.RunWith
+import ldif.local.runtime.impl.{BlockingQuadQueue, EntityQueue}
 
 /**
  * Unit Test for the Entity Builder Module Local.
@@ -27,7 +25,7 @@ class EBLocalTest extends FlatSpec with ShouldMatchers
   val eds = IndexedSeq(ed("aba_ed_1.xml"),ed("aba_ed_2.xml"),ed("aba_ed_3.xml"),ed("aba_ed_4.xml"))
 
   // init queue structures
-  val qq = new QuadQueue
+  val qq = new BlockingQuadQueue
   loadQuads
 
   val eqs = new Array[EntityQueue](eds.size)
@@ -36,7 +34,7 @@ class EBLocalTest extends FlatSpec with ShouldMatchers
 
   val ebe = new EntityBuilderExecutor
 
-  ebe.execute(task, qq, eqs)
+  ebe.execute(task, Seq(qq), eqs)  
 
 //  "DumpLoader" should "read the correct number of quads" in {
 //    loadQuads

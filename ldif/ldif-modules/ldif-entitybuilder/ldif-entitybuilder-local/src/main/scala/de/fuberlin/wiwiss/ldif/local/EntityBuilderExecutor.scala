@@ -27,7 +27,7 @@ class EntityBuilderExecutor() extends Executor {
    * @param reader The reader of the input data
    * @param writer The writer of the output data
    */
-  override def execute(task : EntityBuilderTask, reader : QuadReader, writer : Seq[EntityWriter])
+  override def execute(task : EntityBuilderTask, reader : Seq[QuadReader], writer : Seq[EntityWriter])
   {
     val eb = new EntityBuilder(task.entityDescriptions, reader)
 

@@ -27,4 +27,4 @@ class StringPool(poolSize:Int, maxSize:Int){
 
 }
 
-object StringPool extends StringPool(200,2000)
+object StringPool extends StringPool(Const.POOL_STARTING_SIZE,Const.POOL_MAX_SIZE)     
