@@ -73,7 +73,7 @@ object Main
     val dumpModule = new DumpModule(new DumpConfig(dumpDir.listFiles.map(_.getCanonicalPath)))
     val dumpExecutor = new DumpExecutor
 
-    val quadQueues = for (i <- 0 to dumpModule.tasks.size) yield new BlockingQuadQueue
+    val quadQueues = for (i <- 1 to dumpModule.tasks.size) yield new BlockingQuadQueue
 
     for((dumpTask, writer) <- dumpModule.tasks.toList zip quadQueues){
       runInBackground

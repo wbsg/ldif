@@ -90,7 +90,7 @@ class BlockingQuadQueue(capacity: Int) extends QuadQueue {
    */
   override def write(elem:Quad) {
     quadQueue.put(elem)
-    if (elem!=NoQuadsLeft) totalSize = totalSize +1
+    totalSize = totalSize +1
   }
 
   /**
@@ -99,6 +99,7 @@ class BlockingQuadQueue(capacity: Int) extends QuadQueue {
   override def finish() {
     stillArriving = false
     write(NoQuadsLeft)
+    totalSize = totalSize -1
   }
 
   /**
