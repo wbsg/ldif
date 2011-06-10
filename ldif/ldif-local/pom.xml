@@ -76,6 +76,12 @@
         <artifactId>je</artifactId>
         <version>3.2.76</version>
     </dependency>
+    <dependency>
+  	  <groupId>org.antlr</groupId>
+	  <artifactId>antlr</artifactId>
+	  <version>3.2</version>
+	  <scope>compile</scope>
+	</dependency>
 
     <!-- end of voldermort dependecies -->
 

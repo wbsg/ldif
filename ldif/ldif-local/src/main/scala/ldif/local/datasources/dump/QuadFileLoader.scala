@@ -12,22 +12,15 @@ import ldif.local.runtime.{QuadWriter, Quad}
  */
 
 class QuadFileLoader(graphURI: String) {
-  val quadParser = new QuadFileParser(graphURI)
+  val quadParser = new QuadParser(graphURI)
 
   def this() {
     this("default")
   }
 
-  def parseNTLine(line: String): Quad = {
-    quadParser.parseAll(quadParser.line, line) match {
-      case quadParser.Success(quad, _) => quad
-      case _ => null
-    }
-  }
-
   def parseQuadLine(line: String): Quad = {
-    quadParser.parseAll(quadParser.line, line) match {
-      case quadParser.Success(quad, _) => quad
+    quadParser.parseLine(line) match {
+      case quad: Quad => quad
       case _ => null
     }
   }
@@ -37,16 +30,20 @@ class QuadFileLoader(graphURI: String) {
 
     var loop = true
 
+    var counter = 1;
     while(loop) {
       val line = input.readLine()
 
       if(line==null)
         loop = false
       else {
-        val quad = parseNTLine(line)
+        val quad = parseQuadLine(line)
         if(quad!=null) {
           quadQueue.write(quad) }
       }
+      counter += 1
+      if(counter % 100000 == 0)
+        System.err.println(counter)
     }
   }
 }

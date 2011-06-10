@@ -9,6 +9,7 @@ import java.io.{CharConversionException, FileReader, BufferedReader}
 import ldif.util.NTriplesStringConverter
 import ldif.local.util.StringPool
 
+
 /**
  * A Quad file parser that currently only allows URIs as context
  */
@@ -97,6 +98,7 @@ object QuadFileParser {
   }
 
   def parseQuadLine(line: String): Quad = {
+    try
     p.parseAll(p.line, line) match {
       case p.Success(quad, _) => quad
       case _ => null
@@ -114,7 +116,7 @@ object QuadFileParser {
       if(line==null)
         loop = false
       else {
-        val quad = parseNTLine(line)
+        val quad = parseQuadLine(line)
         if(quad!=null) {
           quadQueue.write(quad) }
       }
@@ -148,5 +150,3 @@ object stopWatch {
     span / 1000.0
   }
 }
-
-
