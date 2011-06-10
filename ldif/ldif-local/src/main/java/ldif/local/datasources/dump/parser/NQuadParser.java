@@ -1,4 +1,4 @@
-// $ANTLR 3.2 Sep 23, 2009 12:02:23 /home/andreas/workspace/ANTLRTester/antlr-files/NQuad.g 2011-06-10 16:24:40
+// $ANTLR 3.2 Sep 23, 2009 12:02:23 /home/andreas/workspace/ANTLRTester/antlr-files/NQuad.g 2011-06-10 17:29:34
 
   package ldif.local.datasources.dump.parser;
   
@@ -537,7 +537,7 @@ public class NQuadParser extends Parser {
 
 
                   value.add(0, LITERAL);
-                  value.add(1, string14);
+                  value.add(1, NTriplesStringConverter.convertFromEscapedString(string14));
                 
             // /home/andreas/workspace/ANTLRTester/antlr-files/NQuad.g:124:3: ( LANGTAG | '^^' iriRef )?
             int alt6=3;
@@ -611,7 +611,7 @@ public class NQuadParser extends Parser {
                   value = new Vector<String>();
                   String iri = (URI17!=null?URI17.getText():null);
                   value.add(0, URINODE);
-                  value.add(1, iri.substring(1, iri.length()-1));
+                  value.add(1, NTriplesStringConverter.convertFromEscapedString(iri.substring(1, iri.length()-1)));
                 
 
             }
