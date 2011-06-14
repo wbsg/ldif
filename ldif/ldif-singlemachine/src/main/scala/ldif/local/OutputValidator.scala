@@ -24,8 +24,7 @@ object OutputValidator {
     // read LDIF output - from QuadReader
     val ldifOutput = new ArrayBuffer[String](reader.size)
     while(!reader.isEmpty)       {
-      // workaround - nxparser seems not to parse escapes properly - see #18
-      var triple = reader.read.toNQuadFormat.replace("\\\"","\"")
+       var triple = reader.read.toNQuadFormat
       // nquad > ntriples
       triple = triple.substring(0,triple.lastIndexOf("<")) + "."
       ldifOutput += triple
