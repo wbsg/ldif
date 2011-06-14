@@ -1,4 +1,4 @@
-// $ANTLR 3.2 Sep 23, 2009 12:02:23 /home/andreas/workspace/ANTLRTester/antlr-files/NQuad.g 2011-06-10 17:29:35
+// $ANTLR 3.2 Sep 23, 2009 12:02:23 /home/andreas/workspace/ANTLRTester/antlr-files/NQuad.g 2011-06-14 15:14:27
 
   package ldif.local.datasources.dump.parser;
 
@@ -81,11 +81,11 @@ public class NQuadLexer extends Lexer {
         try {
             int _type = LANGTAG;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /home/andreas/workspace/ANTLRTester/antlr-files/NQuad.g:164:3: ( '@' ( 'a' .. 'z' | 'A' .. 'Z' )+ ( '-' ( 'a' .. 'z' | 'A' .. 'Z' | '0' .. '9' )+ )* )
-            // /home/andreas/workspace/ANTLRTester/antlr-files/NQuad.g:164:5: '@' ( 'a' .. 'z' | 'A' .. 'Z' )+ ( '-' ( 'a' .. 'z' | 'A' .. 'Z' | '0' .. '9' )+ )*
+            // /home/andreas/workspace/ANTLRTester/antlr-files/NQuad.g:172:3: ( '@' ( 'a' .. 'z' | 'A' .. 'Z' )+ ( '-' ( 'a' .. 'z' | 'A' .. 'Z' | '0' .. '9' )+ )* )
+            // /home/andreas/workspace/ANTLRTester/antlr-files/NQuad.g:172:5: '@' ( 'a' .. 'z' | 'A' .. 'Z' )+ ( '-' ( 'a' .. 'z' | 'A' .. 'Z' | '0' .. '9' )+ )*
             {
             match('@'); 
-            // /home/andreas/workspace/ANTLRTester/antlr-files/NQuad.g:164:9: ( 'a' .. 'z' | 'A' .. 'Z' )+
+            // /home/andreas/workspace/ANTLRTester/antlr-files/NQuad.g:172:9: ( 'a' .. 'z' | 'A' .. 'Z' )+
             int cnt1=0;
             loop1:
             do {
@@ -123,7 +123,7 @@ public class NQuadLexer extends Lexer {
                 cnt1++;
             } while (true);
 
-            // /home/andreas/workspace/ANTLRTester/antlr-files/NQuad.g:164:32: ( '-' ( 'a' .. 'z' | 'A' .. 'Z' | '0' .. '9' )+ )*
+            // /home/andreas/workspace/ANTLRTester/antlr-files/NQuad.g:172:32: ( '-' ( 'a' .. 'z' | 'A' .. 'Z' | '0' .. '9' )+ )*
             loop3:
             do {
                 int alt3=2;
@@ -136,10 +136,10 @@ public class NQuadLexer extends Lexer {
 
                 switch (alt3) {
             	case 1 :
-            	    // /home/andreas/workspace/ANTLRTester/antlr-files/NQuad.g:164:33: '-' ( 'a' .. 'z' | 'A' .. 'Z' | '0' .. '9' )+
+            	    // /home/andreas/workspace/ANTLRTester/antlr-files/NQuad.g:172:33: '-' ( 'a' .. 'z' | 'A' .. 'Z' | '0' .. '9' )+
             	    {
             	    match('-'); 
-            	    // /home/andreas/workspace/ANTLRTester/antlr-files/NQuad.g:164:37: ( 'a' .. 'z' | 'A' .. 'Z' | '0' .. '9' )+
+            	    // /home/andreas/workspace/ANTLRTester/antlr-files/NQuad.g:172:37: ( 'a' .. 'z' | 'A' .. 'Z' | '0' .. '9' )+
             	    int cnt2=0;
             	    loop2:
             	    do {
@@ -202,8 +202,8 @@ public class NQuadLexer extends Lexer {
         try {
             int _type = NAMEDNODE;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /home/andreas/workspace/ANTLRTester/antlr-files/NQuad.g:168:3: ( '_:' ( 'a' .. 'z' | 'A' .. 'Z' ) ( 'a' .. 'z' | 'A' .. 'Z' | '0' .. '9' )* )
-            // /home/andreas/workspace/ANTLRTester/antlr-files/NQuad.g:168:5: '_:' ( 'a' .. 'z' | 'A' .. 'Z' ) ( 'a' .. 'z' | 'A' .. 'Z' | '0' .. '9' )*
+            // /home/andreas/workspace/ANTLRTester/antlr-files/NQuad.g:176:3: ( '_:' ( 'a' .. 'z' | 'A' .. 'Z' ) ( 'a' .. 'z' | 'A' .. 'Z' | '0' .. '9' )* )
+            // /home/andreas/workspace/ANTLRTester/antlr-files/NQuad.g:176:5: '_:' ( 'a' .. 'z' | 'A' .. 'Z' ) ( 'a' .. 'z' | 'A' .. 'Z' | '0' .. '9' )*
             {
             match("_:"); 
 
@@ -216,7 +216,7 @@ public class NQuadLexer extends Lexer {
                 recover(mse);
                 throw mse;}
 
-            // /home/andreas/workspace/ANTLRTester/antlr-files/NQuad.g:168:32: ( 'a' .. 'z' | 'A' .. 'Z' | '0' .. '9' )*
+            // /home/andreas/workspace/ANTLRTester/antlr-files/NQuad.g:176:32: ( 'a' .. 'z' | 'A' .. 'Z' | '0' .. '9' )*
             loop4:
             do {
                 int alt4=2;
@@ -265,8 +265,8 @@ public class NQuadLexer extends Lexer {
         try {
             int _type = WS;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /home/andreas/workspace/ANTLRTester/antlr-files/NQuad.g:172:3: ( ( '\\u0020' | '\\u0009' | '\\u000D' | '\\u000A' ) )
-            // /home/andreas/workspace/ANTLRTester/antlr-files/NQuad.g:172:5: ( '\\u0020' | '\\u0009' | '\\u000D' | '\\u000A' )
+            // /home/andreas/workspace/ANTLRTester/antlr-files/NQuad.g:180:3: ( ( '\\u0020' | '\\u0009' | '\\u000D' | '\\u000A' ) )
+            // /home/andreas/workspace/ANTLRTester/antlr-files/NQuad.g:180:5: ( '\\u0020' | '\\u0009' | '\\u000D' | '\\u000A' )
             {
             if ( (input.LA(1)>='\t' && input.LA(1)<='\n')||input.LA(1)=='\r'||input.LA(1)==' ' ) {
                 input.consume();
@@ -294,8 +294,8 @@ public class NQuadLexer extends Lexer {
         try {
             int _type = DOT;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /home/andreas/workspace/ANTLRTester/antlr-files/NQuad.g:176:3: ( '.' )
-            // /home/andreas/workspace/ANTLRTester/antlr-files/NQuad.g:176:5: '.'
+            // /home/andreas/workspace/ANTLRTester/antlr-files/NQuad.g:184:3: ( '.' )
+            // /home/andreas/workspace/ANTLRTester/antlr-files/NQuad.g:184:5: '.'
             {
             match('.'); 
 
@@ -314,11 +314,11 @@ public class NQuadLexer extends Lexer {
         try {
             int _type = STRING;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /home/andreas/workspace/ANTLRTester/antlr-files/NQuad.g:180:3: ( '\"' ( STRING_CHARS | UNICODEESCAPES | SPECIALESCAPES )* '\"' )
-            // /home/andreas/workspace/ANTLRTester/antlr-files/NQuad.g:180:5: '\"' ( STRING_CHARS | UNICODEESCAPES | SPECIALESCAPES )* '\"'
+            // /home/andreas/workspace/ANTLRTester/antlr-files/NQuad.g:188:3: ( '\"' ( STRING_CHARS | UNICODEESCAPES | SPECIALESCAPES )* '\"' )
+            // /home/andreas/workspace/ANTLRTester/antlr-files/NQuad.g:188:5: '\"' ( STRING_CHARS | UNICODEESCAPES | SPECIALESCAPES )* '\"'
             {
             match('\"'); 
-            // /home/andreas/workspace/ANTLRTester/antlr-files/NQuad.g:180:9: ( STRING_CHARS | UNICODEESCAPES | SPECIALESCAPES )*
+            // /home/andreas/workspace/ANTLRTester/antlr-files/NQuad.g:188:9: ( STRING_CHARS | UNICODEESCAPES | SPECIALESCAPES )*
             loop5:
             do {
                 int alt5=4;
@@ -343,21 +343,21 @@ public class NQuadLexer extends Lexer {
 
                 switch (alt5) {
             	case 1 :
-            	    // /home/andreas/workspace/ANTLRTester/antlr-files/NQuad.g:180:10: STRING_CHARS
+            	    // /home/andreas/workspace/ANTLRTester/antlr-files/NQuad.g:188:10: STRING_CHARS
             	    {
             	    mSTRING_CHARS(); 
 
             	    }
             	    break;
             	case 2 :
-            	    // /home/andreas/workspace/ANTLRTester/antlr-files/NQuad.g:180:25: UNICODEESCAPES
+            	    // /home/andreas/workspace/ANTLRTester/antlr-files/NQuad.g:188:25: UNICODEESCAPES
             	    {
             	    mUNICODEESCAPES(); 
 
             	    }
             	    break;
             	case 3 :
-            	    // /home/andreas/workspace/ANTLRTester/antlr-files/NQuad.g:180:42: SPECIALESCAPES
+            	    // /home/andreas/workspace/ANTLRTester/antlr-files/NQuad.g:188:42: SPECIALESCAPES
             	    {
             	    mSPECIALESCAPES(); 
 
@@ -386,11 +386,11 @@ public class NQuadLexer extends Lexer {
         try {
             int _type = URI;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /home/andreas/workspace/ANTLRTester/antlr-files/NQuad.g:184:3: ( '<' ( URI_CHARS | UNICODEESCAPES | SPECIALESCAPES )* '>' )
-            // /home/andreas/workspace/ANTLRTester/antlr-files/NQuad.g:184:5: '<' ( URI_CHARS | UNICODEESCAPES | SPECIALESCAPES )* '>'
+            // /home/andreas/workspace/ANTLRTester/antlr-files/NQuad.g:192:3: ( '<' ( URI_CHARS | UNICODEESCAPES | SPECIALESCAPES )* '>' )
+            // /home/andreas/workspace/ANTLRTester/antlr-files/NQuad.g:192:5: '<' ( URI_CHARS | UNICODEESCAPES | SPECIALESCAPES )* '>'
             {
             match('<'); 
-            // /home/andreas/workspace/ANTLRTester/antlr-files/NQuad.g:184:9: ( URI_CHARS | UNICODEESCAPES | SPECIALESCAPES )*
+            // /home/andreas/workspace/ANTLRTester/antlr-files/NQuad.g:192:9: ( URI_CHARS | UNICODEESCAPES | SPECIALESCAPES )*
             loop6:
             do {
                 int alt6=4;
@@ -415,21 +415,21 @@ public class NQuadLexer extends Lexer {
 
                 switch (alt6) {
             	case 1 :
-            	    // /home/andreas/workspace/ANTLRTester/antlr-files/NQuad.g:184:10: URI_CHARS
+            	    // /home/andreas/workspace/ANTLRTester/antlr-files/NQuad.g:192:10: URI_CHARS
             	    {
             	    mURI_CHARS(); 
 
             	    }
             	    break;
             	case 2 :
-            	    // /home/andreas/workspace/ANTLRTester/antlr-files/NQuad.g:184:22: UNICODEESCAPES
+            	    // /home/andreas/workspace/ANTLRTester/antlr-files/NQuad.g:192:22: UNICODEESCAPES
             	    {
             	    mUNICODEESCAPES(); 
 
             	    }
             	    break;
             	case 3 :
-            	    // /home/andreas/workspace/ANTLRTester/antlr-files/NQuad.g:184:39: SPECIALESCAPES
+            	    // /home/andreas/workspace/ANTLRTester/antlr-files/NQuad.g:192:39: SPECIALESCAPES
             	    {
             	    mSPECIALESCAPES(); 
 
@@ -458,11 +458,11 @@ public class NQuadLexer extends Lexer {
         try {
             int _type = COMMENT;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /home/andreas/workspace/ANTLRTester/antlr-files/NQuad.g:188:3: ( COMMENTSTART (~ ( '\\n' | '\\r' ) )* )
-            // /home/andreas/workspace/ANTLRTester/antlr-files/NQuad.g:188:5: COMMENTSTART (~ ( '\\n' | '\\r' ) )*
+            // /home/andreas/workspace/ANTLRTester/antlr-files/NQuad.g:196:3: ( COMMENTSTART (~ ( '\\n' | '\\r' ) )* )
+            // /home/andreas/workspace/ANTLRTester/antlr-files/NQuad.g:196:5: COMMENTSTART (~ ( '\\n' | '\\r' ) )*
             {
             mCOMMENTSTART(); 
-            // /home/andreas/workspace/ANTLRTester/antlr-files/NQuad.g:188:18: (~ ( '\\n' | '\\r' ) )*
+            // /home/andreas/workspace/ANTLRTester/antlr-files/NQuad.g:196:18: (~ ( '\\n' | '\\r' ) )*
             loop7:
             do {
                 int alt7=2;
@@ -475,7 +475,7 @@ public class NQuadLexer extends Lexer {
 
                 switch (alt7) {
             	case 1 :
-            	    // /home/andreas/workspace/ANTLRTester/antlr-files/NQuad.g:188:19: ~ ( '\\n' | '\\r' )
+            	    // /home/andreas/workspace/ANTLRTester/antlr-files/NQuad.g:196:19: ~ ( '\\n' | '\\r' )
             	    {
             	    if ( (input.LA(1)>='\u0000' && input.LA(1)<='\t')||(input.LA(1)>='\u000B' && input.LA(1)<='\f')||(input.LA(1)>='\u000E' && input.LA(1)<='\uFFFF') ) {
             	        input.consume();
@@ -509,7 +509,7 @@ public class NQuadLexer extends Lexer {
     // $ANTLR start "STRING_CHARS"
     public final void mSTRING_CHARS() throws RecognitionException {
         try {
-            // /home/andreas/workspace/ANTLRTester/antlr-files/NQuad.g:204:3: ( SPACE | '<' | '>' | CHARS_BASE )
+            // /home/andreas/workspace/ANTLRTester/antlr-files/NQuad.g:212:3: ( SPACE | '<' | '>' | CHARS_BASE )
             // /home/andreas/workspace/ANTLRTester/antlr-files/NQuad.g:
             {
             if ( (input.LA(1)>=' ' && input.LA(1)<='!')||(input.LA(1)>='#' && input.LA(1)<='[')||(input.LA(1)>=']' && input.LA(1)<='~') ) {
@@ -533,7 +533,7 @@ public class NQuadLexer extends Lexer {
     // $ANTLR start "UNICODEESCAPES"
     public final void mUNICODEESCAPES() throws RecognitionException {
         try {
-            // /home/andreas/workspace/ANTLRTester/antlr-files/NQuad.g:211:3: ( '\\\\u' HEX HEX HEX HEX | '\\\\U' HEX HEX HEX HEX HEX HEX HEX HEX )
+            // /home/andreas/workspace/ANTLRTester/antlr-files/NQuad.g:219:3: ( '\\\\u' HEX HEX HEX HEX | '\\\\U' HEX HEX HEX HEX HEX HEX HEX HEX )
             int alt8=2;
             int LA8_0 = input.LA(1);
 
@@ -561,7 +561,7 @@ public class NQuadLexer extends Lexer {
             }
             switch (alt8) {
                 case 1 :
-                    // /home/andreas/workspace/ANTLRTester/antlr-files/NQuad.g:211:5: '\\\\u' HEX HEX HEX HEX
+                    // /home/andreas/workspace/ANTLRTester/antlr-files/NQuad.g:219:5: '\\\\u' HEX HEX HEX HEX
                     {
                     match("\\u"); 
 
@@ -573,7 +573,7 @@ public class NQuadLexer extends Lexer {
                     }
                     break;
                 case 2 :
-                    // /home/andreas/workspace/ANTLRTester/antlr-files/NQuad.g:212:5: '\\\\U' HEX HEX HEX HEX HEX HEX HEX HEX
+                    // /home/andreas/workspace/ANTLRTester/antlr-files/NQuad.g:220:5: '\\\\U' HEX HEX HEX HEX HEX HEX HEX HEX
                     {
                     match("\\U"); 
 
@@ -599,7 +599,7 @@ public class NQuadLexer extends Lexer {
     // $ANTLR start "SPECIALESCAPES"
     public final void mSPECIALESCAPES() throws RecognitionException {
         try {
-            // /home/andreas/workspace/ANTLRTester/antlr-files/NQuad.g:216:3: ( '\\\\t' | '\\\\n' | '\\\\\"' | '\\\\\\\\' | '\\\\r' )
+            // /home/andreas/workspace/ANTLRTester/antlr-files/NQuad.g:224:3: ( '\\\\t' | '\\\\n' | '\\\\\"' | '\\\\\\\\' | '\\\\r' )
             int alt9=5;
             int LA9_0 = input.LA(1);
 
@@ -646,7 +646,7 @@ public class NQuadLexer extends Lexer {
             }
             switch (alt9) {
                 case 1 :
-                    // /home/andreas/workspace/ANTLRTester/antlr-files/NQuad.g:216:5: '\\\\t'
+                    // /home/andreas/workspace/ANTLRTester/antlr-files/NQuad.g:224:5: '\\\\t'
                     {
                     match("\\t"); 
 
@@ -654,7 +654,7 @@ public class NQuadLexer extends Lexer {
                     }
                     break;
                 case 2 :
-                    // /home/andreas/workspace/ANTLRTester/antlr-files/NQuad.g:217:5: '\\\\n'
+                    // /home/andreas/workspace/ANTLRTester/antlr-files/NQuad.g:225:5: '\\\\n'
                     {
                     match("\\n"); 
 
@@ -662,7 +662,7 @@ public class NQuadLexer extends Lexer {
                     }
                     break;
                 case 3 :
-                    // /home/andreas/workspace/ANTLRTester/antlr-files/NQuad.g:218:5: '\\\\\"'
+                    // /home/andreas/workspace/ANTLRTester/antlr-files/NQuad.g:226:5: '\\\\\"'
                     {
                     match("\\\""); 
 
@@ -670,7 +670,7 @@ public class NQuadLexer extends Lexer {
                     }
                     break;
                 case 4 :
-                    // /home/andreas/workspace/ANTLRTester/antlr-files/NQuad.g:219:5: '\\\\\\\\'
+                    // /home/andreas/workspace/ANTLRTester/antlr-files/NQuad.g:227:5: '\\\\\\\\'
                     {
                     match("\\\\"); 
 
@@ -678,7 +678,7 @@ public class NQuadLexer extends Lexer {
                     }
                     break;
                 case 5 :
-                    // /home/andreas/workspace/ANTLRTester/antlr-files/NQuad.g:220:5: '\\\\r'
+                    // /home/andreas/workspace/ANTLRTester/antlr-files/NQuad.g:228:5: '\\\\r'
                     {
                     match("\\r"); 
 
@@ -696,7 +696,7 @@ public class NQuadLexer extends Lexer {
     // $ANTLR start "HEX"
     public final void mHEX() throws RecognitionException {
         try {
-            // /home/andreas/workspace/ANTLRTester/antlr-files/NQuad.g:224:3: ( '0' .. '9' | 'A' .. 'Z' )
+            // /home/andreas/workspace/ANTLRTester/antlr-files/NQuad.g:232:3: ( '0' .. '9' | 'A' .. 'Z' )
             // /home/andreas/workspace/ANTLRTester/antlr-files/NQuad.g:
             {
             if ( (input.LA(1)>='0' && input.LA(1)<='9')||(input.LA(1)>='A' && input.LA(1)<='Z') ) {
@@ -720,7 +720,7 @@ public class NQuadLexer extends Lexer {
     // $ANTLR start "URI_CHARS"
     public final void mURI_CHARS() throws RecognitionException {
         try {
-            // /home/andreas/workspace/ANTLRTester/antlr-files/NQuad.g:229:3: ( CHARS_BASE | '\\u0022' )
+            // /home/andreas/workspace/ANTLRTester/antlr-files/NQuad.g:237:3: ( CHARS_BASE | '\\u0022' )
             // /home/andreas/workspace/ANTLRTester/antlr-files/NQuad.g:
             {
             if ( (input.LA(1)>='!' && input.LA(1)<=';')||input.LA(1)=='='||(input.LA(1)>='?' && input.LA(1)<='[')||(input.LA(1)>=']' && input.LA(1)<='~') ) {
@@ -744,8 +744,8 @@ public class NQuadLexer extends Lexer {
     // $ANTLR start "SPACE"
     public final void mSPACE() throws RecognitionException {
         try {
-            // /home/andreas/workspace/ANTLRTester/antlr-files/NQuad.g:234:3: ( '\\u0020' )
-            // /home/andreas/workspace/ANTLRTester/antlr-files/NQuad.g:234:5: '\\u0020'
+            // /home/andreas/workspace/ANTLRTester/antlr-files/NQuad.g:242:3: ( '\\u0020' )
+            // /home/andreas/workspace/ANTLRTester/antlr-files/NQuad.g:242:5: '\\u0020'
             {
             match(' '); 
 
@@ -760,7 +760,7 @@ public class NQuadLexer extends Lexer {
     // $ANTLR start "CHARS_BASE"
     public final void mCHARS_BASE() throws RecognitionException {
         try {
-            // /home/andreas/workspace/ANTLRTester/antlr-files/NQuad.g:238:3: ( '\\u0021' | '\\u0023' .. '\\u003B' | '\\u003D' | '\\u003F' .. '\\u005B' | '\\u005D' .. '\\u007E' )
+            // /home/andreas/workspace/ANTLRTester/antlr-files/NQuad.g:246:3: ( '\\u0021' | '\\u0023' .. '\\u003B' | '\\u003D' | '\\u003F' .. '\\u005B' | '\\u005D' .. '\\u007E' )
             // /home/andreas/workspace/ANTLRTester/antlr-files/NQuad.g:
             {
             if ( input.LA(1)=='!'||(input.LA(1)>='#' && input.LA(1)<=';')||input.LA(1)=='='||(input.LA(1)>='?' && input.LA(1)<='[')||(input.LA(1)>=']' && input.LA(1)<='~') ) {
@@ -784,8 +784,8 @@ public class NQuadLexer extends Lexer {
     // $ANTLR start "COMMENTSTART"
     public final void mCOMMENTSTART() throws RecognitionException {
         try {
-            // /home/andreas/workspace/ANTLRTester/antlr-files/NQuad.g:246:3: ( '#' )
-            // /home/andreas/workspace/ANTLRTester/antlr-files/NQuad.g:246:5: '#'
+            // /home/andreas/workspace/ANTLRTester/antlr-files/NQuad.g:254:3: ( '#' )
+            // /home/andreas/workspace/ANTLRTester/antlr-files/NQuad.g:254:5: '#'
             {
             match('#'); 
 

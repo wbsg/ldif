@@ -1,4 +1,4 @@
-// $ANTLR 3.2 Sep 23, 2009 12:02:23 /home/andreas/workspace/ANTLRTester/antlr-files/NQuad.g 2011-06-10 17:29:34
+// $ANTLR 3.2 Sep 23, 2009 12:02:23 /home/andreas/workspace/ANTLRTester/antlr-files/NQuad.g 2011-06-14 15:14:27
 
   package ldif.local.datasources.dump.parser;
   
@@ -78,6 +78,14 @@ public class NQuadParser extends Parser {
         throw new ParseException(hdr + " " + msg);
       }
       
+      private Vector<String> createNullsVector() {
+        Vector<String> v = new Vector<String>(3);
+        v.add(null);
+        v.add(null);
+        v.add(null);
+        return v;
+      }
+      
       private ldif.entity.Node createNode(Vector<String> node, String graph) {
         ldif.entity.Node ldifNode = null;
         if(node.get(0)==LITERAL)        return LocalNode.createLiteral(node.get(1), graph);
@@ -91,7 +99,7 @@ public class NQuadParser extends Parser {
 
 
     // $ANTLR start "nQuadDoc"
-    // /home/andreas/workspace/ANTLRTester/antlr-files/NQuad.g:75:1: nQuadDoc returns [List<Quad> quads] : ( line )* EOF ;
+    // /home/andreas/workspace/ANTLRTester/antlr-files/NQuad.g:83:1: nQuadDoc returns [List<Quad> quads] : ( line )* EOF ;
     public final List<Quad> nQuadDoc() throws RecognitionException {
         List<Quad> quads = null;
 
@@ -99,11 +107,11 @@ public class NQuadParser extends Parser {
 
 
         try {
-            // /home/andreas/workspace/ANTLRTester/antlr-files/NQuad.g:76:3: ( ( line )* EOF )
-            // /home/andreas/workspace/ANTLRTester/antlr-files/NQuad.g:76:5: ( line )* EOF
+            // /home/andreas/workspace/ANTLRTester/antlr-files/NQuad.g:84:3: ( ( line )* EOF )
+            // /home/andreas/workspace/ANTLRTester/antlr-files/NQuad.g:84:5: ( line )* EOF
             {
              List<Quad> qs = new ArrayList<Quad>(); 
-            // /home/andreas/workspace/ANTLRTester/antlr-files/NQuad.g:77:5: ( line )*
+            // /home/andreas/workspace/ANTLRTester/antlr-files/NQuad.g:85:5: ( line )*
             loop1:
             do {
                 int alt1=2;
@@ -116,7 +124,7 @@ public class NQuadParser extends Parser {
 
                 switch (alt1) {
             	case 1 :
-            	    // /home/andreas/workspace/ANTLRTester/antlr-files/NQuad.g:78:7: line
+            	    // /home/andreas/workspace/ANTLRTester/antlr-files/NQuad.g:86:7: line
             	    {
             	    pushFollow(FOLLOW_line_in_nQuadDoc81);
             	    line1=line();
@@ -154,7 +162,7 @@ public class NQuadParser extends Parser {
 
 
     // $ANTLR start "line"
-    // /home/andreas/workspace/ANTLRTester/antlr-files/NQuad.g:86:1: line returns [Quad value] : ( comment | quad );
+    // /home/andreas/workspace/ANTLRTester/antlr-files/NQuad.g:94:1: line returns [Quad value] : ( comment | quad );
     public final Quad line() throws RecognitionException {
         Quad value = null;
 
@@ -162,7 +170,7 @@ public class NQuadParser extends Parser {
 
 
         try {
-            // /home/andreas/workspace/ANTLRTester/antlr-files/NQuad.g:87:3: ( comment | quad )
+            // /home/andreas/workspace/ANTLRTester/antlr-files/NQuad.g:95:3: ( comment | quad )
             int alt2=2;
             int LA2_0 = input.LA(1);
 
@@ -180,7 +188,7 @@ public class NQuadParser extends Parser {
             }
             switch (alt2) {
                 case 1 :
-                    // /home/andreas/workspace/ANTLRTester/antlr-files/NQuad.g:87:5: comment
+                    // /home/andreas/workspace/ANTLRTester/antlr-files/NQuad.g:95:5: comment
                     {
                     pushFollow(FOLLOW_comment_in_line109);
                     comment();
@@ -192,7 +200,7 @@ public class NQuadParser extends Parser {
                     }
                     break;
                 case 2 :
-                    // /home/andreas/workspace/ANTLRTester/antlr-files/NQuad.g:88:5: quad
+                    // /home/andreas/workspace/ANTLRTester/antlr-files/NQuad.g:96:5: quad
                     {
                     pushFollow(FOLLOW_quad_in_line117);
                     quad2=quad();
@@ -218,7 +226,7 @@ public class NQuadParser extends Parser {
 
 
     // $ANTLR start "quad"
-    // /home/andreas/workspace/ANTLRTester/antlr-files/NQuad.g:91:1: quad returns [Quad value] : subject predicate object ( graph )? DOT ;
+    // /home/andreas/workspace/ANTLRTester/antlr-files/NQuad.g:99:1: quad returns [Quad value] : subject predicate object ( graph )? DOT ;
     public final Quad quad() throws RecognitionException {
         Quad value = null;
 
@@ -232,8 +240,8 @@ public class NQuadParser extends Parser {
 
 
         try {
-            // /home/andreas/workspace/ANTLRTester/antlr-files/NQuad.g:92:3: ( subject predicate object ( graph )? DOT )
-            // /home/andreas/workspace/ANTLRTester/antlr-files/NQuad.g:92:5: subject predicate object ( graph )? DOT
+            // /home/andreas/workspace/ANTLRTester/antlr-files/NQuad.g:100:3: ( subject predicate object ( graph )? DOT )
+            // /home/andreas/workspace/ANTLRTester/antlr-files/NQuad.g:100:5: subject predicate object ( graph )? DOT
             {
              String quadGraph = graph; 
             pushFollow(FOLLOW_subject_in_quad145);
@@ -251,7 +259,7 @@ public class NQuadParser extends Parser {
 
             state._fsp--;
 
-            // /home/andreas/workspace/ANTLRTester/antlr-files/NQuad.g:93:30: ( graph )?
+            // /home/andreas/workspace/ANTLRTester/antlr-files/NQuad.g:101:30: ( graph )?
             int alt3=2;
             int LA3_0 = input.LA(1);
 
@@ -260,7 +268,7 @@ public class NQuadParser extends Parser {
             }
             switch (alt3) {
                 case 1 :
-                    // /home/andreas/workspace/ANTLRTester/antlr-files/NQuad.g:93:31: graph
+                    // /home/andreas/workspace/ANTLRTester/antlr-files/NQuad.g:101:31: graph
                     {
                     pushFollow(FOLLOW_graph_in_quad152);
                     graph3=graph();
@@ -294,7 +302,7 @@ public class NQuadParser extends Parser {
 
 
     // $ANTLR start "subject"
-    // /home/andreas/workspace/ANTLRTester/antlr-files/NQuad.g:99:1: subject returns [Vector<String> value] : ( iriRef | bNode );
+    // /home/andreas/workspace/ANTLRTester/antlr-files/NQuad.g:107:1: subject returns [Vector<String> value] : ( iriRef | bNode );
     public final Vector<String> subject() throws RecognitionException {
         Vector<String> value = null;
 
@@ -304,7 +312,7 @@ public class NQuadParser extends Parser {
 
 
         try {
-            // /home/andreas/workspace/ANTLRTester/antlr-files/NQuad.g:100:3: ( iriRef | bNode )
+            // /home/andreas/workspace/ANTLRTester/antlr-files/NQuad.g:108:3: ( iriRef | bNode )
             int alt4=2;
             int LA4_0 = input.LA(1);
 
@@ -322,7 +330,7 @@ public class NQuadParser extends Parser {
             }
             switch (alt4) {
                 case 1 :
-                    // /home/andreas/workspace/ANTLRTester/antlr-files/NQuad.g:100:5: iriRef
+                    // /home/andreas/workspace/ANTLRTester/antlr-files/NQuad.g:108:5: iriRef
                     {
                     pushFollow(FOLLOW_iriRef_in_subject181);
                     iriRef7=iriRef();
@@ -334,7 +342,7 @@ public class NQuadParser extends Parser {
                     }
                     break;
                 case 2 :
-                    // /home/andreas/workspace/ANTLRTester/antlr-files/NQuad.g:101:5: bNode
+                    // /home/andreas/workspace/ANTLRTester/antlr-files/NQuad.g:109:5: bNode
                     {
                     pushFollow(FOLLOW_bNode_in_subject189);
                     bNode8=bNode();
@@ -360,7 +368,7 @@ public class NQuadParser extends Parser {
 
 
     // $ANTLR start "predicate"
-    // /home/andreas/workspace/ANTLRTester/antlr-files/NQuad.g:104:1: predicate returns [ldif.entity.Node value] : iriRef ;
+    // /home/andreas/workspace/ANTLRTester/antlr-files/NQuad.g:112:1: predicate returns [ldif.entity.Node value] : iriRef ;
     public final ldif.entity.Node predicate() throws RecognitionException {
         ldif.entity.Node value = null;
 
@@ -368,8 +376,8 @@ public class NQuadParser extends Parser {
 
 
         try {
-            // /home/andreas/workspace/ANTLRTester/antlr-files/NQuad.g:105:3: ( iriRef )
-            // /home/andreas/workspace/ANTLRTester/antlr-files/NQuad.g:105:5: iriRef
+            // /home/andreas/workspace/ANTLRTester/antlr-files/NQuad.g:113:3: ( iriRef )
+            // /home/andreas/workspace/ANTLRTester/antlr-files/NQuad.g:113:5: iriRef
             {
             pushFollow(FOLLOW_iriRef_in_predicate211);
             iriRef9=iriRef();
@@ -393,7 +401,7 @@ public class NQuadParser extends Parser {
 
 
     // $ANTLR start "object"
-    // /home/andreas/workspace/ANTLRTester/antlr-files/NQuad.g:108:1: object returns [Vector<String> value] : ( iriRef | bNode | literal );
+    // /home/andreas/workspace/ANTLRTester/antlr-files/NQuad.g:116:1: object returns [Vector<String> value] : ( iriRef | bNode | literal );
     public final Vector<String> object() throws RecognitionException {
         Vector<String> value = null;
 
@@ -405,7 +413,7 @@ public class NQuadParser extends Parser {
 
 
         try {
-            // /home/andreas/workspace/ANTLRTester/antlr-files/NQuad.g:109:3: ( iriRef | bNode | literal )
+            // /home/andreas/workspace/ANTLRTester/antlr-files/NQuad.g:117:3: ( iriRef | bNode | literal )
             int alt5=3;
             switch ( input.LA(1) ) {
             case URI:
@@ -432,7 +440,7 @@ public class NQuadParser extends Parser {
 
             switch (alt5) {
                 case 1 :
-                    // /home/andreas/workspace/ANTLRTester/antlr-files/NQuad.g:109:5: iriRef
+                    // /home/andreas/workspace/ANTLRTester/antlr-files/NQuad.g:117:5: iriRef
                     {
                     pushFollow(FOLLOW_iriRef_in_object230);
                     iriRef10=iriRef();
@@ -444,7 +452,7 @@ public class NQuadParser extends Parser {
                     }
                     break;
                 case 2 :
-                    // /home/andreas/workspace/ANTLRTester/antlr-files/NQuad.g:110:5: bNode
+                    // /home/andreas/workspace/ANTLRTester/antlr-files/NQuad.g:118:5: bNode
                     {
                     pushFollow(FOLLOW_bNode_in_object239);
                     bNode11=bNode();
@@ -456,7 +464,7 @@ public class NQuadParser extends Parser {
                     }
                     break;
                 case 3 :
-                    // /home/andreas/workspace/ANTLRTester/antlr-files/NQuad.g:111:5: literal
+                    // /home/andreas/workspace/ANTLRTester/antlr-files/NQuad.g:119:5: literal
                     {
                     pushFollow(FOLLOW_literal_in_object249);
                     literal12=literal();
@@ -482,7 +490,7 @@ public class NQuadParser extends Parser {
 
 
     // $ANTLR start "graph"
-    // /home/andreas/workspace/ANTLRTester/antlr-files/NQuad.g:114:1: graph returns [ldif.entity.Node value] : iriRef ;
+    // /home/andreas/workspace/ANTLRTester/antlr-files/NQuad.g:122:1: graph returns [ldif.entity.Node value] : iriRef ;
     public final ldif.entity.Node graph() throws RecognitionException {
         ldif.entity.Node value = null;
 
@@ -490,8 +498,8 @@ public class NQuadParser extends Parser {
 
 
         try {
-            // /home/andreas/workspace/ANTLRTester/antlr-files/NQuad.g:115:3: ( iriRef )
-            // /home/andreas/workspace/ANTLRTester/antlr-files/NQuad.g:115:5: iriRef
+            // /home/andreas/workspace/ANTLRTester/antlr-files/NQuad.g:123:3: ( iriRef )
+            // /home/andreas/workspace/ANTLRTester/antlr-files/NQuad.g:123:5: iriRef
             {
             pushFollow(FOLLOW_iriRef_in_graph268);
             iriRef13=iriRef();
@@ -515,7 +523,7 @@ public class NQuadParser extends Parser {
 
 
     // $ANTLR start "literal"
-    // /home/andreas/workspace/ANTLRTester/antlr-files/NQuad.g:118:1: literal returns [Vector<String> value] : string ( LANGTAG | '^^' iriRef )? ;
+    // /home/andreas/workspace/ANTLRTester/antlr-files/NQuad.g:126:1: literal returns [Vector<String> value] : string ( LANGTAG | '^^' iriRef )? ;
     public final Vector<String> literal() throws RecognitionException {
         Vector<String> value = null;
 
@@ -526,20 +534,20 @@ public class NQuadParser extends Parser {
 
 
         try {
-            // /home/andreas/workspace/ANTLRTester/antlr-files/NQuad.g:119:3: ( string ( LANGTAG | '^^' iriRef )? )
-            // /home/andreas/workspace/ANTLRTester/antlr-files/NQuad.g:119:5: string ( LANGTAG | '^^' iriRef )?
+            // /home/andreas/workspace/ANTLRTester/antlr-files/NQuad.g:127:3: ( string ( LANGTAG | '^^' iriRef )? )
+            // /home/andreas/workspace/ANTLRTester/antlr-files/NQuad.g:127:5: string ( LANGTAG | '^^' iriRef )?
             {
-             value = new Vector<String>(); 
+             value = createNullsVector(); 
             pushFollow(FOLLOW_string_in_literal292);
             string14=string();
 
             state._fsp--;
 
 
-                  value.add(0, LITERAL);
-                  value.add(1, NTriplesStringConverter.convertFromEscapedString(string14));
+                  value.set(0, LITERAL);
+                  value.set(1, NTriplesStringConverter.convertFromEscapedString(string14));
                 
-            // /home/andreas/workspace/ANTLRTester/antlr-files/NQuad.g:124:3: ( LANGTAG | '^^' iriRef )?
+            // /home/andreas/workspace/ANTLRTester/antlr-files/NQuad.g:132:3: ( LANGTAG | '^^' iriRef )?
             int alt6=3;
             int LA6_0 = input.LA(1);
 
@@ -551,18 +559,18 @@ public class NQuadParser extends Parser {
             }
             switch (alt6) {
                 case 1 :
-                    // /home/andreas/workspace/ANTLRTester/antlr-files/NQuad.g:125:7: LANGTAG
+                    // /home/andreas/workspace/ANTLRTester/antlr-files/NQuad.g:133:7: LANGTAG
                     {
                     LANGTAG15=(Token)match(input,LANGTAG,FOLLOW_LANGTAG_in_literal306); 
 
-                            value.add(0, LTLITERAL); 
-                            value.add(2, (LANGTAG15!=null?LANGTAG15.getText():null).substring(1));
+                            value.set(0, LTLITERAL); 
+                            value.set(2, (LANGTAG15!=null?LANGTAG15.getText():null).substring(1));
                           
 
                     }
                     break;
                 case 2 :
-                    // /home/andreas/workspace/ANTLRTester/antlr-files/NQuad.g:129:7: '^^' iriRef
+                    // /home/andreas/workspace/ANTLRTester/antlr-files/NQuad.g:137:7: '^^' iriRef
                     {
                     match(input,19,FOLLOW_19_in_literal316); 
                     pushFollow(FOLLOW_iriRef_in_literal318);
@@ -571,8 +579,8 @@ public class NQuadParser extends Parser {
                     state._fsp--;
 
 
-                            value.add(0, DTLITERAL);
-                            value.add(2, iriRef16.get(1));
+                            value.set(0, DTLITERAL);
+                            value.set(2, iriRef16.get(1));
                           
 
                     }
@@ -596,22 +604,22 @@ public class NQuadParser extends Parser {
 
 
     // $ANTLR start "iriRef"
-    // /home/andreas/workspace/ANTLRTester/antlr-files/NQuad.g:136:1: iriRef returns [Vector<String> value] : URI ;
+    // /home/andreas/workspace/ANTLRTester/antlr-files/NQuad.g:144:1: iriRef returns [Vector<String> value] : URI ;
     public final Vector<String> iriRef() throws RecognitionException {
         Vector<String> value = null;
 
         Token URI17=null;
 
         try {
-            // /home/andreas/workspace/ANTLRTester/antlr-files/NQuad.g:137:3: ( URI )
-            // /home/andreas/workspace/ANTLRTester/antlr-files/NQuad.g:137:5: URI
+            // /home/andreas/workspace/ANTLRTester/antlr-files/NQuad.g:145:3: ( URI )
+            // /home/andreas/workspace/ANTLRTester/antlr-files/NQuad.g:145:5: URI
             {
             URI17=(Token)match(input,URI,FOLLOW_URI_in_iriRef345); 
 
-                  value = new Vector<String>();
+                  value = createNullsVector();
                   String iri = (URI17!=null?URI17.getText():null);
-                  value.add(0, URINODE);
-                  value.add(1, NTriplesStringConverter.convertFromEscapedString(iri.substring(1, iri.length()-1)));
+                  value.set(0, URINODE);
+                  value.set(1, NTriplesStringConverter.convertFromEscapedString(iri.substring(1, iri.length()-1)));
                 
 
             }
@@ -629,15 +637,15 @@ public class NQuadParser extends Parser {
 
 
     // $ANTLR start "string"
-    // /home/andreas/workspace/ANTLRTester/antlr-files/NQuad.g:145:1: string returns [String value] : STRING ;
+    // /home/andreas/workspace/ANTLRTester/antlr-files/NQuad.g:153:1: string returns [String value] : STRING ;
     public final String string() throws RecognitionException {
         String value = null;
 
         Token STRING18=null;
 
         try {
-            // /home/andreas/workspace/ANTLRTester/antlr-files/NQuad.g:146:3: ( STRING )
-            // /home/andreas/workspace/ANTLRTester/antlr-files/NQuad.g:146:5: STRING
+            // /home/andreas/workspace/ANTLRTester/antlr-files/NQuad.g:154:3: ( STRING )
+            // /home/andreas/workspace/ANTLRTester/antlr-files/NQuad.g:154:5: STRING
             {
             STRING18=(Token)match(input,STRING,FOLLOW_STRING_in_string364); 
 
@@ -659,21 +667,21 @@ public class NQuadParser extends Parser {
 
 
     // $ANTLR start "bNode"
-    // /home/andreas/workspace/ANTLRTester/antlr-files/NQuad.g:151:1: bNode returns [Vector<String> value] : NAMEDNODE ;
+    // /home/andreas/workspace/ANTLRTester/antlr-files/NQuad.g:159:1: bNode returns [Vector<String> value] : NAMEDNODE ;
     public final Vector<String> bNode() throws RecognitionException {
         Vector<String> value = null;
 
         Token NAMEDNODE19=null;
 
         try {
-            // /home/andreas/workspace/ANTLRTester/antlr-files/NQuad.g:152:3: ( NAMEDNODE )
-            // /home/andreas/workspace/ANTLRTester/antlr-files/NQuad.g:152:5: NAMEDNODE
+            // /home/andreas/workspace/ANTLRTester/antlr-files/NQuad.g:160:3: ( NAMEDNODE )
+            // /home/andreas/workspace/ANTLRTester/antlr-files/NQuad.g:160:5: NAMEDNODE
             {
             NAMEDNODE19=(Token)match(input,NAMEDNODE,FOLLOW_NAMEDNODE_in_bNode385); 
 
-                  value = new Vector<String>();
-                  value.add(0, BLANKNODE);
-                  value.add(1, (NAMEDNODE19!=null?NAMEDNODE19.getText():null).substring(2));
+                  value = createNullsVector();
+                  value.set(0, BLANKNODE);
+                  value.set(1, (NAMEDNODE19!=null?NAMEDNODE19.getText():null).substring(2));
                 
 
             }
@@ -691,11 +699,11 @@ public class NQuadParser extends Parser {
 
 
     // $ANTLR start "comment"
-    // /home/andreas/workspace/ANTLRTester/antlr-files/NQuad.g:159:1: comment : COMMENT ;
+    // /home/andreas/workspace/ANTLRTester/antlr-files/NQuad.g:167:1: comment : COMMENT ;
     public final void comment() throws RecognitionException {
         try {
-            // /home/andreas/workspace/ANTLRTester/antlr-files/NQuad.g:160:3: ( COMMENT )
-            // /home/andreas/workspace/ANTLRTester/antlr-files/NQuad.g:160:5: COMMENT
+            // /home/andreas/workspace/ANTLRTester/antlr-files/NQuad.g:168:3: ( COMMENT )
+            // /home/andreas/workspace/ANTLRTester/antlr-files/NQuad.g:168:5: COMMENT
             {
             match(input,COMMENT,FOLLOW_COMMENT_in_comment402); 
 

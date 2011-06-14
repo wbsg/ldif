@@ -3,8 +3,9 @@ package ldif.entity
 import Node._
 import org.semanticweb.yars.nx.parser.NxParser
 import ldif.util.NTriplesStringConverter
+import java.util.Comparator
 
-final case class Node protected(val value : String, datatypeOrLanguage : String, val nodeType : Node.NodeType, val graph : String)
+final case class Node protected(val value : String, datatypeOrLanguage : String, val nodeType : Node.NodeType, val graph : String) //extends Ordered[Node]
 {
   def datatype = nodeType match
   {
@@ -92,6 +93,33 @@ final case class Node protected(val value : String, datatypeOrLanguage : String,
     case UriNode => "<" + NTriplesStringConverter.convertToEscapedString(value) + ">"
   }
 
+  def compare(otherNode: Node) = {
+    // case: Both are Blank Nodes
+    if(nodeType==BlankNode && otherNode.nodeType==BlankNode) {
+      if(value!=otherNode.value)
+        value.compare(otherNode.value)
+      else
+        graph.compare(otherNode.graph)
+    } else if(nodeType==BlankNode || otherNode.nodeType==BlankNode) { // case: only one is a Blank Node
+      if(nodeType==BlankNode)
+        -1
+      else
+        1
+    } else { // case: no Blank Nodes involved
+      if(nodeType!=otherNode.nodeType)
+        nodeType.id.compare(otherNode.nodeType.id)
+      else if(value!=otherNode.value)
+        value.compare(otherNode.value)
+      else if(datatypeOrLanguage!=null && otherNode.datatypeOrLanguage!=null)
+        datatypeOrLanguage.compare(otherNode.datatypeOrLanguage)
+      else if(datatypeOrLanguage!=null && otherNode.datatypeOrLanguage==null)
+        1
+      else if(datatypeOrLanguage==null && otherNode.datatypeOrLanguage!=null)
+        -1
+      else
+        0
+    }
+  }
 }
 
 object Node
@@ -144,15 +172,15 @@ object Node
     case <BlankNode>{value @ _*}</BlankNode> => createBlankNode(value.text,defaultGraph)
   }
 
-  sealed trait NodeType
+  sealed trait NodeType {val id: Int}
 
-  case object Literal extends NodeType
+  case object Literal extends NodeType { val id = 1}
 
-  case object TypedLiteral extends NodeType
+  case object TypedLiteral extends NodeType { val id = 2}
 
-  case object LanguageLiteral extends NodeType
+  case object LanguageLiteral extends NodeType { val id = 3}
 
-  case object BlankNode extends NodeType
+  case object BlankNode extends NodeType { val id = 4}
 
-  case object UriNode extends NodeType
+  case object UriNode extends NodeType { val id = 5}
 }

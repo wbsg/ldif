@@ -2,6 +2,7 @@ package ldif.local.datasources.dump
 
 import java.io.BufferedReader
 import ldif.local.runtime.{QuadWriter, Quad}
+import java.util.logging.Logger
 
 /**
  * Created by IntelliJ IDEA.
@@ -12,6 +13,7 @@ import ldif.local.runtime.{QuadWriter, Quad}
  */
 
 class QuadFileLoader(graphURI: String) {
+  private val log = Logger.getLogger(getClass.getName)
   val quadParser = new QuadParser(graphURI)
 
   def this() {
@@ -26,24 +28,36 @@ class QuadFileLoader(graphURI: String) {
   }
 
   def readQuads(input: BufferedReader, quadQueue: QuadWriter) {
-    var line: String = null
-
     var loop = true
+    var foundParseError = false
 
     var counter = 1;
+    var nrOfErrors = 0;
+
     while(loop) {
       val line = input.readLine()
+      var quad: Quad = null
 
       if(line==null)
         loop = false
       else {
-        val quad = parseQuadLine(line)
-        if(quad!=null) {
+        try {
+          quad = parseQuadLine(line)
+        } catch {
+          case e: RuntimeException => {
+            foundParseError=true
+            nrOfErrors += 1
+            log.warning("Parse error found at line " + counter + ". Input line: " + line)
+          }
+        }
+        if(quad!=null && (!foundParseError)) {
           quadQueue.write(quad) }
       }
       counter += 1
-      if(counter % 100000 == 0)
-        System.err.println(counter)
+  //      if(counter % 100000 == 0)
+  //        System.err.println(counter)
     }
+    if(foundParseError)
+      throw new RuntimeException("Found errors while parsing NT/NQ file. Found " + nrOfErrors + " parse errors. See log file for more details.")
   }
 }
