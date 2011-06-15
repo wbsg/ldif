@@ -10,7 +10,33 @@ import collection.mutable.{ListBuffer, ArrayBuffer}
 
 object OutputValidator {
 
-  def compare (reader:QuadReader, cOutputFile : File) {
+
+  def compare (ldifOutputFile:File, cOutputFile : File) : Int =  {
+    // read LDIF output - from File
+    val lines = scala.io.Source.fromFile(ldifOutputFile).getLines
+    val ldifOutput = new ListBuffer[String]
+    for (l <- lines.toSeq){
+      // nquad > ntriples
+      ldifOutput += l.substring(0,l.lastIndexOf("<")) + "."
+    }
+
+    compare(ldifOutput, cOutputFile)
+  }
+
+  def compare (ldifOutputReader:QuadReader, cOutputFile : File) : Int = {
+    // read LDIF output - from QuadReader
+    val ldifOutput = new ArrayBuffer[String](ldifOutputReader.size)
+    while(!ldifOutputReader.isEmpty)  {
+       var triple = ldifOutputReader.read.toNQuadFormat
+      // nquad > ntriples
+      triple = triple.substring(0,triple.lastIndexOf("<")) + "."
+      ldifOutput += triple
+    }
+
+    compare(ldifOutput, cOutputFile)
+  }
+
+  private def compare (ldifOutput:Seq[String], cOutputFile : File) :Int = {
     // read the correct output - from file
     val lines = scala.io.Source.fromFile(cOutputFile).getLines
     val cOutput = new ListBuffer[String]
@@ -21,15 +47,6 @@ object OutputValidator {
       else cOutput += l
     }
 
-    // read LDIF output - from QuadReader
-    val ldifOutput = new ArrayBuffer[String](reader.size)
-    while(!reader.isEmpty)       {
-       var triple = reader.read.toNQuadFormat
-      // nquad > ntriples
-      triple = triple.substring(0,triple.lastIndexOf("<")) + "."
-      ldifOutput += triple
-    }
-
     // init vars
     val outSize = ldifOutput.size+cOutput.size
     var eq = false
@@ -37,6 +54,7 @@ object OutputValidator {
     var count = 0
 
     // check #1: ldif-output => ldimporter-output
+    //println("Check #1")
     for (line <- ldifOutput){
 
       eq = lineCompare(line,cOutput,cSameAsOutput,true)
@@ -46,13 +64,13 @@ object OutputValidator {
         println(line)
       }
       count = count +1
-      if(count%200==0)
-        {println(count*100/(outSize)+"%")
-          if (errCount>0) printf("("+errCount+" errors found)")
+      if(count%200==0){
+         println(count*100/(outSize)+"% ("+errCount+" error(s) found)")
         }
     }
 
     // check #2: ldimporter-output => ldif-output
+    //println("Check #2")
     for (line <- cOutput){
 
       eq = lineCompare(line,ldifOutput,cSameAsOutput,false)
@@ -62,15 +80,16 @@ object OutputValidator {
         errCount= errCount+1
       }
       count = count +1
-      if(count%200==0)
-        {println(count*100/(ldifOutput.size+cOutput.size)+"%")
-          if (errCount>0) printf("("+errCount+" errors found)")
+      if(count%200==0){
+         println(count*100/(outSize)+"% ("+errCount+" error(s) found)")        
         }
     }
 
     if (errCount == 0 )
       println("\nOutput is correct")
-    else println("\nOutput is NOT correct. "+ errCount +" errors found.")
+    else println("\nOutput is NOT correct. "+ errCount +" error(s) found.")
+
+    errCount
   }
 
 
