@@ -52,6 +52,17 @@ final case class Node protected(val value : String, datatypeOrLanguage : String,
     }
   }
 
+  /**
+   * This equals variation differs from the equals method in that it does not compare the named graph
+   */
+  def valueEquals(other: Node): Boolean = {
+    var otherNode: Node = other.asInstanceOf[Node]
+    var result = (otherNode.nodeType == nodeType) && compareDTorLang(this.datatypeOrLanguage, otherNode.datatypeOrLanguage) && (this.value.equals(otherNode.value))
+    if(nodeType== BlankNode)
+      result = result && (graph == otherNode.graph)
+    result
+  }
+
   private def compareDTorLang(v1: String, v2: String): Boolean = {
     if (v1 == null)
       v2 == null

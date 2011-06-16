@@ -6,13 +6,13 @@ import impl.{BlockingQuadQueue, EntityQueue, QuadQueue}
 import ldif.modules.silk.SilkModule
 import ldif.datasources.dump.{DumpModule, DumpConfig}
 import ldif.modules.silk.local.SilkLocalExecutor
-import de.fuberlin.wiwiss.ldif.local.EntityBuilderExecutor
 import de.fuberlin.wiwiss.ldif.{EntityBuilderModule, EntityBuilderConfig}
 import java.io.{FileWriter, File}
 import de.fuberlin.wiwiss.r2r._
 import ldif.modules.r2r.local.R2RLocalExecutor
 import ldif.modules.r2r._
 import ldif.entity.EntityDescription
+import de.fuberlin.wiwiss.ldif.local.{EntityBuilderType, EntityBuilderExecutor}
 
 
 object Main
@@ -153,7 +153,7 @@ object Main
       val entityBuilderConfig = new EntityBuilderConfig(entityDescriptions.toIndexedSeq)
       val entityBuilderModule = new EntityBuilderModule(entityBuilderConfig)
       val entityBuilderTask = entityBuilderModule.tasks.head
-      val entityBuilderExecutor = new EntityBuilderExecutor
+      val entityBuilderExecutor = new EntityBuilderExecutor(EntityBuilderType.Voldemort)
 
       entityBuilderExecutor.execute(entityBuilderTask, readers, entityQueues)
     }

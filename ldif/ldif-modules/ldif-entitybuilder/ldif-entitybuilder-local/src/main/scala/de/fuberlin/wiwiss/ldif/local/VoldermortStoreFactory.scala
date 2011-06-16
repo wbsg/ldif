@@ -8,13 +8,23 @@ import voldemort.store.bdb.BdbStorageConfiguration
 import java.lang.String
 import java.util.List
 import voldemort.client.{BootstrapFailureException, RoutingTier, SocketStoreClientFactory, ClientConfig}
-
+import java.util.concurrent.TimeUnit
 
 object VoldermortStoreFactory {
 
+  val adminClientConfig = new AdminClientConfig
+
+  val clientConfig = new ClientConfig
+  clientConfig.setMaxThreads(1)
+  clientConfig.setSocketKeepAlive(true)
+  clientConfig.setMaxBootstrapRetries(10)
+  clientConfig.setSocketTimeout(60000, TimeUnit.MILLISECONDS)
+
   val bootstrapUrl = "tcp://localhost:6666"
+  clientConfig.setBootstrapUrls(bootstrapUrl)
+
   val factory = new SocketStoreClientFactory(new ClientConfig().setBootstrapUrls(bootstrapUrl))
-  val adminClient = new AdminClient(bootstrapUrl, new AdminClientConfig)
+  val adminClient = new AdminClient(bootstrapUrl, adminClientConfig)
 
   def getStore(storeId: String) = {
     try {

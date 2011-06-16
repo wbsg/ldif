@@ -2,34 +2,45 @@ package de.fuberlin.wiwiss.ldif.local
 
 import ldif.entity.Node
 import java.util.ArrayList
+import java.util.List
 import collection.mutable.HashSet
 
 // Voldermort adapter
 
 class VoldermortHashTable (storeName : String) extends HashTable {
   val store = VoldermortStoreFactory.getStore(storeName)
+  var lastKey: List[String] = null
+  var values: java.util.List[String] = null
 
   override def put(key : Pair[Node,String], value: Node) {
-    val keyAsList = convertKey(key)
+    val keyAsList: List[String] = convertKey(key)
     val newValue = convertValue(value)
 
-    val prev = store.getValue(keyAsList)
-    if (prev!=null){
-      prev.add(newValue)
-      store.put(keyAsList, prev)
-    }
+    if(lastKey==keyAsList) // Key is the same, don't write list back to Voldemort
+      values.add(newValue)
     else {
-      val valueAsList = new ArrayList[String]
-      valueAsList.add(newValue)
-      store.put(keyAsList,valueAsList)
+      if(lastKey!=null) { // Not the first run
+        store.put(lastKey, values)
+        lastKey = keyAsList
+      } else // First run
+        lastKey = keyAsList
+      values = store.getValue(keyAsList)
+      if(values==null)
+          values = new ArrayList[String]
+      values.add(newValue)
     }
+  }
 
+  def finishPut() {
+    if(lastKey!=null)
+      store.put(lastKey, values)
   }
 
   override def get(key : Pair[Node,String]) = {
     val result = new HashSet[Node]
     val keyAsList = convertKey(key)
     val values = store.getValue(keyAsList)
+
     if(values!=null){
       val it = values.iterator
       while(it.hasNext())  {

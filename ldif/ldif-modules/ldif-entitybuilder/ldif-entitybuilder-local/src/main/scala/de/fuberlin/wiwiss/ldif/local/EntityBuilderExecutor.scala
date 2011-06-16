@@ -4,7 +4,7 @@ import ldif.module.Executor
 import ldif.local.runtime.{GraphFormat, DynamicEntityFormat, QuadReader, EntityWriter}
 import de.fuberlin.wiwiss.ldif.EntityBuilderTask
 
-class EntityBuilderExecutor() extends Executor {
+class EntityBuilderExecutor(ebType: EntityBuilderType.Type = EntityBuilderType.InMemory) extends Executor {
 
   type TaskType = EntityBuilderTask
   type InputFormat = GraphFormat
@@ -29,10 +29,16 @@ class EntityBuilderExecutor() extends Executor {
    */
   override def execute(task : EntityBuilderTask, reader : Seq[QuadReader], writer : Seq[EntityWriter])
   {
-    val eb = new EntityBuilder(task.entityDescriptions, reader)
+    val eb = new EntityBuilder(task.entityDescriptions, reader, ebType==EntityBuilderType.Voldemort)  //TODO: change if more EB types are added
 
     for ((ed, i) <- task.entityDescriptions.zipWithIndex )
       eb.buildEntities(ed, writer(i))
 
   }
+}
+
+object EntityBuilderType extends Enumeration {
+  type Type = Value
+  val InMemory = Value("In-Memory")
+  val Voldemort = Value("Voldemort")
 }

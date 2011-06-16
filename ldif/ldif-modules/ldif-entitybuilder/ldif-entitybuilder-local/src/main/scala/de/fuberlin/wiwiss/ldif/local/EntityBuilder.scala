@@ -8,9 +8,16 @@ import collection.mutable.{ArraySeq, ArrayBuffer, HashMap, Set, HashSet}
 import ldif.local.runtime.{LocalNode, EntityWriter, QuadReader}
 import actors.{Future, Futures}
 import ldif.local.util.Const
+import java.util.ArrayList
+import java.util.List
+import ldif.local.runtime.Quad
+import java.util.Collections
+import ldif.local.runtime.{BackwardComparator, ForwardComparator}
+import scala.collection.JavaConversions._
 
-class EntityBuilder (entityDescriptions : IndexedSeq[EntityDescription], readers : Seq[QuadReader]) extends FactumBuilder {
-
+class EntityBuilder (entityDescriptions : IndexedSeq[EntityDescription], readers : Seq[QuadReader], useVoldemort: Boolean) extends FactumBuilder {
+//  private val useVoldemort = true
+  private val nrOfQuadsPerSort = 500000
   private val log = Logger.getLogger(getClass.getName)
 
   object PropertyType extends Enumeration {
@@ -20,11 +27,13 @@ class EntityBuilder (entityDescriptions : IndexedSeq[EntityDescription], readers
   // Property HT - Describes all the properties used in the Entity Description
   val PHT = new HashMap[String, PropertyType.Value]
   // Forward HT - Contains connections which are going to be explored straight/forward
-  val FHT:HashTable = new MemHashTable
-  // val FHT:HashTable = new VoldermortHashTable("fht")
+  var FHT:HashTable = new MemHashTable
+  if(useVoldemort)
+    FHT = new VoldermortHashTable("fht")
   // Backward HT - Contains connections from quads which are going to be explored reverse/backward
-  val BHT:HashTable = new MemHashTable
-  // val BHT:HashTable = new VoldermortHashTable("bht")
+  var BHT:HashTable = new MemHashTable
+  if(useVoldemort)
+    BHT = new VoldermortHashTable("bht")
 
   // if no restriction is defined, build an entity for each resource
   var allUriNodes : Set[Node] = null
@@ -61,8 +70,11 @@ class EntityBuilder (entityDescriptions : IndexedSeq[EntityDescription], readers
 
   // Init memory structures
   private def init {
-     buildPHT
-     buildHTs
+    buildPHT
+    if(useVoldemort)
+      buildVoldemortHTs
+    else
+      buildHTs
   }
 
   // Build the property hash table
@@ -96,22 +108,16 @@ class EntityBuilder (entityDescriptions : IndexedSeq[EntityDescription], readers
      BHT.clear
      val startTime = now
 
+
      //TODO multithread-safe hashtables are required to fork here
      //forkAll( for (reader <- readers) yield Futures.future {
-     for (reader <- readers) {
+        for (reader <- readers) {
            while (reader.hasNext){
              val quad = reader.read
 
              val prop = new Uri(quad.predicate).toString
 
-             if(allUriNodes!=null){
-              if (quad.subject.isUriNode) {
-                allUriNodes += quad.subject
-              }
-              if (quad.value.isUriNode){
-                allUriNodes += quad.value
-              }
-             }
+             addUriNodes(quad)
 
              val v = PHT.get(prop)
 
@@ -128,6 +134,84 @@ class EntityBuilder (entityDescriptions : IndexedSeq[EntityDescription], readers
      //log.info("Read in Quads took " + ((now - startTime)) + " ms")
      //log.info(" [ FHT ] \n > keySet = ("+FHT.keySet.size.toString+")")
      //log.info(" [ BHT ] \n > keySet = ("+BHT.keySet.size.toString+")\n   - " + BHT.keySet.map(a => Pair.unapply(a).get._2 + " "+Pair.unapply(a).get._1.value).mkString("\n   - "))
+  }
+
+  // Build HTs in a Voldemort specific way. This is done because the in-memory hashtable strategy is not applicable here.
+  // The Sets to store values had to be deserialized and serialized every time a value was added.
+  private def buildVoldemortHTs {
+    FHT.clear
+    BHT.clear
+    val startTime = now
+
+     //TODO multithread-safe hashtables are required to fork here
+     //forkAll( for (reader <- readers) yield Futures.future {
+
+     //Voldemort specific
+       for (reader <- readers) {
+           var completeCount = 0
+           var count = 0
+           val quadList: List[Quad] = new ArrayList[Quad]
+
+         val watch = new StopWatch
+         watch.getTimeSpanInSeconds
+           while (reader.hasNext){
+             val quad = reader.read
+             quadList.add(quad)
+             addUriNodes(quad)
+             count += 1
+             completeCount += 1
+             if(count==nrOfQuadsPerSort) {
+               addQuadsToFHT(quadList)
+               addQuadsToBHT(quadList)
+               count = 0
+               System.out.println("Number of Quads written to Voldemort: " + completeCount + " in " + watch.getTimeSpanInSeconds + "s")
+             }
+           }
+           // Write remaining quads to table
+           if(count>0) {
+              addQuadsToFHT(quadList)
+              addQuadsToBHT(quadList)
+              count = 0
+           }
+           // Write remaining values to Voldemort
+           BHT.asInstanceOf[VoldermortHashTable].finishPut()
+           FHT.asInstanceOf[VoldermortHashTable].finishPut()
+        }
+  }
+
+  private def addUriNodes(quad:Quad) {
+    if(allUriNodes!=null){
+      if (quad.subject.isUriNode)
+        allUriNodes += quad.subject
+      if (quad.value.isUriNode)
+        allUriNodes += quad.value
+    }
+  }
+
+  private def addQuadsToFHT(quads: List[Quad]) {
+    Collections.sort(quads, new ForwardComparator)
+    var lastSubject: Node = null
+    var lastPredicate: String = null
+
+    for(quad <- quads) {
+      val property = new Uri(quad.predicate).toString
+      val propertyType = PHT.get(property)
+      if (propertyType == Some(PropertyType.FORW) || propertyType == Some(PropertyType.BOTH))
+        FHT.put(Pair(quad.subject, property), quad.value)
+    }
+  }
+
+  private def addQuadsToBHT(quads: List[Quad]) {
+    Collections.sort(quads, new BackwardComparator)
+    var lastSubject: Node = null
+    var lastPredicate: String = null
+
+    for(quad <- quads) {
+      val property = new Uri(quad.predicate).toString
+      val propertyType = PHT.get(property)
+      if (propertyType == Some(PropertyType.BACK) || propertyType == Some(PropertyType.BOTH))
+        BHT.put(Pair(quad.value, property), quad.subject)
+    }
   }
 
   // Find all properties from a given operator and add those to the property hash table
@@ -374,4 +458,15 @@ class EntityBuilder (entityDescriptions : IndexedSeq[EntityDescription], readers
   private def min(a:Int , b:Int) =  if (a<b) a else b
 
   private def now = System.currentTimeMillis
+}
+
+class StopWatch {
+  private var lastTime = System.currentTimeMillis
+
+  def getTimeSpanInSeconds(): Double = {
+    val newTime = System.currentTimeMillis
+    val span = newTime - lastTime
+    lastTime = newTime
+    span / 1000.0
+  }
 }
