@@ -103,7 +103,6 @@ class EntityBuilder (entityDescriptions : IndexedSeq[EntityDescription], readers
 
   // Build the forward/backward hash tables
   private def buildHTs {
-    System.out.println("CHECK")
     FHT.clear
     BHT.clear
     val startTime = now
@@ -127,8 +126,6 @@ class EntityBuilder (entityDescriptions : IndexedSeq[EntityDescription], readers
         }
       }
     }
-
-    System.out.println("CHECK")
 
     //log.info("Read in Quads took " + ((now - startTime)) + " ms")
     //log.info(" [ FHT ] \n > keySet = ("+FHT.keySet.size.toString+")")

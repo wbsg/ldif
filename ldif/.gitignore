@@ -7,3 +7,4 @@
 output
 ldif-modules/ldif-r2r/ldif-r2r-common/*.sh
 ldif-modules/ldif-r2r/ldif-r2r-local/src/test/resources/ldif.modules.r2r/.testMapping.ttl.swp
+ldif-singlemachine/output.nq
