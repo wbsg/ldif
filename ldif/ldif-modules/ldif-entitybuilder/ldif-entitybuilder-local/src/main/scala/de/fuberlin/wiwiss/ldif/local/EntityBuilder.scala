@@ -132,6 +132,21 @@ class EntityBuilder (entityDescriptions : IndexedSeq[EntityDescription], readers
     //log.info(" [ BHT ] \n > keySet = ("+BHT.keySet.size.toString+")\n   - " + BHT.keySet.map(a => Pair.unapply(a).get._2 + " "+Pair.unapply(a).get._1.value).mkString("\n   - "))
   }
 
+  private def isRelevantQuad(quad: Quad): Boolean = {
+    val prop = new Uri(quad.predicate).toString
+    if(PHT.contains(prop))
+      true
+    else
+      false
+  }
+
+  private def isProvenanceQuad(quad: Quad): Boolean = {
+    if(quad.graph=="http://www4.wiwiss.fu-berlin.de/ldif/provenance")//TODO: Use this graph?
+      true
+    else
+      false
+  }
+
   // Build HTs in a Voldemort specific way. This is done because the in-memory hashtable strategy is not applicable here.
   // The Sets to store values had to be deserialized and serialized every time a value was added.
   private def buildVoldemortHTs {
