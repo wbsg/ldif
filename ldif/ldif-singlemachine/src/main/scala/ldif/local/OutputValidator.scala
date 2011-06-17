@@ -53,6 +53,7 @@ object OutputValidator {
     var errCount = 0
     var count = 0
 
+    println("Validating the output")
     // check #1: ldif-output => ldimporter-output
     //println("Check #1")
     for (line <- ldifOutput){

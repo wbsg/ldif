@@ -15,8 +15,8 @@ import java.util.Collections
 import ldif.local.runtime.{BackwardComparator, ForwardComparator}
 import scala.collection.JavaConversions._
 
-class EntityBuilder (entityDescriptions : IndexedSeq[EntityDescription], readers : Seq[QuadReader], useVoldemort: Boolean=false) extends FactumBuilder {
-//  private val useVoldemort = true
+class EntityBuilder (entityDescriptions : IndexedSeq[EntityDescription], readers : Seq[QuadReader], useVoldemort: Boolean) extends FactumBuilder {
+
   private val nrOfQuadsPerSort = 500000
   private val log = Logger.getLogger(getClass.getName)
 
@@ -104,36 +104,33 @@ class EntityBuilder (entityDescriptions : IndexedSeq[EntityDescription], readers
 
   // Build the forward/backward hash tables
   private def buildHTs {
-     FHT.clear
-     BHT.clear
-     val startTime = now
+    FHT.clear
+    BHT.clear
+    val startTime = now
 
+    // Round robin over readers
+    while (readers.filter(_.hasNext).size > 0 ){
+      for (reader <- readers.filter(_.size > 0)) {
+        val quad = reader.read
 
-     //TODO multithread-safe hashtables are required to fork here
-     //forkAll( for (reader <- readers) yield Futures.future {
-        for (reader <- readers) {
-           while (reader.hasNext){
-             val quad = reader.read
+        val prop = new Uri(quad.predicate).toString
 
-             val prop = new Uri(quad.predicate).toString
+        addUriNodes(quad)
 
-             addUriNodes(quad)
+        val v = PHT.get(prop)
 
-             val v = PHT.get(prop)
-
-             if (v == Some(PropertyType.FORW) || v == Some(PropertyType.BOTH))  {
-                FHT.put(Pair(quad.subject, prop), quad.value)
-             }
-             if (v == Some(PropertyType.BACK) || v == Some(PropertyType.BOTH))  {
-                BHT.put(Pair(quad.value, prop), quad.subject)
-             }
-           }
+        if (v == Some(PropertyType.FORW) || v == Some(PropertyType.BOTH))  {
+          FHT.put(Pair(quad.subject, prop), quad.value)
         }
-     //)
+        if (v == Some(PropertyType.BACK) || v == Some(PropertyType.BOTH))  {
+          BHT.put(Pair(quad.value, prop), quad.subject)
+        }
+      }
+    }
 
-     //log.info("Read in Quads took " + ((now - startTime)) + " ms")
-     //log.info(" [ FHT ] \n > keySet = ("+FHT.keySet.size.toString+")")
-     //log.info(" [ BHT ] \n > keySet = ("+BHT.keySet.size.toString+")\n   - " + BHT.keySet.map(a => Pair.unapply(a).get._2 + " "+Pair.unapply(a).get._1.value).mkString("\n   - "))
+    //log.info("Read in Quads took " + ((now - startTime)) + " ms")
+    //log.info(" [ FHT ] \n > keySet = ("+FHT.keySet.size.toString+")")
+    //log.info(" [ BHT ] \n > keySet = ("+BHT.keySet.size.toString+")\n   - " + BHT.keySet.map(a => Pair.unapply(a).get._2 + " "+Pair.unapply(a).get._1.value).mkString("\n   - "))
   }
 
   // Build HTs in a Voldemort specific way. This is done because the in-memory hashtable strategy is not applicable here.
@@ -142,9 +139,6 @@ class EntityBuilder (entityDescriptions : IndexedSeq[EntityDescription], readers
     FHT.clear
     BHT.clear
     val startTime = now
-
-     //TODO multithread-safe hashtables are required to fork here
-     //forkAll( for (reader <- readers) yield Futures.future {
 
      //Voldemort specific
        for (reader <- readers) {
