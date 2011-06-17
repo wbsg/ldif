@@ -16,7 +16,6 @@ import ldif.local.runtime.{BackwardComparator, ForwardComparator}
 import scala.collection.JavaConversions._
 
 class EntityBuilder (entityDescriptions : IndexedSeq[EntityDescription], readers : Seq[QuadReader], useVoldemort: Boolean) extends FactumBuilder {
-
   private val nrOfQuadsPerSort = 500000
   private val log = Logger.getLogger(getClass.getName)
 
@@ -109,8 +108,8 @@ class EntityBuilder (entityDescriptions : IndexedSeq[EntityDescription], readers
     val startTime = now
 
     // Round robin over readers
-    while (readers.filter(_.hasNext).size > 0 ){
-      for (reader <- readers.filter(_.size > 0)) {
+    while (readers.foldLeft(false)((a, b) => a || b.hasNext)){
+      for (reader <- readers.filter(_.hasNext)) {
         val quad = reader.read
 
         val prop = new Uri(quad.predicate).toString
@@ -131,6 +130,21 @@ class EntityBuilder (entityDescriptions : IndexedSeq[EntityDescription], readers
     //log.info("Read in Quads took " + ((now - startTime)) + " ms")
     //log.info(" [ FHT ] \n > keySet = ("+FHT.keySet.size.toString+")")
     //log.info(" [ BHT ] \n > keySet = ("+BHT.keySet.size.toString+")\n   - " + BHT.keySet.map(a => Pair.unapply(a).get._2 + " "+Pair.unapply(a).get._1.value).mkString("\n   - "))
+  }
+
+  private def isRelevantQuad(quad: Quad): Boolean = {
+    val prop = new Uri(quad.predicate).toString
+    if(PHT.contains(prop))
+      true
+    else
+      false
+  }
+
+  private def isProvenanceQuad(quad: Quad): Boolean = {
+    if(quad.graph=="http://www4.wiwiss.fu-berlin.de/ldif/provenance")//TODO: Use this graph?
+      true
+    else
+      false
   }
 
   // Build HTs in a Voldemort specific way. This is done because the in-memory hashtable strategy is not applicable here.

@@ -20,9 +20,4 @@ class FileQuadWriter(val outputFile: File) extends QuadWriter {
   def write(quad: Quad) = {
     objectOutput.writeObject(quad)
   }
-
-  /**
-   * This object signals the end of quads for an QuadQueue
-   */
-  case object NoQuadsLeft extends Quad(null,null,null,null)
 }

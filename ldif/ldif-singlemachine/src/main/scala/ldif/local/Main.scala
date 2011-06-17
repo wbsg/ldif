@@ -94,12 +94,17 @@ object Main
 
     val quadQueues = for (i <- 1 to dumpModule.tasks.size) yield new BlockingQuadQueue(DEFAULT_QUAD_QUEUE_CAPACITY)
 
-    for((dumpTask, writer) <- dumpModule.tasks.toList zip quadQueues){
-      runInBackground
-        {
+    // Don't read in parallel for Voldemort because Voldemort Put is slower than DumpLoader
+    if(ebType==EntityBuilderType.Voldemort)
+      for((dumpTask, writer) <- dumpModule.tasks.toList zip quadQueues)
           dumpExecutor.execute(dumpTask, null, writer)
-        }
-    }
+    else
+      for((dumpTask, writer) <- dumpModule.tasks.toList zip quadQueues){
+        runInBackground
+          {
+            dumpExecutor.execute(dumpTask, null, writer)
+          }
+      }
     quadQueues.toSeq
   }
 

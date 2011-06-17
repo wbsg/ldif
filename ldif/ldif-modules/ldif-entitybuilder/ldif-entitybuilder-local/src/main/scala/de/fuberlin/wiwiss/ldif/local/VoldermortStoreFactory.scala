@@ -17,7 +17,7 @@ object VoldermortStoreFactory {
   val clientConfig = new ClientConfig
   clientConfig.setMaxThreads(1)
   clientConfig.setSocketKeepAlive(true)
-  clientConfig.setSocketTimeout(10000, TimeUnit.MILLISECONDS)
+  clientConfig.setSocketTimeout(60000, TimeUnit.MILLISECONDS)
 
   val bootstrapUrl = "tcp://localhost:6666"
   clientConfig.setBootstrapUrls(bootstrapUrl)

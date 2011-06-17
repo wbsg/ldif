@@ -12,6 +12,7 @@ import scala.collection.mutable.{Map, HashMap, HashSet, Set}
 import ldif.local.runtime.impl.QuadQueue
 import ldif.entity._
 import java.util.logging.Logger
+import org.w3c.dom.css.Counter
 
 object URITranslator {
 
@@ -31,16 +32,12 @@ object URITranslator {
     val uriMap = generateUriMap(linkReader)
 
     val quadOutput = new QuadQueue
-    val overAllCount = quadsReader.size
     var counter = 0
-    var percentCounter = 1
 
+    log.info("Start URI translation...")
     while(!quadsReader.isEmpty) {
       counter += 1
-      if(10*counter/overAllCount > percentCounter/10) {
-        log.info("Amount of quads translated: " + percentCounter + "%")
-        percentCounter = 100*counter/overAllCount
-      }
+
       quadsReader.read match {
         case Quad(s, p, o, g) => {
           val (sNew, oNew) = translateQuadURIs(s, o, uriMap)
@@ -49,6 +46,7 @@ object URITranslator {
         }
       }
     }
+    log.info("End URI translation: Processed " + counter + " quads.")
 
     quadOutput
   }
