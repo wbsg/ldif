@@ -16,7 +16,6 @@ import ldif.local.runtime.{BackwardComparator, ForwardComparator}
 import scala.collection.JavaConversions._
 
 class EntityBuilder (entityDescriptions : IndexedSeq[EntityDescription], readers : Seq[QuadReader], useVoldemort: Boolean) extends FactumBuilder {
-
   private val nrOfQuadsPerSort = 500000
   private val log = Logger.getLogger(getClass.getName)
 
@@ -104,13 +103,14 @@ class EntityBuilder (entityDescriptions : IndexedSeq[EntityDescription], readers
 
   // Build the forward/backward hash tables
   private def buildHTs {
+    System.out.println("CHECK")
     FHT.clear
     BHT.clear
     val startTime = now
 
     // Round robin over readers
-    while (readers.filter(_.hasNext).size > 0 ){
-      for (reader <- readers.filter(_.size > 0)) {
+    while (readers.foldLeft(false)((a, b) => a || b.hasNext)){
+      for (reader <- readers.filter(_.hasNext)) {
         val quad = reader.read
 
         val prop = new Uri(quad.predicate).toString
@@ -127,6 +127,8 @@ class EntityBuilder (entityDescriptions : IndexedSeq[EntityDescription], readers
         }
       }
     }
+
+    System.out.println("CHECK")
 
     //log.info("Read in Quads took " + ((now - startTime)) + " ms")
     //log.info(" [ FHT ] \n > keySet = ("+FHT.keySet.size.toString+")")
