@@ -5,6 +5,7 @@ import org.scalatest.FlatSpec
 import org.scalatest.matchers.ShouldMatchers
 import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner
+import de.fuberlin.wiwiss.ldif.local.EntityBuilderType
 
 
 @RunWith(classOf[JUnitRunner])
@@ -17,7 +18,7 @@ class IntegrationFlowTest extends FlatSpec with ShouldMatchers {
 
   it should "run the whole integration flow correctly" in {
 
-    Main.runIntegrationFlow(configFile)
+    Main.runIntegrationFlow(configFile, EntityBuilderType.InMemory)
 
     val resultsUrl = getClass.getClassLoader.getResource("ldif/local/resources/results.nt")
     val resultsFile = new File(resultsUrl.toString.stripPrefix("file:"))

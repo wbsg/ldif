@@ -13,10 +13,13 @@ import ldif.modules.r2r.local.R2RLocalExecutor
 import ldif.modules.r2r._
 import ldif.entity.EntityDescription
 import de.fuberlin.wiwiss.ldif.local.{EntityBuilderType, EntityBuilderExecutor}
+import ldif.local.util.Const._
 
 
 object Main
 {
+  private var ebType = EntityBuilderType.Voldemort
+
   def main(args : Array[String])
   {
     var debug = false
@@ -31,6 +34,15 @@ object Main
     //val configFile = new File(configUrl.toString.stripPrefix("file:"))
     val configFile = new File(args(args.length-1))
     runIntegrationFlow(configFile, debug)
+  }
+
+  def runIntegrationFlow(configFile: File, debugMode: Boolean, entityBuilderType: EntityBuilderType.Type) {
+    ebType = entityBuilderType
+    runIntegrationFlow(configFile, debugMode)
+  }
+
+  def runIntegrationFlow(configFile: File, entityBuilderType: EntityBuilderType.Type) {
+    runIntegrationFlow(configFile, false, entityBuilderType)
   }
 
   def runIntegrationFlow(configFile: File, debugMode: Boolean) {
@@ -80,7 +92,7 @@ object Main
     val dumpModule = new DumpModule(new DumpConfig(dumpDir.listFiles.map(_.getCanonicalPath)))
     val dumpExecutor = new DumpExecutor
 
-    val quadQueues = for (i <- 1 to dumpModule.tasks.size) yield new BlockingQuadQueue
+    val quadQueues = for (i <- 1 to dumpModule.tasks.size) yield new BlockingQuadQueue(DEFAULT_QUAD_QUEUE_CAPACITY)
 
     for((dumpTask, writer) <- dumpModule.tasks.toList zip quadQueues){
       runInBackground
@@ -153,7 +165,7 @@ object Main
       val entityBuilderConfig = new EntityBuilderConfig(entityDescriptions.toIndexedSeq)
       val entityBuilderModule = new EntityBuilderModule(entityBuilderConfig)
       val entityBuilderTask = entityBuilderModule.tasks.head
-      val entityBuilderExecutor = new EntityBuilderExecutor(EntityBuilderType.Voldemort)
+      val entityBuilderExecutor = new EntityBuilderExecutor(ebType)
 
       entityBuilderExecutor.execute(entityBuilderTask, readers, entityQueues)
     }

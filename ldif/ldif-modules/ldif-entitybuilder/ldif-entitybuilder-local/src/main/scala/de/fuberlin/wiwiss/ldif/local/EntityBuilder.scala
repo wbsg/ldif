@@ -15,7 +15,7 @@ import java.util.Collections
 import ldif.local.runtime.{BackwardComparator, ForwardComparator}
 import scala.collection.JavaConversions._
 
-class EntityBuilder (entityDescriptions : IndexedSeq[EntityDescription], readers : Seq[QuadReader], useVoldemort: Boolean) extends FactumBuilder {
+class EntityBuilder (entityDescriptions : IndexedSeq[EntityDescription], readers : Seq[QuadReader], useVoldemort: Boolean=false) extends FactumBuilder {
 //  private val useVoldemort = true
   private val nrOfQuadsPerSort = 500000
   private val log = Logger.getLogger(getClass.getName)

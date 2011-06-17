@@ -4,6 +4,7 @@ import ldif.entity.Node
 import java.util.ArrayList
 import java.util.List
 import collection.mutable.HashSet
+import voldemort.store.UnreachableStoreException
 
 // Voldermort adapter
 
@@ -24,7 +25,7 @@ class VoldermortHashTable (storeName : String) extends HashTable {
         lastKey = keyAsList
       } else // First run
         lastKey = keyAsList
-      values = store.getValue(keyAsList)
+      values = getValue(keyAsList)
       if(values==null)
           values = new ArrayList[String]
       values.add(newValue)
@@ -39,7 +40,7 @@ class VoldermortHashTable (storeName : String) extends HashTable {
   override def get(key : Pair[Node,String]) = {
     val result = new HashSet[Node]
     val keyAsList = convertKey(key)
-    val values = store.getValue(keyAsList)
+    val values = getValue(keyAsList)
 
     if(values!=null){
       val it = values.iterator
@@ -51,6 +52,21 @@ class VoldermortHashTable (storeName : String) extends HashTable {
       None
     else
       Some(result)
+  }
+
+  private def getValue(key: List[String]): java.util.List[String] = {
+    val retries = 10;
+    var tries = 0;
+
+    var exception: Exception = null
+    while(tries<retries) {
+      try {
+        store.getValue(key)
+      } catch {
+        case e: UnreachableStoreException => tries += 1; exception=e
+      }
+    }
+    throw exception
   }
 
   override def clear {
