@@ -1,0 +1,3 @@
+#!/bin/bash
+filename=${1%\.nt}
+awk -v graph=${filename} 'BEGIN {FS=" \\.[ ]*$"}; {print $1" <"graph"> ."}' $1 > "$filename.nq"
