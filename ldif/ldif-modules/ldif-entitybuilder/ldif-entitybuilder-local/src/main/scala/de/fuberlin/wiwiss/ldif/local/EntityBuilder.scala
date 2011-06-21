@@ -15,7 +15,7 @@ import java.util.Collections
 import ldif.local.runtime.{BackwardComparator, ForwardComparator}
 import scala.collection.JavaConversions._
 
-class EntityBuilder (entityDescriptions : IndexedSeq[EntityDescription], readers : Seq[QuadReader], useVoldemort: Boolean) extends FactumBuilder {
+class EntityBuilder (entityDescriptions : IndexedSeq[EntityDescription], readers : Seq[QuadReader], useVoldemort: Boolean = false) extends FactumBuilder {
   private val nrOfQuadsPerSort = 500000
   private val log = Logger.getLogger(getClass.getName)
 
@@ -154,11 +154,10 @@ class EntityBuilder (entityDescriptions : IndexedSeq[EntityDescription], readers
     BHT.clear
     val startTime = now
 
-     //Voldemort specific
-       for (reader <- readers) {
-           var completeCount = 0
-           var count = 0
-           val quadList: List[Quad] = new ArrayList[Quad]
+    for (reader <- readers) {
+      var completeCount = 0
+      var count = 0
+      val quadList: List[Quad] = new ArrayList[Quad]
 
          val watch = new StopWatch
          watch.getTimeSpanInSeconds
@@ -172,13 +171,14 @@ class EntityBuilder (entityDescriptions : IndexedSeq[EntityDescription], readers
                addQuadsToFHT(quadList)
                addQuadsToBHT(quadList)
                count = 0
-               System.out.println("Number of Quads written to Voldemort: " + completeCount + " in " + watch.getTimeSpanInSeconds + "s")
+               System.out.println("Number of Quads written to Voldemort: " + nrOfQuadsPerSort + " in " + watch.getTimeSpanInSeconds + "s")
              }
            }
            // Write remaining quads to table
            if(count>0) {
               addQuadsToFHT(quadList)
               addQuadsToBHT(quadList)
+              System.out.println("Number of Quads written to Voldemort: " + count + " in " + watch.getTimeSpanInSeconds + "s")
               count = 0
            }
            // Write remaining values to Voldemort

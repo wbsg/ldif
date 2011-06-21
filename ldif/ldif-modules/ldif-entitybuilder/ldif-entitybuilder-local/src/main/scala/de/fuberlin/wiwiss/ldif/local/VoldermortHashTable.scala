@@ -61,7 +61,7 @@ class VoldermortHashTable (storeName : String) extends HashTable {
     var exception: Exception = null
     while(tries<retries) {
       try {
-        store.getValue(key)
+        return store.getValue(key)
       } catch {
         case e: UnreachableStoreException => tries += 1; exception=e
       }

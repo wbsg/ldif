@@ -29,7 +29,7 @@ class EntityBuilderExecutor(ebType: EntityBuilderType.Type = EntityBuilderType.I
    */
   override def execute(task : EntityBuilderTask, reader : Seq[QuadReader], writer : Seq[EntityWriter])
   {
-    val eb = new EntityBuilder(task.entityDescriptions, reader, false)//ebType==EntityBuilderType.InMemory)  //TODO: change if more EB types are added
+    val eb = new EntityBuilder(task.entityDescriptions, reader, ebType==EntityBuilderType.Voldemort)  //TODO: change last parameter if more EB types are added
 
     for ((ed, i) <- task.entityDescriptions.zipWithIndex )
       eb.buildEntities(ed, writer(i))

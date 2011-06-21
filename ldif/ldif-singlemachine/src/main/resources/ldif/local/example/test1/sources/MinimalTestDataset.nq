@@ -1,0 +1,6 @@
+<http://testNamespace/resource1> <http://testNamespace/oldP> "same" <MinimalTestDataset> .
+<http://testNamespace/resource1> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://testNamespace/someOldClass> <MinimalTestDataset> .
+<http://testNamespace/resource2> <http://testNamespace/oldP> "same" <MinimalTestDataset> .
+<http://testNamespace/resource2> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://testNamespace/someOldClass> <MinimalTestDataset> .
+<http://testNamespace/resource3> <http://testNamespace/oldP> "different" <MinimalTestDataset> .
+<http://testNamespace/resource3> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://testNamespace/someOldClass>  <MinimalTestDataset> .

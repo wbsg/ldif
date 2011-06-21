@@ -1,4 +1,5 @@
 <LDIF>
+  <Properties>test1.properties</Properties>
   <Sources>sources</Sources>
   <LinkSpecifications>linkSpecs</LinkSpecifications>
   <Mappings>mappings/mappings.ttl</Mappings>
