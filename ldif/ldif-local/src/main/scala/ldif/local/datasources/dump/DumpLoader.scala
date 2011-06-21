@@ -55,10 +55,6 @@ class DumpLoader(sourceLocation:String) {
   private def getFileStream(file:File) = {
     var inputStream:InputStream = null
     var lang = ContentTypes.jenaLangFromExtension(file.getName)
-    // line before does not recognize n-Quads format
-    val extension = file.getName.substring(file.getName.length-3, file.getName.length)
-    if(extension==".nq")
-      lang = "N-QUAD"
 
     if (lang == null) {
       throw new Exception("Unable to determine language for "+ sourceLocation	+ " based on file extension")

@@ -16,6 +16,7 @@ object ContentTypes {
   val langXML = "RDF/XML"
   val langXMLAbbrev = "RDF/XML-ABBREV"
   val langNTriple = "N-TRIPLE"
+  val langNQuad = "N-QUAD"
   val langN3 = "N3"
   val langTurtle = "TURTLE"
 
@@ -92,6 +93,8 @@ object ContentTypes {
 			result = langN3
 		else if (Pattern.matches(".*\\.nt(\\..*)?", urlOrPath))
 			result = langNTriple
+    else if (Pattern.matches(".*\\.nq(\\..*)?", urlOrPath))
+			result = langNQuad
 		else if (Pattern.matches(".*\\.ttl(\\..*)?", urlOrPath))
       result = langTurtle
 		result
