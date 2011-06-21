@@ -3,5 +3,5 @@
   <Sources>sources</Sources>
   <LinkSpecifications>linkSpecs</LinkSpecifications>
   <Mappings>mappings/mappings.ttl</Mappings>
-  <Output>output</Output>
+  <Output>output_minimal</Output>
 </LDIF>

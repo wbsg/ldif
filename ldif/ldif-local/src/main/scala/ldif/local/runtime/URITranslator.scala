@@ -35,7 +35,7 @@ object URITranslator {
     var counter = 0
 
     log.info("Start URI translation...")
-    while(!quadsReader.isEmpty) {
+    while(quadsReader.hasNext) {
       counter += 1
 
       quadsReader.read match {

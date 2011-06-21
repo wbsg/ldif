@@ -5,19 +5,23 @@ import java.util.logging.Logger
 import ldif.util.Uri
 import ldif.entity.Restriction._
 import collection.mutable.{ArraySeq, ArrayBuffer, HashMap, Set, HashSet}
-import ldif.local.runtime.{LocalNode, EntityWriter, QuadReader}
 import actors.{Future, Futures}
 import ldif.local.util.Const
 import java.util.ArrayList
 import java.util.List
-import ldif.local.runtime.Quad
 import java.util.Collections
-import ldif.local.runtime.{BackwardComparator, ForwardComparator}
 import scala.collection.JavaConversions._
+import ldif.local.runtime._
 
-class EntityBuilder (entityDescriptions : IndexedSeq[EntityDescription], readers : Seq[QuadReader], useVoldemort: Boolean = false) extends FactumBuilder {
+class EntityBuilder (entityDescriptions : IndexedSeq[EntityDescription], readers : Seq[QuadReader], config: ConfigParameters) extends FactumBuilder {
   private val nrOfQuadsPerSort = 500000
   private val log = Logger.getLogger(getClass.getName)
+  // true if quads not relevant for the Entity Builder should be written to a QuadReader
+  private val useVoldemort = config.configProperties.getPropertyValue("entityBuilderType", "in-memory").toLowerCase=="voldemort"
+  // If this is true, quads like provenance quads (or even all quads) are saved for later use (merge)
+  private val saveQuads = config.otherQuadsWriter!=null
+  private val outputAllQuads = config.configProperties.getPropertyValue("output", "mapped-only").toLowerCase=="all"
+  private val provenanceGraph = config.configProperties.getPropertyValue("provenanceGraph", "http://www4.wiwiss.fu-berlin.de/ldif/provenance")
 
   object PropertyType extends Enumeration {
     val FORW, BACK, BOTH = Value
@@ -112,6 +116,9 @@ class EntityBuilder (entityDescriptions : IndexedSeq[EntityDescription], readers
       for (reader <- readers.filter(_.hasNext)) {
         val quad = reader.read
 
+        if(saveQuads)
+          saveQuadsForLater(quad)
+
         val prop = new Uri(quad.predicate).toString
 
         addUriNodes(quad)
@@ -132,16 +139,21 @@ class EntityBuilder (entityDescriptions : IndexedSeq[EntityDescription], readers
     //log.info(" [ BHT ] \n > keySet = ("+BHT.keySet.size.toString+")\n   - " + BHT.keySet.map(a => Pair.unapply(a).get._2 + " "+Pair.unapply(a).get._1.value).mkString("\n   - "))
   }
 
+  private def saveQuadsForLater(quad: Quad) {
+    if(outputAllQuads || isProvenanceQuad(quad))
+      config.otherQuadsWriter.write(quad)
+  }
+
   private def isRelevantQuad(quad: Quad): Boolean = {
     val prop = new Uri(quad.predicate).toString
-    if(PHT.contains(prop))
+    if(PHT.contains(prop) && !isProvenanceQuad(quad))
       true
     else
       false
   }
 
   private def isProvenanceQuad(quad: Quad): Boolean = {
-    if(quad.graph=="http://www4.wiwiss.fu-berlin.de/ldif/provenance")//TODO: Use this graph?
+    if(quad.graph==provenanceGraph)
       true
     else
       false
@@ -159,32 +171,35 @@ class EntityBuilder (entityDescriptions : IndexedSeq[EntityDescription], readers
       var count = 0
       val quadList: List[Quad] = new ArrayList[Quad]
 
-         val watch = new StopWatch
-         watch.getTimeSpanInSeconds
-           while (reader.hasNext){
-             val quad = reader.read
-             quadList.add(quad)
-             addUriNodes(quad)
-             count += 1
-             completeCount += 1
-             if(count==nrOfQuadsPerSort) {
-               addQuadsToFHT(quadList)
-               addQuadsToBHT(quadList)
-               count = 0
-               System.out.println("Number of Quads written to Voldemort: " + nrOfQuadsPerSort + " in " + watch.getTimeSpanInSeconds + "s")
-             }
-           }
-           // Write remaining quads to table
-           if(count>0) {
-              addQuadsToFHT(quadList)
-              addQuadsToBHT(quadList)
-              System.out.println("Number of Quads written to Voldemort: " + count + " in " + watch.getTimeSpanInSeconds + "s")
-              count = 0
-           }
-           // Write remaining values to Voldemort
-           BHT.asInstanceOf[VoldermortHashTable].finishPut()
-           FHT.asInstanceOf[VoldermortHashTable].finishPut()
+      val watch = new StopWatch
+      watch.getTimeSpanInSeconds
+      while (reader.hasNext){
+        val quad = reader.read
+        if(saveQuads)
+          saveQuadsForLater(quad)
+
+        quadList.add(quad)
+        addUriNodes(quad)
+        count += 1
+        completeCount += 1
+        if(count==nrOfQuadsPerSort) {
+          addQuadsToFHT(quadList)
+          addQuadsToBHT(quadList)
+          count = 0
+          System.out.println("Number of Quads written to Voldemort: " + nrOfQuadsPerSort + " in " + watch.getTimeSpanInSeconds + "s")
         }
+      }
+      // Write remaining quads to table
+      if(count>0) {
+        addQuadsToFHT(quadList)
+        addQuadsToBHT(quadList)
+        System.out.println("Number of Quads written to Voldemort: " + count + " in " + watch.getTimeSpanInSeconds + "s")
+        count = 0
+      }
+      // Write remaining values to Voldemort
+      BHT.asInstanceOf[VoldermortHashTable].finishPut()
+      FHT.asInstanceOf[VoldermortHashTable].finishPut()
+    }
   }
 
   private def addUriNodes(quad:Quad) {
@@ -400,7 +415,7 @@ class EntityBuilder (entityDescriptions : IndexedSeq[EntityDescription], readers
   private def merge(table : Traversable[IndexedSeq[Node]], prev:IndexedSeq[Node], next:IndexedSeq[Traversable[Node]], pathIndex : Int) = {
     var newTable = new HashSet[ArraySeq[Node]]
     for (i <- 0 to prev.size-1)
-      for ((row,j) <- table.toSeq.zipWithIndex.filter(_._1(pathIndex) == prev(i))){
+      for ((row,j) <- table.toSeq.zipWithIndex.filter(_._1(pathIndex)==prev(i))){
         val newRows = for (newValue <- next(i)) yield {
           val newRow = ArraySeq(row:_*)  //from immutable to mutable
           newRow(pathIndex) = newValue

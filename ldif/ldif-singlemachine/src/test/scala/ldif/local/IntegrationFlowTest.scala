@@ -18,7 +18,7 @@ class IntegrationFlowTest extends FlatSpec with ShouldMatchers {
 
   it should "run the whole integration flow correctly" in {
 
-    Main.runIntegrationFlow(configFile, EntityBuilderType.InMemory)
+    Main.runIntegrationFlow(configFile)
 
     val resultsUrl = getClass.getClassLoader.getResource("ldif/local/resources/results.nt")
     val resultsFile = new File(resultsUrl.toString.stripPrefix("file:"))

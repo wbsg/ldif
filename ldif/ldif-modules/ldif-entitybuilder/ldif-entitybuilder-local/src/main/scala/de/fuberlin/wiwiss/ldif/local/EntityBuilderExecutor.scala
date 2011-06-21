@@ -1,10 +1,10 @@
 package de.fuberlin.wiwiss.ldif.local
 
 import ldif.module.Executor
-import ldif.local.runtime.{GraphFormat, DynamicEntityFormat, QuadReader, EntityWriter}
 import de.fuberlin.wiwiss.ldif.EntityBuilderTask
+import ldif.local.runtime._
 
-class EntityBuilderExecutor(ebType: EntityBuilderType.Type = EntityBuilderType.InMemory) extends Executor {
+class EntityBuilderExecutor(configParameters: ConfigParameters = ConfigParameters(new ConfigProperties, null)) extends Executor {
 
   type TaskType = EntityBuilderTask
   type InputFormat = GraphFormat
@@ -29,7 +29,7 @@ class EntityBuilderExecutor(ebType: EntityBuilderType.Type = EntityBuilderType.I
    */
   override def execute(task : EntityBuilderTask, reader : Seq[QuadReader], writer : Seq[EntityWriter])
   {
-    val eb = new EntityBuilder(task.entityDescriptions, reader, ebType==EntityBuilderType.Voldemort)  //TODO: change last parameter if more EB types are added
+    val eb = new EntityBuilder(task.entityDescriptions, reader, configParameters)  //TODO: change last parameter if more EB types are added
 
     for ((ed, i) <- task.entityDescriptions.zipWithIndex )
       eb.buildEntities(ed, writer(i))
