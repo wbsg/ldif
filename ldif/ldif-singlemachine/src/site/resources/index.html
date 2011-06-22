@@ -1,6 +1,7 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
-<html><head>
-  <title>LDIF - Linked Data Integration Framework</title>
+<html><head><title>LDIF - Linked Data Integration Framework</title>
+
+  
 
   
   
@@ -48,28 +49,26 @@ pre { speak-punctuation: code; }
 }
   </style>
   
-  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-
-</head><body>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"></head><body>
 <div id="logo"> <a href="http://www.fu-berlin.de/"><img src="img/fu-logo.gif" alt="Freie Universität Berlin Logo"></a></div>
 
 <div id="header">
 <h1 style="font-size: 250%;">LDIF - Linked Data Integration Framework<br>
 </h1>
-<div id="tagline">Baking your individual Linked Data brownie<br>
+<div id="tagline">Reducing complexity and increasing the quality of your Web Data<br>
 </div>
 <div id="authors"><a href="mailto:aschultz@mi.fu-berlin.de">Andreas
-Schultz</a><br>
-Andrea Matteini<br>
-Robert Isele<br>
+Schultz</a><br><a href="mailto:andrea.matteini@gmail.com">
+Andrea Matteini</a><br><a href="http://www.wiwiss.fu-berlin.de/en/institute/pwo/bizer/team/IseleRobert.html">
+Robert Isele</a><br>
 <a href="http://www.bizer.de/">Chris
-Bizer</a>
+Bizer</a><br>
+<a href="mailto:chris@beckr.org">Christian Becker</a><br>
+
 </div>
 <div id="content">
 <p>&nbsp;</p>
-<p> Data is represented on the <a href="http://esw.w3.org/SweoIG/TaskForces/CommunityProjects/LinkingOpenData">Web
-of Linked Data </a> using terms from a wide range of different
-vocabularies...</p>
+<p> Some intro...</p>
 <div id="download">
 <h2>Download LDIF<br>
 </h2>
@@ -96,29 +95,76 @@ Data<br>
 </ol>
 <h2 id="about"><a name="about"></a>1. About LDIF<br>
 </h2>
-<p>...<br>
+<p>The Linked Data Integration Framework is developed to answer the need of integrating RDF datasets from the Web. Data is represented   on the <a href="http://esw.w3.org/SweoIG/TaskForces/CommunityProjects/LinkingOpenData">Web of Linked Data </a>
+using terms from a wide range of different vocabularies. Furthermore
+datasets usually define proprietary URIs to identify entities and
+statements made in different datasets can be conflicting when merging
+these datasets. In order to produce a consistent dataset by tackling
+these problems an integration framework has to offer at least these
+steps as shown in the following figure:<br>
+<br>
 </p>
-<h3>Outlook<br>
-</h3>
+<p style="text-align: left; margin-left: 120px;"><img style="border: 1px solid ; width: 650px; height: 501px;" alt="Example-architecture of an integration aware Linked Data application" src="img/ldarchitecture.png"><br>
+</p>
+<p style="text-align: left;"><br>
+The LDI Framework sits in the "Data Access, Integration and Storage Layer". A typical workflow consists of the following phases:<br>
+</p>
+<ol>
+  <li>The <span style="font-weight: bold;">Web Data Access Module</span>
+obtains the relevant datasets for example by crawling the Web of Data
+or downloading specific dataset dumps. It associates the data with
+provenance information and then offers the data to the following phase.</li>
+  <li>The <span style="font-weight: bold;">Vocabulary Mapping Module</span> translates the data to a target vocabulary chosen by the user to offer a uniform view on data from different datasets.</li>
+  <li>The <span style="font-weight: bold;">Identity Resolution Module</span> identifies pairs of URIs that seem to correspond to the same real world object.</li>
+  <li>The <span style="font-weight: bold;">Quality Evaluation Module</span>
+decides based on the data and on provenance information and background
+knowledge, how to resolve confliicting data values and produce a
+coherent view on the integrated data.<br>
+  </li>
+</ol>
+<p style="text-align: left;">
+</p>
+
+<h3>Outlook</h3><br>
+The next steps we want to take to offer a scalable and configurable data integration solutions are:<br>
+<ul>
+  <li>Add Cluster profile: Processes and data are distributed over a cluster of machines 
+(probably based on HDFS and Hadoop)</li>
+  <li>Support for modelling the integration flow: Currently the
+integration flow is static and can only be influenced by predefined
+configuration parameters.</li>
+  <li>Add Web Data Access Module</li>
+  <li>Add Quality Evaluation Module<br>
+  </li>
+</ul>
+<br>
+
 <h2 id="quickstart"><a name="quickstart"></a>2. Quick
 start</h2>
 <br>
-...<br>
-<br>
+In order to experiment with LDIF follow these steps:<br>
+<ol>
+  <li>Download the latest release (download link at the top of this page)</li>
+  <li>Unpack the archive to an arbitrary location<br>
+  </li>
+  <li>To run the command line tool type the following in the root directory of LDIF:<br>
+  </li>
+</ol>
+<pre>java -jar ldif-all-inclusive-TODO.jar ldif.local.Main &lt;path-to-ldif-config-file&gt;</pre>
+
+For details about the configuration file and parameters, see section 5.<br>
 <h2><a name="components"></a>3. LDIF Components<br>
 </h2>
 <br>
-<br>
+The components or modules are the essential parts of the integration
+flow. These are the main parts that are wired together by the
+framework. Right now there is one implementation for the Mapping Module
+and one for the Identity Resolution Module. For the mappings we utilize
+the <a href="http://www4.wiwiss.fu-berlin.de/bizer/r2r/">R2R Framework</a>, for the identity resolution the <a href="http://www4.wiwiss.fu-berlin.de/bizer/silk/">Silk Framework</a> is used. Implementations for the other modules will be added at a later time.<br>
 <h3>R2R</h3>
-<br>
-Todo: Write something about mappings and link R2R spec<br>
+<br>An overview and examples for mappings are given on the <a href="http://www4.wiwiss.fu-berlin.de/bizer/r2r/">main page</a> of the R2R Framework. The <a href="http://www4.wiwiss.fu-berlin.de/bizer/r2r/spec/">specification and user manual</a> is described in a separate document.<br>
 <h3>Silk</h3>
-<br>
-Todo: Write something about&nbsp; Silk <br>
-<h3>EntityBuilder<br>
-</h3>
-<br>
-Todo: Write something about EB??<br>
+<br>An overview and examples can be found on the <a href="http://www4.wiwiss.fu-berlin.de/bizer/silk/">Silk main page</a>.<br><br>
 <h2 id="development"><a name="examples"></a>4. Mapping
 Examples</h2>
 <br>
@@ -160,11 +206,50 @@ created by running the example application: </li>
 <h2 id="configuration"><a name="config"></a>5. Configuration
 options</h2>
 <br>
+<p>In this section we describe how an LDIF configuration file looks
+like and which parameters you can modify to change the runtime
+behaviour of LDIF.<br>
+</p>
+<h3>LDIF configuration file</h3>
+<p>LDIF is configured with an XML file, whose current structure is very
+simple because the integration flow is static at the moment - something
+that will change in future releases. A typical config file looks like
+this:<br>
+</p>
+<pre>&lt;LDIF&gt;<br>  &lt;Properties&gt;test1.properties&lt;/Properties&gt;<br>  &lt;Sources&gt;sources&lt;/Sources&gt;<br>  &lt;LinkSpecifications&gt;linkSpecs&lt;/LinkSpecifications&gt;<br>  &lt;Mappings&gt;mappings/mappings.ttl&lt;/Mappings&gt;<br>  &lt;Output&gt;output.nq&lt;/Output&gt;<br>&lt;/LDIF&gt;</pre>
+<p>It has the following elements:<br>
+</p>
+<ul>
+  <li><span style="font-style: italic;">Properties</span>: The path to a Java properties file for configuration parameters.</li>
+  <li><span style="font-style: italic;">Sources</span>: The directory to the source datasets. This is also the location where provenance data can be stored. These files must be in <a href="http://sw.deri.org/2008/07/n-quads/">N-Quads</a> format and may be compressed (.gz, .zip).<br>
+  </li>
+  <li><span style="font-style: italic;">LinkSpecifications</span>: The directory containing the <a href="http://www.assembla.com/wiki/show/silk/Link_Specification_Language">Silk link specifications</a>.</li>
+  <li><span style="font-style: italic;">Mappings</span>: File containing <a href="http://www4.wiwiss.fu-berlin.de/bizer/r2r/spec/#mappings">R2R mappings</a>.</li>
+  <li><span style="font-style: italic;">Output</span>: The name of the output dataset with the integrated data.<br>
+  </li>
+</ul>
+<p>All the paths are relative to the config file location. In this case
+there is a root directory with the config file and the test1.properties
+file in it. Furthermore the following directories would be nested in
+the root directory: linkSpecs, sources and mappings. As you can see,
+currently the datasets have to be in a local directory. More
+sophisticated data access will be implemented with the coming Data
+Access Module.<br>
+</p>
+<h3>Configuration Properties</h3>
+<p>In the LDIF configuration file you can specify a (Java) properties
+file to further tweak certain parameters concerning the integration
+execution. Here is a list with all properties that can be set at the
+moment and the possible values for each property:<br>
+</p>
+<pre># Specify if all input quads should be included in the output file or only the mapped quads.<br># Default: mapped-only<br><br><span style="font-weight: bold;">output = all | mapped-only</span><br><br># Specify if URIs should be rewritten to a common URI in regard to the discovered links by the Identity Resolution Module.<br># Default: true<br><br><span style="font-weight: bold;">rewriteURIs = true | false</span><br><br># The graph containing the provenance information. These quads are only output at the end, but are not further processed by the integration flow.<br># Default: http://www4.wiwiss.fu-berlin.de/ldif/provenance<br><br><span style="font-weight: bold;">provenanceGraphURI = http://www4.wiwiss.fu-berlin.de/ldif/provenance</span><br><br># Here you can choose how data is stored while it is being processed.<br># Regarding the space vs. speed compromise, there are two solutions right now: A pure in-memory solution and a solution based on Voldemort.<br># Default: In-Memory<br><br><span style="font-weight: bold;">entityBuilderType = in-memory | voldemort</span><br></pre>
+
 <br>
+
 <p><strong>Setting the storage type:<br>
 </strong></p>
 <p>Depending on your integration use case, especially the size of the
-input datasets, you can may choose different storage types in order to
+input datasets, you may choose different storage types in order to
 increase execution speed or limit the memory foot print. Right now we
 offer two solutions:<br>
 </p>

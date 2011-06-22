@@ -75,9 +75,9 @@ class EntityBuilder (entityDescriptions : IndexedSeq[EntityDescription], readers
   private def init {
     buildPHT
     if(useVoldemort)
-      buildVoldemortHTs
+      buildVoldemortHashTables
     else
-      buildHTs
+      buildHashTables
   }
 
   // Build the property hash table
@@ -106,7 +106,7 @@ class EntityBuilder (entityDescriptions : IndexedSeq[EntityDescription], readers
   }
 
   // Build the forward/backward hash tables
-  private def buildHTs {
+  private def buildHashTables {
     FHT.clear
     BHT.clear
     val startTime = now
@@ -121,7 +121,8 @@ class EntityBuilder (entityDescriptions : IndexedSeq[EntityDescription], readers
 
         val prop = new Uri(quad.predicate).toString
 
-        addUriNodes(quad)
+        if(isRelevantQuad(quad))
+          addUriNodes(quad)
 
         val v = PHT.get(prop)
 
@@ -161,7 +162,7 @@ class EntityBuilder (entityDescriptions : IndexedSeq[EntityDescription], readers
 
   // Build HTs in a Voldemort specific way. This is done because the in-memory hashtable strategy is not applicable here.
   // The Sets to store values had to be deserialized and serialized every time a value was added.
-  private def buildVoldemortHTs {
+  private def buildVoldemortHashTables {
     FHT.clear
     BHT.clear
     val startTime = now
@@ -178,10 +179,13 @@ class EntityBuilder (entityDescriptions : IndexedSeq[EntityDescription], readers
         if(saveQuads)
           saveQuadsForLater(quad)
 
-        quadList.add(quad)
-        addUriNodes(quad)
-        count += 1
+        if(isRelevantQuad(quad)) {
+          quadList.add(quad)
+          addUriNodes(quad)
+          count += 1
+        }
         completeCount += 1
+
         if(count==nrOfQuadsPerSort) {
           addQuadsToFHT(quadList)
           addQuadsToBHT(quadList)
@@ -202,6 +206,7 @@ class EntityBuilder (entityDescriptions : IndexedSeq[EntityDescription], readers
     }
   }
 
+  // Gathers all instances from the (relevant) input quads
   private def addUriNodes(quad:Quad) {
     if(allUriNodes!=null){
       if (quad.subject.isUriNode)

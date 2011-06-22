@@ -13,6 +13,7 @@ import java.util.concurrent.TimeUnit
 object VoldermortStoreFactory {
 
   val adminClientConfig = new AdminClientConfig
+  adminClientConfig.setAdminSocketTimeoutSec(10)
 
   val clientConfig = new ClientConfig
   clientConfig.setMaxThreads(1)
