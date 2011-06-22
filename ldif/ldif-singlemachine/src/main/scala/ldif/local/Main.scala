@@ -208,8 +208,14 @@ object Main
    */
   private def runInBackground(function : => Unit) {
     val thread = new Thread {
+      private val listener: FatalErrorListener = fatalErrorListener
+
       override def run() {
-        function
+        try {
+          function
+        } catch {
+          case e: Exception => listener.reportError(e)
+        }
       }
     }
     thread.start()
@@ -282,4 +288,15 @@ object configProperties extends ConfigProperties {
   override def getPropertyValue(property: String, default: String): String = {
     properties.getProperty(property, default)
   }
+}
+
+object fatalErrorListener extends FatalErrorListener {
+  def reportError(e: Exception) {
+    e.printStackTrace
+    System.exit(1)
+  }
+}
+
+trait FatalErrorListener {
+  def reportError(e: Exception)
 }
