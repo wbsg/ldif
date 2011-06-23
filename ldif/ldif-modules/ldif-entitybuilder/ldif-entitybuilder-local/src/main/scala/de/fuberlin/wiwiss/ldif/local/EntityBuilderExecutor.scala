@@ -29,7 +29,7 @@ class EntityBuilderExecutor(configParameters: ConfigParameters = ConfigParameter
    */
   override def execute(task : EntityBuilderTask, reader : Seq[QuadReader], writer : Seq[EntityWriter])
   {
-    val eb = new EntityBuilder(task.entityDescriptions, reader, configParameters)  //TODO: change last parameter if more EB types are added
+    val eb = new EntityBuilder(task.entityDescriptions, reader, configParameters)
 
     for ((ed, i) <- task.entityDescriptions.zipWithIndex )
       eb.buildEntities(ed, writer(i))

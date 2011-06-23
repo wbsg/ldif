@@ -16,6 +16,7 @@ import ldif.local.util.Const._
 import java.util.Properties
 import java.io._
 import java.util.logging.Logger
+import util.StringPool
 
 object Main
 {
@@ -39,6 +40,15 @@ object Main
     runIntegrationFlow(configFile, debug)
   }
 
+  private def setupQuadReader(_clonedR2rReader: QuadReader): QuadReader = {
+    var clonedR2rReader: QuadReader = _clonedR2rReader
+    if (clonedR2rReader.isInstanceOf[FileQuadReader]) {
+      clonedR2rReader.asInstanceOf[FileQuadReader].close()
+      clonedR2rReader = new FileQuadReader(clonedR2rReader.asInstanceOf[FileQuadReader].inputFile)
+    }
+    clonedR2rReader
+  }
+
   def runIntegrationFlow(configFile: File, debugMode: Boolean) {
     stopWatch.getTimeSpanInSeconds
     val config: LdifConfiguration = loadConfigFile(configFile)
@@ -52,12 +62,14 @@ object Main
 
     val quadReaders = loadDump(config.sourceDir)
 
-    var r2rReader: Seq[QuadReader] = executeMappingPhase(config, quadReaders)
+    val r2rReader: Seq[QuadReader] = executeMappingPhase(config, quadReaders)
 
     if(debugMode==true)
       writeDebugOutput("r2r", config.outputFile, r2rReader.head)
 
-    val clonedR2rReader = cloneQuadQueue(r2rReader.head) //TODO: Right now, only works for QuadQueue implementation
+    var clonedR2rReader = r2rReader.head
+    if(clonedR2rReader.isInstanceOf[QuadQueue])//TODO: Redesign QuadReader interface to be generally clonable
+      clonedR2rReader = cloneQuadQueue(clonedR2rReader.asInstanceOf[QuadQueue])
 
     val linkReader: QuadReader = executeLinkingPhase(config, r2rReader)
 
@@ -66,6 +78,9 @@ object Main
 
     configParameters.otherQuadsWriter.finish
     val otherQuadsReader = new FileQuadReader(otherQuadsFile)
+
+    clonedR2rReader = setupQuadReader(clonedR2rReader)
+
     val allQuads = new MultiQuadReader(clonedR2rReader, otherQuadsReader)
 
     val integratedReader: QuadReader = executeURITranslation(allQuads, linkReader)
@@ -144,18 +159,22 @@ object Main
 
     val entityDescriptions = for(task <- module.tasks) yield task.mapping.entityDescription
     val entityReaders = buildEntities(readers, entityDescriptions.toSeq, configParameters)
+    StringPool.reset
     println("Time needed to load dump and build entities for mapping phase: " + stopWatch.getTimeSpanInSeconds + "s")
     //println("Number of triples after loading the dump: " + (quadReaders.foldLeft(0)(_ + _.totalSize)))
 
-    val outputQueue = new QuadQueue
+    val outputFile = File.createTempFile("ldif-mapped-quads", ".bin")
+    outputFile.deleteOnExit
+    val writer = new FileQuadWriter(outputFile)
 
     //runInBackground
     {
       for((r2rTask, reader) <- module.tasks.toList zip entityReaders)
-        executor.execute(r2rTask, Seq(reader), outputQueue)
+        executor.execute(r2rTask, Seq(reader), writer)
     }
 
-    Seq(outputQueue)
+    writer.finish
+    Seq(new FileQuadReader(outputFile))
   }
 
   /**
@@ -238,17 +257,15 @@ object Main
   def writeDebugOutput(phase: String, outputFile: File, reader: QuadReader) {
     if(reader.isInstanceOf[QuadQueue] && !reader.isInstanceOf[BlockingQuadQueue]) {
       val newOutputFile = new File(outputFile.getAbsolutePath + "." + phase)
-      val clonedReader = cloneQuadQueue(reader)
-      writeOutput(newOutputFile, clonedReader)
+      val clonedReader = cloneQuadQueue(reader.asInstanceOf[QuadQueue])
+      if(clonedReader!=null)
+        writeOutput(newOutputFile, clonedReader)
     }
   }
 
   // Only clone QuadQueue implementation of QuadReader
-  def cloneQuadQueue(queue: QuadReader) = {
-    if(queue.isInstanceOf[QuadQueue])
-      queue.asInstanceOf[QuadQueue].clone
-    else//TODO: clone other queue types also
-      null
+  def cloneQuadQueue(queue: QuadQueue): QuadReader = {
+      queue.clone
   }
 }
 

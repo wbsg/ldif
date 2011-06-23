@@ -1,0 +1,34 @@
+<stores>
+  <store>
+    <name>fht</name>
+    <persistence>bdb</persistence>
+    <routing>client</routing>
+    <replication-factor>1</replication-factor>
+    <required-reads>1</required-reads>
+    <required-writes>1</required-writes>
+    <key-serializer>
+      <type>json</type>
+      <schema-info version="0">["string"]</schema-info>
+    </key-serializer>
+    <value-serializer>
+      <type>json</type>
+      <schema-info version="0">["string"]</schema-info>
+    </value-serializer>
+  </store>
+  <store>
+    <name>bht</name>
+    <persistence>bdb</persistence>
+    <routing>client</routing>
+    <replication-factor>1</replication-factor>
+    <required-reads>1</required-reads>
+    <required-writes>1</required-writes>
+    <key-serializer>
+      <type>json</type>
+      <schema-info version="0">["string"]</schema-info>
+    </key-serializer>
+    <value-serializer>
+      <type>json</type>
+      <schema-info version="0">["string"]</schema-info>
+    </value-serializer>
+  </store>
+</stores>

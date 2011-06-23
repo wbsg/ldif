@@ -56,4 +56,6 @@ class FileQuadReader(val inputFile: File) extends QuadReader {
   def isEmpty = !hasNext
 
   def size = throw new RuntimeException("Method 'size' not implemented in FileQuadReader")
+
+  def close() = objectInput.close()
 }
