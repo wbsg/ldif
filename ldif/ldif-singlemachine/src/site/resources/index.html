@@ -94,7 +94,7 @@ a single URI. &nbsp;</li>
   <li><a href="#components">LDIF components</a></li>
   <li><a href="#quickstart">Quick start</a></li>
   <li><a href="#examples">Example: Using LDIF for integrating Life
-Science Data </a></li>
+Science Data</a></li>
   <li><a href="#performance">Performance Evaluation</a> </li>
   <li><a href="#config">Configuration options</a></li>
   <li><a href="#code">Source code and development</a></li>
@@ -134,7 +134,7 @@ gap and provide an initial version of an open-source Linked Data
 Integration Framework that can be used within applications to translate
 Web data and normalize URI aliases. </p>
 <p>The figure below shows the schematic <a href="http://linkeddatabook.com/editions/1.0/#htoc84">architecture of
-Linked Data applications </a>that
+Linked Data applications</a> that
 implement the Crawling/Data Warehousing Pattern. The figure also
 highlights the steps of the data integration process that are currently
 supported by LDIF.<br>
@@ -191,7 +191,7 @@ to discover real-world entities that are identified with different URIs
 within different data sources. Afterwards, these URI aliases are
 replaced with a single URI within the data. Silk is a flexible identity
 resolution framework that allows the user to specify identity
-resolution heuristics which combine different typs of matchers using
+resolution heuristics which combine different types of matchers using
 the declarative <a href="http://www4.wiwiss.fu-berlin.de/bizer/silk/spec/">Silk - Link
 Specification Language</a>.</p>
 <p>An overview and examples can be found on the <a href="http://www4.wiwiss.fu-berlin.de/bizer/silk/">Silk main page</a>.<br>
@@ -254,7 +254,7 @@ directory of LDIF:<br>
 <pre>bin/run &lt;path-to-ldif-config-file&gt;<br><br>bin\run.bat &lt;path-to-ldif-config-file&gt;<br></pre>
 For details about the configuration file and parameters, see <a href="#config">Section 6</a>.
 <p>&nbsp;</p>
-<h2 id="development"><a name="examples"></a>4. Example: Using LDIF to
+<h2 id="examples"><a name="examples"></a>4. Example: Using LDIF to
 integrate Life Science Data </h2>
 <br>
 <p>To be able to execute&nbsp;the following examples you need to set up
@@ -276,14 +276,15 @@ Linked Data Integration, these data sources can be brought together to
 improve the user experience and eventually assist in serendipitous
 discovery.<br>
 <br>
-Some sources of interest are:<br>
+In this example, the following data sources are translated into a common <a href="resources/Wiki.owl">Wiki ontology</a>:<br>
 </p>
 <ul>
   <ul>
-    <li>KEGG Pathway, a collection of pathway maps representing knowledge on the molecular interaction and reaction networks</li>
-    <li>PharmGKB, which provides data on gene information, disease and drug pathways, and SNP variants</li>
-    <li>Uniprot, which provides information on protein sequence and function<strong></strong><br>
-    </li>
+    <li><a href="http://mouse.brain-map.org/">Allen Mouse Brain Atlas</a></li>
+    <li><a href="http://www.genome.jp/kegg/genes.html">KEGG GENES</a>, a collection of gene catalogs for all complete genomes generated from publicly available resources, mostly NCBI RefSeq</li>
+    <li><a href="http://www.genome.jp/kegg/pathway.html">KEGG Pathway</a>, a collection of pathway maps representing knowledge on the molecular interaction and reaction networks</li>
+    <li><a href="http://pharmgkb.org/">PharmGKB</a>, which provides data on gene information, disease and drug pathways, and SNP variants</li>
+    <li><a href="http://www.uniprot.org/">Uniprot</a>, which provides information on protein sequence and function </li>
   </ul>
 </ul>
 <ul>
@@ -308,7 +309,7 @@ dir.</li>
     <pre>bin/run examples/example1/config.xml</pre>
     <li>Under
 Windows type:</li>
-    <pre>bin\run examples\example1\config.xml</pre>
+    <pre>bin\run.bat examples\example1\config.xml</pre>
   </ul>
   
   <li>Example input quads (reduced to two source datasets):<br></li>
@@ -325,7 +326,7 @@ Windows type:</li>
 <p>The example input and output needs some explanation:<br>
 </p>
 <ul>
-  <li>There are two source graphs, each containing data from a different source: From ABA and Uniprot in this example<br>
+  <li>There are two source graphs, each containing data from a different source: From ABA and Uniprot in this example.<br>
   </li>
   <li>Both graphs contain data about the same entity:</li>
   <ul>
@@ -339,7 +340,7 @@ this case).</li>
   <li>Because the <span style="font-family: monospace;">smwprop:EntrezGeneId</span> value came from both datasets, it is also represented two times in the output. Whereas the <span style="font-family: monospace;">smwprop:GeneSymbol</span> value is derived from the ABA dataset only.<br>
   </li>
 </ul>
-<h2 id="development"><a name="performance" id="performance"></a>5.
+<h2 id="performance"><a name="performance"></a>5.
 Performance Evaluation</h2>
 
 <p>We regularly carry out performance evaluations. Our test use case
@@ -510,13 +511,11 @@ following steps:<br>
 <ol>
   <li>Download the latest Voldemort release from their <a href="https://github.com/voldemort/voldemort/downloads">Download</a>
 site.</li>
-  <li>Unpack it to a local directory. (the same machine you want to run
-LDIF on)</li>
-  <li>Copy <a href="resources/stores.xml">this stores.xml</a> file
-into the VOLDEMORT/config/single_node_cluster/config directory -
-overwriting the old one.</li>
-  <li>And start the voldemort server like this from the voldemort root
-directory:<br>
+  <li>Unpack it to a local directory (the same machine you want to run
+LDIF on).</li>
+  <li>Copy this <a href="resources/stores.xml">stores.xml</a> file
+into the [VOLDEMORT]/config/single_node_cluster/config directory (overwriting the old one).</li>
+  <li>Start the server by typing the following in the Voldermort root directory:<br>
   </li>
 </ol>
 <pre style="margin-left: 40px;">bin/voldemort-server.sh config/single_node_cluster<br></pre>
@@ -536,29 +535,24 @@ use? </strong></p>
 <h2 id="relatedprojects"><a name="related"></a>9. References</h2>
 <ul>
   <li>Tom Heath, Christian Bizer: <a href="http://www.morganclaypool.com/doi/abs/10.2200/S00334ED1V01Y201102WBE001">Linked
-Data: Evolving the Web into a Global Data Space </a>. Synthesis
+Data: Evolving the Web into a Global Data Space</a>. Synthesis
 Lectures on the Semantic Web: Theory and Technology, Morgan &amp;
-Claypool Publishers, ISBN <a href="http://www.amazon.com/Linked-Data-Synthesis-Lectures-Engineering/dp/1608454304/ref=sr_1_1?ie=UTF8&amp;s=books&amp;qid=1297846088&amp;sr=8-1">978160845431
-    </a>, 2011 ( <a href="http://linkeddatabook.com/">Free HTML
-version </a>).</li>
+Claypool Publishers, ISBN <a href="http://www.amazon.com/Linked-Data-Synthesis-Lectures-Engineering/dp/1608454304/ref=sr_1_1?ie=UTF8&amp;s=books&amp;qid=1297846088&amp;sr=8-1">978160845431</a>, 2011 ( <a href="http://linkeddatabook.com/">Free HTML version</a> ).</li>
   <li>Christian Bizer, Andreas Schultz: <a href="http://www.wiwiss.fu-berlin.de/en/institute/pwo/bizer/research/publications/BizerSchultz-COLD-R2R-Paper.pdf">The
-R2R Framework: Publishing and Discovering Mappings on the Web </a> ( <a href="http://www.wiwiss.fu-berlin.de/en/institute/pwo/bizer/research/publications/BizerSchultz-COLD-R2R-Talk.pdf">Slides
-    </a>). 1st International Workshop on Consuming Linked Data (COLD
+R2R Framework: Publishing and Discovering Mappings on the Web</a> ( <a href="http://www.wiwiss.fu-berlin.de/en/institute/pwo/bizer/research/publications/BizerSchultz-COLD-R2R-Talk.pdf">Slides</a> ). 1st International Workshop on Consuming Linked Data (COLD
 2010), Shanghai, November 2010. </li>
   <li>Julius Volz, Christian Bizer, Martin Gaedke, Georgi Kobilarov: <a href="http://www.wiwiss.fu-berlin.de/en/institute/pwo/bizer/research/publications/VolzBizerGaedkeKobilarov-ISWC2009-Silk.pdf">Discovering
-and Maintaining Links on the Web of Data </a> ( <a href="http://www.wiwiss.fu-berlin.de/en/institute/pwo/bizer/research/publications/VolzBizerGaedkeKobilarov-ISWC2009-Silk-Talk.pdf">Slides
-    </a>). International Semantic Web Conference (ISWC2009),
+and Maintaining Links on the Web of Data</a> ( <a href="http://www.wiwiss.fu-berlin.de/en/institute/pwo/bizer/research/publications/VolzBizerGaedkeKobilarov-ISWC2009-Silk-Talk.pdf">Slides</a> ). International Semantic Web Conference (ISWC2009),
 Westfields, USA, October 2009. </li>
   <li>Robert Isele, Anja Jentzsch, Christian Bizer: <a href="http://www.wiwiss.fu-berlin.de/en/institute/pwo/bizer/research/publications/IseleJentzschBizer-Silk-Cold2010.pdf">Silk
-Server - Adding missing Links while consuming Linked Data </a> ( <a href="http://www.wiwiss.fu-berlin.de/en/institute/pwo/bizer/research/publications/IseleJentzschBizer-Silk-Cold2010-Talk.pdf">Slides
-    </a>). 1st International Workshop on Consuming Linked Data (COLD
+Server - Adding missing Links while consuming Linked Data</a> ( <a href="http://www.wiwiss.fu-berlin.de/en/institute/pwo/bizer/research/publications/IseleJentzschBizer-Silk-Cold2010-Talk.pdf">Slides</a> ). 1st International Workshop on Consuming Linked Data (COLD
 2010), Shanghai, November 2010. </li>
 </ul>
 <p>&nbsp;</p>
 <h2><a name="acknowledgments"></a>10. Acknowledgments </h2>
-<p>This work was supported in part by Vulcan Inc. as part of its <a href="http://www.projecthalo.com">Project Halo </a> and by the EU FP7
+<p>This work was supported in part by Vulcan Inc. as part of its <a href="http://www.projecthalo.com">Project Halo</a> and by the EU FP7
 project <a href="http://lod2.eu/">LOD2 - Creating Knowledge out of
-Interlinked Data </a> (Grant No. 257943). </p>
+Interlinked Data</a> (Grant No. 257943). </p>
 <p>&nbsp;</p>
 <ol>
 </ol>
