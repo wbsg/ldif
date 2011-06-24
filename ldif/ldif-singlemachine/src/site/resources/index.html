@@ -52,7 +52,7 @@ pre { speak-punctuation: code; }
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
 </head><body>
-<div id="logo"> <a href="http://www.fu-berlin.de/"><img src="img/fu-logo.gif" alt="Freie Universität Berlin Logo"></a></div>
+<div id="logo"><a href="http://www.fu-berlin.de/"><img src="img/fu-logo.gif" alt="Freie Universität Berlin Logo"></a>&nbsp;<a href="http://mediaeventservices.com"><img src="img/logo.gif" alt="Media Event Services"></a></div>
 
 <div id="header">
 <h1 style="font-size: 250%;">LDIF - Linked Data Integration Framework<br>
@@ -150,16 +150,22 @@ Component, a Data Transformation Component and a Data Output Component.
 </p>
 <p><img src="img/LDIFcomponents.png" height="92" width="299"></p>
 Currently, we have implemented the following modules: <br>
-<h3>Data Access: N-Quad Loader<br>
+<h3>Data Access: N-Quads Loader<br>
 </h3>
 <br>
 <p>Version 0.1 of LDIF expects input data to be represented as Named
-Graphs and be stored in <a href="http://sw.deri.org/2008/07/n-quads/">N-Quad
-format</a> in a local directory. The graph URI of each quad is used for
-provenance tracking. These graphs themselves can be described in a
-specific provenance graph, which is configurable. In this way the final
-dataset that is produced by the integration flow still includes all the
-provenance information about the sources.<br>
+Graphs and be stored in <a href="http://sw.deri.org/2008/07/n-quads/">N-Quads
+format</a>
+in a local directory. The graph URI of each quad is used for
+provenance tracking. Provenance meta-information describing the graphs
+can be provided in the form of specific provenance graph. The name of
+this provenance graph can be set in the configuration file. LDIF does
+not make any assumptions about the provenance vocabulary that is used
+to describe the graphs, meaning that you can use your provenance
+vocabulary of choice. Currently, the provenance information is just
+copied to the final output. In future releases, we will use the
+provenance information for data quality assessment and data fusion (see
+next steps).<br>
 </p>
 <h3>Transformation: R2R Data Translation<br>
 </h3>
@@ -196,7 +202,7 @@ the declarative <a href="http://www4.wiwiss.fu-berlin.de/bizer/silk/spec/">Silk 
 Specification Language</a>.</p>
 <p>An overview and examples can be found on the <a href="http://www4.wiwiss.fu-berlin.de/bizer/silk/">Silk main page</a>.<br>
 </p>
-<h3 style="text-align: left;">Data Output: Nquad Writer<br>
+<h3 style="text-align: left;">Data Output: N-Quads Writer<br>
 </h3>
 <br>
 <p>The N-Quads writer simply dumps the final output of the integration
@@ -214,9 +220,8 @@ available. </li>
   <li>File-backed Implementation: Uses the <a href="http://project-voldemort.com/">Project Voldemort</a> key-value
 store to keep intermediate results. Is slower than the in-memory
 implementation but scales to larger amounts of data. <br>
-</li>
+  </li>
 </ol>
-
 <h3>Next steps for LDIF</h3>
 <p>LDIF V0.1 only provides data translation and identity resolution
 functionality. Over the next months, we plan to extend LDIF along the
@@ -261,7 +266,8 @@ integrate Life Science Data </h2>
 everything as explained under <a href="#quickstart">Quick start</a>.</p>
 <p><strong>Example 1:<br>
 </strong></p>
-<p>This example shows how LDIF is applied to five Life Science datasets from different sources.<br>
+<p>This example shows how LDIF is applied to five Life Science datasets
+from different sources.<br>
 </p>
 <ul>
   <li>Description of the use case and the data sources:</li>
@@ -276,19 +282,25 @@ Linked Data Integration, these data sources can be brought together to
 improve the user experience and eventually assist in serendipitous
 discovery.<br>
 <br>
-In this example, the following data sources are translated into a common <a href="resources/Wiki.owl">Wiki ontology</a>:<br>
+In this example, the following data sources are translated into a
+common <a href="resources/Wiki.owl">Wiki ontology</a>:<br>
 </p>
 <ul>
   <ul>
     <li><a href="http://mouse.brain-map.org/">Allen Mouse Brain Atlas</a></li>
-    <li><a href="http://www.genome.jp/kegg/genes.html">KEGG GENES</a>, a collection of gene catalogs for all complete genomes generated from publicly available resources, mostly NCBI RefSeq</li>
-    <li><a href="http://www.genome.jp/kegg/pathway.html">KEGG Pathway</a>, a collection of pathway maps representing knowledge on the molecular interaction and reaction networks</li>
-    <li><a href="http://pharmgkb.org/">PharmGKB</a>, which provides data on gene information, disease and drug pathways, and SNP variants</li>
-    <li><a href="http://www.uniprot.org/">Uniprot</a>, which provides information on protein sequence and function </li>
+    <li><a href="http://www.genome.jp/kegg/genes.html">KEGG GENES</a>,
+a collection of gene catalogs for all complete genomes generated from
+publicly available resources, mostly NCBI RefSeq</li>
+    <li><a href="http://www.genome.jp/kegg/pathway.html">KEGG Pathway</a>,
+a collection of pathway maps representing knowledge on the molecular
+interaction and reaction networks</li>
+    <li><a href="http://pharmgkb.org/">PharmGKB</a>, which provides
+data on gene information, disease and drug pathways, and SNP variants</li>
+    <li><a href="http://www.uniprot.org/">Uniprot</a>, which provides
+information on protein sequence and function </li>
   </ul>
 </ul>
 <ul>
-  
   <li>R2R mapping file: <a href="http://www.assembla.com/code/ldif/git/nodes/ldif/ldif-singlemachine/src/main/resources/ldif/local/example/test2/mappings/ALL-to-Wiki.r2r.ttl?rev=176428845b9594e28a2f0362916de23cc821502c">ALL-toWiki.r2r.ttl</a>
     <span style="text-decoration: underline;"></span></li>
   <li>Silk Linking Specifications: <a href="http://www.assembla.com/code/ldif/git/nodes/ldif/ldif-singlemachine/src/main/resources/ldif/local/example/test2/linkSpecs/ABA-to-Wiki.silk.xml?rev=176428845b9594e28a2f0362916de23cc821502c">ABA-to-Wiki.silk.xml</a>,
@@ -311,38 +323,46 @@ dir.</li>
 Windows type:</li>
     <pre>bin\run.bat examples\example1\config.xml</pre>
   </ul>
-  
-  <li>Example input quads (reduced to two source datasets):<br></li>
-</ul>
-<pre style="margin-left: 40px;">01: @prefix aba-voc: &lt;http://brain-map.org/gene/0.1#&gt; .<br>02: @prefix rdfs: &lt;http://www.w3.org/2000/01/rdf-schema#&gt; .<br>03: @prefix uniprot: &lt;http://purl.uniprot.org/core/&gt; . <br>04:&nbsp;<br>05: &lt;file:///aba_mouse_20101010_1000.nq&gt; {<br>06:   &lt;http://brain-map.org/mouse/brain/Oprk1.xml&gt; aba-voc:entrezgeneid "18387" ;<br>07:     aba-voc:gene-aliases _:Ab12290 .<br>08:  _:Ab12290 &lt;http://brain-map.org/gene/0.1#aliassymbol&gt; "Oprk1" .<br>09: }<br>10:<br>11: &lt;file:///datasets/uniprot-organism-human-reviewed-complete_1000.nq&gt; {<br>12:  &lt;http://purl.uniprot.org/uniprot/P61981&gt; rdfs:seeAlso &lt;http://purl.uniprot.org/geneid/18387&gt; .<br>13:   &lt;http://purl.uniprot.org/geneid/7532&gt; uniprot:database "GeneID" .<br>14:   &lt;http://purl.uniprot.org/uniprot/P61981&gt; uniprot:encodedBy &lt;file:///storage/datasets/uniprot-organism-human-reviewed-complete.rdf#_503237333438003B&gt; .<br>15: }<br></pre>
-
-<ul>
-  <li>Example output quads:<br>
+  <li>Example <span style="font-style: italic;">input</span> quads (reduced to two source datasets):<br>
   </li>
 </ul>
-<pre style="margin-left: 40px;">01: @prefix smwprop: &lt;http://mywiki/resource/property/&gt; .<br>02: @prefix xsd: &lt;http://www.w3.org/2001/XMLSchema#&gt; .<br>03: 
-04: &lt;file:///aba_mouse_20101010_1000.nq&gt; {<br>05:  &nbsp;&lt;http://brain-map.org/mouse/brain/Oprk1.xml&gt; smwprop:EntrezGeneId "18387"^^xsd:int .<br>06:  &nbsp;&lt;http://brain-map.org/mouse/brain/Oprk1.xml&gt; smwprop:GeneSymbol "Oprk1"^^xsd:string .<br>07: }<br>08: <br>09: &lt;file:///datasets/uniprot-organism-human-reviewed-complete_1000.nq&gt; {  <br>10:   &lt;http://brain-map.org/mouse/brain/Oprk1.xml&gt; smwprop:EntrezGeneId "18387"^^xsd:int .<br>11: }<br></pre>
-
+<pre style="margin-left: 40px;">01:  @prefix aba-voc: &lt;http://brain-map.org/gene/0.1#&gt; .<br>02:  @prefix rdfs: &lt;http://www.w3.org/2000/01/rdf-schema#&gt; .<br>03:  @prefix uniprot: &lt;http://purl.uniprot.org/core/&gt; . <br>04: &nbsp;<br>05:  &lt;file:///aba_mouse_20101010_1000.nq&gt; {<br>06:    &lt;http://brain-map.org/mouse/brain/Oprk1.xml&gt; aba-voc:entrezgeneid "<span style="font-weight: bold;">18387</span>" ;<br>07:      aba-voc:gene-aliases _:Ab12290 .<br>08:   _:Ab12290 &lt;http://brain-map.org/gene/0.1#aliassymbol&gt; "<span style="font-weight: bold;">Oprk1</span>" .<br>09:  }<br>10:<br>11:  &lt;file:///datasets/uniprot-organism-human-reviewed-complete_1000.nq&gt; {<br>12:    &lt;http://purl.uniprot.org/uniprot/P61981&gt; rdfs:seeAlso &lt;http://purl.uniprot.org/geneid/<span style="font-weight: bold;">18387</span>&gt; .<br>13:    &lt;http://purl.uniprot.org/geneid/<span style="font-weight: bold;">18387</span>&gt; uniprot:database "GeneID" .<br>14:    &lt;http://purl.uniprot.org/uniprot/P61981&gt; uniprot:encodedBy &lt;file:///storage/datasets/uniprot-organism-human-reviewed-complete.rdf#_503237333438003B&gt; .<br>15:  }<br></pre>
+<ul>
+  <li>Example <span style="font-style: italic;">output</span> quads:<br>
+  </li>
+</ul>
+<pre style="margin-left: 40px;">01: @prefix smwprop: &lt;http://mywiki/resource/property/&gt; .<br>02: @prefix xsd: &lt;http://www.w3.org/2001/XMLSchema#&gt; .<br>03: <br>04: &lt;file:///aba_mouse_20101010_1000.nq&gt; {<br>05:  &nbsp;&lt;http://brain-map.org/mouse/brain/Oprk1.xml&gt; smwprop:EntrezGeneId "<span style="font-weight: bold;">18387</span>"^^xsd:int .<br>06:  &nbsp;&lt;http://brain-map.org/mouse/brain/Oprk1.xml&gt; smwprop:GeneSymbol "<span style="font-weight: bold;">Oprk1</span>"^^xsd:string .<br>07: }<br>08: <br>09: &lt;file:///datasets/uniprot-organism-human-reviewed-complete_1000.nq&gt; {  <br>10:   &lt;http://brain-map.org/mouse/brain/Oprk1.xml&gt; smwprop:EntrezGeneId "<span style="font-weight: bold;">18387</span>"^^xsd:int .<br>11: }<br></pre>
 <p>The example input and output needs some explanation:<br>
 </p>
 <ul>
-  <li>There are two source graphs, each containing data from a different source: From ABA and Uniprot in this example.<br>
+  <li>There are two source graphs, each containing data from a
+different source: From ABA (input: line 5) and Uniprot (input: line 11) in this example.<br>
   </li>
   <li>Both graphs contain data about the same entity:</li>
   <ul>
-    <li>In the ABA dataset the URI is <span style="font-family: monospace;">&lt;http://brain-map.org/mouse/brain/Oprk1.xml&gt;</span></li>
-    <li>In the Uniprot dataset the URI is <span style="font-family: monospace;">&lt;file:///storage/datasets/uniprot-organism-human-reviewed-complete.rdf#_503237333438003B&gt;</span></li>
+    <li>In the ABA dataset the URI is <span style="font-family: monospace;">&lt;http://brain-map.org/mouse/brain/Oprk1.xml&gt; </span>(input: line 6)<br>
+</li>
+    <li>In the Uniprot dataset the URI is <span style="font-family: monospace;">&lt;file:///storage/datasets/uniprot-organism-human-reviewed-complete.rdf#_503237333438003B&gt;</span> (input: line 14)<br>
+</li>
   </ul>
   <li>Since they are considered the same entity the URIs in the output
 were rewritten and only one of the two URIs is used (the ABA one in
 this case).</li>
-  <li>In the Uniprot case the <span style="font-family: monospace;">smwprop:EntrezGeneId</span> value was extracted from the URI <span style="font-family: monospace;">&lt;http://purl.uniprot.org/geneid/18387&gt;<span style="font-family: sans-serif;">. </span></span>As you can also see, this URI is not directly connected with the entity in the Uniprot dataset.</li>
-  <li>Because the <span style="font-family: monospace;">smwprop:EntrezGeneId</span> value came from both datasets, it is also represented two times in the output. Whereas the <span style="font-family: monospace;">smwprop:GeneSymbol</span> value is derived from the ABA dataset only.<br>
+  <li>In the Uniprot case the <span style="font-family: monospace;">smwprop:EntrezGeneId</span>
+value was extracted from the URI string <span style="font-family: monospace;">&lt;http://purl.uniprot.org/geneid/18387&gt; </span><span style="font-family: sans-serif;">(input: line 12)</span><span style="font-family: monospace;"><span style="font-family: sans-serif;">. </span></span>As you can also see,
+this URI is not directly connected with the entity in the Uniprot
+dataset (input: lines 12 and 14).</li>
+  <li>Line 13 in the input is a quad that is considered (as precondition) by the Uniprot mapping for the property <span style="font-family: monospace;">smwprop:EntrezGeneId</span>.<br>
+  </li>
+
+  <li>Because the <span style="font-family: monospace;">smwprop:EntrezGeneId</span>
+value came from both datasets, it is also represented two times in the
+output (output: lines 5 and 10). Whereas the <span style="font-family: monospace;">smwprop:GeneSymbol</span>
+value is derived from the ABA dataset only.<br>
   </li>
 </ul>
 <h2 id="performance"><a name="performance"></a>5.
 Performance Evaluation</h2>
-
 <p>We regularly carry out performance evaluations. Our test use case
 resembles the one of example 1 in section 4 of this document. In order
 to measure the performance at different scale we used several samples
@@ -356,13 +376,13 @@ setup for the experiments and then give an overview of our results.</p>
   <li>Intel Core i5-2500K CPU @ 3.30GHz (quadcore)</li>
   <li>16GB of memory</li>
   <li>SATA HD</li>
-</ul>LDIF setup:<br>
+</ul>
+LDIF setup:<br>
 <ul>
   <li>In-memory storage solution<br>
   </li>
 </ul>
 <p>Overview of the results:</p>
-
 <table style="text-align: left; width: 1012px; height: 150px;" border="1" cellpadding="2" cellspacing="0">
   <tbody>
     <tr>
@@ -410,7 +430,9 @@ mm:ss)</td>
   </tbody>
 </table>
 <br>
-The memory foot print for the 100k-test was 7.2 GB at maximum. For more details and the latest results please visit our <a href="https://www.assembla.com/spaces/ldif/wiki/Performance_Tests">Performance Testing</a>&nbsp; page.<br>
+The memory foot print for the 100k-test was 7.2 GB at maximum. For more
+details and the latest results please visit our <a href="https://www.assembla.com/spaces/ldif/wiki/Performance_Tests">Performance
+Testing</a>&nbsp; page.<br>
 <p><strong><br>
 </strong></p>
 <h2 id="configuration"><a name="config"></a>6. Configuration
@@ -514,8 +536,10 @@ site.</li>
   <li>Unpack it to a local directory (the same machine you want to run
 LDIF on).</li>
   <li>Copy this <a href="resources/stores.xml">stores.xml</a> file
-into the [VOLDEMORT]/config/single_node_cluster/config directory (overwriting the old one).</li>
-  <li>Start the server by typing the following in the Voldermort root directory:<br>
+into the [VOLDEMORT]/config/single_node_cluster/config directory
+(overwriting the old one).</li>
+  <li>Start the server by typing the following in the Voldermort root
+directory:<br>
   </li>
 </ol>
 <pre style="margin-left: 40px;">bin/voldemort-server.sh config/single_node_cluster<br></pre>
@@ -530,41 +554,43 @@ License</a>.<br>
 </p>
 <h2><a name="feedback" id="feedback"></a>8. Support and Feedback </h2>
 <p>&nbsp;</p>
-<p>For questions and feedback please use the LDIF Google Group.
-  <table border=0 style="background-color: #fff; padding: 5px;" cellspacing=0>
-    <tr><td>
-    <img src="http://groups.google.com/intl/en/images/logos/groups_logo_sm.gif"
-           height=30 width=140 alt="Google Groups">
-    </td></tr>
-    <tr><td style="padding-left: 5px">
-    <b>Subscribe to LDIF</b>
-    </td></tr>
-    <form action="http://groups.google.com/group/ldif/boxsubscribe">
-    <input type=hidden name="hl" value="en">
-    <tr><td style="padding-left: 5px;">
-    Email: <input type=text name=email>
-    <input type=submit name="sub" value="Subscribe">
-    </td></tr>
-  </form>
-  <tr><td align=right>
-    <a href="http://groups.google.com/group/ldif?hl=en">Visit this group</a>
-  </td></tr>
+<p>For questions and feedback please use the LDIF Google Group. </p>
+<input name="hl" value="en" type="hidden">
+<table style="padding: 5px; background-color: rgb(255, 255, 255);" border="0" cellspacing="0">
+  <tbody>
+    <tr>
+      <td> <img src="http://groups.google.com/intl/en/images/logos/groups_logo_sm.gif" alt="Google Groups" height="30" width="140"> </td>
+    </tr>
+    <tr>
+      <td style="padding-left: 5px;"> <b>Subscribe to LDIF</b> </td>
+    </tr>
+    <form action="http://groups.google.com/group/ldif/boxsubscribe"></form>
+    <tr>
+      <td style="padding-left: 5px;"> Email: <input name="email" type="text"> <input name="sub" value="Subscribe" type="submit"> </td>
+    </tr>
+    <tr>
+      <td align="right"> <a href="http://groups.google.com/group/ldif?hl=en">Visit this group</a> </td>
+    </tr>
+  </tbody>
 </table>
-</p>
 <h2 id="relatedprojects"><a name="related"></a>9. References</h2>
 <ul>
   <li>Tom Heath, Christian Bizer: <a href="http://www.morganclaypool.com/doi/abs/10.2200/S00334ED1V01Y201102WBE001">Linked
 Data: Evolving the Web into a Global Data Space</a>. Synthesis
 Lectures on the Semantic Web: Theory and Technology, Morgan &amp;
-Claypool Publishers, ISBN <a href="http://www.amazon.com/Linked-Data-Synthesis-Lectures-Engineering/dp/1608454304/ref=sr_1_1?ie=UTF8&amp;s=books&amp;qid=1297846088&amp;sr=8-1">978160845431</a>, 2011 ( <a href="http://linkeddatabook.com/">Free HTML version</a> ).</li>
+Claypool Publishers, ISBN <a href="http://www.amazon.com/Linked-Data-Synthesis-Lectures-Engineering/dp/1608454304/ref=sr_1_1?ie=UTF8&amp;s=books&amp;qid=1297846088&amp;sr=8-1">978160845431</a>,
+2011 ( <a href="http://linkeddatabook.com/">Free HTML version</a> ).</li>
   <li>Christian Bizer, Andreas Schultz: <a href="http://www.wiwiss.fu-berlin.de/en/institute/pwo/bizer/research/publications/BizerSchultz-COLD-R2R-Paper.pdf">The
-R2R Framework: Publishing and Discovering Mappings on the Web</a> ( <a href="http://www.wiwiss.fu-berlin.de/en/institute/pwo/bizer/research/publications/BizerSchultz-COLD-R2R-Talk.pdf">Slides</a> ). 1st International Workshop on Consuming Linked Data (COLD
+R2R Framework: Publishing and Discovering Mappings on the Web</a> ( <a href="http://www.wiwiss.fu-berlin.de/en/institute/pwo/bizer/research/publications/BizerSchultz-COLD-R2R-Talk.pdf">Slides</a>
+). 1st International Workshop on Consuming Linked Data (COLD
 2010), Shanghai, November 2010. </li>
   <li>Julius Volz, Christian Bizer, Martin Gaedke, Georgi Kobilarov: <a href="http://www.wiwiss.fu-berlin.de/en/institute/pwo/bizer/research/publications/VolzBizerGaedkeKobilarov-ISWC2009-Silk.pdf">Discovering
-and Maintaining Links on the Web of Data</a> ( <a href="http://www.wiwiss.fu-berlin.de/en/institute/pwo/bizer/research/publications/VolzBizerGaedkeKobilarov-ISWC2009-Silk-Talk.pdf">Slides</a> ). International Semantic Web Conference (ISWC2009),
+and Maintaining Links on the Web of Data</a> ( <a href="http://www.wiwiss.fu-berlin.de/en/institute/pwo/bizer/research/publications/VolzBizerGaedkeKobilarov-ISWC2009-Silk-Talk.pdf">Slides</a>
+). International Semantic Web Conference (ISWC2009),
 Westfields, USA, October 2009. </li>
   <li>Robert Isele, Anja Jentzsch, Christian Bizer: <a href="http://www.wiwiss.fu-berlin.de/en/institute/pwo/bizer/research/publications/IseleJentzschBizer-Silk-Cold2010.pdf">Silk
-Server - Adding missing Links while consuming Linked Data</a> ( <a href="http://www.wiwiss.fu-berlin.de/en/institute/pwo/bizer/research/publications/IseleJentzschBizer-Silk-Cold2010-Talk.pdf">Slides</a> ). 1st International Workshop on Consuming Linked Data (COLD
+Server - Adding missing Links while consuming Linked Data</a> ( <a href="http://www.wiwiss.fu-berlin.de/en/institute/pwo/bizer/research/publications/IseleJentzschBizer-Silk-Cold2010-Talk.pdf">Slides</a>
+). 1st International Workshop on Consuming Linked Data (COLD
 2010), Shanghai, November 2010. </li>
 </ul>
 <p>&nbsp;</p>

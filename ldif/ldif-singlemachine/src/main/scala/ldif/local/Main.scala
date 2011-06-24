@@ -209,7 +209,7 @@ object Main
   {
     val entityQueues = entityDescriptions.map(new EntityQueue(_))
 
-    //runInBackground
+    try
     {
       val entityBuilderConfig = new EntityBuilderConfig(entityDescriptions.toIndexedSeq)
       val entityBuilderModule = new EntityBuilderModule(entityBuilderConfig)
@@ -217,6 +217,11 @@ object Main
       val entityBuilderExecutor = new EntityBuilderExecutor(configParameters)
 
       entityBuilderExecutor.execute(entityBuilderTask, readers, entityQueues)
+    } catch {
+      case e: Exception => {
+        e.printStackTrace
+        System.exit(1)
+      }
     }
 
     entityQueues
