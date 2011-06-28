@@ -26,27 +26,23 @@
 			<LinkType>owl:sameAs</LinkType>
 
 			<SourceDataset dataSource="Wiki" var="a">
-				<RestrictTo>?a rdf:type smwcat:Gene</RestrictTo>
+				<RestrictTo>?a rdf:type smwcat:Pathway</RestrictTo>
 			</SourceDataset>
 
 			<TargetDataset dataSource="KEGG_PATH" var="b">
-				<RestrictTo>?b rdf:type smwcat:Gene</RestrictTo>
+				<RestrictTo>?b rdf:type smwcat:Pathway</RestrictTo>
 			</TargetDataset>
 
 			<LinkCondition>
 			<Aggregate type="max">
-					<Compare metric="equality">
-						<Input path="?a/smwprop:UniprotId" />
-						<Input path="?b/smwprop:UniprotId" />
-					</Compare>
-					<Compare metric="equality">
-						<Input path="?a/smwprop:EntrezGeneId" />
-						<Input path="?b/smwprop:EntrezGeneId" />
-					</Compare>
-					<Compare metric="equality">
-						<Input path="?a/smwprop:MgiMarkerAccessionId" />
-						<Input path="?b/smwprop:MgiMarkerAccessionId" />
-					</Compare>
+        <Compare metric="equality">
+			  	<Input path="?a/smwprop:KeggPathwayId" />
+			  	<Input path="?b/smwprop:KeggPathwayId" />
+		  	</Compare>
+        <Compare metric="equality">
+          <Input path="?a/smwprop:PharmGKBId" />
+          <Input path="?b/smwprop:PharmGKBId" />
+        </Compare>
 			</Aggregate>
 			</LinkCondition>
 

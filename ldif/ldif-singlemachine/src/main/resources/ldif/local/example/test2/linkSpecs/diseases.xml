@@ -27,35 +27,23 @@
 
 			<!-- a dummy dataset, the real dataset is defined at runtime -->
 			<SourceDataset dataSource="KEGG_GENES" var="b">
-				<RestrictTo>{ ?b rdf:type smwcat:Gene } UNION { ?b rdf:type smwcat:Disease }	UNION { ?b rdf:type smwcat:Pathway }	</RestrictTo>
+				<RestrictTo>?a rdf:type smwcat:Disease</RestrictTo>
 			</SourceDataset>
 
 			<TargetDataset dataSource="Wiki" var="a">
-				<RestrictTo> 	{ ?a rdf:type smwcat:Gene }	UNION { ?a rdf:type smwcat:Disease }	UNION { ?a rdf:type smwcat:Pathway }	</RestrictTo>
+				<RestrictTo>?b rdf:type smwcat:Disease</RestrictTo>
 			</TargetDataset>
 
 			<LinkCondition>
 			<Aggregate type="max">
-					<Compare metric="equality">
-						<Input path="?a/smwprop:UniprotId" />
-						<Input path="?b/smwprop:UniprotId" />
-					</Compare>
-					<Compare metric="equality">
-						<Input path="?a/smwprop:EntrezGeneId" />
-						<Input path="?b/smwprop:EntrezGeneId" />
-					</Compare>
-					<Compare metric="equality">
-						<Input path="?a/smwprop:MgiMarkerAccessionId" />
-						<Input path="?b/smwprop:MgiMarkerAccessionId" />
-					</Compare>
-					<Compare metric="equality">
-						<Input path="?a/smwprop:KeggDiseaseId" />
-						<Input path="?b/smwprop:KeggDiseaseId" />
-					</Compare>
-					<Compare metric="equality">
-						<Input path="?a/smwprop:KeggPathwayId" />
-						<Input path="?b/smwprop:KeggPathwayId" />
-					</Compare>
+        <Compare metric="equality">
+          <Input path="?a/smwprop:KeggDiseaseId" />
+          <Input path="?b/smwprop:KeggDiseaseId" />
+        </Compare>
+        <Compare metric="equality">
+          <Input path="?a/smwprop:PharmGKBId" />
+          <Input path="?b/smwprop:PharmGKBId" />
+        </Compare>
 			</Aggregate>
 			</LinkCondition>
 
