@@ -5,12 +5,12 @@
   <parent>
     <groupId>ldif</groupId>
     <artifactId>ldif-modules</artifactId>
-    <version>0.1-SNAPSHOT</version>
+    <version>${ldif.version}</version>
   </parent>
 
 	<artifactId>ldif-silk</artifactId>
 	<packaging>pom</packaging>
-	<version>0.1-SNAPSHOT</version>
+	<version>${ldif.version}</version>
 	<name>LDIF Silk Module</name>
   
   <modules>

@@ -5,12 +5,12 @@
     <parent>
       <groupId>ldif</groupId>
       <artifactId>ldif-entitybuilder</artifactId>
-      <version>0.1-SNAPSHOT</version>
+      <version>${ldif.version}</version>
     </parent>
 
 	<artifactId>ldif-entitybuilder-local</artifactId>
 	<packaging>jar</packaging>
-	<version>0.1-SNAPSHOT</version>
+	<version>${ldif.version}</version>
 	<name>LDIF EntityBuilder Module Local</name>
 
   	<dependencies>

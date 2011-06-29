@@ -14,8 +14,7 @@ import scala.collection.JavaConversions._
 import ldif.local.runtime._
 
 class EntityBuilder (entityDescriptions : IndexedSeq[EntityDescription], readers : Seq[QuadReader], config: ConfigParameters) extends FactumBuilder {
-//  private val nrOfQuadsPerSort = 500000
-    private val nrOfQuadsPerSort = 1000
+  private val nrOfQuadsPerSort = 500000
   private val log = Logger.getLogger(getClass.getName)
   // true if quads not relevant for the Entity Builder should be written to a QuadReader
   private val useVoldemort = config.configProperties.getPropertyValue("entityBuilderType", "in-memory").toLowerCase=="voldemort"
@@ -167,9 +166,9 @@ class EntityBuilder (entityDescriptions : IndexedSeq[EntityDescription], readers
     FHT.clear
     BHT.clear
     val startTime = now
+    var completeCount = 0
 
     for (reader <- readers) {
-      var completeCount = 0
       var count = 0
       val quadList: List[Quad] = new ArrayList[Quad]
 
@@ -177,8 +176,8 @@ class EntityBuilder (entityDescriptions : IndexedSeq[EntityDescription], readers
       watch.getTimeSpanInSeconds
       while (reader.hasNext){
         val quad = reader.read
-        if(saveQuads)
-          saveQuadsForLater(quad)
+//        if(saveQuads)
+//          saveQuadsForLater(quad)
 
         if(isRelevantQuad(quad)) {
           quadList.add(quad)
@@ -191,14 +190,14 @@ class EntityBuilder (entityDescriptions : IndexedSeq[EntityDescription], readers
           addQuadsToFHT(quadList)
           addQuadsToBHT(quadList)
           count = 0
-          System.out.println("Number of Quads written to Voldemort: " + nrOfQuadsPerSort + " in " + watch.getTimeSpanInSeconds + "s")
+          System.out.println("Number of Quads written to Voldemort: " + nrOfQuadsPerSort + " in " + watch.getTimeSpanInSeconds + "s, overall quads processed: " + completeCount)
         }
       }
       // Write remaining quads to table
       if(count>0) {
         addQuadsToFHT(quadList)
         addQuadsToBHT(quadList)
-        System.out.println("Number of Quads written to Voldemort: " + count + " in " + watch.getTimeSpanInSeconds + "s")
+        System.out.println("Number of Quads written to Voldemort: " + nrOfQuadsPerSort + " in " + watch.getTimeSpanInSeconds + "s, overall quads processed: " + completeCount)
         count = 0
       }
       // Write remaining values to Voldemort

@@ -5,7 +5,7 @@
     <parent>
       <groupId>ldif</groupId>
       <artifactId>ldif-modules</artifactId>
-      <version>0.1-SNAPSHOT</version>
+      <version>${ldif.version}</version>
     </parent>
 
    <modules>
@@ -15,7 +15,7 @@
 
 	<artifactId>ldif-r2r</artifactId>
 	<packaging>pom</packaging>
-	<version>0.1-SNAPSHOT</version>
+	<version>${ldif.version}</version>
 	<name>LDIF R2R Module</name>
 
 	<properties>

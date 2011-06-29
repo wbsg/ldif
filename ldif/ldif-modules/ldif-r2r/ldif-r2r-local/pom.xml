@@ -5,12 +5,12 @@
     <parent>
       <groupId>ldif</groupId>
       <artifactId>ldif-r2r</artifactId>
-      <version>0.1-SNAPSHOT</version>
+      <version>${ldif.version}</version>
     </parent>
 
 	<artifactId>ldif-r2r-local</artifactId>
 	<packaging>jar</packaging>
-	<version>0.1-SNAPSHOT</version>
+	<version>${ldif.version}</version>
 	<name>LDIF R2R Module Locale</name>
 
 	<properties>
@@ -123,7 +123,7 @@
         <dependency>
             <groupId>ldif</groupId>
             <artifactId>ldif-r2r-common</artifactId>
-            <version>0.1-SNAPSHOT</version>
+            <version>${ldif.version}</version>
         </dependency>
 	</dependencies>
 </project>

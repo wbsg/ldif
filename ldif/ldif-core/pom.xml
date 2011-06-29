@@ -8,7 +8,7 @@
   <parent>
     <groupId>ldif</groupId>
     <artifactId>ldif</artifactId>
-    <version>0.1-SNAPSHOT</version>
+    <version>${ldif.version}</version>
   </parent>
 
   <artifactId>ldif-core</artifactId>

@@ -13,11 +13,11 @@ import voldemort.client._
 object VoldermortStoreFactory {
 
   val adminClientConfig = new AdminClientConfig
-  adminClientConfig.setAdminSocketTimeoutSec(20)
+  adminClientConfig.setAdminSocketTimeoutSec(10)
 
   val clientConfig = new ClientConfig
   clientConfig.setSocketKeepAlive(true)
-  clientConfig.setSocketTimeout(60000, TimeUnit.MILLISECONDS)
+  clientConfig.setSocketTimeout(30000, TimeUnit.MILLISECONDS)
 
   val bootstrapUrl = "tcp://localhost:6666"
   clientConfig.setBootstrapUrls(bootstrapUrl)
