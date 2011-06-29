@@ -1,4 +1,6 @@
-	<file:///storage/datasets/uniprot-organism-human-reviewed-complete.rdf#_5033363534340072> <http://purl.uniprot.org/core/xeno> "0"^^<http://www.w3.org/2001/XMLSchema#integer> <uniprot> .
+    <uniprot> <http://www4.wiwiss.fu-berlin.de/ldif/ldif.owl#lastmod> "2011-01-01T01:00:00.000+01:00"^^<http://www.w3.org/2001/XMLSchema#dateTime> <http://www4.wiwiss.fu-berlin.de/ldif/provenance> .
+	<uniprot> <http://www4.wiwiss.fu-berlin.de/ldif/ldif.owl#id> "Uniprot"^^<http://www.w3.org/2001/XMLSchema#string> <http://www4.wiwiss.fu-berlin.de/ldif/provenance> .
+	<uniprot> <http://www4.wiwiss.fu-berlin.de/ldif/ldif.owl#changefreq> "weekly"^^<http://www.w3.org/2001/XMLSchema#string> <http://www4.wiwiss.fu-berlin.de/ldif/provenance> .	<file:///storage/datasets/uniprot-organism-human-reviewed-complete.rdf#_5033363534340072> <http://purl.uniprot.org/core/xeno> "0"^^<http://www.w3.org/2001/XMLSchema#integer> <uniprot> .
 	<http://purl.uniprot.org/uniprot/P36544> <http://purl.uniprot.org/core/reviewed> "1"^^<http://www.w3.org/2001/XMLSchema#integer> <uniprot> .
 	<file:///storage/datasets/uniprot-organism-human-reviewed-complete.rdf#_5032323330330034> <http://purl.uniprot.org/core/manual> "1"^^<http://www.w3.org/2001/XMLSchema#integer> <uniprot> .
 	<file:///storage/datasets/uniprot-organism-human-reviewed-complete.rdf#_503232333033005B> <http://purl.uniprot.org/core/manual> "1"^^<http://www.w3.org/2001/XMLSchema#integer> <uniprot> .

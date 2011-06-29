@@ -16,6 +16,9 @@ object OutputValidator {
     val lines = scala.io.Source.fromFile(ldifOutputFile).getLines
     val ldifOutput = new ListBuffer[String]
     for (l <- lines.toSeq){
+      // filter out provenance triples
+      //TODO should be configurable
+      if (!l.endsWith("<http://www4.wiwiss.fu-berlin.de/ldif/provenance> ."))
       // nquad > ntriples
       ldifOutput += l.substring(0,l.lastIndexOf("<")) + "."
     }
@@ -53,7 +56,7 @@ object OutputValidator {
     var errCount = 0
     var count = 0
 
-    println("Validating the output")
+    println("Validating the output:")
     // check #1: ldif-output => ldimporter-output
     //println("Check #1")
     for (line <- ldifOutput){
@@ -150,4 +153,22 @@ object OutputValidator {
     }
     eq
   }
+
+  def contains(ldifOutputFile:File, quads : Traversable[Quad]) = {
+    var isContained = new Array[Boolean](quads.size)
+    val nquads = quads.map(_.toNQuadFormat + " .")
+
+    val lines = scala.io.Source.fromFile(ldifOutputFile).getLines
+
+    for (l <- lines.toSeq){
+      for ((q,i) <- nquads.toSeq.zipWithIndex)
+        if (l.equals(q))
+          isContained(i) = true
+    }
+
+    var res = true
+    for (i <- isContained) res && i
+    res
+  }
+
 }

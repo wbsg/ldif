@@ -253,7 +253,7 @@ object Main
     val writer = new FileWriter(outputFile)
     var count = 0
 
-    while(!reader.isEmpty) {
+    while(reader.hasNext) {
       writer.write(reader.read().toNQuadFormat + " .\n")
       count += 1
     }

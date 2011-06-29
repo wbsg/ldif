@@ -1,4 +1,6 @@
-	<http://chem2bio2rdf.org/pharmgkb/resource/pharmgkb_relationships/190> <http://chem2bio2rdf.org/pharmgkb/resource/ID> "190"^^<http://www.w3.org/2001/XMLSchema#int> <pharmgkb_reduced> .
+    <pharmgkb_reduced> <http://www4.wiwiss.fu-berlin.de/ldif/ldif.owl#lastmod> "2011-01-01T01:00:00.000+01:00"^^<http://www.w3.org/2001/XMLSchema#dateTime> <http://www4.wiwiss.fu-berlin.de/ldif/provenance> .
+	<pharmgkb_reduced> <http://www4.wiwiss.fu-berlin.de/ldif/ldif.owl#id> "PharmGKB"^^<http://www.w3.org/2001/XMLSchema#string> <http://www4.wiwiss.fu-berlin.de/ldif/provenance> .
+	<pharmgkb_reduced> <http://www4.wiwiss.fu-berlin.de/ldif/ldif.owl#changefreq> "weekly"^^<http://www.w3.org/2001/XMLSchema#string> <http://www4.wiwiss.fu-berlin.de/ldif/provenance> .	<http://chem2bio2rdf.org/pharmgkb/resource/pharmgkb_relationships/190> <http://chem2bio2rdf.org/pharmgkb/resource/ID> "190"^^<http://www.w3.org/2001/XMLSchema#int> <pharmgkb_reduced> .
 	<http://chem2bio2rdf.org/pharmgkb/resource/pharmgkb_relationships/213> <http://chem2bio2rdf.org/pharmgkb/resource/ID> "213"^^<http://www.w3.org/2001/XMLSchema#int> <pharmgkb_reduced> .
 	<http://chem2bio2rdf.org/pharmgkb/resource/pharmgkb_relationships/231> <http://chem2bio2rdf.org/pharmgkb/resource/ID> "231"^^<http://www.w3.org/2001/XMLSchema#int> <pharmgkb_reduced> .
 	<http://chem2bio2rdf.org/pharmgkb/resource/pharmgkb_relationships/281> <http://chem2bio2rdf.org/pharmgkb/resource/ID> "281"^^<http://www.w3.org/2001/XMLSchema#int> <pharmgkb_reduced> .

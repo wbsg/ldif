@@ -1,0 +1,9 @@
+    <aba> <http://www4.wiwiss.fu-berlin.de/ldif/ldif.owl#lastmod> "2011-01-01T01:00:00.000+01:00"^^<http://www.w3.org/2001/XMLSchema#dateTime> <http://www4.wiwiss.fu-berlin.de/ldif/provenance> .
+	<aba> <http://www4.wiwiss.fu-berlin.de/ldif/ldif.owl#id> "ABA"^^<http://www.w3.org/2001/XMLSchema#string> <http://www4.wiwiss.fu-berlin.de/ldif/provenance> .
+	<aba> <http://www4.wiwiss.fu-berlin.de/ldif/ldif.owl#changefreq> "weekly"^^<http://www.w3.org/2001/XMLSchema#string> <http://www4.wiwiss.fu-berlin.de/ldif/provenance> .
+	<http://brain-map.org/mouse/brain/Chrna4.xml> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://brain-map.org/gene/0.1#gene> <aba> .
+	<http://brain-map.org/mouse/brain/Chrna7.xml> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://brain-map.org/gene/0.1#gene> <aba> .
+	<http://brain-map.org/mouse/brain/Chat.xml> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://brain-map.org/gene/0.1#gene> <aba> .
+	<http://brain-map.org/mouse/brain/Chrnb2.xml> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://brain-map.org/gene/0.1#gene> <aba> .
+	<http://brain-map.org/mouse/brain/Ache.xml> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://brain-map.org/gene/0.1#gene> <aba> .
+	<http://brain-map.org/mouse/brain/Chrna7.xml> <http://brain-map.org/gene/0.1#mgimarkeraccessionid> "MGI:99779" <aba> .
