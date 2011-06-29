@@ -137,15 +137,15 @@ object Node
 {
   val defaultGraph : String = Consts.DEFAULT_GRAPH
 
-  def createLiteral(value : String, graph : String) = new Node(value, null, Literal, graph)
+  def createLiteral(value : String, graph : String = null) = new Node(value, null, Literal, graph)
 
-  def createTypedLiteral(value : String, datatype : String, graph : String) = new Node(value, datatype, TypedLiteral, graph)
+  def createTypedLiteral(value : String, datatype : String, graph : String = null) = new Node(value, datatype, TypedLiteral, graph)
 
-  def createLanguageLiteral(value : String, language : String, graph : String) = new Node(value, language, LanguageLiteral, graph)
+  def createLanguageLiteral(value : String, language : String, graph : String = null) = new Node(value, language, LanguageLiteral, graph)
 
   def createBlankNode(value : String, graph : String) = new Node(value, null, BlankNode, graph)
 
-  def createUriNode(value : String, graph : String) = new Node(value, null, UriNode, graph)
+  def createUriNode(value : String, graph : String = null) = new Node(value, null, UriNode, graph)
 
   def fromString(value : String, graph : String) = {
     val nxNode = NxParser.parseNode(value)

@@ -1,3 +1,6 @@
+    <kegg_pathway> <http://www4.wiwiss.fu-berlin.de/ldif/ldif.owl#lastmod> "2011-01-01T01:00:00.000+01:00"^^<http://www.w3.org/2001/XMLSchema#dateTime> <http://www4.wiwiss.fu-berlin.de/ldif/provenance> .
+	<kegg_pathway> <http://www4.wiwiss.fu-berlin.de/ldif/ldif.owl#id> "KEGG Pathway"^^<http://www.w3.org/2001/XMLSchema#string> <http://www4.wiwiss.fu-berlin.de/ldif/provenance> .
+	<kegg_pathway> <http://www4.wiwiss.fu-berlin.de/ldif/ldif.owl#changefreq> "weekly"^^<http://www.w3.org/2001/XMLSchema#string> <http://www4.wiwiss.fu-berlin.de/ldif/provenance> .
 	<http://wiking.vulcan.com/neurobase/kegg_pathway/resource/gene/hsa:6391> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://wiking.vulcan.com/neurobase/kegg_pathway/resource/vocab/gene> <kegg_pathway> .
 	<http://wiking.vulcan.com/neurobase/kegg_pathway/resource/gene/hsa:6391> <http://wiking.vulcan.com/neurobase/kegg_pathway/resource/vocab/id> "hsa:6391" <kegg_pathway> .
 	<http://wiking.vulcan.com/neurobase/kegg_pathway/resource/gene/hsa:4720> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://wiking.vulcan.com/neurobase/kegg_pathway/resource/vocab/gene> <kegg_pathway> .

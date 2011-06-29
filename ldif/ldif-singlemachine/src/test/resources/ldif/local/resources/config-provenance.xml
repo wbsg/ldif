@@ -1,6 +1,6 @@
 <LDIF>
-  <Properties>test.properties</Properties>
-  <Sources>sources</Sources>
+  <Properties>test-provenance.properties</Properties>
+  <Sources>sources-provenance</Sources>
   <LinkSpecifications>linkSpecs</LinkSpecifications>
   <Mappings>mappings/mappings.ttl</Mappings>
   <Output>output.nq</Output>
