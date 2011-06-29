@@ -32,6 +32,7 @@ object CreatorHelperFunctions {
 
 class MutableEntity(entityUri: String, mapping: LDIFMapping) extends Entity {
   val uri = entityUri
+  def graph = Consts.DEFAULT_GRAPH
   val resultTable = new HashSet[FactumRow] with FactumTable
   override def factums(patternID: Int) : FactumTable = resultTable
   def entityDescription = mapping.entityDescription

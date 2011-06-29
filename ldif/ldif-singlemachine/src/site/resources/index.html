@@ -1,6 +1,8 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
-<html><head>
-  <title>LDIF - Linked Data Integration Framework</title>
+<html><head><title>LDIF - Linked Data Integration Framework</title>
+
+
+  
 
   
   
@@ -49,9 +51,7 @@ pre { speak-punctuation: code; }
   .Stil1 {color: #FF0000}
   </style>
   
-  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-
-</head><body>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"></head><body>
 <div id="logo"><a href="http://www.fu-berlin.de/"><img src="img/fu-logo.gif" alt="Freie Universität Berlin Logo"></a>&nbsp;<a href="http://mediaeventservices.com"><img src="img/logo.gif" alt="Media Event Services"></a></div>
 
 <div id="header">
@@ -211,16 +211,13 @@ flow into a single file in N-Quads syntax.<br>
 <h3 style="text-align: left;">Runtime Environment </h3>
 <p style="text-align: left;"> The Runtime Environment manages the data
 flow between the various stages and the caching of the intermediate
-results. Currently there are two execution profiles (implementations)
+results. Currently there is one execution profile (implementations)
 of the runtime environment:</p>
 <ol>
   <li>In-Memory Implementation: Keeps all intermediate results in
 memory. Is very fast but scales only depending on the amount of memory
 available. </li>
-  <li>File-backed Implementation: Uses the <a href="http://project-voldemort.com/">Project Voldemort</a> key-value
-store to keep intermediate results. Is slower than the in-memory
-implementation but scales to larger amounts of data. <br>
-  </li>
+  
 </ol>
 <h3>Next steps for LDIF</h3>
 <p>LDIF V0.1 only provides data translation and identity resolution
@@ -234,7 +231,10 @@ input data cache. </li>
   <li>Add a <strong>Data Quality Evaluation and Data Fusion Module</strong>
 which allows Web data to be filtered according to different data
 quality assessment policies and provides for fusing Web data according
-to different fusion methods. </li>
+to different fusion methods.</li>
+  <li>Implement a <span style="font-weight: bold;">Quad Store backed version of the Runtime Environment</span> that will be able to integrate datasets that the in-memory solution cannot process.<br>
+  </li>
+
   <li>Implement a <strong>Hadoop Version of the Runtime Environment </strong>in
 order to be able to scale to large amounts of input data. Processes and
 data will be distributed over a cluster of machines.</li>
@@ -501,48 +501,7 @@ from this graph are only written to the final output dataset, but are
 not further processed by the integration flow.Default: <span style="font-family: monospace;">http://www4.wiwiss.fu-berlin.de/ldif/provenance</span></p>
   </li>
 </ul>
-<pre style="margin-left: 40px;"><span style="font-weight: bold;">provenanceGraphURI = http://www4.wiwiss.fu-berlin.de/ldif/provenance</span><br></pre>
-<ul>
-  <li>Here you can choose how data is stored while it is being
-processed. Regarding
-the space vs. speed compromise, there are two solutions right now: A
-pure in-memory solution and a solution based on Project Voldemort, a
-key value store. Default: <span style="font-family: monospace;">In-Memory</span></li>
-</ul>
-<pre style="margin-left: 40px;"><span style="font-weight: bold;">entityBuilderType = in-memory | voldemort</span><br></pre>
-<br>
-<p><strong>Setting the storage type:<br>
-</strong></p>
-<p>Depending on your integration use case, especially the size of the
-input datasets, you may choose different storage types in order to
-increase execution speed or limit the memory foot print. Right now we
-offer two solutions:<br>
-</p>
-<ul>
-  <li>An in-memory solution, which keeps most of the data in-memory to
-perform as fast as possible.</li>
-  <li>A file backed solution with <a href="http://project-voldemort.com/">Project Voldemort</a> as storage
-solution.</li>
-</ul>
-Config property file changes:<br>
-<pre>entityBuilderType = Voldemort | In-memory<br></pre>
-<p>If this property is not set, it defaults to the in-memory solution.<br>
-</p>
-If you want to use the Voldemort setup, you have to carry out the
-following steps:<br>
-<ol>
-  <li>Download the latest Voldemort release from their <a href="https://github.com/voldemort/voldemort/downloads">Download</a>
-site.</li>
-  <li>Unpack it to a local directory (the same machine you want to run
-LDIF on).</li>
-  <li>Copy this <a href="resources/stores.xml">stores.xml</a> file
-into the [VOLDEMORT]/config/single_node_cluster/config directory
-(overwriting the old one).</li>
-  <li>Start the server by typing the following in the Voldermort root
-directory:<br>
-  </li>
-</ol>
-<pre style="margin-left: 40px;">bin/voldemort-server.sh config/single_node_cluster<br></pre>
+<pre style="margin-left: 40px;"><span style="font-weight: bold;">provenanceGraphURI = http://www4.wiwiss.fu-berlin.de/ldif/provenance</span><br></pre><br>
 <h2 id="development"><a name="code"></a>7. Source
 Code and Development</h2>
 <br>

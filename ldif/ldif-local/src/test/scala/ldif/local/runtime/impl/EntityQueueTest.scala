@@ -5,7 +5,7 @@ import scala.Predef._
 import org.scalatest.junit.JUnitRunner
 import org.scalatest.FlatSpec
 import org.scalatest.matchers.ShouldMatchers
-import ldif.entity.{Entity, EntityDescription}
+import ldif.entity.{Consts, Entity, EntityDescription}
 
 /**
  * Created by IntelliJ IDEA.
@@ -28,6 +28,8 @@ class EntityQueueTest extends FlatSpec with ShouldMatchers {
   private def createEntity(id: String): Entity = {
      new Entity {
        def uri = id
+
+       def graph = Consts.DEFAULT_GRAPH
 
        def entityDescription = null
 

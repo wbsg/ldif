@@ -1,9 +1,9 @@
 package de.fuberlin.wiwiss.r2r
 
-import ldif.entity.{EntityDescription, FactumRow, Entity, Node}
 import ldif.local.runtime.QuadWriter
 import java.util.ArrayList
 import scala.collection.JavaConversions._
+import ldif.entity._
 
 class LDIFMapping(val mapping: Mapping, val entityDescription: EntityDescription, variableToResultIndexMap: Map[String, Int]) {
   // Convert Target Patterns
@@ -16,7 +16,7 @@ class LDIFMapping(val mapping: Mapping, val entityDescription: EntityDescription
       val results = entity.factums(0)
       for(row <- results) {
         val variableResults = getResults(row)
-        variableResults.addVariableResult("SUBJ", Node.createUriNode(entity.uri, ""))
+        variableResults.addVariableResult("SUBJ", Node.createUriNode(entity.uri, entity.graph))
         executeAllFunctions(variableResults)
         executeTargetPatterns(variableResults, quadWriter)
       }
@@ -50,24 +50,33 @@ class LDIFMapping(val mapping: Mapping, val entityDescription: EntityDescription
   }
 
   def executeFunction(functionExecution: FunctionExecution, results: LDIFVariableResults, dataTypeHint: String): List[Node] = {
-    val arguments = functionExecution.getArguments
+    val arguments: java.util.List[Argument] = functionExecution.getArguments
     val realArguments = new ArrayList[java.util.List[String]]
     val function = functionExecution.getFunction
+    var graph: String = Consts.DEFAULT_GRAPH
 
     //Gather arguments
     try {
       for(argument <- arguments) {
         if(argument.isInstanceOf[ConstantArgument])
           realArguments.add(List(argument.asInstanceOf[ConstantArgument].getValue))
-        else if(argument.isInstanceOf[VariableArgument])
-          realArguments.add(results.getLexicalResults(argument.asInstanceOf[VariableArgument].getVariableName))
+        else if(argument.isInstanceOf[VariableArgument]) {
+          val variableName = argument.asInstanceOf[VariableArgument].getVariableName
+          realArguments.add(results.getLexicalResults(variableName))
+          graph = results.getResults(variableName).get.head.graph
+        }
         else if(argument.isInstanceOf[FunctionExecution]) {
-          val stringResults = for(node <- executeFunction(argument.asInstanceOf[FunctionExecution], results, dataTypeHint)) yield node.value
+          val nodeResults = executeFunction(argument.asInstanceOf[FunctionExecution], results, dataTypeHint)
+          if(graph==Consts.DEFAULT_GRAPH)
+            for(node <- nodeResults)
+              if(node.graph!=Consts.DEFAULT_GRAPH)
+                graph=node.graph
+          val stringResults = for(node <- nodeResults) yield node.value
           realArguments.add(stringResults)
         }
       }
 
-      (for(result <- function.execute(realArguments, dataTypeHint)) yield Node.createLiteral(result, "default")).toList
+      (for(result <- function.execute(realArguments, dataTypeHint)) yield Node.createLiteral(result, graph)).toList
     } catch {
       case e => throw new FunctionExecutionException("Error in executing function <" + function.getURI + ">: " + e)
     }

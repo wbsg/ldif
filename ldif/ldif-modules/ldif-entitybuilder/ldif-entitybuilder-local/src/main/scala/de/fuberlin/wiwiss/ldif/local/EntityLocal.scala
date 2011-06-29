@@ -2,7 +2,7 @@ package de.fuberlin.wiwiss.ldif.local
 
 import ldif.entity._
 
-class EntityLocal(val uri : String, val entityDescription : EntityDescription, factumBuilder : FactumBuilder) extends Entity {
+class EntityLocal(val uri : String, val graph: String, val entityDescription : EntityDescription, factumBuilder : FactumBuilder) extends Entity {
 
   override def factums(patternId : Int) =
     factumBuilder.buildFactumTable(uri,entityDescription.patterns(patternId))

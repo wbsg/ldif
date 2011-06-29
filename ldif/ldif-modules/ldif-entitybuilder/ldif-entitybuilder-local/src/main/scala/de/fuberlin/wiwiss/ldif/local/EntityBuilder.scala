@@ -14,7 +14,8 @@ import scala.collection.JavaConversions._
 import ldif.local.runtime._
 
 class EntityBuilder (entityDescriptions : IndexedSeq[EntityDescription], readers : Seq[QuadReader], config: ConfigParameters) extends FactumBuilder {
-  private val nrOfQuadsPerSort = 500000
+//  private val nrOfQuadsPerSort = 500000
+    private val nrOfQuadsPerSort = 1000
   private val log = Logger.getLogger(getClass.getName)
   // true if quads not relevant for the Entity Builder should be written to a QuadReader
   private val useVoldemort = config.configProperties.getPropertyValue("entityBuilderType", "in-memory").toLowerCase=="voldemort"
@@ -51,7 +52,7 @@ class EntityBuilder (entityDescriptions : IndexedSeq[EntityDescription], readers
     val entityNodes = getSubjSet(ed.restriction.operator)
 
     for (e <- entityNodes) {
-      val entity = new EntityLocal(e.value, ed, this)
+      val entity = new EntityLocal(e.value, e.graph ,ed, this)
       writer.write(entity)
     }
     writer.finish

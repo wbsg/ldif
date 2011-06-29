@@ -9,7 +9,7 @@ import voldemort.store.UnreachableStoreException
 // Voldermort adapter
 
 class VoldermortHashTable (storeName : String) extends HashTable {
-  val store = VoldermortStoreFactory.getStore(storeName)
+  var store = VoldermortStoreFactory.getStore(storeName)
   var lastKey: List[String] = null
   var values: java.util.List[String] = null
 
@@ -21,11 +21,11 @@ class VoldermortHashTable (storeName : String) extends HashTable {
       values.add(newValue)
     else {
       if(lastKey!=null) { // Not the first run
-        store.put(lastKey, values)
+        putValue(lastKey, values)
         lastKey = keyAsList
       } else // First run
         lastKey = keyAsList
-      values = getValue(keyAsList)
+        values = getValue(keyAsList)
       if(values==null)
           values = new ArrayList[String]
       values.add(newValue)
@@ -34,7 +34,7 @@ class VoldermortHashTable (storeName : String) extends HashTable {
 
   def finishPut() {
     if(lastKey!=null)
-      store.put(lastKey, values)
+      putValue(lastKey, values)
   }
 
   override def get(key : Pair[Node,String]) = {
@@ -58,15 +58,45 @@ class VoldermortHashTable (storeName : String) extends HashTable {
     val retries = 10;
     var tries = 0;
 
-    var exception: Exception = null
+    var throwable: Throwable = null
     while(tries<retries) {
       try {
         return store.getValue(key)
       } catch {
-        case e: UnreachableStoreException => tries += 1; exception=e
+        case t: Throwable => {
+          tries += 1;
+          throwable=t;
+          System.err.println("Voldemort: Store not reachable, waiting 10 seconds, try nr. " + tries)
+          VoldermortStoreFactory.reset()
+          store = VoldermortStoreFactory.getStore(storeName)
+          Thread.sleep(10000)
+        }
       }
     }
-    throw exception
+    throw throwable
+  }
+
+  private def putValue(key: List[String], values: List[String]) {
+    val retries = 10;
+    var tries = 0;
+
+    var throwable: Throwable = null
+    while(tries<retries) {
+      try {
+        store.put(key, values)
+        return
+      } catch {
+        case t: Throwable => {
+          tries += 1;
+          throwable=t;
+          System.err.println("Voldemort: Store not reachable, waiting 10 seconds, try nr. " + tries)
+          VoldermortStoreFactory.reset()
+          store = VoldermortStoreFactory.getStore(storeName)
+          Thread.sleep(10000)
+        }
+      }
+    }
+    throw throwable
   }
 
   override def clear {

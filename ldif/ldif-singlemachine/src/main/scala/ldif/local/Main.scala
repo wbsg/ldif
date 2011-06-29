@@ -83,7 +83,10 @@ object Main
 
     val allQuads = new MultiQuadReader(clonedR2rReader, otherQuadsReader)
 
-    val integratedReader: QuadReader = executeURITranslation(allQuads, linkReader)
+    var integratedReader: QuadReader = allQuads
+
+    if(configProperties.getPropertyValue("rewriteURIs", "true").toLowerCase=="true")
+      integratedReader = executeURITranslation(allQuads, linkReader)
 
     //OutputValidator.compare(cloneQuadQueue(integratedReader),new File(configFile.getParent+"/../results/all-mes.nt"))
 
@@ -218,9 +221,9 @@ object Main
 
       entityBuilderExecutor.execute(entityBuilderTask, readers, entityQueues)
     } catch {
-      case e: Exception => {
+      case e: Throwable => {
         e.printStackTrace
-        System.exit(1)
+        exit(2)
       }
     }
 

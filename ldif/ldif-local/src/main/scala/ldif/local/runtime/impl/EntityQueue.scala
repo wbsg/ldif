@@ -105,4 +105,6 @@ case object NoEntitiesLeft extends Entity{
   def entityDescription = null
 
   def factums(patternId: Int) = null
+
+  def graph = null
 }

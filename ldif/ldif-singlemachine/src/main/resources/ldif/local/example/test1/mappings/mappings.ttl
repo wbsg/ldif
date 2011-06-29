@@ -9,3 +9,14 @@ mappings:renamePropertyMapping
    r2r:sourcePattern "?SUBJ <http://testNamespace/oldP> ?o. ?SUBJ a <http://testNamespace/someOldClass>" ;
    r2r:targetPattern "?SUBJ <http://testNamespace/newP> ?o" ;
    r2r:targetPattern "?SUBJ a <http://testNamespace/someNewClass>" .
+
+mappings:transformationMapping
+  a r2r:Mapping ;
+  r2r:sourcePattern "?SUBJ <http://v> ?v . ?SUBJ <http://n> ?n" ;
+  r2r:transformation "?name = concat(?v, ' ', ?n)" ;
+  r2r:targetPattern "?SUBJ <http://name> ?name" .
+
+mappings:whateverClassMapping
+  a r2r:Mapping ;
+  r2r:sourcePattern "?SUBJ a <http://WhatEver>" ;
+  r2r:targetPattern "?SUBJ a <http://testNamespace/WhatEverClass>" .

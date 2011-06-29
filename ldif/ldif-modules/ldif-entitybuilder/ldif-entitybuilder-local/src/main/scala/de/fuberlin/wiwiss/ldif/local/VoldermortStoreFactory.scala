@@ -7,26 +7,25 @@ import voldemort.store.StoreDefinitionBuilder
 import voldemort.store.bdb.BdbStorageConfiguration
 import java.lang.String
 import java.util.List
-import voldemort.client.{BootstrapFailureException, RoutingTier, SocketStoreClientFactory, ClientConfig}
 import java.util.concurrent.TimeUnit
+import voldemort.client._
 
 object VoldermortStoreFactory {
 
   val adminClientConfig = new AdminClientConfig
-  adminClientConfig.setAdminSocketTimeoutSec(10)
+  adminClientConfig.setAdminSocketTimeoutSec(20)
 
   val clientConfig = new ClientConfig
-  clientConfig.setMaxThreads(1)
   clientConfig.setSocketKeepAlive(true)
   clientConfig.setSocketTimeout(60000, TimeUnit.MILLISECONDS)
 
   val bootstrapUrl = "tcp://localhost:6666"
   clientConfig.setBootstrapUrls(bootstrapUrl)
 
-  val factory = new SocketStoreClientFactory(new ClientConfig().setBootstrapUrls(bootstrapUrl))
+  var factory = new SocketStoreClientFactory(clientConfig)
   val adminClient = new AdminClient(bootstrapUrl, adminClientConfig)
 
-  def getStore(storeId: String) = {
+  def getStore(storeId: String): StoreClient[List[String], List[String]] = {
     try {
       //adminClient.truncate(0,storeId)
       factory.getStoreClient[List[String],List[String]](storeId)
@@ -37,6 +36,10 @@ object VoldermortStoreFactory {
         factory.getStoreClient[List[String],List[String]](storeId)
       }
     }
+  }
+
+  def reset() {
+    factory = new SocketStoreClientFactory(clientConfig)
   }
 
   def createStore(storeId: String) {

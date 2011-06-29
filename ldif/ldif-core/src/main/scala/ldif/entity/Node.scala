@@ -135,7 +135,7 @@ final case class Node protected(val value : String, datatypeOrLanguage : String,
 
 object Node
 {
-  val defaultGraph : String = "default"
+  val defaultGraph : String = Consts.DEFAULT_GRAPH
 
   def createLiteral(value : String, graph : String) = new Node(value, null, Literal, graph)
 
