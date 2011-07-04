@@ -28,6 +28,13 @@
       <version>${ldif.version}</version>
     </dependency>
 
+    <dependency>
+      <groupId>com.hp.hpl.jena</groupId>
+      <artifactId>tdb</artifactId>
+      <version>0.8.10</version>
+    </dependency>
+
+
     <!--
     <dependency>
       <groupId>org.apache.httpcomponents</groupId>

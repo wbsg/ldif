@@ -1,8 +1,11 @@
 package ldif.local.datasources.dump
 
-import java.io.BufferedReader
 import ldif.local.runtime.{QuadWriter, Quad}
 import java.util.logging.Logger
+import scala.collection.mutable.{ArrayBuffer, Map}
+import scala.Predef._
+import java.io.{File, BufferedReader}
+import java.io.FileReader
 
 /**
  * Created by IntelliJ IDEA.
@@ -25,6 +28,26 @@ class QuadFileLoader(graphURI: String) {
       case quad: Quad => quad
       case _ => null
     }
+  }
+
+  def validateQuads(input: BufferedReader): Seq[Pair[Int, String]] = {
+    val errorList = new ArrayBuffer[Pair[Int, String]]
+    var lineNr = 1
+
+    var line: String = input.readLine()
+    while(line!=null) {
+      try {
+        parseQuadLine(line)
+      } catch {
+        case e: RuntimeException => {
+          errorList += Pair(lineNr, line)
+        }
+      }
+      line = input.readLine()
+      lineNr += 1
+    }
+
+    errorList
   }
 
   def readQuads(input: BufferedReader, quadQueue: QuadWriter) {
@@ -54,8 +77,6 @@ class QuadFileLoader(graphURI: String) {
           quadQueue.write(quad) }
       }
       counter += 1
-  //      if(counter % 100000 == 0)
-  //        System.err.println(counter)
     }
     if(foundParseError)
       throw new RuntimeException("Found errors while parsing NT/NQ file. Found " + nrOfErrors + " parse errors. See log file for more details.")

@@ -190,14 +190,15 @@ class EntityBuilder (entityDescriptions : IndexedSeq[EntityDescription], readers
           addQuadsToFHT(quadList)
           addQuadsToBHT(quadList)
           count = 0
-          System.out.println("Number of Quads written to Voldemort: " + nrOfQuadsPerSort + " in " + watch.getTimeSpanInSeconds + "s, overall quads processed: " + completeCount)
+          System.out.println("Number of Quads written to Voldemort: " + count + " in " + watch.getTimeSpanInSeconds + "s, overall quads processed: " + completeCount)
+          Thread.sleep(5000)
         }
       }
       // Write remaining quads to table
       if(count>0) {
         addQuadsToFHT(quadList)
         addQuadsToBHT(quadList)
-        System.out.println("Number of Quads written to Voldemort: " + nrOfQuadsPerSort + " in " + watch.getTimeSpanInSeconds + "s, overall quads processed: " + completeCount)
+        System.out.println("Number of Quads written to Voldemort: " + count + " in " + watch.getTimeSpanInSeconds + "s, overall quads processed: " + completeCount)
         count = 0
       }
       // Write remaining values to Voldemort
