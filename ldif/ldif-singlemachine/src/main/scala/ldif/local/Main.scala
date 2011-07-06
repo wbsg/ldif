@@ -17,12 +17,14 @@ import java.util.Properties
 import java.io._
 import java.util.logging.Logger
 import util.StringPool
+import collection.mutable.{Map,HashMap}
 
 object Main
 {
   private val log = Logger.getLogger(getClass.getName)
   // Object to store all kinds of configuration data
   private var configParameters: ConfigParameters = null
+  private var initError = false
 
   def main(args : Array[String])
   {
@@ -52,6 +54,13 @@ object Main
   def runIntegrationFlow(configFile: File, debugMode: Boolean) {
     stopWatch.getTimeSpanInSeconds
     val config: LdifConfiguration = loadConfigFile(configFile)
+
+    // Validate configuration
+    val fail = ConfigValidator.validateConfiguration(config)
+    if(fail) {
+      println("There was an error in the configuration")
+      exit(1)
+    }
 
     // Setup config properties file
     configProperties.loadPropertyFile(config.propertiesFile)
@@ -93,6 +102,8 @@ object Main
     writeOutput(config.outputFile, integratedReader)
   }
 
+
+
   def setupConfigParameters(outputFile: File) {
     var otherQuads: QuadWriter = new FileQuadWriter(outputFile)
 
@@ -102,7 +113,6 @@ object Main
   private def executeMappingPhase(config: LdifConfiguration, quadReaders: Seq[QuadReader]): Seq[QuadReader] = {
     val r2rReader:Seq[QuadReader] = mapQuads(config.mappingFile, quadReaders)
     println("Time needed to map data: " + stopWatch.getTimeSpanInSeconds + "s")
-    println("Number of triples after mapping the input dump: " + r2rReader.size)
 
     r2rReader
   }
@@ -150,6 +160,7 @@ object Main
       }
     quadQueues.toSeq
   }
+
 
   /**
    * Transforms the Quads

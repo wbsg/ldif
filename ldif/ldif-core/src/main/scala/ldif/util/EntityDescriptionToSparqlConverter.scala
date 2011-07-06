@@ -112,6 +112,7 @@ object EntityDescriptionToSparqlConverter {
     operator match { //TODO: Match other operators
         case ForwardOperator(uri) => triple.append(resource).append(" <").append(uri).append("> ").append(nextResource).append(" . ")
         case BackwardOperator(uri) => triple.append(nextResource).append(" <").append(uri).append("> ").append(resource).append(" . ")
+        case _ => throw new UnsupportedOperationException("Path operator " + operator + "is not implemented, yet")
       }
 
     return triple.toString()
@@ -162,6 +163,7 @@ object EntityDescriptionToSparqlConverter {
       case Condition(path, values) => {
          return processCondition(path, values, resourceFunction)
       }
+      case _ => throw new UnsupportedOperationException("Restriction operator " + operator + "is not implemented, yet")
     }
   }
 
@@ -187,6 +189,7 @@ object EntityDescriptionToSparqlConverter {
 
         return pathSB.toString
       }
+      case Nil => return ""
     }
   }
 }
