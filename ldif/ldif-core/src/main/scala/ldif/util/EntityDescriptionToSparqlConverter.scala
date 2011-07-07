@@ -18,7 +18,6 @@ object EntityDescriptionToSparqlConverter {
   val entityVar = "?SUBJ"
 
   def convert(entityDesc: EntityDescription): Seq[String] = {
-    println(entityDesc)
     val varMaker = new VariableMaker("?ldifph")
     val bnMaker = new BlankNodeMaker()
 

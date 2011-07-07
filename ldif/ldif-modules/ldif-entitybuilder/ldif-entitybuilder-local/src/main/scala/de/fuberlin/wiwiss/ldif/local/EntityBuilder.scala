@@ -23,12 +23,8 @@ class EntityBuilder (entityDescriptions : IndexedSeq[EntityDescription], readers
   private val outputAllQuads = config.configProperties.getPropertyValue("output", "mapped-only").toLowerCase=="all"
   private val provenanceGraph = config.configProperties.getPropertyValue("provenanceGraph", "http://www4.wiwiss.fu-berlin.de/ldif/provenance")
 
-  object PropertyType extends Enumeration {
-    val FORW, BACK, BOTH = Value
-  }
-
   // Property HT - Describes all the properties used in the Entity Description
-  val PHT = new HashMap[String, PropertyType.Value]
+  var PHT: PropertyHashTable = null
   // Forward HT - Contains connections which are going to be explored straight/forward
   var FHT:HashTable = new MemHashTable
   if(useVoldemort)
@@ -43,7 +39,7 @@ class EntityBuilder (entityDescriptions : IndexedSeq[EntityDescription], readers
 
   init
 
-  // Build entities and write those in the EntityWriter
+  // Build entities and write those into the EntityWriter
   def buildEntities (ed : EntityDescription, writer : EntityWriter) {
     val startTime = now
 
@@ -73,36 +69,13 @@ class EntityBuilder (entityDescriptions : IndexedSeq[EntityDescription], readers
 
   // Init memory structures
   private def init {
-    buildPHT
+    PHT = new PropertyHashTable(entityDescriptions)
+    if(PHT.areAllUriNodesNeeded)
+      allUriNodes = new HashSet[Node]
     if(useVoldemort)
       buildVoldemortHashTables
     else
       buildHashTables
-  }
-
-  // Build the property hash table
-  private def buildPHT {
-     PHT.clear
-     val startTime = now
-
-     for (ed <- entityDescriptions){
-
-       // analyse restriction
-       addRestrictionProperties(ed.restriction.operator)
-
-       // analyse patterns
-       for (patterns <- ed.patterns)
-         for (pattern <- patterns)
-           for (op <- pattern.operators)
-            op match {
-               case op:ForwardOperator => updatePHT(op.property.toString, PropertyType.FORW)
-               case op:BackwardOperator => updatePHT(op.property.toString, PropertyType.BACK)
-               case _ =>
-            }
-     }
-
-     log.info("Analyse Entity Descriptions took " + ((now - startTime)) + " ms")
-     //log.info(" [ PHT ] \n > keySet = ("+PHT.size.toString +") \n   - "+ PHT.mkString("\n   - "))
   }
 
   // Build the forward/backward hash tables
@@ -241,49 +214,6 @@ class EntityBuilder (entityDescriptions : IndexedSeq[EntityDescription], readers
       if (propertyType == Some(PropertyType.BACK) || propertyType == Some(PropertyType.BOTH))
         BHT.put(Pair(quad.value, property), quad.subject)
     }
-  }
-
-  // Find all properties from a given operator and add those to the property hash table
-  private def addRestrictionProperties(operator : Option[Operator]) {
-    operator match {
-      case Some(cond:Condition) =>
-        for (op <- cond.path.operators){
-          op match {
-            case op:ForwardOperator => updatePHT(op.property.toString, PropertyType.BACK)
-            case op:BackwardOperator => updatePHT(op.property.toString, PropertyType.FORW)
-            case _ =>
-          }
-        }
-      case Some(and:And) =>  {
-        for (child <- and.children)
-          addRestrictionProperties(Some(child))
-      }
-      case Some(or:Or) =>  {
-        for (child <- or.children)
-          addRestrictionProperties(Some(child))
-      }
-      case Some(not:Not) =>
-      case Some(exists:Exists) =>
-      case None => {
-        allUriNodes = new HashSet[Node]
-      }
-    }
-  }
-
-  private def updatePHT(property :String, propertyType : PropertyType.Value ){
-    PHT.get(property) match {
-      case Some(PropertyType.BOTH) =>
-      case Some(PropertyType.FORW) =>
-        if (propertyType==PropertyType.BACK)
-          PHT.put(property, PropertyType.BOTH)
-        else PHT.put(property, propertyType)
-      case Some(PropertyType.BACK) =>
-        if (propertyType==PropertyType.FORW)
-          PHT.put(property, PropertyType.BOTH)
-        else PHT.put(property, propertyType)
-      case None => PHT.put(property, propertyType)
-    }
-
   }
 
   // Build the subject set from a given operator
@@ -498,4 +428,88 @@ class StopWatch {
     lastTime = newTime
     span / 1000.0
   }
+}
+
+class PropertyHashTable(entityDescriptions: IndexedSeq[EntityDescription]) {
+  private val hashtable = new HashMap[String, PropertyType.Value]
+  private val log = Logger.getLogger(getClass.getName)
+  private var allUriNodesNeeded = false
+
+  buildPHT
+
+  def areAllUriNodesNeeded = allUriNodesNeeded
+
+  def contains(property: String) = hashtable.contains(property)
+
+  def get(property: String) = hashtable.get(property)
+
+  private def buildPHT {
+     hashtable.clear
+     val startTime = System.currentTimeMillis
+
+     for (ed <- entityDescriptions){
+
+       // analyse restriction
+       addRestrictionProperties(ed.restriction.operator)
+
+       // analyse patterns
+       for (patterns <- ed.patterns)
+         for (pattern <- patterns)
+           for (op <- pattern.operators)
+            op match {
+               case op:ForwardOperator => updatePHT(op.property.toString, PropertyType.FORW)
+               case op:BackwardOperator => updatePHT(op.property.toString, PropertyType.BACK)
+               case _ =>
+            }
+     }
+
+     log.info("Analyse Entity Descriptions took " + ((System.currentTimeMillis - startTime)) + " ms")
+     //log.info(" [ PHT ] \n > keySet = ("+PHT.size.toString +") \n   - "+ PHT.mkString("\n   - "))
+  }
+
+    private def updatePHT(property :String, propertyType : PropertyType.Value ){
+      hashtable.get(property) match {
+        case Some(PropertyType.BOTH) =>
+        case Some(PropertyType.FORW) =>
+          if (propertyType==PropertyType.BACK)
+            hashtable.put(property, PropertyType.BOTH)
+          else hashtable.put(property, propertyType)
+        case Some(PropertyType.BACK) =>
+          if (propertyType==PropertyType.FORW)
+            hashtable.put(property, PropertyType.BOTH)
+          else hashtable.put(property, propertyType)
+        case None => hashtable.put(property, propertyType)
+      }
+  }
+
+  // Find all properties from a given operator and add those to the property hash table
+  private def addRestrictionProperties(operator : Option[Operator]) {
+    operator match {
+      case Some(cond:Condition) =>
+        for (op <- cond.path.operators){
+          op match {
+            case op:ForwardOperator => updatePHT(op.property.toString, PropertyType.BACK)
+            case op:BackwardOperator => updatePHT(op.property.toString, PropertyType.FORW)
+            case _ =>
+          }
+        }
+      case Some(and:And) =>  {
+        for (child <- and.children)
+          addRestrictionProperties(Some(child))
+      }
+      case Some(or:Or) =>  {
+        for (child <- or.children)
+          addRestrictionProperties(Some(child))
+      }
+      case Some(not:Not) =>
+      case Some(exists:Exists) =>
+      case None => {
+        allUriNodesNeeded = true
+      }
+    }
+  }
+}
+
+object PropertyType extends Enumeration {
+  val FORW, BACK, BOTH = Value
 }

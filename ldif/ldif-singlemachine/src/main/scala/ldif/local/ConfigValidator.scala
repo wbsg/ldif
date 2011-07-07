@@ -24,9 +24,13 @@ object ConfigValidator {
   def validateConfiguration(config: LdifConfiguration): Boolean = {
     var fail = false
 
-    val r2rMappingsErrors = validateMappingFile(config.mappingFile)
-    val sourceFileErrors = validateSourceFiles(config.sourceDir)
-    validateSilkLinkSpecs(config.linkSpecDir)
+    try {
+      val r2rMappingsErrors = validateMappingFile(config.mappingFile)
+      validateSilkLinkSpecs(config.linkSpecDir)
+      val sourceFileErrors = validateSourceFiles(config.sourceDir)
+    } catch {
+      case e: Exception => throw new RuntimeException("Unknown Error occured while validating configuration: " + e.getMessage, e)
+    }
 
     return fail
   }

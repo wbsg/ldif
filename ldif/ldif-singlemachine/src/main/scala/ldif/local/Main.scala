@@ -58,8 +58,10 @@ object Main
     // Validate configuration
     val fail = ConfigValidator.validateConfiguration(config)
     if(fail) {
-      println("There was an error in the configuration")
+      println("!- There was an error in the configuration")
       exit(1)
+    } else {
+      println("-- Validation phase succeeded in " + stopWatch.getTimeSpanInSeconds + "s")
     }
 
     // Setup config properties file
@@ -166,7 +168,7 @@ object Main
    * Transforms the Quads
    */
   def mapQuads(mappingFile: File, readers: Seq[QuadReader]) : Seq[QuadReader] = {
-    val repository = new Repository(new FileOrURISource(mappingFile.getAbsolutePath))
+    val repository = new Repository(new FileOrURISource(mappingFile))
     val executor = new R2RLocalExecutor
     val config = new R2RConfig(repository)
     val module = new R2RModule(config)
