@@ -26,7 +26,7 @@ class IntegrationFlowTest extends FlatSpec with ShouldMatchers {
     OutputValidator.compare(ldifOutput,ldimporterOuputFile) should equal (0)
   }
 
-  it should "handle rewriting and provenance  correctly" in {
+  it should "handle rewriting and provenance correctly" in {
     // Run LDIF
     val configFile = loadConfig("ldif/local/resources/config-provenance.xml")
     val ldifOutput = runLdif(configFile)
