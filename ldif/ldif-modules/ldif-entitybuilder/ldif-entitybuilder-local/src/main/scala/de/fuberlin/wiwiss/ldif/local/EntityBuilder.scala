@@ -52,7 +52,7 @@ class EntityBuilder (entityDescriptions : IndexedSeq[EntityDescription], readers
     }
     writer.finish
 
-    log.info("Build Entities took " + ((now - startTime)) + " ms")
+    log.fine("Build Entities took " + ((now - startTime)) + " ms")
   }
 
   // Build a factum table from a given resource uri and an entity description

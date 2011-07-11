@@ -1,174 +1,109 @@
 package ldif.local
 
+import datasources.dump.QuadParser
 import runtime._
 import java.io.File
-import collection.mutable.{ListBuffer, ArrayBuffer}
+import collection.mutable.{HashMap, MultiMap, Set}
+import java.util.logging.Logger
 
 /*
- * Compare LDIF output with a given LDImpoter output (which has a target vocab and minting) 
- */
+* Compare LDIF output with a given LDImpoter output (which has a target vocab and minting)
+*/
 
 object OutputValidator {
 
+  private val log = Logger.getLogger(getClass.getName)
 
-  def compare (ldifOutputFile:File, cOutputFile : File) : Int =  {
-    // read LDIF output - from File
-    val lines = scala.io.Source.fromFile(ldifOutputFile).getLines
-    val ldifOutput = new ListBuffer[String]
-    for (l <- lines.toSeq){
-      // filter out provenance triples
-      //TODO should be configurable
-      if (!l.endsWith("<http://www4.wiwiss.fu-berlin.de/ldif/provenance> ."))
-      // nquad > ntriples
-      ldifOutput += l.substring(0,l.lastIndexOf("<")) + "."
-    }
+  def compare(ldifOutputFile : File, otherOutputFile : File) : Int =  {
+    log.info("Output validation started")
 
-    compare(ldifOutput, cOutputFile)
-  }
+    val parser = new QuadParser
+    val ldifOutputQuads = scala.io.Source.fromFile(ldifOutputFile).getLines.toTraversable.map(parser.parseLine(_))
+    val otherOutputQuads = scala.io.Source.fromFile(otherOutputFile).getLines.toTraversable.map(parser.parseLine(_))
 
-  def compare (ldifOutputReader:QuadReader, cOutputFile : File) : Int = {
-    // read LDIF output - from QuadReader
-    val ldifOutput = new ArrayBuffer[String](ldifOutputReader.size)
-    while(!ldifOutputReader.isEmpty)  {
-       var triple = ldifOutputReader.read.toNQuadFormat
-      // nquad > ntriples
-      triple = triple.substring(0,triple.lastIndexOf("<")) + "."
-      ldifOutput += triple
-    }
-
-    compare(ldifOutput, cOutputFile)
-  }
-
-  private def compare (ldifOutput:Seq[String], cOutputFile : File) :Int = {
-    // read the correct output - from file
-    val lines = scala.io.Source.fromFile(cOutputFile).getLines
-    val cOutput = new ListBuffer[String]
-    val cSameAsOutput = new ListBuffer[String]
-    for (l <- lines.toSeq){
-      if ((l.split(" "))(1).equals("<http://www.w3.org/2002/07/owl#sameAs>"))
-        cSameAsOutput += l
-      else cOutput += l
-    }
-
-    // init vars
-    val outSize = ldifOutput.size+cOutput.size
-    var eq = false
-    var errCount = 0
-    var count = 0
-
-    println("Validating the output:")
-    // check #1: ldif-output => ldimporter-output
-    //println("Check #1")
-    for (line <- ldifOutput){
-
-      eq = lineCompare(line,cOutput,cSameAsOutput,true)
-
-      if (!eq) {
-        errCount = errCount +1
-        println(line)
+    val otherHT:MultiMap[String, Pair[String,String]] = new HashMap[String, Set[Pair[String,String]]] with MultiMap[String, Pair[String,String]]
+    val sameAsMap = new HashMap[String,String]
+    for (quad <- otherOutputQuads)
+      if (quad!=null) {
+        if (quad.predicate.equals("http://www.w3.org/2002/07/owl#sameAs"))
+          sameAsMap.put(quad.value.toString,quad.subject.toString)
+        else
+          otherHT.addBinding(quad.predicate, Pair(quad.subject.toString,quad.value.toString))
       }
-      count = count +1
-      if(count%200==0){
-         println(count*100/(outSize)+"% ("+errCount+" error(s) found)")
+
+    val ldifHT:MultiMap[String, Pair[String,String]] = new HashMap[String, Set[Pair[String,String]]] with MultiMap[String, Pair[String,String]]
+    for (quad <- ldifOutputQuads)
+      if (quad!=null)
+        // filter out provenance triples
+        //TODO should be configurable - see #37
+        if (!quad.graph.equals("http://www4.wiwiss.fu-berlin.de/ldif/provenance"))
+        {
+          var sub = quad.subject.toString
+          if (sameAsMap.contains(sub))
+            sub = sameAsMap.get(sub).get
+          var obj = quad.value.toString
+          if (sameAsMap.contains(obj))
+            obj = sameAsMap.get(obj).get
+          ldifHT.addBinding(quad.predicate, Pair(sub,obj))
         }
+
+    var err = 0
+
+    // check #1: ldif-output => ldimporter-output
+    for (p <- ldifHT.keys){
+      if (otherHT.contains(p)){
+        val elems = otherHT.get(p).get
+        for (elem <- ldifHT.get(p).get.toSeq)
+          if(!elems.contains(elem)) {
+            err += 1
+            log.warning("Quad not found: "+elem._1+" <"+p+"> "+elem._2)
+          }
+      }
+      else {
+        err += ldifHT.get(p).get.size
+        log.warning("Property not found: "+p)
+      }
     }
 
     // check #2: ldimporter-output => ldif-output
-    //println("Check #2")
-    for (line <- cOutput){
-
-      eq = lineCompare(line,ldifOutput,cSameAsOutput,false)
-
-      if (!eq) {
-        println(line)
-        errCount= errCount+1
-      }
-      count = count +1
-      if(count%200==0){
-         println(count*100/(outSize)+"% ("+errCount+" error(s) found)")        
-        }
-    }
-
-    if (errCount == 0 )
-      println("\nOutput is correct")
-    else println("\nOutput is NOT correct. "+ errCount +" error(s) found.")
-
-    errCount
-  }
-
-
-  private def getSameAs(node : String, sameAsList : Seq[String], direction :Boolean ) = {
-    val same = new ListBuffer[String]
-    for (l <- sameAsList){
-      val split = l.split(" ",3)
-      if (direction) {
-        if (split(2).equals(node))
-          same +=  split(0)       }
-      else
-      if (split(0).equals(node))
-        same +=  split(2).substring(0,split(2).size-2)
-    }
-    same
-  }
-
-  private def lineCompare(line : String, output : Seq[String], cSameAsOutput : Seq[String], direction : Boolean) ={
-    val triple = line.split(" ",3)
-
-    var subjSame : ListBuffer[String] = null
-    var objSame :  ListBuffer[String] = null
-    if (direction){
-      subjSame = getSameAs(triple(0)+" .",cSameAsOutput,direction)
-      objSame = getSameAs(triple(2),cSameAsOutput,direction)
-
-    }
-    else {
-      subjSame = getSameAs(triple(0),cSameAsOutput,direction)
-      objSame = getSameAs(triple(2).substring(0,triple(2).size-2),cSameAsOutput,direction)
-    }
-
-    var eq = false
-    for (l1 <- output){
-      if(!eq){
-        val split1 = l1.split(" ",3)
-        if (triple(1).equals(split1(1))){
-          if (l1.equals(line))  {eq = true}
-          else {
-            for (l3 <- subjSame){
-              if(!eq)
-                if (l1.equals(l3 +" "+triple(1)+" "+triple(2))) { eq = true }
-              for (l4 <- objSame){
-                if(!eq)
-                  if (l1.equals(l3 +" "+triple(1)+" "+l4+" ."))  { eq = true }
-              }
-            }
-            for (l4 <- objSame){
-              if(!eq){
-                if (l1.equals(triple(0)+" "+triple(1)+" "+l4+" ."))  { eq = true }
-              }
-            }
+    for (p <- otherHT.keys){
+      if (ldifHT.contains(p)){
+        val elems = ldifHT.get(p).get
+        for (elem <- otherHT.get(p).get.toSeq)
+          if(!elems.contains(elem)) {
+            err += 1
+            log.warning("Quad not found: "+elem._1+" <"+p+"> "+elem._2)
           }
-        }
-
+      }
+      else {
+        err += otherHT.get(p).get.size
+        log.warning("Property not found: "+p)
       }
     }
-    eq
+
+    if (err == 0)
+      log.info("Output is correct")
+    else log.warning("Output is NOT correct. "+ err +" error(s) found.")
+
+    err
   }
+
 
   def contains(ldifOutputFile:File, quads : Traversable[Quad]) = {
-    var isContained = new Array[Boolean](quads.size)
-    val nquads = quads.map(_.toNQuadFormat + " .")
+    val parser = new QuadParser
+
+    val isContained = new Array[Boolean](quads.size)
 
     val lines = scala.io.Source.fromFile(ldifOutputFile).getLines
 
-    for (l <- lines.toSeq){
-      for ((q,i) <- nquads.toSeq.zipWithIndex)
-        if (l.equals(q))
+    for (oq <- lines.toTraversable.map(parser.parseLine(_))){
+      for ((q,i) <- quads.toSeq.zipWithIndex)
+        if (oq.equals(q))
           isContained(i) = true
     }
 
-    var res = true
-    for (i <- isContained) res && i
-    res
+    //log.warning("Quads missing: "+isContained.count(false))
+    isContained.filter(x => !x).isEmpty
   }
 
 }
