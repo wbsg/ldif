@@ -11,13 +11,12 @@ import de.fuberlin.wiwiss.r2r._
 import ldif.modules.r2r.local.R2RLocalExecutor
 import ldif.modules.r2r._
 import ldif.entity.EntityDescription
-import de.fuberlin.wiwiss.ldif.local.{EntityBuilderType, EntityBuilderExecutor}
+import de.fuberlin.wiwiss.ldif.local.EntityBuilderExecutor
 import ldif.local.util.Const._
 import java.util.Properties
 import java.io._
 import java.util.logging.Logger
 import util.StringPool
-import collection.mutable.{Map,HashMap}
 
 object Main
 {
@@ -71,7 +70,7 @@ object Main
     val otherQuadsFile = File.createTempFile("ldif-other-quads", ".bin")
     setupConfigParameters(otherQuadsFile)
 
-    val quadReaders = loadDump(config.sourceDir)
+    val quadReaders = loadDump(config.sources)
 
     val r2rReader: Seq[QuadReader] = executeMappingPhase(config, quadReaders)
 
@@ -146,9 +145,9 @@ object Main
   /**
    * Loads the dump files.
    */
-  def loadDump(dumpDir : File) : Seq[QuadReader] =
+  def loadDump(sources : Traversable[String]) : Seq[QuadReader] =
   {
-    val dumpModule = new DumpModule(new DumpConfig(dumpDir.listFiles.map(_.getCanonicalPath)))
+    val dumpModule = new DumpModule(new DumpConfig(sources))
     val dumpExecutor = new DumpExecutor
 
     val quadQueues = for (i <- 1 to dumpModule.tasks.size) yield new BlockingQuadQueue(DEFAULT_QUAD_QUEUE_CAPACITY)

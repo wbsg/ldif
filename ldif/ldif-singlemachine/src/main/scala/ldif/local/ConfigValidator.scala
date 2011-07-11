@@ -3,18 +3,9 @@ package ldif.local
 import datasources.dump.DumpLoader
 import de.fuberlin.wiwiss.r2r.{FileOrURISource, Repository}
 import scala.collection.mutable.{Map, HashMap}
-import scala.collection.JavaConversions._
 import java.io.{IOException, BufferedReader, InputStreamReader, File}
 import ldif.local.datasources.dump.QuadFileLoader
 import collection.JavaConversions
-
-/**
- * Created by IntelliJ IDEA.
- * User: andreas
- * Date: 05.07.11
- * Time: 15:48
- * To change this template use File | Settings | File Templates.
- */
 
 object ConfigValidator {
   val okMessage = "Ok"
@@ -27,7 +18,7 @@ object ConfigValidator {
     try {
       val r2rMappingsErrors = validateMappingFile(config.mappingFile)
       validateSilkLinkSpecs(config.linkSpecDir)
-      val sourceFileErrors = validateSourceFiles(config.sourceDir)
+      val sourceFileErrors = validateSourceFiles(config.sources)
     } catch {
       case e: Exception => throw new RuntimeException("Unknown Error occured while validating configuration: " + e.getMessage, e)
     }
@@ -35,17 +26,17 @@ object ConfigValidator {
     return fail
   }
 
-  def validateSourceFiles(sourceDir: File): Map[String, Seq[Pair[Int, String]]] = {
+  def validateSourceFiles(sources: Traversable[String]): Map[String, Seq[Pair[Int, String]]] = {
     val errorMap = new HashMap[String, Seq[Pair[Int, String]]]
-    for(file <- sourceDir.listFiles) {
+    for(source <- sources) {
       try {
-        val reader = new BufferedReader(new InputStreamReader(new DumpLoader(file.getCanonicalPath).getStream))
+        val reader = new BufferedReader(new InputStreamReader(new DumpLoader(source).getStream))
         val loader = new QuadFileLoader
         val errors = loader.validateQuads(reader)
         if(errors.size > 0)
-          errorMap.put(file.getCanonicalPath, errors)
+          errorMap.put(source, errors)
       } catch {
-        case e: IOException => errorMap.put(file.getCanonicalPath, List(Pair(0, "Error reading file: " + e.getMessage)))
+        case e: IOException => errorMap.put(source, List(Pair(0, "Error reading file: " + e.getMessage)))
       }
     }
     return errorMap
