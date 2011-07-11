@@ -13,7 +13,7 @@ import java.util.Collections
 import scala.collection.JavaConversions._
 import ldif.local.runtime._
 
-class EntityBuilder (entityDescriptions : IndexedSeq[EntityDescription], readers : Seq[QuadReader], config: ConfigParameters) extends FactumBuilder {
+class EntityBuilder (entityDescriptions : IndexedSeq[EntityDescription], readers : Seq[QuadReader], config: ConfigParameters) extends FactumBuilder with EntityBuilderTrait {
   private val nrOfQuadsPerSort = 500000
   private val log = Logger.getLogger(getClass.getName)
   // true if quads not relevant for the Entity Builder should be written to a QuadReader
@@ -84,7 +84,7 @@ class EntityBuilder (entityDescriptions : IndexedSeq[EntityDescription], readers
     BHT.clear
     val startTime = now
 
-    // Round robin over readers
+    // Round robin over reader
     while (readers.foldLeft(false)((a, b) => a || b.hasNext)){
       for (reader <- readers.filter(_.hasNext)) {
         val quad = reader.read
@@ -430,7 +430,7 @@ class StopWatch {
   }
 }
 
-class PropertyHashTable(entityDescriptions: IndexedSeq[EntityDescription]) {
+class PropertyHashTable(entityDescriptions: Seq[EntityDescription]) {
   private val hashtable = new HashMap[String, PropertyType.Value]
   private val log = Logger.getLogger(getClass.getName)
   private var allUriNodesNeeded = false

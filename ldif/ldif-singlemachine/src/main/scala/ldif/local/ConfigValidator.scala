@@ -27,6 +27,10 @@ object ConfigValidator {
     try {
       val r2rMappingsErrors = validateMappingFile(config.mappingFile)
       validateSilkLinkSpecs(config.linkSpecDir)
+      if(configProperties.getPropertyValue("validate", "true").toLowerCase=="false") {
+        println("-- Validation of source datasets disabled")
+        return fail
+      }
       val sourceFileErrors = validateSourceFiles(config.sourceDir)
     } catch {
       case e: Exception => throw new RuntimeException("Unknown Error occured while validating configuration: " + e.getMessage, e)

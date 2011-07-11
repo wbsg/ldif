@@ -1,6 +1,7 @@
 package ldif.local.util
 
 import java.util.concurrent.ConcurrentHashMap
+import ldif.local.runtime.{ConfigProperties, ConfigParameters}
 
 /**
  * StringPool implements string canonicalization (with an explicit collection)

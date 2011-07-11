@@ -49,7 +49,8 @@ object SourcePatternToEntityDescriptionTransformer {
     var restriction = Restriction(None)
     if(operators.size>0)
       restriction = Restriction(Some(And(operators)))
-    (EntityDescription(restriction, IndexedSeq(pattern.toIndexedSeq)), variableToIndexMap)
+    // reverse 'pattern' because new paths were inserted at the head
+    (EntityDescription(restriction, IndexedSeq(pattern.toIndexedSeq.reverse)), variableToIndexMap)
   }
 
   def constructPathsAndRestrictions(triples: List[NodeTriple], variableDependencies: List[String]): (Map[String, Path],

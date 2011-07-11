@@ -12,7 +12,7 @@ mappings:renamePropertyMapping
 
 mappings:transformationMapping
   a r2r:Mapping ;
-  r2r:sourcePattern "?SUBJ <http://v> ?v . ?SUBJ <http://n> ?n" ;
+  r2r:sourcePattern "?SUBJ <http://n> ?n . ?SUBJ <http://v> ?v . " ;
   r2r:transformation "?name = concat(?v, ' ', ?n)" ;
   r2r:targetPattern "?SUBJ <http://name> ?name" .
 

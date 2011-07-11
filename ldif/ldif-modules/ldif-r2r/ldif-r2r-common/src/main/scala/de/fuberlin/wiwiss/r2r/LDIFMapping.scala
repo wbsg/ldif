@@ -30,7 +30,7 @@ class LDIFMapping(val mapping: Mapping, val entityDescription: EntityDescription
       targetPattern.writeQuads(results, quadWriter)
   }
 
-  def getResults(row: FactumRow): LDIFVariableResults = {
+  def getResults(row: IndexedSeq[Node]): LDIFVariableResults = {
     val results = new LDIFVariableResults()
     for((variableName, index) <- variableToResultIndexMap)
       results.addVariableResult(variableName, row.get(index))

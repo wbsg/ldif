@@ -29,16 +29,10 @@ class EntityBuilderExecutor(configParameters: ConfigParameters = ConfigParameter
    */
   override def execute(task : EntityBuilderTask, reader : Seq[QuadReader], writer : Seq[EntityWriter])
   {
-    val eb = new EntityBuilder(task.entityDescriptions, reader, configParameters)
+    val eb = EntityBuilderFactory.getEntityBuilder(configParameters, task.entityDescriptions, reader)
 
     for ((ed, i) <- task.entityDescriptions.zipWithIndex )
       eb.buildEntities(ed, writer(i))
 
   }
-}
-
-object EntityBuilderType extends Enumeration {
-  type Type = Value
-  val InMemory = Value("In-Memory")
-  val Voldemort = Value("Voldemort")
 }

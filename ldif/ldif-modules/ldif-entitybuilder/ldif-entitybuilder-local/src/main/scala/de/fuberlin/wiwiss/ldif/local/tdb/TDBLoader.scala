@@ -50,7 +50,6 @@ class TDBLoader {
     val time1 = System.currentTimeMillis
     val dataTriples = tdbRoot + "/data-triples.tmp"
     val dataQuads = tdbRoot + "/data-quads.tmp"
-    val rootDir = databaseRoot
     val dataFile = datasetFile
     val dt = new File(dataTriples)
     val dq = new File(dataQuads)
@@ -64,12 +63,12 @@ class TDBLoader {
 
     println("-- TDB Bulk Loader Start")
     println("-- Data phase")
-    cleanTarget(tdbRoot, rootDir)
+    cleanTarget(tdbRoot, databaseRoot)
 
-    loadData(rootDir, dataTriples, dataQuads, dataFile)
+    loadData(databaseRoot, dataTriples, dataQuads, dataFile)
 
     println("-- Index phase")
-    indexData(rootDir, dataTriples, dataQuads)
+    indexData(databaseRoot, dataTriples, dataQuads)
 
     // Calculate overall processing time
     val timeSpan = System.currentTimeMillis - time1
@@ -93,7 +92,7 @@ class TDBLoader {
       return
 
     val idx = index
-    val work = "/database/tdbtest/" + idx + "-txt"
+    val work = rootDir + "/" + idx + "-txt"
     new File(work).createNewFile
 
     val sortString = "sort " + keys + " < " + data + " > " + work
@@ -136,15 +135,5 @@ class TDBLoader {
       sb.append(s).append(" ")
 
     sb.toString.trim
-  }
-}
-
-object TDBLoader {
-  def main(args: Array[String]) {
-    val tdbRoot = "/home/andreas/install/stores/tdb/TDB-0.8.9/"
-    val rootDir = "/database/tdbtest"
-    val dataFile = "/home/andreas/projects/example/sources/aba_mouse_20101010_1000.nq"
-    val loader = new TDBLoader
-    loader.createNewTDBDatabase(tdbRoot, rootDir, dataFile)
   }
 }

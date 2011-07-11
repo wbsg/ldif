@@ -9,6 +9,8 @@ import ldif.local.util.StringPool
 
 object LocalNode
 {
+  private var useStringPool = true
+
   def createLiteral(value : String, graph : String) = new Node(strCan(value), null, Node.Literal, strCan(graph))
 
   def createTypedLiteral(value : String, datatype : String, graph : String) = new Node(strCan(value), strCan(datatype), Node.TypedLiteral, strCan(graph))
@@ -38,5 +40,13 @@ object LocalNode
     }
   }
 
-  private def strCan(str: String) = StringPool.getCanonicalVersion(str)
+  def reconfigure(config: ConfigProperties) {
+    val ebType = config.getPropertyValue("entityBuilderType", "in-memory").toLowerCase
+    if(ebType=="quad-store")
+      useStringPool = false
+    else
+      useStringPool = true
+  }
+
+  private def strCan(str: String) = if(useStringPool) StringPool.getCanonicalVersion(str) else str
 }

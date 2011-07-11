@@ -8,7 +8,7 @@ trait Entity
 
   def entityDescription : EntityDescription
 
-  def factums(patternId : Int) : FactumTable
+  def factums(patternId : Int) : Traversable[IndexedSeq[Node]]
 }
 
 

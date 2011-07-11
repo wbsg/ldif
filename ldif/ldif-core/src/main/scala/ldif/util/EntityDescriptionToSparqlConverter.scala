@@ -12,38 +12,47 @@ import ldif.entity._
 import ldif.entity.Restriction._
 import scala.collection.mutable.ListBuffer
 
-class EntityDescriptionToSparqlConverter
+class EntityDescriptionToSparqlConverter {
+  var pickedEntityGraph: Array[Boolean] = null  // true if a graph for the entity has been picked
+  var entityGraphVar: Array[String] = null
 
-object EntityDescriptionToSparqlConverter {
-  val entityVar = "?SUBJ"
+  private def init(entityDesc: EntityDescription) {
+    val nrOfQueries = math.max(entityDesc.patterns.size, 1)
+    pickedEntityGraph = new Array[Boolean](nrOfQueries)
+    entityGraphVar = new Array[String](nrOfQueries)
+    for(i <- 0 to (nrOfQueries-1))
+      pickedEntityGraph(i) = false
+  }
 
-  def convert(entityDesc: EntityDescription): Seq[String] = {
+  private def convert(entityDesc: EntityDescription): Seq[(String, String)] = {
+    init(entityDesc)
     val varMaker = new VariableMaker("?ldifph")
-    val bnMaker = new BlankNodeMaker()
 
-    val selectStrings = createSelectStrings(entityDesc)
-
-    val restriction = convertRestriction(entityDesc.restriction,bnMaker.getBlankNode)
-
-    val paths = entityDesc.patterns
+    val restriction = convertRestriction(entityDesc.restriction, varMaker.getNextVar)
 
     val whereStringPatterns = createWhereStrings(entityDesc.patterns, varMaker.getNextVar)
+
+    // This has to come last because of the entity graph
+    val selectStrings = createSelectStrings(entityDesc)
+
     return assembleSparqlQueries(selectStrings, restriction, whereStringPatterns)
   }
 
   // Build the SPARQL queries out of its constituent parts
-  private def assembleSparqlQueries(selects: Seq[String], restriction: String, wherePatterns: Seq[String]): Seq[String] = {
-    val sparqlQueries = new ListBuffer[String]
+  private def assembleSparqlQueries(selects: Seq[String], restriction: String, wherePatterns: Seq[String]): Seq[(String, String)] = {
+    val sparqlQueries = new ListBuffer[(String, String)]
+    var index = 0
     for((select, where) <- selects.zip(wherePatterns)) {
       val querySB = new StringBuilder
-      querySB.append(select).append(" { ").append(restriction).append( where).append(" }")
-      sparqlQueries.append(querySB.toString)
+      querySB.append(select).append(" { ").append(restriction).append( where).append(" } ORDER BY ?SUBJ")
+      sparqlQueries.append((querySB.toString, entityGraphVar(index).substring(1)))
+      index += 1
     }
     return sparqlQueries
   }
 
   private def createWhereStrings(patterns: IndexedSeq[IndexedSeq[Path]], resourceFunction: () => String): Seq[String] = {
-    for(pattern <- patterns) yield createWhereString(entityVar, convertPathToIndexedPath(pattern), resourceFunction)
+    for(index <- 0 to (patterns.size-1)) yield createWhereString(index to index, EntityDescriptionToSparqlConverter.entityVar, convertPathToIndexedPath(patterns(index)), resourceFunction)
   }
 
   private def convertPathToIndexedPath(pattern: IndexedSeq[Path]): IndexedSeq[IndexedPath] = {
@@ -51,13 +60,13 @@ object EntityDescriptionToSparqlConverter {
     for(path <- pattern) yield IndexedPath(path, counter.next())
   }
 
-  private def createWhereString(resource: String, pattern: IndexedSeq[IndexedPath], resourceFunction: () => String): String = {
+  private def createWhereString(range: Range, resource: String, pattern: IndexedSeq[IndexedPath], resourceFunction: () => String): String = {
     val whereSB = new StringBuilder
 
     val endPaths = pattern.filter(path => pathLength(path.path)==1)
     val ongoingPaths = pattern.filter(path => pathLength(path.path)>1)
 
-    whereSB.append(createEndWhereStrings(resource, endPaths, resourceFunction))
+    whereSB.append(createEndWhereStrings(resource, endPaths, resourceFunction, range))
 
     val partitions = partitionOngoingPaths(ongoingPaths)
 
@@ -66,11 +75,18 @@ object EntityDescriptionToSparqlConverter {
       val indexedPaths = partition._2
       val nextResource = resourceFunction()
 
-      whereSB.append(createTripleOutOfOperator(resource, operator, nextResource))
-      whereSB.append(createWhereString(nextResource, tailOfIndexedPaths(indexedPaths), resourceFunction))
+      whereSB.append(createNamedGraphedTripleOutOfOperator(resource, operator, nextResource, resourceFunction, range))
+      whereSB.append(createWhereString(range, nextResource, tailOfIndexedPaths(indexedPaths), resourceFunction))
     }
 
     return whereSB.toString
+  }
+
+  private def createNamedGraphedTripleOutOfOperator(resource: String, operator: PathOperator, nextResource: String, resourceFunction: () => String, patternRange: Range): String = {
+    val graphVar = resourceFunction()
+    checkForEntityGraph(resource, graphVar, patternRange)
+    val namedGraphedTriple = new StringBuilder
+    namedGraphedTriple.append("GRAPH ").append(graphVar).append(" { ").append(createTripleOutOfOperator(resource, operator, nextResource)).append(" } ").toString
   }
 
   // partition ongoing paths by their operator
@@ -94,15 +110,26 @@ object EntityDescriptionToSparqlConverter {
     return for(iPath <- indexedPaths) yield tailOfIndexedPath(iPath)
   }
 
-  private def createEndWhereStrings(resource: String, pattern: IndexedSeq[IndexedPath], resourceFunction: () => String): String = {
+  private def createEndWhereStrings(resource: String, pattern: IndexedSeq[IndexedPath], resourceFunction: () => String, range: Range): String = {
     val whereParts = new StringBuilder
     for(path <- pattern) {
       val varName = VariableMaker.makeVar(path)
-      whereParts.append("GRAPH ").append(varName).append("graph { ")
+      val graphName = varName + "graph"
+      checkForEntityGraph(resource, graphName, range)
+      whereParts.append("GRAPH ").append(graphName).append(" { ")
       whereParts.append(createTripleOutOfOperator(resource, path.path.operators.head, varName))
       whereParts.append(" } ")
     }
     return whereParts.toString()
+  }
+
+  private def checkForEntityGraph(resource: String, graphVar: String, range: Range) {
+    for(i <- range) {
+      if(!pickedEntityGraph(i) && resource==EntityDescriptionToSparqlConverter.entityVar) {
+        pickedEntityGraph(i) = true
+        entityGraphVar(i) = graphVar
+      }
+    }
   }
 
   private def createTripleOutOfOperator(resource: String, operator: PathOperator, nextResource: String): String = {
@@ -125,17 +152,20 @@ object EntityDescriptionToSparqlConverter {
   private def createSelectStrings(entityDesc: EntityDescription): Seq[String] = {
     val selectStrings = new ListBuffer[String]
 
-    for(pattern <- entityDesc.patterns)
-      selectStrings.append(createSelectString(convertPathToIndexedPath(pattern)).toString())
+    for(index <- 0 to (entityDesc.patterns.size-1))
+      selectStrings.append(createSelectString(index, convertPathToIndexedPath(entityDesc.patterns(index))).toString())
     return selectStrings
   }
 
-  private def createSelectString(pattern: IndexedSeq[IndexedPath]): StringBuilder = {
+  private def createSelectString(index: Int, pattern: IndexedSeq[IndexedPath]): StringBuilder = {
     val sb = new StringBuilder
     sb.append("SELECT ")
     for(path <- pattern)
-      sb.append("?ldifvar").append(path.index).append(" ?ldifvar").append(path.index).append("graph ")
-    return sb.append("?SUBJ ")
+      sb.append("?").append(EntityDescriptionToSparqlConverter.resultVarBaseName).append(path.index).append(" ?").append(EntityDescriptionToSparqlConverter.resultVarBaseName).append(path.index).append("graph ")
+    sb.append(EntityDescriptionToSparqlConverter.entityVar).append(" ")
+    if(!entityGraphVar(index).startsWith("?" + EntityDescriptionToSparqlConverter.resultVarBaseName))
+      sb.append(entityGraphVar(index)).append(" ")
+    return sb
   }
 
   // return SPARQL representation of LDIF Restriction
@@ -167,7 +197,7 @@ object EntityDescriptionToSparqlConverter {
   }
 
   private def processCondition(path: Path, values: Set[Node], resourceFunction:() => String): String = {
-    return processConditionPath(entityVar, path.operators, values, resourceFunction)
+    return processConditionPath(EntityDescriptionToSparqlConverter.entityVar, path.operators, values, resourceFunction)
   }
 
   // return the SPARQL string representation of a Condition path
@@ -176,20 +206,33 @@ object EntityDescriptionToSparqlConverter {
       case operator::Nil => {
         val valueSetB = new StringBuilder
         for(node <- values)
-          valueSetB.append(createTripleOutOfOperator(resource, operator, node.toNTriplesFormat))
+          valueSetB.append(createNamedGraphedTripleOutOfOperator(resource, operator, node.toNTriplesFormat, resourceFunction, 0 to (entityGraphVar.size-1)))
 
         return valueSetB.toString
       }
       case operator::rest => {
         val pathSB = new StringBuilder
         val nextResource = resourceFunction()
-        pathSB.append(createTripleOutOfOperator(resource, operator, nextResource))
+        pathSB.append(createNamedGraphedTripleOutOfOperator(resource, operator, nextResource, resourceFunction, 0 to (entityGraphVar.size-1)))
         pathSB.append(processConditionPath(nextResource, rest, values, resourceFunction))
 
         return pathSB.toString
       }
       case Nil => return ""
     }
+  }
+}
+
+object EntityDescriptionToSparqlConverter {
+  val entityVar = "?SUBJ"
+  val resultVarBaseName = "ldifvar"
+
+  /**
+   * Converts Entity Description into one or more SPARQL queries
+   * @returns a pair of a SPARQL pattern and the variable name of the entity's graph
+   */
+  def convert(entityDesc: EntityDescription): Seq[(String, String)] = {
+    (new EntityDescriptionToSparqlConverter).convert(entityDesc)
   }
 }
 
