@@ -48,6 +48,21 @@ class IntegrationFlowTest extends FlatSpec with ShouldMatchers {
     OutputValidator.contains(ldifOutput,provenanceQuads) should equal (true)
   }
 
+//  it should "be correct with TDB backend" in {
+//// Run LDIF
+//    val configFile = loadConfig("ldif/local/resources/config-tdb.xml")
+//    val ldifOutput = runLdif(configFile)
+//
+//    // Load results to compare with
+//    val ldimporterOuputUrl = getClass.getClassLoader.getResource("ldif/local/resources/results.nt")
+//    val ldimporterOuputFile = new File(ldimporterOuputUrl.toString.stripPrefix("file:"))
+//
+//    // quantity check
+//    //Source.fromFile(ldifOutput).getLines.size should equal(4835)
+//    // quality check
+//    OutputValidator.compare(ldifOutput,ldimporterOuputFile) should equal (0)
+//  }
+
 
   protected def loadConfig(config : String) =  {
 

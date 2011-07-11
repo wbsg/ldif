@@ -192,6 +192,14 @@ class EntityDescriptionToSparqlConverter {
       case Condition(path, values) => {
          return processCondition(path, values, resourceFunction)
       }
+      case Or(children) => {
+        val orBuilder = new StringBuilder
+        orBuilder.append(" { ")
+        val internalStrings = for(child <- children) yield processOperator(child, resourceFunction)
+        val unionString = internalStrings.reduceLeft(_ + " } UNION { " + _)
+        orBuilder.append(unionString).append(" } ")
+        return orBuilder.toString
+      }
       case _ => throw new UnsupportedOperationException("Restriction operator " + operator + "is not implemented, yet")
     }
   }
