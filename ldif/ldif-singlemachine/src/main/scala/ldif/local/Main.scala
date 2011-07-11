@@ -71,7 +71,7 @@ object Main
     val otherQuadsFile = File.createTempFile("ldif-other-quads", ".bin")
     setupConfigParameters(otherQuadsFile)
 
-    val quadReaders = loadDump(config.sourceDir)
+    val quadReaders = loadDump(config.sources)
 
     val r2rReader: Seq[QuadReader] = executeMappingPhase(config, quadReaders)
 
@@ -150,9 +150,9 @@ object Main
   /**
    * Loads the dump files.
    */
-  private def loadDump(dumpDir : File) : Seq[QuadReader] =
+  def loadDump(sources : Traversable[String]) : Seq[QuadReader] =
   {
-    val dumpModule = new DumpModule(new DumpConfig(dumpDir.listFiles.map(_.getCanonicalPath)))
+    val dumpModule = new DumpModule(new DumpConfig(sources))
     val dumpExecutor = new DumpExecutor
 
     val quadQueues = for (i <- 1 to dumpModule.tasks.size) yield new BlockingQuadQueue(DEFAULT_QUAD_QUEUE_CAPACITY)

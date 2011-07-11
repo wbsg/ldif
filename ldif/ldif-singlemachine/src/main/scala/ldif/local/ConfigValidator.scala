@@ -31,7 +31,7 @@ object ConfigValidator {
         println("-- Validation of source datasets disabled")
         return fail
       }
-      val sourceFileErrors = validateSourceFiles(config.sourceDir)
+      val sourceFileErrors = validateSourceFiles(config.sources)
     } catch {
       case e: Exception => throw new RuntimeException("Unknown Error occured while validating configuration: " + e.getMessage, e)
     }
@@ -39,17 +39,17 @@ object ConfigValidator {
     return fail
   }
 
-  def validateSourceFiles(sourceDir: File): Map[String, Seq[Pair[Int, String]]] = {
+  def validateSourceFiles(sources: Traversable[String]): Map[String, Seq[Pair[Int, String]]] = {
     val errorMap = new HashMap[String, Seq[Pair[Int, String]]]
-    for(file <- sourceDir.listFiles) {
+    for(source <- sources) {
       try {
-        val reader = new BufferedReader(new InputStreamReader(new DumpLoader(file.getCanonicalPath).getStream))
+        val reader = new BufferedReader(new InputStreamReader(new DumpLoader(source).getStream))
         val loader = new QuadFileLoader
         val errors = loader.validateQuads(reader)
         if(errors.size > 0)
-          errorMap.put(file.getCanonicalPath, errors)
+          errorMap.put(source, errors)
       } catch {
-        case e: IOException => errorMap.put(file.getCanonicalPath, List(Pair(0, "Error reading file: " + e.getMessage)))
+        case e: IOException => errorMap.put(source, List(Pair(0, "Error reading file: " + e.getMessage)))
       }
     }
     return errorMap

@@ -2,8 +2,9 @@ package ldif.local
 
 import java.io.File
 import xml.XML
+import collection.mutable.HashSet
 
-case class LdifConfiguration(sourceDir : File, linkSpecDir : File, mappingFile : File, outputFile : File, propertiesFile: File)
+case class LdifConfiguration(sources : Traversable[String], linkSpecDir : File, mappingFile : File, outputFile : File, propertiesFile: File)
 
 object LdifConfiguration
 {
@@ -17,8 +18,17 @@ object LdifConfiguration
     if(propertyFileName!="")
       propertyFile = new File(baseDir + "/" + propertyFileName)
 
+    val sourceSet = new HashSet[String]
+    // local source directories
+    for (sourceDir <- (xml \ "Sources" ).toSeq)
+      sourceSet ++= new File(baseDir + "/" + sourceDir.text).listFiles.map(_.getCanonicalPath)
+
+    // remote sources
+    for (sourceUrl <- (xml \ "RemoteSources" \ "Source" ).toSeq)
+      sourceSet += sourceUrl.text
+
     LdifConfiguration(
-      sourceDir = new File(baseDir + "/" + (xml \ "Sources" text)),
+      sources = sourceSet,
       linkSpecDir = new File(baseDir + "/" + (xml \ "LinkSpecifications" text)),
       mappingFile = new File(baseDir + "/" + (xml \ "Mappings" text)),
       outputFile = new File(xml \ "Output" text),

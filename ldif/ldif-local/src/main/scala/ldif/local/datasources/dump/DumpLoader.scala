@@ -6,42 +6,53 @@ import java.io.{BufferedInputStream, FileNotFoundException, InputStream, File}
 
 //import org.apache.http.{HttpEntity, HttpResponse}
 //import org.apache.http.client.methods.HttpGet
-import ldif.local.util.HttpClientFactory
+//import ldif.local.util.HttpClientFactory
 
 /**
  * Streams data from a given file path or URL
  * Accepts N-TRIPLE, N3 and RDF/XML serializations and gzip, bz2 and zip compression.
-**/
+ **/
 
 @throws(classOf[Exception])
 class DumpLoader(sourceLocation:String) {
   private val log = Logger.getLogger(getClass.getName)
 
-  private val httpClient = HttpClientFactory.createHttpClient
+  //private val httpClient = HttpClientFactory.createHttpClient
 
   def getStream = {
-    
     if (sourceLocation == null) {
-			throw new Exception("Invalid data location" )
-		}
+      throw new Exception("Invalid data location" )
+    }
 
     var url:URL = null
     var file:File = null
+    var lang:String = null
 
     try {
       url = new URL(sourceLocation)
     } catch {
-        case e:Exception => {
-          file = new File(sourceLocation)
-          if (!file.exists) {
-            throw new Exception("File does not exist: "	+ file.getCanonicalPath)
-          }
+      case e:Exception => {
+        file = new File(sourceLocation)
+        if (!file.exists) {
+          throw new Exception("File does not exist: "	+ file.getCanonicalPath)
         }
+      }
     }
 
     if (url != null && url.getProtocol.toLowerCase.equals("file")) {
-        file = new File(url.getFile)
+      file = new File(url.getFile)
     }
+
+    if (file != null)
+      lang = ContentTypes.jenaLangFromExtension(file.getName)
+    else if (url != null)
+      lang = ContentTypes.jenaLangFromExtension(url.getFile)
+
+    if (lang == null) {
+      throw new Exception("Unable to determine language for "+ sourceLocation	+ " based on file extension")
+    }
+
+    log.info("Loading from " + sourceLocation + " using language " + lang)
 
     if (file != null)
       getFileStream(file)
@@ -51,32 +62,33 @@ class DumpLoader(sourceLocation:String) {
       throw new Exception("Protocol \"" + url.getProtocol	+ "\" is not supported.")
   }
 
-
   private def getFileStream(file:File) = {
+
     var inputStream:InputStream = null
-    var lang = ContentTypes.jenaLangFromExtension(file.getName)
-
-    if (lang == null) {
-      throw new Exception("Unable to determine language for "+ sourceLocation	+ " based on file extension")
-    }
-
-    log.info("Loading from " + file.getCanonicalPath + " using language " + lang)
 
     try {
       inputStream = new DecompressingStream(file)
-      } catch {
-        case e:FileNotFoundException => {
-          log.warning(file.getCanonicalPath + " vanished: " + e.getMessage)
-          throw e
-        }
+    } catch {
+      case e:FileNotFoundException => {
+        log.warning(file.getCanonicalPath + " vanished: " + e.getMessage)
+        throw e
+      }
     }
     new BufferedInputStream(inputStream)
   }
 
-
   private def getUrlStream(url:URL) = {
+
     var inputStream:InputStream = null
-    log.info("Loading from " + url)
+
+    try  {
+      inputStream = new DecompressingStream(url)
+    } catch {
+      case e:Exception => {
+        log.warning(url + " did not provide any data")
+        throw e
+      }
+    }
 
     //		if (url.getProtocol.toLowerCase.equals("http")) {
     //				val httpget = new HttpGet(sourceLocation)
@@ -124,7 +136,7 @@ class DumpLoader(sourceLocation:String) {
     //					}
     //				}
     //    }
-    
+
     new BufferedInputStream(inputStream)
   }
 }
