@@ -88,6 +88,11 @@
 	  <artifactId>antlr</artifactId>
 	  <version>3.2</version>
 	</dependency>
+    <dependency>
+      <groupId>bzip2</groupId>
+      <artifactId>bzip2</artifactId>
+      <version>0.1</version>
+    </dependency>
 
     <!-- end of voldermort dependecies -->
 
@@ -114,6 +119,20 @@
                             <version>0.81</version>
                             <packaging>jar</packaging>
                             <file>${project.basedir}/lib/voldemort-0.81.jar</file>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>install-bzip2-jar</id>
+                        <phase>generate-resources</phase>
+                        <goals>
+                            <goal>install-file</goal>
+                        </goals>
+                        <configuration>
+                            <groupId>bzip2</groupId>
+                            <artifactId>bzip2</artifactId>
+                            <version>0.1</version>
+                            <packaging>jar</packaging>
+                            <file>${project.basedir}/lib/bzip2-0.1.jar</file>
                         </configuration>
                     </execution>
                 </executions>

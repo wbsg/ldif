@@ -4,9 +4,9 @@ import java.io.{IOException, File, FileInputStream, InputStream}
 import collection.immutable.HashMap
 import java.util.zip.{GZIPInputStream, DeflaterInputStream}
 import java.net.URL
+import org.apache.tools.bzip2.CBZip2InputStream
 
 //import org.apache.http.{Header, HttpEntity}
-//import org.apache.tools.bzip2.CBZip2InputStream
 
 /**
  * Wrapper class to permit transparent decompression of a dump files.
@@ -80,13 +80,12 @@ class DecompressingStream(inputStream:InputStream, fileName:String) extends Inpu
       case None => inputStream
       case Some(CompressionType.DEFLATE) => new DeflaterInputStream(inputStream)
       case Some(CompressionType.GZIP) => new GZIPInputStream(inputStream)
-      // TODO requires a lib dependency (bzip2) which is not in the maven repository
-      // case Some(CompressionType.BZIP2) => {
-      //   /* CBZip2InputStream expects the magic number to be consumed */
-      //   inputStream.read
-      //   inputStream.read
-      //   new CBZip2InputStream(inputStream)
-      // }
+      case Some(CompressionType.BZIP2) => {
+         /* CBZip2InputStream expects the magic number to be consumed */
+         inputStream.read
+         inputStream.read
+         new CBZip2InputStream(inputStream)
+      }
     }
 
   @throws(classOf[IOException])
