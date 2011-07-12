@@ -27,6 +27,19 @@
       <artifactId>nxparser</artifactId>
       <version>1.1</version>
     </dependency>
+
+      <dependency>
+          <groupId>bzip2</groupId>
+          <artifactId>bzip2</artifactId>
+          <version>0.1</version>
+      </dependency>
+
+      <dependency>
+        <groupId>ldspider</groupId>
+        <artifactId>ldspider</artifactId>
+        <version>249</version>
+      </dependency>
+
    </dependencies>
     
 
@@ -49,6 +62,34 @@
                             <version>1.1</version>
                             <packaging>jar</packaging>
                             <file>${project.basedir}/lib/nxparser-1.1.jar</file>
+                        </configuration>
+                    </execution>
+                     <execution>
+                        <id>install-bzip2-jar</id>
+                        <phase>generate-resources</phase>
+                        <goals>
+                            <goal>install-file</goal>
+                        </goals>
+                        <configuration>
+                            <groupId>bzip2</groupId>
+                            <artifactId>bzip2</artifactId>
+                            <version>0.1</version>
+                            <packaging>jar</packaging>
+                            <file>${project.basedir}/lib/bzip2-0.1.jar</file>
+                        </configuration>
+                    </execution>
+                     <execution>
+                        <id>install-ldspider-jar</id>
+                        <phase>generate-resources</phase>
+                        <goals>
+                            <goal>install-file</goal>
+                        </goals>
+                        <configuration>
+                            <groupId>ldspider</groupId>
+                            <artifactId>ldspider</artifactId>
+                            <version>249</version>
+                            <packaging>jar</packaging>
+                            <file>${project.basedir}/lib/ldspider-rev249.jar</file>
                         </configuration>
                     </execution>
                 </executions>

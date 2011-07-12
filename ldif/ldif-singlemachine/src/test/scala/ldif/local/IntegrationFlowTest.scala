@@ -57,8 +57,6 @@ class IntegrationFlowTest extends FlatSpec with ShouldMatchers {
 //    val ldimporterOuputUrl = getClass.getClassLoader.getResource("ldif/local/resources/results.nt")
 //    val ldimporterOuputFile = new File(ldimporterOuputUrl.toString.stripPrefix("file:"))
 //
-//    // quantity check
-//    //Source.fromFile(ldifOutput).getLines.size should equal(4835)
 //    // quality check
 //    OutputValidator.compare(ldifOutput,ldimporterOuputFile) should equal (0)
 //  }
@@ -70,9 +68,9 @@ class IntegrationFlowTest extends FlatSpec with ShouldMatchers {
     new File(configUrl.toString.stripPrefix("file:"))
   }
 
-  protected def runLdif(configFile : File) = {
+  protected def runLdif(configFile : File, debugMode: Boolean = false) = {
 
-    Main.runIntegrationFlow(configFile)
+    Main.runIntegrationFlow(configFile, debugMode)
     LdifConfiguration.load(configFile).outputFile
   }
 }
