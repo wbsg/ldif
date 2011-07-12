@@ -53,12 +53,13 @@ class TDBQuadStore(tdbRoot: File, databaseRoot: File) extends QuadStoreTrait {
       return false
 
     val queries = EntityDescriptionToSparqlConverter.convert(entityDescription)
+    val graphVars = for(query <- queries) yield query._2
     val resultSets = executeAllQueries(queries)
 
-    JenaResultSetEntityBuilderHelper.buildEntitiesFromResultSet(resultSets, entityDescription, entityWriter)
+    JenaResultSetEntityBuilderHelper.buildEntitiesFromResultSet(resultSets, entityDescription, entityWriter, graphVars)
   }
 
-  private def executeAllQueries(queries: Seq[(String, String)]): Seq[ResultSet] = {
+  private def executeAllQueries(queries: Seq[(String, Seq[String])]): Seq[ResultSet] = {
     for(query <- queries) yield QueryExecutionFactory.create(query._1, dataset).execSelect
   }
 }

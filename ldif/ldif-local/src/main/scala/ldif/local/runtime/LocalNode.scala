@@ -48,5 +48,9 @@ object LocalNode
       useStringPool = true
   }
 
+  def setUseStringPool(on: Boolean) {
+    useStringPool = on
+  }
+
   private def strCan(str: String) = if(useStringPool) StringPool.getCanonicalVersion(str) else str
 }

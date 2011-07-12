@@ -12,10 +12,10 @@ import java.io._
  */
 
 class TDBLoader {
-  val k1 = "-k 1,1"
-  val k2 = "-k 2,2"
-  val k3 = "-k 3,3"
-  val k4 = "-k 4,4"
+  private val k1 = "-k 1,1"
+  private val k2 = "-k 2,2"
+  private val k3 = "-k 3,3"
+  private val k4 = "-k 4,4"
 
 
 //  def generateStatistics(rootDir: String): Unit = {
@@ -30,7 +30,7 @@ class TDBLoader {
 //    System.setOut(oldOut)
 //  }
 
-  def indexData(rootDir: String, datatriples: String, dataquads: String): Unit = {
+  private def indexData(rootDir: String, datatriples: String, dataquads: String): Unit = {
     processRows(rootDir, makeRowString(k1, k2, k3), datatriples, "SPO")
     processRows(rootDir, makeRowString(k2, k3, k1), datatriples, "POS")
     processRows(rootDir, makeRowString(k3, k1, k2), datatriples, "OSP")
@@ -42,7 +42,7 @@ class TDBLoader {
     processRows(rootDir, makeRowString(k4, k2, k3, k1), dataquads, "OSPG")
   }
 
-  def loadData(rootDir: String, datatriples: String, dataquads: String, dataFile: String): Unit = {
+  private def loadData(rootDir: String, datatriples: String, dataquads: String, dataFile: String): Unit = {
     CmdNodeTableBuilder.main("--loc=" + rootDir, "--triples=" + datatriples, "--quads=" + dataquads, dataFile)
   }
 
@@ -85,7 +85,7 @@ class TDBLoader {
     executeCommand(commandString)
   }
 
-  def processRows(rootDir: String, rowString: String, file: String, index: String) {
+  private def processRows(rootDir: String, rowString: String, file: String, index: String) {
     val keys = rowString
     val data = file
     if(new File(data).length==0)
@@ -110,7 +110,7 @@ class TDBLoader {
     new File(work).delete
   }
 
-  def executeCommand(command: String) {
+  private def executeCommand(command: String) {
     try {
       val process = Runtime.getRuntime().exec(Array[String]("/bin/sh", "-c",command));
       val in = new BufferedReader(new InputStreamReader(process.getInputStream()));
@@ -128,7 +128,7 @@ class TDBLoader {
     }
   }
 
-  def makeRowString(k: String*): String = {
+  private def makeRowString(k: String*): String = {
     val sb = new StringBuilder
 
     for(s <- k)

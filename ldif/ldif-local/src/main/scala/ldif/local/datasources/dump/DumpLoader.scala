@@ -7,6 +7,7 @@ import java.io.{BufferedInputStream, FileNotFoundException, InputStream, File}
 //import org.apache.http.{HttpEntity, HttpResponse}
 //import org.apache.http.client.methods.HttpGet
 //import ldif.local.util.HttpClientFactory
+import org.apache.tools.bzip2.CBZip2InputStream
 
 /**
  * Streams data from a given file path or URL

@@ -17,9 +17,9 @@ import scala.collection.JavaConversions._
  */
 
 object JenaResultSetEntityBuilderHelper {
-  def buildEntitiesFromResultSet(resultSets: Seq[ResultSet], entityDescription: EntityDescription, entityWriter: EntityWriter): Boolean = {
+  def buildEntitiesFromResultSet(resultSets: Seq[ResultSet], entityDescription: EntityDescription, entityWriter: EntityWriter, graphVars: Seq[Seq[String]]): Boolean = {
     val nrOfQueries = resultSets.size
-    val resultManagers = for(resultSet <- resultSets) yield new ResultSetManager(resultSet)
+    val resultManagers = for((resultSet, graphVar) <- resultSets zip graphVars) yield new ResultSetManager(resultSet, graphVar)
     var entityResults = for(rManager <- resultManagers) yield rManager.getNextEntityData
 
     while(entityResults.filter(_ != None).size > 0) {
@@ -108,7 +108,7 @@ object JenaResultSetEntityBuilderHelper {
 
   }
 
-  class ResultSetManager(resultSet: ResultSet) {
+  class ResultSetManager(resultSet: ResultSet, graphvars: Seq[String]) {
     var entity: String = null
     var entityGraph: String = null
     var factumTable = new ArrayBuffer[IndexedSeq[Node]]
@@ -119,7 +119,7 @@ object JenaResultSetEntityBuilderHelper {
       while(resultSet.hasNext) {
         val querySolution = resultSet.next
         val subj = querySolution.getResource("SUBJ").getURI
-        val graph = "test"//querySolution.getResource(graphVar).getURI
+        val graph = getAGraph(querySolution)
 
         val factumRow = getFactumRow(subj, graph, querySolution)
         if(entity!=subj && entity!=null) {
@@ -144,6 +144,14 @@ object JenaResultSetEntityBuilderHelper {
           return None
       } else
         return None
+    }
+
+    private def getAGraph(querySolution: QuerySolution): String = {
+      for(graphVar <- graphvars) {
+        if(querySolution.get(graphVar)!=null)
+          return querySolution.get(graphVar).asResource.getURI
+      }
+      throw new RuntimeException("Cannot happen. There will always be at least one SUBJ graph.")
     }
   }
 

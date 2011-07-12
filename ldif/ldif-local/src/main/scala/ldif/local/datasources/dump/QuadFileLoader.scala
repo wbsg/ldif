@@ -1,11 +1,12 @@
 package ldif.local.datasources.dump
 
-import ldif.local.runtime.{QuadWriter, Quad}
 import java.util.logging.Logger
 import scala.collection.mutable.{ArrayBuffer, Map}
 import scala.Predef._
 import java.io.{File, BufferedReader}
 import java.io.FileReader
+import ldif.local.util.StringPool
+import ldif.local.runtime.{LocalNode, QuadWriter, Quad}
 
 /**
  * Created by IntelliJ IDEA.
@@ -80,5 +81,15 @@ class QuadFileLoader(graphURI: String) {
     }
     if(foundParseError)
       throw new RuntimeException("Found errors while parsing NT/NQ file. Found " + nrOfErrors + " parse errors. See log file for more details.")
+  }
+}
+
+object Main {
+  def main(args: Array[String]) {
+    LocalNode.setUseStringPool(false)
+    val start = System.currentTimeMillis
+    val reader = new BufferedReader(new FileReader("/home/andreas/cordis_dump.nt"))
+    new QuadFileLoader("test").validateQuads(reader)
+    println("Time in seconds: " + (System.currentTimeMillis-start)/1000.0)
   }
 }

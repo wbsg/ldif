@@ -15,6 +15,9 @@ class NTriplesStringConverter
 object NTriplesStringConverter {
 
   def convertFromEscapedString(value: String): String = {
+    if(value.indexOf('\\') == -1)
+      return value
+
     val sb = new java.lang.StringBuilder
 
     // iterate over code points (http://blogs.sun.com/darcy/entry/iterating_over_codepoints)
@@ -29,6 +32,7 @@ object NTriplesStringConverter {
       else {
         offset += 1
         val specialChar = value.charAt(offset)
+
         specialChar match {
           case '"' => sb append '"'
           case 't' => sb append '\t'
