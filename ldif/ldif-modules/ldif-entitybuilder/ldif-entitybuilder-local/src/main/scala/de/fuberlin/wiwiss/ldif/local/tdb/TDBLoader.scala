@@ -46,10 +46,10 @@ class TDBLoader {
     CmdNodeTableBuilder.main("--loc=" + rootDir, "--triples=" + datatriples, "--quads=" + dataquads, dataFile)
   }
 
-  def createNewTDBDatabase(tdbRoot: String, databaseRoot: String, datasetFile: String) {
+  def createNewTDBDatabase(databaseRoot: String, datasetFile: String) {
     val time1 = System.currentTimeMillis
-    val dataTriples = tdbRoot + "/data-triples.tmp"
-    val dataQuads = tdbRoot + "/data-quads.tmp"
+    val dataTriples = databaseRoot + "/data-triples.tmp"
+    val dataQuads = databaseRoot + "/data-quads.tmp"
     val dataFile = datasetFile
     val dt = new File(dataTriples)
     val dq = new File(dataQuads)
@@ -63,7 +63,7 @@ class TDBLoader {
 
     println("-- TDB Bulk Loader Start")
     println("-- Data phase")
-    cleanTarget(tdbRoot, databaseRoot)
+    cleanTarget(databaseRoot)
 
     loadData(databaseRoot, dataTriples, dataQuads, dataFile)
 
@@ -80,9 +80,15 @@ class TDBLoader {
     dq.delete
   }
 
-  def cleanTarget(tdbRoot: String, databaseRoot: String) {
-    val commandString = tdbRoot + "/bin/tdbclean " + databaseRoot
-    executeCommand(commandString)
+  /**
+   * Remove all files from databaseRoot directory
+   */
+  def cleanTarget(databaseRoot: String) {
+    val databaseDir = new File(databaseRoot)
+    if(!databaseDir.isDirectory)
+      throw new IllegalArgumentException(databaseDir.getAbsolutePath + " is no directory!")
+    for(file <- databaseDir.listFiles)
+      file.delete
   }
 
   private def processRows(rootDir: String, rowString: String, file: String, index: String) {

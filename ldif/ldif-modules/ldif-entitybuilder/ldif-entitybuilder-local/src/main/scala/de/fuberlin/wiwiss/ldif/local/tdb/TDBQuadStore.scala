@@ -16,7 +16,7 @@ import de.fuberlin.wiwiss.ldif.local.{JenaResultSetEntityBuilderHelper, EntityLo
  * To change this template use File | Settings | File Templates.
  */
 
-class TDBQuadStore(tdbRoot: File, databaseRoot: File) extends QuadStoreTrait {
+class TDBQuadStore(databaseRoot: File) extends QuadStoreTrait {
   private var storeStarted = false
   private var dataset: Dataset = null
 
@@ -25,12 +25,12 @@ class TDBQuadStore(tdbRoot: File, databaseRoot: File) extends QuadStoreTrait {
   def loadDataset(datasetFile: File) {
     val loader = new TDBLoader
 
-    loader.createNewTDBDatabase(tdbRoot.getCanonicalPath, tempDatabaseDir.getCanonicalPath, datasetFile.getCanonicalPath)
+    loader.createNewTDBDatabase(tempDatabaseDir.getCanonicalPath, datasetFile.getCanonicalPath)
     startStore
   }
 
-  def this(tdbRoot: String, databaseRoot: String) {
-    this(new File(tdbRoot), new File(databaseRoot))
+  def this(databaseRoot: String) {
+    this(new File(databaseRoot))
   }
 
   private def startStore = {
@@ -42,7 +42,7 @@ class TDBQuadStore(tdbRoot: File, databaseRoot: File) extends QuadStoreTrait {
     storeStarted = false
     dataset = null
     val loader = new TDBLoader
-    loader.cleanTarget(tdbRoot.getCanonicalPath, tempDatabaseDir.getCanonicalPath)
+    loader.cleanTarget(tempDatabaseDir.getCanonicalPath)
   }
 
   /**

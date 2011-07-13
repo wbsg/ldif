@@ -61,7 +61,7 @@ object Main
      // Validate configuration
     val fail = ConfigValidator.validateConfiguration(config)
     if(fail) {
-      println("!- Validation phase fails")
+      println("-- Validation phase fails")
       exit(1)
     } else {
       println("-- Validation phase succeeded in " + stopWatch.getTimeSpanInSeconds + "s")

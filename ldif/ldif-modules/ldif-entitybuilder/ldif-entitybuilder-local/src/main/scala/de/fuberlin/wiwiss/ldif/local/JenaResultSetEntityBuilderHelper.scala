@@ -7,6 +7,7 @@ import collection.mutable.ArrayBuffer
 import com.hp.hpl.jena.query.{QuerySolution, ResultSet}
 import com.hp.hpl.jena.rdf.model.RDFNode
 import scala.collection.JavaConversions._
+import runtime.Char
 
 /**
  * Created by IntelliJ IDEA.
@@ -65,12 +66,12 @@ object JenaResultSetEntityBuilderHelper {
     }
   }
 
-  def getFactumRow(entity: String, entityGraph: String, resultSet: QuerySolution): IndexedSeq[Node] = {
+  def getFactumRow(entity: String, entityGraph: String, resultSet: QuerySolution, nrOfSUBJGraphVars: Int): IndexedSeq[Node] = {
     val resultVarBaseName = EntityDescriptionToSparqlConverter.resultVarBaseName
     val row = new ArrayBuffer[Node]
     var nrOfVars: Int = 0
-    for(v <- resultSet.varNames) nrOfVars += 1
-    nrOfVars = (nrOfVars-1) >> 1
+    for(v <- resultSet.varNames) if(v.startsWith(resultVarBaseName) &&  v.substring(resultVarBaseName.length).forall(Character.isDigit(_))) nrOfVars += 1
+
     if(nrOfVars==0)
       row.append(Node.createUriNode(entity, entityGraph))
     for(index <- 1 to nrOfVars) {
@@ -121,7 +122,7 @@ object JenaResultSetEntityBuilderHelper {
         val subj = querySolution.getResource("SUBJ").getURI
         val graph = getAGraph(querySolution)
 
-        val factumRow = getFactumRow(subj, graph, querySolution)
+        val factumRow = getFactumRow(subj, graph, querySolution, graphvars.size)
         if(entity!=subj && entity!=null) {
           returnEntityData = EntityData(entity, entityGraph, factumTable)
           factumTable = new ArrayBuffer[IndexedSeq[Node]]

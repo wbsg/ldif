@@ -27,10 +27,7 @@ object EntityBuilderFactory {
   private def createQuadStore(quadStoreType: String, configParameters: ConfigParameters, databaseLocation: String): QuadStoreTrait = {
     quadStoreType match {
       case "tdb" => {
-        val tdbRoot = configParameters.configProperties.getPropertyValue("tdbRoot", null)
-        if (tdbRoot == null)
-          throw new RuntimeException("tdbRoot property not specified!")
-        new TDBQuadStore(tdbRoot, databaseLocation)
+        new TDBQuadStore(databaseLocation)
       }
       case _ => throw new RuntimeException("Unknown quad store type: " + quadStoreType)
     }
