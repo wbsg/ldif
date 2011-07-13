@@ -299,7 +299,7 @@ genes and other expressions that are described in multiple datasets.</p>
 <p>To run the example, please download LDIF and use the following LDIF
 configuration. The configuration options are explained in the Section <a href="#config">Configuration</a> below. <br>
     </p>
-<ul><pre>&lt;LDIF&gt;<br>  &lt;Properties&gt;test1k.properties&lt;/Properties&gt;<br>  &lt;Sources&gt;sources&lt;/Sources&gt;<br>  &lt;LinkSpecifications&gt;linkSpecs&lt;/LinkSpecifications&gt;<br>  &lt;Mappings&gt;mappings/ALL-to-Wiki.r2r.ttl&lt;/Mappings&gt;<br>  &lt;Output&gt;output1.nq&lt;/Output&gt;<br>&lt;/LDIF&gt;</pre>
+<ul><pre>&lt;LDIF&gt;<br>  &lt;Properties&gt;test1k.properties&lt;/Properties&gt;<br>  &lt;Sources&gt;sources&lt;/Sources&gt;<br>  &lt;LinkSpecifications&gt;linkSpecs&lt;/LinkSpecifications&gt;<br>  &lt;Mappings&gt;mappings&lt;/Mappings&gt;<br>  &lt;Output&gt;output1.nq&lt;/Output&gt;<br>&lt;/LDIF&gt;</pre>
     </ul>
 <p>Execution
       instructions:</p>
@@ -455,19 +455,19 @@ that will change in future releases. <br>
 A typical config file looks like
 this:<br>
 </p>
-<pre>&lt;LDIF&gt;<br>  &lt;Properties&gt;test1.properties&lt;/Properties&gt;<br>  &lt;Sources&gt;sources&lt;/Sources&gt;<br>  &lt;LinkSpecifications&gt;linkSpecs&lt;/LinkSpecifications&gt;<br>  &lt;Mappings&gt;mappings/mappings.ttl&lt;/Mappings&gt;<br>  &lt;Output&gt;output.nq&lt;/Output&gt;<br>&lt;/LDIF&gt;</pre>
+<pre>&lt;LDIF&gt;<br>  &lt;Properties&gt;test1.properties&lt;/Properties&gt;<br>  &lt;Sources&gt;sources&lt;/Sources&gt;<br>  &lt;LinkSpecifications&gt;linkSpecs&lt;/LinkSpecifications&gt;<br>  &lt;Mappings&gt;mappings&lt;/Mappings&gt;<br>  &lt;Output&gt;output.nq&lt;/Output&gt;<br>&lt;/LDIF&gt;</pre>
 <p>It has the following elements:</p>
 <ul>
   <li><span style="font-style: italic;">Properties</span>: The path to
 a Java properties file for configuration parameters.</li>
   <li><span style="font-style: italic;">Sources</span>: A directory
 containing the source data sets.  These files in this directory must be in <a href="http://sw.deri.org/2008/07/n-quads/">N-Quads</a> format and may
-be compressed (.gz, .zip).</li>
+be compressed (.gz, .zip or .bz2).</li>
   <li><span style="font-style: italic;">LinkSpecifications</span>: A
 directory containing the <a href="http://www.assembla.com/wiki/show/silk/Link_Specification_Language">Silk
 link specifications</a>.</li>
-  <li><span style="font-style: italic;">Mappings</span>: A File
-containing <a href="http://www4.wiwiss.fu-berlin.de/bizer/r2r/spec/#mappings">R2R
+  <li><span style="font-style: italic;">Mappings</span>: A directory
+containing the <a href="http://www4.wiwiss.fu-berlin.de/bizer/r2r/spec/#mappings">R2R
 mappings</a>.</li>
   <li><span style="font-style: italic;">Output</span>: The name of the file to which the
 output should be written.<br>
