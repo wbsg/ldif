@@ -21,7 +21,7 @@ object LdifConfiguration
     val sourceSet = new HashSet[String]
     // local source directories
     for (sourceDir <- (xml \ "Sources" ).toSeq) {
-      val file = new File(sourceDir.text)
+      val file = new File(baseDir + "/" + sourceDir.text)
       if(file.isDirectory)
         sourceSet ++= new File(baseDir + "/" + sourceDir.text).listFiles.map(_.getCanonicalPath)
       else
