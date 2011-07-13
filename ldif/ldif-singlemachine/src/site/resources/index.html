@@ -3,6 +3,7 @@
 
 
 
+
   
 
   
@@ -223,9 +224,9 @@ memory within one of our <a href="#performance">experiments</a>. </p>
 <h3><a name="nextSteps"></a>Next steps for LDIF</h3>
 <p>LDIF V0.1 only provides data translation and identity resolution
 functionality. Over the next months, we plan to extend LDIF along the
-following lines:</p>
-<ol>
-  <li>Implement a <span style="font-weight: bold;">Quad/Triple Store backed version of the Runtime Environment</span> that will be able to integrate datasets that are too large for the in-memory solution.</li>
+following lines:<br>
+</p><ol>
+  
   <li>Implement a <strong>Hadoop Version of the Runtime Environment </strong>in
 order to be able to scale to really large amounts of input data.
 Processes and data will be distributed over a cluster of machines.</li>
@@ -504,9 +505,51 @@ from this graph are only written to the final output dataset, but are
  processed any further in the integration workflow. Default graph name: <span style="font-family: monospace;">http://www4.wiwiss.fu-berlin.de/ldif/provenance</span></p>
   </li>
 </ul>
-<pre style="margin-left: 40px;"><span style="font-weight: bold;">provenanceGraphURI = http://www4.wiwiss.fu-berlin.de/ldif/provenance</span><br></pre><br>
+<pre style="margin-left: 40px;"><span style="font-weight: bold;">provenanceGraphURI = http://www4.wiwiss.fu-berlin.de/ldif/provenance</span><br></pre>
+<ul>
+<li>
+    <p>Specify the storage solution used in the background. At
+this moment there are two options, a fast in-memory solution, which is
+limited by the available memory, and the second one is based on a RDF
+quad store. Default:  <span style="font-family: monospace;">in-memory</span></p>
+  </li>
+</ul>
+
+<pre style="margin-left: 40px;"><span style="font-weight: bold;">entityBuilderType = in-memory | quad-store</span></pre>
+
+<ul>
+<li>
+    <p>If you have specified <span style="font-style: italic;">quad-store</span>
+for the storage solution, you can also specify which concrete
+implementation to use. At this moment there is only one option to pick
+from. Default:  <span style="font-family: monospace;">tdb</span></p>
+  </li>
+</ul>
+
+
+<pre style="margin-left: 40px;"><span style="font-weight: bold;">quadStoreType = tdb</span></pre>
+
+<ul>
+<li>
+    <p>Source datasets, R2R mappings and Silk link specifications
+are all validated before starting with the actual integration. Since
+the syntax validation of the sources (N-Triples / N-Quads files) can
+take a long time, if you already know that they are correct, it is
+possible to disable this step by setting the property to <span style="font-family: monospace;">false</span>. Default:&nbsp;<span style="font-family: monospace;">true</span> <span style="font-family: monospace;"></span></p>
+  </li>
+</ul>
+
+
+
+<pre style="margin-left: 40px;"><span style="font-weight: bold;">validateSources = true | false</span></pre>
+
+
+<h2 id="development"><br>
+</h2>
+
 <h2 id="development"><a name="code"></a>7. Source
 Code and Development</h2>
+
 <br>
 <p>The latest source code is available from the <a href="http://www.assembla.com/spaces/ldif/wiki">LDIF development page</a> on Assembla.com.</p>
 <p>The framework can be used under the terms of the <a href="http://www.apache.org/licenses/LICENSE-2.0">Apache Software

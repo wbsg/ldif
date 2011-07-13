@@ -22,7 +22,7 @@ object ConfigValidator {
       if(r2rMappingsErrors._1!="Ok")
         fail = true
       validateSilkLinkSpecs(config.linkSpecDir)
-      if(configProperties.getPropertyValue("validate", "true").toLowerCase=="false") {
+      if(configProperties.getPropertyValue("validateSources", "true").toLowerCase=="false") {
         println("-- Validation of source datasets disabled")
         if(fail)
           logErrors(r2rMappingsErrors, null)
