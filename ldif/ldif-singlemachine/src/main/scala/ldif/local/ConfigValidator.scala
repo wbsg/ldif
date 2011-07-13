@@ -3,10 +3,10 @@ package ldif.local
 import datasources.dump.DumpLoader
 import de.fuberlin.wiwiss.r2r.{FileOrURISource, Repository}
 import scala.collection.mutable.{Map, HashMap}
-import java.io.{IOException, BufferedReader, InputStreamReader, File}
 import ldif.local.datasources.dump.QuadFileLoader
 import collection.JavaConversions
 import java.util.logging.Logger
+import java.io._
 
 object ConfigValidator {
   val okMessage = "Ok"
