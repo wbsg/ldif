@@ -2,10 +2,6 @@
   <Properties>test2.properties</Properties>
   <Sources>sources</Sources>
   <LinkSpecifications>linkSpecs</LinkSpecifications>
-  <!--Mappings>mappings/ABA-to-Wiki.r2r.ttl</Mappings-->
-  <!--Mappings>mappings/KEGG-GENES-to-Wiki.r2r.ttl</Mappings-->
-  <!--Mappings>mappings/PharmGKB-to-Wiki.r2r.ttl</Mappings-->
-  <!--Mappings>mappings/Uniprot-to-Wiki.r2r.ttl</Mappings-->
-  <Mappings>mappings/ALL-to-Wiki.r2r.ttl</Mappings>
+  <Mappings>mappings</Mappings>
   <Output>output</Output>
 </LDIF>

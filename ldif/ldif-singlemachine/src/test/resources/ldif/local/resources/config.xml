@@ -2,6 +2,6 @@
   <Properties>test.properties</Properties>
   <Sources>sources</Sources>
   <LinkSpecifications>linkSpecs</LinkSpecifications>
-  <Mappings>mappings/mappings.ttl</Mappings>
+  <Mappings>mappings</Mappings>
   <Output>output.nq</Output>
 </LDIF>
