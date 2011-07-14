@@ -21,7 +21,7 @@ object LocalNode
 
   def createUriNode(value : String, graph : String) = new Node(strCan(value), null, Node.UriNode, strCan(graph))
 
-  def fromNxNode(nxNode : org.semanticweb.yars.nx.Node, graph : String) = {
+  def fromNxNode(nxNode : org.semanticweb.yars.nx.Node, graph : String = null) = {
     nxNode match {
       case lit:org.semanticweb.yars.nx.Literal => {
         val dt = lit.getDatatype

@@ -1,8 +1,8 @@
 package ldif.datasources.crawl
 
 import ldif.module.ModuleConfig
-import java.net.URL
+import java.net.URI
 
-case class CrawlConfig (seeds : Traversable[URL]) extends ModuleConfig
+case class CrawlConfig (seeds : Traversable[URI]) extends ModuleConfig
 
 

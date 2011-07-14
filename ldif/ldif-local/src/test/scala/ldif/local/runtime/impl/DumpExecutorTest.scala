@@ -10,6 +10,8 @@ import ldif.datasources.dump.{DumpModule, DumpConfig}
 @RunWith(classOf[JUnitRunner])
 class DumpExecutorTest extends FlatSpec with ShouldMatchers {
 
+  val sourceUrl = "http://www.assembla.com/code/ldif/git/node/blob/ldif/ldif-singlemachine/src/test/resources/ldif/local/resources/sources/aba.nq.bz2"
+
   val executor = new DumpExecutor
   val qq = new QuadQueue
 
@@ -19,7 +21,7 @@ class DumpExecutorTest extends FlatSpec with ShouldMatchers {
   }
 
   private lazy val task = {
-    val config = new DumpConfig(Traversable("http://www.assembla.com/code/ldif/git/node/blob/ldif/ldif-singlemachine/src/test/resources/ldif/local/resources/sources/aba.nq.bz2"))
+    val config = new DumpConfig(Traversable(sourceUrl))
     val module = new DumpModule(config)
     module.tasks.head
   }
