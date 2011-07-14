@@ -14,10 +14,9 @@ import org.apache.tools.bzip2.CBZip2InputStream
  */
 
 @throws(classOf[IOException])
-class DecompressingStream(inputStream:InputStream, fileName:String) extends InputStream{
+class DecompressingStream(inputStream:InputStream, fileName:String) {
 
   val compressionType = detectCompressionType(inputStream, fileName)
-  var wrappedStream = getWrappedStream(inputStream, compressionType)
 
   object CompressionType extends Enumeration {
     val DEFLATE, GZIP, BZIP2 = Value
@@ -38,10 +37,11 @@ class DecompressingStream(inputStream:InputStream, fileName:String) extends Inpu
 
   // -- methods --
 
+  def getStream = getWrappedStream(inputStream, compressionType)
+
   private def detectCompressionType(inputStream:InputStream, fileName:String) = {
     detectByContentExtension(fileName).orElse(detectByMagicByte(inputStream))
   }
-
 
   private def detectByContentExtension(fileName:String) = {
     var result:Option[CompressionType.Value] = None
@@ -88,9 +88,6 @@ class DecompressingStream(inputStream:InputStream, fileName:String) extends Inpu
       }
     }
 
-  @throws(classOf[IOException])
-  override def read =	wrappedStream.read
-
   // -- constructors --
 
   @throws(classOf[IOException])
@@ -121,7 +118,6 @@ class DecompressingStream(inputStream:InputStream, fileName:String) extends Inpu
   //
   //		wrappedStream = getWrappedStream(inputStream, compressionType)
   //	}
-
 
   // private def detectByEncoding(contentEncoding:String) = encodingToCompressionType.get(contentEncoding)
 

@@ -7,7 +7,6 @@ import java.io.{BufferedInputStream, FileNotFoundException, InputStream, File}
 //import org.apache.http.{HttpEntity, HttpResponse}
 //import org.apache.http.client.methods.HttpGet
 //import ldif.local.util.HttpClientFactory
-import org.apache.tools.bzip2.CBZip2InputStream
 
 /**
  * Streams data from a given file path or URL
@@ -68,7 +67,7 @@ class DumpLoader(sourceLocation:String) {
     var inputStream:InputStream = null
 
     try {
-      inputStream = new DecompressingStream(file)
+      inputStream = new DecompressingStream(file).getStream
     } catch {
       case e:FileNotFoundException => {
         log.warning(file.getCanonicalPath + " vanished: " + e.getMessage)
@@ -83,7 +82,7 @@ class DumpLoader(sourceLocation:String) {
     var inputStream:InputStream = null
 
     try  {
-      inputStream = new DecompressingStream(url)
+      inputStream = new DecompressingStream(url).getStream
     } catch {
       case e:Exception => {
         log.warning(url + " did not provide any data")
