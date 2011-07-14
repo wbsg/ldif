@@ -37,8 +37,10 @@ class CrawlExecutorTest extends FlatSpec with ShouldMatchers {
   private def contains(qr : QuadReader, quads : Traversable[Quad]) =  {
     val isContained = new Array[Boolean](quads.size)
     while(qr.hasNext) {
+      val quad = qr.read
+      //println(quad.toString)
       for ((q,i) <- quads.toSeq.zipWithIndex)
-        if (qr.read.equals(q))
+        if (quad.equals(q))
           isContained(i) = true
     }
     isContained.filter(x => !x).isEmpty

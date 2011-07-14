@@ -37,9 +37,8 @@ class CrawlLoader(seed : URI) {
       }
     }
 
-    val includeProvenance = true
     val callback = new CallbackQuadQueue(quadWriter)
-    val sink = new SinkCallback(callback,includeProvenance)
+    val sink = new SinkCallback(callback)
 
     //    if (!predicates.isEmpty()) {
     //      List<Node> predicateList = new ArrayList<Node>()

@@ -25,3 +25,25 @@ Index: src/com/ontologycentral/ldspider/hooks/links/LinkFilterDefault.java
  				}
  			} catch (URISyntaxException e) {
  				try {
+Index: src/com/ontologycentral/ldspider/CrawlerConstants.java
+===================================================================
+--- src/com/ontologycentral/ldspider/CrawlerConstants.java	(revision 281)
++++ src/com/ontologycentral/ldspider/CrawlerConstants.java	(working copy)
+@@ -31,7 +31,7 @@
+ 
+ 	public static final int MAX_CONNECTIONS_PER_THREAD = 32;
+ 	
+-	public static final int RETRIES = 0;
++	public static final int RETRIES = 3;
+ 
+ 	public static final int MAX_REDIRECTS = 1;
+ 
+@@ -41,7 +41,7 @@
+ 	public static final int DEFAULT_NB_URIS = Integer.MAX_VALUE;
+ 	
+ 	// avoid hammering plds
+-	public static final long MIN_DELAY = 2*1000;
++	public static final long MIN_DELAY = 2*100;
+ 	// for bfs queue: max time after plds get re-visited
+ 	public static final long MAX_DELAY = 2*MIN_DELAY;
+ 	
