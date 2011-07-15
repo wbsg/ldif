@@ -14,7 +14,7 @@ class IntegrationFlowTest extends FlatSpec with ShouldMatchers {
   it should "run the whole integration flow correctly" in {
     // Run LDIF
     val configFile = loadConfig("ldif/local/resources/config.xml")
-    val ldifOutput = runLdif(configFile)
+    val ldifOutput = runLdif(configFile, true)
 
     // Load results to compare with
     val ldimporterOuputUrl = getClass.getClassLoader.getResource("ldif/local/resources/results.nt")
