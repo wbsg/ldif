@@ -181,15 +181,17 @@ object Main
     println("Time needed to load dump and build entities for mapping phase: " + stopWatch.getTimeSpanInSeconds + "s")
     //println("Number of triples after loading the dump: " + (quadReaders.foldLeft(0)(_ + _.totalSize)))
 
-    val outputQueue = new QuadQueue
+    val outputFile = File.createTempFile("ldif-mapped-quads", ".bin")
+    outputFile.deleteOnExit
+    val writer = new FileQuadWriter(outputFile)
 
     //runInBackground
     {
       for((r2rTask, reader) <- module.tasks.toList zip entityReaders)
-        executor.execute(r2rTask, Seq(reader), outputQueue)
+        executor.execute(r2rTask, Seq(reader), writer)
     }
-
-    outputQueue
+    writer.finish
+    new FileQuadReader(outputFile)
   }
 
   /**

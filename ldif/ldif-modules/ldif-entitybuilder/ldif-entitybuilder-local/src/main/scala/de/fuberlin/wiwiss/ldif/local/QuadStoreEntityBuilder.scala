@@ -65,6 +65,7 @@ class QuadStoreEntityBuilder(store: QuadStoreTrait, entityDescriptions : Seq[Ent
     }
     writer.flush
     writer.close
+    log.info("Created filtered quad file at " + tempFile.getCanonicalPath + " in " + (now - startTime)/1000.0 + "s")
 
     return tempFile
   }

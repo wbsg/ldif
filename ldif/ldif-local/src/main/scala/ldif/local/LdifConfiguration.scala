@@ -21,7 +21,12 @@ object LdifConfiguration
     val sourceSet = new HashSet[String]
     // local source directories
     for (sourceDir <- (xml \ "Sources" ).toSeq) {
-      val file = new File(baseDir + "/" + sourceDir.text)
+      var file: File = null
+      if(isAbsolutePath(sourceDir.text))
+        file = new File(sourceDir.text)
+      else
+        file = new File(baseDir + "/" + sourceDir.text)
+
       if(file.isDirectory)
         sourceSet ++= new File(baseDir + "/" + sourceDir.text).listFiles.map(_.getCanonicalPath)
       else
@@ -39,5 +44,9 @@ object LdifConfiguration
       outputFile = new File(xml \ "Output" text),
       propertiesFile = propertyFile
     )
+  }
+
+  def isAbsolutePath(path: String): Boolean = {
+    return (new File(path)).isAbsolute
   }
 }

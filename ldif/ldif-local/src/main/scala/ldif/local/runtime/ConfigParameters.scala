@@ -29,4 +29,5 @@ class ConfigProperties  {
   def getPropertyValue(property: String, default: String): String = {
     default
   }
+
 }
