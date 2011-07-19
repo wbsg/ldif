@@ -6,12 +6,12 @@ import ldif.util.Uri
 import ldif.entity.Restriction._
 import collection.mutable.{ArraySeq, ArrayBuffer, HashMap, Set, HashSet}
 import actors.{Future, Futures}
-import ldif.local.util.Const
 import java.util.ArrayList
 import java.util.List
 import java.util.Collections
 import scala.collection.JavaConversions._
 import ldif.local.runtime._
+import ldif.local.util.{StringPool, Const}
 
 class EntityBuilder (entityDescriptions : IndexedSeq[EntityDescription], readers : Seq[QuadReader], config: ConfigParameters) extends FactumBuilder with EntityBuilderTrait {
   private val nrOfQuadsPerSort = 500000
@@ -92,18 +92,21 @@ class EntityBuilder (entityDescriptions : IndexedSeq[EntityDescription], readers
         if(saveQuads)
           saveQuadsForLater(quad)
 
-        val prop = new Uri(quad.predicate).toString
-
-        if(isRelevantQuad(quad))
+        if(isRelevantQuad(quad))  {
           addUriNodes(quad)
 
-        val v = PHT.get(prop)
+          val prop = new Uri(StringPool.getCanonicalVersion(quad.predicate)).toString
+          val subj = LocalNode.intern(quad.subject)
+          val obj = LocalNode.intern(quad.value)
 
-        if (v == Some(PropertyType.FORW) || v == Some(PropertyType.BOTH))  {
-          FHT.put(Pair(quad.subject, prop), quad.value)
-        }
-        if (v == Some(PropertyType.BACK) || v == Some(PropertyType.BOTH))  {
-          BHT.put(Pair(quad.value, prop), quad.subject)
+          val v = PHT.get(prop)
+
+          if (v == Some(PropertyType.FORW) || v == Some(PropertyType.BOTH))  {
+            FHT.put(Pair(subj, prop), obj)
+          }
+          if (v == Some(PropertyType.BACK) || v == Some(PropertyType.BOTH))  {
+            BHT.put(Pair(obj, prop), subj)
+          }
         }
       }
     }
@@ -513,3 +516,4 @@ class PropertyHashTable(entityDescriptions: Seq[EntityDescription]) {
 object PropertyType extends Enumeration {
   val FORW, BACK, BOTH = Value
 }
+

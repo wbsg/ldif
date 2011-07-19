@@ -2,9 +2,7 @@ package ldif.local.datasources.dump
 
 import ldif.datasources.dump.DumpTask
 import ldif.module.Executor
-import org.semanticweb.yars.nx.parser.NxParser
 import ldif.local.runtime._
-import ldif.local.util.StringPool
 import java.io.{BufferedReader, InputStreamReader}
 
 /**
@@ -40,15 +38,6 @@ class DumpExecutor() extends Executor
 
     val quadParser = new QuadFileLoader(task.name)
     quadParser.readQuads(bufferedReader, writer)
-//    val nxp:NxParser = new NxParser(inputStream)
-//    while (nxp.hasNext) {
-//      val ns:Array[org.semanticweb.yars.nx.Node] = nxp.next
-//      val graph = StringPool.getCanonicalVersion(task.name)
-//      val subj = LocalNode.fromNxNode(ns(0),graph)
-//      val prop = StringPool.getCanonicalVersion(ns(1).toString)
-//      val obj = LocalNode.fromNxNode(ns(2),graph)
-//      writer.write(new Quad(subj,prop,obj,graph))
-//    }
     
     writer.finish
   }

@@ -7,7 +7,6 @@ import ldif.entity._
 import java.util.concurrent.atomic.AtomicInteger
 import java.io.{CharConversionException, FileReader, BufferedReader}
 import ldif.util.NTriplesStringConverter
-import ldif.local.util.StringPool
 
 
 /**
@@ -46,21 +45,21 @@ class QuadFileParser(val graphURI: String) extends JavaTokenParsers {
 
   def graph = uriref
 
-  def uriref = "<" ~ absoluteUri ~ ">" ^^ { case "<"~uri~">" => LocalNode.createUriNode(uri, null)}
+  def uriref = "<" ~ absoluteUri ~ ">" ^^ { case "<"~uri~">" => Node.createUriNode(uri, null)}
 
-  def namedNode = "_:" ~ name ^^ { case "_:"~name => LocalNode.createBlankNode(name, null)
+  def namedNode = "_:" ~ name ^^ { case "_:"~name => Node.createBlankNode(name, null)
 
   }
 
   def lit = langString | datatypeString
 
   def langString = "\"" ~ characterString ~ "\"" ~ opt("@" ~ language) ^^ {
-    case "\"" ~ characters ~ "\"" ~ Some("@" ~ language) => LocalNode.createLanguageLiteral(characters, language, null)
-    case "\"" ~ characters ~ "\"" ~ None => LocalNode.createLiteral(characters, null)
+    case "\"" ~ characters ~ "\"" ~ Some("@" ~ language) => Node.createLanguageLiteral(characters, language, null)
+    case "\"" ~ characters ~ "\"" ~ None => Node.createLiteral(characters, null)
   }
 
   def datatypeString = "\"" ~ characterString ~ "\"^^" ~ uriref ^^ {
-    case "\"" ~ characters ~ "\"^^" ~ uri => LocalNode.createTypedLiteral(characters, uri.value, null)
+    case "\"" ~ characters ~ "\"^^" ~ uri => Node.createTypedLiteral(characters, uri.value, null)
   }
 
   val language = "[a-z]+(-[a-z0-9]+)*".r

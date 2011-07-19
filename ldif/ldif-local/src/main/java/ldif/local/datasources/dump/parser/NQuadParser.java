@@ -2,15 +2,14 @@
 
   package ldif.local.datasources.dump.parser;
   
-  import ldif.local.runtime.LocalNode;
+
+  import ldif.entity.Node;
   import ldif.local.runtime.Quad;
   import ldif.util.NTriplesStringConverter;
-  import java.io.Reader;
   import java.util.Vector;
 
 
 import org.antlr.runtime.*;
-import java.util.Stack;
 import java.util.List;
 import java.util.ArrayList;
 
@@ -88,11 +87,11 @@ public class NQuadParser extends Parser {
       
       private ldif.entity.Node createNode(Vector<String> node, String graph) {
         ldif.entity.Node ldifNode = null;
-        if(node.get(0)==LITERAL)        return LocalNode.createLiteral(node.get(1), graph);
-        else if(node.get(0)==DTLITERAL) return LocalNode.createTypedLiteral(node.get(1), node.get(2), graph);
-        else if(node.get(0)==LTLITERAL) return LocalNode.createLanguageLiteral(node.get(1), node.get(2), graph);
-        else if(node.get(0)==URINODE)   return LocalNode.createUriNode(node.get(1), graph);
-        else if(node.get(0)==BLANKNODE) return LocalNode.createBlankNode(node.get(1), graph);
+        if(node.get(0)==LITERAL)        return Node.createLiteral(node.get(1), graph);
+        else if(node.get(0)==DTLITERAL) return Node.createTypedLiteral(node.get(1), node.get(2), graph);
+        else if(node.get(0)==LTLITERAL) return Node.createLanguageLiteral(node.get(1), node.get(2), graph);
+        else if(node.get(0)==URINODE)   return Node.createUriNode(node.get(1), graph);
+        else if(node.get(0)==BLANKNODE) return Node.createBlankNode(node.get(1), graph);
         return ldifNode;
       }
 
