@@ -19,25 +19,33 @@ object ConfigValidator {
 
     try {
       val r2rMappingsErrors = validateMappingFile(config.mappingFile)
+      var sourceFileErrors : Map[String, Seq[Pair[Int, String]]] = null
       if(r2rMappingsErrors._1!="Ok")
         fail = true
       validateSilkLinkSpecs(config.linkSpecDir)
-      if(configProperties.getPropertyValue("validateSources", "true").toLowerCase=="false") {
+
+      val sourceValidation = configProperties.getPropertyValue("validateSources")
+      if(sourceValidation!=null && sourceValidation.toLowerCase=="false") {
         println("-- Validation of source datasets disabled")
-        if(fail)
-          logErrors(r2rMappingsErrors, null)
-        return fail
       }
-      val sourceFileErrors = validateSourceFiles(config.sources)
-      for (err <- sourceFileErrors)   {
-        if(err._2.size > 0)
-          fail = true
+      else {
+        // Sources validation (by default) is enable for local sources and disable for remote ones
+        if(sourceValidation!=null && sourceValidation.toLowerCase=="true")
+          sourceFileErrors = validateSourceFiles(config.sources)
+        else
+          sourceFileErrors = validateSourceFiles(config.getLocalSources)
+
+        for (err <- sourceFileErrors) {
+          if(err._2.size > 0)
+            fail = true
+        }
       }
       logErrors(r2rMappingsErrors, sourceFileErrors)
     } catch {
       case e: Exception => throw new RuntimeException("Unknown Error occured while validating configuration: " + e.getMessage, e)
     }
-    return fail
+
+    fail
   }
 
   def logErrors(r2rMappingErrors: (String, Map[String, String]), sourceFileErrors: Map[String, Seq[Pair[Int, String]]]) {

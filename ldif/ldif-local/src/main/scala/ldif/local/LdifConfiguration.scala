@@ -3,8 +3,14 @@ package ldif.local
 import java.io.File
 import xml.XML
 import collection.mutable.HashSet
+import java.net.URL
 
 case class LdifConfiguration(sources : Traversable[String], linkSpecDir : File, mappingFile : File, outputFile : File, propertiesFile: File)
+{
+  def getLocalSources : Traversable[String] = {
+    sources.filterNot(LdifConfiguration.isRemoteSource(_))
+  }
+}
 
 object LdifConfiguration
 {
@@ -33,9 +39,9 @@ object LdifConfiguration
         sourceSet += file.getCanonicalPath
     }
 
-    // remote sources
-    for (sourceUrl <- (xml \ "RemoteSources" \ "Source" ).toSeq)
-      sourceSet += sourceUrl.text
+    // local/remote single sources
+    for (sourcePath <- (xml \ "Source" ).toSeq)
+      sourceSet += sourcePath.text
 
     LdifConfiguration(
       sources = sourceSet,
@@ -49,4 +55,18 @@ object LdifConfiguration
   def isAbsolutePath(path: String): Boolean = {
     return (new File(path)).isAbsolute
   }
+
+  def isRemoteSource(sourceLocation: String): Boolean = {
+    try {
+      val url = new URL(sourceLocation)
+      if (url != null && !url.getProtocol.toLowerCase.equals("file"))
+        true
+      else false
+    } catch {
+      case e:Exception => {
+        false
+      }
+    }
+  }
+
 }

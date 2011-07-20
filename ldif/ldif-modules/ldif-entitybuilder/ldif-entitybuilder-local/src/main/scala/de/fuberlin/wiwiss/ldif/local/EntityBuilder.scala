@@ -95,7 +95,7 @@ class EntityBuilder (entityDescriptions : IndexedSeq[EntityDescription], readers
         if(isRelevantQuad(quad))  {
           addUriNodes(quad)
 
-          val prop = new Uri(StringPool.getCanonicalVersion(quad.predicate)).toString
+          val prop = StringPool.getCanonicalVersion(quad.predicate)
           val subj = LocalNode.intern(quad.subject)
           val obj = LocalNode.intern(quad.value)
 
