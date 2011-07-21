@@ -34,6 +34,7 @@ class TDBLoader {
     processRows(rootDir, makeRowString(k1, k2, k3), datatriples, "SPO")
     processRows(rootDir, makeRowString(k2, k3, k1), datatriples, "POS")
     processRows(rootDir, makeRowString(k3, k1, k2), datatriples, "OSP")
+// The following indexes will never be used in out queries
 //    processRows(rootDir, makeRowString(k1, k2, k3, k4), dataquads, "GSPO")
 //    processRows(rootDir, makeRowString(k1, k3, k4, k2), dataquads, "GPOS")
 //    processRows(rootDir, makeRowString(k1, k4, k2, k3), dataquads, "GOSP")
@@ -101,7 +102,7 @@ class TDBLoader {
     val work = rootDir + "/" + idx + "-txt"
     new File(work).createNewFile
 
-    val sortString = "sort " + keys + " < " + data + " > " + work
+    val sortString = "sort -u " + keys + " < " + data + " > " + work
 
     println("Index " + idx)
     val returnCode = executeCommand(sortString)
