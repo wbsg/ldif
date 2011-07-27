@@ -11,7 +11,8 @@
    <modules>
     <module>ldif-entitybuilder-common</module>
     <module>ldif-entitybuilder-local</module>
-  </modules>
+       <module>ldif-entitybuilder-mapreduce</module>
+   </modules>
 
 	<artifactId>ldif-entitybuilder</artifactId>
 	<packaging>pom</packaging>

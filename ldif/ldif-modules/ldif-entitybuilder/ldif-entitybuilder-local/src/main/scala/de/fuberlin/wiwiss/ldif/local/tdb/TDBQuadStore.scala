@@ -5,8 +5,8 @@ import ldif.local.runtime.EntityWriter
 import com.hp.hpl.jena.tdb.TDBFactory
 import ldif.util.EntityDescriptionToSparqlConverter
 import ldif.entity.{Node, EntityDescription}
-import com.hp.hpl.jena.query.{ResultSet, QueryExecutionFactory, Dataset}
 import de.fuberlin.wiwiss.ldif.local.{JenaResultSetEntityBuilderHelper, EntityLocalComplete, QuadStoreTrait}
+import com.hp.hpl.jena.query.{QueryExecution, ResultSet, QueryExecutionFactory, Dataset}
 
 /**
  * Created by IntelliJ IDEA.
@@ -53,13 +53,24 @@ class TDBQuadStore(databaseRoot: File) extends QuadStoreTrait {
       return false
 
     val queries = EntityDescriptionToSparqlConverter.convert(entityDescription)
+    var success = false
     val graphVars = for(query <- queries) yield query._2
-    val resultSets = executeAllQueries(queries)
+    val queryExecutions = getQueryExecutions(queries)
+    try {
+      val resultSets = executeAllQueries(queryExecutions)
 
-    JenaResultSetEntityBuilderHelper.buildEntitiesFromResultSet(resultSets, entityDescription, entityWriter, graphVars)
+      success = JenaResultSetEntityBuilderHelper.buildEntitiesFromResultSet(resultSets, entityDescription, entityWriter, graphVars)
+    } finally {
+      queryExecutions.map(_.close)
+    }
+    return success
   }
 
-  private def executeAllQueries(queries: Seq[(String, Seq[String])]): Seq[ResultSet] = {
-    for(query <- queries) yield QueryExecutionFactory.create(query._1, dataset).execSelect
+  private def getQueryExecutions(queries: Seq[(String, Seq[String])]): Seq[QueryExecution] = {
+    for(query <- queries) yield QueryExecutionFactory.create(query._1, dataset)
+  }
+
+  private def executeAllQueries(queryExecutions: Seq[QueryExecution]): Seq[ResultSet] = {
+    for(queryExecution <- queryExecutions) yield queryExecution.execSelect
   }
 }

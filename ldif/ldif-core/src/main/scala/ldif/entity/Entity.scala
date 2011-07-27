@@ -1,6 +1,6 @@
 package ldif.entity
 
-trait Entity
+@serializable trait Entity
 {
   def uri : String
 

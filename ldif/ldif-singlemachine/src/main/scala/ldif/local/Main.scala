@@ -71,19 +71,19 @@ object Main
 
     val quadReaders = loadDump(config.sources)
 
-    val r2rReader: QuadReader = executeMappingPhase(config, quadReaders)
+    var r2rReader: QuadReader = executeMappingPhase(config, quadReaders)
 
     if(debugMode==true)
-      writeDebugOutput("r2r", config.outputFile, r2rReader)
+      r2rReader = writeDebugOutput("r2r", config.outputFile, r2rReader)
 
     var clonedR2rReader = r2rReader
     if(clonedR2rReader.isInstanceOf[QuadQueue])//TODO: Redesign QuadReader interface to be generally clonable
       clonedR2rReader = cloneQuadQueue(clonedR2rReader.asInstanceOf[QuadQueue])
 
-    val linkReader: QuadReader = executeLinkingPhase(config, r2rReader)
+    var linkReader: QuadReader = executeLinkingPhase(config, r2rReader)
 
     if(debugMode==true)
-      writeDebugOutput("silk", config.outputFile, linkReader)
+      linkReader = writeDebugOutput("silk", config.outputFile, linkReader)
 
     configParameters.otherQuadsWriter.finish
     val otherQuadsReader = new FileQuadReader(otherQuadsFile)
@@ -224,7 +224,21 @@ object Main
    */
   private def buildEntities(readers : Seq[QuadReader], entityDescriptions : Seq[EntityDescription], configParameters: ConfigParameters) : Seq[EntityReader] =
   {
+    var entityWriters: Seq[EntityWriter] = null
     val entityQueues = entityDescriptions.map(new EntityQueue(_))
+    val fileEntityQueues = for(eD <- entityDescriptions) yield {
+      val file = File.createTempFile("ldif_entities", ".dat")
+      file.deleteOnExit
+      new FileEntityWriter(eD, file)                     ;
+    }
+
+    val inmemory = configParameters.configProperties.getPropertyValue("entityBuilderType", "in-memory")=="in-memory"
+
+    //Because of memory problems circumvent with FileQuadQueue */
+    if(inmemory)
+      entityWriters = entityQueues
+    else
+      entityWriters = fileEntityQueues
 
     try
     {
@@ -233,7 +247,7 @@ object Main
       val entityBuilderTask = entityBuilderModule.tasks.head
       val entityBuilderExecutor = new EntityBuilderExecutor(configParameters)
 
-      entityBuilderExecutor.execute(entityBuilderTask, readers, entityQueues)
+      entityBuilderExecutor.execute(entityBuilderTask, readers, entityWriters)
     } catch {
       case e: Throwable => {
         e.printStackTrace
@@ -241,7 +255,11 @@ object Main
       }
     }
 
-    entityQueues
+    if(inmemory)
+      return entityQueues
+    else
+      return fileEntityQueues.map((entityWriter) => new FileEntityReader(entityWriter.entityDescription, entityWriter.inputFile))
+
   }
 
   /**
@@ -276,18 +294,29 @@ object Main
     println(count + " Quads written")
   }
 
-  private def writeDebugOutput(phase: String, outputFile: File, reader: QuadReader) {
-    if(reader.isInstanceOf[QuadQueue] && !reader.isInstanceOf[BlockingQuadQueue]) {
-      val newOutputFile = new File(outputFile.getAbsolutePath + "." + phase)
-      val clonedReader = cloneQuadQueue(reader.asInstanceOf[QuadQueue])
-      if(clonedReader!=null)
-        writeOutput(newOutputFile, clonedReader)
-    }
+  private def writeDebugOutput(phase: String, outputFile: File, reader: QuadReader): QuadReader = {
+    val newOutputFile = new File(outputFile.getAbsolutePath + "." + phase)
+    return copyAndDumpQuadQueue(reader, newOutputFile.getAbsolutePath)
   }
 
   // Only clone QuadQueue implementation of QuadReader
   def cloneQuadQueue(queue: QuadQueue): QuadReader = {
       queue.clone
+  }
+
+  def copyAndDumpQuadQueue(quadQueue: QuadReader, outputFile: String): QuadReader = {
+    val quadOutput = File.createTempFile("ldif-debug-quads", ".bin")
+    quadOutput.deleteOnExit
+    val writer = new FileQuadWriter(quadOutput)
+    val quadWriter = new BufferedWriter(new FileWriter(new File(outputFile)))
+    while(quadQueue.hasNext) {
+      val next = quadQueue.read
+      quadWriter.write(next.toNQuadFormat)
+      quadWriter.write(" .\n")
+      writer.write(next)
+    }
+    writer.finish
+    return new FileQuadReader(writer.outputFile)
   }
 }
 

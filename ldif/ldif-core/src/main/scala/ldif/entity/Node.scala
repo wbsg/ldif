@@ -194,4 +194,10 @@ object Node
   case object BlankNode extends NodeType { val id = 4}
 
   case object UriNode extends NodeType { val id = 5}
+
+  case object NodeTypeMap {
+    val map = Map(1 -> Literal, 2 -> TypedLiteral, 3 -> LanguageLiteral, 4 -> BlankNode, 5 -> UriNode)
+
+    def apply(index: Int) = map(index)
+  }
 }
