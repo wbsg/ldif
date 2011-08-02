@@ -10,4 +10,5 @@ import ldif.entity.{Path, EntityDescription}
  * To change this template use File | Settings | File Templates.
  */
 
-case class PathInfo(entityDescription: EntityDescription, patternIndex: Int, pathIndex: Int, path: Path, isRestrictionPath: Boolean)
+case class PathInfo(entityDescriptionIndex: Int, patternIndex: Int, pathIndex: Int, path: Path, isRestrictionPath: Boolean)
+
