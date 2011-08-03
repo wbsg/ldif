@@ -80,11 +80,7 @@
           <artifactId>ldif-local</artifactId>
           <version>${ldif.version}</version>
         </dependency>
-        <dependency>
-            <groupId>r2rApi</groupId>
-            <artifactId>r2rApi</artifactId>
-            <version>0.2.3-SNAPSHOT</version>
-        </dependency>
+
 
 	</dependencies>
 
