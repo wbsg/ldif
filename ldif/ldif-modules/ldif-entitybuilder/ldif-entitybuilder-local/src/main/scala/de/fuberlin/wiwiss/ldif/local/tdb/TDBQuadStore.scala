@@ -58,9 +58,10 @@ class TDBQuadStore(databaseRoot: File) extends QuadStoreTrait {
     val queryExecutions = getQueryExecutions(queries)
     try {
       val resultSets = executeAllQueries(queryExecutions)
-
+      println("ResultSets: " + resultSets.size) //TODO REMOVE
       success = JenaResultSetEntityBuilderHelper.buildEntitiesFromResultSet(resultSets, entityDescription, entityWriter, graphVars)
     } finally {
+      println("THIS IS RUN")//TODO REMOVE
       queryExecutions.map(_.close)
     }
     return success

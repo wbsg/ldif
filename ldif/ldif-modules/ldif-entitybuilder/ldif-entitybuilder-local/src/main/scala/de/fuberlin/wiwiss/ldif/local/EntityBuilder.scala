@@ -83,6 +83,7 @@ class EntityBuilder (entityDescriptions : IndexedSeq[EntityDescription], readers
     FHT.clear
     BHT.clear
     val startTime = now
+    var counter = 0
 
     // Round robin over reader
     while (readers.foldLeft(false)((a, b) => a || b.hasNext)){
@@ -94,6 +95,7 @@ class EntityBuilder (entityDescriptions : IndexedSeq[EntityDescription], readers
 
         if(isRelevantQuad(quad))  {
           addUriNodes(quad)
+          counter += 1
 
           val prop = StringPool.getCanonicalVersion(quad.predicate)
           val subj = LocalNode.intern(quad.subject)
@@ -110,6 +112,8 @@ class EntityBuilder (entityDescriptions : IndexedSeq[EntityDescription], readers
         }
       }
     }
+
+    println("-- EntityBuilder: " + counter + " quads loaded into the entity builder.")
 
     //log.info("Read in Quads took " + ((now - startTime)) + " ms")
     //log.info(" [ FHT ] \n > keySet = ("+FHT.keySet.size.toString+")")

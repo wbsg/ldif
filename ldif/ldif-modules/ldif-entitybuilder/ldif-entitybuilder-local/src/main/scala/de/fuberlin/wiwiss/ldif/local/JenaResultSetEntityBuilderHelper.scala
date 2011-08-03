@@ -23,15 +23,23 @@ object JenaResultSetEntityBuilderHelper {
     val resultManagers = for((resultSet, graphVar) <- resultSets zip graphVars) yield new ResultSetManager(resultSet, graphVar)
     var entityResults = for(rManager <- resultManagers) yield rManager.getNextEntityData
 
-    while(entityResults.filter(_ != None).size > 0) {
-      val entity = ResultSetManager.pickSmallestEntity(entityResults)
-      val graph = getGraph(entity, entityResults)
-      val factumTable = initFactumTable(nrOfQueries)
-      assignResultsForEntity(entity, entityResults, factumTable)
-      entityResults = updateEntityResults(entity, entityResults, resultManagers)
-
-      entityWriter.write(EntityLocalComplete(entity, graph, entityDescription, factumTable))
+    for(resultSet <-resultSets) {//TODO: REMOVE
+      var counter = 0
+      while(resultSet.hasNext) {
+        resultSet.next
+        counter += 1
+      }
+      println("ResultSet size: " + counter)
     }
+//    while(entityResults.filter(_ != None).size > 0) {
+//      val entity = ResultSetManager.pickSmallestEntity(entityResults)
+//      val graph = getGraph(entity, entityResults)
+//      val factumTable = initFactumTable(nrOfQueries)
+//      assignResultsForEntity(entity, entityResults, factumTable)
+//      entityResults = updateEntityResults(entity, entityResults, resultManagers)
+//
+//      entityWriter.write(EntityLocalComplete(entity, graph, entityDescription, factumTable))
+//    }
 
     entityWriter.finish
     return true

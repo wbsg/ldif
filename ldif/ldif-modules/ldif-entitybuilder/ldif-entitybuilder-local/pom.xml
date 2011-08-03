@@ -24,6 +24,7 @@
           <artifactId>ldif-local</artifactId>
           <version>${ldif.version}</version>
         </dependency>
-	</dependencies>  
+
+	</dependencies>
 
 </project>

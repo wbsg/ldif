@@ -75,16 +75,16 @@ object URITranslator {
   private def createEntityCluster(linkReader: QuadReader): Map[String, EntityCluster] = {
     val entityToClusterMap = new HashMap[String, EntityCluster]()
 
-    val overAllCount = linkReader.size
+//    val overAllCount = linkReader.size
     var counter = 0
     var percentCounter = 1
 
     while (!linkReader.isEmpty) {
       counter += 1
-      if(10*counter/overAllCount > percentCounter/10) {
-        log.info("URITranslator: Links read: " + percentCounter + "%")
-        percentCounter = 100*counter/overAllCount
-      }
+//      if(10*counter/overAllCount > percentCounter/10) {
+//        log.info("URITranslator: Links read: " + percentCounter + "%")
+//        percentCounter = 100*counter/overAllCount
+//      }
       val (entity1, entity2) = extractEntityStrings(linkReader.read)
       val clusterOfEntity1 = entityToClusterMap.get(entity1)
       val clusterOfEntity2 = entityToClusterMap.get(entity2)
