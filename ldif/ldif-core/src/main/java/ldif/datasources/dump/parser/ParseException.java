@@ -1,4 +1,4 @@
-package ldif.local.datasources.dump.parser;
+package ldif.datasources.dump.parser;
 
 /**
  * Created by IntelliJ IDEA.

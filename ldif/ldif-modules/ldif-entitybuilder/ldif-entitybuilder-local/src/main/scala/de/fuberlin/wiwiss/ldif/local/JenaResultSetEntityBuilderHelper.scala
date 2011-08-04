@@ -31,15 +31,15 @@ object JenaResultSetEntityBuilderHelper {
       }
       println("ResultSet size: " + counter)
     }
-//    while(entityResults.filter(_ != None).size > 0) {
-//      val entity = ResultSetManager.pickSmallestEntity(entityResults)
-//      val graph = getGraph(entity, entityResults)
-//      val factumTable = initFactumTable(nrOfQueries)
-//      assignResultsForEntity(entity, entityResults, factumTable)
-//      entityResults = updateEntityResults(entity, entityResults, resultManagers)
-//
-//      entityWriter.write(EntityLocalComplete(entity, graph, entityDescription, factumTable))
-//    }
+    while(entityResults.filter(_ != None).size > 0) {
+      val entity = ResultSetManager.pickSmallestEntity(entityResults)
+      val graph = getGraph(entity, entityResults)
+      val factumTable = initFactumTable(nrOfQueries)
+      assignResultsForEntity(entity, entityResults, factumTable)
+      entityResults = updateEntityResults(entity, entityResults, resultManagers)
+
+      entityWriter.write(EntityLocalComplete(entity, graph, entityDescription, factumTable))
+    }
 
     entityWriter.finish
     return true

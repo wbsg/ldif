@@ -1,20 +1,19 @@
-package ldif.local.datasources.dump
+package ldif.datasources.dump
 
-import org.antlr.runtime.ANTLRStringStream;
-import org.antlr.runtime.CommonTokenStream;
-import ldif.datasources.dump.parser.{NQuadParser, NQuadLexer}
+import java.util.logging.Logger
 import ldif.local.runtime.Quad
-;
+import org.antlr.runtime.{CommonTokenStream, ANTLRStringStream}
+import parser.{NQuadParser, NQuadLexer}
 
 /**
  * Created by IntelliJ IDEA.
- * User: andreas
- * Date: 10.06.11
- * Time: 16:31
+ * User: andrea
+ * Date: 8/4/11
+ * Time: 6:18 PM
  * To change this template use File | Settings | File Templates.
  */
 
-class QuadParser(val graphURI: String) {
+class QuadParser(graphURI: String) {
   def this() {
     this("default")
   }

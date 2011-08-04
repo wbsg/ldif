@@ -1,12 +1,8 @@
 // $ANTLR 3.2 Sep 23, 2009 12:02:23 /home/andreas/workspace/ANTLRTester/antlr-files/NQuad.g 2011-06-14 15:14:27
 
-  package ldif.local.datasources.dump.parser;
-
+package ldif.datasources.dump.parser;
 
 import org.antlr.runtime.*;
-import java.util.Stack;
-import java.util.List;
-import java.util.ArrayList;
 
 public class NQuadLexer extends Lexer {
     public static final int URI_CHARS=14;

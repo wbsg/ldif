@@ -10,19 +10,20 @@ import ldif.entity.{BackwardOperator, ForwardOperator}
 class EntityDescriptionMetaDataExtractor {
   var pathCounter = new AtomicInteger(0)
   // propertyMap stores information of (pathID, phaseNr)
-  var propertyMap = new HashMap[String, MSeq[Pair[Int, Int]]]()
+  var propertyMap = new HashMap[String, ArrayBuffer[PropertyInfo]]()
   var pathMap = new HashMap[Int, PathInfo]()
 
   def extract(entityDescriptions: Seq[EntityDescription]): EntityDescriptionMetadata = {
     pathCounter = new AtomicInteger(0)
-    propertyMap = new HashMap[String, MSeq[Pair[Int, Int]]]()
+    propertyMap = new HashMap[String, ArrayBuffer[PropertyInfo]]()
     pathMap = new HashMap[Int, PathInfo]()
 
     for((entityDescription, index) <- entityDescriptions zipWithIndex) {
       extractEntityDescriptionMetaData(entityDescription, index)
     }
 
-    EntityDescriptionMetadata(entityDescriptions, pathMap.clone.toMap, propertyMap.clone.toMap)
+    val entityDescriptionMap = for((ed, index) <- entityDescriptions.zipWithIndex) yield (ed, index)
+    EntityDescriptionMetadata(entityDescriptions.toIndexedSeq, pathMap.clone.toMap, propertyMap.clone.toMap, entityDescriptionMap.toMap)
   }
 
   private def extractEntityDescriptionMetaData(entityDescription: EntityDescription, entityDescriptionIndex : Int) {
@@ -71,10 +72,12 @@ class EntityDescriptionMetaDataExtractor {
   }
 
   private def addPropertyInfo(property: String, pathId: Int, phase: Int, isForward : Boolean) {
-    // TODO do we really need the phase here?
+    // TODO add join direction
 
-    val propertyInfoList = propertyMap.getOrElseUpdate(property, new ArrayBuffer[Pair[Int,Int]])
-//    propertyInfoList + (pathId, phase)
+    val propertyInfoList: ArrayBuffer[PropertyInfo] = propertyMap.getOrElseUpdate(property, new ArrayBuffer[PropertyInfo])
+    propertyInfoList.append(PropertyInfo(pathId, phase, isForward))
   }
 
 }
+
+case class PropertyInfo(pathId: Int, phase: Int, isForward: Boolean)
