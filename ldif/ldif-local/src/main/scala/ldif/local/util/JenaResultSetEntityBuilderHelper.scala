@@ -1,4 +1,4 @@
-package de.fuberlin.wiwiss.ldif.local
+   package ldif.local.util
 
 import ldif.local.runtime.EntityWriter
 import ldif.util.EntityDescriptionToSparqlConverter
@@ -7,36 +7,48 @@ import collection.mutable.ArrayBuffer
 import com.hp.hpl.jena.query.{QuerySolution, ResultSet}
 import com.hp.hpl.jena.rdf.model.RDFNode
 import scala.collection.JavaConversions._
-import runtime.Char
 
-/**
- * Created by IntelliJ IDEA.
- * User: andreas
- * Date: 11.07.11
- * Time: 17:53
- * To change this template use File | Settings | File Templates.
+/*  There are two scenarios:
+ *   1) ResultSets contain graph vars
+ *   2) ResultSets does not contain graphs vars
  */
 
+   //TODO refactor
+
 object JenaResultSetEntityBuilderHelper {
+
+  // (1)
   def buildEntitiesFromResultSet(resultSets: Seq[ResultSet], entityDescription: EntityDescription, entityWriter: EntityWriter, graphVars: Seq[Seq[String]]): Boolean = {
     val nrOfQueries = resultSets.size
     val resultManagers = for((resultSet, graphVar) <- resultSets zip graphVars) yield new ResultSetManager(resultSet, graphVar)
     var entityResults = for(rManager <- resultManagers) yield rManager.getNextEntityData
 
-    for(resultSet <-resultSets) {//TODO: REMOVE
-      var counter = 0
-      while(resultSet.hasNext) {
-        resultSet.next
-        counter += 1
-      }
-      println("ResultSet size: " + counter)
-    }
     while(entityResults.filter(_ != None).size > 0) {
       val entity = ResultSetManager.pickSmallestEntity(entityResults)
       val graph = getGraph(entity, entityResults)
       val factumTable = initFactumTable(nrOfQueries)
       assignResultsForEntity(entity, entityResults, factumTable)
       entityResults = updateEntityResults(entity, entityResults, resultManagers)
+
+      entityWriter.write(EntityLocalComplete(entity, graph, entityDescription, factumTable))
+    }
+
+    entityWriter.finish
+    return true
+  }
+
+  // (2)
+  def buildEntitiesFromResultSet(resultSets: Seq[ResultSet], entityDescription: EntityDescription, entityWriter: EntityWriter, graph: String): Boolean = {
+    val nrOfQueries = resultSets.size
+    val resultManagers = for((resultSet) <- resultSets) yield new ResultSetManager(resultSet, Nil)
+    var entityResults = for(rManager <- resultManagers) yield rManager.getNextEntityData(graph)
+
+    while(entityResults.filter(_ != None).size > 0) {
+      val entity = ResultSetManager.pickSmallestEntity(entityResults)
+      //val graph = getGraph(entity, entityResults)
+      val factumTable = initFactumTable(nrOfQueries)
+      assignResultsForEntity(entity, entityResults, factumTable)
+      entityResults = updateEntityResults(entity, entityResults, resultManagers, graph)
 
       entityWriter.write(EntityLocalComplete(entity, graph, entityDescription, factumTable))
     }
@@ -65,10 +77,15 @@ object JenaResultSetEntityBuilderHelper {
     throw new RuntimeException("This should not happen ;)")
   }
 
-  private def updateEntityResults(entityURI: String, entityResults: Seq[Option[EntityData]], resultManagers: Seq[ResultSetManager]): Seq[Option[EntityData]] = {
+  private def updateEntityResults(entityURI: String, entityResults: Seq[Option[EntityData]], resultManagers: Seq[ResultSetManager], graph : String = null): Seq[Option[EntityData]] = {
     return for((entityResult, resultManager) <- entityResults zip resultManagers) yield {
       if(entityResult!=None && entityResult.get.entityURI==entityURI)
-        resultManager.getNextEntityData
+        if (graph != null)
+          // (2)
+          resultManager.getNextEntityData(graph)
+        else
+          // (1)
+          resultManager.getNextEntityData
       else
         entityResult
     }
@@ -86,6 +103,23 @@ object JenaResultSetEntityBuilderHelper {
       val node = resultSet.get(resultVarBaseName + index)
       val graph = resultSet.get(resultVarBaseName + index + "graph")
       row.append(convertNode(node, graph))
+    }
+
+    return row
+  }
+
+  // (2)
+  def getFactumRow(entity: String, entityGraph: String, resultSet: QuerySolution): IndexedSeq[Node] = {
+    val resultVarBaseName = EntityDescriptionToSparqlConverter.resultVarBaseName
+    val row = new ArrayBuffer[Node]
+    var nrOfVars: Int = 0
+    for(v <- resultSet.varNames) if(v.startsWith(resultVarBaseName) &&  v.substring(resultVarBaseName.length).forall(Character.isDigit(_))) nrOfVars += 1
+
+    if(nrOfVars==0)
+      row.append(Node.createUriNode(entity, entityGraph))
+    for(index <- 1 to nrOfVars) {
+      val node = resultSet.get(resultVarBaseName + index)
+      row.append(convertNode(node, entityGraph))
     }
 
     return row
@@ -117,7 +151,19 @@ object JenaResultSetEntityBuilderHelper {
 
   }
 
-  class ResultSetManager(resultSet: ResultSet, graphvars: Seq[String]) {
+  def convertNode(node: RDFNode, graphURI: String): Node = {
+    if(node.isURIResource) {
+      return Node.createUriNode(node.asResource.getURI, graphURI)
+    } else if(node.isLiteral) {
+      return convertLiteralNode(node, graphURI)
+    } else if(node.isAnon) {
+      return Node.createBlankNode(node.asResource.getId.getLabelString, graphURI)
+    } else
+      throw new RuntimeException("Unknown node type for RDFNode: " + node) // Should never be the case
+
+  }
+
+  class ResultSetManager(resultSet: ResultSet, graphvars : Seq[String]) {
     var entity: String = null
     var entityGraph: String = null
     var factumTable = new ArrayBuffer[IndexedSeq[Node]]
@@ -161,6 +207,38 @@ object JenaResultSetEntityBuilderHelper {
           return querySolution.get(graphVar).asResource.getURI
       }
       throw new RuntimeException("Cannot happen. There will always be at least one SUBJ graph.")
+    }
+
+    // (2)
+    def getNextEntityData(graph: String): Option[EntityData] = {
+      var returnEntityData: EntityData = null
+
+      while(resultSet.hasNext) {
+        val querySolution = resultSet.next
+        val subj = querySolution.getResource("SUBJ").getURI
+
+        val factumRow = getFactumRow(subj, graph, querySolution)
+        if(entity!=subj && entity!=null) {
+          returnEntityData = EntityData(entity, graph, factumTable)
+          factumTable = new ArrayBuffer[IndexedSeq[Node]]
+        }
+        entity=subj
+        factumTable.append(factumRow)
+        if(returnEntityData != null) {
+          return Some(returnEntityData)
+        }
+      }
+
+      if(entity!=null) {
+        if(factumTable.size>0) {
+          returnEntityData = EntityData(entity, graph, factumTable)
+          factumTable = new ArrayBuffer[IndexedSeq[Node]]
+          return Some(returnEntityData)
+        }
+        else
+          return None
+      } else
+        return None
     }
   }
 

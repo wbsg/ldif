@@ -1,0 +1,12 @@
+<EntityDescription>
+  <Restriction>
+    <Condition path="?a/rdf:type">
+      <Uri>http://chem2bio2rdf.org/pharmgkb/resource/PharmGKB_Genes</Uri>
+    </Condition>
+  </Restriction>
+  <Patterns>
+    <Pattern>
+      <Path>?a/pharmGKB:Ensembl_Id</Path>
+    </Pattern>
+  </Patterns>
+</EntityDescription>

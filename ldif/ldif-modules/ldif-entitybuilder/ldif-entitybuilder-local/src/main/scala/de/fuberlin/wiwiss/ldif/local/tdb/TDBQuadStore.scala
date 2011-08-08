@@ -4,9 +4,10 @@ import java.io.File
 import ldif.local.runtime.EntityWriter
 import com.hp.hpl.jena.tdb.TDBFactory
 import ldif.util.EntityDescriptionToSparqlConverter
-import ldif.entity.{Node, EntityDescription}
-import de.fuberlin.wiwiss.ldif.local.{JenaResultSetEntityBuilderHelper, EntityLocalComplete, QuadStoreTrait}
+import ldif.entity.EntityDescription
+import de.fuberlin.wiwiss.ldif.local. QuadStoreTrait
 import com.hp.hpl.jena.query.{QueryExecution, ResultSet, QueryExecutionFactory, Dataset}
+import ldif.local.util.JenaResultSetEntityBuilderHelper
 
 /**
  * Created by IntelliJ IDEA.
@@ -52,7 +53,7 @@ class TDBQuadStore(databaseRoot: File) extends QuadStoreTrait {
     if(!storeStarted)
       return false
 
-    val queries = EntityDescriptionToSparqlConverter.convert(entityDescription)
+    val queries = EntityDescriptionToSparqlConverter.convert(entityDescription,false)
     var success = false
     val graphVars = for(query <- queries) yield query._2
     val queryExecutions = getQueryExecutions(queries)
