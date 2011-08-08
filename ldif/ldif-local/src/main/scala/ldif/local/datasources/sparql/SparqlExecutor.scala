@@ -7,7 +7,7 @@ import ldif.datasources.sparql.SparqlTask
 /**
  * Executor for the sparql data access module.
  */
-class SparqlExecutor() extends Executor
+class SparqlExecutor extends Executor
 {
   type TaskType = SparqlTask
   type InputFormat = NoDataFormat

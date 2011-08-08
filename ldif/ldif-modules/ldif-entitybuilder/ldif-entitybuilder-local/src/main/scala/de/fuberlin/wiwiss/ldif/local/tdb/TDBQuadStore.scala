@@ -53,7 +53,7 @@ class TDBQuadStore(databaseRoot: File) extends QuadStoreTrait {
     if(!storeStarted)
       return false
 
-    val queries = EntityDescriptionToSparqlConverter.convert(entityDescription,false)
+    val queries = EntityDescriptionToSparqlConverter.convert(entityDescription)
     var success = false
     val graphVars = for(query <- queries) yield query._2
     val queryExecutions = getQueryExecutions(queries)

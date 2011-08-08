@@ -8,7 +8,7 @@ import java.io.{BufferedReader, InputStreamReader}
 /**
  * Executor for the dump data source.
  */
-class DumpExecutor() extends Executor
+class DumpExecutor extends Executor
 {
   type TaskType = DumpTask
   type InputFormat = NoDataFormat
