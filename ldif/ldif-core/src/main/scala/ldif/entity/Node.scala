@@ -5,7 +5,7 @@ import org.semanticweb.yars.nx.parser.NxParser
 import ldif.util.NTriplesStringConverter
 import java.util.Comparator
 
-final case class Node protected(val value : String, datatypeOrLanguage : String, val nodeType : Node.NodeType, val graph : String) //extends Ordered[Node]
+final case class Node(value : String, datatypeOrLanguage : String, nodeType : Node.NodeType, graph : String) //extends Ordered[Node]
 {
   def datatype = nodeType match
   {
@@ -35,7 +35,7 @@ final case class Node protected(val value : String, datatypeOrLanguage : String,
   }
 
   def modifyGraph(graph: String): Node = {
-    new Node(this.value, this.datatypeOrLanguage, this.nodeType, graph)
+    Node(this.value, this.datatypeOrLanguage, this.nodeType, graph)
   }
 
   override def equals(other: Any): Boolean = {
@@ -60,13 +60,13 @@ final case class Node protected(val value : String, datatypeOrLanguage : String,
   }
 
   override def hashCode: Int = {
-    var hash: Int = 1
-    hash = hash * 31 + value.hashCode
-    hash = hash * 31 + (if (datatypeOrLanguage == null) 0 else datatypeOrLanguage.hashCode)
-    hash = hash * 31 + nodeType.hashCode
-    if(nodeType==BlankNode)
-      hash = hash * 31 + graph.hashCode
-    hash
+//    var hash: Int = 1
+    return value.hashCode
+//    hash = hash * 31 + (if (datatypeOrLanguage == null) 0 else datatypeOrLanguage.hashCode)
+//    hash = hash * 31 + nodeType.hashCode
+//    if(nodeType==BlankNode)
+//      hash = hash * 31 + graph.hashCode
+//    hash
   }
 
   def toXML =  nodeType match {
@@ -127,15 +127,15 @@ object Node
 {
   val defaultGraph : String = Consts.DEFAULT_GRAPH
 
-  def createLiteral(value : String, graph : String = null) = new Node(value, null, Literal, graph)
+  def createLiteral(value : String, graph : String = null) = Node(value, null, Literal, graph)
 
-  def createTypedLiteral(value : String, datatype : String, graph : String = null) = new Node(value, datatype, TypedLiteral, graph)
+  def createTypedLiteral(value : String, datatype : String, graph : String = null) = Node(value, datatype, TypedLiteral, graph)
 
-  def createLanguageLiteral(value : String, language : String, graph : String = null) = new Node(value, language, LanguageLiteral, graph)
+  def createLanguageLiteral(value : String, language : String, graph : String = null) = Node(value, language, LanguageLiteral, graph)
 
-  def createBlankNode(value : String, graph : String) = new Node(value, null, BlankNode, graph)
+  def createBlankNode(value : String, graph : String) = Node(value, null, BlankNode, graph)
 
-  def createUriNode(value : String, graph : String = null) = new Node(value, null, UriNode, graph)
+  def createUriNode(value : String, graph : String = null) = Node(value, null, UriNode, graph)
 
   def fromString(value : String, graph : String) = {
     val nxNode = NxParser.parseNode(value)
