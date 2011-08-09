@@ -8,9 +8,9 @@ import de.fuberlin.wiwiss.silk.impl.DefaultImplementations
 /**
  * Silk Module.
  */
-class SilkModule(val config : SilkConfig) extends Module
+class SilkModule(val config : SilkModuleConfig) extends Module
 {
-  type ConfigType = SilkConfig
+  type ConfigType = SilkModuleConfig
 
   type TaskType = SilkTask
 
@@ -26,7 +26,7 @@ object SilkModule
   {
     DefaultImplementations.register()
 
-    new SilkModule(new SilkConfig(loadConfig(file)))
+    new SilkModule(new SilkModuleConfig(loadConfig(file)))
   }
 
   private def loadConfig(file : File) : Configuration =
