@@ -6,12 +6,9 @@ import de.fuberlin.wiwiss.silk.instance.{InstanceSpecification, Instance}
 /**
  * A Silk instance which can be viewed as a LDIF entity.
  */
-class LdifInstance(val entity : Entity, instanceSpec : InstanceSpecification) extends Instance(entity.uri, IndexedSeq.empty, instanceSpec)
+class LdifInstance(val entity : Entity, instanceSpec : InstanceSpecification)
+    extends Instance(entity.uri, IndexedSeq.fill(instanceSpec.paths.size)(i => entity.factums(i).map(_.last.value).toSet), instanceSpec)
 {
-  override def evaluate(pathIndex : Int) : Set[String] =
-  {
-    entity.factums(pathIndex).map(_.last.value).toSet
-  }
 }
 
 object LdifInstance
