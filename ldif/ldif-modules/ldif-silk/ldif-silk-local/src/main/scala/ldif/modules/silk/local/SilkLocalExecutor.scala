@@ -58,7 +58,7 @@ class SilkLocalExecutor extends Executor
     def blockingFunction(instance : Instance) = linkSpec.condition.index(instance, linkSpec.filter.threshold).map(_ % blocking.map(_.blocks).getOrElse(1))
 
     val loadTask = new LoadTask(sources, caches, instanceSpecs, if(blocking.isDefined) Some(blockingFunction _) else None)
-    val loader = loadTask.runInBackground()
+    val loader = loadTask()//TODO: for profiling
 
     //Execute matching
     val matchTask = new MatchTask(linkSpec, caches, numThreads, true)

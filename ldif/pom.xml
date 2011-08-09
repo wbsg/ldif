@@ -7,8 +7,8 @@
 
   <properties>
     <ldif.version>0.1</ldif.version>
-    <scala.version>2.8.1</scala.version>
-    <scala.plugin.version>2.14.3</scala.plugin.version>
+    <scala.version>2.9.0-1</scala.version>
+    <scala.plugin.version>2.15.2</scala.plugin.version>
   </properties>
 
   <groupId>ldif</groupId>
@@ -36,6 +36,10 @@
           <jvmArgs>
             <jvmArg>-Xmx1024m</jvmArg>
           </jvmArgs>
+          <args>
+            <arg>-Ylog:icode</arg>
+            <arg>-Ydebug</arg>
+          </args>
         </configuration>
         <executions>
           <execution>
@@ -101,8 +105,8 @@
 
     <dependency>
       <groupId>org.scalatest</groupId>
-      <artifactId>scalatest</artifactId>
-      <version>1.3</version>
+      <artifactId>scalatest_2.9.0-1</artifactId>
+      <version>1.6.1</version>
       <scope>test</scope>
     </dependency>
 
