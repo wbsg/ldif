@@ -14,6 +14,8 @@ import collection.mutable.{ArrayBuffer, ListBuffer}
 
 class EntityDescriptionToSparqlConverter {
   var entityGraphVars: Array[ArrayBuffer[String]] = null
+  var useGraph : Boolean = false
+  var graphName : String = null
 
   private def init(entityDesc: EntityDescription) {
     val nrOfQueries = math.max(entityDesc.patterns.size, 1)
@@ -22,8 +24,11 @@ class EntityDescriptionToSparqlConverter {
       entityGraphVars(i) = new ArrayBuffer[String]
   }
 
-  private def convert(entityDesc: EntityDescription): Seq[(String, Seq[String])] = {
+  private def convert(entityDesc: EntityDescription, useGraph : Boolean, graphName : String = null): Seq[(String, Seq[String])] = {
     init(entityDesc)
+    this.useGraph = useGraph
+    this.graphName = graphName
+
     val varMaker = new VariableMaker("?ldifph")
 
     val restriction = convertRestriction(entityDesc.restriction, varMaker.getNextVar)
@@ -42,7 +47,13 @@ class EntityDescriptionToSparqlConverter {
     var index = 0
     for((select, where) <- selects.zip(wherePatterns)) {
       val querySB = new StringBuilder
-      querySB.append(select).append(" { ").append(restriction).append( where).append(" } ORDER BY ?SUBJ")
+      querySB.append(select)
+      if (useGraph) {
+        if (graphName != null)
+          querySB.append(" FROM <"+ graphName +"> ")
+        querySB.append(" WHERE ")
+      }
+      querySB.append(" { ").append(restriction).append( where).append(" } ORDER BY ?SUBJ")
       sparqlQueries.append((querySB.toString, entityGraphVars(index).map(_.substring(1))))
       index += 1
     }
@@ -84,7 +95,9 @@ class EntityDescriptionToSparqlConverter {
     val graphVar = resourceFunction()
     checkForEntityGraph(resource, graphVar, patternRange)
     val namedGraphedTriple = new StringBuilder
-    namedGraphedTriple.append("GRAPH ").append(graphVar).append(" { ").append(createTripleOutOfOperator(resource, operator, nextResource)).append(" } ").toString
+    if (useGraph)
+      namedGraphedTriple.append(createTripleOutOfOperator(resource, operator, nextResource)).toString
+    else namedGraphedTriple.append("GRAPH ").append(graphVar).append(" { ").append(createTripleOutOfOperator(resource, operator, nextResource)).append(" } ").toString
   }
 
   // partition ongoing paths by their operator
@@ -112,11 +125,13 @@ class EntityDescriptionToSparqlConverter {
     val whereParts = new StringBuilder
     for(path <- pattern) {
       val varName = VariableMaker.makeVar(path)
-      val graphName = varName + "graph"
-      checkForEntityGraph(resource, graphName, range)
-      whereParts.append("GRAPH ").append(graphName).append(" { ")
+      if (!useGraph) {
+        val graphName = varName + "graph"
+        checkForEntityGraph(resource, graphName, range)
+        whereParts.append("GRAPH ").append(graphName).append(" { ")
+      }
       whereParts.append(createTripleOutOfOperator(resource, path.path.operators.head, varName))
-      whereParts.append(" } ")
+      if (!useGraph)  whereParts.append(" } ")
     }
     return whereParts.toString()
   }
@@ -156,16 +171,19 @@ class EntityDescriptionToSparqlConverter {
 
   private def createSelectString(index: Int, pattern: IndexedSeq[IndexedPath]): StringBuilder = {
     val sb = new StringBuilder
-    sb.append("SELECT ")
-//    sb.append("SELECT ")
-    for(path <- pattern)
-      sb.append("?").append(EntityDescriptionToSparqlConverter.resultVarBaseName).append(path.index).append(" ?").append(EntityDescriptionToSparqlConverter.resultVarBaseName).append(path.index).append("graph ")
+    sb.append("SELECT DISTINCT ")
+    for(path <- pattern) {
+      sb.append("?").append(EntityDescriptionToSparqlConverter.resultVarBaseName).append(path.index).append(" ")
+      if (!useGraph) sb.append("?").append(EntityDescriptionToSparqlConverter.resultVarBaseName).append(path.index).append("graph ")
+    }
     sb.append(EntityDescriptionToSparqlConverter.entityVar).append(" ")
-    for(graphVar <- entityGraphVars(index))
-      if(!graphVar.startsWith("?" + EntityDescriptionToSparqlConverter.resultVarBaseName))
-        sb.append(graphVar).append(" ")
+    if (!useGraph) {
+      for(graphVar <- entityGraphVars(index))
+        if(!graphVar.startsWith("?" + EntityDescriptionToSparqlConverter.resultVarBaseName))
+          sb.append(graphVar).append(" ")
+      }
     return sb
-  }
+    }
 
   // return SPARQL representation of LDIF Restriction
   private def convertRestriction(restriction: Restriction, resourceFunction:() => String): String = {
@@ -239,7 +257,15 @@ object EntityDescriptionToSparqlConverter {
    * @returns a pair of a SPARQL pattern and a sequence of variable names of the entity's graphs (can be multiple)
    */
   def convert(entityDesc: EntityDescription): Seq[(String, Seq[String])] = {
-    (new EntityDescriptionToSparqlConverter).convert(entityDesc)
+    (new EntityDescriptionToSparqlConverter).convert(entityDesc, false)
+  }
+
+  def convert(entityDesc: EntityDescription, useGraph : Boolean): Seq[(String, Seq[String])] = {
+    (new EntityDescriptionToSparqlConverter).convert(entityDesc, useGraph)
+  }
+
+  def convert(entityDesc: EntityDescription, graphName : String): Seq[(String, Seq[String])] = {
+    (new EntityDescriptionToSparqlConverter).convert(entityDesc, true, graphName)
   }
 }
 

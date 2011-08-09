@@ -13,4 +13,4 @@ import ldif.entity.{Path, EntityDescription}
 /**
  * @param propertyMap A Map from a property URI to a sequence of pairs of (path ID, phase number)
  */
-case class EntityDescriptionMetadata(entityDescriptions: Seq[EntityDescription], pathMap: Map[Int, PathInfo], propertyMap: Map[String, Seq[Pair[Int, Int]]])
+case class EntityDescriptionMetadata(entityDescriptions: IndexedSeq[EntityDescription], pathMap: Map[Int, PathInfo], propertyMap: Map[String, Seq[PropertyInfo]], entityDescriptionMap: Map[EntityDescription, Int])

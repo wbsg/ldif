@@ -7,7 +7,7 @@ import ldif.datasources.crawl.CrawlTask
 /**
  * Executor for the crawling data source.
  */
-class CrawlExecutor() extends Executor
+class CrawlExecutor extends Executor
 {
   type TaskType = CrawlTask
   type InputFormat = NoDataFormat

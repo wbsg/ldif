@@ -1,17 +1,16 @@
 // $ANTLR 3.2 Sep 23, 2009 12:02:23 /home/andreas/workspace/ANTLRTester/antlr-files/NQuad.g 2011-06-14 15:14:27
 
-  package ldif.local.datasources.dump.parser;
-  
-
-  import ldif.entity.Node;
-  import ldif.local.runtime.Quad;
-  import ldif.util.NTriplesStringConverter;
-  import java.util.Vector;
+package ldif.datasources.dump.parser;
 
 
+import ldif.entity.Node;
+import ldif.local.runtime.Quad;
+import ldif.util.NTriplesStringConverter;
 import org.antlr.runtime.*;
-import java.util.List;
+
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Vector;
 
 public class NQuadParser extends Parser {
     public static final String[] tokenNames = new String[] {
@@ -85,8 +84,8 @@ public class NQuadParser extends Parser {
         return v;
       }
       
-      private ldif.entity.Node createNode(Vector<String> node, String graph) {
-        ldif.entity.Node ldifNode = null;
+      private Node createNode(Vector<String> node, String graph) {
+        Node ldifNode = null;
         if(node.get(0)==LITERAL)        return Node.createLiteral(node.get(1), graph);
         else if(node.get(0)==DTLITERAL) return Node.createTypedLiteral(node.get(1), node.get(2), graph);
         else if(node.get(0)==LTLITERAL) return Node.createLanguageLiteral(node.get(1), node.get(2), graph);
@@ -109,7 +108,7 @@ public class NQuadParser extends Parser {
             // /home/andreas/workspace/ANTLRTester/antlr-files/NQuad.g:84:3: ( ( line )* EOF )
             // /home/andreas/workspace/ANTLRTester/antlr-files/NQuad.g:84:5: ( line )* EOF
             {
-             List<Quad> qs = new ArrayList<Quad>(); 
+             List<Quad> qs = new ArrayList<Quad>();
             // /home/andreas/workspace/ANTLRTester/antlr-files/NQuad.g:85:5: ( line )*
             loop1:
             do {
@@ -134,7 +133,7 @@ public class NQuadParser extends Parser {
             	                   qs.add(line1);
             	                 else
             	                   System.out.println("Comment");
-            	               
+
 
             	    }
             	    break;
@@ -144,7 +143,7 @@ public class NQuadParser extends Parser {
                 }
             } while (true);
 
-            match(input,EOF,FOLLOW_EOF_in_nQuadDoc92); 
+            match(input,EOF,FOLLOW_EOF_in_nQuadDoc92);
 
             }
 
@@ -194,7 +193,7 @@ public class NQuadParser extends Parser {
 
                     state._fsp--;
 
-                     value = null; 
+                     value = null;
 
                     }
                     break;
@@ -206,7 +205,7 @@ public class NQuadParser extends Parser {
 
                     state._fsp--;
 
-                     value = quad2; 
+                     value = quad2;
 
                     }
                     break;
@@ -229,11 +228,11 @@ public class NQuadParser extends Parser {
     public final Quad quad() throws RecognitionException {
         Quad value = null;
 
-        ldif.entity.Node graph3 = null;
+        Node graph3 = null;
 
         Vector<String> subject4 = null;
 
-        ldif.entity.Node predicate5 = null;
+        Node predicate5 = null;
 
         Vector<String> object6 = null;
 
@@ -242,7 +241,7 @@ public class NQuadParser extends Parser {
             // /home/andreas/workspace/ANTLRTester/antlr-files/NQuad.g:100:3: ( subject predicate object ( graph )? DOT )
             // /home/andreas/workspace/ANTLRTester/antlr-files/NQuad.g:100:5: subject predicate object ( graph )? DOT
             {
-             String quadGraph = graph; 
+             String quadGraph = graph;
             pushFollow(FOLLOW_subject_in_quad145);
             subject4=subject();
 
@@ -281,10 +280,10 @@ public class NQuadParser extends Parser {
 
             }
 
-            match(input,DOT,FOLLOW_DOT_in_quad158); 
+            match(input,DOT,FOLLOW_DOT_in_quad158);
 
-                  value = new Quad(createNode(subject4, quadGraph), predicate5.value(), createNode(object6, quadGraph), quadGraph); 
-                
+                  value = new Quad(createNode(subject4, quadGraph), predicate5.value(), createNode(object6, quadGraph), quadGraph);
+
 
             }
 
@@ -336,7 +335,7 @@ public class NQuadParser extends Parser {
 
                     state._fsp--;
 
-                    value = iriRef7; 
+                    value = iriRef7;
 
                     }
                     break;
@@ -368,8 +367,8 @@ public class NQuadParser extends Parser {
 
     // $ANTLR start "predicate"
     // /home/andreas/workspace/ANTLRTester/antlr-files/NQuad.g:112:1: predicate returns [ldif.entity.Node value] : iriRef ;
-    public final ldif.entity.Node predicate() throws RecognitionException {
-        ldif.entity.Node value = null;
+    public final Node predicate() throws RecognitionException {
+        Node value = null;
 
         Vector<String> iriRef9 = null;
 
@@ -383,7 +382,7 @@ public class NQuadParser extends Parser {
 
             state._fsp--;
 
-             value = createNode(iriRef9, null); 
+             value = createNode(iriRef9, null);
 
             }
 
@@ -446,7 +445,7 @@ public class NQuadParser extends Parser {
 
                     state._fsp--;
 
-                    value = iriRef10; 
+                    value = iriRef10;
 
                     }
                     break;
@@ -458,7 +457,7 @@ public class NQuadParser extends Parser {
 
                     state._fsp--;
 
-                    value = bNode11; 
+                    value = bNode11;
 
                     }
                     break;
@@ -470,7 +469,7 @@ public class NQuadParser extends Parser {
 
                     state._fsp--;
 
-                    value = literal12; 
+                    value = literal12;
 
                     }
                     break;
@@ -490,8 +489,8 @@ public class NQuadParser extends Parser {
 
     // $ANTLR start "graph"
     // /home/andreas/workspace/ANTLRTester/antlr-files/NQuad.g:122:1: graph returns [ldif.entity.Node value] : iriRef ;
-    public final ldif.entity.Node graph() throws RecognitionException {
-        ldif.entity.Node value = null;
+    public final Node graph() throws RecognitionException {
+        Node value = null;
 
         Vector<String> iriRef13 = null;
 
