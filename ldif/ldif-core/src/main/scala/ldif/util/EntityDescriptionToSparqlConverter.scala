@@ -171,7 +171,7 @@ class EntityDescriptionToSparqlConverter {
 
   private def createSelectString(index: Int, pattern: IndexedSeq[IndexedPath]): StringBuilder = {
     val sb = new StringBuilder
-    sb.append("SELECT DISTINCT ")
+    sb.append("SELECT ") //TODO: Have maybe two versions
     for(path <- pattern) {
       sb.append("?").append(EntityDescriptionToSparqlConverter.resultVarBaseName).append(path.index).append(" ")
       if (!useGraph) sb.append("?").append(EntityDescriptionToSparqlConverter.resultVarBaseName).append(path.index).append("graph ")

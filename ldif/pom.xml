@@ -36,10 +36,10 @@
           <jvmArgs>
             <jvmArg>-Xmx1024m</jvmArg>
           </jvmArgs>
-          <args>
+          <!--args>
             <arg>-Ylog:icode</arg>
             <arg>-Ydebug</arg>
-          </args>
+          </args-->
         </configuration>
         <executions>
           <execution>
