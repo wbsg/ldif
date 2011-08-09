@@ -267,7 +267,7 @@ object Main
    */
   private def runInBackground(function : => Unit) {
     val thread = new Thread {
-      private val listener: FatalErrorListener = fatalErrorListener
+      private val listener: FatalErrorListener = FatalErrorListener
 
       override def run() {
         try {
@@ -358,7 +358,7 @@ object configProperties extends ConfigProperties {
   }
 }
 
-object fatalErrorListener extends FatalErrorListener {
+object FatalErrorListener extends FatalErrorListener {
   def reportError(e: Exception) {
     e.printStackTrace
     System.exit(1)
