@@ -11,6 +11,6 @@ class LdifLinkWriter(quadWriter : QuadWriter) extends LinkWriter
 {
   def write(link : Link, predicateUri : String)
   {
-    quadWriter.write(Quad(Node.createUriNode(link.sourceUri, null), predicateUri, Node.createUriNode(link.targetUri, null), ""))
+    quadWriter.write(Quad(Node.createUriNode(link.source, null), predicateUri, Node.createUriNode(link.target, null), ""))
   }
 }

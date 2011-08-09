@@ -40,7 +40,7 @@ class SilkLokalExecutorTest extends FlatSpec with ShouldMatchers
 
   private lazy val entityDescription =
   {
-    implicit val prefixes = Prefixes(task.silkConfig.prefixes)
+    implicit val prefixes = Prefixes(task.silkConfig.silkConfig.prefixes)
 
     val stream = getClass.getClassLoader.getResourceAsStream("ldif/modules/silk/local/PharmGKB_EntityDescription.xml")
 
