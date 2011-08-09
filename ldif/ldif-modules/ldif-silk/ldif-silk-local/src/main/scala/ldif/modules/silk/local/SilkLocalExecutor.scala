@@ -2,14 +2,11 @@ package ldif.modules.silk.local
 
 import ldif.module.Executor
 import ldif.modules.silk.{CreateEntityDescriptions, SilkTask}
-import ldif.modules.silk.LdifInstance.toEntity
-import de.fuberlin.wiwiss.silk.util.{Future, SourceTargetPair}
-import de.fuberlin.wiwiss.silk.instance.{Instance, MemoryInstanceCache, FileInstanceCache, InstanceSpecification}
+import de.fuberlin.wiwiss.silk.util.SourceTargetPair
+import de.fuberlin.wiwiss.silk.instance.{Instance, MemoryInstanceCache, InstanceSpecification}
 import de.fuberlin.wiwiss.silk.datasource.Source
-import de.fuberlin.wiwiss.silk.impl.writer.MemoryWriter
 import de.fuberlin.wiwiss.silk.{OutputTask, FilterTask, MatchTask, LoadTask}
 import de.fuberlin.wiwiss.silk.output.Output
-import ldif.entity._
 import ldif.local.runtime._
 
 /**
@@ -28,7 +25,7 @@ class SilkLocalExecutor extends Executor
 
   def input(task : SilkTask) =
   {
-    implicit val prefixes = task.silkConfig.prefixes
+    implicit val prefixes = task.silkConfig.silkConfig.prefixes
     val entityDescriptions = CreateEntityDescriptions(task.linkSpec)
 
     new StaticEntityFormat(entityDescriptions)
@@ -41,7 +38,7 @@ class SilkLocalExecutor extends Executor
    */
   override def execute(task : SilkTask, reader : Seq[EntityReader], writer : QuadWriter)
   {
-    val blocking = task.silkConfig.blocking
+    val blocking = task.silkConfig.silkConfig.blocking
     val linkSpec = task.linkSpec
 
     //Retrieve Instance Specifications from Link Specification
@@ -55,10 +52,10 @@ class SilkLocalExecutor extends Executor
 
     //Load instances into cache
     val sources = SourceTargetPair.fromSeq(reader).map(reader => Source("id", LdifDataSource(reader)))
-    def blockingFunction(instance : Instance) = linkSpec.condition.index(instance, linkSpec.filter.threshold).map(_ % blocking.map(_.blocks).getOrElse(1))
+    def indexFunction(instance: Instance) = linkSpec.condition.index(instance, 0.0)
 
-    val loadTask = new LoadTask(sources, caches, instanceSpecs, if(blocking.isDefined) Some(blockingFunction _) else None)
-    val loader = loadTask()//TODO: for profiling
+    val loadTask = new LoadTask(sources, caches, instanceSpecs, if (blocking.isDefined) Some(indexFunction _) else None)
+    loadTask()//TODO: for profiling
 
     //Execute matching
     val matchTask = new MatchTask(linkSpec, caches, numThreads, true)
@@ -70,7 +67,7 @@ class SilkLocalExecutor extends Executor
 
     //Write links
     val linkWriter = new LdifLinkWriter(writer)
-    val outputTask = new OutputTask(filteredLinks, linkSpec.linkType, Output(linkWriter) :: Nil)
+    val outputTask = new OutputTask(filteredLinks, linkSpec.linkType, Output("output", linkWriter) :: Nil)
     outputTask()
   }
 }

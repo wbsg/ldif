@@ -2,14 +2,14 @@ package ldif.modules.silk.local
 
 import org.scalatest.FlatSpec
 import org.scalatest.matchers.ShouldMatchers
-import ldif.modules.silk.{SilkConfig, SilkModule}
+import ldif.modules.silk.{SilkModuleConfig, SilkModule}
 import de.fuberlin.wiwiss.silk.impl.DefaultImplementations
-import de.fuberlin.wiwiss.silk.config.{Configuration}
 import ldif.util.Prefixes
 import ldif.entity.EntityDescription
 import xml.XML
 import org.scalatest.junit.JUnitRunner
 import org.junit.runner.RunWith
+import de.fuberlin.wiwiss.silk.config.SilkConfig
 
 /**
  * Unit Test for the SilkLokalExecutor.
@@ -31,16 +31,16 @@ class SilkLokalExecutorTest extends FlatSpec with ShouldMatchers
   {
     val configStream = getClass.getClassLoader.getResourceAsStream("ldif/modules/silk/local/PharmGKB.xml")
 
-    val config = Configuration.load(configStream)
+    val config = SilkConfig.load(configStream)
 
-    val module = new SilkModule(new SilkConfig(config))
+    val module = new SilkModule(new SilkModuleConfig(config))
 
     module.tasks.head
   }
 
   private lazy val entityDescription =
   {
-    implicit val prefixes = Prefixes(task.silkConfig.prefixes)
+    implicit val prefixes = Prefixes(task.silkConfig.silkConfig.prefixes)
 
     val stream = getClass.getClassLoader.getResourceAsStream("ldif/modules/silk/local/PharmGKB_EntityDescription.xml")
 

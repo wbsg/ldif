@@ -2,21 +2,21 @@ package ldif.modules.silk
 
 import ldif.module.Module
 import java.io.File
-import de.fuberlin.wiwiss.silk.config.Configuration
 import de.fuberlin.wiwiss.silk.impl.DefaultImplementations
+import de.fuberlin.wiwiss.silk.config.SilkConfig
 
 /**
  * Silk Module.
  */
-class SilkModule(val config : SilkConfig) extends Module
+class SilkModule(val config : SilkModuleConfig) extends Module
 {
-  type ConfigType = SilkConfig
+  type ConfigType = SilkModuleConfig
 
   type TaskType = SilkTask
 
   lazy val tasks : Traversable[SilkTask] =
   {
-    for(linkSpec <- config.silkConfig.linkSpecs) yield new SilkTask(config.silkConfig, linkSpec)
+    for(linkSpec <- config.silkConfig.linkSpecs) yield new SilkTask(config, linkSpec)
   }
 }
 
@@ -26,14 +26,14 @@ object SilkModule
   {
     DefaultImplementations.register()
 
-    new SilkModule(new SilkConfig(loadConfig(file)))
+    new SilkModule(new SilkModuleConfig(loadConfig(file)))
   }
 
-  private def loadConfig(file : File) : Configuration =
+  private def loadConfig(file : File) : SilkConfig =
   {
     if(file.isFile)
     {
-      Configuration.load(file)
+      SilkConfig.load(file)
     }
     else if(file.isDirectory)
     {
@@ -41,7 +41,7 @@ object SilkModule
     }
     else
     {
-      Configuration.empty
+      SilkConfig.empty
     }
   }
 }
