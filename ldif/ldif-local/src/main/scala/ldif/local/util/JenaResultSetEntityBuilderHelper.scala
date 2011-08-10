@@ -7,11 +7,12 @@ import collection.mutable.ArrayBuffer
 import com.hp.hpl.jena.query.{QuerySolution, ResultSet}
 import com.hp.hpl.jena.rdf.model.RDFNode
 import scala.collection.JavaConversions._
+import java.util.HashSet
 
-/*  There are two scenarios:
- *   1) ResultSets contain graph vars
- *   2) ResultSets does not contain graphs vars
- */
+   /*  There are two scenarios:
+   *   1) ResultSets contain graph vars
+   *   2) ResultSets does not contain graphs vars
+   */
 
    //TODO refactor
 
@@ -34,7 +35,7 @@ object JenaResultSetEntityBuilderHelper {
     }
 
     entityWriter.finish
-    return true
+    true
   }
 
   // (2)
@@ -54,7 +55,7 @@ object JenaResultSetEntityBuilderHelper {
     }
 
     entityWriter.finish
-    return true
+    true
   }
 
   private def assignResultsForEntity(entityURI: String, entityResults: Seq[Option[EntityData]], factumTable: Array[Traversable[IndexedSeq[Node]]]) {
@@ -67,7 +68,7 @@ object JenaResultSetEntityBuilderHelper {
     val array = new Array[Traversable[IndexedSeq[Node]]](size)
     for(i <- 0 to (array.size-1))
       array(i) = new ArrayBuffer[IndexedSeq[Node]]
-    return array
+    array
   }
 
   private def getGraph(entityURI: String, entityResults: Seq[Option[EntityData]]): String = {
@@ -78,7 +79,7 @@ object JenaResultSetEntityBuilderHelper {
   }
 
   private def updateEntityResults(entityURI: String, entityResults: Seq[Option[EntityData]], resultManagers: Seq[ResultSetManager], graph : String = null): Seq[Option[EntityData]] = {
-    return for((entityResult, resultManager) <- entityResults zip resultManagers) yield {
+    for((entityResult, resultManager) <- entityResults zip resultManagers) yield {
       if(entityResult!=None && entityResult.get.entityURI==entityURI)
         if (graph != null)
           // (2)
@@ -93,7 +94,7 @@ object JenaResultSetEntityBuilderHelper {
 
   def getFactumRow(entity: String, entityGraph: String, resultSet: QuerySolution, nrOfSUBJGraphVars: Int): IndexedSeq[Node] = {
     val resultVarBaseName = EntityDescriptionToSparqlConverter.resultVarBaseName
-    val row = new ArrayBuffer[Node]
+    val row = new Row
     var nrOfVars: Int = 0
     for(v <- resultSet.varNames) if(v.startsWith(resultVarBaseName) &&  v.substring(resultVarBaseName.length).forall(Character.isDigit(_))) nrOfVars += 1
 
@@ -105,13 +106,13 @@ object JenaResultSetEntityBuilderHelper {
       row.append(convertNode(node, graph))
     }
 
-    return row
+    row
   }
 
   // (2)
   def getFactumRow(entity: String, entityGraph: String, resultSet: QuerySolution): IndexedSeq[Node] = {
     val resultVarBaseName = EntityDescriptionToSparqlConverter.resultVarBaseName
-    val row = new ArrayBuffer[Node]
+    val row = new Row
     var nrOfVars: Int = 0
     for(v <- resultSet.varNames) if(v.startsWith(resultVarBaseName) &&  v.substring(resultVarBaseName.length).forall(Character.isDigit(_))) nrOfVars += 1
 
@@ -122,7 +123,7 @@ object JenaResultSetEntityBuilderHelper {
       row.append(convertNode(node, entityGraph))
     }
 
-    return row
+    row
   }
 
   private def convertLiteralNode(node: RDFNode, graphURI: String): Node = {
@@ -166,7 +167,7 @@ object JenaResultSetEntityBuilderHelper {
   class ResultSetManager(resultSet: ResultSet, graphvars : Seq[String]) {
     var entity: String = null
     var entityGraph: String = null
-    var factumTable = new ArrayBuffer[IndexedSeq[Node]]
+    var factumTable = new HashSet[IndexedSeq[Node]]
 
     def getNextEntityData(): Option[EntityData] = {
       var returnEntityData: EntityData = null
@@ -179,11 +180,11 @@ object JenaResultSetEntityBuilderHelper {
         val factumRow = getFactumRow(subj, graph, querySolution, graphvars.size)
         if(entity!=subj && entity!=null) {
           returnEntityData = EntityData(entity, entityGraph, factumTable)
-          factumTable = new ArrayBuffer[IndexedSeq[Node]]
+          factumTable = new HashSet[IndexedSeq[Node]]
         }
         entity=subj
         entityGraph=graph
-        factumTable.append(factumRow)
+        factumTable += factumRow
         if(returnEntityData != null) {
           return Some(returnEntityData)
         }
@@ -192,7 +193,7 @@ object JenaResultSetEntityBuilderHelper {
       if(entity!=null) {
         if(factumTable.size>0) {
           returnEntityData = EntityData(entity, entityGraph, factumTable)
-          factumTable = new ArrayBuffer[IndexedSeq[Node]]
+          factumTable = new HashSet[IndexedSeq[Node]]
           return Some(returnEntityData)
         }
         else
@@ -220,10 +221,10 @@ object JenaResultSetEntityBuilderHelper {
         val factumRow = getFactumRow(subj, graph, querySolution)
         if(entity!=subj && entity!=null) {
           returnEntityData = EntityData(entity, graph, factumTable)
-          factumTable = new ArrayBuffer[IndexedSeq[Node]]
+          factumTable = new HashSet[IndexedSeq[Node]]
         }
         entity=subj
-        factumTable.append(factumRow)
+        factumTable += factumRow
         if(returnEntityData != null) {
           return Some(returnEntityData)
         }
@@ -232,7 +233,7 @@ object JenaResultSetEntityBuilderHelper {
       if(entity!=null) {
         if(factumTable.size>0) {
           returnEntityData = EntityData(entity, graph, factumTable)
-          factumTable = new ArrayBuffer[IndexedSeq[Node]]
+          factumTable = new HashSet[IndexedSeq[Node]]
           return Some(returnEntityData)
         }
         else
@@ -254,4 +255,34 @@ object JenaResultSetEntityBuilderHelper {
   }
 
   case class EntityData(val entityURI: String, val graphURI: String, val factumTable: Traversable[IndexedSeq[Node]])
+
+  class Row extends ArrayBuffer[Node] {
+    override def hashCode : Int  = {
+      var hash: Int = 1
+      for (node <- this)
+        hash = hash * 31 + node.hashCode
+      hash
+    }
+
+    override def equals (other : Any) : Boolean = {
+      if (this.asInstanceOf[AnyRef] eq other.asInstanceOf[AnyRef])
+        true
+      if (!(other.isInstanceOf[Row]))
+        false
+      else {
+       val otherRow : Row = other.asInstanceOf[Row]
+        if (this.size != otherRow.size)
+          false
+        else
+        {
+          var result = true
+          for((node,i) <- this zipWithIndex)
+            if (!node.equals(otherRow(i)))
+              result = false
+          result
+        }
+      }
+    }
+
+  }
 }
