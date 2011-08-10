@@ -33,8 +33,12 @@ object LdifConfiguration
       else
         file = new File(baseDir + "/" + sourceDir.text)
 
-      if(file.isDirectory)
-        sourceSet ++= new File(baseDir + "/" + sourceDir.text).listFiles.map(_.getCanonicalPath)
+      if(file.isDirectory) {
+        if(file.isAbsolute)
+          sourceSet ++= new File(file.getAbsolutePath).listFiles.map(_.getCanonicalPath)
+        else
+          sourceSet ++= new File(baseDir + "/" + sourceDir.text).listFiles.map(_.getCanonicalPath)
+      }
       else
         sourceSet += file.getCanonicalPath
     }

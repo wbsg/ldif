@@ -36,9 +36,9 @@
           <jvmArgs>
             <jvmArg>-Xmx1024m</jvmArg>
           </jvmArgs>
-          <args>
+          <!--args>
             <arg>-optimise</arg>
-          </args>
+          </args-->
         </configuration>
         <executions>
           <execution>
@@ -109,12 +109,6 @@
       <scope>test</scope>
     </dependency>
 
-    <dependency>
-      <groupId>org.scala-tools.testing</groupId>
-      <artifactId>specs_2.8.1</artifactId>
-      <version>1.6.7</version>
-      <scope>test</scope>
-    </dependency>
 
     <dependency>
 		<groupId>junit</groupId>

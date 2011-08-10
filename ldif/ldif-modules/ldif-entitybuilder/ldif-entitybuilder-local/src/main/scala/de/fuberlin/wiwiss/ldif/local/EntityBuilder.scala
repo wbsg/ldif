@@ -12,6 +12,7 @@ import java.util.Collections
 import scala.collection.JavaConversions._
 import ldif.local.runtime._
 import ldif.local.util.{StringPool, Const}
+import java.util.{HashSet => JHashSet}
 
 class EntityBuilder (entityDescriptions : IndexedSeq[EntityDescription], readers : Seq[QuadReader], config: ConfigParameters) extends FactumBuilder with EntityBuilderTrait {
   private val nrOfQuadsPerSort = 500000
@@ -71,7 +72,7 @@ class EntityBuilder (entityDescriptions : IndexedSeq[EntityDescription], readers
   private def init {
     PHT = new PropertyHashTable(entityDescriptions)
     if(PHT.areAllUriNodesNeeded)
-      allUriNodes = new HashSet[Node]
+      allUriNodes = new JHashSet[Node]
     if(useVoldemort)
       buildVoldemortHashTables
     else
@@ -229,14 +230,14 @@ class EntityBuilder (entityDescriptions : IndexedSeq[EntityDescription], readers
           case Some(x:Condition) => getSubjSet(x)
           case Some(x:And) => getSubjSet(x)
           case Some(x:Or) => getSubjSet(x)
-          case Some(x:Not) => new HashSet[Node]  //TODO support Not operator - after M1
-          case Some(x:Exists) => new HashSet[Node]  //TODO support Exists operator - after M1
+          case Some(x:Not) => new JHashSet[Node]  //TODO support Not operator - after M1
+          case Some(x:Exists) => new JHashSet[Node]  //TODO support Exists operator - after M1
           case None => allUriNodes
         }
   }
 
   private def getSubjSet(and : And) : Set[Node] = {
-    var subjSet : Set[Node] = new HashSet[Node]
+    var subjSet : Set[Node] = new JHashSet[Node]
     for ((child,i) <- and.children.toSeq.zipWithIndex){
       val tmpSubjSet = getSubjSet(Some(child))
       if (i>0)
@@ -247,7 +248,7 @@ class EntityBuilder (entityDescriptions : IndexedSeq[EntityDescription], readers
   }
 
   private def getSubjSet(or : Or) : Set[Node] = {
-    var subjSet : Set[Node] = new HashSet[Node]
+    var subjSet : Set[Node] = new JHashSet[Node]
     for ((child,i) <- or.children.toSeq.zipWithIndex){
       val tmpSubjSet = getSubjSet(Some(child))
       subjSet = subjSet | tmpSubjSet
@@ -276,7 +277,7 @@ class EntityBuilder (entityDescriptions : IndexedSeq[EntityDescription], readers
    * @param direction : if false, reverse evaluation (from obj to subj)
    */
   private def evaluateOperator(op : PathOperator, srcNodes : Set[Node], direction : Boolean) = {
-    var nodes = new HashSet[Node]
+    var nodes = new JHashSet[Node]
 
     op match {
       case bo:BackwardOperator =>
@@ -356,7 +357,7 @@ class EntityBuilder (entityDescriptions : IndexedSeq[EntityDescription], readers
 
   // Update column 'pathIndex' replacing prev level values with new ones
   private def merge(table : Traversable[IndexedSeq[Node]], prev:IndexedSeq[Node], next:IndexedSeq[Traversable[Node]], pathIndex : Int) = {
-    var newTable = new HashSet[ArraySeq[Node]]
+    var newTable = new JHashSet[ArraySeq[Node]]
     for (i <- 0 to prev.size-1)
       for ((row,j) <- table.toSeq.zipWithIndex.filter(_._1(pathIndex)==prev(i))){
         val newRows = for (newValue <- next(i)) yield {
@@ -371,7 +372,7 @@ class EntityBuilder (entityDescriptions : IndexedSeq[EntityDescription], readers
 
   // Update column 'to' as a copy of column 'from', since relative paths have a common sub-path
   private def mergeCopy(table : Traversable[IndexedSeq[Node]], from : Int, to : Int) = {
-    var newTable = new HashSet[ArraySeq[Node]]
+    var newTable = new JHashSet[ArraySeq[Node]]
     for (row <- table){
       val newRow = ArraySeq(row:_*)  //from immutable to mutable
       newRow(to) = newRow(from)
