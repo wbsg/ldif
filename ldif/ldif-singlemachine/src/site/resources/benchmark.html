@@ -45,9 +45,9 @@ pre { speak-punctuation: code; }
 }
   .Stil1 {color: #FF0000}
 table {border-collapse: collapse; margin-bottom: .75em; border-top: 1px solid #D4DCE8; border-bottom: 1px solid #D4DCE8}
-table th {text-align: left; background: #EAF3FA; padding: .2em .5em; height: 21px; font-weight: bold; font-size: 1em; color: #333}
+table th {text-align: right; background: #EAF3FA; padding: .5em .9em; height: 21px; font-weight: bold; font-size: 1em; color: #333}
 table th a {text-decoration: none !important}
-table td {vertical-align: top; text-align: left; padding: .375em .5em; border-bottom: 1px solid #eee}
+table td {vertical-align: top; text-align: right; padding: .5em 1em; border-bottom: 1px solid #eee}
 table tr.even {background-color: #fff}
 table tr.odd {background-color: #f9f9f9}
 </style>
@@ -91,34 +91,40 @@ The benchmark was run for different dataset sizes. </p>
 
 <table> 
 	<tr> 
-		<th>Dataset name</th> 
-
-    <th>Number of Quads</th> 
-
-		<th>Number of resources</th> 
+		<td></td> 
+    <th> 25 M</th> 
+    <th> 50 M</th>    
+    <th> 100 M</th> 
+	</tr> 
+	<tr> 
+   <th>Number of input quads</th> 
+	 <td> 25,000,000 </td> 
+	 <td> 50,000,000 </td> 
+	 <td> 100,000,000 </td> 
+	</tr> 
+	<tr> 
+		<th>Number of quads after irrelevance filter</th> 
+		<td> 13,576,394</td> 
+		<td> 25,397,310</td> 
+		<td> 44,249,757</td> 
+	</tr> 
+	<tr> 
+		<th>Number of quads after mapping</th> 
+		<td> 4,419,410</td> 
+		<td> 11,398,236</td> 
+		<td> 24,972,112</td> 
+	</tr> 
+	<tr> 
+		<th>Number of pairs of equivalent entities resolved</th> 
+		<td> 24,782</td> 
+		<td> 113,245</td> 
+		<td> 213,062</td> 
+	</tr> 
+	<tr> 
 		<th>Overall file size</th> 
-
-	</tr> 
-	<tr> 
-
-		<td> 50 M</th> 
-		<td> 50 000 000 </td> 
-		<td>  </td> 
-		<td>  </td> 
-	</tr> 
-	<tr> 
-
-		<td> 100 M </td> 
-		<td> 100 000 000</td> 
-		<td>  </td> 
-		<td>  </td> 
-	</tr> 
-	<tr> 
-
-		<td> 150 M </td> 
-		<td> 150 000 000</td> 
-		<td>  </td> 
-		<td>  </td> 
+		<td> 5.6 GB</td> 
+		<td> 12 GB</td> 
+		<td> 23 GB</td> 
 	</tr> 
 </table> 
 
@@ -212,5 +218,52 @@ The benchmark was run for different dataset sizes. </p>
 
 
 <h2><a name="results"></a>7. Results<br></h2>
+
+<p>The following table summarizes the LDIF run times for the different dataset sizes:</p>
+
+<table> 
+	<tr> 
+		<td></td> 
+    <th> 25 M</th> 
+    <th> 50 M</th>    
+    <th> 100 M</th> 
+	</tr> 
+	<tr> 
+   <th>Load and build entites for R2R</th> 
+	 <td> 128.1 sec</td> 
+	 <td> 297.2 sec</td> 
+	 <td> 1059.7 sec</td> 
+	</tr> 
+	<tr> 
+   <th>R2R data translation</th> 
+	 <td> 169.9 sec</td> 
+	 <td> 515.0 sec</td> 
+	 <td> 1109.2 sec</td> 
+	</tr> 
+	<tr> 
+   <th>Build entities for Silk</th> 
+	 <td> 15.3 sec</td> 
+	 <td> 36.8 sec</td> 
+	 <td> 107.4 sec</td> 
+	</tr> 
+	<tr> 
+   <th>Silk Identity Resolution</th> 
+	 <td> 103.0 sec</td> 
+	 <td> 568.5 sec</td> 
+	 <td> 2954.9 sec</td> 
+	</tr> 
+	<tr> 
+   <th>Final URI rewriting</th> 
+	 <td> 8.1 sec</td> 
+	 <td> 27.0 sec</td> 
+	 <td> 65.0 sec</td> 
+	</tr> 
+	<tr> 
+   <th>Overall execution time</th> 
+	 <td> 7.0 min</td> 
+	 <td> 24.0 min</td> 
+	 <td> 88.3 min</td> 
+	</tr> 
+</table> 
 
 </body></html>
