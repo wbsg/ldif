@@ -1,150 +1,205 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
-<html><head><title>LDIF - Benchmark Results</title>
+<html>
+<head>
+    <title>LDIF - Benchmark Results</title>
+    <style>
+        body { background: white; color: black; font-family: sans-serif; line-height: 1.4em; padding: 2.5em 3em; margin: 0; }
+        :link { color: #00c; }
+        :visited { color: #609; }
+        a:link img { border: none; }
+        a:visited img { border: none; }
+        h1, h2, h3 { background: white; color: #800; }
+        h1 { font: 170% sans-serif; margin: 0; }
+        h2 { clear: both; font: 140% sans-serif; margin: 1.5em 0 -0.5em 0; }
+        h3 { font: 120% sans-serif; margin: 1.5em 0 -0.5em 0; }
+        h4 { font: bold 100% sans-serif; }
+        h5 { font: italic 100% sans-serif; }
+        h6 { font: small-caps 100% sans-serif; }
+        .hide { display: none; }
+        pre { background: #fff6bb; font-family: monospace; line-height: 1.2em; padding: 1em 2em; }
+        dt { font-weight: bold; margin-top: 0; margin-bottom: 0; }
+        dd { margin-top: 0; margin-bottom: 0; }
+        code, tt { font-family: monospace; }
+        ol.toclist li a { text-decoration: none; }
+        .note { color: red; }
+        #header { border-bottom: 1px solid #ccc; }
+        #logo { float: right; }
+        #authors { clear: right; float: right; font-size: 80%; text-align: right;}
+        #toc {  float: left; }
+        #content { clear: both; margin: 2em auto 0 0; text-align: justify }
+        #download h2, #demo h2 { font-size: 125%; margin: 1.5em 0 -0.2em 0; }
+        #download small, #demo small { color: #888; font-size: 80%; }
+        #footer { border-top: 1px solid #ccc; color: #aaa; margin: 2em 0 0; }
+        @media Print {
+            * { font-size: 92%; }
+            body { padding: 0; line-height: 1.2em; }
+            #content { margin: 0; width: 100%; }
+        }
+        @media Aural {
+            h1 { stress: 20; richness: 90; }
+            h2 { stress: 20; richness: 90; }
+            h3 { stress: 20; richness: 90; }
+            .hide { speak: none; }
+            dt { pause-before: 20%; }
+            pre { speak-punctuation: code; }
+        }
+        .Stil1 {color: #FF0000}
+        table {border-collapse: collapse; margin-bottom: .75em; border-top: 1px solid #D4DCE8; border-bottom: 1px solid #D4DCE8}
+        table th {text-align: right; background: #EAF3FA; padding: .5em .9em; height: 21px; font-weight: bold; font-size: 1em; color: #333}
+        table th a {text-decoration: none !important}
+        table td {vertical-align: top; text-align: right; padding: .5em 1em; border-bottom: 1px solid #eee}
+        table tr.even {background-color: #fff}
+        table tr.odd {background-color: #f9f9f9}
+    </style>
 
-<style>
-body { background: white; color: black; font-family: sans-serif; line-height: 1.4em; padding: 2.5em 3em; margin: 0; }
-:link { color: #00c; }
-:visited { color: #609; }
-a:link img { border: none; }
-a:visited img { border: none; }
-h1, h2, h3 { background: white; color: #800; }
-h1 { font: 170% sans-serif; margin: 0; }
-h2 { clear: both; font: 140% sans-serif; margin: 1.5em 0 -0.5em 0; }
-h3 { font: 120% sans-serif; margin: 1.5em 0 -0.5em 0; }
-h4 { font: bold 100% sans-serif; }
-h5 { font: italic 100% sans-serif; }
-h6 { font: small-caps 100% sans-serif; }
-.hide { display: none; }
-pre { background: #fff6bb; font-family: monospace; line-height: 1.2em; padding: 1em 2em; }
-dt { font-weight: bold; margin-top: 0; margin-bottom: 0; }
-dd { margin-top: 0; margin-bottom: 0; }
-code, tt { font-family: monospace; }
-ul.toc { list-style-type: none; }
-ol.toc li a { text-decoration: none; }
-.note { color: red; }
-#header { border-bottom: 1px solid #ccc; }
-#logo { float: right; }
-#authors { clear: right; float: right; font-size: 80%; text-align: right; }
-#content { clear: both; margin: 2em auto 0 0; text-align: justify }
-#download, #demo { float: left; font-family: sans-serif; margin: 1em 0 1.5em; text-align: center; width: 50%; }
-#download h2, #demo h2 { font-size: 125%; margin: 1.5em 0 -0.2em 0; }
-#download small, #demo small { color: #888; font-size: 80%; }
-#footer { border-top: 1px solid #ccc; color: #aaa; margin: 2em 0 0; }
-@media Print {
-* { font-size: 92%; }
-body { padding: 0; line-height: 1.2em; }
-#content { margin: 0; width: 100%; }
-}
-@media Aural {
-h1 { stress: 20; richness: 90; }
-h2 { stress: 20; richness: 90; }
-h3 { stress: 20; richness: 90; }
-.hide { speak: none; }
-dt { pause-before: 20%; }
-pre { speak-punctuation: code; }
-}
-  .Stil1 {color: #FF0000}
-table {border-collapse: collapse; margin-bottom: .75em; border-top: 1px solid #D4DCE8; border-bottom: 1px solid #D4DCE8}
-table th {text-align: right; background: #EAF3FA; padding: .5em .9em; height: 21px; font-weight: bold; font-size: 1em; color: #333}
-table th a {text-decoration: none !important}
-table td {vertical-align: top; text-align: right; padding: .5em 1em; border-bottom: 1px solid #eee}
-table tr.even {background-color: #fff}
-table tr.odd {background-color: #f9f9f9}
-</style>
-  
-  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"></head><body>
-<div id="logo" align="right"><a href="http://www.wiwiss.fu-berlin.de/en/institute/pwo/bizer/index.html"><img src="img/fu-logo.gif" alt="Freie Universität Berlin Logo" border="0"></a>&nbsp;<br>
-  <a href="http://mediaeventservices.com"><img src="img/logo.gif" alt="Media Event Services"></a></div>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+</head>
 
-<div id="header">
-<h1 style="font-size: 250%;">LDIF - Benchmark Results<br>
-</h1>
-
-<div id="authors"><a href="http://www.wiwiss.fu-berlin.de/en/institute/pwo/bizer/team/SchultzAndreas.html">Andreas
-Schultz</a><br>
-<a href="mailto:andrea.matteini@gmail.com">Andrea Matteini</a><br>
-<a href="http://www.wiwiss.fu-berlin.de/en/institute/pwo/bizer/team/IseleRobert.html">Robert
-Isele</a><br>
-<a href="http://www.wiwiss.fu-berlin.de/en/institute/pwo/bizer/team/BizerChristian.html">Chris
-Bizer</a><br>
-<a href="http://www.wiwiss.fu-berlin.de/en/institute/pwo/bizer/team/BeckerChristian.html">Christian Becker</a><br>
+<body>
+<div id="logo" align="right">
+    <a href="http://www.wiwiss.fu-berlin.de/en/institute/pwo/bizer/index.html">
+        <img src="img/fu-logo.gif" alt="Freie Universität Berlin Logo" border="0"></a>&nbsp;<br>
+    <a href="http://mediaeventservices.com">
+        <img src="img/logo.gif" alt="Media Event Services"></a>
 </div>
 
+<div id="header">
+    <h1 style="font-size: 250%;">LDIF - Benchmark Results<br></h1>
+</div>
+
+<div id="authors">
+    <a href="http://www.wiwiss.fu-berlin.de/en/institute/pwo/bizer/team/SchultzAndreas.html">Andreas Schultz</a><br>
+    <a href="mailto:andrea.matteini@gmail.com">Andrea Matteini</a><br>
+    <a href="http://www.wiwiss.fu-berlin.de/en/institute/pwo/bizer/team/IseleRobert.html">Robert Isele</a><br>
+    <a href="http://www.wiwiss.fu-berlin.de/en/institute/pwo/bizer/team/BizerChristian.html">Chris Bizer</a><br>
+    <a href="http://www.wiwiss.fu-berlin.de/en/institute/pwo/bizer/team/BeckerChristian.html">Christian Becker</a><br>
+</div>
+
+<div id="toc">
 <h2 id="contents">Contents</h2>
-<ol class="toc">
-  <li><a href="#intro">Introduction</a></li>
-  <li><a href="#datasets">Datasets</a></li>
-  <li><a href="#mappings">Mappings</a></li>
-  <li><a href="#linkspecs">Link Specififcation</a></li>
-  <li><a href="#machine">Benchmark Machine</a></li>
-  <li><a href="#procedure">Test Procedure</a></li>
-  <li><a href="#results">Results</a></li>
+<ol class="toclist">
+    <li><a href="#intro">Introduction</a></li>
+    <li><a href="#datasets">Datasets</a></li>
+    <li><a href="#mappings">Mappings</a></li>
+    <li><a href="#linkspecs">Link Specififcation</a></li>
+    <li><a href="#machine">Benchmark Machine</a></li>
+    <li><a href="#procedure">Test Procedure</a></li>
+    <li><a href="#results">Results</a></li>
 </ol>
+</div>
+
 <h2 id="intro"><a name="intro"></a>1. Introduction<br></h2>
+<p> This page presents a performance evaluation for <a href="index.html">LDIF</a> using a life science use case.</p>
 
 <h2><a name="datasets"></a>2. Datasets<br></h2>
-<p>We ran the benchmark using the KEGG Genes and Uniprot datasets. 
+<p>We evaluated the performance of LDIF using two life science datasets:
+    <ul>
+    <li><a href="http://www.genome.jp/kegg/genes.html">KEGG Genes</a> -  a collection of gene catalogs generated from publicly available resources</li>
+    <li><a href="http://www.uniprot.org/">Uniprot</a> - a dataset containing protein sequence, genes and function</li>
+    </ul>
+</p>
 
-The benchmark was run for different dataset sizes. </p>
+<p>There is a huge difference in dataset size between the two datasets.
+    Converted to N-Triples the complete KEGG GENES dump is about 28GB in size whereas the UniProt dataset contains over 400GB worth of data.
+    Because of this size mismatch we extracted only data of five different species from UniProt: bos taurus (cattle), canis familiaris (dog), danio rerio (zebrafish), drosophila melanogaster (fruitfly) and sus scrofa (pig).</p>
 
-<p>Details about the benchmark datasets are summarized in the following table:</p>
+<p>The benchmark was run for different dataset sizes. Details about the benchmark datasets are summarized in the following table:</p>
 
-<table> 
-	<tr> 
-		<td></td> 
-    <th> 25 M</th> 
-    <th> 50 M</th>    
-    <th> 100 M</th> 
-	</tr> 
-	<tr> 
-   <th>Number of input quads</th> 
-	 <td> 25,000,000 </td> 
-	 <td> 50,000,000 </td> 
-	 <td> 100,000,000 </td> 
-	</tr> 
-	<tr> 
-		<th>Number of quads after irrelevance filter</th> 
-		<td> 13,576,394</td> 
-		<td> 25,397,310</td> 
-		<td> 44,249,757</td> 
-	</tr> 
-	<tr> 
-		<th>Number of quads after mapping</th> 
-		<td> 4,419,410</td> 
-		<td> 11,398,236</td> 
-		<td> 24,972,112</td> 
-	</tr> 
-	<tr> 
-		<th>Number of pairs of equivalent entities resolved</th> 
-		<td> 24,782</td> 
-		<td> 113,245</td> 
-		<td> 213,062</td> 
-	</tr> 
-	<tr> 
-		<th>Overall file size</th> 
-		<td> 5.6 GB</td> 
-		<td> 12 GB</td> 
-		<td> 23 GB</td> 
-	</tr> 
-</table> 
+<table>
+    <tr>
+        <td></td>
+        <th> 25 M</th>
+        <th> 50 M</th>
+        <th> 100 M</th>
+    </tr>
+    <tr>
+        <th>Number of input quads</th>
+        <td> 25,000,000 </td>
+        <td> 50,000,000 </td>
+        <td> 100,000,000 </td>
+    </tr>
+    <tr>
+        <th>Number of quads after irrelevance filter</th>
+        <td> 13,576,394</td>
+        <td> 25,397,310</td>
+        <td> 44,249,757</td>
+    </tr>
+    <tr>
+        <th>Number of quads after mapping</th>
+        <td> 4,419,410</td>
+        <td> 11,398,236</td>
+        <td> 24,972,112</td>
+    </tr>
+    <tr>
+        <th>Number of pairs of equivalent entities resolved</th>
+        <td> 24,782</td>
+        <td> 113,245</td>
+        <td> 213,062</td>
+    </tr>
+    <tr>
+        <th>Overall file size</th>
+        <td> 5.6 GB</td>
+        <td> 12 GB</td>
+        <td> 23 GB</td>
+    </tr>
+</table>
 
 
 <h2><a name="mappings"></a>3. Mappings<br></h2>
+
+<p>We defined <a href="resources/mappings.ttl"> R2R mappings</a> for translating genes, diseases and pathways from KEGG GENES and genes from UniProt
+    into a proprietary <a href="resources/Wiki.owl">target vocabulary</a>.</p>
+
+Here are some exmples of the mappings we used for:
+<ul>
+<li> mapping a KEGG Gene 'gene' into a target vocabulary 'Gene'
+<pre>
+<code> mp:Gene
+   a r2r:ClassMapping;
+   r2r:prefixDefinitions
+        "category: &lt;http://mywiki/resource/category/&gt; .
+         property: &lt;http://mywiki/resource/property/&gt; .
+         pathway:  &lt;http://wiking.vulcan.com/neurobase/kegg_pathway/resource/vocab/&gt; .
+         genes:    &lt;http://wiking.vulcan.com/neurobase/kegg_genes/resource/vocab/&gt; .
+         xsd:      &lt;http://www.w3.org/2001/XMLSchema#&gt; .";
+   r2r:sourcePattern "?SUBJ a genes:gene";
+   r2r:targetPattern "?SUBJ a category:Gene";
+   .</code>
+</pre>
+</li>
+<li> mapping a KEGG Gene 'externalLink' property into a target vocabulary 'UniprotId' property
+<pre>
+<code> mp:GeneLinkUniProt
+   a r2r:PropertyMapping;
+   r2r:mappingRef mp:Gene;
+   r2r:sourcePattern  "?SUBJ genes:externalLink ?x";
+   r2r:transformation "?id = regexToList('UniProt:(.+)', ?x)";
+   r2r:targetPattern  "?SUBJ property:UniprotId ?'id'^^xsd:string";
+   . </code>
+</pre>
+</li>
+</ul>
+
+
 <h2><a name="linkspecs"></a>4. Link Specifications<br></h2>
-<p>We used the following <a href="http://www.assembla.com/wiki/show/silk/Link_Specification_Language">Link Specification</a> for the identity resolution phase:</p>
+<p>We defined the following <a href="resources/linkSpecs.xml">Link Specification</a> for the identity resolution phase:</p>
 <pre>
 <code>&lt;Silk&gt;
 	&lt;Prefixes&gt;
 		&lt;Prefix id="rdf" namespace="http://www.w3.org/1999/02/22-rdf-syntax-ns#" /&gt;
 		&lt;Prefix id="rdfs" namespace="http://www.w3.org/2000/01/rdf-schema#" /&gt;
 		&lt;Prefix id="owl" namespace="http://www.w3.org/2002/07/owl#" /&gt;
-		&lt;Prefix id="property" namespace="http://ldif/resource/property/" /&gt;
-		&lt;Prefix id="category" namespace="http://ldif/resource/category/" /&gt;
+		&lt;Prefix id="property" namespace="http://mywiki/resource/property/" /&gt;
+		&lt;Prefix id="category" namespace="http://mywiki/resource/category/" /&gt;
 	&lt;/Prefixes&gt;
 
 	&lt;DataSources&gt;
-		&lt;DataSource id="Source"&gt; &lt;/DataSource&gt;
-		&lt;DataSource id="Target"&gt; &lt;/DataSource&gt;
+		&lt;DataSource id="Source" type="sparqlEndpoint" &gt;
+			&lt;Param name="endpointURI" value="http://localhost:2020/sparql/read" /&gt;
+		&lt;/DataSource&gt;
+		&lt;DataSource id="Target" type="sparqlEndpoint" &gt;
+			&lt;Param name="endpointURI" value="http://localhost:2020/sparql/read" /&gt;
+		&lt;/DataSource&gt;
 	&lt;/DataSources&gt;
 
 	&lt;Interlinks&gt;
@@ -152,11 +207,19 @@ The benchmark was run for different dataset sizes. </p>
 			&lt;LinkType&gt;owl:sameAs&lt;/LinkType&gt;
 
 			&lt;SourceDataset dataSource="Source" var="a"&gt;
-				&lt;RestrictTo&gt; { ?a rdf:type category:Gene } UNION { ?a rdf:type category:Disease } UNION { ?a rdf:type category:Pathway } &lt;/RestrictTo&gt;
+				&lt;RestrictTo&gt;
+					{ ?a rdf:type category:Gene }
+					UNION { ?a rdf:type category:Disease }
+					UNION { ?a rdf:type category:Pathway }
+				&lt;/RestrictTo&gt;
 			&lt;/SourceDataset&gt;
 
 			&lt;TargetDataset dataSource="Target" var="b"&gt;
-				&lt;RestrictTo&gt; { ?b rdf:type category:Gene } UNION { ?b rdf:type category:Disease } UNION { ?b rdf:type category:Pathway } &lt;/RestrictTo&gt;
+				&lt;RestrictTo&gt;
+					{ ?b rdf:type category:Gene }
+					UNION { ?b rdf:type category:Disease }
+					UNION { ?b rdf:type category:Pathway }
+				&lt;/RestrictTo&gt;
 			&lt;/TargetDataset&gt;
 
 			&lt;LinkCondition&gt;
@@ -194,6 +257,7 @@ The benchmark was run for different dataset sizes. </p>
 
 <h2><a name="machine"></a>5. Benchmark Machine<br></h2>
 <p>We used a machine with the following specification for the benchmark experiment:</p>
+
 <h3>Hardware:</h3>
 <ul>
   <li>Processors: Intel i7 950, 3.07GHz (4 cores)</li>
@@ -219,51 +283,53 @@ The benchmark was run for different dataset sizes. </p>
 
 <h2><a name="results"></a>7. Results<br></h2>
 
-<p>The following table summarizes the LDIF run times for the different dataset sizes:</p>
+<p>The following table summarizes the LDIF run times for the different dataset sizes.
+    The overall run time is split according to the different processing steps of the integration process. </p>
 
-<table> 
-	<tr> 
-		<td></td> 
-    <th> 25 M</th> 
-    <th> 50 M</th>    
-    <th> 100 M</th> 
-	</tr> 
-	<tr> 
-   <th>Load and build entites for R2R</th> 
-	 <td> 128.1 sec</td> 
-	 <td> 297.2 sec</td> 
-	 <td> 1059.7 sec</td> 
-	</tr> 
-	<tr> 
-   <th>R2R data translation</th> 
-	 <td> 169.9 sec</td> 
-	 <td> 515.0 sec</td> 
-	 <td> 1109.2 sec</td> 
-	</tr> 
-	<tr> 
-   <th>Build entities for Silk</th> 
-	 <td> 15.3 sec</td> 
-	 <td> 36.8 sec</td> 
-	 <td> 107.4 sec</td> 
-	</tr> 
-	<tr> 
-   <th>Silk Identity Resolution</th> 
-	 <td> 103.0 sec</td> 
-	 <td> 568.5 sec</td> 
-	 <td> 2954.9 sec</td> 
-	</tr> 
-	<tr> 
-   <th>Final URI rewriting</th> 
-	 <td> 8.1 sec</td> 
-	 <td> 27.0 sec</td> 
-	 <td> 65.0 sec</td> 
-	</tr> 
-	<tr> 
-   <th>Overall execution time</th> 
-	 <td> 7.0 min</td> 
-	 <td> 24.0 min</td> 
-	 <td> 88.3 min</td> 
-	</tr> 
+<table>
+    <tr>
+        <td></td>
+        <th> 25 M</th>
+        <th> 50 M</th>
+        <th> 100 M</th>
+    </tr>
+    <tr>
+        <th>Load and build entites for R2R</th>
+        <td> 128.1 sec</td>
+        <td> 297.2 sec</td>
+        <td> 1059.7 sec</td>
+    </tr>
+    <tr>
+        <th>R2R data translation</th>
+        <td> 169.9 sec</td>
+        <td> 515.0 sec</td>
+        <td> 1109.2 sec</td>
+    </tr>
+    <tr>
+        <th>Build entities for Silk</th>
+        <td> 15.3 sec</td>
+        <td> 36.8 sec</td>
+        <td> 107.4 sec</td>
+    </tr>
+    <tr>
+        <th>Silk Identity Resolution</th>
+        <td> 103.0 sec</td>
+        <td> 568.5 sec</td>
+        <td> 2954.9 sec</td>
+    </tr>
+    <tr>
+        <th>Final URI rewriting</th>
+        <td> 8.1 sec</td>
+        <td> 27.0 sec</td>
+        <td> 65.0 sec</td>
+    </tr>
+    <tr>
+        <th>Overall execution time</th>
+        <td> 7.0 min</td>
+        <td> 24.0 min</td>
+        <td> 88.3 min</td>
+    </tr>
 </table> 
 
-</body></html>
+</body>
+</html>
