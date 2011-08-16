@@ -60,14 +60,18 @@ object Main
     val fail = ConfigValidator.validateConfiguration(config)
     if(fail) {
       println("!- Validation phase failed")
-      exit(1)
+      sys.exit(1)
     } else {
       println("-- Validation phase succeeded in " + stopWatch.getTimeSpanInSeconds + "s")
     }
 
     // Quads that are not used in the integration flow, but should still be output
     val otherQuadsFile = File.createTempFile("ldif-other-quads", ".bin")
-    setupConfigParameters(otherQuadsFile)
+
+    // Quads that contain external sameAs links
+    val sameAsQuadsFile = File.createTempFile("ldif-sameas-quads", ".bin")
+
+    setupConfigParameters(otherQuadsFile, sameAsQuadsFile)
 
     val quadReaders = loadDump(config.sources)
 
@@ -88,14 +92,18 @@ object Main
     configParameters.otherQuadsWriter.finish
     val otherQuadsReader = new FileQuadReader(otherQuadsFile)
 
+    configParameters.sameAsWriter.finish
+    val sameAsReader = new FileQuadReader(sameAsQuadsFile)
+
     clonedR2rReader = setupQuadReader(clonedR2rReader)
 
     val allQuads = new MultiQuadReader(clonedR2rReader, otherQuadsReader)
+    val allSameAsLinks = new MultiQuadReader(linkReader, sameAsReader)
 
     var integratedReader: QuadReader = allQuads
 
     if(configProperties.getPropertyValue("rewriteURIs", "true").toLowerCase=="true")
-      integratedReader = executeURITranslation(allQuads, linkReader)
+      integratedReader = executeURITranslation(allQuads, allSameAsLinks)
 
     //OutputValidator.compare(cloneQuadQueue(integratedReader),new File(configFile.getParent+"/../results/all-mes.nt"))
 
@@ -104,11 +112,12 @@ object Main
 
 
 
-  def setupConfigParameters(outputFile: File) {
+  def setupConfigParameters(outputFile: File, sameasFile: File) {
     var otherQuads: QuadWriter = new FileQuadWriter(outputFile)
+    var sameAsQuads: QuadWriter = new FileQuadWriter(sameasFile)
 
     // Setup config parameters
-    configParameters = ConfigParameters(configProperties, otherQuads)
+    configParameters = ConfigParameters(configProperties, otherQuads, sameAsQuads)
 
     // Setup LocalNode (to pool strings etc.)
     LocalNode.reconfigure(configProperties)
@@ -203,7 +212,7 @@ object Main
     val silkExecutor = new SilkLocalExecutor
 
     val entityDescriptions = silkModule.tasks.toIndexedSeq.map(silkExecutor.input).flatMap{ case StaticEntityFormat(ed) => ed }
-    val entityReaders = buildEntities(Seq(reader), entityDescriptions, ConfigParameters(configProperties, otherQuadsWriter = null))
+    val entityReaders = buildEntities(Seq(reader), entityDescriptions, ConfigParameters(configProperties))
     println("Time needed to build entities for linking phase: " + stopWatch.getTimeSpanInSeconds + "s")
 
     val outputQueue = new QuadQueue

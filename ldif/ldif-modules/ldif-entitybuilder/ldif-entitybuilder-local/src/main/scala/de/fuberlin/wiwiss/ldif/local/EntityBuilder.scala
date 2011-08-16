@@ -20,9 +20,11 @@ class EntityBuilder (entityDescriptions : IndexedSeq[EntityDescription], readers
   // true if quads not relevant for the Entity Builder should be written to a QuadReader
   private val useVoldemort = config.configProperties.getPropertyValue("entityBuilderType", "in-memory").toLowerCase=="voldemort"
   // If this is true, quads like provenance quads (or even all quads) are saved for later use (merge)
-  private val saveQuads = config.otherQuadsWriter!=null
   private val outputAllQuads = config.configProperties.getPropertyValue("output", "mapped-only").toLowerCase=="all"
+  private val saveQuads = config.otherQuadsWriter!=null
+  private val saveSameAsQuads = config.sameAsWriter!=null
   private val provenanceGraph = config.configProperties.getPropertyValue("provenanceGraph", "http://www4.wiwiss.fu-berlin.de/ldif/provenance")
+  private val useExternalSameAsLinks = config.configProperties.getPropertyValue("useExternalSameAsLinks", "true").toLowerCase=="true"
 
   // Property HT - Describes all the properties used in the Entity Description
   var PHT: PropertyHashTable = null
@@ -94,6 +96,9 @@ class EntityBuilder (entityDescriptions : IndexedSeq[EntityDescription], readers
         if(saveQuads)
           saveQuadsForLater(quad)
 
+        if(useExternalSameAsLinks)
+          saveIfSameAsQuad(quad)
+
         if(isRelevantQuad(quad))  {
           addUriNodes(quad)
           counter += 1
@@ -132,6 +137,11 @@ class EntityBuilder (entityDescriptions : IndexedSeq[EntityDescription], readers
       true
     else
       false
+  }
+
+  private def saveIfSameAsQuad(quad:Quad) {
+    if(saveSameAsQuads && quad.predicate=="http://www.w3.org/2002/07/owl#sameAs")
+      config.sameAsWriter.write(quad)
   }
 
   private def isProvenanceQuad(quad: Quad): Boolean = {

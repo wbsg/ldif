@@ -12,7 +12,7 @@ import java.io.{IOException, FileInputStream, BufferedInputStream, File}
  * To change this template use File | Settings | File Templates.
  */
 
-case class ConfigParameters(val configProperties: ConfigProperties, val otherQuadsWriter: QuadWriter)
+case class ConfigParameters(val configProperties: ConfigProperties, val otherQuadsWriter: QuadWriter = null, val sameAsWriter: QuadWriter = null)
 
 
 class ConfigProperties  {

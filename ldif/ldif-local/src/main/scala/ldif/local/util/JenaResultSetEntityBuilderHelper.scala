@@ -5,9 +5,9 @@ import ldif.util.EntityDescriptionToSparqlConverter
 import ldif.entity.{Node, EntityDescription}
 import collection.mutable.ArrayBuffer
 import com.hp.hpl.jena.query.{QuerySolution, ResultSet}
-import com.hp.hpl.jena.rdf.model.RDFNode
 import scala.collection.JavaConversions._
 import java.util.HashSet
+   import com.hp.hpl.jena.rdf.model.{Resource, Literal, RDFNode}
 
    /*  There are two scenarios:
    *   1) ResultSets contain graph vars
@@ -127,9 +127,9 @@ object JenaResultSetEntityBuilderHelper {
   }
 
   private def convertLiteralNode(node: RDFNode, graphURI: String): Node = {
-    val lexicalValue = node.asLiteral.getLexicalForm
-    val datatype = node.asLiteral.getDatatypeURI
-    val language = node.asLiteral.getLanguage
+    val lexicalValue = node.asInstanceOf[Literal].getLexicalForm
+    val datatype = node.asInstanceOf[Literal].getDatatypeURI
+    val language = node.asInstanceOf[Literal].getLanguage
 
     if (datatype != null)
       return Node.createTypedLiteral(lexicalValue, datatype, graphURI)
@@ -140,13 +140,13 @@ object JenaResultSetEntityBuilderHelper {
   }
 
   def convertNode(node: RDFNode, graph: RDFNode): Node = {
-    val graphURI = graph.asResource.getURI
+    val graphURI = graph.asInstanceOf[Resource].getURI
     if(node.isURIResource) {
-      return Node.createUriNode(node.asResource.getURI, graphURI)
+      return Node.createUriNode(node.asInstanceOf[Resource].getURI, graphURI)
     } else if(node.isLiteral) {
       return convertLiteralNode(node, graphURI)
     } else if(node.isAnon) {
-      return Node.createBlankNode(node.asResource.getId.getLabelString, graphURI)
+      return Node.createBlankNode(node.asInstanceOf[Resource].getId.getLabelString, graphURI)
     } else
       throw new RuntimeException("Unknown node type for RDFNode: " + node) // Should never be the case
 
@@ -154,11 +154,11 @@ object JenaResultSetEntityBuilderHelper {
 
   def convertNode(node: RDFNode, graphURI: String): Node = {
     if(node.isURIResource) {
-      return Node.createUriNode(node.asResource.getURI, graphURI)
+      return Node.createUriNode(node.asInstanceOf[Resource].getURI, graphURI)
     } else if(node.isLiteral) {
       return convertLiteralNode(node, graphURI)
     } else if(node.isAnon) {
-      return Node.createBlankNode(node.asResource.getId.getLabelString, graphURI)
+      return Node.createBlankNode(node.asInstanceOf[Resource].getId.getLabelString, graphURI)
     } else
       throw new RuntimeException("Unknown node type for RDFNode: " + node) // Should never be the case
 
@@ -205,7 +205,7 @@ object JenaResultSetEntityBuilderHelper {
     private def getAGraph(querySolution: QuerySolution): String = {
       for(graphVar <- graphvars) {
         if(querySolution.get(graphVar)!=null)
-          return querySolution.get(graphVar).asResource.getURI
+          return querySolution.get(graphVar).asInstanceOf[Resource].getURI
       }
       throw new RuntimeException("Cannot happen. There will always be at least one SUBJ graph.")
     }

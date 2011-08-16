@@ -18,12 +18,12 @@ class MultiQuadReader(quadReader: QuadReader*) extends QuadReader {
 
   def hasNext: Boolean = {
     if(closed)
-      false
+      return false
 
     if(quadReader(index).hasNext)
       return true
     else {
-      while(index < quadReader.length && !quadReader(index).hasNext)
+      while(index < quadReader.length && (!quadReader(index).hasNext))
         index += 1
 
       if(index >= quadReader.length) {

@@ -47,8 +47,20 @@ object URITranslator {
       }
     }
     log.info("End URI translation: Processed " + counter + " quads.")
+    log.info("Outputting sameAs links...")
+    writeSameAsLinks(uriMap, quadOutput)
 
     quadOutput
+  }
+
+  private def writeSameAsLinks(linkMap: Map[String, String], quadWriter: QuadWriter) {
+    val sameAsProperty = "http://www.w3.org/2002/07/owl#sameAs"
+    val graph = "urn:ldif:sameAsOutput"
+    for((linkSubj, linkObj) <- linkMap) {
+      val subj = LocalNode.createUriNode(linkSubj, "")
+      val obj  = LocalNode.createUriNode(linkObj, "")
+      quadWriter.write(Quad(subj, sameAsProperty, obj, graph))
+    }
   }
 
   // Returns translated URI if they are found in the map, or returns the original URI
@@ -79,7 +91,7 @@ object URITranslator {
     var counter = 0
     var percentCounter = 1
 
-    while (!linkReader.isEmpty) {
+    while (linkReader.hasNext) {
       counter += 1
 //      if(10*counter/overAllCount > percentCounter/10) {
 //        log.info("URITranslator: Links read: " + percentCounter + "%")

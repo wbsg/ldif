@@ -4,6 +4,7 @@
 
 
 
+
   
 
   
@@ -533,8 +534,9 @@ from. Default:  <span style="font-family: monospace;">tdb</span></p>
 <li>
     <p>Source datasets, R2R mappings and Silk link specifications
 are all validated before starting with the actual integration. Since
-the syntax validation of the sources (N-Triples / N-Quads files) can
-take a long time, if you already know that they are correct, it is
+the syntax validation of the sources (N-Triples / N-Quads files) takes
+some time (about 15s/GB), if you already know that they are correct, it
+is
 possible to disable this step by setting the property to <span style="font-family: monospace;">false</span>. Default:&nbsp;<span style="font-family: monospace;">true</span> <span style="font-family: monospace;"></span></p>
   </li>
 </ul>
@@ -544,8 +546,24 @@ possible to disable this step by setting the property to <span style="font-famil
 <pre style="margin-left: 40px;"><span style="font-weight: bold;">validateSources = true | false</span></pre>
 
 
-<h2 id="development"><br>
-</h2>
+<ul>
+<li>
+    <p>Besides discovering equal entities in the identity
+resolution phase, LDIF also offers the opportunity to input these
+relationships in form of owl:sameAs links. The NT/N-Quads file with
+these sameAs-links has to be placed in the source directory with the
+other datasets. If you don't want to use sameAs-links from the input
+data, set this property to <span style="font-family: monospace;">false</span>. Default:&nbsp;<span style="font-family: monospace;">true</span> <span style="font-family: monospace;"></span></p>
+  </li>
+</ul>
+
+
+
+
+<pre style="margin-left: 40px;"><span style="font-weight: bold;">useExternalSameAsLinks = true | false</span></pre>
+<br>
+<br>
+
 
 <h2 id="development"><a name="code"></a>7. Source
 Code and Development</h2>
