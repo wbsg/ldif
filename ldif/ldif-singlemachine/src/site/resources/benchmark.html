@@ -262,7 +262,7 @@ Here are some exmples of the mappings we used for:
 <ul>
   <li>Processors: Intel i7 950, 3.07GHz (4 cores)</li>
   <li>Memory: 24GB</li>
-  <li>Hard Disks: 2 × 1.8TB (7,200 rpm) SATA2 & 1 x SSD OCZ Vertex 2 (120 GB)</li>
+  <li>Hard Disks: 2 × 1.8TB (7,200 rpm) SATA2</li>
 </ul>
 
 <h3>Software:</h3>
@@ -274,10 +274,10 @@ Here are some exmples of the mappings we used for:
 <h2><a name="procedure"></a>6. Test Procedure<br></h2>
 <p>We applied the following test procedure to each test:</p>
 <ol> 
-	<li>Clear Operating System caches with command: echo 2 &gt; /proc/sys/vm/drop_caches</li> 
-	<li>Run test</li> 
-	<li>Clear caches again</li> 
-	<li>Run test with memory profiler</li> 
+	<li>Clear Operating System caches
+        <pre> echo 2 &gt; /proc/sys/vm/drop_caches </pre></li>
+	<li>Run test
+        <pre> java -server -Xmx20G -jar ldif-0.1-single-machine.jar </pre></li>
 </ol> 
 
 
