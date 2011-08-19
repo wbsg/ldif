@@ -20,3 +20,8 @@ mappings:whateverClassMapping
   a r2r:Mapping ;
   r2r:sourcePattern "?SUBJ a <http://WhatEver>" ;
   r2r:targetPattern "?SUBJ a <http://testNamespace/WhatEverClass>" .
+
+mappings:somePropMapping
+  a r2r:Mapping ;
+  r2r:sourcePattern "?SUBJ <http://someProp> ?o" ;
+  r2r:targetPattern "?SUBJ <http://someMappedProp> ?o" .

@@ -102,7 +102,7 @@ object ConfigValidator {
       if(erroneousMappings.size>0)
         mappingFileErrors = Pair(mappingsError, erroneousMappings)
     } catch {
-      case e: Exception => mappingFileErrors = Pair(fileError, null)
+      case e: Exception => mappingFileErrors = Pair(fileError + ": " + e.getMessage, null)
     }
     if(mappingFileErrors==null)
       mappingFileErrors = Pair("Ok", null)

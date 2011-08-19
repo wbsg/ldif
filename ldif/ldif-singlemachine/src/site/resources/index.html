@@ -5,6 +5,7 @@
 
 
 
+
   
 
   
@@ -460,7 +461,8 @@ this:<br>
 <p>It has the following elements:</p>
 <ul>
   <li><span style="font-style: italic;">Properties</span>: The path to
-a Java properties file for configuration parameters.</li>
+a Java properties file for configuration parameters. See the <a href="#configurationproperties">following&nbsp; section</a> for more details.<br>
+</li>
   <li><span style="font-style: italic;">Sources</span>: A directory
 containing the source data sets.  These files in this directory must be in <a href="http://sw.deri.org/2008/07/n-quads/">N-Quads</a> format and may
 be compressed (.gz, .zip or .bz2).</li>
@@ -482,7 +484,7 @@ currently the datasets have to be in a local directory. More
 sophisticated data access will be implemented with the coming <a href="#nextSteps">Data
 Access Modules</a>.<br>
 </p>
-<h3>Configuration Properties</h3>
+<h3><a name="configurationproperties"></a>Configuration Properties</h3>
 <p>In the LDIF configuration file you can specify a (Java) properties
       file to further tweak certain parameters concerning the integration
       workflow. Here is a list with all properties that can be set at the
@@ -560,8 +562,19 @@ data, set this property to <span style="font-family: monospace;">false</span>. D
 
 
 
-<pre style="margin-left: 40px;"><span style="font-weight: bold;">useExternalSameAsLinks = true | false</span></pre>
-<br>
+<pre style="margin-left: 40px;"><span style="font-weight: bold;">useExternalSameAsLinks = true | false</span><br></pre>
+<ul>
+<li>
+    <p>Although the default output format is N-Quads, LDIF also offers a triple output as N-Triple. Default: <span style="font-family: monospace;">nq</span> <span style="font-family: monospace;"></span></p>
+  </li>
+</ul>
+
+
+
+
+
+<pre style="margin-left: 40px;"><span style="font-weight: bold;">outputFormat = nq | nt</span></pre>
+
 <br>
 
 

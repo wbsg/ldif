@@ -1,13 +1,13 @@
    package ldif.local.util
 
 import ldif.local.runtime.EntityWriter
-import ldif.util.EntityDescriptionToSparqlConverter
 import ldif.entity.{Node, EntityDescription}
 import collection.mutable.ArrayBuffer
 import com.hp.hpl.jena.query.{QuerySolution, ResultSet}
 import scala.collection.JavaConversions._
 import java.util.HashSet
    import com.hp.hpl.jena.rdf.model.{Resource, Literal, RDFNode}
+   import ldif.util.{NTriplesStringConverter, EntityDescriptionToSparqlConverter}
 
    /*  There are two scenarios:
    *   1) ResultSets contain graph vars
@@ -146,7 +146,7 @@ object JenaResultSetEntityBuilderHelper {
     } else if(node.isLiteral) {
       return convertLiteralNode(node, graphURI)
     } else if(node.isAnon) {
-      return Node.createBlankNode(node.asInstanceOf[Resource].getId.getLabelString, graphURI)
+      return Node.createBlankNode(NTriplesStringConverter.convertJenaBlankNodeLabelsToNTriplesLabels(node.asNode().getBlankNodeLabel), graphURI)
     } else
       throw new RuntimeException("Unknown node type for RDFNode: " + node) // Should never be the case
 

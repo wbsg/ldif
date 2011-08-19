@@ -105,4 +105,10 @@ object NTriplesStringConverter {
 
     sb.toString
   }
+
+  def convertJenaBlankNodeLabelsToNTriplesLabels(jenaBNLabel: String): String = {
+    var converted = jenaBNLabel.replace('_', 'A')
+    converted = converted.replace('-', 'B')
+    "J" + converted.replace(':', 'C')
+  }
 }

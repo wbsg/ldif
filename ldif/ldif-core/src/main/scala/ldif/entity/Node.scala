@@ -3,7 +3,7 @@ package ldif.entity
 import Node._
 import org.semanticweb.yars.nx.parser.NxParser
 import ldif.util.NTriplesStringConverter
-import java.util.Comparator
+import ldif.util.MD5Helper
 
 final case class Node(value : String, datatypeOrLanguage : String, nodeType : Node.NodeType, graph : String) //extends Ordered[Node]
 {
@@ -86,11 +86,19 @@ final case class Node(value : String, datatypeOrLanguage : String, nodeType : No
     case UriNode => "<" + value + ">"
   }
 
-  def toNTriplesFormat = nodeType match {
+  def toNQuadsFormat = nodeType match {
     case Literal => "\"" + NTriplesStringConverter.convertToEscapedString(value) + "\""
     case TypedLiteral => "\"" + NTriplesStringConverter.convertToEscapedString(value) + "\"^^<" + NTriplesStringConverter.convertToEscapedString(datatypeOrLanguage) + ">"
     case LanguageLiteral => "\"" + NTriplesStringConverter.convertToEscapedString(value) + "\"@" + datatypeOrLanguage
     case BlankNode => "_:"+ value
+    case UriNode => "<" + NTriplesStringConverter.convertToEscapedString(value) + ">"
+  }
+
+  def toNTriplesFormat = nodeType match {
+    case Literal => "\"" + NTriplesStringConverter.convertToEscapedString(value) + "\""
+    case TypedLiteral => "\"" + NTriplesStringConverter.convertToEscapedString(value) + "\"^^<" + NTriplesStringConverter.convertToEscapedString(datatypeOrLanguage) + ">"
+    case LanguageLiteral => "\"" + NTriplesStringConverter.convertToEscapedString(value) + "\"@" + datatypeOrLanguage
+    case BlankNode => "_:g" + MD5Helper.md5(graph) + value
     case UriNode => "<" + NTriplesStringConverter.convertToEscapedString(value) + ">"
   }
 

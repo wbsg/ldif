@@ -107,7 +107,7 @@ object Main
 
     //OutputValidator.compare(cloneQuadQueue(integratedReader),new File(configFile.getParent+"/../results/all-mes.nt"))
 
-    writeOutput(config.outputFile, integratedReader)
+    writeOutput(config, integratedReader)
   }
 
 
@@ -289,13 +289,17 @@ object Main
     thread.start()
   }
 
-  //TODO we don't have an output module yet...
-  private def writeOutput(outputFile : File, reader : QuadReader)    {
-    val writer = new FileWriter(outputFile)
+  //TODO we don't have an output module, yet...
+  private def writeOutput(config: LdifConfiguration, reader : QuadReader)    {
+    val writer = new FileWriter(config.outputFile)
     var count = 0
+    val nqOutput = configParameters.configProperties.getPropertyValue("outputFormat", "nq").toLowerCase.equals("nq")
 
     while(reader.hasNext) {
-      writer.write(reader.read().toNQuadFormat + " .\n")
+      if(nqOutput)
+        writer.write(reader.read().toNQuadFormat + " .\n")
+      else
+        writer.write(reader.read().toNTripleFormat + " .\n")
       count += 1
     }
 
