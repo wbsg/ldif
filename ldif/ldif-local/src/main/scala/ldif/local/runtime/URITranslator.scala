@@ -30,6 +30,7 @@ object URITranslator {
 
   def translateQuads(quadsReader: QuadReader, linkReader: QuadReader): QuadReader = {
     val uriMap = generateUriMap(linkReader)
+    val entityGraphChecker = new EntityGraphChecker
 
     val quadOutput = new QuadQueue
     var counter = 0
@@ -41,26 +42,28 @@ object URITranslator {
       quadsReader.read match {
         case Quad(s, p, o, g) => {
           val (sNew, oNew) = translateQuadURIs(s, o, uriMap)
-
+          checkAndWriteSameAsLinks(uriMap, quadOutput, entityGraphChecker, s, o)
           quadOutput.write(Quad(sNew, p, oNew, g))
         }
       }
     }
     log.info("End URI translation: Processed " + counter + " quads.")
     log.info("Outputting sameAs links...")
-    writeSameAsLinks(uriMap, quadOutput)
 
     quadOutput
   }
 
-  private def writeSameAsLinks(linkMap: Map[String, String], quadWriter: QuadWriter) {
+  private def checkAndWriteSameAsLinks(uriMap: Map[String, String], quadOutput: QuadWriter, entityGraphChecker: EntityGraphChecker, nodes: Node*) {
+    for(node <- nodes if node.nodeType==Node.UriNode && uriMap.contains(node.value))
+      if(entityGraphChecker.addAndCheck(node.value, node.graph))
+        writeSameAsLink(node.value, uriMap.get(node.value).get, node.graph, quadOutput)
+  }
+
+  private def writeSameAsLink(subj: String, obj: String, graph: String, quadWriter: QuadWriter) {
     val sameAsProperty = "http://www.w3.org/2002/07/owl#sameAs"
-    val graph = "urn:ldif:sameAsOutput"
-    for((linkSubj, linkObj) <- linkMap) {
-      val subj = LocalNode.createUriNode(linkSubj, "")
-      val obj  = LocalNode.createUriNode(linkObj, "")
-      quadWriter.write(Quad(subj, sameAsProperty, obj, graph))
-    }
+    val s = LocalNode.createUriNode(subj, "")
+    val o = LocalNode.createUriNode(obj, "")
+    quadWriter.write(Quad(s, sameAsProperty, o, graph))
   }
 
   // Returns translated URI if they are found in the map, or returns the original URI
@@ -78,7 +81,9 @@ object URITranslator {
     val entityToClusterMap: Map[String, EntityCluster] = createEntityCluster(linkReader)
 
     for((fromURI, toURICluster) <- entityToClusterMap) {
-      uriMap.put(fromURI, toURICluster.getGlobalEntity)
+      val toURI = toURICluster.getGlobalEntity
+      if(fromURI!=toURI)
+        uriMap.put(fromURI, toURI)
     }
 
     uriMap
@@ -155,4 +160,20 @@ case class EntityCluster(entity: String, entitySet: Set[String]) {
   }
 
   def size = entitySet.size
+}
+
+class EntityGraphChecker {
+  val entityGraphMap = new HashMap[String, Set[String]]()
+
+  /**
+   * add the graph to the entity.
+   * @returns true if the graph has not been added before, else false
+   */
+  def addAndCheck(entity: String, graph: String): Boolean = {
+    val entityGraphSet = entityGraphMap.getOrElseUpdate(entity, new HashSet[String])
+    if(entityGraphSet.contains(graph))
+      return false
+    entityGraphSet.add(graph)
+    return true
+  }
 }
