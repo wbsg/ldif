@@ -1,6 +1,5 @@
    package ldif.local.util
 
-import ldif.local.runtime.EntityWriter
 import ldif.entity.{Node, EntityDescription}
 import collection.mutable.ArrayBuffer
 import com.hp.hpl.jena.query.{QuerySolution, ResultSet}
@@ -8,6 +7,7 @@ import scala.collection.JavaConversions._
 import java.util.HashSet
    import com.hp.hpl.jena.rdf.model.{Resource, Literal, RDFNode}
    import ldif.util.{NTriplesStringConverter, EntityDescriptionToSparqlConverter}
+   import ldif.local.runtime.{LocalNode, EntityWriter}
 
    /*  There are two scenarios:
    *   1) ResultSets contain graph vars
@@ -31,7 +31,7 @@ object JenaResultSetEntityBuilderHelper {
       assignResultsForEntity(entity, entityResults, factumTable)
       entityResults = updateEntityResults(entity, entityResults, resultManagers)
 
-      entityWriter.write(EntityLocalComplete(entity, graph, entityDescription, factumTable))
+      entityWriter.write(EntityLocalComplete(LocalNode.createResourceNode(entity, graph), entityDescription, factumTable))
     }
 
     entityWriter.finish
@@ -51,7 +51,7 @@ object JenaResultSetEntityBuilderHelper {
       assignResultsForEntity(entity, entityResults, factumTable)
       entityResults = updateEntityResults(entity, entityResults, resultManagers, graph)
 
-      entityWriter.write(EntityLocalComplete(entity, graph, entityDescription, factumTable))
+      entityWriter.write(EntityLocalComplete(LocalNode.createResourceNode(entity, graph), entityDescription, factumTable))
     }
 
     entityWriter.finish

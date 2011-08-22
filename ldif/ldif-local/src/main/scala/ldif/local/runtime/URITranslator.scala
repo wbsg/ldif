@@ -56,14 +56,13 @@ object URITranslator {
   private def checkAndWriteSameAsLinks(uriMap: Map[String, String], quadOutput: QuadWriter, entityGraphChecker: EntityGraphChecker, nodes: Node*) {
     for(node <- nodes if node.nodeType==Node.UriNode && uriMap.contains(node.value))
       if(entityGraphChecker.addAndCheck(node.value, node.graph))
-        writeSameAsLink(node.value, uriMap.get(node.value).get, node.graph, quadOutput)
+        writeSameAsLink(node, uriMap.get(node.value).get, quadOutput)
   }
 
-  private def writeSameAsLink(subj: String, obj: String, graph: String, quadWriter: QuadWriter) {
+  private def writeSameAsLink(subj: String, obj: String, quadWriter: QuadWriter) {
     val sameAsProperty = "http://www.w3.org/2002/07/owl#sameAs"
-    val s = LocalNode.createResourceNode(subj, "")
     val o = LocalNode.createResourceNode(obj, "")
-    quadWriter.write(Quad(s, sameAsProperty, o, graph))
+    quadWriter.write(Quad(subj, sameAsProperty, o, subj.graph))
   }
 
   // Returns translated URI if they are found in the map, or returns the original URI
