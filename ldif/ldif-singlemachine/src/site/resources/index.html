@@ -1,16 +1,7 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html><head><title>LDIF - Linked Data Integration Framework</title>
 
-
-
-
-
-
-  
-
-  
-  
-  <style>
+<style>
 body { background: white; color: black; font-family: sans-serif; line-height: 1.4em; padding: 2.5em 3em; margin: 0; }
 :link { color: #00c; }
 :visited { color: #609; }
@@ -18,7 +9,7 @@ a:link img { border: none; }
 a:visited img { border: none; }
 h1, h2, h3 { background: white; color: #800; }
 h1 { font: 170% sans-serif; margin: 0; }
-h2 { clear: both; font: 140% sans-serif; margin: 1.5em 0 -0.5em 0; }
+h2 { clear: both; font: 140% sans-serif; margin: 2.5em 0 -0.5em 0; }
 h3 { font: 120% sans-serif; margin: 1.5em 0 -0.5em 0; }
 h4 { font: bold 100% sans-serif; }
 h5 { font: italic 100% sans-serif; }
@@ -52,17 +43,16 @@ h3 { stress: 20; richness: 90; }
 dt { pause-before: 20%; }
 pre { speak-punctuation: code; }
 }
-  .Stil1 {color: #FF0000}
-  </style>
-  
-  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"></head><body>
+.Stil1 {color: #FF0000}
+</style>
+
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"></head><body>
 <div id="logo" align="right"><a href="http://www.wiwiss.fu-berlin.de/en/institute/pwo/bizer/index.html"><img src="img/fu-logo.gif" alt="Freie Universität Berlin Logo" border="0"></a>&nbsp;<br>
   <a href="http://mediaeventservices.com"><img src="img/logo.gif" alt="Media Event Services"></a></div>
 
-<div id="header">
-<h1 style="font-size: 250%;">LDIF - Linked Data Integration Framework<br>
-</h1>
-<div id="tagline">A component for building Linked Data applications <br>
+<div id="header"> <h1 style="font-size: 250%;">LDIF - Linked Data Integration Framework </h1></div>
+
+<div id="tagline">A component for building Linked Data applications
 </div>
 <div id="authors"><a href="http://www.wiwiss.fu-berlin.de/en/institute/pwo/bizer/team/SchultzAndreas.html">Andreas
 Schultz</a><br>
@@ -74,24 +64,22 @@ Bizer</a><br>
 <a href="http://www.wiwiss.fu-berlin.de/en/institute/pwo/bizer/team/BeckerChristian.html">Christian Becker</a><br>
 </div>
 <div id="content">
-<p>The LDIF - Framework translates 
-
-
- heterogeneous Linked Data from the Web into <br>
+<p>The LDIF - Framework translates heterogeneous Linked Data from the Web into <br>
 a clean, local target representation while keeping track of data
 provenance.</p>
 <div id="download">
-<h2><a href="http://www4.wiwiss.fu-berlin.de/bizer/ldif/releases/ldif-0.1.zip">Download LDIF</a><br>
+<h2><a href="http://www4.wiwiss.fu-berlin.de/bizer/ldif/releases/ldif-0.2.zip">Download LDIF</a><br>
 </h2>
-<small>v0.1 (alpha), released 2011-06-29</small>
+<small>v0.2, released 2011-08-XX</small>
 </div>
 <h2 id="news">News</h2>
 <ul>
-  <li><strong>6/29/2011: Version 0.1 released.</strong> This alpha
+ <li><strong>8/XX/2011: Version 0.2 released.</strong> This version...</li>
+ <li><strong>6/29/2011: Version 0.1 released.</strong> This alpha
 version provides for translating data that is represented using
 different source vocabularies into a single target vocabulary and for
 replacing different URIs that refer to the same real-world entity with
-a single target URI. &nbsp;</li>
+a single target URI.</li>
 </ul>
 <h2 id="contents">Contents</h2>
 <ol class="toc">
@@ -172,7 +160,7 @@ copied to the final output. In future releases, we will use the
 provenance information for data quality assessment and data fusion (see
 <a href="#nextSteps">Next Steps</a>).<br>
 </p>
-<h3>Transformation: R2R Data Translation<br>
+<h3>Transformation: R2R Data Translation
 </h3>
 <p>LDIF employs the <a href="http://www4.wiwiss.fu-berlin.de/bizer/r2r/">R2R Framework</a>
 to translate Web data that is represented using terms from different
@@ -193,7 +181,7 @@ The <a href="http://www4.wiwiss.fu-berlin.de/bizer/r2r/spec/">specification
 and user manual</a> is provided as a separate document.<br>
 </p>
 <h3>Transformation: Silk Identity Resolution </h3>
-<p><br>
+<p>
 LDIF employs the <a href="http://www4.wiwiss.fu-berlin.de/bizer/silk/">Silk
 Link Discovery Framework</a>
 to find different URIs that are used within different data sources to
@@ -213,6 +201,11 @@ workflow into a single N-Quads file. This file contains the translated
 versions of all graphs from the input graph set as well as the content
 of the provenance graph. <br>
 </p>
+<h3 style="text-align: left;">Data Output: N-Triples Writer<br>
+</h3>
+<p>The N-Triples writer dumps the final output of the integration
+workflow into a single N-Triples file.<br>
+</p>
 <h3 style="text-align: left;">Runtime Environment </h3>
 <p style="text-align: left;"> The Runtime Environment manages the data
 flow between the various stages and the caching of the intermediate
@@ -221,8 +214,8 @@ in-memory version of the runtime environment. This implementation keeps
 all intermediate results in
 memory. It is very fast but scales only depending on the amount of
 memory
-available. For instance, integrating 24 million triples required 7.2 GB
-memory within one of our <a href="#performance">experiments</a>. </p>
+available. For instance, integrating 25 million triples required 5 GB
+memory within one of our <a href="benchmark.html">experiments</a>. </p>
 <h3><a name="nextSteps"></a>Next steps for LDIF</h3>
 <p>LDIF V0.1 only provides data translation and identity resolution
 functionality. Over the next months, we plan to extend LDIF along the
@@ -246,7 +239,7 @@ configuration parameters. We plan to make the workflow and its
 configuration more flexible in order to make it easier to include
 additional modules that cover other data integration aspects. </li>
   </ol>
-<p>&nbsp;</p>
+
 <h2 id="quickstart"><a name="quickstart"></a>3. Quick start</h2>
 <br>
 In order to experiment with LDIF follow these steps:<br>
@@ -318,7 +311,6 @@ configuration. The configuration options are explained in the Section <a href="#
     <pre>bin\run.bat examples\1k\config.xml</pre>
   </ul>
   </ul>
-<h3>&nbsp;</h3>
 <h3>Example Data Translation </h3>
 <p>In the following, we explain the data translation that is performed
 for the example of one entity that is described in two input datasets:</p>
@@ -374,82 +366,13 @@ the input data. </li>
     </ul>
 <h2 id="performance"><a name="performance"></a>5.
 Performance Evaluation</h2>
-<p>We regularly carry out performance evaluations. Our test use case
-resembles the one explained above. In order
-to measure the performance at different scale we used several samples of the input data
-which differ in the amount of entities. In the following we present our
-setup for the experiments and then give an overview of our initial results.</p>
-<p>Test machine:</p>
-<ul>
-  <li>OS – Ubuntu 10.04.2 LTS 64-bit</li>
-  <li>Intel Core i5-2500K CPU @ 3.30GHz (quadcore)</li>
-  <li>16GB of memory</li>
-  <li>SATA HD</li>
-</ul>
-<p>Overview of the results:</p>
-<table style="text-align: left; width: 1012px; height: 150px;" border="1" cellpadding="2" cellspacing="0">
-  <tbody>
-    <tr>
-      <td style="vertical-align: top; font-weight: bold;">Number of
-entities per dataset<br>
-      </td>
-      <td style="vertical-align: top; font-weight: bold;">Number of
-quads</td>
-      <td style="vertical-align: top; font-weight: bold;">dataset size
-on disk (N-Quads format)<br>
-      </td>
-      <td style="vertical-align: top; font-weight: bold;">runtime (in
-mm:ss)</td>
-    </tr>
-    <tr>
-      <td style="vertical-align: top; text-align: center;">1K<br>
-      </td>
-      <td style="vertical-align: top; text-align: center;">1M<br>
-      </td>
-      <td style="vertical-align: top; text-align: center;">150MB<br>
-      </td>
-      <td style="vertical-align: top; text-align: center;">0:36<br>
-      </td>
-    </tr>
-    <tr>
-      <td style="vertical-align: top; text-align: center;">10K<br>
-      </td>
-      <td style="vertical-align: top; text-align: center;">7.5M<br>
-      </td>
-      <td style="vertical-align: top; text-align: center;">1GB<br>
-      </td>
-      <td style="vertical-align: top; text-align: center;">3:40<br>
-      </td>
-    </tr>
-    <tr>
-      <td style="vertical-align: top; text-align: center;">100K<br>
-      </td>
-      <td style="vertical-align: top; text-align: center;">24M<br>
-      </td>
-      <td style="vertical-align: top; text-align: center;">4GB<br>
-      </td>
-      <td style="vertical-align: top; text-align: center;">16:55<br>
-      </td>
-    </tr>
-  </tbody>
-</table>
-<br>
-The memory foot print for the 100k-test was 7.2 GB at maximum. For more
-details and the latest results please visit our <a href="https://www.assembla.com/spaces/ldif/wiki/Performance_Tests">Performance
-Testing</a>&nbsp; page.<br>
-<strong><br>
-</strong>
+<p>We regularly carry out performance evaluations. For more
+details and the latest results please visit our <a href="benchmark.html">Benchmark results</a> page.</p>
+
+
 <h2 id="configuration"><a name="config"></a>6. Configuration
 Options</h2>
-<br>
-<p>This section describes how an LDIF configuration file looks
-like and which parameters you can modify to change the runtime
-
-
-
- behavior
-
- of LDIF.</p>
+<p>This section describes how an LDIF configuration file looks like and which parameters you can modify to change the runtime behavior of LDIF.</p>
 <h3>LDIF configuration file</h3>
 <p>LDIF is configured with an XML file, whose current structure is very
 simple because the integration flow is static at the moment - something
@@ -494,8 +417,6 @@ Access Modules</a>.<br>
   <li>Specify if all input quads from the input should  be included in the output
         file or only the quads that were mapped/translated by LDIF. Default: <span style="font-family: monospace;">mapped-only</span></li>
 </ul>
-<p>
-</p>
 <pre style="margin-left: 40px;"><span style="font-weight: bold;">output = all | mapped-only</span><br></pre>
 <ul>
   <li>Specify if URI aliases in the input data should be rewritten to a single target URI in the output data. Default: <span style="font-family: monospace;">true</span></li>
@@ -575,38 +496,15 @@ data, set this property to <span style="font-family: monospace;">false</span>. D
 
 <pre style="margin-left: 40px;"><span style="font-weight: bold;">outputFormat = nq | nt</span></pre>
 
-<br>
-
 
 <h2 id="development"><a name="code"></a>7. Source
 Code and Development</h2>
-
-<br>
 <p>The latest source code is available from the <a href="http://www.assembla.com/spaces/ldif/wiki">LDIF development page</a> on Assembla.com.</p>
 <p>The framework can be used under the terms of the <a href="http://www.apache.org/licenses/LICENSE-2.0">Apache Software
-License</a>.<br>
+License</a>.
 </p>
 <h2><a name="feedback" id="feedback"></a>8. Support and Feedback </h2>
-<p>&nbsp;</p>
-<p>For questions and feedback please use the LDIF Google Group. </p>
-<input name="hl" value="en" type="hidden">
-<table style="padding: 5px; background-color: rgb(255, 255, 255);" border="0" cellspacing="0">
-  <tbody>
-    <tr>
-      <td> <img src="http://groups.google.com/intl/en/images/logos/groups_logo_sm.gif" alt="Google Groups" height="30" width="140"> </td>
-    </tr>
-    <tr>
-      <td style="padding-left: 5px;"> <b>Subscribe to LDIF</b> </td>
-    </tr>
-    <form action="http://groups.google.com/group/ldif/boxsubscribe"></form>
-    <tr>
-      <td style="padding-left: 5px;"> Email: <input name="email" type="text"> <input name="sub" value="Subscribe" type="submit"> </td>
-    </tr>
-    <tr>
-      <td align="right"> <a href="http://groups.google.com/group/ldif?hl=en">Visit this group</a> </td>
-    </tr>
-  </tbody>
-</table>
+<p>For questions and feedback please use the <a href="http://groups.google.com/group/ldif?hl=en">LDIF Google Group</a>. </p>
 <h2 id="relatedprojects"><a name="related"></a>9. References</h2>
 <ul>
   <li>Tom Heath, Christian Bizer: <a href="http://www.morganclaypool.com/doi/abs/10.2200/S00334ED1V01Y201102WBE001">Linked
@@ -627,16 +525,10 @@ Server - Adding missing Links while consuming Linked Data</a> ( <a href="http://
 ). 1st International Workshop on Consuming Linked Data (COLD
 2010), Shanghai, November 2010. </li>
 </ul>
-<p>&nbsp;</p>
 <h2><a name="acknowledgments"></a>10. Acknowledgments </h2>
 <p>This work was supported in part by Vulcan Inc. as part of its <a href="http://www.projecthalo.com">Project Halo</a> and by the EU FP7
 project <a href="http://lod2.eu/">LOD2 - Creating Knowledge out of
 Interlinked Data</a> (Grant No. 257943). </p>
-<p>&nbsp;</p>
-<ol>
-</ol>
-<br>
-</div>
 </div>
 
 </body></html>
