@@ -2,7 +2,7 @@ package de.fuberlin.wiwiss.ldif.mapreduce
 
 import java.io.{DataInput, DataOutput}
 import org.apache.hadoop.io.{ArrayWritable, Text, IntWritable, WritableComparable}
-import ldif.entity.{Entity, Node, EntityDescription}
+import ldif.entity.{NodeWritable, Entity, Node, EntityDescription}
 
 /**
  * Created by IntelliJ IDEA.
@@ -12,25 +12,23 @@ import ldif.entity.{Entity, Node, EntityDescription}
  * To change this template use File | Settings | File Templates.
  */
 
-class EntityWritable(var uri : String, var graph: String, var entityDescription : EntityDescription, var resultTable: ArrayWritable, var entityDescriptionID: IntWritable, edmd: EntityDescriptionMetadata) extends WritableComparable[EntityWritable] with Entity {
+class EntityWritable(var resource : NodeWritable, var entityDescription : EntityDescription, var resultTable: ArrayWritable, var entityDescriptionID: IntWritable, edmd: EntityDescriptionMetadata) extends WritableComparable[EntityWritable] with Entity {
   def compareTo(other: EntityWritable) = {
-    if(uri.compareTo(other.uri)==0)
+    if(resource.compareTo(other.resource)==0)
       entityDescriptionID.compareTo(other.entityDescriptionID)
     else
-      uri.compareTo(other.uri)
+      resource.compareTo(other.resource)
   }
 
   def readFields(in: DataInput) {
-    uri = in.readUTF()
-    graph = in.readUTF()
+    resource.readFields(in)
     entityDescription = edmd.entityDescriptions(in.readInt())
     resultTable.readFields(in)
     entityDescriptionID.readFields(in)
   }
 
   def write(out: DataOutput) {
-    out.writeUTF(uri)
-    out.writeUTF(graph)
+    resource.write(out)
     out.writeInt(edmd.entityDescriptionMap(entityDescription))
     resultTable.write(out)
     entityDescriptionID.write(out)
@@ -54,6 +52,6 @@ class EntityWritable(var uri : String, var graph: String, var entityDescription 
     for(node <- path.get()) yield node.asInstanceOf[Node]
   }
 
-  override def hashCode = uri.hashCode() + 31 * entityDescriptionID.get()
+  override def hashCode = resource.hashCode() + 31 * entityDescriptionID.get()
 }
 

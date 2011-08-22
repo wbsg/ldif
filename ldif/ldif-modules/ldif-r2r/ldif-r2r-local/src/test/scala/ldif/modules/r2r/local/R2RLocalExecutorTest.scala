@@ -34,7 +34,7 @@ class R2RLocalExecutorTest extends FlatSpec with ShouldMatchers {
     val executor = new R2RLocalExecutor
     val mapping =  getMapping("http://mappings.dbpedia.org/r2r/propertyRenamingDatatypeModifierMapping", repository)
     val entityQueue = createEntityQueue(mapping.entityDescription)
-    val entity = createEntity("TestURI1", mapping)
+    val entity = createEntity("<TestURI1>", mapping)
     entity.addFactumRow(Node.createLiteral("testValue", "default"))
     entityQueue.write(entity)
     entityQueue.finish

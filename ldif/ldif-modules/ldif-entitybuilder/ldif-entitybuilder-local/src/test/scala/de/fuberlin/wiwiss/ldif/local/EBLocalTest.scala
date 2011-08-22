@@ -59,25 +59,25 @@ class EBLocalTest extends FlatSpec with ShouldMatchers
     }
     while(eqs(1).hasNext){
       val entity = eqs(1).read
-      if (entity.uri == "http://brain-map.org/mouse/brain/Chrna4.xml")
+      if (entity.resource.value == "http://brain-map.org/mouse/brain/Chrna4.xml")
         entity.factums(0).size should equal (5)
-      if (entity.uri == "http://brain-map.org/mouse/brain/Chrnb2.xml")
+      if (entity.resource.value == "http://brain-map.org/mouse/brain/Chrnb2.xml")
         entity.factums(0).size should equal (5)
-      if (entity.uri == "http://brain-map.org/mouse/brain/Chrna7.xml")
+      if (entity.resource.value == "http://brain-map.org/mouse/brain/Chrna7.xml")
         entity.factums(0).size should equal (3)
     }
     while(eqs(2).hasNext){
       val entity = eqs(2).read
-      if (entity.uri == "http://brain-map.org/mouse/brain/Chrna4.xml")
+      if (entity.resource.value == "http://brain-map.org/mouse/brain/Chrna4.xml")
         entity.factums(0).size should equal (3)
-      if (entity.uri == "http://brain-map.org/mouse/brain/Chrnb2.xml")
+      if (entity.resource.value == "http://brain-map.org/mouse/brain/Chrnb2.xml")
         entity.factums(0).size should equal (3)
-      if (entity.uri == "http://brain-map.org/mouse/brain/Chrna7.xml")
+      if (entity.resource.value == "http://brain-map.org/mouse/brain/Chrna7.xml")
         entity.factums(0).size should equal (2)
     }
     while(eqs(3).hasNext){
       val entity = eqs(3).read
-      if (entity.uri == "http://brain-map.org/gene/0.1#gene")
+      if (entity.resource.value == "http://brain-map.org/gene/0.1#gene")
         entity.factums(0).size should equal (0)
     }
   }

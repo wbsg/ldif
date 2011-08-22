@@ -22,7 +22,7 @@ object CreatorHelperFunctions {
   }
 
   def createEntity(entityUri: String, mapping: LDIFMapping): MutableEntity = {
-    new MutableEntity(entityUri, mapping)
+    new MutableEntity(Node.fromString(entityUri, Consts.DEFAULT_GRAPH), mapping)
   }
 
   def getMapping(mappingURI: String, repository: Repository): LDIFMapping = {
@@ -30,8 +30,7 @@ object CreatorHelperFunctions {
   }
 }
 
-class MutableEntity(entityUri: String, mapping: LDIFMapping) extends Entity {
-  def resource = Node.fromString(entityUri, Consts.DEFAULT_GRAPH)
+class MutableEntity(val resource : Node, mapping: LDIFMapping) extends Entity {
   val resultTable = new HashSet[FactumRow] with FactumTable
   override def factums(patternID: Int) : FactumTable = resultTable
   def entityDescription = mapping.entityDescription

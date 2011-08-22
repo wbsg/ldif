@@ -59,7 +59,7 @@ object URITranslator {
         writeSameAsLink(node, uriMap.get(node.value).get, quadOutput)
   }
 
-  private def writeSameAsLink(subj: String, obj: String, quadWriter: QuadWriter) {
+  private def writeSameAsLink(subj: Node, obj: String, quadWriter: QuadWriter) {
     val sameAsProperty = "http://www.w3.org/2002/07/owl#sameAs"
     val o = LocalNode.createResourceNode(obj, "")
     quadWriter.write(Quad(subj, sameAsProperty, o, subj.graph))
