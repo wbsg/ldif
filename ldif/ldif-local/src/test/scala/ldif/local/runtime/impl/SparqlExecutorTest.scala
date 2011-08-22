@@ -6,9 +6,9 @@ import org.scalatest.FlatSpec
 import org.scalatest.matchers.ShouldMatchers
 import ldif.local.datasources.sparql.SparqlExecutor
 import ldif.datasources.sparql.{SparqlModule, SparqlConfig}
-import ldif.entity.EntityDescription
 import xml.XML
 import ldif.util.Prefixes
+import ldif.entity.{Consts, EntityDescription}
 
 @RunWith(classOf[JUnitRunner])
 class SparqlExecutorTest extends FlatSpec with ShouldMatchers {

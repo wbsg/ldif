@@ -1,10 +1,8 @@
 package ldif.entity
 
-@serializable trait Entity
+trait Entity extends Serializable
 {
-  def uri : String
-
-  def graph: String
+  def resource : Node
 
   def entityDescription : EntityDescription
 

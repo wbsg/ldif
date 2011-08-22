@@ -3,7 +3,7 @@ package ldif.util
 /**
  * Represents a URI.
  */
-@serializable class Uri(val uri : String)
+class Uri(val uri : String) extends Serializable
 {
   /**
    * The turtle representation of this Uri.

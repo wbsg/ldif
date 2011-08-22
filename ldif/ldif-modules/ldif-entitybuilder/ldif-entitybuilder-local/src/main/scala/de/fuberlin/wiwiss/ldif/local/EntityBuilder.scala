@@ -50,7 +50,7 @@ class EntityBuilder (entityDescriptions : IndexedSeq[EntityDescription], readers
     val entityNodes = getSubjSet(ed.restriction.operator)
 
     for (e <- entityNodes) {
-      val entity = new EntityLocal(e.value, e.graph ,ed, this)
+      val entity = new EntityLocal(e, ed, this)
       writer.write(entity)
     }
     writer.finish
@@ -59,10 +59,10 @@ class EntityBuilder (entityDescriptions : IndexedSeq[EntityDescription], readers
   }
 
   // Build a factum table from a given resource uri and an entity description
-  override def buildFactumTable (entityUri : String, pattern : IndexedSeq[Path]) = {
+  override def buildFactumTable (entityResource : Node, pattern : IndexedSeq[Path]) = {
 
     // build the result table
-    val valuesTable = getFactums(entityUri, pattern)
+    val valuesTable = getFactums(entityResource, pattern)
 
     // build a FactumTable from the table of values
     new FactumTableLocal(for (values <- valuesTable) yield new FactumRowLocal(values))
@@ -276,8 +276,8 @@ class EntityBuilder (entityDescriptions : IndexedSeq[EntityDescription], readers
         tmpSet(i) = evaluateOperator(op,tmpSet(i-1),false)
       }
     }
-    // filter out blank nodes
-    tmpSet(cond.path.operators.size-1).filter(_.isUriNode)
+
+    tmpSet(cond.path.operators.size-1)
   }
 
   /**
@@ -292,13 +292,14 @@ class EntityBuilder (entityDescriptions : IndexedSeq[EntityDescription], readers
     op match {
       case bo:BackwardOperator =>
         for (srcNode <- srcNodes) {
+          val prop = StringPool.getCanonicalVersion(bo.property.toString)
           if (direction)
-            BHT.get((srcNode, bo.property.toString)) match {
+            BHT.get((srcNode, prop)) match {
               case Some(node) => nodes ++= node
               case None =>
             }
           else
-            FHT.get((srcNode, bo.property.toString)) match {
+            FHT.get((srcNode, prop)) match {
               case Some(node) => nodes ++= node
               case None =>
             }
@@ -306,13 +307,14 @@ class EntityBuilder (entityDescriptions : IndexedSeq[EntityDescription], readers
 
       case fo:ForwardOperator =>
         for (srcNode <- srcNodes)  {
+          val prop = StringPool.getCanonicalVersion(fo.property.toString)
           if (direction)
-            FHT.get((srcNode, fo.property.toString)) match {
+            FHT.get((srcNode, prop)) match {
               case Some(node) => nodes ++= node
               case None =>
             }
           else
-            BHT.get((srcNode, fo.property.toString)) match {
+            BHT.get((srcNode, prop)) match {
               case Some(node) => nodes ++= node
               case None =>
             }
@@ -330,12 +332,12 @@ class EntityBuilder (entityDescriptions : IndexedSeq[EntityDescription], readers
   }
 
   // Build the result table, given the seed/entity Uri and a sequence of paths
-  private def getFactums(entityUri : String, paths : IndexedSeq[Path]) : Traversable[IndexedSeq[Node]]  = {
+  private def getFactums(entityResource : Node, paths : IndexedSeq[Path]) : Traversable[IndexedSeq[Node]]  = {
     // init structures
     val prev = new ArraySeq[ArrayBuffer[Node]](paths.size)
     val next = new ArraySeq[ArrayBuffer[Traversable[Node]]](paths.size)
     val treeStructure = getTreeStructure(paths)
-    val entityNode = LocalNode.createUriNode(entityUri,null)
+    val entityNode = LocalNode.createResourceNode(entityResource.value, entityResource.graph)
     val initRow = for (j <- 0 to paths.size-1) yield {
       prev(j) = ArrayBuffer(entityNode)
       next(j) = new ArrayBuffer[Traversable[Node]]

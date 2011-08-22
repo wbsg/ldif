@@ -16,7 +16,7 @@ class LDIFMapping(val mapping: Mapping, val entityDescription: EntityDescription
       val results = entity.factums(0)
       for(row <- results) {
         val variableResults = getResults(row)
-        variableResults.addVariableResult("SUBJ", Node.createUriNode(entity.uri, entity.graph))
+        variableResults.addVariableResult("SUBJ", entity.resource)
         executeAllFunctions(variableResults)
         executeTargetPatterns(variableResults, quadWriter)
       }

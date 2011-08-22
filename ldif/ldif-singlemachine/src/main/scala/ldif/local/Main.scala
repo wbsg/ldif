@@ -213,6 +213,7 @@ object Main
 
     val entityDescriptions = silkModule.tasks.toIndexedSeq.map(silkExecutor.input).flatMap{ case StaticEntityFormat(ed) => ed }
     val entityReaders = buildEntities(Seq(reader), entityDescriptions, ConfigParameters(configProperties))
+    StringPool.reset
     println("Time needed to build entities for linking phase: " + stopWatch.getTimeSpanInSeconds + "s")
 
     val outputQueue = new QuadQueue
@@ -238,7 +239,7 @@ object Main
     val fileEntityQueues = for(eD <- entityDescriptions) yield {
       val file = File.createTempFile("ldif_entities", ".dat")
       file.deleteOnExit
-      new FileEntityWriter(eD, file)                     ;
+      new FileEntityWriter(eD, file)
     }
 
     val inmemory = configParameters.configProperties.getPropertyValue("entityBuilderType", "in-memory")=="in-memory"

@@ -27,7 +27,7 @@ class LDIFMappingTest extends FlatSpec with ShouldMatchers {
   it should "be able to rename properties" in {
     val mapping =  getMapping("http://mappings.dbpedia.org/r2r/propertyRenamingMapping", repository)
     val entityQueue = createEntityQueue(mapping.entityDescription)
-    val entity = createEntity("TestURI1", mapping)
+    val entity = createEntity("<TestURI1>", mapping)
     entity.addFactumRow(Node.createLiteral("testValue", "default"))
     val quadQueue = new QuadQueue
     mapping.executeMapping(entity, quadQueue)
@@ -37,7 +37,7 @@ class LDIFMappingTest extends FlatSpec with ShouldMatchers {
   it should "be able to convert URIs to Literals" in {
     val mapping =  getMapping("http://mappings.dbpedia.org/r2r/whateverToLiteralMapping", repository)
     val entityQueue = createEntityQueue(mapping.entityDescription)
-    val entity = createEntity("TestURI1", mapping)
+    val entity = createEntity("<TestURI1>", mapping)
     entity.addFactumRow(Node.createUriNode("testValue", "default"))
     val quadQueue = new QuadQueue
     mapping.executeMapping(entity, quadQueue)
@@ -47,7 +47,7 @@ class LDIFMappingTest extends FlatSpec with ShouldMatchers {
   it should "pick the correct graph uri from the value nodes" in {
     val mapping =  getMapping("http://mappings.dbpedia.org/r2r/whateverToLiteralMapping", repository)
     val entityQueue = createEntityQueue(mapping.entityDescription)
-    val entity = createEntity("TestURI1", mapping)
+    val entity = createEntity("<TestURI1>", mapping)
     entity.addFactumRow(Node.createUriNode("testValue", "myNameSpace"))
     val quadQueue = new QuadQueue
     mapping.executeMapping(entity, quadQueue)
@@ -57,7 +57,7 @@ class LDIFMappingTest extends FlatSpec with ShouldMatchers {
   it should "generate blank nodes for the target graph" in {
     val mapping =  getMapping("http://mappings.dbpedia.org/r2r/blankNodeAndPathMapping", repository)
     val entityQueue = createEntityQueue(mapping.entityDescription)
-    val entity = createEntity("TestURI1", mapping)
+    val entity = createEntity("<TestURI1>", mapping)
     entity.addFactumRow(Node.createLiteral("testValue", "myNameSpace"))
     val quadQueue = new QuadQueue
     mapping.executeMapping(entity, quadQueue)

@@ -6,6 +6,7 @@ import org.scalatest.junit.JUnitRunner
 import org.scalatest.FlatSpec
 import org.scalatest.matchers.ShouldMatchers
 import ldif.entity.{Consts, Entity, EntityDescription}
+import ldif.local.runtime.LocalNode
 
 /**
  * Created by IntelliJ IDEA.
@@ -19,17 +20,15 @@ import ldif.entity.{Consts, Entity, EntityDescription}
 class EntityQueueTest extends FlatSpec with ShouldMatchers {
   it should "read entities in the same order as they were written" in {
     val entityQueue = new EntityQueue(createEntityDescription)
-    entityQueue.write(createEntity("1"))
-    entityQueue.write(createEntity("2"))
-    entityQueue.read.uri should equal ("1")
-    entityQueue.read.uri should equal ("2")
+    entityQueue.write(createEntity("_:1"))
+    entityQueue.write(createEntity("_:2"))
+    entityQueue.read.resource.toString should equal ("_:1")
+    entityQueue.read.resource.toString should equal ("_:2")
   }
 
   private def createEntity(id: String): Entity = {
      new Entity {
-       def uri = id
-
-       def graph = Consts.DEFAULT_GRAPH
+       def resource = LocalNode.createResourceNode(id,Consts.DEFAULT_GRAPH)
 
        def entityDescription = null
 

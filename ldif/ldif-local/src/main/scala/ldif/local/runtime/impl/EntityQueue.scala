@@ -100,7 +100,7 @@ class EntityQueue(val entityDescription : EntityDescription, capacity: Int) exte
  * This object signals the end of entities for an EntityQueue
  */
 case object NoEntitiesLeft extends Entity{
-  def uri = null
+  def resource = null
 
   def entityDescription = null
 

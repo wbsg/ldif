@@ -1,9 +1,9 @@
 package de.fuberlin.wiwiss.ldif.local
 
-import ldif.entity.{Path, FactumTable}
+import ldif.entity.{Node, Path, FactumTable}
 
 trait FactumBuilder{
 
-  def buildFactumTable (entityUri : String, pattern : IndexedSeq[Path]) : FactumTable
+  def buildFactumTable (resource : Node, pattern : IndexedSeq[Path]) : FactumTable
   
 }

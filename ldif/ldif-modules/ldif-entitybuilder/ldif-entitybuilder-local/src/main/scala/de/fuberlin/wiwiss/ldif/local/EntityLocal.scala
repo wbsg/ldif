@@ -2,10 +2,10 @@ package de.fuberlin.wiwiss.ldif.local
 
 import ldif.entity._
 
-@serializable class EntityLocal(val uri : String, val graph: String, val entityDescription : EntityDescription, factumBuilder : FactumBuilder) extends Entity {
+class EntityLocal(val resource : Node, val entityDescription : EntityDescription, factumBuilder : FactumBuilder) extends Entity with Serializable {
 
   override def factums(patternId : Int) =
-    factumBuilder.buildFactumTable(uri,entityDescription.patterns(patternId))
+    factumBuilder.buildFactumTable(resource,entityDescription.patterns(patternId))
 }
 
 class FactumTableLocal(table : Traversable[FactumRow]) extends FactumTable {

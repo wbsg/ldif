@@ -11,7 +11,14 @@ object LocalNode
 {
   private var useStringPool = true
 
-  def createUriNode(value : String, graph : String) = new Node(strCan(value), null, Node.UriNode, strCan(graph))
+  def createResourceNode(value : String, graph : String) = {
+    if (!value.startsWith("_:") && !value.startsWith("<")) {
+      // Add brackets to SPARQL result URIs
+      Node.fromString("<"+strCan(value)+">", strCan(graph))
+    }
+    else
+      Node.fromString(strCan(value), strCan(graph))
+  }
 
   def reconfigure(config: ConfigProperties) {
     val ebType = config.getPropertyValue("entityBuilderType", "in-memory").toLowerCase
