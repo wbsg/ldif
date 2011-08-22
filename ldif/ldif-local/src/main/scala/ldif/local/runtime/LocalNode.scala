@@ -10,14 +10,15 @@ import ldif.local.util.StringPool
 object LocalNode
 {
   private var useStringPool = true
+  private var useUriCompression = true
 
   def createResourceNode(value : String, graph : String) = {
     if (!value.startsWith("_:") && !value.startsWith("<")) {
       // Add brackets to SPARQL result URIs
-      Node.fromString("<"+strCan(value)+">", strCan(graph))
+      Node.fromString("<"+intern(value)+">", intern(graph))
     }
     else
-      Node.fromString(strCan(value), strCan(graph))
+      Node.fromString(intern(value), intern(graph))
   }
 
   def reconfigure(config: ConfigProperties) {
@@ -32,9 +33,36 @@ object LocalNode
     useStringPool = on
   }
 
-  def intern(node : Node) = {
-    node.copy(strCan(node.value), strCan(node.datatypeOrLanguage), node.nodeType, strCan(node.graph))
+  def setUseUriCompression(on: Boolean) {
+    useUriCompression = on
   }
 
-  private def strCan(str: String) = if(useStringPool) StringPool.getCanonicalVersion(str) else str
+  // Intern a Node (eventually compressed)
+  def intern(node : Node) : Node = {
+    var value = node.value
+    if (node.isResource)
+      value = intern(node.value)
+    Node(value, intern(node.datatypeOrLanguage), node.nodeType, intern(node.graph))
+  }
+
+  // Decompress (and eventually intern) a Node
+  def decompress(node: Node) : Node =
+    if (useUriCompression){
+      var value = node.value
+      if (node.isResource)
+        value = decompress(node.value)
+      Node(value, decompress(node.datatypeOrLanguage), node.nodeType, decompress(node.graph))
+    }
+    else node
+
+  // Intern a String (eventually compressed)
+  private def intern(str: String, compress : Boolean = useUriCompression) : String =
+    if(useStringPool)
+      StringPool.getCanonicalVersion(str, compress)
+    else str
+
+  // Decompress (and eventually intern) a String
+  private def decompress(str:String) : String =
+    intern(StringPool.decompress(str), false)
+
 }

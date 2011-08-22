@@ -47,7 +47,7 @@ class EntityBuilder (entityDescriptions : IndexedSeq[EntityDescription], readers
     val startTime = now
 
     // entityNodes <- combination (as in the restriction pattern) of all the subjSets
-    val entityNodes = getSubjSet(ed.restriction.operator)
+    val entityNodes = getSubjSet(ed.restriction.operator) map (n => LocalNode.decompress(n))
 
     for (e <- entityNodes) {
       val entity = new EntityLocal(e, ed, this)
@@ -290,24 +290,27 @@ class EntityBuilder (entityDescriptions : IndexedSeq[EntityDescription], readers
     var nodes = new JHashSet[Node]
 
     op match {
-      case bo:BackwardOperator =>
-        for (srcNode <- srcNodes) {
-          val prop = StringPool.getCanonicalVersion(bo.property.toString)
-          if (direction)
-            BHT.get((srcNode, prop)) match {
-              case Some(node) => nodes ++= node
-              case None =>
-            }
-          else
-            FHT.get((srcNode, prop)) match {
-              case Some(node) => nodes ++= node
-              case None =>
-            }
-        }
+      case bo:BackwardOperator => {
 
-      case fo:ForwardOperator =>
+        val prop = StringPool.getCanonicalVersion(bo.property.toString)
+
+        for (srcNode <- srcNodes) {
+          if (direction)
+            BHT.get((srcNode, prop)) match {
+              case Some(node) => nodes ++= node
+              case None =>
+            }
+          else
+            FHT.get((srcNode, prop)) match {
+              case Some(node) => nodes ++= node
+              case None =>
+            }
+        }
+      }
+
+      case fo:ForwardOperator =>  {
+        val prop = StringPool.getCanonicalVersion(fo.property.toString)
         for (srcNode <- srcNodes)  {
-          val prop = StringPool.getCanonicalVersion(fo.property.toString)
           if (direction)
             FHT.get((srcNode, prop)) match {
               case Some(node) => nodes ++= node
@@ -319,6 +322,7 @@ class EntityBuilder (entityDescriptions : IndexedSeq[EntityDescription], readers
               case None =>
             }
         }
+      }
       case pf:PropertyFilter =>  //TODO support PropertyFilter - after M1
       case lf:LanguageFilter =>  //TODO support LanguageFilter - after M1
     }
@@ -327,17 +331,17 @@ class EntityBuilder (entityDescriptions : IndexedSeq[EntityDescription], readers
 
   // Helper method: analyse the operator for an immutable set of nodes
   private def evaluateOperator(op : PathOperator, values : collection.immutable.Set[Node]) : Set[Node] =   {
-    val srcNodes = HashSet(values.toArray:_*)  //from immutable to mutable
+    val srcNodes = HashSet(values.toArray:_*) map (n => LocalNode.intern(n))  //from immutable to mutable
     evaluateOperator(op, srcNodes, false)
   }
 
   // Build the result table, given the seed/entity Uri and a sequence of paths
-  private def getFactums(entityResource : Node, paths : IndexedSeq[Path]) : Traversable[IndexedSeq[Node]]  = {
+  private def getFactums(entityResource: Node, paths : IndexedSeq[Path]) : Traversable[IndexedSeq[Node]]  = {
     // init structures
     val prev = new ArraySeq[ArrayBuffer[Node]](paths.size)
     val next = new ArraySeq[ArrayBuffer[Traversable[Node]]](paths.size)
     val treeStructure = getTreeStructure(paths)
-    val entityNode = LocalNode.createResourceNode(entityResource.value, entityResource.graph)
+    val entityNode = LocalNode.intern(entityResource)
     val initRow = for (j <- 0 to paths.size-1) yield {
       prev(j) = ArrayBuffer(entityNode)
       next(j) = new ArrayBuffer[Traversable[Node]]
@@ -364,7 +368,7 @@ class EntityBuilder (entityDescriptions : IndexedSeq[EntityDescription], readers
           prev(j) ++= nodes
      }
     }
-    valuesTable
+    for (row <- valuesTable) yield row map (n => LocalNode.decompress(n))
   }
 
   // Update column 'pathIndex' replacing prev level values with new ones
