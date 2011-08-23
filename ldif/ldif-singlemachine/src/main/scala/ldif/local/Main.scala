@@ -310,7 +310,7 @@ object Main
 
   private def writeDebugOutput(phase: String, outputFile: File, reader: QuadReader): QuadReader = {
     val newOutputFile = new File(outputFile.getAbsolutePath + "." + phase)
-    return copyAndDumpQuadQueue(reader, newOutputFile.getAbsolutePath)
+    copyAndDumpQuadQueue(reader, newOutputFile.getAbsolutePath)
   }
 
   // Only clone QuadQueue implementation of QuadReader
@@ -322,13 +322,16 @@ object Main
     val quadOutput = File.createTempFile("ldif-debug-quads", ".bin")
     quadOutput.deleteOnExit
     val writer = new FileQuadWriter(quadOutput)
-    val quadWriter = new BufferedWriter(new FileWriter(new File(outputFile)))
+    val quadWriter = new BufferedWriter(new FileWriter(outputFile))
+
     while(quadQueue.hasNext) {
       val next = quadQueue.read
       quadWriter.write(next.toNQuadFormat)
       quadWriter.write(" .\n")
       writer.write(next)
     }
+    quadWriter.flush()
+    quadWriter.close()
     writer.finish
     return new FileQuadReader(writer.outputFile)
   }

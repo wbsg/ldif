@@ -30,7 +30,7 @@ object URITranslator {
 
   def translateQuads(quadsReader: QuadReader, linkReader: QuadReader): QuadReader = {
     val uriMap = generateUriMap(linkReader)
-    val entityGraphChecker = new EntityGraphChecker
+     val entityGraphChecker = new EntityGraphChecker
 
     val quadOutput = new QuadQueue
     var counter = 0
@@ -42,13 +42,14 @@ object URITranslator {
       quadsReader.read match {
         case Quad(s, p, o, g) => {
           val (sNew, oNew) = translateQuadURIs(s, o, uriMap)
+          if(s.nodeType==Node.UriNode)
+          if(s.nodeType==Node.UriNode)
           checkAndWriteSameAsLinks(uriMap, quadOutput, entityGraphChecker, s, o)
           quadOutput.write(Quad(sNew, p, oNew, g))
         }
       }
     }
     log.info("End URI translation: Processed " + counter + " quads.")
-    log.info("Outputting sameAs links...")
 
     quadOutput
   }
@@ -61,7 +62,7 @@ object URITranslator {
 
   private def writeSameAsLink(subj: Node, obj: String, quadWriter: QuadWriter) {
     val sameAsProperty = "http://www.w3.org/2002/07/owl#sameAs"
-    val o = LocalNode.createResourceNode(obj, "")
+    val o = Node.createUriNode(obj, "")
     quadWriter.write(Quad(subj, sameAsProperty, o, subj.graph))
   }
 
