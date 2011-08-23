@@ -175,6 +175,7 @@ object JenaResultSetEntityBuilderHelper {
       while(resultSet.hasNext) {
         val querySolution = resultSet.next
         val subj = querySolution.getResource("SUBJ").getURI
+        if(subj!=null) {//TODO: Support Blank nodes as entites
         val graph = getAGraph(querySolution)
 
         val factumRow = getFactumRow(subj, graph, querySolution, graphvars.size)
@@ -188,6 +189,7 @@ object JenaResultSetEntityBuilderHelper {
         if(returnEntityData != null) {
           return Some(returnEntityData)
         }
+        }//TODO: see above
       }
 
       if(entity!=null) {

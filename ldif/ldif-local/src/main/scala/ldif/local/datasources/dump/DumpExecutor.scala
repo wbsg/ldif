@@ -37,6 +37,7 @@ class DumpExecutor extends Executor
     val bufferedReader = new BufferedReader(new InputStreamReader(inputStream))
 
     val quadParser = new QuadFileLoader(task.name)
+//    quadParser.readQuadsMT(bufferedReader, writer)
     quadParser.readQuads(bufferedReader, writer)
     
     writer.finish

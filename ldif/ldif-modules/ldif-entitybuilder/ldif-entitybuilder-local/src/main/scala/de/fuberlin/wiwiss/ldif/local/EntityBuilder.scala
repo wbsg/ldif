@@ -91,6 +91,8 @@ class EntityBuilder (entityDescriptions : IndexedSeq[EntityDescription], readers
     // Round robin over reader
     while (readers.foldLeft(false)((a, b) => a || b.hasNext)){
       for (reader <- readers.filter(_.hasNext)) {
+//    for(reader <- readers) {
+//      while(reader.hasNext) {
         val quad = reader.read
 
         if(saveQuads)

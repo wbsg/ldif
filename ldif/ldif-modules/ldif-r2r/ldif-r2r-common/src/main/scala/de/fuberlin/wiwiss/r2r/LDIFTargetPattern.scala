@@ -14,6 +14,7 @@ import de.fuberlin.wiwiss.r2r.TripleElement.Type
 import scala.collection.JavaConversions._
 import de.fuberlin.wiwiss.r2r.functions.HelperFunctions
 import ldif.entity.Consts._
+import collection.mutable.ArrayBuffer
 
 class LDIFTargetPattern(targetPattern: TargetPattern) extends TargetPattern(targetPattern.getPath) {
 
@@ -22,17 +23,33 @@ class LDIFTargetPattern(targetPattern: TargetPattern) extends TargetPattern(targ
       val subjects = getSubjects(triple.getSubject, results)
       val predicate = getPredicate(triple.getVerb)
       val objects = getObjects(triple.getObject, results)
-      for(s <- subjects) {
-        for(o <- objects) {
-          var graph: String = DEFAULT_GRAPH
-          if(o.graph!=null && o.graph!=DEFAULT_GRAPH && o.graph!="")
-            graph = o.graph
-          else if (s.graph!=null && s.graph!=DEFAULT_GRAPH && s.graph!="")
-            graph = s.graph
-          quadWriter.write(Quad(s, predicate.value, o, graph))
-        }
-      }
+      for(s <- subjects)
+        for(o <- objects)
+          quadWriter.write(createQuad(s, predicate, o))
     }
+  }
+
+  def createQuads(variableResults: LDIFVariableResults): Iterable[Quad] = {
+    val results = new ArrayBuffer[Quad]
+
+    for(triple <- getPath) {
+      val subjects = getSubjects(triple.getSubject, variableResults)
+      val predicate = getPredicate(triple.getVerb)
+      val objects = getObjects(triple.getObject, variableResults)
+      for(s <- subjects)
+        for(o <- objects)
+          results.append(createQuad(s, predicate, o))
+    }
+    return results
+  }
+
+  private def createQuad(s: Node, predicate: Node, o: Node): Quad = {
+    var graph: String = DEFAULT_GRAPH
+    if(o.graph!=null && o.graph!=DEFAULT_GRAPH && o.graph!="")
+      graph = o.graph
+    else if (s.graph!=null && s.graph!=DEFAULT_GRAPH && s.graph!="")
+      graph = s.graph
+    return Quad(s, predicate.value, o, graph)
   }
 
   private def getObjects(tripleElement: TripleElement, results: LDIFVariableResults): Iterable[Node] = {

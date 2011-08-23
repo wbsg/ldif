@@ -7,7 +7,7 @@
 <http://testNamespace/resource1> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://WhatEver> <MinimalTestDatasetZ> .
 <http://testNamespace/resource3> <http://testNamespace/oldP> "different" <MinimalTestDatasetZ> .
 <http://testNamespace/resource3> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://testNamespace/someOldClass>  <MinimalTestDatasetZ> .
-#_:bn <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://WhatEver> <MinimalTestDatasetX> .
+_:bn <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://WhatEver> <MinimalTestDatasetX> .
 <http://oooo> <http://someProp> _:bla <someGraph>.
 <http://o1> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://WhatEver> <XY> .
 <http://o1> <http://v> "John" <WhatAboutThisOne> .

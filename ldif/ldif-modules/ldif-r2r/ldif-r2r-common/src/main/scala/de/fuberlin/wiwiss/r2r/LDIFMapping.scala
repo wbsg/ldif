@@ -1,9 +1,10 @@
 package de.fuberlin.wiwiss.r2r
 
-import ldif.local.runtime.QuadWriter
 import java.util.ArrayList
 import scala.collection.JavaConversions._
 import ldif.entity._
+import ldif.local.runtime.{Quad, QuadWriter}
+import collection.parallel.ParIterable
 
 class LDIFMapping(val mapping: Mapping, val entityDescription: EntityDescription, variableToResultIndexMap: Map[String, Int]) {
   // Convert Target Patterns
@@ -23,6 +24,33 @@ class LDIFMapping(val mapping: Mapping, val entityDescription: EntityDescription
     } catch {
       case e: Exception => throw new R2RException("Error in executing mapping <" + mapping.getUri + ">", e)
     }
+  }
+
+  def executeMapping(entity: Entity): Traversable[Quad] = {
+    try {
+      val results = entity.factums(0)
+      (for(row <- results) yield {
+        val variableResults = getResults(row)
+        variableResults.addVariableResult("SUBJ", entity.resource)
+        executeAllFunctions(variableResults)
+        executeTargetPatterns(variableResults)
+      }).flatten
+    } catch {
+      case e: Exception => throw new R2RException("Error in executing mapping <" + mapping.getUri + ">", e)
+    }
+  }
+
+  /**
+   * A multi-tasking version of the executeMapping function
+   */
+  def executeMappingMT(entities: Iterable[Entity]): ParIterable[Quad] = {
+    val parEntites = entities.par
+    return parEntites.flatMap(entity => executeMapping(entity))
+  }
+
+  def executeTargetPatterns(results: LDIFVariableResults): Iterable[Quad] = {
+    (for(targetPattern <- targetPatterns)
+      yield targetPattern.createQuads(results)).flatten
   }
 
   def executeTargetPatterns(results: LDIFVariableResults, quadWriter: QuadWriter) {
