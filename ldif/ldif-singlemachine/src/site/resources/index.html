@@ -44,6 +44,12 @@ dt { pause-before: 20%; }
 pre { speak-punctuation: code; }
 }
 .Stil1 {color: #FF0000}
+table {border-collapse: collapse; margin-bottom: .75em; border-top: 1px solid #D4DCE8; border-bottom: 1px solid #D4DCE8}
+table th {text-align: left; background: #EAF3FA; padding: .5em .9em; height: 21px; font-weight: bold; font-size: 1em; color: #333}
+table th a {text-decoration: none !important}
+table td {vertical-align: top; text-align: left; padding: .5em 1em; border-bottom: 1px solid #eee}
+table tr.even {background-color: #fff}
+table tr.odd {background-color: #f6f6f6}
 </style>
 
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"></head><body>
@@ -74,7 +80,7 @@ provenance.</p>
 </div>
 <h2 id="news">News</h2>
 <ul>
- <li><strong>8/XX/2011: Version 0.2 released.</strong> This version...</li>
+ <li><strong>8/XX/2011: Version 0.2 released.</strong> This version includes improved performance, a source syntax validation phase and support for N-Triples output format.</li>
  <li><strong>6/29/2011: Version 0.1 released.</strong> This alpha
 version provides for translating data that is represented using
 different source vocabularies into a single target vocabulary and for
@@ -91,6 +97,7 @@ Science Data</a></li>
   <li><a href="#performance">Performance Evaluation</a> </li>
   <li><a href="#config">Configuration options</a></li>
   <li><a href="#code">Source code and development</a></li>
+  <li><a href="#history">Version history</a></li>
   <li><a href="#feedback">Support and Feedback</a></li>
   <li><a href="#related">References</a></li>
 </ol>
@@ -294,7 +301,7 @@ genes and other expressions that are described in multiple datasets.</p>
 <p>To run the example, please download LDIF and use the following LDIF
 configuration. The configuration options are explained in the Section <a href="#config">Configuration</a> below. <br>
     </p>
-<ul><pre>&lt;LDIF&gt;<br>  &lt;Properties&gt;test1k.properties&lt;/Properties&gt;<br>  &lt;Sources&gt;sources&lt;/Sources&gt;<br>  &lt;LinkSpecifications&gt;linkSpecs&lt;/LinkSpecifications&gt;<br>  &lt;Mappings&gt;mappings&lt;/Mappings&gt;<br>  &lt;Output&gt;output1.nq&lt;/Output&gt;<br>&lt;/LDIF&gt;</pre>
+<ul><pre>&lt;LDIF&gt;<br>  &lt;Properties&gt;test1k.properties&lt;/Properties&gt;<br>  &lt;Sources&gt;sources&lt;/Sources&gt;<br>  &lt;LinkSpecifications&gt;linkSpecs&lt;/LinkSpecifications&gt;<br>  &lt;Mappings&gt;mappings&lt;/Mappings&gt;<br>  &lt;Output&gt;output.nq&lt;/Output&gt;<br>&lt;/LDIF&gt;</pre>
     </ul>
 <p>Execution
       instructions:</p>
@@ -380,7 +387,7 @@ that will change in future releases. <br>
 A typical config file looks like
 this:<br>
 </p>
-<pre>&lt;LDIF&gt;<br>  &lt;Properties&gt;test1.properties&lt;/Properties&gt;<br>  &lt;Sources&gt;sources&lt;/Sources&gt;<br>  &lt;LinkSpecifications&gt;linkSpecs&lt;/LinkSpecifications&gt;<br>  &lt;Mappings&gt;mappings&lt;/Mappings&gt;<br>  &lt;Output&gt;output.nq&lt;/Output&gt;<br>&lt;/LDIF&gt;</pre>
+<pre>&lt;LDIF&gt;<br>  &lt;Properties&gt;test.properties&lt;/Properties&gt;<br>  &lt;Sources&gt;sources&lt;/Sources&gt;<br>  &lt;LinkSpecifications&gt;linkSpecs&lt;/LinkSpecifications&gt;<br>  &lt;Mappings&gt;mappings&lt;/Mappings&gt;<br>  &lt;Output&gt;output.nq&lt;/Output&gt;<br>&lt;/LDIF&gt;</pre>
 <p>It has the following elements:</p>
 <ul>
   <li><span style="font-style: italic;">Properties</span>: The path to
@@ -400,7 +407,7 @@ output should be written.<br>
   </li>
 </ul>
 <p>All the paths are relative to the config file location. In this case
-there is a root directory with the config file and the test1.properties
+there is a root directory with the config file and the test.properties
 file in it. Furthermore the following directories would be nested in
 the root directory: linkSpecs, sources and mappings. As you can see,
 currently the datasets have to be in a local directory. More
@@ -503,9 +510,42 @@ Code and Development</h2>
 <p>The framework can be used under the terms of the <a href="http://www.apache.org/licenses/LICENSE-2.0">Apache Software
 License</a>.
 </p>
-<h2><a name="feedback" id="feedback"></a>8. Support and Feedback </h2>
+
+<h2 id="history"><a name="code"></a>8. Version history </h2>
+<p>
+<table>
+    <tr>
+        <th> Version</th>
+        <th> Release log</th>
+        <th> Date</th>
+    </tr>
+    <tr class="even">
+        <td> 0.2</td>
+        <td>
+        R2R data translation tasks are now executed in parallel <br/>
+        Perform source syntax validation before loading data (optional)    <br/>
+        Support for external sameAs links   <br/>
+        RDF/N-Triples data output module  <br/>
+        Support for bzip2 source compression <br/>
+        Improved loading perfomance <br/>
+        Memory usage improvements: caching factum rows and string interning only for relevant data
+        </td>
+        <td> 8/XX/2011</td>
+    </tr>
+    <tr class="odd">
+        <td> 0.1</td>
+        <td> Intial release of LDIF</td>
+        <td> 6/29/2011</td>
+    </tr>
+</table>
+</p>
+
+
+
+<h2><a name="feedback" id="feedback"></a>9. Support and Feedback </h2>
 <p>For questions and feedback please use the <a href="http://groups.google.com/group/ldif?hl=en">LDIF Google Group</a>. </p>
-<h2 id="relatedprojects"><a name="related"></a>9. References</h2>
+
+<h2 id="relatedprojects"><a name="related"></a>10. References</h2>
 <ul>
   <li>Tom Heath, Christian Bizer: <a href="http://www.morganclaypool.com/doi/abs/10.2200/S00334ED1V01Y201102WBE001">Linked
 Data: Evolving the Web into a Global Data Space</a>. Synthesis
@@ -525,7 +565,8 @@ Server - Adding missing Links while consuming Linked Data</a> ( <a href="http://
 ). 1st International Workshop on Consuming Linked Data (COLD
 2010), Shanghai, November 2010. </li>
 </ul>
-<h2><a name="acknowledgments"></a>10. Acknowledgments </h2>
+
+<h2><a name="acknowledgments"></a>11. Acknowledgments </h2>
 <p>This work was supported in part by Vulcan Inc. as part of its <a href="http://www.projecthalo.com">Project Halo</a> and by the EU FP7
 project <a href="http://lod2.eu/">LOD2 - Creating Knowledge out of
 Interlinked Data</a> (Grant No. 257943). </p>

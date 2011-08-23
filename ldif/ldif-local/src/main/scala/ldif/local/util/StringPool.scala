@@ -41,7 +41,6 @@ class StringPool(poolSize : Int, maxSize : Int){
       val code = encoder.putIfAbsent(pref,encoder.size+1)
       if (code == 0) {
         decoder.put(encoder.size,pref)
-        println(encoder.size-1 +" : "+ pref)
         "<"+(encoder.size).toString+"<"+str.substring(pos)
       }
       else "<"+code.toString+"<"+str.substring(pos)
