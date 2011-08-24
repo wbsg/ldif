@@ -1,6 +1,7 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html><head><title>LDIF - Linked Data Integration Framework</title>
 
+
 <style>
 body { background: white; color: black; font-family: sans-serif; line-height: 1.4em; padding: 2.5em 3em; margin: 0; }
 :link { color: #00c; }
@@ -76,11 +77,14 @@ provenance.</p>
 <div id="download">
 <h2><a href="http://www4.wiwiss.fu-berlin.de/bizer/ldif/releases/ldif-0.2.zip">Download LDIF</a><br>
 </h2>
-<small>v0.2, released 2011-08-XX</small>
+<small>v0.2, released 2011-08-25</small>
 </div>
 <h2 id="news">News</h2>
 <ul>
- <li><strong>8/XX/2011: Version 0.2 released.</strong> This version includes improved performance, a source syntax validation phase and support for N-Triples output format.</li>
+ <li><strong>8/25/2011: Version 0.2 released.</strong> This
+version includes improved performance, a validation phase for source
+dataset syntax, R2R mappings, and Silk link specifications and as
+output format it is possible to choose N-Triples syntax.</li>
  <li><strong>6/29/2011: Version 0.1 released.</strong> This alpha
 version provides for translating data that is represented using
 different source vocabularies into a single target vocabulary and for
@@ -153,10 +157,9 @@ components, a data transformation components and a data output components.
 Currently, we have implemented the following modules: <br>
 <h3>Data Access: N-Quads Loader<br>
 </h3>
-<p>Version 0.1 of LDIF expects input data to be represented as Named
+<p>The current version of LDIF expects input data to be represented as Named
 Graphs and be stored in <a href="http://sw.deri.org/2008/07/n-quads/">N-Quads
-format</a>
-in a local directory. The graph URI is used for
+format</a> accessible by a URL. The graph URI is used for
 provenance tracking. Provenance meta-information describing the graphs
 can be provided within a specific provenance graph. The name of
 this provenance graph can be set in the configuration file. LDIF does
@@ -173,16 +176,15 @@ provenance information for data quality assessment and data fusion (see
 to translate Web data that is represented using terms from different
 vocabularies into a single target vocabulary. Vocabulary mappings are
 expressed using the <a href="http://www4.wiwiss.fu-berlin.de/bizer/r2r/spec/">R2R Mapping
-Language</a>. The language 
-provides for simple transformations as well as for more
+Language</a>.
+The language provides for simple transformations as well as for more
 complex structural transformations and property value transformations
-such as normalizing different units of measurement. The syntax of the
+such as normalizing different units of measurement or complex string
+manipulations. The syntax of the
 R2R Mapping Language is very similar to the query language SPARQL,
-which eases the learning curve. The expressivity of the language is
-higher than the expressivity provided by the <a href="http://www.w3.org/TR/2004/REC-owl-features-20040210/#s3.2">OWL
-Equality and Inequality constructs</a>, making the language capable to
-deal with most requirements that arise around properly translating data in
-real-world settings. </p>
+which eases the learning curve. The expressivity of the language
+enabled us to deal with all requirements that we have encountered so
+far when translatingLinked Data from the Web into a target representation (evaluation in [2]).  </p>
 <p>An overview and examples for mappings are given on the <a href="http://www4.wiwiss.fu-berlin.de/bizer/r2r/">R2R website</a>.<br>
 The <a href="http://www4.wiwiss.fu-berlin.de/bizer/r2r/spec/">specification
 and user manual</a> is provided as a separate document.<br>
@@ -192,8 +194,12 @@ and user manual</a> is provided as a separate document.<br>
 LDIF employs the <a href="http://www4.wiwiss.fu-berlin.de/bizer/silk/">Silk
 Link Discovery Framework</a>
 to find different URIs that are used within different data sources to
-identify the same real-world entity. Afterwards, these URI aliases are
-replaced with a single target URI within the output data. Silk is a
+identify the same real-world entity. For each set of duplicates which
+have been identified by Silk, LDIF replaces all URI aliases with a
+single target URI within the output data. In addition, it adds
+owl:sameAs links pointing at the original URIs, which makes it possible
+for applications to refer back to the data sources on the Web. If the
+LDIF input data already contains owl:sameAs links, the referenced URIsare normalized accordingly (optional, see  <a href="#config">configuration</a>). Silk is a
 flexible identity
 resolution framework that allows the user to specify identity
 resolution heuristics which combine different types of matchers using
@@ -206,7 +212,7 @@ Specification Language</a>.</p>
 <p>The N-Quads writer dumps the final output of the integration
 workflow into a single N-Quads file. This file contains the translated
 versions of all graphs from the input graph set as well as the content
-of the provenance graph. <br>
+of the provenance graph and sameAs-links. <br>
 </p>
 <h3 style="text-align: left;">Data Output: N-Triples Writer<br>
 </h3>
@@ -216,26 +222,36 @@ workflow into a single N-Triples file.<br>
 <h3 style="text-align: left;">Runtime Environment </h3>
 <p style="text-align: left;"> The Runtime Environment manages the data
 flow between the various stages and the caching of the intermediate
-results. For the LDIF V0.1 release, we have implemented only an
+results. In order to parallelize the data processing, the data is
+partitioned into entities prior to supplying it to a transformation
+module. An entity represents a Web resource together with all data that
+is required by a transformation module to process this resource.
+Entities consist of one or more graph paths and include a provenance
+URI for each node. Each transformation module specifies which paths
+should be included into the entities it processes. Splitting the work
+into fine-granular entities, allows LDIF to parallelize the work into
+multiple threats and will, in the next release, allow thework to be parallelized on multiple machines using Hadoop. For the LDIF V0.1 release, we have implemented only an
 in-memory version of the runtime environment. This implementation keeps
 all intermediate results in
 memory. It is very fast but scales only depending on the amount of
 memory
 available. For instance, integrating 25 million triples required 5 GB
-memory within one of our <a href="benchmark.html">experiments</a>. </p>
+memory within one of our  <a href="benchmark.html">experiments</a>. </p>
 <h3><a name="nextSteps"></a>Next steps for LDIF</h3>
 <p>LDIF V0.1 only provides data translation and identity resolution
 functionality. Over the next months, we plan to extend LDIF along the
 following lines:<br>
 </p><ol>
   
-  <li>Implement a <strong>Hadoop Version of the Runtime Environment </strong>in
-order to be able to scale to really large amounts of input data.
-Processes and data will be distributed over a cluster of machines.</li>
   <li>Add <strong>Web Data Access Modules</strong> (Linked Data
   Crawler, SPARQL Endpoint Reader, Remote RDF File Loader) as well as a
   scheduling component which provides for regularly updating the local
-  input data cache. </li>
+  input data cache.</li>
+  <li>Implement a <strong>Hadoop Version of the Runtime Environment </strong>in
+order to be able to scale to really large amounts of input data.
+Processes and data will be distributed over a cluster of machines.</li>
+
+  
   <li>Add a <strong>Data Quality Evaluation and Data Fusion Module</strong>
 which allows Web data to be filtered according to different data
 quality assessment policies and provides for fusing Web data according
@@ -379,7 +395,8 @@ details and the latest results please visit our <a href="benchmark.html">Benchma
 
 <h2 id="configuration"><a name="config"></a>6. Configuration
 Options</h2>
-<p>This section describes how an LDIF configuration file looks like and which parameters you can modify to change the runtime behavior of LDIF.</p>
+<p>This section describes how an LDIF configuration file looks like and
+which parameters you can modify to change the runtime behavior of LDIF.</p>
 <h3>LDIF configuration file</h3>
 <p>LDIF is configured with an XML file, whose current structure is very
 simple because the integration flow is static at the moment - something
@@ -513,8 +530,8 @@ License</a>.
 
 <h2 id="history"><a name="code"></a>8. Version history </h2>
 <p>
-<table>
-    <tr>
+</p><table>
+    <tbody><tr>
         <th> Version</th>
         <th> Release log</th>
         <th> Date</th>
@@ -522,12 +539,12 @@ License</a>.
     <tr class="even">
         <td> 0.2</td>
         <td>
-        R2R data translation tasks are now executed in parallel <br/>
-        Perform source syntax validation before loading data (optional)    <br/>
-        Support for external sameAs links   <br/>
-        RDF/N-Triples data output module  <br/>
-        Support for bzip2 source compression <br/>
-        Improved loading perfomance <br/>
+        R2R data translation tasks are now executed in parallel <br>
+        Perform source syntax validation before loading data (optional)    <br>
+        Support for external sameAs links   <br>
+        RDF/N-Triples data output module  <br>
+        Support for bzip2 source compression <br>
+        Improved loading perfomance <br>
         Memory usage improvements: caching factum rows and string interning only for relevant data
         </td>
         <td> 8/XX/2011</td>
@@ -537,8 +554,8 @@ License</a>.
         <td> Intial release of LDIF</td>
         <td> 6/29/2011</td>
     </tr>
-</table>
-</p>
+</tbody></table>
+
 
 
 
@@ -547,6 +564,12 @@ License</a>.
 
 <h2 id="relatedprojects"><a name="related"></a>10. References</h2>
 <ul>
+  </ul>
+<ul>
+
+  
+</ul>
+<ol>
   <li>Tom Heath, Christian Bizer: <a href="http://www.morganclaypool.com/doi/abs/10.2200/S00334ED1V01Y201102WBE001">Linked
 Data: Evolving the Web into a Global Data Space</a>. Synthesis
 Lectures on the Semantic Web: Theory and Technology, Morgan &amp;
@@ -560,11 +583,15 @@ R2R Framework: Publishing and Discovering Mappings on the Web</a> ( <a href="htt
 and Maintaining Links on the Web of Data</a> ( <a href="http://www.wiwiss.fu-berlin.de/en/institute/pwo/bizer/research/publications/VolzBizerGaedkeKobilarov-ISWC2009-Silk-Talk.pdf">Slides</a>
 ). International Semantic Web Conference (ISWC2009),
 Westfields, USA, October 2009. </li>
+
+  
   <li>Robert Isele, Anja Jentzsch, Christian Bizer: <a href="http://www.wiwiss.fu-berlin.de/en/institute/pwo/bizer/research/publications/IseleJentzschBizer-Silk-Cold2010.pdf">Silk
 Server - Adding missing Links while consuming Linked Data</a> ( <a href="http://www.wiwiss.fu-berlin.de/en/institute/pwo/bizer/research/publications/IseleJentzschBizer-Silk-Cold2010-Talk.pdf">Slides</a>
 ). 1st International Workshop on Consuming Linked Data (COLD
 2010), Shanghai, November 2010. </li>
-</ul>
+
+</ol>
+
 
 <h2><a name="acknowledgments"></a>11. Acknowledgments </h2>
 <p>This work was supported in part by Vulcan Inc. as part of its <a href="http://www.projecthalo.com">Project Halo</a> and by the EU FP7
