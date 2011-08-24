@@ -2,6 +2,8 @@
 <html><head><title>LDIF - Linked Data Integration Framework</title>
 
 
+
+
 <style>
 body { background: white; color: black; font-family: sans-serif; line-height: 1.4em; padding: 2.5em 3em; margin: 0; }
 :link { color: #00c; }
@@ -228,15 +230,17 @@ Entities consist of one or more graph paths and include a provenance
 URI for each node. Each transformation module specifies which paths
 should be included into the entities it processes. Splitting the work
 into fine-granular entities, allows LDIF to parallelize the work into
-multiple threats and will, in the next release, allow thework to be parallelized on multiple machines using Hadoop. For the LDIF V0.1 release, we have implemented only an
+multiple threats and will, in the next release, allow thework to be
+parallelized on multiple machines using Hadoop. For the LDIF V0.2
+release, we have implemented only an
 in-memory version of the runtime environment. This implementation keeps
 all intermediate results in
 memory. It is very fast but scales only depending on the amount of
 memory
 available. For instance, integrating 25 million triples required 5 GB
-memory within one of our  <a href="benchmark.html">experiments</a>. </p>
+memory within one of our <a href="benchmark.html">experiments</a>. </p>
 <h3><a name="nextSteps"></a>Next steps for LDIF</h3>
-<p>LDIF V0.1 only provides data translation and identity resolution
+<p>LDIF V0.2 provides data translation and identity resolution
 functionality. Over the next months, we plan to extend LDIF along the
 following lines:<br>
 </p><ol>
@@ -446,36 +450,12 @@ Access Modules</a>.<br>
 <pre style="margin-left: 40px;"><span style="font-weight: bold;">rewriteURIs = true | false</span><br></pre>
 <ul>
   <li>
-    <p>Specify the graph containing the provenance information. As of LDIF V0.1, Quads
+    <p>Specify the graph containing the provenance information. As of LDIF V0.2, Quads
 from this graph are only written to the final output dataset, but are
  processed any further in the integration workflow. Default graph name: <span style="font-family: monospace;">http://www4.wiwiss.fu-berlin.de/ldif/provenance</span></p>
   </li>
 </ul>
-<pre style="margin-left: 40px;"><span style="font-weight: bold;">provenanceGraphURI = http://www4.wiwiss.fu-berlin.de/ldif/provenance</span><br></pre>
-<ul>
-<li>
-    <p>Specify the storage solution used in the background. At
-this moment there are two options, a fast in-memory solution, which is
-limited by the available memory, and the second one is based on a RDF
-quad store. Default:  <span style="font-family: monospace;">in-memory</span></p>
-  </li>
-</ul>
-
-<pre style="margin-left: 40px;"><span style="font-weight: bold;">entityBuilderType = in-memory | quad-store</span></pre>
-
-<ul>
-<li>
-    <p>If you have specified <span style="font-style: italic;">quad-store</span>
-for the storage solution, you can also specify which concrete
-implementation to use. At this moment there is only one option to pick
-from. Default:  <span style="font-family: monospace;">tdb</span></p>
-  </li>
-</ul>
-
-
-<pre style="margin-left: 40px;"><span style="font-weight: bold;">quadStoreType = tdb</span></pre>
-
-<ul>
+<pre style="margin-left: 40px;"><span style="font-weight: bold;">provenanceGraphURI = http://www4.wiwiss.fu-berlin.de/ldif/provenance</span><br></pre><ul>
 <li>
     <p>Source datasets, R2R mappings and Silk link specifications
 are all validated before starting with the actual integration. Since
