@@ -4,14 +4,14 @@ import java.util.logging.Logger
 import java.util.Calendar
 import scheduler.ImportJob
 import util.Const
-import java.io.File
+import java.io.{FileWriter, File}
 
 class Scheduler (val config : LdifConfiguration) {
   val log = Logger.getLogger(getClass.getName)
 
   val importJobs = config.getImportJobs
-  val sourceDir = config.getLocalSourceDir
-  // val provenanceGraph = get provenance graph from properties
+  val localSourceDir = config.getLocalSourceDir
+  // val provenanceGraph = get provenance graph name
 
   /**
    * Updates local sources based on the defined import schedule.
@@ -19,33 +19,44 @@ class Scheduler (val config : LdifConfiguration) {
    */
   def runUpdate {
     for (job <- importJobs.filter(checkUpdate(_))) {
-       //runImport(job);
+      job.load(new FileWriter(getLocalPath(job)))
+
+      // append provenance quads
+      //TODO
     }
   }
 
+  // Check if an update is required for the job
   def checkUpdate(job : ImportJob) : Boolean = {
-      var lastUpdate : Calendar = null
-      var nextUpdate : Calendar = null
+    val changeFreqHours = Const.changeFreqToHours.get(job.changeFreq)
 
-      val changeFreqHours = Const.changeFreqToHours.get(job.changeFreq)
+    // Get last update run
+    var lastUpdate, nextUpdate = getLastUpdate(job)
 
-      /* Get last update run */
-      val prevImportFile = new File(sourceDir + "/" + job.id +".nq")
-      if (prevImportFile != null) {
-        // lastUpdate = getLastUpdateFromFile(prevImportFile, provenanceGraph)
+    // Figure out if update is required
+    if (changeFreqHours != None) {
+      if (lastUpdate == null) {
+        true
+      } else {
+        nextUpdate.add(Calendar.HOUR, changeFreqHours.get)
+        Calendar.getInstance.after(nextUpdate)
       }
-
-      /* Figure out if update is required */
-      if (changeFreqHours != None) {
-        if (lastUpdate == null) {
-          true
-        } else {
-          nextUpdate = lastUpdate
-          nextUpdate.add(Calendar.HOUR, changeFreqHours.get)
-          Calendar.getInstance.after(nextUpdate)
-        }
-      }
-      else
-        false
+    }
+    else
+      false
   }
+
+  // Build dump local path for the import job
+  private def getLocalPath(job : ImportJob) = new File(localSourceDir + "/" + job.id +".nq")
+
+  // Retrieve last update from provenance info
+  private def getLastUpdate(job : ImportJob) : Calendar = {
+    val localDump = getLocalPath(job)
+    if (localDump.exists) {
+      //TODO get last update from provenance graph
+      Calendar.getInstance
+    }
+    else null
+  }
+
 }
