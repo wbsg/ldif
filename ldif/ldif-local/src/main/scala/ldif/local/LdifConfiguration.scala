@@ -1,7 +1,6 @@
 package ldif.local
 
 import java.io.File
-import scheduler.ImportJob
 import xml.XML
 import collection.mutable.HashSet
 import java.net.URL
@@ -10,16 +9,6 @@ case class LdifConfiguration(sources : Traversable[String], linkSpecDir : File, 
 {
   def getLocalSources : Traversable[String] = {
     sources.filterNot(LdifConfiguration.isRemoteSource(_))
-  }
-
-  def getImportJobs : Traversable[ImportJob] = {
-    //TODO parse from configuration file
-   Traversable.empty
-  }
-
-  def getLocalSourceDir : File = {
-    //TODO parse from configuration file
-    new File("")
   }
 }
 

@@ -6,18 +6,17 @@ import com.ontologycentral.ldspider.frontier.BasicFrontier
 import java.net.{URISyntaxException, URI}
 import java.util.logging.Logger
 import com.ontologycentral.ldspider.hooks.sink.SinkCallback
-import java.util.Calendar
-import java.io.InputStream
-import ldif.local.runtime.impl.{BlockingQuadQueue, QuadQueue}
 import ldif.local.runtime.QuadWriter
-import org.semanticweb.yars.util.CallbackNxOutputStream
+import com.ontologycentral.ldspider.hooks.links.LinkFilterSelect
+import java.util.ArrayList
+import org.semanticweb.yars.nx.{Resource, Node}
 
 /**
  * Streams data into temporary graph, crawling from given resource/URI seeds.
  **/
 
 @throws(classOf[Exception])
-class CrawlLoader(seed : URI) {
+class CrawlLoader(seed : URI, predicates : Traversable[URI] = Traversable.empty) {
   private val log = Logger.getLogger(getClass.getName)
 
   def crawl(quadWriter : QuadWriter, levels : Int = 1, limit : Int = -1) = {
@@ -40,16 +39,15 @@ class CrawlLoader(seed : URI) {
     val callback = new CallbackQuadQueue(quadWriter)
     val sink = new SinkCallback(callback)
 
-    //    if (!predicates.isEmpty()) {
-    //      List<Node> predicateList = new ArrayList<Node>()
-    //      val strPredicates : String = ""
-    //      for (Node node : predicates) {
-    //        strPredicates += node.toString()
-    //        predicateList.add(node)
-    //      }
-    //      log.info("Predicates to crawl ("+predicates.size()+"): "+strPredicates)
-    //      crawler.setLinkFilter(new LinkFilterSelect(frontier, predicateList, true))
-    //    }
+    // Add predicate filter
+    if (!predicates.isEmpty) {
+      val predicateNodes = new ArrayList[Node]
+      for (predicate <- predicates) {
+        predicateNodes.add(new Resource(predicate.toString))
+      }
+      log.info("Predicates to crawl ("+predicates.size+"): " + predicates.mkString(" "))
+      crawler.setLinkFilter(new LinkFilterSelect(frontier, predicateNodes, true))
+    }
 
     crawler.setOutputCallback(sink)
 

@@ -20,4 +20,7 @@ object Const{
                 "yearly" -> 24 * 365,
                 "never" ->  Int.MaxValue)
 
+  val DEFAULT_PROVENANCE_GRAPH = "http://www4.wiwiss.fu-berlin.de/ldif/provenance"
+  val DEFAULT_DUMP_LOCATION = "dumps"
+
 }

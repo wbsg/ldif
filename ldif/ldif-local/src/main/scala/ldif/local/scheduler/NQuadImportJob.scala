@@ -2,17 +2,15 @@ package ldif.local.scheduler
 
 import ldif.local.datasources.dump.DumpLoader
 import java.io.{FileWriter, InputStreamReader, BufferedReader}
+import ldif.util.Identifier
 
-class NQuadImportJob(val locationUrl : String, changeFreq : String, dataSource : DataSource) extends ImportJob(locationUrl, changeFreq, dataSource) {
+class NQuadImportJob(val locationUrl : String, id : Identifier, refreshSchedule : String, dataSource : DataSource) extends ImportJob(id, refreshSchedule, dataSource) {
 
   override def load(writer : FileWriter) {
 
     // get bufferReader from Url
     val inputStream = new DumpLoader(locationUrl).getStream
     val bufferedReader = new BufferedReader(new InputStreamReader(inputStream))
-
-    // define graph names rewriting rule
-    //TODO
 
     // parse and write to file
     //TODO
