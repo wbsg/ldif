@@ -76,6 +76,7 @@ object URITranslator {
     val mintingPropertiesNamespace = configProperties.getPropertyValue("uriMintNamespace")
     val mintingPropertiesString = configProperties.getPropertyValue("uriMintLabelPredicate")
     if(mintingPropertiesString!=null && mintingPropertiesNamespace != null) {
+      log.info("Minting URIs...")
       val mintingProperties = Set(mintingPropertiesString.split("\\s+"): _*)
       val entityToClusterMap = createEntityCluster(linkReader)
       val entitiesToMint = new HashSet[String]
@@ -211,7 +212,7 @@ case class EntityCluster(var entity: String, entitySet: Set[String]) {
     }
     else {
       parentCluster match {
-        case null => val newCluster = new EntityCluster(newEntity); parentCluster = newCluster
+        case null => val newCluster = new EntityCluster(newEntity); entityToClusterMap.put(newEntity, newCluster);parentCluster = newCluster
         case _ => parentCluster.integrateEntity(newEntity, entityToClusterMap)
       }
     }
@@ -237,7 +238,7 @@ case class EntityCluster(var entity: String, entitySet: Set[String]) {
 
   def setGlobalEntityIfSmaller(uri: String) {
     parentCluster match {
-      case null => if(uri < entity) entity = uri
+      case null => if(uri > entity) entity = uri
       case parent => parent.setGlobalEntity(uri)
     }
   }
