@@ -1,6 +1,6 @@
 package ldif.local.runtime.impl
 
-import ldif.local.runtime.{Quad, QuadReader}
+import ldif.local.runtime.{Quad, ClonableQuadReader}
 import java.io._
 import java.lang.RuntimeException
 
@@ -12,7 +12,7 @@ import java.lang.RuntimeException
  * To change this template use File | Settings | File Templates.
  */
 
-class FileQuadReader(val inputFile: File) extends QuadReader {
+class FileQuadReader(val inputFile: File) extends ClonableQuadReader {
   val objectInput = new ObjectInputStream(new BufferedInputStream(new FileInputStream(inputFile)))
   var closed = false
   var bufferedQuad: Quad = null
@@ -53,9 +53,9 @@ class FileQuadReader(val inputFile: File) extends QuadReader {
       throw new RuntimeException("No Quads left in FileQuadReader! Use hasNext-method before calling read-method.")
   }
 
-  def isEmpty = !hasNext
-
   def size = throw new RuntimeException("Method 'size' not implemented in FileQuadReader")
 
   def close() = objectInput.close()
+
+  def cloneReader = new FileQuadReader(inputFile)
 }

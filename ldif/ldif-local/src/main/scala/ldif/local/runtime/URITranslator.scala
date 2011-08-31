@@ -8,11 +8,12 @@ package ldif.local.runtime
  * To change this template use File | Settings | File Templates.
  */
 
+import impl.{MultiQuadReader, FileQuadReader, QuadQueue}
 import scala.collection.mutable.{Map, HashMap, HashSet, Set}
-import ldif.local.runtime.impl.QuadQueue
 import ldif.entity._
 import java.util.logging.Logger
 import org.w3c.dom.css.Counter
+import java.net.URLEncoder
 
 object URITranslator {
 
@@ -28,30 +29,86 @@ object URITranslator {
     (sNew, oNew)
   }
 
-  def translateQuads(quadsReader: QuadReader, linkReader: QuadReader): QuadReader = {
-    val uriMap = generateUriMap(linkReader)
-     val entityGraphChecker = new EntityGraphChecker
-
+  private def rewriteURIs(quadsReader: QuadReader, uriMap: Map[String, String]): QuadQueue = {
+    val entityGraphChecker = new EntityGraphChecker
     val quadOutput = new QuadQueue
     var counter = 0
 
     log.info("Start URI translation...")
-    while(quadsReader.hasNext) {
+    while (quadsReader.hasNext) {
       counter += 1
 
       quadsReader.read match {
         case Quad(s, p, o, g) => {
           val (sNew, oNew) = translateQuadURIs(s, o, uriMap)
-          if(s.nodeType==Node.UriNode)
-          if(s.nodeType==Node.UriNode)
-          checkAndWriteSameAsLinks(uriMap, quadOutput, entityGraphChecker, s, o)
+          if (s.nodeType == Node.UriNode)
+            if (s.nodeType == Node.UriNode)
+              checkAndWriteSameAsLinks(uriMap, quadOutput, entityGraphChecker, s, o)
           quadOutput.write(Quad(sNew, p, oNew, g))
         }
       }
     }
     log.info("End URI translation: Processed " + counter + " quads.")
+    quadOutput
+  }
+
+  def translateQuads(quadsReader: QuadReader, linkReader: QuadReader, configProperties: ConfigProperties): QuadReader = {
+    var uriMap: Map[String, String] = null
+
+    var quadsReaderPassTwo = quadsReader
+
+    val uriMinting = configProperties.getPropertyValue("uriMinting", "false").toLowerCase=="true"
+    if(uriMinting) {
+      if (!quadsReader.isInstanceOf[ClonableQuadReader])
+        throw new RuntimeException("QuadReader for URI translator has to be a ClonableQuadReader.")
+      quadsReaderPassTwo = quadsReader.asInstanceOf[ClonableQuadReader].cloneReader
+      uriMap = generateMintedUriMap(linkReader, quadsReader, configProperties)
+    }
+    else
+      uriMap = generateUriMap(linkReader)
+
+    val quadOutput: QuadQueue = rewriteURIs(quadsReaderPassTwo, uriMap)
 
     quadOutput
+  }
+
+  private def generateMintedUriMap(linkReader: QuadReader, quadsReader: QuadReader, configProperties: ConfigProperties): Map[String, String] = {
+    val mintingPropertiesNamespace = configProperties.getPropertyValue("uriMintNamespace")
+    val mintingPropertiesString = configProperties.getPropertyValue("uriMintLabelPredicate")
+    if(mintingPropertiesString!=null && mintingPropertiesNamespace != null) {
+      val mintingProperties = Set(mintingPropertiesString.split("\\s+"): _*)
+      val entityToClusterMap = createEntityCluster(linkReader)
+      val entitiesToMint = new HashSet[String]
+      val entitiesAlreadyMinted = new HashSet[String]()
+      for(cluster <- entityToClusterMap.values)
+        if(cluster.isGlobalCluster)
+          entitiesToMint.add(cluster.entity)
+
+      while(quadsReader.hasNext) {
+        val quad = quadsReader.read()
+        val subject = quad.subject.value
+        if((entitiesToMint.contains(subject) || entitiesAlreadyMinted.contains(subject)) && mintingProperties.contains(quad.predicate)) {
+          val entityCluster = entityToClusterMap.get(subject).get
+          val mintedURI = mintURI(mintingPropertiesNamespace, quad.value.value)
+          if(entitiesAlreadyMinted.contains(subject))
+            entityCluster.setGlobalEntityIfSmaller(mintedURI)
+          else {
+            entityCluster.setGlobalEntity(mintedURI)
+            entitiesToMint.remove(subject)
+            entitiesAlreadyMinted.add(subject)
+          }
+        }
+      }
+      generateUriMap(entityToClusterMap)
+    }
+    else {
+      log.severe("Missing values for uriMintNamespace and/or uriMintLabelPredicate")
+      throw new RuntimeException("Missing values for uriMintNamespace and/or uriMintLabelPredicate")
+    }
+  }
+
+  private def mintURI(nameSpace: String, label: String): String = {
+    nameSpace + URLEncoder.encode(label.replace(' ', '_'), "UTF-8")
   }
 
   private def checkAndWriteSameAsLinks(uriMap: Map[String, String], quadOutput: QuadWriter, entityGraphChecker: EntityGraphChecker, nodes: Node*) {
@@ -76,9 +133,13 @@ object URITranslator {
 
   // Generate a Map from uri to "global" uri
   def generateUriMap(linkReader: QuadReader): Map[String, String] = {
-    val uriMap = new HashMap[String, String]()
-
     val entityToClusterMap: Map[String, EntityCluster] = createEntityCluster(linkReader)
+
+    generateUriMap(entityToClusterMap)
+  }
+
+  private def generateUriMap(entityToClusterMap: Map[String, EntityCluster]): Map[String, String] = {
+    val uriMap = new HashMap[String, String]()
 
     for((fromURI, toURICluster) <- entityToClusterMap) {
       val toURI = toURICluster.getGlobalEntity
@@ -127,7 +188,7 @@ object URITranslator {
   def extractEntityStrings(quad: Quad) = quad match { case Quad(e1, _, e2, _) => (e1.value, e2.value)}
 }
 
-case class EntityCluster(entity: String, entitySet: Set[String]) {
+case class EntityCluster(var entity: String, entitySet: Set[String]) {
 
   var parentCluster: EntityCluster = null
 
@@ -137,18 +198,47 @@ case class EntityCluster(entity: String, entitySet: Set[String]) {
 
   // Moves all the entities to this cluster, making the other cluster obsolete
   def integrateCluster(other: EntityCluster, entityToClusterMap: Map[String, EntityCluster]) {
-    other.parentCluster = this
+    if(other.entity < entity)
+      other.parentCluster = this
+    else
+      parentCluster = other
   }
 
-  def integrateEntity(entity: String, entityToClusterMap: Map[String, EntityCluster]) {
-    entitySet += entity
-    entityToClusterMap.put(entity, this)
+  def integrateEntity(newEntity: String, entityToClusterMap: Map[String, EntityCluster]) {
+    if(entity < newEntity) {
+      entitySet += newEntity
+      entityToClusterMap.put(entity, this)
+    }
+    else {
+      parentCluster match {
+        case null => val newCluster = new EntityCluster(newEntity); parentCluster = newCluster
+        case _ => parentCluster.integrateEntity(newEntity, entityToClusterMap)
+      }
+    }
   }
 
   def getGlobalEntity(): String = {
     parentCluster match {
       case null => entity
       case parent => parent.getGlobalEntity
+    }
+  }
+
+  def isGlobalCluster(): Boolean = {
+    parentCluster==null
+  }
+
+  def setGlobalEntity(uri: String) {
+    parentCluster match {
+      case null => entity = uri
+      case parent => parent.setGlobalEntity(uri)
+    }
+  }
+
+  def setGlobalEntityIfSmaller(uri: String) {
+    parentCluster match {
+      case null => if(uri < entity) entity = uri
+      case parent => parent.setGlobalEntity(uri)
     }
   }
 

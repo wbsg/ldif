@@ -4,6 +4,7 @@
 
 
 
+
 <style>
 body { background: white; color: black; font-family: sans-serif; line-height: 1.4em; padding: 2.5em 3em; margin: 0; }
 :link { color: #00c; }
@@ -83,8 +84,12 @@ provenance.</p>
 </div>
 <h2 id="news">News</h2>
 <ul>
- <li><strong>8/25/2011: Version 0.2 released.</strong> This
-version includes improved performance, a validation phase for source dataset syntax, R2R mappings, and Silk link specifications, as well as support for N-Triples output.</li>
+ <li><strong>8/25/2011: Version 0.2 released.</strong> The second
+LDIF release provides improved performance (faster data loading,
+parallelization of the data translation), smaller memory footprint, a
+new N-Triples output module, new performance evaluation results for use
+cases up to 100 million triples.<br>
+</li>
  <li><strong>6/29/2011: Version 0.1 released.</strong> This alpha
 version provides for translating data that is represented using
 different source vocabularies into a single target vocabulary and for
@@ -134,9 +139,18 @@ resolution</a>), before starting to ask SPARQL queries against the
 data. </p>
 <p>Up-till-now, there have not been any integrated tools that help
 application developers with these tasks. With LDIF, we try to fill this
-gap and provide an initial alpha version of an open-source Linked Data
-Integration Framework that can be used by Linked Data applications to translate
-Web data and normalize URI aliases. </p>
+gap and provide an an open-source Linked Data Integration Framework
+that can be used by Linked Data applications to translate Web data and
+normalize URI while keeping track of data provenance.<br>
+<br>
+LDIF provides an expressive mapping language for translating data from
+the various vocabularies that are used on the Web into a consistent,
+local target vocabulary. LDIF includes an identity resolution component
+which discovers URI aliases in the input data and replaces them with a
+single target URI based on user-provided matching heuristics. For
+provenance tracking, the LDIF framework employs the Named Graphs data
+model.<br>
+ </p>
 <p>The figure below shows the schematic <a href="http://linkeddatabook.com/editions/1.0/#htoc84">architecture of
 Linked Data applications</a>
 that
@@ -348,7 +362,7 @@ for the example of one entity that is described in two input datasets:</p>
   <li><strong>Example <span style="font-style: italic;">output</span> :</strong><br>
   </li>
 </ul>
-<pre style="margin-left: 40px;">01: @prefix smwprop: &lt;http://mywiki/resource/property/&gt; .<br>02: @prefix xsd: &lt;http://www.w3.org/2001/XMLSchema#&gt; .<br>03: <br>04: &lt;file:///aba_mouse_20101010_1000.nq&gt; {<br>05:  &nbsp;&lt;http://brain-map.org/mouse/brain/Oprk1.xml&gt; smwprop:EntrezGeneId "<span style="font-weight: bold;">18387</span>"^^xsd:int .<br>06:  &nbsp;&lt;http://brain-map.org/mouse/brain/Oprk1.xml&gt; smwprop:GeneSymbol "<span style="font-weight: bold;">Oprk1</span>"^^xsd:string .<br>07: }<br>08: <br>09: &lt;file:///datasets/uniprot-organism-human-reviewed-complete_1000.nq&gt; {  <br>10:   &lt;http://brain-map.org/mouse/brain/Oprk1.xml&gt; smwprop:EntrezGeneId "<span style="font-weight: bold;">18387</span>"^^xsd:int .<br>11: }<br></pre>
+<pre style="margin-left: 40px;">01: @prefix smwprop: &lt;http://mywiki/resource/property/&gt; .<br>02: @prefix xsd: &lt;http://www.w3.org/2001/XMLSchema#&gt; .<br>03: <br>04: &lt;file:///aba_mouse_20101010_1000.nq&gt; {<br>05:  &nbsp;&lt;http://brain-map.org/mouse/brain/Oprk1.xml&gt; smwprop:EntrezGeneId "<span style="font-weight: bold;">18387</span>"^^xsd:int .<br>06:  &nbsp;&lt;http://brain-map.org/mouse/brain/Oprk1.xml&gt; smwprop:GeneSymbol "<span style="font-weight: bold;">Oprk1</span>"^^xsd:string .<br>07: }<br>08: <br>09: &lt;file:///datasets/uniprot-organism-human-reviewed-complete_1000.nq&gt; {<br>10:   &lt;http://brain-map.org/mouse/brain/Oprk1.xml&gt; smwprop:EntrezGeneId "<span style="font-weight: bold;">18387</span>"^^xsd:int .<br>11:   &lt;http://brain-map.org/mouse/brain/Oprk1.xml&gt; <span style="font-family: monospace;">owl:sameAs </span><span style="font-family: monospace;">&lt;file:///storage/datasets/uniprot-organism-human-reviewed-complete.rdf#_503237333438003B&gt; .</span><br>12: }<br></pre>
 <p>The example input and output needs some explanation:</p>
 <ul>
         <li>There are two source graphs, each containing data from a
@@ -370,6 +384,9 @@ for the example of one entity that is described in two input datasets:</p>
  the same entity, the both URIs are replaced in the output
         with a single URI (in
       this case the ABA one, output: lines 5, 6 and 10).</li>
+  <li>The rewritten URI is linked by <span style="font-family: monospace;">owl:sameAs</span> to the original URI (output: line 11).<br>
+  </li>
+
   </ul>
 <p>Data Translation: </p>
 <ul>

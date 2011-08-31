@@ -1,13 +1,13 @@
 package ldif.local.runtime.impl
 
 import java.util.concurrent.{TimeUnit, LinkedBlockingQueue}
-import ldif.local.runtime.Quad
+import ldif.local.runtime.{QuadWriter, QuadReader, Quad}
 
 /**
  * BlockingQuadQueue is made for exactly one producer and one consumer. Not thread safe!
  */
 
-class BlockingQuadQueue(capacity: Int) extends QuadQueue {
+class BlockingQuadQueue(capacity: Int) extends QuadReader with QuadWriter {
 
   var bufferedQuad: Quad = null
   var buffered = false
@@ -101,6 +101,7 @@ class BlockingQuadQueue(capacity: Int) extends QuadQueue {
     write(NoQuadsLeft)
     totalSize = totalSize -1
   }
+
 }
 
 /**

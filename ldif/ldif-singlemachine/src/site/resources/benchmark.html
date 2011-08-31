@@ -2,6 +2,7 @@
 <html><head><title>LDIF - Benchmark Results</title>
 
 
+
     
     <style>
         body { background: white; color: black; font-family: sans-serif; line-height: 1.4em; padding: 2.5em 3em; margin: 0; }
@@ -100,7 +101,7 @@
 <h2 id="intro"><a name="intro"></a>Introduction<br></h2>
 <p> This page presents a performance evaluation for <a href="index.html">LDIF</a> using life science use cases.</p>
 
-<p>The following data sources have been considered:</p>
+<p>The following data sources have been used to evaluate the performance of LDIF:</p>
 <ul>
   <li><a href="http://mouse.brain-map.org/">Allen Mouse Brain Atlas</a>  is a growing
       collection of online public resources integrating extensive gene
@@ -145,11 +146,15 @@
 
 
 <h2 id="useCaseA"> Use case A</h2>
- <p> In this use case, we evaluated the performance of LDIF applied to integrate data originating from the five life science sources described above and translate those into a
-  common <a href="resources/Wiki.owl">target vocabulary</a>.</p>
+ <p> In this use case, we evaluated
+the performance of LDIF applied to integrate data originating from the
+five life science sources described above and translate those into a
+common <a href="resources/Wiki.owl">target vocabulary</a>.</p>
 
 <h3><a name="datasetsA"></a> Datasets</h3>
-<p>In order to measure the performance at different scale we used several samples of the input data which differ in the amount of resources (1, 10 and 100 thousand) for each data source.<br/>
+<p>In order to measure the performance at different scale we used
+several samples of the input data which differ in the amount of
+resources (1, 10 and 100 thousand) for each data source.<br>
 For this use case we extracted only data of human (Homo sapiens, hsa) and mouse (Mus musculus, mmu) species. </p>
 <p>Details about the benchmark datasets are summarized in the following table:   </p>
 <table>
@@ -184,7 +189,9 @@ For this use case we extracted only data of human (Homo sapiens, hsa) and mouse 
  <p>We defined <a href="http://www.assembla.com/code/ldif/git/nodes/ldif/ldif-singlemachine/src/main/resources/ldif/local/example/test2/mappings/ALL-to-Wiki.r2r.ttl?rev=176428845b9594e28a2f0362916de23cc821502c">R2R mappings</a> for translating vocabularies used by the source datasets into the target vocabulary.</p>
 
 <h3><a name="linkspecsA"></a>Link Specifications</h3>
- <p>The following Silk identity resolution heuristics are used to find genes and other expressions that are described in multiple datasets.</p>
+ <p>The following
+Silk identity resolution heuristics are used to find genes and other
+expressions that are described in multiple datasets.</p>
 <ul>
       <li><a href="http://www.assembla.com/code/ldif/git/nodes/ldif/ldif-singlemachine/src/main/resources/ldif/local/example/test2/linkSpecs/ABA-to-Wiki.silk.xml?rev=176428845b9594e28a2f0362916de23cc821502c">ABA-to-Wiki.silk.xml</a>, </li>
       <li><a href="http://www.assembla.com/code/ldif/git/nodes/ldif/ldif-singlemachine/src/main/resources/ldif/local/example/test2/linkSpecs/KEGG-GENES-to-Wiki.silk.xml?rev=176428845b9594e28a2f0362916de23cc821502c">KEGG-GENES-to-Wiki.silk.xml</a>, </li>

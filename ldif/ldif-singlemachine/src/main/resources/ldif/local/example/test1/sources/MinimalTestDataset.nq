@@ -1,9 +1,9 @@
-<http://testNamespace/resource1> <http://testNamespace/oldP> "same" <MinimalTestDatasetX> .
-<http://testNamespace/resource1> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://testNamespace/someOldClass> <MinimalTestDatasetX> .
-<http://testNamespace/resource1> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://WhatEver> <MinimalTestDatasetX> .
 <http://testNamespace/resource2> <http://testNamespace/oldP> "same" <MinimalTestDatasetY> .
 <http://testNamespace/resource2> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://testNamespace/someOldClass> <MinimalTestDatasetY> .
 <http://testNamespace/resource2> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://WhatEver> <MinimalTestDatasetX> .
+<http://testNamespace/resource1> <http://testNamespace/oldP> "same" <MinimalTestDatasetX> .
+<http://testNamespace/resource1> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://testNamespace/someOldClass> <MinimalTestDatasetX> .
+<http://testNamespace/resource1> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://WhatEver> <MinimalTestDatasetX> .
 <http://testNamespace/resource1> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://WhatEver> <MinimalTestDatasetZ> .
 <http://testNamespace/resource3> <http://testNamespace/oldP> "different" <MinimalTestDatasetZ> .
 <http://testNamespace/resource3> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://testNamespace/someOldClass>  <MinimalTestDatasetZ> .

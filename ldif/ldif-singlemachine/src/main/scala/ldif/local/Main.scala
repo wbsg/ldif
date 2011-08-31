@@ -80,10 +80,6 @@ object Main
     if(debugMode==true)
       r2rReader = writeDebugOutput("r2r", config.outputFile, r2rReader)
 
-    var clonedR2rReader = r2rReader
-    if(clonedR2rReader.isInstanceOf[QuadQueue])//TODO: Redesign QuadReader interface to be generally clonable
-      clonedR2rReader = cloneQuadQueue(clonedR2rReader.asInstanceOf[QuadQueue])
-
     var linkReader: QuadReader = executeLinkingPhase(config, r2rReader)
 
     if(debugMode==true)
@@ -95,7 +91,7 @@ object Main
     configParameters.sameAsWriter.finish
     val sameAsReader = new FileQuadReader(sameAsQuadsFile)
 
-    clonedR2rReader = setupQuadReader(clonedR2rReader)
+    val clonedR2rReader = setupQuadReader(r2rReader)
 
     val allQuads = new MultiQuadReader(clonedR2rReader, otherQuadsReader)
     val allSameAsLinks = new MultiQuadReader(linkReader, sameAsReader)
@@ -103,7 +99,7 @@ object Main
     var integratedReader: QuadReader = allQuads
 
     if(configProperties.getPropertyValue("rewriteURIs", "true").toLowerCase=="true")
-      integratedReader = executeURITranslation(allQuads, allSameAsLinks)
+      integratedReader = executeURITranslation(allQuads, allSameAsLinks, configParameters.configProperties)
 
     //OutputValidator.compare(cloneQuadQueue(integratedReader),new File(configFile.getParent+"/../results/all-mes.nt"))
 
@@ -143,8 +139,8 @@ object Main
     config
   }
 
-  private def executeURITranslation(inputQuadReader: QuadReader, linkReader: QuadReader): QuadReader = {
-    val integratedReader = URITranslator.translateQuads(inputQuadReader, linkReader)
+  private def executeURITranslation(inputQuadReader: QuadReader, linkReader: QuadReader, configProperties: ConfigProperties): QuadReader = {
+    val integratedReader = URITranslator.translateQuads(inputQuadReader, linkReader, configProperties)
 
     println("Time needed to translate URIs: " + stopWatch.getTimeSpanInSeconds + "s")
     integratedReader
@@ -311,11 +307,6 @@ object Main
   private def writeDebugOutput(phase: String, outputFile: File, reader: QuadReader): QuadReader = {
     val newOutputFile = new File(outputFile.getAbsolutePath + "." + phase)
     copyAndDumpQuadQueue(reader, newOutputFile.getAbsolutePath)
-  }
-
-  // Only clone QuadQueue implementation of QuadReader
-  def cloneQuadQueue(queue: QuadQueue): QuadReader = {
-      queue.clone
   }
 
   def copyAndDumpQuadQueue(quadQueue: QuadReader, outputFile: String): QuadReader = {
