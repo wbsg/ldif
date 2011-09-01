@@ -19,6 +19,7 @@ trait ImportJob {
   def load(file : Writer)
 
   def getType : String
+  def getOriginalLocation : String
 
   /* Build provenance quads for the import job */
   def generateProvenanceInfo(writer : Writer, provenanceGraph : String)    {
@@ -27,6 +28,8 @@ trait ImportJob {
     val lastUpdateProp = "http://www4.wiwiss.fu-berlin.de/ldif/lastUpdate"
     val hasDatasourceProp = "http://www4.wiwiss.fu-berlin.de/ldif/hasDatasource"
     val hasImportTypeProp = "http://www4.wiwiss.fu-berlin.de/ldif/hasImportType"
+    val hasOriginalLocationProp = "http://www4.wiwiss.fu-berlin.de/ldif/hasOriginalLocation"
+
 
     // build xsd datetime
     val updateTime = new StringBuffer(Const.xsdDateTimeFormat.format(new Date))
@@ -46,6 +49,8 @@ trait ImportJob {
     quads.append(Quad(jobBlankNode, lastUpdateProp, Node.createTypedLiteral(updateTime.toString,"http://www.w3.org/2001/XMLSchema#dateTime"), provenanceGraph))
     quads.append(Quad(jobBlankNode, hasDatasourceProp, Node.createLiteral(dataSource), provenanceGraph))
     quads.append(Quad(jobBlankNode, hasImportTypeProp, Node.createLiteral(getType), provenanceGraph))
+    quads.append(Quad(jobBlankNode, hasOriginalLocationProp, Node.createLiteral(getOriginalLocation), provenanceGraph))
+
 
     for (quad <- quads)
       writer.write(quad.toNQuadFormat+" . \n")

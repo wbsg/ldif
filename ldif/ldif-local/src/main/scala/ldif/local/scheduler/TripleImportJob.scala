@@ -14,20 +14,22 @@ case class TripleImportJob(dumpLocation : String, id : Identifier, refreshSchedu
     val inputStream = new DumpLoader(dumpLocation).getStream
     //val bufferedReader = new BufferedReader(new InputStreamReader(inputStream))
 
-    val graph = dataSource+"_"+id
+    val graph = id
     importedGraphs += graph
 
     val parser = new QuadParser(graph)
     val lines = scala.io.Source.fromInputStream(inputStream).getLines
     for (line <- lines.toTraversable){
         val quad = parser.parseLine(line)
-        writer.write(quad.toNQuadFormat+". \n")
+        if (quad != null)
+          writer.write(quad.toNQuadFormat+". \n")
     }
     writer.flush
     writer.close
   }
 
   override def getType = "triple"
+  override def getOriginalLocation = dumpLocation
 }
 
 object TripleImportJob {

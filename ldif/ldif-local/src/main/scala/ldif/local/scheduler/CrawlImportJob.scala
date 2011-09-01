@@ -12,6 +12,7 @@ case class CrawlImportJob(conf : CrawlConfig, id :  Identifier, refreshSchedule 
   }
 
   override def getType = "crawl"
+  override def getOriginalLocation = ""
 }
 
 object CrawlImportJob {

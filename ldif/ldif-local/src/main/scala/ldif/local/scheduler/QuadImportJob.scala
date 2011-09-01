@@ -25,6 +25,7 @@ case class QuadImportJob(dumpLocation : String, id : Identifier, refreshSchedule
   }
 
   override def getType = "quad"
+  override def getOriginalLocation = dumpLocation
 }
 
 object QuadImportJob{
