@@ -16,12 +16,13 @@ class CrawlExecutorTest extends FlatSpec with ShouldMatchers {
   val executor = new CrawlExecutor
   val qq = new QuadQueue
 
-  it should "load by crawling a resource URI" in {
-    executor.execute(task,null,qq)
-    //qq.size should equal (1426)
+    /* Disabled - remote test */
+
+//  it should "load by crawling a resource URI" in {
+//    executor.execute(task,null,qq)
+//    qq.size should equal (1426)
 //    contains(qq, testQuads) should equal (true)
-    (true) should equal (true) //TODO: Fix test!
-  }
+//  }
 
   private lazy val task = {
     val config = new CrawlConfig(Traversable(new URI("http://dbpedia.org/resource/Stanley_Kubrick")))

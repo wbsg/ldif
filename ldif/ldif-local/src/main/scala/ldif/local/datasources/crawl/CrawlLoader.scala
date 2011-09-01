@@ -16,7 +16,7 @@ import org.semanticweb.yars.nx.{Resource, Node}
  **/
 
 @throws(classOf[Exception])
-class CrawlLoader(seed : URI, predicates : Traversable[URI] = Traversable.empty) {
+class CrawlLoader(seed : URI, predicates : Traversable[URI] = Traversable.empty[URI]) {
   private val log = Logger.getLogger(getClass.getName)
 
   def crawl(quadWriter : QuadWriter, levels : Int = 1, limit : Int = -1) = {

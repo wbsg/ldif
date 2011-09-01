@@ -5,7 +5,7 @@ import java.io.{IOException, FileInputStream, BufferedInputStream, File}
 import java.util.Properties
 import java.util.logging.Logger
 
-case class SchedulerConfig (importJobsDir : File, dataSourcesDir : File, properties : Properties)  {
+case class SchedulerConfig (importJobsDir : File, dataSourcesDir : File, dumpLocationDir : File, properties : Properties)  {
   def getLastUpdateProperty = "http://www4.wiwiss.fu-berlin.de/ldif/lastUpdate"
 }
 
@@ -33,17 +33,20 @@ object SchedulerConfig
           stream.close()
 
         } catch {
-
           case e: IOException => {
             log.severe("No property file found at: " + propertyFile.getAbsoluteFile)
-            System.exit(1)
           }
         }
     }
 
+    val dumpLocationDir = new File(baseDir + "/" + (xml \ "DumpLocation" text))
+    if(!dumpLocationDir.exists && !dumpLocationDir.mkdirs())
+      throw new IOException("Could not create local dump directory at: " + dumpLocationDir.getCanonicalPath)
+
     SchedulerConfig(
       new File(baseDir + "/" + (xml \ "ImportJobs" text)),
       new File(baseDir + "/" + (xml \ "DataSources" text)),
+      dumpLocationDir,
       properties
     )
   }

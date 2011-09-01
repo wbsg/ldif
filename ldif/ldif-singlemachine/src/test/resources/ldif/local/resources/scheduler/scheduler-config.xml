@@ -2,4 +2,5 @@
   <Properties>scheduler.properties</Properties>
   <DataSources>datasources</DataSources>
   <ImportJobs>importJobs</ImportJobs>
+  <DumpLocation>dumps</DumpLocation>
 </Scheduler>

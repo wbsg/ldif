@@ -1,13 +1,29 @@
 package ldif.local.scheduler
 
-/**
- * Created by IntelliJ IDEA.
- * User: andrea
- * Date: 8/30/11
- * Time: 12:30 PM
- * To change this template use File | Settings | File Templates.
- */
+import ldif.util.Identifier
+import xml.Node
+import java.io.Writer
 
-class CrawlImportJob {
+
+case class CrawlImportJob(conf : CrawlConfig, id :  Identifier, refreshSchedule : String, dataSource : String) extends ImportJob{
+
+  override def load(writer : Writer) {
+    //TODO
+  }
+
+  override def getType = "crawl"
+}
+
+object CrawlImportJob {
+
+  //  def fromXML(node : Node, id : Identifier, refreshSchedule : String, dataSource : String) : ImportJob = {
+  //    val crawlConfig : CrawlConfig =
+  //    val job = new CrawlImportJob(crawlConfig, id, refreshSchedule, dataSource)
+  //    job
+  //  }
+
+}
+
+class CrawlConfig(seedUris : Seq[String], predicatesToCrawl : Seq[String], levels : Int) {
 
 }

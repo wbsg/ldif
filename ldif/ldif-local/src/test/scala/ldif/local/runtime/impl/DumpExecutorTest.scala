@@ -15,10 +15,11 @@ class DumpExecutorTest extends FlatSpec with ShouldMatchers {
   val executor = new DumpExecutor
   val qq = new QuadQueue
 
-  it should "load remote (bzip2 compress) file correctly" in {
-    executor.execute(task,null,qq)
-    qq.size should equal (1235)
-  }
+     /* Disabled - remote test */
+//  it should "load remote (bzip2 compress) file correctly" in {
+//    executor.execute(task,null,qq)
+//    qq.size should equal (1235)
+//  }
 
   private lazy val task = {
     val config = new DumpConfig(Traversable(sourceUrl))
