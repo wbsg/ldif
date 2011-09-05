@@ -24,7 +24,7 @@ class Scheduler (val config : SchedulerConfig) {
    */
   def runUpdate {
     for (job <- importJobs.filter(checkUpdate(_))) {
-      job.load(new OutputStreamWriter(new FileOutputStream(getDumpPath(job))))
+      job.load(new FileOutputStream(getDumpPath(job)))
 
       // append provenance quads
       job.generateProvenanceInfo(new OutputStreamWriter(new FileOutputStream(getDumpProvenancePath(job))), provenanceGraph)

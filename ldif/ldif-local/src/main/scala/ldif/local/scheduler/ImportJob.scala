@@ -5,8 +5,7 @@ import ldif.local.runtime.Quad
 import ldif.entity.Node
 import collection.mutable.{HashSet, ListBuffer, Set}
 import java.io._
-import java.text.SimpleDateFormat
-import java.util.{Calendar, Date}
+import java.util.Date
 import ldif.local.util.Const
 
 trait ImportJob {
@@ -16,7 +15,7 @@ trait ImportJob {
   // Contains the list of the imported graphs
   var importedGraphs : Set[String] = new HashSet[String]
 
-  def load(file : Writer)
+  def load(out : OutputStream)
 
   def getType : String
   def getOriginalLocation : String
@@ -79,10 +78,10 @@ object ImportJob {
       case None =>
     }
 
-//    (node \ "crawlImportJob").headOption match {
-//      case Some(job) => return CrawlImportJob.fromXML(job, id, refreshSchedule, dataSource)
-//      case None =>
-//    }
+    (node \ "crawlImportJob").headOption match {
+      case Some(job) => return CrawlImportJob.fromXML(job, id, refreshSchedule, dataSource)
+      case None =>
+    }
 
 //    (node \ "sparqlImportJob").headOption match {
 //      case Some(job) => return SparqlImportJob.fromXML(job, id, refreshSchedule, dataSource)

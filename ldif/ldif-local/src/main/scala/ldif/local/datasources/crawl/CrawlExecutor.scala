@@ -32,6 +32,6 @@ class CrawlExecutor extends Executor
    */
   override def execute(task : CrawlTask, reader : Null, writer : QuadWriter)
   {
-    new CrawlLoader(task.seed).crawl(writer,task.levels,task.limit)
+    new CrawlLoader(Traversable(task.seed)).crawl(writer,task.levels,task.limit)
   }
 }

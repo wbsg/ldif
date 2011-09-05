@@ -4,11 +4,14 @@ import ldif.local.datasources.dump.DumpLoader
 import ldif.util.Identifier
 import xml.Node
 import ldif.datasources.dump.QuadParser
-import java.io._
+import java.io.{OutputStreamWriter, OutputStream}
 
 case class QuadImportJob(dumpLocation : String, id : Identifier, refreshSchedule : String, dataSource : String) extends ImportJob {
 
-  override def load(writer : Writer) {
+  override def load(out : OutputStream) {
+
+    val writer = new OutputStreamWriter(out)
+
     // get bufferReader from Url
     val inputStream = new DumpLoader(dumpLocation).getStream
     //val bufferedReader = new BufferedReader(new InputStreamReader(inputStream))

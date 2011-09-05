@@ -1,0 +1,15 @@
+<ImportJob xmlns="http://www4.wiwiss.fu-berlin.de/bizer/ldif">
+    <internalId>dBpedia.0</internalId>
+    <dataSource>dBpedia</dataSource>
+    <refreshSchedule>always</refreshSchedule>
+    <crawlImportJob>
+      <seedURIs>
+        <URI>http://dbpedia.org/resource/Stanley_Kubrick</URI>
+        <URI>http://dbpedia.org/resource/David_Lynch</URI>
+      </seedURIs>
+      <predicatesToFollow>
+        <URI>http://dbpedia.org/ontology/spouse</URI>
+      </predicatesToFollow>
+      <levels>2</levels>
+   </crawlImportJob>
+</ImportJob>

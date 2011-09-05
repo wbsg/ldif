@@ -3,12 +3,14 @@ package ldif.local.scheduler
 import ldif.local.datasources.dump.DumpLoader
 import ldif.util.Identifier
 import xml.Node
-import java.io.Writer
 import ldif.datasources.dump.QuadParser
+import java.io.{OutputStreamWriter, OutputStream}
 
 case class TripleImportJob(dumpLocation : String, id : Identifier, refreshSchedule : String, dataSource : String) extends ImportJob {
 
-  override def load(writer : Writer) {
+  override def load(out : OutputStream) {
+
+    val writer = new OutputStreamWriter(out)
 
     // get bufferReader from Url
     val inputStream = new DumpLoader(dumpLocation).getStream
