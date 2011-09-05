@@ -1,12 +1,11 @@
 package ldif.local.scheduler
 
-import ldif.util.Identifier
 import ldif.local.runtime.Quad
 import ldif.entity.Node
 import collection.mutable.{HashSet, ListBuffer, Set}
 import java.io._
 import java.util.Date
-import ldif.local.util.Const
+import ldif.util.{Consts, Identifier}
 
 trait ImportJob {
   val id : Identifier
@@ -31,7 +30,7 @@ trait ImportJob {
 
 
     // build xsd datetime
-    val updateTime = new StringBuffer(Const.xsdDateTimeFormat.format(new Date))
+    val updateTime = new StringBuffer(Consts.xsdDateTimeFormat.format(new Date))
     updateTime.insert(22, ':')
 
     //TODO create an unique blank node
@@ -83,10 +82,10 @@ object ImportJob {
       case None =>
     }
 
-//    (node \ "sparqlImportJob").headOption match {
-//      case Some(job) => return SparqlImportJob.fromXML(job, id, refreshSchedule, dataSource)
-//      case None =>
-//    }
+    (node \ "sparqlImportJob").headOption match {
+      case Some(job) => return SparqlImportJob.fromXML(job, id, refreshSchedule, dataSource)
+      case None =>
+    }
 
     null
   }

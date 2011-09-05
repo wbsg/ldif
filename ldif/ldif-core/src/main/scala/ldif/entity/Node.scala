@@ -4,6 +4,7 @@ import Node._
 import org.semanticweb.yars.nx.parser.NxParser
 import ldif.util.NTriplesStringConverter
 import ldif.util.MD5Helper
+import ldif.util.Consts
 
 final case class Node(value : String, datatypeOrLanguage : String, nodeType : Node.NodeType, graph : String) //extends Ordered[Node]
 {

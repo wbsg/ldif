@@ -8,13 +8,13 @@ package de.fuberlin.wiwiss.r2r
  * To change this template use File | Settings | File Templates.
  */
 
-import ldif.entity.{EntityDescription, FactumRow, Entity, Node}
+import ldif.entity.Node
 import ldif.local.runtime.{Quad, QuadWriter}
 import de.fuberlin.wiwiss.r2r.TripleElement.Type
 import scala.collection.JavaConversions._
 import de.fuberlin.wiwiss.r2r.functions.HelperFunctions
-import ldif.entity.Consts._
 import collection.mutable.ArrayBuffer
+import ldif.util.Consts._
 
 class LDIFTargetPattern(targetPattern: TargetPattern) extends TargetPattern(targetPattern.getPath) {
 

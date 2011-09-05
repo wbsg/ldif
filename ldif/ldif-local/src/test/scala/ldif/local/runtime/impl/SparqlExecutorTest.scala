@@ -8,7 +8,7 @@ import ldif.local.datasources.sparql.SparqlExecutor
 import ldif.datasources.sparql.{SparqlModule, SparqlConfig}
 import xml.XML
 import ldif.util.Prefixes
-import ldif.entity.{Consts, EntityDescription}
+import ldif.entity.EntityDescription
 
 @RunWith(classOf[JUnitRunner])
 class SparqlExecutorTest extends FlatSpec with ShouldMatchers {

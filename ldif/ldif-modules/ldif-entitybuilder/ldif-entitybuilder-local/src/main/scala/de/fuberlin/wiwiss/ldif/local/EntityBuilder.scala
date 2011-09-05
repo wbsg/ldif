@@ -2,7 +2,6 @@ package de.fuberlin.wiwiss.ldif.local
 
 import ldif.entity._
 import java.util.logging.Logger
-import ldif.util.Uri
 import ldif.entity.Restriction._
 import collection.mutable.{ArraySeq, ArrayBuffer, HashMap, Set, HashSet}
 import actors.{Future, Futures}
@@ -11,8 +10,9 @@ import java.util.List
 import java.util.Collections
 import scala.collection.JavaConversions._
 import ldif.local.runtime._
-import ldif.local.util.{StringPool, Const}
+import ldif.local.util.StringPool
 import java.util.{HashSet => JHashSet}
+import ldif.util.{Consts, Uri}
 
 class EntityBuilder (entityDescriptions : IndexedSeq[EntityDescription], readers : Seq[QuadReader], config: ConfigParameters) extends FactumBuilder with EntityBuilderTrait {
   private val nrOfQuadsPerSort = 500000
@@ -437,7 +437,7 @@ class EntityBuilder (entityDescriptions : IndexedSeq[EntityDescription], readers
   }
 
   private def forkAll(futures: Seq[Future[Any]]) {
-    Futures.awaitAll(Const.MAX_WAITING_TIME, futures: _*)
+    Futures.awaitAll(Consts.MAX_WAITING_TIME, futures: _*)
   }
 
   private def min(a:Int , b:Int) =  if (a<b) a else b

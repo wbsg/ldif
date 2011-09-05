@@ -1,14 +1,17 @@
 package ldif.local.runtime
 
-import ldif.entity.Node
 import ldif.local.util.StringPool
+import com.hp.hpl.jena.rdf.model.{Resource, Literal, RDFNode}
+import ldif.entity.Node
+import ldif.util.Consts
 
 /*
- * Object used to create Node using string canonicalization
- */
+* Object used to create Node using string canonicalization
+*/
 
 object LocalNode
 {
+  val defaultGraph : String = Consts.DEFAULT_GRAPH
   private var useStringPool = true
   private var useUriCompression = true
 
@@ -64,5 +67,32 @@ object LocalNode
   // Decompress (and eventually intern) a String
   private def decompress(str:String) : String =
     intern(StringPool.decompress(str), false)
+
+
+  private def convertLiteralNode(node: RDFNode, graphURI: String): Node = {
+    val lexicalValue = node.asInstanceOf[Literal].getLexicalForm
+    val datatype = node.asInstanceOf[Literal].getDatatypeURI
+    val language = node.asInstanceOf[Literal].getLanguage
+
+    if (datatype != null)
+      return Node.createTypedLiteral(lexicalValue, datatype, graphURI)
+    else if (language != "")
+      return Node.createLanguageLiteral(lexicalValue, language, graphURI)
+    else
+      return Node.createLiteral(lexicalValue, graphURI)
+  }
+
+  def fromRDFNode(node: RDFNode, graphURI: String = defaultGraph): Node = {
+    if(node.isURIResource) {
+      return Node.createUriNode(node.asInstanceOf[Resource].getURI, graphURI)
+    } else if(node.isLiteral) {
+      return convertLiteralNode(node, graphURI)
+    } else if(node.isAnon) {
+      return Node.createBlankNode(node.asInstanceOf[Resource].getId.getLabelString, graphURI)
+    } else
+      throw new RuntimeException("Unknown node type for RDFNode: " + node) // Should never be the case
+
+  }
+
 
 }

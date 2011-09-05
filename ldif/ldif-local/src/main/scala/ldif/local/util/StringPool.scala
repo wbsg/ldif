@@ -1,6 +1,7 @@
 package ldif.local.util
 
 import java.util.concurrent.ConcurrentHashMap
+import ldif.util.Consts
 
 /**
  * StringPool implements string canonicalization (with an explicit collection)
@@ -61,4 +62,4 @@ class StringPool(poolSize : Int, maxSize : Int){
   }
 }
 
-object StringPool extends StringPool(Const.POOL_STARTING_SIZE,Const.POOL_MAX_SIZE)
+object StringPool extends StringPool(Consts.POOL_STARTING_SIZE,Consts.POOL_MAX_SIZE)

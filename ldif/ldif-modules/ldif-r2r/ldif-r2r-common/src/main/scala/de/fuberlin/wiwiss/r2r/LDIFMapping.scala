@@ -5,6 +5,7 @@ import scala.collection.JavaConversions._
 import ldif.entity._
 import ldif.local.runtime.{Quad, QuadWriter}
 import collection.parallel.ParIterable
+import ldif.util.Consts
 
 class LDIFMapping(val mapping: Mapping, val entityDescription: EntityDescription, variableToResultIndexMap: Map[String, Int]) {
   // Convert Target Patterns

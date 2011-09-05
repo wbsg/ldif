@@ -5,8 +5,9 @@ import scala.Predef._
 import org.scalatest.junit.JUnitRunner
 import org.scalatest.FlatSpec
 import org.scalatest.matchers.ShouldMatchers
-import ldif.entity.{Consts, Entity, EntityDescription}
+import ldif.entity.{Entity, EntityDescription}
 import ldif.local.runtime.LocalNode
+import ldif.util.Consts
 
 /**
  * Created by IntelliJ IDEA.

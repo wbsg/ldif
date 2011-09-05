@@ -4,6 +4,7 @@ import ldif.local.runtime.impl.EntityQueue
 import collection.mutable.HashSet
 import ldif.entity._
 import de.fuberlin.wiwiss.r2r.{Repository, LDIFMapping}
+import ldif.util.Consts
 
 /**
  * Created by IntelliJ IDEA.

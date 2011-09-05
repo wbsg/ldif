@@ -12,11 +12,11 @@ import ldif.modules.r2r.local.R2RLocalExecutor
 import ldif.modules.r2r._
 import ldif.entity.EntityDescription
 import de.fuberlin.wiwiss.ldif.local.EntityBuilderExecutor
-import ldif.local.util.Const._
 import java.util.Properties
 import java.io._
 import java.util.logging.Logger
 import util.StringPool
+import ldif.util.Consts
 
 object Main
 {
@@ -158,7 +158,7 @@ object Main
     val dumpModule = new DumpModule(new DumpConfig(sources))
     val dumpExecutor = new DumpExecutor
 
-    val quadQueues = for (i <- 1 to dumpModule.tasks.size) yield new BlockingQuadQueue(DEFAULT_QUAD_QUEUE_CAPACITY)
+    val quadQueues = for (i <- 1 to dumpModule.tasks.size) yield new BlockingQuadQueue(Consts.DEFAULT_QUAD_QUEUE_CAPACITY)
 
 
       for((dumpTask, writer) <- dumpModule.tasks.toList zip quadQueues){

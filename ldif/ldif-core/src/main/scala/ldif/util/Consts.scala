@@ -1,9 +1,11 @@
-package ldif.local.util
+package ldif.util
 
-import collection.mutable.HashMap
 import java.text.SimpleDateFormat
+import collection.immutable.HashMap
 
-object Const{
+object Consts {
+  val DEFAULT_GRAPH = "http://www4.wiwiss.fu-berlin.de/ldif/defaultOutputGraph"
+  val DEFAULT_PROVENANCE_GRAPH = "http://www4.wiwiss.fu-berlin.de/ldif/provenance"
 
   val MAX_WAITING_TIME : Long = Long.MaxValue
 
@@ -21,9 +23,6 @@ object Const{
                 "yearly" -> 24 * 365,
                 "never" ->  Int.MaxValue)
 
-  val DEFAULT_PROVENANCE_GRAPH = "http://www4.wiwiss.fu-berlin.de/ldif/provenance"
-
   val simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss.S")
   val xsdDateTimeFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ")
-
 }

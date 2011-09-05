@@ -3,12 +3,11 @@ package ldif.local
 import datasources.dump.QuadParser
 import java.util.logging.Logger
 import scheduler.ImportJob
-import util.Const
 import ldif.config.SchedulerConfig
-import javax.xml.bind.DatatypeConverter
 import xml.XML
 import java.io.{FileOutputStream, OutputStreamWriter, File}
 import java.util.{Date, Calendar}
+import ldif.util.Consts
 
 class Scheduler (val config : SchedulerConfig) {
   val log = Logger.getLogger(getClass.getName)
@@ -16,7 +15,7 @@ class Scheduler (val config : SchedulerConfig) {
   val lastUpdateProperty = config.getLastUpdateProperty
   val importJobs = loadImportJobs(config.importJobsDir)
   val localSourceDir = config.dumpLocationDir
-  val provenanceGraph = config.properties.getProperty("provenanceGraphURI", Const.DEFAULT_PROVENANCE_GRAPH)
+  val provenanceGraph = config.properties.getProperty("provenanceGraphURI", Consts.DEFAULT_PROVENANCE_GRAPH)
 
   /**
    * Updates local sources based on the defined import schedule.
@@ -37,7 +36,7 @@ class Scheduler (val config : SchedulerConfig) {
 
   /* Check if an update is required for the job */
   def checkUpdate(job : ImportJob) : Boolean = {
-    val changeFreqHours = Const.changeFreqToHours.get(job.refreshSchedule)
+    val changeFreqHours = Consts.changeFreqToHours.get(job.refreshSchedule)
 
     // Get last update run
     var lastUpdate, nextUpdate = getLastUpdate(job)
@@ -69,7 +68,7 @@ class Scheduler (val config : SchedulerConfig) {
             log.info("Date not in expected xml datetime format")
           else {
             val sb = new StringBuilder(lastUpdateStr).deleteCharAt(22)
-            val lastUpdateDate = Const.xsdDateTimeFormat.parse(sb.toString)
+            val lastUpdateDate = Consts.xsdDateTimeFormat.parse(sb.toString)
             // Convert Date to a Calendar
             val lastUpdateCal = Calendar.getInstance
             lastUpdateCal.setTime(lastUpdateDate)
@@ -102,10 +101,10 @@ class Scheduler (val config : SchedulerConfig) {
 
   // Build dump local path for the import job
   private def getDumpPath(job : ImportJob) = new File(localSourceDir, job.id +".nq")
-  private def getTmpDumpPath(job : ImportJob) = new File(localSourceDir, job.id +"_"+ Const.simpleDateFormat.format(new Date()) +".nq")
+  private def getTmpDumpPath(job : ImportJob) = new File(localSourceDir, job.id +"_"+ Consts.simpleDateFormat.format(new Date()) +".nq")
 
   // Build dump local path for the import job
   private def getDumpProvenancePath(job : ImportJob) = new File(localSourceDir, job.id +".provenance.nq")
-  private def getTmpDumpProvenancePath(job : ImportJob) = new File(localSourceDir, job.id +"_"+ Const.simpleDateFormat.format(new Date()) +".provenance.nq")
+  private def getTmpDumpProvenancePath(job : ImportJob) = new File(localSourceDir, job.id +"_"+ Consts.simpleDateFormat.format(new Date()) +".provenance.nq")
 
 }

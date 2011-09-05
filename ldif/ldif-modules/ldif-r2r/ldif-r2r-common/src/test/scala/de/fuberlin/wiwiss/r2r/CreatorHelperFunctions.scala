@@ -3,6 +3,7 @@ package de.fuberlin.wiwiss.r2r
 import ldif.local.runtime.impl.EntityQueue
 import collection.mutable.HashSet
 import ldif.entity._
+import ldif.util.Consts
 
 /**
  * Created by IntelliJ IDEA.
