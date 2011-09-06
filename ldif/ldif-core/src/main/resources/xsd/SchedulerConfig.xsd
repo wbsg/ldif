@@ -11,6 +11,8 @@
 
         <xs:element name="ImportJobs" type="xs:string" />
 
+        <xs:element name="DumpLocation" type="xs:string" />
+
        </xs:sequence>
     </xs:complexType>
   </xs:element>
