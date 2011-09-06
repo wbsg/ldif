@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+  <xs:element name="URI" type="xs:string" />
+
+  <xs:element name="Job" abstract="true" />
+
+  <xs:element name="QuadImportJob" substitutionGroup="Job">
+    <xs:complexType>
+       <xs:sequence>
+        <xs:element name="DumpLocation" type="xs:string" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="TripleImportJob" substitutionGroup="Job">
+    <xs:complexType>
+       <xs:sequence>
+        <xs:element name="DumpLocation" type="xs:string" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="CrawlImportJob" substitutionGroup="Job">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="SeedURIs" >
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element ref="URI" maxOccurs="unbounded" />
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="PredicatesToFollow" minOccurs="0" >
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element ref="URI" maxOccurs="unbounded" />
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+	<xs:element name="Levels" type="xs:unsignedShort" minOccurs="0" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="SparqlImportJob" substitutionGroup="Job">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="EndpointLocation" type="xs:string" />
+
+        <xs:element name="GraphName" type="xs:string" minOccurs="0" />
+
+        <xs:element name="SparqlPatterns" minOccurs="0" >
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="Pattern" type="xs:string" maxOccurs="unbounded" />
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="ImportJob">
+    <xs:complexType>
+      <xs:sequence>
+
+        <xs:element name="InternalId" type="xs:string"  />
+
+        <xs:element name="DataSource" type="xs:string" />
+
+        <xs:element name="RefreshSchedule" type="xs:string" />
+
+        <xs:element ref="Job" />
+
+       </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+</xs:schema>
