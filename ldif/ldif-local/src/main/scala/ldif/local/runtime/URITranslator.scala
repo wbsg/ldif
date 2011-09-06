@@ -62,7 +62,7 @@ object URITranslator {
       if (!quadsReader.isInstanceOf[ClonableQuadReader])
         throw new RuntimeException("QuadReader for URI translator has to be a ClonableQuadReader.")
       quadsReaderPassTwo = quadsReader.asInstanceOf[ClonableQuadReader].cloneReader
-      uriMap = generateMintedUriMap(linkReader, quadsReader, configProperties)
+      uriMap = generateMintedUriMaps(linkReader, quadsReader, configProperties)
     }
     else
       uriMap = generateUriMap(linkReader)
@@ -101,6 +101,49 @@ object URITranslator {
         }
       }
       generateUriMap(entityToClusterMap)
+    }
+    else {
+      log.severe("Missing values for uriMintNamespace and/or uriMintLabelPredicate")
+      throw new RuntimeException("Missing values for uriMintNamespace and/or uriMintLabelPredicate")
+    }
+  }
+
+  private def generateMintedUriMaps(linkReader: QuadReader, quadsReader: QuadReader, configProperties: ConfigProperties): Map[String, String] = {
+    val mintingPropertiesNamespace = configProperties.getPropertyValue("uriMintNamespace")
+    val mintingPropertiesString = configProperties.getPropertyValue("uriMintLabelPredicate")
+    if(mintingPropertiesString!=null && mintingPropertiesNamespace != null) {
+      log.info("Minting URIs...")
+      val mintingProperties = Set(mintingPropertiesString.split("\\s+"): _*)
+      val mintValues = new HashMap[String, String]
+      val entitiesAlreadyMinted = new HashSet[String]
+
+      while(quadsReader.hasNext) {
+        val quad = quadsReader.read()
+        val subject = quad.subject.value
+        val value = quad.value.value
+        if(mintingProperties.contains(quad.predicate)) {
+          if(mintValues.contains(subject)) {
+            if(mintValues.get(subject).get < value)
+              mintValues.put(subject, value)
+          } else
+              mintValues.put(subject, value)
+        }
+      }
+
+      val entityToClusterMap = createEntityCluster(linkReader)
+      for(cluster <- entityToClusterMap.values)
+        if(cluster.isGlobalCluster && mintValues.contains(cluster.entity)) {
+          val entity = cluster.entity
+          cluster.entity = mintURI(mintingPropertiesNamespace, mintValues.get(entity).get)
+          mintValues.remove(entity)
+        }
+
+      val sameAsURIMap = generateUriMap(entityToClusterMap)
+      for((uri, mintValue) <- mintValues) {
+        if(!sameAsURIMap.contains(uri))
+          sameAsURIMap.put(uri, mintURI(mintingPropertiesNamespace, mintValue))
+      }
+      sameAsURIMap
     }
     else {
       log.severe("Missing values for uriMintNamespace and/or uriMintLabelPredicate")
