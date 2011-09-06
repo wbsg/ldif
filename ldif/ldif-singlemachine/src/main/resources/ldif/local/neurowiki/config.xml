@@ -1,0 +1,7 @@
+<LDIF>
+  <Properties>neurowiki.properties</Properties>
+  <Sources>imported_dumps</Sources>
+  <LinkSpecifications>linkSpecs</LinkSpecifications>
+  <Mappings>mappings</Mappings>
+  <Output>neurowiki.output</Output>
+</LDIF>

@@ -1,0 +1,10 @@
+<ImportJob>
+    <internalId>Diseasome.0</internalId>
+    <dataSource>Diseasome</dataSource>
+    <refreshSchedule>always</refreshSchedule>
+    <tripleImportJob>
+        <dumpLocation>
+            http://mes.smw-lde-eu.s3.amazonaws.com/diseasome_dump_fixed.nt.bz2
+        </dumpLocation>
+    </tripleImportJob>
+</ImportJob>

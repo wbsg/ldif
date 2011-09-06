@@ -1,0 +1,49 @@
+@prefix r2r: <http://www4.wiwiss.fu-berlin.de/bizer/r2r/> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix mp: <http://www.example.org/smw-lde/smwTransformations/drugbank/> .
+
+mp:Drug
+   a r2r:ClassMapping;
+   r2r:prefixDefinitions	"""smwcat: <http://neurowiki.alleninstitute.org/resource/category/> .
+   							 smwprop: <http://neurowiki.alleninstitute.org/resource/property/> .
+   							 drugbank: <http://www4.wiwiss.fu-berlin.de/drugbank/resource/drugbank/> .
+   							 uniprot: <http://purl.uniprot.org/core/> .
+   							 skos: <http://www.w3.org/2004/02/skos/core#> .
+   							 rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+							 xsd: <http://www.w3.org/2001/XMLSchema#>""";
+   r2r:sourcePattern 	"?SUBJ a drugbank:drugs";
+   r2r:targetPattern	"?SUBJ a smwcat:Drug";
+   .
+
+mp:drugLabel 
+  a r2r:PropertyMapping ; 
+  r2r:mappingRef mp:Drug ; 
+  r2r:sourcePattern "?SUBJ <http://www4.wiwiss.fu-berlin.de/drugbank/resource/drugbank/genericName> ?label" ; 
+  r2r:targetPattern "?SUBJ <http://www4.wiwiss.fu-berlin.de/drugbank/resource/drugbank/genericName> ?label" .
+
+mp:targets 
+  a r2r:PropertyMapping ; 
+  r2r:mappingRef mp:Drug ; 
+  r2r:sourcePattern "?SUBJ drugbank:target ?gene" ; 
+  r2r:targetPattern "?SUBJ smwprop:targets ?gene" . 
+
+mp:Gene
+   a r2r:ClassMapping;
+   r2r:prefixDefinitions	"""smwcat: <http://neurowiki.alleninstitute.org/resource/category/> .
+   							 smwprop: <http://neurowiki.alleninstitute.org/resource/property/> .
+   							 drugbank: <http://www4.wiwiss.fu-berlin.de/drugbank/resource/drugbank/> .
+   							 uniprot: <http://purl.uniprot.org/core/> .
+   							 skos: <http://www.w3.org/2004/02/skos/core#> .
+   							 rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+							 xsd: <http://www.w3.org/2001/XMLSchema#>""";
+   r2r:sourcePattern 	"?SUBJ a drugbank:targets";
+   r2r:targetPattern	"?SUBJ a smwcat:Gene";
+   .
+
+mp:geneLabel 
+  a r2r:PropertyMapping ; 
+  r2r:mappingRef mp:Gene ; 
+  r2r:sourcePattern "?SUBJ <http://www4.wiwiss.fu-berlin.de/drugbank/resource/drugbank/geneName> ?label" ; 
+  r2r:targetPattern "?SUBJ <http://www4.wiwiss.fu-berlin.de/drugbank/resource/drugbank/geneName> ?label" .
+

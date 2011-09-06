@@ -1,0 +1,55 @@
+@prefix r2r: <http://www4.wiwiss.fu-berlin.de/bizer/r2r/> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix mp: <http://www.example.org/smw-lde/smwTransformations/diseasome/> .
+
+mp:Gene
+ a r2r:ClassMapping;
+ r2r:prefixDefinitions """smwcat: <http://neurowiki.alleninstitute.org/resource/category/> .
+ smwprop: <http://neurowiki.alleninstitute.org/resource/property/> .
+ diseasome: <http://www4.wiwiss.fu-berlin.de/diseasome/resource/diseasome/> .
+ uniprot: <http://purl.uniprot.org/core/> .
+ skos: <http://www.w3.org/2004/02/skos/core#> .
+ rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+ xsd: <http://www.w3.org/2001/XMLSchema#>""";
+ r2r:sourcePattern "?SUBJ a diseasome:genes";
+ r2r:targetPattern "?SUBJ a smwcat:Gene";
+ .
+
+mp:geneLabel 
+ a r2r:PropertyMapping ; 
+ r2r:mappingRef mp:Gene ; 
+ r2r:sourcePattern "?SUBJ rdfs:label ?label" ; 
+ r2r:targetPattern "?SUBJ rdfs:label ?label" .
+
+mp:Disease
+ a r2r:ClassMapping;
+ r2r:prefixDefinitions """smwcat: <http://neurowiki.alleninstitute.org/resource/category/> .
+ smwprop: <http://neurowiki.alleninstitute.org/resource/property/> .
+ diseasome: <http://www4.wiwiss.fu-berlin.de/diseasome/resource/diseasome/> .
+ uniprot: <http://purl.uniprot.org/core/> .
+ skos: <http://www.w3.org/2004/02/skos/core#> .
+ rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+ xsd: <http://www.w3.org/2001/XMLSchema#>""";
+ r2r:sourcePattern "?SUBJ a diseasome:diseases";
+ r2r:targetPattern "?SUBJ a smwcat:Disease";
+ .
+
+mp:diseaseLabel 
+ a r2r:PropertyMapping ; 
+ r2r:mappingRef mp:Disease ; 
+ r2r:sourcePattern "?SUBJ rdfs:label ?label" ; 
+ r2r:transformation "?labelTransformed = regexToList('(.+?)(?:, [0-9]+)?', ?label)";
+ r2r:targetPattern "?SUBJ rdfs:label ?labelTransformed" .
+
+mp:associatedGene 
+ a r2r:PropertyMapping ; 
+ r2r:mappingRef mp:Disease ; 
+ r2r:sourcePattern "?SUBJ diseasome:associatedGene ?gene" ; 
+ r2r:targetPattern "?SUBJ smwprop:associatedGene ?gene" . 
+
+mp:possibleDrug 
+ a r2r:PropertyMapping ; 
+ r2r:mappingRef mp:Disease ; 
+ r2r:sourcePattern "?SUBJ diseasome:possibleDrug ?drug" ; 
+ r2r:targetPattern "?SUBJ smwprop:possibleDrug ?drug" . 

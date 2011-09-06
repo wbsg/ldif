@@ -1,0 +1,52 @@
+@prefix r2r: <http://www4.wiwiss.fu-berlin.de/bizer/r2r/> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix mp: <http://www.example.org/smw-lde/smwTransformations/sider/> .
+
+mp:Effect
+        a r2r:ClassMapping ;
+        r2r:prefixDefinitions """smwcat: <http://neurowiki.alleninstitute.org/resource/category/> .
+        smwprop: <http://neurowiki.alleninstitute.org/resource/property/> .
+        sider: <http://www4.wiwiss.fu-berlin.de/sider/resource/sider/> .
+        uniprot: <http://purl.uniprot.org/core/> .
+        skos: <http://www.w3.org/2004/02/skos/core#> .
+        rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+        xsd: <http://www.w3.org/2001/XMLSchema#>""" ;
+        r2r:sourcePattern "?SUBJ a sider:side_effects" ;
+        r2r:targetPattern "?SUBJ a smwcat:Effect" .
+
+mp:effectLabel
+        a r2r:PropertyMapping ;
+        r2r:mappingRef mp:Effect ;
+        r2r:sourcePattern "?SUBJ <http://www4.wiwiss.fu-berlin.de/sider/resource/sider/sideEffectName> ?label" ;
+        r2r:targetPattern "?SUBJ <http://www4.wiwiss.fu-berlin.de/sider/resource/sider/sideEffectName> ?label" .
+
+mp:causes
+        a r2r:PropertyMapping ;
+        r2r:mappingRef mp:Effect ;
+        r2r:sourcePattern "?drug sider:sideEffect ?SUBJ" ;
+        r2r:targetPattern "?SUBJ smwprop:isCausedBy ?drug" .
+
+mp:Drug
+        a r2r:ClassMapping ;
+        r2r:prefixDefinitions """smwcat: <http://neurowiki.alleninstitute.org/resource/category/> .
+        smwprop: <http://neurowiki.alleninstitute.org/resource/property/> .
+        sider: <http://www4.wiwiss.fu-berlin.de/sider/resource/sider/> .
+        uniprot: <http://purl.uniprot.org/core/> .
+        skos: <http://www.w3.org/2004/02/skos/core#> .
+        rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+        xsd: <http://www.w3.org/2001/XMLSchema#>""" ;
+        r2r:sourcePattern "?SUBJ a sider:drugs" ;
+        r2r:targetPattern "?SUBJ a smwcat:Drug" .
+
+mp:drugName
+        a r2r:PropertyMapping ;
+        r2r:sourcePattern "?SUBJ <http://www4.wiwiss.fu-berlin.de/sider/resource/sider/drugName> ?label" ;
+        r2r:targetPattern "?SUBJ <http://www4.wiwiss.fu-berlin.de/sider/resource/sider/drugName> ?label" .
+
+mp:drugLabel
+        a r2r:PropertyMapping ;
+        r2r:sourcePattern "?SUBJ rdfs:label ?label" ;
+        r2r:targetPattern "?SUBJ rdfs:label ?label" .
+
+

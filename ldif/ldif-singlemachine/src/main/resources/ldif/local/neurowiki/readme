@@ -1,0 +1,36 @@
+# Neurowiki - use case for SMWCon demo
+
+# sources
+
+- The original datasets are available here: http://neurowiki.alleninstitute.org/index.php/Datasources
+
+- The fixed dumps (.nt) are available here: http://www.assembla.com/spaces/ldif/documents/cPy7aQ2iur4iN0eJe5cbCb/download/cPy7aQ2iur4iN0eJe5cbCb 
+	Changes:
+	- The following filter has been applied to the Sider dump, in order to remove some invalid URIs (containing blank spaces)
+		grep -v '<http://www.fda.gov' sider_dump.nt
+
+- Dumps (.nq) including provenance info are available here: http://www.assembla.com/spaces/ldif/documents/dRqm1W2iur4iAZeJe5cbLr/download/dRqm1W2iur4iAZeJe5cbLr 
+
+
+# mappings
+
+- The original mappings are available here: http://neurowiki.alleninstitute.org/index.php?title=Special%3AAllPages&from=&to=&namespace=502
+
+- The LDIF-fixed mappings are in the 'mappings' directory
+	Changes:
+	- fixed Sider - remove space at line 2, column 22
+	- changed mappings URIs, mappings with same URI, but in different files, are otherwise seens as one mapping - changed mp prefixes in each mapping file
+
+
+
+# linkSpecs
+
+- The LDIF-fixed link specifications are in the 'linkSpecs' directory
+	Changes:
+	- changed format from ttl to xml 
+	- moved uriMintNamespace and uriMintLabelPredicate to the LDIF configuration properties:
+		uriMinting = true
+		uriMintNamespace = http://neurowiki.alleninstitute.org/resource/a/
+		uriMintLabelPredicate = http://www.w3.org/2000/01/rdf-schema#label 
+					http://www4.wiwiss.fu-berlin.de/drugbank/resource/drugbank/geneName 
+					http://www4.wiwiss.fu-berlin.de/drugbank/resource/drugbank/genericName

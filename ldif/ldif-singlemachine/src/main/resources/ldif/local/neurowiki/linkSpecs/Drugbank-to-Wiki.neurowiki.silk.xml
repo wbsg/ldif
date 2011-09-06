@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Silk>
+	<Prefixes>
+		<Prefix id="rdf" namespace="http://www.w3.org/1999/02/22-rdf-syntax-ns#" />
+		<Prefix id="rdfs" namespace="http://www.w3.org/2000/01/rdf-schema#" />
+		<Prefix id="owl" namespace="http://www.w3.org/2002/07/owl#" />
+		<Prefix id="smwprop" namespace="http://neurowiki.alleninstitute.org/resource/property/" />
+		<Prefix id="smwcat" namespace="http://neurowiki.alleninstitute.org/resource/category/" />
+		<Prefix id="wiki" namespace="http://www.example.com/smw#" />
+	</Prefixes>
+
+<!--	<Blocking/> -->
+	
+	<Interlinks>
+		<Interlink id="genes">
+			<LinkType>owl:sameAs</LinkType>
+
+			<SourceDataset dataSource="SOURCE" var="b">
+				<RestrictTo>?b rdf:type smwcat:Gene .</RestrictTo>
+			</SourceDataset>
+
+			<TargetDataset dataSource="TARGET" var="a">
+				<RestrictTo>?a rdf:type smwcat:Gene .</RestrictTo>
+			</TargetDataset>
+
+			<LinkCondition>
+				<Aggregate type="max">
+					<Compare metric="equality">
+						<Input path="?a/rdfs:label" />
+						<Input path="?b/rdfs:label" />
+					</Compare>
+				</Aggregate>
+			</LinkCondition>
+
+			<Filter threshold="1.0" />
+
+		</Interlink>
+		
+	</Interlinks>
+	
+</Silk>
