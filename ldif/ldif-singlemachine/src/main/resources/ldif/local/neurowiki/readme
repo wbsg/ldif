@@ -18,9 +18,9 @@
 
 - The LDIF-fixed mappings are in the 'mappings' directory
 	Changes:
-	- fixed Sider - remove space at line 2, column 22
+	- fixed Sider - removed space at line 2, column 22
 	- changed mappings URIs, mappings with same URI, but in different files, are otherwise seens as one mapping - changed mp prefixes in each mapping file
-
+    - changed Sider mp:drugLabel mapping - added 'r2r:mappingRef mp:Drug'
 
 
 # linkSpecs

@@ -46,6 +46,7 @@ mp:drugName
 
 mp:drugLabel
         a r2r:PropertyMapping ;
+	    r2r:mappingRef mp:Drug ;
         r2r:sourcePattern "?SUBJ rdfs:label ?label" ;
         r2r:targetPattern "?SUBJ rdfs:label ?label" .
 
