@@ -62,7 +62,7 @@ object URITranslator {
       if (!quadsReader.isInstanceOf[ClonableQuadReader])
         throw new RuntimeException("QuadReader for URI translator has to be a ClonableQuadReader.")
       quadsReaderPassTwo = quadsReader.asInstanceOf[ClonableQuadReader].cloneReader
-      uriMap = generateMintedUriMaps(linkReader, quadsReader, configProperties)
+      uriMap = generateMintedUriMap(linkReader, quadsReader, configProperties)
     }
     else
       uriMap = generateUriMap(linkReader)
@@ -72,78 +72,97 @@ object URITranslator {
     quadOutput
   }
 
+//  private def generateMintedUriMap(linkReader: QuadReader, quadsReader: QuadReader, configProperties: ConfigProperties): Map[String, String] = {
+//    val mintingPropertiesNamespace = configProperties.getPropertyValue("uriMintNamespace")
+//    val mintingPropertiesString = configProperties.getPropertyValue("uriMintLabelPredicate")
+//    if(mintingPropertiesString!=null && mintingPropertiesNamespace != null) {
+//      log.info("Minting URIs...")
+//      val mintingProperties = Set(mintingPropertiesString.split("\\s+"): _*)
+//      val entityToClusterMap = createEntityCluster(linkReader)
+//      val entitiesToMint = new HashSet[String]
+//      val entitiesAlreadyMinted = new HashSet[String]()
+//      for(cluster <- entityToClusterMap.values)
+//        if(cluster.isGlobalCluster)
+//          entitiesToMint.add(cluster.entity)
+//
+//      while(quadsReader.hasNext) {
+//        val quad = quadsReader.read()
+//        val subject = quad.subject.value
+//        if((entitiesToMint.contains(subject) || entitiesAlreadyMinted.contains(subject)) && mintingProperties.contains(quad.predicate)) {
+//          val entityCluster = entityToClusterMap.get(subject).get
+//          val mintedURI = mintURI(mintingPropertiesNamespace, quad.value.value)
+//          if(entitiesAlreadyMinted.contains(subject))
+//            entityCluster.setGlobalEntityIfLarger(mintedURI)
+//          else {
+//            entityCluster.setGlobalEntity(mintedURI)
+//            entitiesToMint.remove(subject)
+//            entitiesAlreadyMinted.add(subject)
+//          }
+//        }
+//      }
+//      generateUriMap(entityToClusterMap)
+//    }
+//    else {
+//      log.severe("Missing values for uriMintNamespace and/or uriMintLabelPredicate")
+//      throw new RuntimeException("Missing values for uriMintNamespace and/or uriMintLabelPredicate")
+//    }
+//  }
+
+  def rewriteGlobalEntitiesWithMintedURIs(linkReader: QuadReader, mintValues: HashMap[String, String], mintingPropertiesNamespace: String): Map[String, EntityCluster] = {
+    val entitiesAlreadyMinted = new HashSet[String]
+    val entityToClusterMap = createEntityCluster(linkReader)
+    for ((entity, cluster) <- entityToClusterMap)
+      if (mintValues.contains(entity)) {
+        val globalEntity = cluster.getGlobalEntity()
+        if (entitiesAlreadyMinted(globalEntity))
+          cluster.setGlobalEntityIfLarger(mintURI(mintingPropertiesNamespace, mintValues.get(entity).get))
+        else {
+          cluster.setGlobalEntity(mintURI(mintingPropertiesNamespace, mintValues.get(entity).get))
+          entitiesAlreadyMinted.add(globalEntity)
+        }
+        mintValues.remove(entity)
+      }
+    entityToClusterMap
+  }
+
+  private def extractMaxMintValues(mintingPropertiesString: String, quadsReader: QuadReader): HashMap[String, String] = {
+    val mintingProperties = Set(mintingPropertiesString.split("\\s+"): _*)
+    val mintValues = new HashMap[String, String]
+
+    while (quadsReader.hasNext) {
+      val quad = quadsReader.read()
+      val subject = quad.subject.value
+      val value = quad.value.value
+      if (mintingProperties.contains(quad.predicate)) {
+        if (mintValues.contains(subject)) {
+          if (mintValues.get(subject).get < value)
+            mintValues.put(subject, value)
+        } else
+          mintValues.put(subject, value)
+      }
+    }
+    mintValues
+  }
+
+  private def generateMintedURIMap(entityToClusterMap: Map[String, EntityCluster], mintValues: HashMap[String, String], mintingPropertiesNamespace: String): Map[String, String] = {
+    val sameAsURIMap = generateUriMap(entityToClusterMap)
+    for ((uri, mintValue) <- mintValues) {
+      if (!sameAsURIMap.contains(uri))
+        sameAsURIMap.put(uri, mintURI(mintingPropertiesNamespace, mintValue))
+    }
+    sameAsURIMap
+  }
+
   private def generateMintedUriMap(linkReader: QuadReader, quadsReader: QuadReader, configProperties: ConfigProperties): Map[String, String] = {
     val mintingPropertiesNamespace = configProperties.getPropertyValue("uriMintNamespace")
     val mintingPropertiesString = configProperties.getPropertyValue("uriMintLabelPredicate")
     if(mintingPropertiesString!=null && mintingPropertiesNamespace != null) {
       log.info("Minting URIs...")
-      val mintingProperties = Set(mintingPropertiesString.split("\\s+"): _*)
-      val entityToClusterMap = createEntityCluster(linkReader)
-      val entitiesToMint = new HashSet[String]
-      val entitiesAlreadyMinted = new HashSet[String]()
-      for(cluster <- entityToClusterMap.values)
-        if(cluster.isGlobalCluster)
-          entitiesToMint.add(cluster.entity)
+      val mintValues: HashMap[String, String] = extractMaxMintValues(mintingPropertiesString, quadsReader)
 
-      while(quadsReader.hasNext) {
-        val quad = quadsReader.read()
-        val subject = quad.subject.value
-        if((entitiesToMint.contains(subject) || entitiesAlreadyMinted.contains(subject)) && mintingProperties.contains(quad.predicate)) {
-          val entityCluster = entityToClusterMap.get(subject).get
-          val mintedURI = mintURI(mintingPropertiesNamespace, quad.value.value)
-          if(entitiesAlreadyMinted.contains(subject))
-            entityCluster.setGlobalEntityIfSmaller(mintedURI)
-          else {
-            entityCluster.setGlobalEntity(mintedURI)
-            entitiesToMint.remove(subject)
-            entitiesAlreadyMinted.add(subject)
-          }
-        }
-      }
-      generateUriMap(entityToClusterMap)
-    }
-    else {
-      log.severe("Missing values for uriMintNamespace and/or uriMintLabelPredicate")
-      throw new RuntimeException("Missing values for uriMintNamespace and/or uriMintLabelPredicate")
-    }
-  }
+      val entityToClusterMap: Map[String, EntityCluster] = rewriteGlobalEntitiesWithMintedURIs(linkReader, mintValues, mintingPropertiesNamespace)
 
-  private def generateMintedUriMaps(linkReader: QuadReader, quadsReader: QuadReader, configProperties: ConfigProperties): Map[String, String] = {
-    val mintingPropertiesNamespace = configProperties.getPropertyValue("uriMintNamespace")
-    val mintingPropertiesString = configProperties.getPropertyValue("uriMintLabelPredicate")
-    if(mintingPropertiesString!=null && mintingPropertiesNamespace != null) {
-      log.info("Minting URIs...")
-      val mintingProperties = Set(mintingPropertiesString.split("\\s+"): _*)
-      val mintValues = new HashMap[String, String]
-      val entitiesAlreadyMinted = new HashSet[String]
-
-      while(quadsReader.hasNext) {
-        val quad = quadsReader.read()
-        val subject = quad.subject.value
-        val value = quad.value.value
-        if(mintingProperties.contains(quad.predicate)) {
-          if(mintValues.contains(subject)) {
-            if(mintValues.get(subject).get < value)
-              mintValues.put(subject, value)
-          } else
-              mintValues.put(subject, value)
-        }
-      }
-
-      val entityToClusterMap = createEntityCluster(linkReader)
-      for(cluster <- entityToClusterMap.values)
-        if(cluster.isGlobalCluster && mintValues.contains(cluster.entity)) {
-          val entity = cluster.entity
-          cluster.entity = mintURI(mintingPropertiesNamespace, mintValues.get(entity).get)
-          mintValues.remove(entity)
-        }
-
-      val sameAsURIMap = generateUriMap(entityToClusterMap)
-      for((uri, mintValue) <- mintValues) {
-        if(!sameAsURIMap.contains(uri))
-          sameAsURIMap.put(uri, mintURI(mintingPropertiesNamespace, mintValue))
-      }
-      sameAsURIMap
+      generateMintedURIMap(entityToClusterMap, mintValues, mintingPropertiesNamespace)
     }
     else {
       log.severe("Missing values for uriMintNamespace and/or uriMintLabelPredicate")
@@ -176,7 +195,7 @@ object URITranslator {
   }
 
   // Generate a Map from uri to "global" uri
-  def generateUriMap(linkReader: QuadReader): Map[String, String] = {
+  private def generateUriMap(linkReader: QuadReader): Map[String, String] = {
     val entityToClusterMap: Map[String, EntityCluster] = createEntityCluster(linkReader)
 
     generateUriMap(entityToClusterMap)
@@ -279,7 +298,7 @@ case class EntityCluster(var entity: String, entitySet: Set[String]) {
     }
   }
 
-  def setGlobalEntityIfSmaller(uri: String) {
+  def setGlobalEntityIfLarger(uri: String) {
     parentCluster match {
       case null => if(uri > entity) entity = uri
       case parent => parent.setGlobalEntity(uri)
