@@ -245,10 +245,11 @@ object URITranslator {
         }
       }
     }
+
     entityToClusterMap
   }
 
-  def extractEntityStrings(quad: Quad) = quad match { case Quad(e1, _, e2, _) => (e1.value, e2.value)}
+  def extractEntityStrings(quad: Quad): Pair[String, String] = quad match { case Quad(e1, _, e2, _) => (e1.value, e2.value)}
 }
 
 case class EntityCluster(var entity: String, entitySet: Set[String]) {
@@ -268,9 +269,9 @@ case class EntityCluster(var entity: String, entitySet: Set[String]) {
   }
 
   def integrateEntity(newEntity: String, entityToClusterMap: Map[String, EntityCluster]) {
-    if(entity < newEntity) {
+    if(entity > newEntity) {
       entitySet += newEntity
-      entityToClusterMap.put(entity, this)
+      entityToClusterMap.put(newEntity, this)
     }
     else {
       parentCluster match {
