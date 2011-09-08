@@ -5,8 +5,8 @@ import org.scalatest.FlatSpec
 import org.scalatest.matchers.ShouldMatchers
 import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner
-import runtime.Quad
 import ldif.entity.Node
+import ldif.runtime.Quad
 
 @RunWith(classOf[JUnitRunner])
 class IntegrationFlowTest extends FlatSpec with ShouldMatchers {

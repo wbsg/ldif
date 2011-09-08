@@ -15,7 +15,7 @@ import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner
 import de.fuberlin.wiwiss.r2r._
 import ldif.local.runtime.impl.{QuadQueue, EntityQueue}
-import ldif.local.runtime.Quad
+import ldif.runtime.Quad
 import ldif.entity._
 import collection.mutable.HashSet
 import CreatorHelperFunctions._
