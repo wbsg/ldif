@@ -1,7 +1,7 @@
 package ldif.local.runtime.impl
 
 import java.io.{FileInputStream, BufferedInputStream, ObjectInputStream, File}
-import ldif.local.runtime.Quad
+import ldif.runtime.Quad
 
 /**
  * Created by IntelliJ IDEA.

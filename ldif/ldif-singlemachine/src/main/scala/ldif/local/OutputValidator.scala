@@ -5,6 +5,7 @@ import runtime._
 import java.io.File
 import collection.mutable.{HashMap, MultiMap, Set}
 import java.util.logging.Logger
+import ldif.runtime.Quad
 
 /*
 * Compare LDIF output with a given LDImpoter output (which has a target vocab and minting)

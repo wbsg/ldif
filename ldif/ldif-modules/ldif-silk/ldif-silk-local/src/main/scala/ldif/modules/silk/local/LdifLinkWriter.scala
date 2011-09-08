@@ -1,8 +1,9 @@
 package ldif.modules.silk.local
 
-import ldif.local.runtime.{Quad, QuadWriter}
+import ldif.local.runtime.QuadWriter
 import ldif.entity.Node
 import de.fuberlin.wiwiss.silk.output.{Link, LinkWriter}
+import ldif.runtime.Quad
 
 /**
  * A Silk Link Writer which writes all links to a LDIF Quad Writer.

@@ -1,7 +1,6 @@
 package ldif.datasources.dump
 
-import java.util.logging.Logger
-import ldif.local.runtime.Quad
+import ldif.runtime.Quad
 import org.antlr.runtime.{CommonTokenStream, ANTLRStringStream}
 import parser.{NQuadParser, NQuadLexer}
 

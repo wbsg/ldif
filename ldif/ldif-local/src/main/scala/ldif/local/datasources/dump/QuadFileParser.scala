@@ -7,6 +7,7 @@ import ldif.entity._
 import java.util.concurrent.atomic.AtomicInteger
 import java.io.{CharConversionException, FileReader, BufferedReader}
 import ldif.util.NTriplesStringConverter
+import ldif.runtime.Quad
 
 
 /**

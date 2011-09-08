@@ -3,7 +3,8 @@ package ldif.local.datasources.crawl
 import org.semanticweb.yars.nx.parser.Callback
 import org.semanticweb.yars.nx.Node
 import java.io.IOException
-import ldif.local.runtime.{QuadWriter, Quad}
+import ldif.local.runtime.QuadWriter
+import ldif.runtime.Quad
 
 class CallbackQuadQueue(quadWriter : QuadWriter) extends Callback {
 

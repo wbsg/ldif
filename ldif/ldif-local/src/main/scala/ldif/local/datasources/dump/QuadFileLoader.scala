@@ -5,11 +5,11 @@ import scala.collection.mutable.{ArrayBuffer, Map}
 import scala.Predef._
 import java.io.{File, BufferedReader}
 import java.io.FileReader
-import ldif.local.util.StringPool
-import ldif.local.runtime.{LocalNode, QuadWriter, Quad}
+import ldif.local.runtime.{LocalNode, QuadWriter}
 import scala.actors.Actor
 import scala._
 import ldif.local.runtime.impl.DummyQuadWriter
+import ldif.runtime.Quad
 
 /**
  * Created by IntelliJ IDEA.

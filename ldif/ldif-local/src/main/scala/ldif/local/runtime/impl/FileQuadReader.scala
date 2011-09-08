@@ -1,6 +1,7 @@
 package ldif.local.runtime.impl
 
-import ldif.local.runtime.{Quad, ClonableQuadReader}
+import ldif.runtime.Quad
+import ldif.local.runtime.ClonableQuadReader
 import java.io._
 import java.lang.RuntimeException
 

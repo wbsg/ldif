@@ -1,6 +1,6 @@
 package ldif.local.runtime.impl
 
-import ldif.local.runtime.Quad
+import ldif.runtime.Quad
 import java.io.{File, FileOutputStream, BufferedOutputStream, ObjectOutputStream}
 
 /**

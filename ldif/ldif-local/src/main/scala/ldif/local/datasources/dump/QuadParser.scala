@@ -3,7 +3,7 @@ package ldif.local.datasources.dump
 import org.antlr.runtime.ANTLRStringStream;
 import org.antlr.runtime.CommonTokenStream;
 import ldif.datasources.dump.parser.{NQuadParser, NQuadLexer}
-import ldif.local.runtime.Quad
+import ldif.runtime.Quad
 ;
 
 /**

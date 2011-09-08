@@ -12,8 +12,8 @@ import impl.{MultiQuadReader, FileQuadReader, QuadQueue}
 import scala.collection.mutable.{Map, HashMap, HashSet, Set}
 import ldif.entity._
 import java.util.logging.Logger
-import org.w3c.dom.css.Counter
 import java.net.URLEncoder
+import ldif.runtime.Quad
 
 object URITranslator {
 

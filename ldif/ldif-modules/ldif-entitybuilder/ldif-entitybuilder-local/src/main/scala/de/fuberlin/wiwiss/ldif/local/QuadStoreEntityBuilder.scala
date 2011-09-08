@@ -2,10 +2,10 @@ package de.fuberlin.wiwiss.ldif.local
 
 import ldif.entity.EntityDescription
 import java.util.logging.Logger
-import scala.collection.JavaConversions._
 import ldif.util.Uri
-import ldif.local.runtime.{Quad, ConfigParameters, QuadReader, EntityWriter}
+import ldif.local.runtime.{ConfigParameters, QuadReader, EntityWriter}
 import java.io.{BufferedWriter, FileWriter, IOException, File}
+import ldif.runtime.Quad
 
 /**
  * Created by IntelliJ IDEA.

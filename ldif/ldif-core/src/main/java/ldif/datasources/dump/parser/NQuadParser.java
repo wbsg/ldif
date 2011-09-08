@@ -4,7 +4,7 @@ package ldif.datasources.dump.parser;
 
 
 import ldif.entity.Node;
-import ldif.local.runtime.Quad;
+import ldif.runtime.Quad;
 import ldif.util.NTriplesStringConverter;
 import org.antlr.runtime.*;
 

@@ -3,9 +3,10 @@ package de.fuberlin.wiwiss.r2r
 import java.util.ArrayList
 import scala.collection.JavaConversions._
 import ldif.entity._
-import ldif.local.runtime.{Quad, QuadWriter}
+import ldif.local.runtime.QuadWriter
 import collection.parallel.ParIterable
 import ldif.util.Consts
+import ldif.runtime.Quad
 
 class LDIFMapping(val mapping: Mapping, val entityDescription: EntityDescription, variableToResultIndexMap: Map[String, Int]) {
   // Convert Target Patterns

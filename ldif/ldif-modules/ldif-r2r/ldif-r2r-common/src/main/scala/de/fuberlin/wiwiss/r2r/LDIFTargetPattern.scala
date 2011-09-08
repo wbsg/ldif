@@ -9,12 +9,13 @@ package de.fuberlin.wiwiss.r2r
  */
 
 import ldif.entity.Node
-import ldif.local.runtime.{Quad, QuadWriter}
+import ldif.local.runtime.QuadWriter
 import de.fuberlin.wiwiss.r2r.TripleElement.Type
 import scala.collection.JavaConversions._
 import de.fuberlin.wiwiss.r2r.functions.HelperFunctions
 import collection.mutable.ArrayBuffer
 import ldif.util.Consts._
+import ldif.runtime.Quad
 
 class LDIFTargetPattern(targetPattern: TargetPattern) extends TargetPattern(targetPattern.getPath) {
 

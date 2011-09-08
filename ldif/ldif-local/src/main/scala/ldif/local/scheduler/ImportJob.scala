@@ -1,6 +1,6 @@
 package ldif.local.scheduler
 
-import ldif.local.runtime.Quad
+import ldif.runtime.Quad
 import ldif.entity.Node
 import collection.mutable.{HashSet, ListBuffer, Set}
 import java.io._

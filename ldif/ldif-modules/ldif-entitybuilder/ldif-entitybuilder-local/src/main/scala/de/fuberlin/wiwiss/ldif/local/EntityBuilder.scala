@@ -9,10 +9,11 @@ import java.util.ArrayList
 import java.util.List
 import java.util.Collections
 import scala.collection.JavaConversions._
-import ldif.local.runtime._
 import ldif.local.util.StringPool
 import java.util.{HashSet => JHashSet}
 import ldif.util.{Consts, Uri}
+import ldif.local.runtime.{LocalNode, EntityWriter, QuadReader, ConfigParameters}
+import ldif.runtime.{BackwardComparator, ForwardComparator, Quad}
 
 class EntityBuilder (entityDescriptions : IndexedSeq[EntityDescription], readers : Seq[QuadReader], config: ConfigParameters) extends FactumBuilder with EntityBuilderTrait {
   private val nrOfQuadsPerSort = 500000
@@ -141,7 +142,7 @@ class EntityBuilder (entityDescriptions : IndexedSeq[EntityDescription], readers
       false
   }
 
-  private def saveIfSameAsQuad(quad:Quad) {
+  private def saveIfSameAsQuad(quad: Quad) {
     if(saveSameAsQuads && quad.predicate=="http://www.w3.org/2002/07/owl#sameAs")
       config.sameAsWriter.write(quad)
   }

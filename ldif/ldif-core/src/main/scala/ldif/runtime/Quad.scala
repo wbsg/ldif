@@ -1,4 +1,4 @@
-package ldif.local.runtime
+package ldif.runtime
 
 import ldif.entity.Node
 import ldif.util.NTriplesStringConverter

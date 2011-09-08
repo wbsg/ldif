@@ -45,7 +45,7 @@ case class SparqlImportJob(conf : SparqlConfig, id :  Identifier, refreshSchedul
   override def getType = "sparql"
   override def getOriginalLocation = conf.endpointLocation.toString
 
-  /* Execute a SPARQL query, applying LIMIT and OFFSET if the server limits the result set size  */
+  /* Execute a SPARQL query, applying LIMIT and OFFSET if the endpoint limits the result set size  */
   private def execQuery(baseQuery : String) : Model = {
      val endpointUrl = conf.endpointLocation.toString
      var query = baseQuery + " LIMIT " + math.min(conf.pageSize, conf.limit)

@@ -1,8 +1,9 @@
 package ldif.local.runtime.impl
 
-import ldif.local.runtime.{Quad, QuadWriter}
+import ldif.local.runtime.QuadWriter
 import java.io.File
 import java.io.{ObjectOutputStream, FileOutputStream, BufferedOutputStream}
+import ldif.runtime.Quad
 
 /**
  * Created by IntelliJ IDEA.

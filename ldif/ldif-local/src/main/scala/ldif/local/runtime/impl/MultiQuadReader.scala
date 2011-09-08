@@ -1,6 +1,7 @@
 package ldif.local.runtime.impl
 
-import ldif.local.runtime.{Quad, QuadReader, ClonableQuadReader}
+import ldif.runtime.Quad
+import ldif.local.runtime.{QuadReader, ClonableQuadReader}
 import collection.mutable.ArrayBuffer
 
 /**
