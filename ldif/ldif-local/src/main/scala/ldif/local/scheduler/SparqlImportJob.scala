@@ -4,10 +4,9 @@ import ldif.util.Identifier
 import java.net.URI
 import java.util.logging.Logger
 import java.io.{OutputStreamWriter, OutputStream}
-import com.hp.hpl.jena.rdf.model.{Literal, Resource, RDFNode}
-import com.hp.hpl.jena.query.{QuerySolution, QueryExecutionFactory}
-import ldif.entity.Node
+import com.hp.hpl.jena.query.QueryExecutionFactory
 import ldif.local.runtime.LocalNode
+import com.hp.hpl.jena.rdf.model.{Model, RDFNode}
 
 case class SparqlImportJob(conf : SparqlConfig, id :  Identifier, refreshSchedule : String, dataSource : String) extends ImportJob{
   private val log = Logger.getLogger(getClass.getName)
@@ -26,8 +25,9 @@ case class SparqlImportJob(conf : SparqlConfig, id :  Identifier, refreshSchedul
     var graph = id
     importedGraphs += graph
 
-    val results = QueryExecutionFactory.sparqlService(conf.endpointLocation.toString, query).execConstruct
+    val results = execQuery(query)
 
+     //results.write(out, "N-QUAD", graph)
     val stmtIterator = results.listStatements
     while (stmtIterator.hasNext){
         val stmt = stmtIterator.next
@@ -44,6 +44,24 @@ case class SparqlImportJob(conf : SparqlConfig, id :  Identifier, refreshSchedul
 
   override def getType = "sparql"
   override def getOriginalLocation = conf.endpointLocation.toString
+
+  /* Execute a SPARQL query, applying LIMIT and OFFSET if the server limits the result set size  */
+  private def execQuery(baseQuery : String) : Model = {
+     val endpointUrl = conf.endpointLocation.toString
+     var query = baseQuery + " LIMIT " + math.min(conf.pageSize, conf.limit)
+     val results = QueryExecutionFactory.sparqlService(endpointUrl, query).execConstruct
+
+     var loop = (results.size == conf.pageSize) // && (results.size != conf.limit)
+     while (loop) {
+       query = baseQuery + " OFFSET " + results.size + " LIMIT " + math.min(conf.pageSize, conf.limit - results.size)
+       val res = QueryExecutionFactory.sparqlService(endpointUrl, query).execConstruct
+       results.add(res)
+       loop = (res.size == conf.pageSize)
+     }
+
+    results
+   }
+
 }
 
 object SparqlImportJob {
@@ -60,7 +78,7 @@ object SparqlImportJob {
 
 }
 
-case class SparqlConfig(endpointLocation : URI,  graphName : URI, sparqlPatterns : Traversable[String] ) {
+case class SparqlConfig(endpointLocation : URI,  graphName : URI, sparqlPatterns : Traversable[String], limit : Int = Integer.MAX_VALUE, pageSize : Int = 1000) {
 
   def buildQuery : String = {
     val isGraphDefined = graphName.toString.trim != ""
