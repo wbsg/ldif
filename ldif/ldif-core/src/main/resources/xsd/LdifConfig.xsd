@@ -1,22 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
-<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           xmlns:ldif="http://www4.wiwiss.fu-berlin.de/ldif/" >
 
-<xs:element name="LDIF">
-    <xs:complexType>
-      <xs:sequence>
+    <xs:element name="ComplexSource" abstract="true" />
 
-        <xs:element name="Properties" type="xs:string"  />
+    <xs:element name="Source" type="xs:string" substitutionGroup="ComplexSource"/>
+    <xs:element name="Sources" type="xs:string" substitutionGroup="ComplexSource"/>
 
-        <xs:element name="Sources" type="xs:string" />
+    <xs:element name="LDIF">
+        <xs:complexType>
+            <xs:sequence>
 
-        <xs:element name="LinkSpecifications" type="xs:string" />
+                <xs:element name="Properties" type="xs:string" minOccurs="0"/>
 
-        <xs:element name="Mappings" type="xs:string" />
+                <xs:element ref="ComplexSource" maxOccurs="unbounded"/>
 
-        <xs:element name="Output" type="xs:string" />
+                <xs:element name="LinkSpecifications" type="xs:string" />
 
-       </xs:sequence>
-    </xs:complexType>
-  </xs:element>
+                <xs:element name="Mappings" type="xs:string" />
+
+                <xs:element name="Output" type="xs:string" />
+
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
 
 </xs:schema>

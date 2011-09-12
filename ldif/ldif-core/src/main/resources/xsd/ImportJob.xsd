@@ -1,7 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
-<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           xmlns:ldif="http://www4.wiwiss.fu-berlin.de/ldif/" >
 
-  <xs:element name="URI" type="xs:string" />
+  <xs:element name="RefreshSchedule">
+    <xs:restriction base="xs:normalizedString">
+        <xs:enumeration value="onStartup"/>
+        <xs:enumeration value="always"/>
+        <xs:enumeration value="hourly"/>
+        <xs:enumeration value="daily"/>
+        <xs:enumeration value="weekly"/>
+        <xs:enumeration value="monthly"/>
+        <xs:enumeration value="yearly"/>
+        <xs:enumeration value="never"/>
+    </xs:restriction>
+  </xs:element>
+
+  <xs:element name="InternalId" >
+    <xs:restriction base="xs:normalizedString" >
+        <xs:pattern value="[A-Za-z0-9_]"/>
+    </xs:restriction>
+  </xs:element>
 
   <xs:element name="Job" abstract="true" />
 
@@ -27,14 +45,14 @@
         <xs:element name="SeedURIs" >
           <xs:complexType>
             <xs:sequence>
-              <xs:element ref="URI" maxOccurs="unbounded" />
+              <xs:element name="URI" type="xs:anyURI" maxOccurs="unbounded" />
             </xs:sequence>
           </xs:complexType>
         </xs:element>
         <xs:element name="PredicatesToFollow" minOccurs="0" >
           <xs:complexType>
             <xs:sequence>
-              <xs:element ref="URI" maxOccurs="unbounded" />
+              <xs:element name="URI" type="xs:anyURI" maxOccurs="unbounded" />
             </xs:sequence>
           </xs:complexType>
         </xs:element>
@@ -46,9 +64,9 @@
   <xs:element name="SparqlImportJob" substitutionGroup="Job">
     <xs:complexType>
       <xs:sequence>
-        <xs:element name="EndpointLocation" type="xs:string" />
+        <xs:element name="EndpointLocation" type="xs:anyURI" />
 
-        <xs:element name="GraphName" type="xs:string" minOccurs="0" />
+        <xs:element name="GraphName" type="xs:anyURI" minOccurs="0" />
 
         <xs:element name="SparqlPatterns" minOccurs="0" >
           <xs:complexType>
@@ -65,11 +83,11 @@
     <xs:complexType>
       <xs:sequence>
 
-        <xs:element name="InternalId" type="xs:string"  />
+        <xs:element ref="InternalId" minOccurs="0" />
 
         <xs:element name="DataSource" type="xs:string" />
 
-        <xs:element name="RefreshSchedule" type="xs:string" />
+        <xs:element ref="RefreshSchedule" />
 
         <xs:element ref="Job" />
 

@@ -1,18 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
-<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           xmlns:ldif="http://www4.wiwiss.fu-berlin.de/ldif/" >
 
-<xs:element name="DataSource">
-    <xs:complexType>
-      <xs:sequence>
+    <xs:element name="Label" >
+        <xs:restriction base="xs:normalizedString" >
+            <xs:pattern value="[A-Za-z0-9_]"/>
+        </xs:restriction>
+    </xs:element>
 
-        <xs:element name="Label" type="xs:string"  />
+    <xs:element name="DataSource">
+        <xs:complexType>
+            <xs:sequence>
 
-        <xs:element name="Description" type="xs:string" minOccurs="0" />
+                <xs:element ref="Label" />
 
-        <xs:element name="Homepage" type="xs:string" minOccurs="0" />
+                <xs:element name="Description" type="xs:string" minOccurs="0" />
 
-       </xs:sequence>
-    </xs:complexType>
-  </xs:element>
+                <xs:element name="Homepage" type="xs:string" minOccurs="0" />
+
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
 
 </xs:schema>
