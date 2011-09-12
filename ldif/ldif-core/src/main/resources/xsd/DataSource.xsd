@@ -1,18 +1,21 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
-           xmlns:ldif="http://www4.wiwiss.fu-berlin.de/ldif/" >
+           xmlns:ldif="http://www4.wiwiss.fu-berlin.de/ldif/"
+           xmlns="http://www4.wiwiss.fu-berlin.de/ldif/"
+           elementFormDefault="qualified"
+           targetNamespace="http://www4.wiwiss.fu-berlin.de/ldif/">
 
-    <xs:element name="Label" >
+      <xs:simpleType name="labelType">
         <xs:restriction base="xs:normalizedString" >
-            <xs:pattern value="[A-Za-z0-9_]"/>
+            <xs:pattern value="[A-Za-z0-9_]+"/>
         </xs:restriction>
-    </xs:element>
+      </xs:simpleType>
 
     <xs:element name="DataSource">
         <xs:complexType>
             <xs:sequence>
 
-                <xs:element ref="Label" />
+                <xs:element name="Label" type="ldif:labelType" />
 
                 <xs:element name="Description" type="xs:string" minOccurs="0" />
 

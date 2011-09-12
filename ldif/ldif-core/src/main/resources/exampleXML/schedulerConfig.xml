@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ldif:Scheduler xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+            xsi:schemaLocation="http://www4.wiwiss.fu-berlin.de/ldif/ home/andrea/ldif/ldif/ldif-core/src/main/resources/xsd/SchedulerConfig.xsd"
+            xmlns:ldif="http://www4.wiwiss.fu-berlin.de/ldif/" >
+    <ldif:DataSources>DataSource</ldif:DataSources>
+    <ldif:ImportJobs>ImportJob</ldif:ImportJobs>
+    <ldif:DumpLocation>dump</ldif:DumpLocation>
+</ldif:Scheduler>

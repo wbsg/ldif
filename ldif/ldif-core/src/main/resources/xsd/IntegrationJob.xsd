@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
-           xmlns:ldif="http://www4.wiwiss.fu-berlin.de/ldif/" >
+           xmlns:ldif="http://www4.wiwiss.fu-berlin.de/ldif/"
+           elementFormDefault="qualified"
+           targetNamespace="http://www4.wiwiss.fu-berlin.de/ldif/">
 
-    <xs:element name="RunSchedule">
+    <xs:simpleType name="runScheduleType">
         <xs:restriction base="xs:normalizedString">
             <xs:enumeration value="onStartup"/>
             <xs:enumeration value="always"/>
@@ -13,7 +15,7 @@
             <xs:enumeration value="yearly"/>
             <xs:enumeration value="never"/>
         </xs:restriction>
-    </xs:element>
+    </xs:simpleType>
 
     <xs:element name="ComplexSource" abstract="true" />
 
@@ -34,7 +36,7 @@
 
                 <xs:element name="Output" type="xs:string" />
 
-                <xs:element ref="RunSchedule" />
+                <xs:element name="RunSchedule" type="ldif:runScheduleType" />
 
             </xs:sequence>
         </xs:complexType>

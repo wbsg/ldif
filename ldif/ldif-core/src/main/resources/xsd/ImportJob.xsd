@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
-           xmlns:ldif="http://www4.wiwiss.fu-berlin.de/ldif/" >
+           xmlns:ldif="http://www4.wiwiss.fu-berlin.de/ldif/"
+           elementFormDefault="qualified"
+           targetNamespace="http://www4.wiwiss.fu-berlin.de/ldif/" >
 
-  <xs:element name="RefreshSchedule">
+  <xs:simpleType name="refreshScheduleType">
     <xs:restriction base="xs:normalizedString">
         <xs:enumeration value="onStartup"/>
         <xs:enumeration value="always"/>
@@ -13,17 +15,17 @@
         <xs:enumeration value="yearly"/>
         <xs:enumeration value="never"/>
     </xs:restriction>
-  </xs:element>
+  </xs:simpleType>
 
-  <xs:element name="InternalId" >
+  <xs:simpleType name="internalIdType" >
     <xs:restriction base="xs:normalizedString" >
         <xs:pattern value="[A-Za-z0-9_]"/>
     </xs:restriction>
-  </xs:element>
+  </xs:simpleType>
 
   <xs:element name="Job" abstract="true" />
 
-  <xs:element name="QuadImportJob" substitutionGroup="Job">
+  <xs:element name="QuadImportJob" substitutionGroup="ldif:Job">
     <xs:complexType>
        <xs:sequence>
         <xs:element name="DumpLocation" type="xs:string" />
@@ -31,7 +33,7 @@
     </xs:complexType>
   </xs:element>
 
-  <xs:element name="TripleImportJob" substitutionGroup="Job">
+  <xs:element name="TripleImportJob" substitutionGroup="ldif:Job">
     <xs:complexType>
        <xs:sequence>
         <xs:element name="DumpLocation" type="xs:string" />
@@ -39,7 +41,7 @@
     </xs:complexType>
   </xs:element>
 
-  <xs:element name="CrawlImportJob" substitutionGroup="Job">
+  <xs:element name="CrawlImportJob" substitutionGroup="ldif:Job">
     <xs:complexType>
       <xs:sequence>
         <xs:element name="SeedURIs" >
@@ -61,7 +63,7 @@
     </xs:complexType>
   </xs:element>
 
-  <xs:element name="SparqlImportJob" substitutionGroup="Job">
+  <xs:element name="SparqlImportJob" substitutionGroup="ldif:Job">
     <xs:complexType>
       <xs:sequence>
         <xs:element name="EndpointLocation" type="xs:anyURI" />
@@ -83,13 +85,13 @@
     <xs:complexType>
       <xs:sequence>
 
-        <xs:element ref="InternalId" minOccurs="0" />
+        <xs:element name="InternalId" type="ldif:internalIdType" minOccurs="0" />
 
         <xs:element name="DataSource" type="xs:string" />
 
-        <xs:element ref="RefreshSchedule" />
+        <xs:element name="RefreshSchedule" type="ldif:refreshScheduleType" />
 
-        <xs:element ref="Job" />
+        <xs:element ref="ldif:Job" />
 
        </xs:sequence>
     </xs:complexType>
