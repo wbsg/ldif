@@ -3,8 +3,6 @@
     <dataSource>Drugbank</dataSource>
     <refreshSchedule>always</refreshSchedule>
     <tripleImportJob>
-        <dumpLocation>
-            http://mes.smw-lde-eu.s3.amazonaws.com/drugbank_dump_fixed.nt.bz2
-        </dumpLocation>
+        <dumpLocation>http://mes.smw-lde-eu.s3.amazonaws.com/drugbank_dump_fixed.nt.bz2</dumpLocation>
     </tripleImportJob>
 </ImportJob>

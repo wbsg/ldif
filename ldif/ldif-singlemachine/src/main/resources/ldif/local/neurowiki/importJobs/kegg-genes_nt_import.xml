@@ -3,8 +3,6 @@
     <dataSource>KEGG-Genes</dataSource>
     <refreshSchedule>always</refreshSchedule>
     <tripleImportJob>
-        <dumpLocation>
-            http://mes.smw-lde-eu.s3.amazonaws.com/kegg_genes_20101018_100.nt.bz2
-        </dumpLocation>
+        <dumpLocation>http://mes.smw-lde-eu.s3.amazonaws.com/kegg_genes_20101018_100.nt.bz2</dumpLocation>
     </tripleImportJob>
 </ImportJob>

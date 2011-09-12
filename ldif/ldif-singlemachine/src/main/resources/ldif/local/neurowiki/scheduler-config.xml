@@ -1,0 +1,6 @@
+<Scheduler>
+  <Properties>neurowiki.properties</Properties>
+  <DataSources>datasources</DataSources>
+  <ImportJobs>importJobs</ImportJobs>
+  <DumpLocation>imported_dumps</DumpLocation>
+</Scheduler>

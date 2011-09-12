@@ -3,8 +3,6 @@
     <dataSource>KEGG-Pathway</dataSource>
     <refreshSchedule>always</refreshSchedule>
     <tripleImportJob>
-        <dumpLocation>
-            http://mes.smw-lde-eu.s3.amazonaws.com/kegg_pathway_20101010_hsa_mmu_500.nt.bz2
-        </dumpLocation>
+        <dumpLocation>http://mes.smw-lde-eu.s3.amazonaws.com/kegg_pathway_20101010_hsa_mmu_500.nt.bz2</dumpLocation>
     </tripleImportJob>
 </ImportJob>
