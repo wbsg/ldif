@@ -3,10 +3,10 @@ package ldif.local.scheduler
 import ldif.util.Identifier
 import java.net.URI
 import java.util.logging.Logger
-import java.io.{OutputStreamWriter, OutputStream}
 import com.hp.hpl.jena.query.QueryExecutionFactory
 import ldif.local.runtime.LocalNode
 import com.hp.hpl.jena.rdf.model.{Model, RDFNode}
+import java.io.{Writer, OutputStreamWriter, OutputStream}
 
 case class SparqlImportJob(conf : SparqlConfig, id :  Identifier, refreshSchedule : String, dataSource : String) extends ImportJob{
   private val log = Logger.getLogger(getClass.getName)
@@ -22,45 +22,49 @@ case class SparqlImportJob(conf : SparqlConfig, id :  Identifier, refreshSchedul
     log.info("Loading from " + conf.endpointLocation + ", graph: " + conf.graphName)
     log.info("Query: " + query)
 
-    var graph = id
-    importedGraphs += graph
+    importedGraphs += id
 
-    val results = execQuery(query)
+    execQuery(query, writer)
 
-     //results.write(out, "N-QUAD", graph)
-    val stmtIterator = results.listStatements
-    while (stmtIterator.hasNext){
-        val stmt = stmtIterator.next
-        val s = LocalNode.fromRDFNode(stmt.getSubject.asInstanceOf[RDFNode])
-        val p = stmt.getPredicate.getURI
-        val o = LocalNode.fromRDFNode(stmt.getObject)
-        writer.write(s.toNQuadsFormat +" <"+ p +"> "+ o.toNQuadsFormat +" <"+ graph +"> . \n")
-    }
-
-    writer.flush
     writer.close
-
   }
 
   override def getType = "sparql"
   override def getOriginalLocation = conf.endpointLocation.toString
 
   /* Execute a SPARQL query, applying LIMIT and OFFSET if the endpoint limits the result set size  */
-  private def execQuery(baseQuery : String) : Model = {
-     val endpointUrl = conf.endpointLocation.toString
-     var query = baseQuery + " LIMIT " + math.min(conf.pageSize, conf.limit)
-     val results = QueryExecutionFactory.sparqlService(endpointUrl, query).execConstruct
+  private def execQuery(baseQuery : String, writer : Writer)  {
+    val endpointUrl = conf.endpointLocation.toString
+    var loop = true
+    var offset : Long = 0
 
-     var loop = (results.size == conf.pageSize) // && (results.size != conf.limit)
-     while (loop) {
-       query = baseQuery + " OFFSET " + results.size + " LIMIT " + math.min(conf.pageSize, conf.limit - results.size)
-       val res = QueryExecutionFactory.sparqlService(endpointUrl, query).execConstruct
-       results.add(res)
-       loop = (res.size == conf.pageSize)
-     }
+    while (loop) {
+      val query = baseQuery + " OFFSET " + offset + " LIMIT " + math.min(conf.pageSize, conf.limit - offset)
+      val results = QueryExecutionFactory.sparqlService(endpointUrl, query).execConstruct
+      loop = (results.size == conf.pageSize)
+      offset += results.size
 
-    results
-   }
+      write(results, writer)
+
+      log.info(id +" - loaded "+offset+" quads")
+
+    }
+  }
+
+  /* Write SPARQL results */
+  private def write(results : Model, writer : Writer)  {
+    //results.write(out, "N-QUAD", graph)
+    val stmtIterator = results.listStatements
+    while (stmtIterator.hasNext){
+      val stmt = stmtIterator.next
+      val s = LocalNode.fromRDFNode(stmt.getSubject.asInstanceOf[RDFNode])
+      val p = stmt.getPredicate.getURI
+      val o = LocalNode.fromRDFNode(stmt.getObject)
+      writer.write(s.toNQuadsFormat +" <"+ p +"> "+ o.toNQuadsFormat +" <"+ id +"> . \n")
+    }
+    writer.flush
+  }
+
 
 }
 
