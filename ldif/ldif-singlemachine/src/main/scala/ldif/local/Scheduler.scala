@@ -17,12 +17,13 @@ class Scheduler (val config : SchedulerConfig, debug : Boolean = false) {
   val importJobs = loadImportJobs(config.importJobsDir)
   val localSourceDir = config.dumpLocationDir
   val provenanceGraph = config.properties.getProperty("provenanceGraphURI", Consts.DEFAULT_PROVENANCE_GRAPH)
+  var startup = true
 
   /**
    * Updates local sources based on the defined import schedule.
    * This method is supposed to be invoked regularily by means such as a hourly cronjob.
    */
-  def runUpdate {
+  def runUpdate() {
     synchronized {
       log.info("Running update")
       for (job <- importJobs.filter(checkUpdate(_))) {
@@ -38,27 +39,33 @@ class Scheduler (val config : SchedulerConfig, debug : Boolean = false) {
         copyFile(tmpDumpFile, getDumpFile(job))
         copyFile(tmpProvenanceFile, getProvenanceFile(job))
       }
+      startup = false
     }
   }
 
   /* Check if an update is required for the job */
   def checkUpdate(job : ImportJob) : Boolean = {
-    val changeFreqHours = Consts.changeFreqToHours.get(job.refreshSchedule)
-
-    // Get last update run
-    var lastUpdate, nextUpdate = getLastUpdate(job)
-
-    // Figure out if update is required
-    if (changeFreqHours != None) {
-      if (lastUpdate == null) {
+    if (startup && job.refreshSchedule == "onStartup") {
         true
-      } else {
-        nextUpdate.add(Calendar.HOUR, changeFreqHours.get)
-        Calendar.getInstance.after(nextUpdate)
-      }
     }
-    else
-      false
+    else {
+      val changeFreqHours = Consts.changeFreqToHours.get(job.refreshSchedule)
+
+      // Get last update run
+      var lastUpdate, nextUpdate = getLastUpdate(job)
+
+      // Figure out if update is required
+      if (changeFreqHours != None) {
+        if (lastUpdate == null) {
+          true
+        } else {
+          nextUpdate.add(Calendar.HOUR, changeFreqHours.get)
+          Calendar.getInstance.after(nextUpdate)
+        }
+      }
+      else
+        false
+    }
   }
 
   /* Retrieve last update from provenance info */
