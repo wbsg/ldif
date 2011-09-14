@@ -17,26 +17,26 @@
         </xs:restriction>
     </xs:simpleType>
 
-    <xs:element name="ComplexSource" abstract="true" />
+    <xs:element name="complexSource" abstract="true" />
 
-    <xs:element name="Source" type="xs:string" substitutionGroup="ComplexSource"/>
-    <xs:element name="Sources" type="xs:string" substitutionGroup="ComplexSource"/>
+    <xs:element name="source" type="xs:string" substitutionGroup="complexSource"/>
+    <xs:element name="sources" type="xs:string" substitutionGroup="complexSource"/>
 
     <xs:element name="LDIF">
         <xs:complexType>
             <xs:sequence>
 
-                <xs:element name="Properties" type="xs:string" minOccurs="0"/>
+                <xs:element name="properties" type="xs:string" minOccurs="0"/>
 
-                <xs:element ref="ComplexSource" maxOccurs="unbounded"/>
+                <xs:element ref="complexSource" maxOccurs="unbounded"/>
 
-                <xs:element name="LinkSpecifications" type="xs:string" />
+                <xs:element name="linkSpecifications" type="xs:string" />
 
-                <xs:element name="Mappings" type="xs:string" />
+                <xs:element name="mappings" type="xs:string" />
 
-                <xs:element name="Output" type="xs:string" />
+                <xs:element name="output" type="xs:string" />
 
-                <xs:element name="RunSchedule" type="ldif:runScheduleType" />
+                <xs:element name="runSchedule" type="ldif:runScheduleType" />
 
             </xs:sequence>
         </xs:complexType>
