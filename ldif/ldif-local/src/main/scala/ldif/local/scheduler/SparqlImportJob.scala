@@ -3,10 +3,12 @@ package ldif.local.scheduler
 import ldif.util.Identifier
 import java.net.URI
 import java.util.logging.Logger
-import com.hp.hpl.jena.query.QueryExecutionFactory
 import ldif.local.runtime.LocalNode
 import com.hp.hpl.jena.rdf.model.{Model, RDFNode}
 import java.io.{Writer, OutputStreamWriter, OutputStream}
+import javax.xml.ws.http.HTTPException
+import org.apache.http.HttpException
+import com.hp.hpl.jena.query.{QueryException, QueryExecutionFactory}
 
 case class SparqlImportJob(conf : SparqlConfig, id :  Identifier, refreshSchedule : String, dataSource : String) extends ImportJob{
   private val log = Logger.getLogger(getClass.getName)
@@ -40,12 +42,20 @@ case class SparqlImportJob(conf : SparqlConfig, id :  Identifier, refreshSchedul
 
     while (loop) {
       val query = baseQuery + " OFFSET " + offset + " LIMIT " + math.min(conf.pageSize, conf.limit - offset)
-      val results = QueryExecutionFactory.sparqlService(endpointUrl, query).execConstruct
-      loop = (results.size == conf.pageSize)
-      offset += results.size
 
-      write(results, writer)
+      try {
+        val results = QueryExecutionFactory.sparqlService(endpointUrl, query).execConstruct
+        loop = (results.size == conf.pageSize)
+        offset += results.size
 
+        write(results, writer)
+      }
+      catch {
+        case e:Exception => {
+          loop = false
+          log.warning("Error executing query \n"+query+" \non "+endpointUrl+" \n"+e.getMessage)
+        }
+      }
       log.info(id +" - loaded "+offset+" quads")
 
     }

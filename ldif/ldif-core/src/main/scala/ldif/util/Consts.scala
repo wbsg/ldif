@@ -21,7 +21,8 @@ object Consts {
                 "weekly" -> 24 * 7,
                 "monthly" -> 24 * 30,
                 "yearly" -> 24 * 365,
-                "never" ->  Int.MaxValue)
+                "never" ->  Int.MaxValue,
+                "onStartup" ->  Int.MaxValue)
 
   val simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss.S")
   val xsdDateTimeFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ")
