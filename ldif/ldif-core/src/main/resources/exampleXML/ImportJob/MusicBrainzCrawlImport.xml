@@ -14,6 +14,8 @@
             <uri>http://vocab.org/relationship/#collaborated_with</uri>
             <uri>http://purl.org/ontology/mo/produced</uri>
             <uri>http://purl.org/ontology/mo/member_of</uri>
+            <uri>http://xmlns.com/foaf/0.1/member</uri>
+            <uri>http://purl.org/ontology/mo/performed</uri>
         </predicatesToFollow>
         <levels>5</levels>
     </crawlImportJob>

@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Silk xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+            xsi:noNamespaceSchemaLocation="../../xsd/LinkSpecificationLanguage.xsd" >
+	<Prefixes>
+		<Prefix id="rdf" namespace="http://www.w3.org/1999/02/22-rdf-syntax-ns#" />
+		<Prefix id="rdfs" namespace="http://www.w3.org/2000/01/rdf-schema#" />
+		<Prefix id="owl" namespace="http://www.w3.org/2002/07/owl#" />
+		<Prefix id="mo" namespace="http://purl.org/ontology/mo/" />
+		<Prefix id="dbpedia-owl" namespace="http://dbpedia.org/ontology/" />
+		<Prefix id="dc" namespace="http://purl.org/dc/elements/1.1/" />
+        <Prefix id="foaf" namespace="http://xmlns.com/foaf/0.1/" />
+        <Prefix id="freebase" namespace="http://rdf.freebase.com/ns/" />
+        <Prefix id="bio" namespace="http://rdf.freebase.com/ns/" />
+	</Prefixes>
+
+<!--	<Blocking/> -->
+
+	<Interlinks>
+		<Interlink id="Bands">
+			<LinkType>owl:sameAs</LinkType>
+
+			<SourceDataset dataSource="SOURCE" var="a">
+				<RestrictTo>?a rdf:type mo:MusicGroup .</RestrictTo>
+			</SourceDataset>
+
+			<TargetDataset dataSource="TARGET" var="b">
+				<RestrictTo>?b rdf:type mo:MusicGroup .</RestrictTo>
+			</TargetDataset>
+
+			<LinkCondition>
+				<Aggregate type="avg">
+					<Compare metric="jaccard">
+						<Input path="?a/dbpedia-owl:bandMember/rdfs:label" />
+						<Input path="?b/dbpedia-owl:bandMember/rdfs:label" />
+					</Compare>
+                    <Compare metric="equality">
+                        <Input path="?a/rdfs:label" />
+						<Input path="?b/rdfs:label" />
+                    </Compare>
+				</Aggregate>
+			</LinkCondition>
+
+			<Filter threshold="0.7" />
+
+		</Interlink>
+
+	</Interlinks>
+
+</Silk>
