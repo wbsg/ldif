@@ -8,7 +8,7 @@ import java.io.{OutputStreamWriter, OutputStream}
 
 case class TripleImportJob(dumpLocation : String, id : Identifier, refreshSchedule : String, dataSource : String) extends ImportJob {
 
-  override def load(out : OutputStream) {
+  override def load(out : OutputStream) : Boolean = {
 
     val writer = new OutputStreamWriter(out)
 
@@ -28,6 +28,7 @@ case class TripleImportJob(dumpLocation : String, id : Identifier, refreshSchedu
     }
     writer.flush
     writer.close
+    true
   }
 
   override def getType = "triple"

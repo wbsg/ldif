@@ -34,4 +34,7 @@ object Consts {
   val hasDatasourceProp = "http://www4.wiwiss.fu-berlin.de/ldif/hasDatasource"
   val hasImportTypeProp = "http://www4.wiwiss.fu-berlin.de/ldif/hasImportType"
   val hasOriginalLocationProp = "http://www4.wiwiss.fu-berlin.de/ldif/hasOriginalLocation"
+  val rdfTypeProp = "http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
+  val importedGraphClass = "http://www4.wiwiss.fu-berlin.de/ldif/ImportedGraph"
+  val importJobClass = "http://www4.wiwiss.fu-berlin.de/ldif/ImportJob"
 }

@@ -11,7 +11,7 @@ import com.hp.hpl.jena.query.QueryExecutionFactory
 case class SparqlImportJob(conf : SparqlConfig, id :  Identifier, refreshSchedule : String, dataSource : String) extends ImportJob{
   private val log = Logger.getLogger(getClass.getName)
 
-  override def load(out : OutputStream) {
+  override def load(out : OutputStream) : Boolean = {
     val writer = new OutputStreamWriter(out)
 
     if (conf.endpointLocation == null) {
@@ -24,16 +24,16 @@ case class SparqlImportJob(conf : SparqlConfig, id :  Identifier, refreshSchedul
 
     importedGraphs += id
 
-    execQuery(query, writer)
-
+    val success = execQuery(query, writer)
     writer.close
+    success
   }
 
   override def getType = "sparql"
   override def getOriginalLocation = conf.endpointLocation.toString
 
   /* Execute a SPARQL query, applying LIMIT and OFFSET if the endpoint limits the result set size  */
-  private def execQuery(baseQuery : String, writer : Writer)  {
+  private def execQuery(baseQuery : String, writer : Writer) : Boolean = {
     val endpointUrl = conf.endpointLocation.toString
     var loop = true
     var offset : Long = 0
@@ -50,13 +50,13 @@ case class SparqlImportJob(conf : SparqlConfig, id :  Identifier, refreshSchedul
       }
       catch {
         case e:Exception => {
-          loop = false
           log.warning("Error executing query \n"+query+" \non "+endpointUrl+" \n"+e.getMessage)
+          return false
         }
       }
       log.info(id +" - loaded "+offset+" quads")
-
     }
+    true
   }
 
   /* Write SPARQL results */

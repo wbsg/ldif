@@ -14,7 +14,7 @@ trait ImportJob {
   // Contains the list of the imported graphs
   var importedGraphs : Set[String] = new HashSet[String]
 
-  def load(out : OutputStream)
+  def load(out : OutputStream) : Boolean
 
   def getType : String
   def getOriginalLocation : String
@@ -33,10 +33,13 @@ trait ImportJob {
     val quads = new ListBuffer[Quad]
 
     // add graphs
+    val importedGraph = Node.createUriNode(Consts.importedGraphClass)
     for (g <- importedGraphs.map(Node.createUriNode(_))) {
       quads.append(Quad(g, Consts.hasImportJobProp, jobBlankNode, provenanceGraph))
+      quads.append(Quad(g, Consts.rdfTypeProp, importedGraph, provenanceGraph))
     }
 
+    quads.append(Quad(jobBlankNode, Consts.rdfTypeProp, Node.createUriNode(Consts.importJobClass), provenanceGraph))
     quads.append(Quad(jobBlankNode, Consts.importIdProp, Node.createLiteral(id), provenanceGraph))
     quads.append(Quad(jobBlankNode, Consts.lastUpdateProp, Node.createTypedLiteral(updateTime.toString,"http://www.w3.org/2001/XMLSchema#dateTime"), provenanceGraph))
     quads.append(Quad(jobBlankNode, Consts.hasDatasourceProp, Node.createLiteral(dataSource), provenanceGraph))
