@@ -2,10 +2,10 @@
 <importJob xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
             xsi:schemaLocation="http://www4.wiwiss.fu-berlin.de/ldif/ ../../xsd/ImportJob.xsd"
             xmlns="http://www4.wiwiss.fu-berlin.de/ldif/">
-    <internalId>dbpedia.0</internalId>
-    <dataSource>DBpedia</dataSource>
+    <internalId>jamendo.0</internalId>
+    <dataSource>Jamendo</dataSource>
     <refreshSchedule>never</refreshSchedule>
-    <quadImportJob>
-        <dumpLocation>http://downloads.dbpedia.org/3.7/en/mappingbased_properties_en.nq.bz2</dumpLocation>
-    </quadImportJob>
+    <tripleImportJob>
+        <dumpLocation>http://moustaki.org/resources/jamendo-rdf.tar.gz</dumpLocation>
+    </tripleImportJob>
 </importJob>

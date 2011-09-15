@@ -23,8 +23,8 @@ object CrawlImportJob {
 
     def fromXML(node : Node, id : Identifier, refreshSchedule : String, dataSource : String) : ImportJob = {
       val levels = (node \ "levels") text
-      val seedUris = (node \ "seedURIs" \ "URI").map(x => new URI(x text)).toTraversable
-      val predicatesToFollow = (node \ "predicatesToFollow" \ "URI").map(x => new URI(x text)).toTraversable
+      val seedUris = (node \ "seedURIs" \ "uri").map(x => new URI(x text)).toTraversable
+      val predicatesToFollow = (node \ "predicatesToFollow" \ "uri").map(x => new URI(x text)).toTraversable
 
       val crawlConfig = CrawlConfig(seedUris, predicatesToFollow, levels.toInt)
       val job = new CrawlImportJob(crawlConfig, id, refreshSchedule, dataSource)

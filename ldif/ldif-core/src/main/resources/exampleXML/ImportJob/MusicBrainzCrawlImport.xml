@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<importJob xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+            xsi:schemaLocation="http://www4.wiwiss.fu-berlin.de/ldif/ ../../xsd/ImportJob.xsd"
+            xmlns="http://www4.wiwiss.fu-berlin.de/ldif/">
+    <internalId>musicbrainz.0</internalId>
+    <dataSource>MusicBrainz</dataSource>
+    <refreshSchedule>monthly</refreshSchedule>
+    <crawlImportJob>
+        <seedURIs>
+            <uri>http://zitgist.com/music/artist/ba550d0e-adac-4864-b88b-407cab5e76af</uri>
+        </seedURIs>
+        <predicatesToFollow>
+            <uri>http://purl.org/ontology/mo/similar_to</uri>
+            <uri>http://vocab.org/relationship/#collaborated_with</uri>
+            <uri>http://purl.org/ontology/mo/produced</uri>
+            <uri>http://purl.org/ontology/mo/member_of</uri>
+        </predicatesToFollow>
+        <levels>5</levels>
+    </crawlImportJob>
+</importJob>

@@ -150,10 +150,12 @@ object Scheduler
 //    }
 //    else if(args.length>=2 && args(0)=="--debug")
 //      debug = true
+    val configFile = if(args.length == 0) {
+      val configUrl = getClass.getClassLoader.getResource("ldif/local/neurowiki/scheduler-config.xml")
+      new File(configUrl.toString.stripPrefix("file:"))
+    } else
+      new File(args(args.length-1))
 
-    val configUrl = getClass.getClassLoader.getResource("ldif/local/neurowiki/scheduler-config.xml")
-    val configFile = new File(configUrl.toString.stripPrefix("file:"))
-//    val configFile = new File(args(args.length-1))
     val scheduler = new Scheduler(SchedulerConfig.load(configFile))
 
     // Run update every one hour
