@@ -45,7 +45,7 @@ class Scheduler (val config : SchedulerConfig, debug : Boolean = false) {
     for (job <- importJobs)
       if (job.refreshSchedule != "onStartup" || job.refreshSchedule != "never")
         return false
-    if (integrationJob.config.runSchedule != "onStartup" || integrationJob.config.runSchedule != "never")
+    if (integrationJob != null && (integrationJob.config.runSchedule != "onStartup" || integrationJob.config.runSchedule != "never"))
       return false
     true
   }
@@ -199,12 +199,15 @@ class Scheduler (val config : SchedulerConfig, debug : Boolean = false) {
 
   private def loadIntegrationJob(configFile : File) : IntegrationJob = {
     if(configFile != null)  {
-      val integrationJob = new IntegrationJob(IntegrationConfig.load(configFile), debug)
+      var integrationConfig = IntegrationConfig.load(configFile)
+      // use dumpLocation as source directory for the integration job
+      integrationConfig = integrationConfig.copy(sources = config.dumpLocationDir)
+      val integrationJob = new IntegrationJob(integrationConfig, debug)
       log.info("Integration job loaded from "+ configFile.getCanonicalPath)
       integrationJob
     }
     else {
-      log.warning("Configuration file not found at "+ configFile.getCanonicalPath)
+      log.warning("Configuration file not found")
       null
     }
   }

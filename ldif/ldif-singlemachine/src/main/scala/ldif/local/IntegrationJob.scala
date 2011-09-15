@@ -1,11 +1,10 @@
 package ldif.local
 
 import config.IntegrationConfig
-import datasources.dump.DumpExecutor
+import datasources.dump.{QuadFileLoader, DumpLoader}
 import java.util.logging.Logger
 import runtime._
 import impl._
-import ldif.datasources.dump.{DumpConfig, DumpModule}
 import de.fuberlin.wiwiss.r2r.{FileOrURISource, Repository}
 import ldif.modules.r2r.local.R2RLocalExecutor
 import ldif.modules.r2r.{R2RModule, R2RConfig}
@@ -15,9 +14,9 @@ import ldif.modules.silk.local.SilkLocalExecutor
 import ldif.entity.EntityDescription
 import de.fuberlin.wiwiss.ldif.{EntityBuilderModule, EntityBuilderConfig}
 import de.fuberlin.wiwiss.ldif.local.EntityBuilderExecutor
-import java.io.{BufferedWriter, FileWriter, File}
 import ldif.util.{FatalErrorListener, Consts, StopWatch}
 import java.util.{Calendar, Properties}
+import java.io._
 
 class IntegrationJob (val config : IntegrationConfig, debugMode : Boolean = false) {
   val log = Logger.getLogger(getClass.getName)
@@ -30,58 +29,64 @@ class IntegrationJob (val config : IntegrationConfig, debugMode : Boolean = fals
 
   def runIntegration {
     synchronized {
-      log.info("Running integration")
+      val sourceNumber = config.sources.listFiles.size
 
-      stopWatch.getTimeSpanInSeconds
-
-      // Validate configuration
-      val fail = ConfigValidator.validateConfiguration(config)
-      if(fail) {
-        println("!- Validation phase failed")
-        sys.exit(1)
-      } else {
-        println("-- Validation phase succeeded in " + stopWatch.getTimeSpanInSeconds + "s")
+      if (sourceNumber == 0) {
+        log.info("Integration job skipped - no source files found")
       }
+      else {
+        log.info("Running integration job on "+ sourceNumber +" sources")
 
-      // Quads that are not used in the integration flow, but should still be output
-      val otherQuadsFile = File.createTempFile("ldif-other-quads", ".bin")
-      // Quads that contain external sameAs links
-      val sameAsQuadsFile = File.createTempFile("ldif-sameas-quads", ".bin")
+        stopWatch.getTimeSpanInSeconds
 
-      setupConfigParameters(otherQuadsFile, sameAsQuadsFile)
+        // Validate configuration
+        val fail = ConfigValidator.validateConfiguration(config)
+        if(fail) {
+          println("!- Validation phase failed")
+          sys.exit(1)
+        } else {
+          println("-- Validation phase succeeded in " + stopWatch.getTimeSpanInSeconds + "s")
+        }
 
-      // Execute mapping phase
-      val quadReaders = loadDump(config.sources)
-      var r2rReader: QuadReader = executeMappingPhase(config, quadReaders)
-      if(debugMode==true)
-        r2rReader = writeDebugOutput("r2r", config.outputFile, r2rReader)
+        // Quads that are not used in the integration flow, but should still be output
+        val otherQuadsFile = File.createTempFile("ldif-other-quads", ".bin")
+        // Quads that contain external sameAs links
+        val sameAsQuadsFile = File.createTempFile("ldif-sameas-quads", ".bin")
 
-      // Execute linking phase
-      var linkReader: QuadReader = executeLinkingPhase(config, r2rReader)
-      if(debugMode==true)
-        linkReader = writeDebugOutput("silk", config.outputFile, linkReader)
+        setupConfigParameters(otherQuadsFile, sameAsQuadsFile)
 
-      configParameters.otherQuadsWriter.finish
-      val otherQuadsReader = new FileQuadReader(otherQuadsFile)
-      configParameters.sameAsWriter.finish
-      val sameAsReader = new FileQuadReader(sameAsQuadsFile)
+        // Execute mapping phase
+        val quadReaders = loadDumps(config.sources)
+        var r2rReader: QuadReader = executeMappingPhase(config, quadReaders)
+        if(debugMode==true)
+          r2rReader = writeDebugOutput("r2r", config.outputFile, r2rReader)
 
-      val clonedR2rReader = setupQuadReader(r2rReader)
+        // Execute linking phase
+        var linkReader: QuadReader = executeLinkingPhase(config, r2rReader)
+        if(debugMode==true)
+          linkReader = writeDebugOutput("silk", config.outputFile, linkReader)
 
-      val allQuads = new MultiQuadReader(clonedR2rReader, otherQuadsReader)
-      val allSameAsLinks = new MultiQuadReader(linkReader, sameAsReader)
+        configParameters.otherQuadsWriter.finish
+        val otherQuadsReader = new FileQuadReader(otherQuadsFile)
+        configParameters.sameAsWriter.finish
+        val sameAsReader = new FileQuadReader(sameAsQuadsFile)
 
-      var integratedReader: QuadReader = allQuads
+        val clonedR2rReader = setupQuadReader(r2rReader)
 
-      if(config.properties.getProperty("rewriteURIs", "true").toLowerCase=="true")
-        integratedReader = executeURITranslation(allQuads, allSameAsLinks, config.properties)
+        val allQuads = new MultiQuadReader(clonedR2rReader, otherQuadsReader)
+        val allSameAsLinks = new MultiQuadReader(linkReader, sameAsReader)
 
-      lastUpdate = Calendar.getInstance
+        var integratedReader: QuadReader = allQuads
 
-      writeOutput(config, integratedReader)
+        if(config.properties.getProperty("rewriteURIs", "true").toLowerCase=="true")
+          integratedReader = executeURITranslation(allQuads, allSameAsLinks, config.properties)
+
+        lastUpdate = Calendar.getInstance
+
+        writeOutput(config, integratedReader)
+      }
     }
   }
-
 
   private def setupQuadReader(_clonedR2rReader: QuadReader): QuadReader = {
     var clonedR2rReader: QuadReader = _clonedR2rReader
@@ -104,7 +109,7 @@ class IntegrationJob (val config : IntegrationConfig, debugMode : Boolean = fals
   }
 
   private def executeMappingPhase(config: IntegrationConfig, quadReaders: Seq[QuadReader]): QuadReader = {
-    val r2rReader: QuadReader = mapQuads(config.mappingFile, quadReaders)
+    val r2rReader: QuadReader = mapQuads(config.mappingDir, quadReaders)
     println("Time needed to map data: " + stopWatch.getTimeSpanInSeconds + "s")
 
     r2rReader
@@ -127,29 +132,32 @@ class IntegrationJob (val config : IntegrationConfig, debugMode : Boolean = fals
   /**
    * Loads the dump files.
    */
-  def loadDump(sources : Traversable[String]) : Seq[QuadReader] =
+  private def loadDumps(sources : File) : Seq[QuadReader] =
   {
-    val dumpModule = new DumpModule(new DumpConfig(sources))
-    val dumpExecutor = new DumpExecutor
-
-    val quadQueues = for (i <- 1 to dumpModule.tasks.size) yield new BlockingQuadQueue(Consts.DEFAULT_QUAD_QUEUE_CAPACITY)
-
-
-    for((dumpTask, writer) <- dumpModule.tasks.toList zip quadQueues){
-      runInBackground
-      {
-        dumpExecutor.execute(dumpTask, null, writer)
-      }
+    if(sources.isDirectory) {
+      val quadQueues =
+        for (dump <- sources.listFiles) yield {
+          val quadQueue = new BlockingQuadQueue(Consts.DEFAULT_QUAD_QUEUE_CAPACITY)
+          runInBackground
+          {
+            val inputStream = DumpLoader.getFileStream(dump)
+            val bufferedReader = new BufferedReader(new InputStreamReader(inputStream))
+            val quadParser = new QuadFileLoader(dump.getName)
+            quadParser.readQuads(bufferedReader, quadQueue)
+            quadQueue.finish
+          }
+          quadQueue
+        }
+      quadQueues.toSeq
     }
-    quadQueues.toSeq
+    else Seq.empty[QuadReader]
   }
-
 
   /**
    * Transforms the Quads
    */
-  private def mapQuads(mappingFile: File, readers: Seq[QuadReader]) : QuadReader = {
-    val repository = new Repository(new FileOrURISource(mappingFile))
+  private def mapQuads(mappingDir: File, readers: Seq[QuadReader]) : QuadReader = {
+    val repository = new Repository(new FileOrURISource(mappingDir))
     val executor = new R2RLocalExecutor
     val config = new R2RConfig(repository)
     val module = new R2RModule(config)
@@ -238,7 +246,6 @@ class IntegrationJob (val config : IntegrationConfig, debugMode : Boolean = fals
       return entityQueues
     else
       return fileEntityQueues.map((entityWriter) => new FileEntityReader(entityWriter.entityDescription, entityWriter.inputFile))
-
   }
 
   /**

@@ -33,7 +33,7 @@ class DumpExecutor extends Executor
    */
   override def execute(task : DumpTask, reader : Null, writer : QuadWriter)
   {
-    val inputStream = new DumpLoader(task.sourceLocation).getStream
+    val inputStream = DumpLoader.getStream(task.sourceLocation)
     val bufferedReader = new BufferedReader(new InputStreamReader(inputStream))
 
     val quadParser = new QuadFileLoader(task.name)

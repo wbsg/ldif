@@ -13,7 +13,7 @@ case class TripleImportJob(dumpLocation : String, id : Identifier, refreshSchedu
     val writer = new OutputStreamWriter(out)
 
     // get bufferReader from Url
-    val inputStream = new DumpLoader(dumpLocation).getStream
+    val inputStream = DumpLoader.getStream(dumpLocation)
     //val bufferedReader = new BufferedReader(new InputStreamReader(inputStream))
 
     val graph = id

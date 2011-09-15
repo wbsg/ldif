@@ -45,11 +45,11 @@ object SchedulerConfig
         dir = tmpDir
       }
       else {
-        log.warning(key+" path does not exist: "+ dir.getCanonicalPath)
+        log.warning("\'"+key+"\' path does not exist: "+ dir.getCanonicalPath)
       }
     }
     else{
-      log.warning(key+" is not defined in the configuration file")
+      log.warning("\'"+key+"\' is not defined in the configuration file")
     }
     dir
   }

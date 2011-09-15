@@ -14,12 +14,12 @@ import java.io.{BufferedInputStream, FileNotFoundException, InputStream, File}
  **/
 
 @throws(classOf[Exception])
-class DumpLoader(sourceLocation:String) {
+object DumpLoader {
   private val log = Logger.getLogger(getClass.getName)
 
   //private val httpClient = HttpClientFactory.createHttpClient
 
-  def getStream = {
+  def getStream(sourceLocation : String) = {
     if (sourceLocation == null) {
       throw new Exception("Invalid data location" )
     }
@@ -62,7 +62,7 @@ class DumpLoader(sourceLocation:String) {
       throw new Exception("Protocol \"" + url.getProtocol	+ "\" is not supported.")
   }
 
-  private def getFileStream(file:File) = {
+  def getFileStream(file : File) = {
 
     var inputStream:InputStream = null
 
@@ -77,7 +77,7 @@ class DumpLoader(sourceLocation:String) {
     new BufferedInputStream(inputStream)
   }
 
-  private def getUrlStream(url:URL) = {
+  def getUrlStream(url : URL) = {
 
     var inputStream:InputStream = null
 
