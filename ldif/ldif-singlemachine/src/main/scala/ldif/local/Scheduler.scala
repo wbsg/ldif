@@ -1,58 +1,136 @@
 package ldif.local
 
+import config.{IntegrationConfig, SchedulerConfig}
 import datasources.dump.QuadParser
 import java.util.logging.Logger
 import scheduler.ImportJob
-import ldif.config.SchedulerConfig
 import xml.XML
 import java.util.{Date, Calendar}
-import ldif.util.Consts
 import java.nio.channels.FileChannel
 import java.io._
+import java.util.concurrent.ConcurrentHashMap
+import ldif.util.{StopWatch, FatalErrorListener, Consts}
 
 class Scheduler (val config : SchedulerConfig, debug : Boolean = false) {
-  val log = Logger.getLogger(getClass.getName)
+  private val log = Logger.getLogger(getClass.getName)
 
-  val lastUpdateProperty = config.getLastUpdateProperty
-  val importJobs = loadImportJobs(config.importJobsDir)
-  val localSourceDir = config.dumpLocationDir
-  val provenanceGraph = config.properties.getProperty("provenanceGraphURI", Consts.DEFAULT_PROVENANCE_GRAPH)
-  var startup = true
+  // load jobs
+  private val importJobs = loadImportJobs(config.importJobsDir)
+  private val integrationJob : IntegrationJob = loadIntegrationJob(config.integrationJob)
 
-  /**
-   * Updates local sources based on the defined import schedule.
-   * This method is supposed to be invoked regularily by means such as a hourly cronjob.
-   */
-  def runUpdate() {
+  // init status variables
+  private var startup = true
+  private var runningIntegrationJobs = false
+  private val runningImportJobs = initRunningJobsMap
+
+  /* Evaluate updates/integration */
+  def evaluateJobs {
     synchronized {
-      log.info("Running update")
+      if (integrationJob != null && checkUpdate(integrationJob)){
+        runningIntegrationJobs = true
+        runIntegration
+      }
       for (job <- importJobs.filter(checkUpdate(_))) {
-        val tmpDumpFile = getTmpDumpFile(job)
-        val tmpProvenanceFile = getTmpProvenanceFile(job)
-
-        job.load(new FileOutputStream(tmpDumpFile))
-        // append provenance quads
-        job.generateProvenanceInfo(new OutputStreamWriter(new FileOutputStream(tmpProvenanceFile)), provenanceGraph)
-
-        // replace old dumps with the new ones
-        // TODO check that no integration job is running before moving files
-        copyFile(tmpDumpFile, getDumpFile(job))
-        copyFile(tmpProvenanceFile, getProvenanceFile(job))
+        // check if this job is already running
+        if (!runningImportJobs.get(job.id)) {
+          runImport(job)
+        }
       }
       startup = false
     }
   }
 
-  /* Check if an update is required for the job */
+  /* Evaluate if all jobs should run only once (at startup) or never */
+  def runOnce : Boolean = {
+    for (job <- importJobs)
+      if (job.refreshSchedule != "onStartup" || job.refreshSchedule != "never")
+        return false
+    if (integrationJob.config.runSchedule != "onStartup" || integrationJob.config.runSchedule != "never")
+      return false
+    true
+  }
+
+  /* Execute the integration job */
+  def runIntegration {
+    runInBackground
+    {
+      integrationJob.runIntegration
+      runningIntegrationJobs = false
+    }
+  }
+
+  /* Execute an import job, update local source */
+  def runImport(job : ImportJob) {
+    runInBackground
+    {
+      val stopWatch = new StopWatch
+      log.info("Running import job "+ job.id)
+      stopWatch.getTimeSpanInSeconds
+
+      val tmpDumpFile = getTmpDumpFile(job)
+      val tmpProvenanceFile = getTmpProvenanceFile(job)
+
+      // create local dump
+      job.load(new FileOutputStream(tmpDumpFile))
+
+      // create provenance metadata
+      val provenanceGraph = config.properties.getProperty("provenanceGraphURI", Consts.DEFAULT_PROVENANCE_GRAPH)
+      val updateTime = job.generateProvenanceInfo(new OutputStreamWriter(new FileOutputStream(tmpProvenanceFile)), provenanceGraph)
+
+      log.info("Job " + job.id + " imported in "+ stopWatch.getTimeSpanInSeconds + " s")
+
+      var loop = true
+      while(loop) {
+        // if the integration job is not running
+        if (!runningIntegrationJobs) {
+          // replace old dumps with the new ones
+          moveFile(tmpDumpFile, getDumpFile(job))
+          moveFile(tmpProvenanceFile, getProvenanceFile(job))
+          log.info("Updated local dumps for job "+ job.id)
+
+          runningImportJobs.replace(job.id, false)
+          loop = false
+        }
+        else {
+          //          TODO - dont wait integration for ever
+          //          if (now > updateTime + job.refreshSchedule))  {
+          //            // - slept too long :
+          //            loop = false
+          //          }
+          //          else
+          Thread.sleep(1000)
+        }
+      }
+    }
+  }
+
+  private def initRunningJobsMap = {
+    val map = new ConcurrentHashMap[String, Boolean](importJobs.size)
+    for(job <- importJobs)
+      map.putIfAbsent(job.id, false)
+    map
+  }
+
+  /* Check if an update is required for the integration job */
+  def checkUpdate(job : IntegrationJob = integrationJob) : Boolean = {
+    checkUpdate(job.config.runSchedule, job.lastUpdate)
+  }
+
+  /* Check if an update is required for the import job */
   def checkUpdate(job : ImportJob) : Boolean = {
-    if (startup && job.refreshSchedule == "onStartup") {
-        true
+    checkUpdate(job.refreshSchedule, getLastUpdate(job))
+  }
+
+
+  private def checkUpdate(schedule : String, lastUpdate : Calendar) : Boolean = {
+    if (startup && schedule == "onStartup") {
+      true
     }
     else {
-      val changeFreqHours = Consts.changeFreqToHours.get(job.refreshSchedule)
+      val changeFreqHours = Consts.changeFreqToHours.get(schedule)
 
       // Get last update run
-      var lastUpdate, nextUpdate = getLastUpdate(job)
+      var nextUpdate = lastUpdate
 
       // Figure out if update is required
       if (changeFreqHours != None) {
@@ -76,7 +154,7 @@ class Scheduler (val config : SchedulerConfig, debug : Boolean = false) {
       val parser = new QuadParser
 
       for (quad <- lines.toTraversable.map(parser.parseLine(_))){
-        if (quad.predicate.equals(lastUpdateProperty))  {
+        if (quad.predicate.equals(Consts.lastUpdateProp))  {
           val lastUpdateStr = quad.value.value
           if (lastUpdateStr.length != 25)
             log.info("Date not in expected xml datetime format")
@@ -94,74 +172,62 @@ class Scheduler (val config : SchedulerConfig, debug : Boolean = false) {
     null
   }
 
-  private def loadImportJobs(file : File) : Traversable[ImportJob] =
-  {
-    if(file.isFile)
-    {
-      Traversable(loadImportJob(file))
-    }
-    else if(file.isDirectory)
-    {
-      file.listFiles.toTraversable.map(loadImportJob(_))
-    }
-    else {
+  private def loadImportJobs(file : File) : Traversable[ImportJob] =  {
+    if(file == null) {
       Traversable.empty[ImportJob]
     }
-
+    else if(file.isFile) {
+      Traversable(loadImportJob(file))
+    }
+    else {// file is a directory
+      file.listFiles.toTraversable.map(loadImportJob(_))
+    }
   }
 
   private def loadImportJob(file : File) = ImportJob.fromXML(XML.loadFile(file))
 
   // Build local files for the import job
-  private def getDumpFile(job : ImportJob) = new File(localSourceDir, job.id +".nq")
+  private def getDumpFile(job : ImportJob) = new File(config.dumpLocationDir, job.id +".nq")
   private def getTmpDumpFile(job : ImportJob) = File.createTempFile(job.id+"_"+Consts.simpleDateFormat.format(new Date()),".nq")
-  private def getProvenanceFile(job : ImportJob) = new File(localSourceDir, job.id +".provenance.nq")
+  private def getProvenanceFile(job : ImportJob) = new File(config.dumpLocationDir, job.id +".provenance.nq")
   private def getTmpProvenanceFile(job : ImportJob) = File.createTempFile(job.id+"_provenance_"+Consts.simpleDateFormat.format(new Date()),".nq")
 
-  // Copy the source File in the dest File
-  private def copyFile(source : File, dest : File) {
-    var in, out : FileChannel = null
-    try {
-      in = new FileInputStream(source).getChannel
-      out = new FileOutputStream(dest).getChannel
-      val size = in.size
-      val buffer = in.map(FileChannel.MapMode.READ_ONLY, 0, size)
-      out.write(buffer)
-    } catch {
-      case ex: IOException =>  {
-        log.severe("IOException while moving file "+source.getCanonicalPath+" to "+dest.getCanonicalPath)
-        throw ex
-      }
-    } finally {
-      if (in != null) in.close
-      if (out != null) out.close
+
+  private def loadIntegrationJob(configFile : File) : IntegrationJob = {
+    if(configFile != null)  {
+      val integrationJob = new IntegrationJob(IntegrationConfig.load(configFile), debug)
+      log.info("Integration job loaded from "+ configFile.getCanonicalPath)
+      integrationJob
+    }
+    else {
+      log.warning("Configuration file not found at "+ configFile.getCanonicalPath)
+      null
     }
   }
-}
 
-object Scheduler
-{
-  def main(args : Array[String])
-  {
-//    var debug = false
-//    if(args.length<1) {
-//      println("No configuration file given.")
-//      System.exit(1)
-//    }
-//    else if(args.length>=2 && args(0)=="--debug")
-//      debug = true
-    val configFile = if(args.length == 0) {
-      val configUrl = getClass.getClassLoader.getResource("ldif/local/neurowiki/scheduler-config.xml")
-      new File(configUrl.toString.stripPrefix("file:"))
-    } else
-      new File(args(args.length-1))
-
-    val scheduler = new Scheduler(SchedulerConfig.load(configFile))
-
-    // Run update every one hour
-    while(true){
-      runInBackground(scheduler.runUpdate)
-      Thread.sleep(60 * 60 * 1000)
+  // Move source File to dest File
+  private def moveFile(source : File, dest : File) {
+    if (!debug) {
+      if (!source.renameTo(dest))
+        log.severe("File was not successfully moved\n" +source.getCanonicalPath+ " -> " +dest.getCanonicalPath)
+    }
+    else {
+      // if debug, keep tmp file
+      var in, out : FileChannel = null
+      try {
+        in = new FileInputStream(source).getChannel
+        out = new FileOutputStream(dest).getChannel
+        val size = in.size
+        val buffer = in.map(FileChannel.MapMode.READ_ONLY, 0, size)
+        out.write(buffer)
+      } catch {
+        case ex: IOException =>  {
+          log.severe("IOException while copying file "+source.getCanonicalPath+" to "+dest.getCanonicalPath)
+        }
+      } finally {
+        if (in != null) in.close
+        if (out != null) out.close
+      }
     }
   }
 
@@ -172,7 +238,7 @@ object Scheduler
     val thread = new Thread {
       private val listener: FatalErrorListener = FatalErrorListener
 
-      override def run() {
+      override def run {
         try {
           function
         } catch {
@@ -180,7 +246,26 @@ object Scheduler
         }
       }
     }
-    thread.start()
+    thread.start
   }
-
 }
+
+object Scheduler
+{
+  def main(args : Array[String])
+  {
+    val configFile = if(args.length == 0) {
+      val configUrl = getClass.getClassLoader.getResource("ldif/local/neurowiki/scheduler-config.xml")
+      new File(configUrl.toString.stripPrefix("file:"))
+    } else
+      new File(args(args.length-1))
+
+    val scheduler = new Scheduler(SchedulerConfig.load(configFile))
+
+    while(true){
+      scheduler.evaluateJobs
+      Thread.sleep(10 * 1000)
+    }
+  }
+}
+

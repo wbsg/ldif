@@ -1,12 +1,12 @@
 package ldif.local
 
+import config.SchedulerConfig
 import java.io.File
 import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner
 import org.scalatest.FlatSpec
 import org.scalatest.matchers.ShouldMatchers
 import scheduler._
-import ldif.config.SchedulerConfig
 
 @RunWith(classOf[JUnitRunner])
 class SchedulerTest extends FlatSpec with ShouldMatchers {

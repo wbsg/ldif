@@ -1,5 +1,6 @@
 package ldif.local
 
+import config.IntegrationConfig
 import datasources.dump.DumpLoader
 import de.fuberlin.wiwiss.r2r.{FileOrURISource, Repository}
 import scala.collection.mutable.{Map, HashMap}
@@ -14,7 +15,7 @@ object ConfigValidator {
   val fileError = "Error in reading mapping file"
   val mappingsError = "Erroneous mappings found"
 
-  def validateConfiguration(config: LdifConfiguration): Boolean = {
+  def validateConfiguration(config: IntegrationConfig): Boolean = {
     var fail = false
 
     try {
@@ -24,7 +25,7 @@ object ConfigValidator {
         fail = true
       validateSilkLinkSpecs(config.linkSpecDir)
 
-      val sourceValidation = configProperties.getPropertyValue("validateSources")
+      val sourceValidation = config.properties.getProperty("validateSources")
       if(sourceValidation!=null && sourceValidation.toLowerCase=="false") {
         println("-- Validation of source datasets disabled")
       }

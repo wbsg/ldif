@@ -2,5 +2,6 @@
   <Properties>scheduler.properties</Properties>
   <DataSources>datasources</DataSources>
   <ImportJobs>importJobs</ImportJobs>
+  <IntegrationJob>../config.xml</IntegrationJob>
   <DumpLocation>dumps</DumpLocation>
 </Scheduler>

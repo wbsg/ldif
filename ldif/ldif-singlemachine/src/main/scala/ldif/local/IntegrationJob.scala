@@ -1,44 +1,87 @@
 package ldif.local
 
+import config.IntegrationConfig
 import datasources.dump.DumpExecutor
+import java.util.logging.Logger
 import runtime._
 import impl._
-import ldif.modules.silk.SilkModule
-import ldif.datasources.dump.{DumpModule, DumpConfig}
-import ldif.modules.silk.local.SilkLocalExecutor
-import de.fuberlin.wiwiss.ldif.{EntityBuilderModule, EntityBuilderConfig}
-import de.fuberlin.wiwiss.r2r._
+import ldif.datasources.dump.{DumpConfig, DumpModule}
+import de.fuberlin.wiwiss.r2r.{FileOrURISource, Repository}
 import ldif.modules.r2r.local.R2RLocalExecutor
-import ldif.modules.r2r._
-import ldif.entity.EntityDescription
-import de.fuberlin.wiwiss.ldif.local.EntityBuilderExecutor
-import java.util.Properties
-import java.io._
-import java.util.logging.Logger
+import ldif.modules.r2r.{R2RModule, R2RConfig}
 import util.StringPool
-import ldif.util.Consts
+import ldif.modules.silk.SilkModule
+import ldif.modules.silk.local.SilkLocalExecutor
+import ldif.entity.EntityDescription
+import de.fuberlin.wiwiss.ldif.{EntityBuilderModule, EntityBuilderConfig}
+import de.fuberlin.wiwiss.ldif.local.EntityBuilderExecutor
+import java.io.{BufferedWriter, FileWriter, File}
+import ldif.util.{FatalErrorListener, Consts, StopWatch}
+import java.util.{Calendar, Properties}
 
-object Main
-{
-  private val log = Logger.getLogger(getClass.getName)
+class IntegrationJob (val config : IntegrationConfig, debugMode : Boolean = false) {
+  val log = Logger.getLogger(getClass.getName)
+
   // Object to store all kinds of configuration data
   private var configParameters: ConfigParameters = null
+  val stopWatch = new StopWatch
 
-  def main(args : Array[String])
-  {
-    var debug = false
-    if(args.length<1) {
-      println("No configuration file given.")
-      System.exit(1)
+  var lastUpdate : Calendar = null
+
+  def runIntegration {
+    synchronized {
+      log.info("Running integration")
+
+      stopWatch.getTimeSpanInSeconds
+
+      // Validate configuration
+      val fail = ConfigValidator.validateConfiguration(config)
+      if(fail) {
+        println("!- Validation phase failed")
+        sys.exit(1)
+      } else {
+        println("-- Validation phase succeeded in " + stopWatch.getTimeSpanInSeconds + "s")
+      }
+
+      // Quads that are not used in the integration flow, but should still be output
+      val otherQuadsFile = File.createTempFile("ldif-other-quads", ".bin")
+      // Quads that contain external sameAs links
+      val sameAsQuadsFile = File.createTempFile("ldif-sameas-quads", ".bin")
+
+      setupConfigParameters(otherQuadsFile, sameAsQuadsFile)
+
+      // Execute mapping phase
+      val quadReaders = loadDump(config.sources)
+      var r2rReader: QuadReader = executeMappingPhase(config, quadReaders)
+      if(debugMode==true)
+        r2rReader = writeDebugOutput("r2r", config.outputFile, r2rReader)
+
+      // Execute linking phase
+      var linkReader: QuadReader = executeLinkingPhase(config, r2rReader)
+      if(debugMode==true)
+        linkReader = writeDebugOutput("silk", config.outputFile, linkReader)
+
+      configParameters.otherQuadsWriter.finish
+      val otherQuadsReader = new FileQuadReader(otherQuadsFile)
+      configParameters.sameAsWriter.finish
+      val sameAsReader = new FileQuadReader(sameAsQuadsFile)
+
+      val clonedR2rReader = setupQuadReader(r2rReader)
+
+      val allQuads = new MultiQuadReader(clonedR2rReader, otherQuadsReader)
+      val allSameAsLinks = new MultiQuadReader(linkReader, sameAsReader)
+
+      var integratedReader: QuadReader = allQuads
+
+      if(config.properties.getProperty("rewriteURIs", "true").toLowerCase=="true")
+        integratedReader = executeURITranslation(allQuads, allSameAsLinks, config.properties)
+
+      lastUpdate = Calendar.getInstance
+
+      writeOutput(config, integratedReader)
     }
-    else if(args.length>=2 && args(0)=="--debug")
-      debug = true
-
-    //val configUrl = getClass.getClassLoader.getResource("ldif/local/example/test2/config.xml")
-    //val configFile = new File(configUrl.toString.stripPrefix("file:"))
-    val configFile = new File(args(args.length-1))
-    runIntegrationFlow(configFile, debug)
   }
+
 
   private def setupQuadReader(_clonedR2rReader: QuadReader): QuadReader = {
     var clonedR2rReader: QuadReader = _clonedR2rReader
@@ -49,105 +92,36 @@ object Main
     clonedR2rReader
   }
 
-  def runIntegrationFlow(configFile: File, debugMode: Boolean) {
-    stopWatch.getTimeSpanInSeconds
-    val config: LdifConfiguration = loadConfigFile(configFile)
-
-    // Setup config properties file
-    configProperties.loadPropertyFile(config.propertiesFile)
-
-     // Validate configuration
-    val fail = ConfigValidator.validateConfiguration(config)
-    if(fail) {
-      println("!- Validation phase failed")
-      sys.exit(1)
-    } else {
-      println("-- Validation phase succeeded in " + stopWatch.getTimeSpanInSeconds + "s")
-    }
-
-    // Quads that are not used in the integration flow, but should still be output
-    val otherQuadsFile = File.createTempFile("ldif-other-quads", ".bin")
-
-    // Quads that contain external sameAs links
-    val sameAsQuadsFile = File.createTempFile("ldif-sameas-quads", ".bin")
-
-    setupConfigParameters(otherQuadsFile, sameAsQuadsFile)
-
-    val quadReaders = loadDump(config.sources)
-
-    var r2rReader: QuadReader = executeMappingPhase(config, quadReaders)
-
-    if(debugMode==true)
-      r2rReader = writeDebugOutput("r2r", config.outputFile, r2rReader)
-
-    var linkReader: QuadReader = executeLinkingPhase(config, r2rReader)
-
-    if(debugMode==true)
-      linkReader = writeDebugOutput("silk", config.outputFile, linkReader)
-
-    configParameters.otherQuadsWriter.finish
-    val otherQuadsReader = new FileQuadReader(otherQuadsFile)
-
-    configParameters.sameAsWriter.finish
-    val sameAsReader = new FileQuadReader(sameAsQuadsFile)
-
-    val clonedR2rReader = setupQuadReader(r2rReader)
-
-    val allQuads = new MultiQuadReader(clonedR2rReader, otherQuadsReader)
-    val allSameAsLinks = new MultiQuadReader(linkReader, sameAsReader)
-
-    var integratedReader: QuadReader = allQuads
-
-    if(configProperties.getPropertyValue("rewriteURIs", "true").toLowerCase=="true")
-      integratedReader = executeURITranslation(allQuads, allSameAsLinks, configParameters.configProperties)
-
-    //OutputValidator.compare(cloneQuadQueue(integratedReader),new File(configFile.getParent+"/../results/all-mes.nt"))
-
-    writeOutput(config, integratedReader)
-  }
-
-
-
+  // Setup config parameters
   def setupConfigParameters(outputFile: File, sameasFile: File) {
     var otherQuads: QuadWriter = new FileQuadWriter(outputFile)
     var sameAsQuads: QuadWriter = new FileQuadWriter(sameasFile)
 
-    // Setup config parameters
-    configParameters = ConfigParameters(configProperties, otherQuads, sameAsQuads)
+    configParameters = ConfigParameters(config.properties, otherQuads, sameAsQuads)
 
     // Setup LocalNode (to pool strings etc.)
-    LocalNode.reconfigure(configProperties)
+    LocalNode.reconfigure(config.properties)
   }
 
-  private def executeMappingPhase(config: LdifConfiguration, quadReaders: Seq[QuadReader]): QuadReader = {
+  private def executeMappingPhase(config: IntegrationConfig, quadReaders: Seq[QuadReader]): QuadReader = {
     val r2rReader: QuadReader = mapQuads(config.mappingFile, quadReaders)
     println("Time needed to map data: " + stopWatch.getTimeSpanInSeconds + "s")
 
     r2rReader
   }
 
-  private def executeLinkingPhase(config: LdifConfiguration, r2rReader: QuadReader): QuadReader = {
+  private def executeLinkingPhase(config: IntegrationConfig, r2rReader: QuadReader): QuadReader = {
     val linkReader = generateLinks(config.linkSpecDir, r2rReader)
     println("Time needed to link data: " + stopWatch.getTimeSpanInSeconds + "s")
     println("Number of links generated by silk: " + linkReader.size)
     linkReader
   }
 
-  private def loadConfigFile(configFile: File): LdifConfiguration = {
-    val config = LdifConfiguration.load(configFile)
-    println("Time needed to load config file: " + stopWatch.getTimeSpanInSeconds + "s")
-    config
-  }
-
-  private def executeURITranslation(inputQuadReader: QuadReader, linkReader: QuadReader, configProperties: ConfigProperties): QuadReader = {
+  private def executeURITranslation(inputQuadReader: QuadReader, linkReader: QuadReader, configProperties: Properties): QuadReader = {
     val integratedReader = URITranslator.translateQuads(inputQuadReader, linkReader, configProperties)
 
     println("Time needed to translate URIs: " + stopWatch.getTimeSpanInSeconds + "s")
     integratedReader
-  }
-
-  def runIntegrationFlow(configFile: File) {
-    runIntegrationFlow(configFile, false)
   }
 
   /**
@@ -161,12 +135,12 @@ object Main
     val quadQueues = for (i <- 1 to dumpModule.tasks.size) yield new BlockingQuadQueue(Consts.DEFAULT_QUAD_QUEUE_CAPACITY)
 
 
-      for((dumpTask, writer) <- dumpModule.tasks.toList zip quadQueues){
-        runInBackground
-          {
-            dumpExecutor.execute(dumpTask, null, writer)
-          }
+    for((dumpTask, writer) <- dumpModule.tasks.toList zip quadQueues){
+      runInBackground
+      {
+        dumpExecutor.execute(dumpTask, null, writer)
       }
+    }
     quadQueues.toSeq
   }
 
@@ -184,7 +158,6 @@ object Main
     val entityReaders = buildEntities(readers, entityDescriptions.toSeq, configParameters)
     StringPool.reset
     println("Time needed to load dump and build entities for mapping phase: " + stopWatch.getTimeSpanInSeconds + "s")
-    //println("Number of triples after loading the dump: " + (quadReaders.foldLeft(0)(_ + _.totalSize)))
 
     val outputFile = File.createTempFile("ldif-mapped-quads", ".bin")
     outputFile.deleteOnExit
@@ -208,7 +181,7 @@ object Main
     val silkExecutor = new SilkLocalExecutor
 
     val entityDescriptions = silkModule.tasks.toIndexedSeq.map(silkExecutor.input).flatMap{ case StaticEntityFormat(ed) => ed }
-    val entityReaders = buildEntities(Seq(reader), entityDescriptions, ConfigParameters(configProperties))
+    val entityReaders = buildEntities(Seq(reader), entityDescriptions, ConfigParameters(config.properties))
     StringPool.reset
     println("Time needed to build entities for linking phase: " + stopWatch.getTimeSpanInSeconds + "s")
 
@@ -238,7 +211,7 @@ object Main
       new FileEntityWriter(eD, file)
     }
 
-    val inmemory = configParameters.configProperties.getPropertyValue("entityBuilderType", "in-memory")=="in-memory"
+    val inmemory = config.properties.getProperty("entityBuilderType", "in-memory")=="in-memory"
 
     //Because of memory problems circumvent with FileQuadQueue */
     if(inmemory)
@@ -257,7 +230,7 @@ object Main
     } catch {
       case e: Throwable => {
         e.printStackTrace
-        exit(2)
+        sys.exit(2)
       }
     }
 
@@ -275,7 +248,7 @@ object Main
     val thread = new Thread {
       private val listener: FatalErrorListener = FatalErrorListener
 
-      override def run() {
+      override def run {
         try {
           function
         } catch {
@@ -283,14 +256,14 @@ object Main
         }
       }
     }
-    thread.start()
+    thread.start
   }
 
   //TODO we don't have an output module, yet...
-  private def writeOutput(config: LdifConfiguration, reader : QuadReader)    {
+  private def writeOutput(config: IntegrationConfig, reader : QuadReader)    {
     val writer = new FileWriter(config.outputFile)
     var count = 0
-    val nqOutput = configParameters.configProperties.getPropertyValue("outputFormat", "nq").toLowerCase.equals("nq")
+    val nqOutput = config.properties.getProperty("outputFormat", "nq").toLowerCase.equals("nq")
 
     while(reader.hasNext) {
       if(nqOutput)
@@ -300,7 +273,7 @@ object Main
       count += 1
     }
 
-    writer.close()
+    writer.close
     println(count + " Quads written")
   }
 
@@ -328,51 +301,27 @@ object Main
   }
 }
 
-object stopWatch {
-  private var lastTime = System.currentTimeMillis
 
-  def getTimeSpanInSeconds(): Double = {
-    val newTime = System.currentTimeMillis
-    val span = newTime - lastTime
-    lastTime = newTime
-    span / 1000.0
-  }
-}
-
-object configProperties extends ConfigProperties {
+object IntegrationJob {
   private val log = Logger.getLogger(getClass.getName)
 
-  override def loadPropertyFile(propertyFile: File) {
-    properties = new Properties()
-    if(propertyFile!=null)
-      try {
-        val stream = new BufferedInputStream(new FileInputStream(propertyFile));
-        properties.load(stream);
-        stream.close();
-      } catch {
-        case e: IOException => {
-          log.severe("No property file found at: " + propertyFile.getAbsoluteFile)
-          System.exit(1)
-        }
-      }
-  }
+  def main(args : Array[String])
+  {
+    var debug = false
+    if(args.length<1) {
+      println("No configuration file given.")
+      System.exit(1)
+    }
+    else if(args.length>=2 && args(0)=="--debug")
+      debug = true
 
-  override def getPropertyValue(property: String): String = {
-    properties.getProperty(property)
-  }
-
-  override def getPropertyValue(property: String, default: String): String = {
-    properties.getProperty(property, default)
+    val configFile = new File(args(args.length-1))
+    val integrator = new IntegrationJob(IntegrationConfig.load(configFile), debug)
+    integrator.runIntegration
   }
 }
 
-object FatalErrorListener extends FatalErrorListener {
-  def reportError(e: Exception) {
-    e.printStackTrace
-    System.exit(1)
-  }
-}
 
-trait FatalErrorListener {
-  def reportError(e: Exception)
-}
+
+
+

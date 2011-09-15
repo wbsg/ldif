@@ -6,9 +6,7 @@ import java.util.logging.Logger
 import ldif.local.runtime.LocalNode
 import com.hp.hpl.jena.rdf.model.{Model, RDFNode}
 import java.io.{Writer, OutputStreamWriter, OutputStream}
-import javax.xml.ws.http.HTTPException
-import org.apache.http.HttpException
-import com.hp.hpl.jena.query.{QueryException, QueryExecutionFactory}
+import com.hp.hpl.jena.query.QueryExecutionFactory
 
 case class SparqlImportJob(conf : SparqlConfig, id :  Identifier, refreshSchedule : String, dataSource : String) extends ImportJob{
   private val log = Logger.getLogger(getClass.getName)

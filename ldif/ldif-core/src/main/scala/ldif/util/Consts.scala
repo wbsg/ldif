@@ -26,4 +26,12 @@ object Consts {
 
   val simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss.S")
   val xsdDateTimeFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ")
+
+  // Import metadata properties
+  val lastUpdateProp = "http://www4.wiwiss.fu-berlin.de/ldif/lastUpdate"
+  val hasImportJobProp = "http://www4.wiwiss.fu-berlin.de/ldif/hasImportJob"
+  val importIdProp = "http://www4.wiwiss.fu-berlin.de/ldif/importId"
+  val hasDatasourceProp = "http://www4.wiwiss.fu-berlin.de/ldif/hasDatasource"
+  val hasImportTypeProp = "http://www4.wiwiss.fu-berlin.de/ldif/hasImportType"
+  val hasOriginalLocationProp = "http://www4.wiwiss.fu-berlin.de/ldif/hasOriginalLocation"
 }

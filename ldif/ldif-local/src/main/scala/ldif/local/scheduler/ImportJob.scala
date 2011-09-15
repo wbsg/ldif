@@ -20,17 +20,11 @@ trait ImportJob {
   def getOriginalLocation : String
 
   /* Build provenance quads for the import job */
-  def generateProvenanceInfo(writer : Writer, provenanceGraph : String)    {
-    val hasImportJobProp = "http://www4.wiwiss.fu-berlin.de/ldif/hasImportJob"
-    val importIdProp = "http://www4.wiwiss.fu-berlin.de/ldif/importId"
-    val lastUpdateProp = "http://www4.wiwiss.fu-berlin.de/ldif/lastUpdate"
-    val hasDatasourceProp = "http://www4.wiwiss.fu-berlin.de/ldif/hasDatasource"
-    val hasImportTypeProp = "http://www4.wiwiss.fu-berlin.de/ldif/hasImportType"
-    val hasOriginalLocationProp = "http://www4.wiwiss.fu-berlin.de/ldif/hasOriginalLocation"
-
+  def generateProvenanceInfo(writer : Writer, provenanceGraph : String) =  {
 
     // build xsd datetime
-    val updateTime = new StringBuffer(Consts.xsdDateTimeFormat.format(new Date))
+    val now = new Date
+    val updateTime = new StringBuffer(Consts.xsdDateTimeFormat.format(now))
     updateTime.insert(22, ':')
 
     //TODO create an unique blank node
@@ -40,14 +34,14 @@ trait ImportJob {
 
     // add graphs
     for (g <- importedGraphs.map(Node.createUriNode(_))) {
-      quads.append(Quad(g, hasImportJobProp, jobBlankNode, provenanceGraph))
+      quads.append(Quad(g, Consts.hasImportJobProp, jobBlankNode, provenanceGraph))
     }
 
-    quads.append(Quad(jobBlankNode, importIdProp, Node.createLiteral(id), provenanceGraph))
-    quads.append(Quad(jobBlankNode, lastUpdateProp, Node.createTypedLiteral(updateTime.toString,"http://www.w3.org/2001/XMLSchema#dateTime"), provenanceGraph))
-    quads.append(Quad(jobBlankNode, hasDatasourceProp, Node.createLiteral(dataSource), provenanceGraph))
-    quads.append(Quad(jobBlankNode, hasImportTypeProp, Node.createLiteral(getType), provenanceGraph))
-    quads.append(Quad(jobBlankNode, hasOriginalLocationProp, Node.createLiteral(getOriginalLocation), provenanceGraph))
+    quads.append(Quad(jobBlankNode, Consts.importIdProp, Node.createLiteral(id), provenanceGraph))
+    quads.append(Quad(jobBlankNode, Consts.lastUpdateProp, Node.createTypedLiteral(updateTime.toString,"http://www.w3.org/2001/XMLSchema#dateTime"), provenanceGraph))
+    quads.append(Quad(jobBlankNode, Consts.hasDatasourceProp, Node.createLiteral(dataSource), provenanceGraph))
+    quads.append(Quad(jobBlankNode, Consts.hasImportTypeProp, Node.createLiteral(getType), provenanceGraph))
+    quads.append(Quad(jobBlankNode, Consts.hasOriginalLocationProp, Node.createLiteral(getOriginalLocation), provenanceGraph))
 
 
     for (quad <- quads)
@@ -55,6 +49,7 @@ trait ImportJob {
 
     writer.flush
     writer.close
+    now
   }
 }
 
@@ -63,9 +58,9 @@ object ImportJob {
   /* Build an Import Job from XML config */
   // - assume only one import job is defined
   def fromXML(node : xml.Node) : ImportJob = {
-    val id = node \ "internalId" text
-    val dataSource = node \ "dataSource" text
-    val refreshSchedule = node \ "refreshSchedule" text
+    val id = (node \ "internalId" text)
+    val dataSource = (node \ "dataSource" text)
+    val refreshSchedule = (node \ "refreshSchedule" text)
 
     (node \ "quadImportJob").headOption match {
       case Some(job) => return QuadImportJob.fromXML(job, id, refreshSchedule, dataSource)

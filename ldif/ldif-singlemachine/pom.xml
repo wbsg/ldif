@@ -29,9 +29,8 @@
                     <launchers>
                         <launcher>
                             <id>Run</id>
-                            <mainClass>ldif.local.Main</mainClass>
+                            <mainClass>ldif.local.Ldif</mainClass>
                             <jvmArgs>
-
                                 <jvmArg>-Xmx1024m</jvmArg>
                             </jvmArgs>
                         </launcher>
@@ -49,7 +48,7 @@
                     </descriptorRefs>
                     <archive>
                         <manifest>
-                            <mainClass>ldif.local.Main</mainClass>
+                            <mainClass>ldif.local.Ldif</mainClass>
                         </manifest>
                     </archive>
                 </configuration>

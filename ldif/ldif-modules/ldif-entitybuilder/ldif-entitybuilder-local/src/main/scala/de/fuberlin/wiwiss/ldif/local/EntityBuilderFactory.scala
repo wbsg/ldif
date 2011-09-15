@@ -14,17 +14,17 @@ import tdb.TDBQuadStore
 
 object EntityBuilderFactory {
   def getEntityBuilder(configParameters: ConfigParameters, entityDescriptions: IndexedSeq[EntityDescription], reader : Seq[QuadReader]): EntityBuilderTrait = {
-    val entityBuilderType = configParameters.configProperties.getPropertyValue("entityBuilderType", "in-memory").toLowerCase
+    val entityBuilderType = configParameters.configProperties.getProperty("entityBuilderType", "in-memory").toLowerCase
     entityBuilderType match {
-      case "voldemort" => return new EntityBuilder(entityDescriptions, reader, configParameters)
-      case "in-memory" => return new EntityBuilder(entityDescriptions, reader, configParameters)
+      case "voldemort" => new EntityBuilder(entityDescriptions, reader, configParameters)
+      case "in-memory" => new EntityBuilder(entityDescriptions, reader, configParameters)
       case "quad-store" => {
-        return createQuadStoreEntityBuilder(configParameters, entityDescriptions, reader)
+        createQuadStoreEntityBuilder(configParameters, entityDescriptions, reader)
       }
     }
   }
 
-  private def createQuadStore(quadStoreType: String, configParameters: ConfigParameters, databaseLocation: String): QuadStoreTrait = {
+  private def createQuadStore(quadStoreType: String, databaseLocation: String): QuadStoreTrait = {
     quadStoreType match {
       case "tdb" => {
         new TDBQuadStore(databaseLocation)
@@ -34,9 +34,9 @@ object EntityBuilderFactory {
   }
 
   private def createQuadStoreEntityBuilder(configParameters: ConfigParameters, entityDescriptions: scala.Seq[EntityDescription], reader: scala.Seq[QuadReader]): EntityBuilderTrait = {
-    val quadStoreType = configParameters.configProperties.getPropertyValue("quadStoreType", "tdb").toLowerCase
-    val databaseLocation = configParameters.configProperties.getPropertyValue("databaseLocation", System.getProperty("java.io.tmpdir"))
-    val quadStore = createQuadStore(quadStoreType, configParameters, databaseLocation)
-    return new QuadStoreEntityBuilder(quadStore, entityDescriptions, reader, configParameters)
+    val quadStoreType = configParameters.configProperties.getProperty("quadStoreType", "tdb").toLowerCase
+    val databaseLocation = configParameters.configProperties.getProperty("databaseLocation", System.getProperty("java.io.tmpdir"))
+    val quadStore = createQuadStore(quadStoreType, databaseLocation)
+    new QuadStoreEntityBuilder(quadStore, entityDescriptions, reader, configParameters)
   }
 }

@@ -30,7 +30,7 @@ class CrawlLoader(seedUris : Traversable[URI], predicates : Traversable[URI] = T
   def crawl(out : OutputStream, levels : Int, limit : Int) : Set[String] = {
     val callback = new CallbackOutputStream(out)
     crawl(callback, levels, limit)
-    log.info("Loaded "+  callback.graphs.size + "resources and "+ callback.statements + " statements")
+    log.info("Loaded "+  callback.graphs.size + " resources and "+ callback.statements + " statements")
     callback.graphs
   }
 

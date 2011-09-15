@@ -11,8 +11,8 @@ import ldif.util.Prefixes
 import org.scalatest.junit.JUnitRunner
 import org.junit.runner.RunWith
 import ldif.local.runtime.impl.{BlockingQuadQueue, EntityQueue}
-import ldif.local.runtime.ConfigParameters._
-import ldif.local.runtime.{ConfigParameters, ConfigProperties}
+import ldif.local.runtime.ConfigParameters
+import java.util.Properties
 
 /**
  * Unit Test for the Entity Builder Module Local.
@@ -34,7 +34,7 @@ class EBLocalTest extends FlatSpec with ShouldMatchers
   for ((ed, i) <- eds.zipWithIndex)
      eqs(i) = new EntityQueue(ed)
 
-  val ebe = new EntityBuilderExecutor(ConfigParameters(new ConfigProperties, null))
+  val ebe = new EntityBuilderExecutor(ConfigParameters(new Properties, null))
 
   ebe.execute(task, Seq(qq), eqs)  
 

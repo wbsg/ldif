@@ -11,21 +11,21 @@ import java.util.Collections
 import scala.collection.JavaConversions._
 import ldif.local.util.StringPool
 import java.util.{HashSet => JHashSet}
-import ldif.util.{Consts, Uri}
 import ldif.local.runtime.{LocalNode, EntityWriter, QuadReader, ConfigParameters}
 import ldif.runtime.{BackwardComparator, ForwardComparator, Quad}
+import ldif.util.{StopWatch, Consts, Uri}
 
 class EntityBuilder (entityDescriptions : IndexedSeq[EntityDescription], readers : Seq[QuadReader], config: ConfigParameters) extends FactumBuilder with EntityBuilderTrait {
   private val nrOfQuadsPerSort = 500000
   private val log = Logger.getLogger(getClass.getName)
   // true if quads not relevant for the Entity Builder should be written to a QuadReader
-  private val useVoldemort = config.configProperties.getPropertyValue("entityBuilderType", "in-memory").toLowerCase=="voldemort"
+  private val useVoldemort = config.configProperties.getProperty("entityBuilderType", "in-memory").toLowerCase=="voldemort"
   // If this is true, quads like provenance quads (or even all quads) are saved for later use (merge)
-  private val outputAllQuads = config.configProperties.getPropertyValue("output", "mapped-only").toLowerCase=="all"
+  private val outputAllQuads = config.configProperties.getProperty("output", "mapped-only").toLowerCase=="all"
   private val saveQuads = config.otherQuadsWriter!=null
   private val saveSameAsQuads = config.sameAsWriter!=null
-  private val provenanceGraph = config.configProperties.getPropertyValue("provenanceGraph", "http://www4.wiwiss.fu-berlin.de/ldif/provenance")
-  private val useExternalSameAsLinks = config.configProperties.getPropertyValue("useExternalSameAsLinks", "true").toLowerCase=="true"
+  private val provenanceGraph = config.configProperties.getProperty("provenanceGraph", "http://www4.wiwiss.fu-berlin.de/ldif/provenance")
+  private val useExternalSameAsLinks = config.configProperties.getProperty("useExternalSameAsLinks", "true").toLowerCase=="true"
 
   // Property HT - Describes all the properties used in the Entity Description
   var PHT: PropertyHashTable = null
@@ -444,17 +444,6 @@ class EntityBuilder (entityDescriptions : IndexedSeq[EntityDescription], readers
   private def min(a:Int , b:Int) =  if (a<b) a else b
 
   private def now = System.currentTimeMillis
-}
-
-class StopWatch {
-  private var lastTime = System.currentTimeMillis
-
-  def getTimeSpanInSeconds(): Double = {
-    val newTime = System.currentTimeMillis
-    val span = newTime - lastTime
-    lastTime = newTime
-    span / 1000.0
-  }
 }
 
 class PropertyHashTable(entityDescriptions: Seq[EntityDescription]) {

@@ -14,6 +14,7 @@ import ldif.entity._
 import java.util.logging.Logger
 import java.net.URLEncoder
 import ldif.runtime.Quad
+import java.util.Properties
 
 object URITranslator {
 
@@ -52,12 +53,12 @@ object URITranslator {
     quadOutput
   }
 
-  def translateQuads(quadsReader: QuadReader, linkReader: QuadReader, configProperties: ConfigProperties): QuadReader = {
+  def translateQuads(quadsReader: QuadReader, linkReader: QuadReader, configProperties: Properties): QuadReader = {
     var uriMap: Map[String, String] = null
 
     var quadsReaderPassTwo = quadsReader
 
-    val uriMinting = configProperties.getPropertyValue("uriMinting", "false").toLowerCase=="true"
+    val uriMinting = configProperties.getProperty("uriMinting", "false").toLowerCase=="true"
     if(uriMinting) {
       if (!quadsReader.isInstanceOf[ClonableQuadReader])
         throw new RuntimeException("QuadReader for URI translator has to be a ClonableQuadReader.")
@@ -153,9 +154,9 @@ object URITranslator {
     sameAsURIMap
   }
 
-  private def generateMintedUriMap(linkReader: QuadReader, quadsReader: QuadReader, configProperties: ConfigProperties): Map[String, String] = {
-    val mintingPropertiesNamespace = configProperties.getPropertyValue("uriMintNamespace")
-    val mintingPropertiesString = configProperties.getPropertyValue("uriMintLabelPredicate")
+  private def generateMintedUriMap(linkReader: QuadReader, quadsReader: QuadReader, configProperties: Properties) : Map[String, String] = {
+    val mintingPropertiesNamespace = configProperties.getProperty("uriMintNamespace")
+    val mintingPropertiesString = configProperties.getProperty("uriMintLabelPredicate")
     if(mintingPropertiesString!=null && mintingPropertiesNamespace != null) {
       log.info("Minting URIs...")
       val mintValues: HashMap[String, String] = extractMaxMintValues(mintingPropertiesString, quadsReader)

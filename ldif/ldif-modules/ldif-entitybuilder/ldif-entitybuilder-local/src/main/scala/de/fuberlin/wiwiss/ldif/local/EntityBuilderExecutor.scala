@@ -3,8 +3,9 @@ package de.fuberlin.wiwiss.ldif.local
 import ldif.module.Executor
 import de.fuberlin.wiwiss.ldif.EntityBuilderTask
 import ldif.local.runtime._
+import java.util.Properties
 
-class EntityBuilderExecutor(configParameters: ConfigParameters = ConfigParameters(new ConfigProperties, null)) extends Executor {
+class EntityBuilderExecutor(configParameters: ConfigParameters = ConfigParameters(new Properties, null)) extends Executor {
 
   type TaskType = EntityBuilderTask
   type InputFormat = GraphFormat
