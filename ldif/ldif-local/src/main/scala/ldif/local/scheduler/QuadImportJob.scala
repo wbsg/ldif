@@ -8,7 +8,7 @@ import java.io.{OutputStreamWriter, OutputStream}
 
 case class QuadImportJob(dumpLocation : String, id : Identifier, refreshSchedule : String, dataSource : String) extends ImportJob {
 
-  override def load(out : OutputStream) {
+  override def load(out : OutputStream) : Boolean = {
 
     val writer = new OutputStreamWriter(out)
 
@@ -25,6 +25,7 @@ case class QuadImportJob(dumpLocation : String, id : Identifier, refreshSchedule
     }
     writer.flush
     writer.close
+    true
   }
 
   override def getType = "quad"
@@ -34,7 +35,7 @@ case class QuadImportJob(dumpLocation : String, id : Identifier, refreshSchedule
 object QuadImportJob{
 
   def fromXML (node : Node, id : Identifier, refreshSchedule : String, dataSource : String) : ImportJob = {
-    val dumpLocation : String = (node \ "dumpLocation") text
+    val dumpLocation : String = (node \ "dumpLocation" text)
     val job = new QuadImportJob(dumpLocation.trim, id, refreshSchedule, dataSource)
     job
   }

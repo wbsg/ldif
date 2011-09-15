@@ -1,7 +1,7 @@
-<Scheduler>
-  <Properties>scheduler.properties</Properties>
-  <DataSources>datasources</DataSources>
-  <ImportJobs>importJobs</ImportJobs>
-  <IntegrationJob>../config.xml</IntegrationJob>
-  <DumpLocation>dumps</DumpLocation>
-</Scheduler>
+<scheduler>
+  <properties>scheduler.properties</properties>
+  <dataSources>datasources</dataSources>
+  <importJobs>importJobs</importJobs>
+  <integrationJob>../config.xml</integrationJob>
+  <dumpLocation>dumps</dumpLocation>
+</scheduler>

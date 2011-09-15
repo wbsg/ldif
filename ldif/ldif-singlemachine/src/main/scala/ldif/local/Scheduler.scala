@@ -71,36 +71,40 @@ class Scheduler (val config : SchedulerConfig, debug : Boolean = false) {
       val tmpProvenanceFile = getTmpProvenanceFile(job)
 
       // create local dump
-      job.load(new FileOutputStream(tmpDumpFile))
+      val success = job.load(new FileOutputStream(tmpDumpFile))
 
-      // create provenance metadata
-      val provenanceGraph = config.properties.getProperty("provenanceGraphURI", Consts.DEFAULT_PROVENANCE_GRAPH)
-      val updateTime = job.generateProvenanceInfo(new OutputStreamWriter(new FileOutputStream(tmpProvenanceFile)), provenanceGraph)
+      if(success) {
+        // create provenance metadata
+        val provenanceGraph = config.properties.getProperty("provenanceGraphURI", Consts.DEFAULT_PROVENANCE_GRAPH)
+        val updateTime = job.generateProvenanceInfo(new OutputStreamWriter(new FileOutputStream(tmpProvenanceFile)), provenanceGraph)
 
-      log.info("Job " + job.id + " imported in "+ stopWatch.getTimeSpanInSeconds + " s")
+        log.info("Job " + job.id + " imported in "+ stopWatch.getTimeSpanInSeconds + " s")
 
-      var loop = true
-      while(loop) {
-        // if the integration job is not running
-        if (!runningIntegrationJobs) {
-          // replace old dumps with the new ones
-          moveFile(tmpDumpFile, getDumpFile(job))
-          moveFile(tmpProvenanceFile, getProvenanceFile(job))
-          log.info("Updated local dumps for job "+ job.id)
+        var loop = true
+        while(loop) {
+          // if the integration job is not running
+          if (!runningIntegrationJobs) {
+            // replace old dumps with the new ones
+            moveFile(tmpDumpFile, getDumpFile(job))
+            moveFile(tmpProvenanceFile, getProvenanceFile(job))
+            log.info("Updated local dumps for job "+ job.id)
 
-          runningImportJobs.replace(job.id, false)
-          loop = false
-        }
-        else {
-          //          TODO - dont wait integration for ever
-          //          if (now > updateTime + job.refreshSchedule))  {
-          //            // - slept too long :
-          //            loop = false
-          //          }
-          //          else
-          Thread.sleep(1000)
+            runningImportJobs.replace(job.id, false)
+            loop = false
+          }
+          else {
+            //          TODO - dont wait integration for ever
+            //          if (now > updateTime + job.refreshSchedule))  {
+            //            // - slept too long :
+            //            loop = false
+            //          }
+            //          else
+            Thread.sleep(1000)
+          }
         }
       }
+      else
+        log.warning("Job " + job.id + " has not been imported - see log f")
     }
   }
 

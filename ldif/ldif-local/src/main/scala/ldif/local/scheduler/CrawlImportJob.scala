@@ -10,9 +10,10 @@ case class CrawlImportJob(conf : CrawlConfig, id :  Identifier, refreshSchedule 
 
   val crawler = new CrawlLoader(conf.seedUris, conf.predicatesToFollow)
 
-  override def load(out : OutputStream) {
+  override def load(out : OutputStream) : Boolean = {
     val limit = -1
     importedGraphs = crawler.crawl(out, conf.levels, limit)
+    true
   }
 
   override def getType = "crawl"

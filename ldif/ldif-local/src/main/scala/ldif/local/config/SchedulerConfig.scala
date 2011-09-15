@@ -17,15 +17,15 @@ object SchedulerConfig
     val xml = XML.loadFile(configFile)
 
     // Read in properties
-    val properties = ConfigProperties.loadProperties(baseDir + "/" + (xml \ "Properties" text))
+    val properties = ConfigProperties.loadProperties(baseDir + "/" + (xml \ "properties" text))
 
-    val dumpLocationDir = new File(baseDir + "/" + (xml \ "DumpLocation" text))
+    val dumpLocationDir = new File(baseDir + "/" + (xml \ "dumpLocation" text))
     if(!dumpLocationDir.exists && !dumpLocationDir.mkdirs)
       log.severe("Could not create local dump directory at: " + dumpLocationDir.getCanonicalPath)
 
-    val importJobsDir = getDir(xml, "ImportJobs", baseDir)
-    val integrationJobDir = getDir(xml, "IntegrationJob", baseDir)
-    val datasourceJobDir = getDir(xml, "DataSources", baseDir)
+    val importJobsDir = getDir(xml, "importJobs", baseDir)
+    val integrationJobDir = getDir(xml, "integrationJob", baseDir)
+    val datasourceJobDir = getDir(xml, "dataSources", baseDir)
 
     SchedulerConfig(
       importJobsDir,
