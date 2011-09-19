@@ -6,10 +6,10 @@ import java.util.logging.Logger
 import scheduler.ImportJob
 import xml.XML
 import java.util.{Date, Calendar}
-import java.nio.channels.FileChannel
 import java.io._
 import java.util.concurrent.ConcurrentHashMap
 import ldif.util.{StopWatch, FatalErrorListener, Consts}
+import org.apache.commons.io.FileUtils
 
 class Scheduler (val config : SchedulerConfig, debug : Boolean = false) {
   private val log = Logger.getLogger(getClass.getName)
@@ -104,7 +104,7 @@ class Scheduler (val config : SchedulerConfig, debug : Boolean = false) {
         }
       }
       else
-        log.warning("Job " + job.id + " has not been imported - see log f")
+        log.warning("Job " + job.id + " has not been imported - see log for details")
     }
   }
 
@@ -215,25 +215,19 @@ class Scheduler (val config : SchedulerConfig, debug : Boolean = false) {
   // Move source File to dest File
   private def moveFile(source : File, dest : File) {
     if (!debug) {
-      if (!source.renameTo(dest))
-        log.severe("File was not successfully moved\n" +source.getCanonicalPath+ " -> " +dest.getCanonicalPath)
+      try {FileUtils.moveFile(source, dest)
+      } catch {
+        case ex:IOException => log.severe("IO error occurs moving a file: \n" +source.getCanonicalPath+ " -> " +dest.getCanonicalPath)
+      }
     }
     else {
-      // if debug, keep tmp file
-      var in, out : FileChannel = null
+      // if debugMode, keep tmp file
       try {
-        in = new FileInputStream(source).getChannel
-        out = new FileOutputStream(dest).getChannel
-        val size = in.size
-        val buffer = in.map(FileChannel.MapMode.READ_ONLY, 0, size)
-        out.write(buffer)
+        FileUtils.copyFile(source, dest)
       } catch {
         case ex: IOException =>  {
-          log.severe("IOException while copying file "+source.getCanonicalPath+" to "+dest.getCanonicalPath)
+          log.severe("IO error occurs copying a file: \n"+source.getCanonicalPath+" to "+dest.getCanonicalPath)
         }
-      } finally {
-        if (in != null) in.close
-        if (out != null) out.close
       }
     }
   }

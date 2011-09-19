@@ -52,8 +52,6 @@ object DumpLoader {
       throw new Exception("Unable to determine language for "+ sourceLocation	+ " based on file extension")
     }
 
-    log.info("Loading from " + sourceLocation + " using language " + lang)
-
     if (file != null)
       getFileStream(file)
     else if (url != null)
@@ -63,9 +61,8 @@ object DumpLoader {
   }
 
   def getFileStream(file : File) = {
-
+    log.info("Loading from " + file.getCanonicalPath)
     var inputStream:InputStream = null
-
     try {
       inputStream = new DecompressingStream(file).getStream
     } catch {
@@ -78,7 +75,7 @@ object DumpLoader {
   }
 
   def getUrlStream(url : URL) = {
-
+    log.info("Loading from " + url.toString)
     var inputStream:InputStream = null
 
     try  {

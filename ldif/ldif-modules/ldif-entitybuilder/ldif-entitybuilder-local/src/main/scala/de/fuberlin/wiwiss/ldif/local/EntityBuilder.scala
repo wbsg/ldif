@@ -5,21 +5,16 @@ import java.util.logging.Logger
 import ldif.entity.Restriction._
 import collection.mutable.{ArraySeq, ArrayBuffer, HashMap, Set, HashSet}
 import actors.{Future, Futures}
-import java.util.ArrayList
-import java.util.List
-import java.util.Collections
 import scala.collection.JavaConversions._
 import ldif.local.util.StringPool
 import java.util.{HashSet => JHashSet}
 import ldif.local.runtime.{LocalNode, EntityWriter, QuadReader, ConfigParameters}
-import ldif.runtime.{BackwardComparator, ForwardComparator, Quad}
-import ldif.util.{StopWatch, Consts, Uri}
+import ldif.runtime.Quad
+import ldif.util.{Consts, Uri}
 
 class EntityBuilder (entityDescriptions : IndexedSeq[EntityDescription], readers : Seq[QuadReader], config: ConfigParameters) extends FactumBuilder with EntityBuilderTrait {
-  private val nrOfQuadsPerSort = 500000
+
   private val log = Logger.getLogger(getClass.getName)
-  // true if quads not relevant for the Entity Builder should be written to a QuadReader
-  private val useVoldemort = config.configProperties.getProperty("entityBuilderType", "in-memory").toLowerCase=="voldemort"
   // If this is true, quads like provenance quads (or even all quads) are saved for later use (merge)
   private val outputAllQuads = config.configProperties.getProperty("output", "mapped-only").toLowerCase=="all"
   private val saveQuads = config.otherQuadsWriter!=null
@@ -31,12 +26,8 @@ class EntityBuilder (entityDescriptions : IndexedSeq[EntityDescription], readers
   var PHT: PropertyHashTable = null
   // Forward HT - Contains connections which are going to be explored straight/forward
   var FHT:HashTable = new MemHashTable
-  if(useVoldemort)
-    FHT = new VoldermortHashTable("fht")
   // Backward HT - Contains connections from quads which are going to be explored reverse/backward
   var BHT:HashTable = new MemHashTable
-  if(useVoldemort)
-    BHT = new VoldermortHashTable("bht")
 
   // if no restriction is defined, build an entity for each resource
   var allUriNodes : Set[Node] = null
@@ -76,9 +67,6 @@ class EntityBuilder (entityDescriptions : IndexedSeq[EntityDescription], readers
     PHT = new PropertyHashTable(entityDescriptions)
     if(PHT.areAllUriNodesNeeded)
       allUriNodes = new JHashSet[Node]
-    if(useVoldemort)
-      buildVoldemortHashTables
-    else
       buildHashTables
   }
 
@@ -86,14 +74,11 @@ class EntityBuilder (entityDescriptions : IndexedSeq[EntityDescription], readers
   private def buildHashTables {
     FHT.clear
     BHT.clear
-    val startTime = now
     var counter = 0
 
     // Round robin over reader
     while (readers.foldLeft(false)((a, b) => a || b.hasNext)){
       for (reader <- readers.filter(_.hasNext)) {
-//    for(reader <- readers) {
-//      while(reader.hasNext) {
         val quad = reader.read
 
         if(saveQuads)
@@ -154,53 +139,6 @@ class EntityBuilder (entityDescriptions : IndexedSeq[EntityDescription], readers
       false
   }
 
-  // Build HTs in a Voldemort specific way. This is done because the in-memory hashtable strategy is not applicable here.
-  // The Sets to store values had to be deserialized and serialized every time a value was added.
-  private def buildVoldemortHashTables {
-    FHT.clear
-    BHT.clear
-    val startTime = now
-    var completeCount = 0
-
-    for (reader <- readers) {
-      var count = 0
-      val quadList: List[Quad] = new ArrayList[Quad]
-
-      val watch = new StopWatch
-      watch.getTimeSpanInSeconds
-      while (reader.hasNext){
-        val quad = reader.read
-//        if(saveQuads)
-//          saveQuadsForLater(quad)
-
-        if(isRelevantQuad(quad)) {
-          quadList.add(quad)
-          addUriNodes(quad)
-          count += 1
-        }
-        completeCount += 1
-
-        if(count==nrOfQuadsPerSort) {
-          addQuadsToFHT(quadList)
-          addQuadsToBHT(quadList)
-          count = 0
-          System.out.println("Number of Quads written to Voldemort: " + count + " in " + watch.getTimeSpanInSeconds + "s, overall quads processed: " + completeCount)
-          Thread.sleep(5000)
-        }
-      }
-      // Write remaining quads to table
-      if(count>0) {
-        addQuadsToFHT(quadList)
-        addQuadsToBHT(quadList)
-        System.out.println("Number of Quads written to Voldemort: " + count + " in " + watch.getTimeSpanInSeconds + "s, overall quads processed: " + completeCount)
-        count = 0
-      }
-      // Write remaining values to Voldemort
-      BHT.asInstanceOf[VoldermortHashTable].finishPut()
-      FHT.asInstanceOf[VoldermortHashTable].finishPut()
-    }
-  }
-
   // Gathers all instances from the (relevant) input quads
   private def addUriNodes(quad:Quad) {
     if(allUriNodes!=null){
@@ -208,32 +146,6 @@ class EntityBuilder (entityDescriptions : IndexedSeq[EntityDescription], readers
         allUriNodes += quad.subject
       if (quad.value.isUriNode)
         allUriNodes += quad.value
-    }
-  }
-
-  private def addQuadsToFHT(quads: List[Quad]) {
-    Collections.sort(quads, new ForwardComparator)
-    var lastSubject: Node = null
-    var lastPredicate: String = null
-
-    for(quad <- quads) {
-      val property = new Uri(quad.predicate).toString
-      val propertyType = PHT.get(property)
-      if (propertyType == Some(PropertyType.FORW) || propertyType == Some(PropertyType.BOTH))
-        FHT.put(Pair(quad.subject, property), quad.value)
-    }
-  }
-
-  private def addQuadsToBHT(quads: List[Quad]) {
-    Collections.sort(quads, new BackwardComparator)
-    var lastSubject: Node = null
-    var lastPredicate: String = null
-
-    for(quad <- quads) {
-      val property = new Uri(quad.predicate).toString
-      val propertyType = PHT.get(property)
-      if (propertyType == Some(PropertyType.BACK) || propertyType == Some(PropertyType.BOTH))
-        BHT.put(Pair(quad.value, property), quad.subject)
     }
   }
 

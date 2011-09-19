@@ -1,9 +1,9 @@
 package ldif.local.config
 
-import java.util.Properties
 import java.util.logging.Logger
 import java.io.File
 import xml.{Elem, XML}
+import java.util.Properties
 
 case class SchedulerConfig (importJobsDir : File, integrationJob : File, dataSourcesDir : File, dumpLocationDir : File, properties : Properties)  {}
 
@@ -17,15 +17,18 @@ object SchedulerConfig
     val xml = XML.loadFile(configFile)
 
     // Read in properties
-    val properties = ConfigProperties.loadProperties(baseDir + "/" + (xml \ "properties" text))
+    val propertiesFile = getFile(xml, "properties", baseDir)
+    var properties = new Properties
+    if (propertiesFile != null)
+      properties = ConfigProperties.loadProperties(propertiesFile)
 
     val dumpLocationDir = new File(baseDir + "/" + (xml \ "dumpLocation" text))
     if(!dumpLocationDir.exists && !dumpLocationDir.mkdirs)
       log.severe("Could not create local dump directory at: " + dumpLocationDir.getCanonicalPath)
 
-    val importJobsDir = getDir(xml, "importJobs", baseDir)
-    val integrationJobDir = getDir(xml, "integrationJob", baseDir)
-    val datasourceJobDir = getDir(xml, "dataSources", baseDir)
+    val importJobsDir = getFile(xml, "importJobs", baseDir)
+    val integrationJobDir = getFile(xml, "integrationJob", baseDir)
+    val datasourceJobDir = getFile(xml, "dataSources", baseDir)
 
     SchedulerConfig(
       importJobsDir,
@@ -36,22 +39,22 @@ object SchedulerConfig
     )
   }
 
-  private def getDir (xml : Elem, key : String, baseDir : String) : File = {
+  private def getFile (xml : Elem, key : String, baseDir : String) : File = {
     val value : String = (xml \ key text)
-    var dir : File = null
+    var file : File = null
     if (value != ""){
-      val tmpDir = new File(baseDir + "/" + value)
-      if (tmpDir.exists) {
-        dir = tmpDir
+      val tmpFile = new File(baseDir + "/" + value)
+      if (tmpFile.exists) {
+        file = tmpFile
       }
       else {
-        log.warning("\'"+key+"\' path does not exist: "+ dir.getCanonicalPath)
+        log.warning("\'"+key+"\' path not found: "+ tmpFile.getCanonicalPath)
       }
     }
     else{
       log.warning("\'"+key+"\' is not defined in the configuration file")
     }
-    dir
+    file
   }
 
 }
