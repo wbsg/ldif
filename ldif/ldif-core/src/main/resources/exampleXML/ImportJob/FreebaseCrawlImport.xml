@@ -4,7 +4,7 @@
             xmlns="http://www4.wiwiss.fu-berlin.de/ldif/">
     <internalId>freebase.0</internalId>
     <dataSource>Freebase</dataSource>
-    <refreshSchedule>onStartup</refreshSchedule>
+    <refreshSchedule>never</refreshSchedule>
     <crawlImportJob>
         <seedURIs>
             <uri>http://rdf.freebase.com/ns/en.dance-pop</uri>

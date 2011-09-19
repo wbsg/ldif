@@ -4,7 +4,7 @@
             xmlns="http://www4.wiwiss.fu-berlin.de/ldif/">
     <internalId>jamendo.0</internalId>
     <dataSource>Jamendo</dataSource>
-    <refreshSchedule>never</refreshSchedule>
+    <refreshSchedule>onStartup</refreshSchedule>
     <tripleImportJob>
         <dumpLocation>http://moustaki.org/resources/jamendo-rdf.tar.gz</dumpLocation>
     </tripleImportJob>

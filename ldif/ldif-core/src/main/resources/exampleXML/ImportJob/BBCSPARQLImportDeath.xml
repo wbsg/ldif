@@ -2,16 +2,13 @@
 <importJob xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
             xsi:schemaLocation="http://www4.wiwiss.fu-berlin.de/ldif/ ../../xsd/ImportJob.xsd"
             xmlns="http://www4.wiwiss.fu-berlin.de/ldif/">
-    <internalId>bbc.0</internalId>
+    <internalId>bbc.1</internalId>
     <dataSource>BBC</dataSource>
-    <refreshSchedule>never</refreshSchedule>
+    <refreshSchedule>onStartup</refreshSchedule>
     <sparqlImportJob>
         <endpointLocation>http://api.talis.com/stores/bbc-backstage/services/sparql</endpointLocation>
         <sparqlPatterns>
-            <pattern>?s a &lt;http://purl.org/ontology/mo/SoloMusicArtist&gt;</pattern>
-            <pattern>?s a &lt;http://purl.org/ontology/mo/Record&gt;</pattern>
-            <pattern>?s a &lt;http://purl.org/ontology/mo/MusicArtist&gt;</pattern>
-            <pattern>?s a &lt;http://purl.org/vocab/bio/0.1/Birth&gt;</pattern>
+            <pattern>?s a &lt;http://purl.org/vocab/bio/0.1/Death&gt;</pattern>
         </sparqlPatterns>
     </sparqlImportJob>
 </importJob>
