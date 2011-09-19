@@ -8,8 +8,8 @@ import xml.XML
 import java.util.{Date, Calendar}
 import java.io._
 import java.util.concurrent.ConcurrentHashMap
-import ldif.util.{StopWatch, FatalErrorListener, Consts}
 import org.apache.commons.io.FileUtils
+import ldif.util.{Consts, StopWatch, FatalErrorListener}
 
 class Scheduler (val config : SchedulerConfig, debug : Boolean = false) {
   private val log = Logger.getLogger(getClass.getName)
@@ -24,7 +24,7 @@ class Scheduler (val config : SchedulerConfig, debug : Boolean = false) {
   private val runningImportJobs = initRunningJobsMap
 
   /* Evaluate updates/integration */
-  def evaluateJobs {
+  def evaluateJobs() {
     synchronized {
       if (integrationJob != null && checkUpdate(integrationJob)){
         runningIntegrationJobs = true
@@ -53,7 +53,7 @@ class Scheduler (val config : SchedulerConfig, debug : Boolean = false) {
   def allJobsCompleted = !runningIntegrationJobs && !runningImportJobs.containsValue(true)
 
   /* Execute the integration job */
-  def runIntegration {
+  def runIntegration() {
     runInBackground
     {
       integrationJob.runIntegration
@@ -69,7 +69,7 @@ class Scheduler (val config : SchedulerConfig, debug : Boolean = false) {
       runningImportJobs.replace(job.id, true)
       val stopWatch = new StopWatch
       log.info("Running import job "+ job.id)
-      stopWatch.getTimeSpanInSeconds
+      stopWatch.getTimeSpanInSeconds()
 
       val tmpDumpFile = getTmpDumpFile(job)
       val tmpProvenanceFile = getTmpProvenanceFile(job)
@@ -80,11 +80,14 @@ class Scheduler (val config : SchedulerConfig, debug : Boolean = false) {
       if(success) {
         // create provenance metadata
         val provenanceGraph = config.properties.getProperty("provenanceGraphURI", Consts.DEFAULT_PROVENANCE_GRAPH)
-        val updateTime = job.generateProvenanceInfo(new OutputStreamWriter(new FileOutputStream(tmpProvenanceFile)), provenanceGraph)
+        job.generateProvenanceInfo(new OutputStreamWriter(new FileOutputStream(tmpProvenanceFile)), provenanceGraph)
 
-        log.info("Job " + job.id + " imported in "+ stopWatch.getTimeSpanInSeconds + " s")
+        log.info("Job " + job.id + " loaded in "+ stopWatch.getTimeSpanInSeconds + " s")
 
         var loop = true
+        var maxWaitingTime = Consts.changeFreqToHours(job.refreshSchedule) * 60 * 60
+        val waitingInterval = 1
+
         while(loop) {
           // if the integration job is not running
           if (!runningIntegrationJobs) {
@@ -97,13 +100,19 @@ class Scheduler (val config : SchedulerConfig, debug : Boolean = false) {
             loop = false
           }
           else {
-            //          TODO - dont wait integration for ever
-            //          if (now > updateTime + job.refreshSchedule))  {
-            //            // - slept too long :
-            //            loop = false
-            //          }
-            //          else
-            Thread.sleep(1000)
+            // wait for integration job to be completed, but not more than the job refreshSchedule
+            maxWaitingTime -= waitingInterval
+            if (maxWaitingTime < 0) {
+              // waited too long, dump is outdates
+              log.info("The dump loaded for job "+ job.id +" expired, a new import is required. \n"+ tmpDumpFile.getCanonicalPath)
+              if (!debug) {
+                FileUtils.deleteQuietly(tmpDumpFile)
+                FileUtils.deleteQuietly(tmpProvenanceFile)
+              }
+              runningImportJobs.replace(job.id, false)
+              loop = false
+            }
+            Thread.sleep(waitingInterval * 1000)
           }
         }
       }
@@ -169,10 +178,7 @@ class Scheduler (val config : SchedulerConfig, debug : Boolean = false) {
           else {
             val sb = new StringBuilder(lastUpdateStr).deleteCharAt(22)
             val lastUpdateDate = Consts.xsdDateTimeFormat.parse(sb.toString)
-            // Convert Date to a Calendar
-            val lastUpdateCal = Calendar.getInstance
-            lastUpdateCal.setTime(lastUpdateDate)
-            return lastUpdateCal
+            dateToCalendar(lastUpdateDate)
           }
         }
       }
@@ -246,7 +252,7 @@ class Scheduler (val config : SchedulerConfig, debug : Boolean = false) {
     val thread = new Thread {
       private val listener: FatalErrorListener = FatalErrorListener
 
-      override def run {
+      override def run() {
         try {
           function
         } catch {
@@ -254,7 +260,14 @@ class Scheduler (val config : SchedulerConfig, debug : Boolean = false) {
         }
       }
     }
-    thread.start
+    thread.start()
+  }
+
+  /* Convert Date to a Calendar   */
+  private def dateToCalendar(date : Date) : Calendar = {
+      val cal = Calendar.getInstance
+      cal.setTime(date)
+      cal
   }
 }
 
