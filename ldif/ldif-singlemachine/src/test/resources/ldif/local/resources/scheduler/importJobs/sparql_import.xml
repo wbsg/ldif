@@ -1,7 +1,7 @@
 <ImportJob xmlns="http://www4.wiwiss.fu-berlin.de/bizer/ldif">
     <internalId>KeggPathway.0</internalId>
     <dataSource>KeggPathway</dataSource>
-    <refreshSchedule>always</refreshSchedule>
+    <refreshSchedule>onStartup</refreshSchedule>
     <sparqlImportJob>
 	<endpointLocation>http://wiking.vulcan.com/neurobase/kegg_pathway/sparql</endpointLocation>
 	<sparqlPatterns>

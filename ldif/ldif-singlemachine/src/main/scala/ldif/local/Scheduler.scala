@@ -43,18 +43,21 @@ class Scheduler (val config : SchedulerConfig, debug : Boolean = false) {
   /* Evaluate if all jobs should run only once (at startup) or never */
   def runOnce : Boolean = {
     for (job <- importJobs)
-      if (job.refreshSchedule != "onStartup" || job.refreshSchedule != "never")
+      if (job.refreshSchedule != "onStartup" && job.refreshSchedule != "never")
         return false
-    if (integrationJob != null && (integrationJob.config.runSchedule != "onStartup" || integrationJob.config.runSchedule != "never"))
+    if (integrationJob != null && (integrationJob.config.runSchedule != "onStartup" && integrationJob.config.runSchedule != "never"))
       return false
     true
   }
+
+  def allJobsCompleted = !runningIntegrationJobs && !runningImportJobs.containsValue(true)
 
   /* Execute the integration job */
   def runIntegration {
     runInBackground
     {
       integrationJob.runIntegration
+      log.info("Integration Job completed")
       runningIntegrationJobs = false
     }
   }
@@ -63,6 +66,7 @@ class Scheduler (val config : SchedulerConfig, debug : Boolean = false) {
   def runImport(job : ImportJob) {
     runInBackground
     {
+      runningImportJobs.replace(job.id, true)
       val stopWatch = new StopWatch
       log.info("Running import job "+ job.id)
       stopWatch.getTimeSpanInSeconds
@@ -214,8 +218,11 @@ class Scheduler (val config : SchedulerConfig, debug : Boolean = false) {
 
   // Move source File to dest File
   private def moveFile(source : File, dest : File) {
+    // delete dest (if exists)
+    FileUtils.deleteQuietly(dest)
     if (!debug) {
-      try {FileUtils.moveFile(source, dest)
+      try {
+        FileUtils.moveFile(source, dest)
       } catch {
         case ex:IOException => log.severe("IO error occurs moving a file: \n" +source.getCanonicalPath+ " -> " +dest.getCanonicalPath)
       }
@@ -248,25 +255,6 @@ class Scheduler (val config : SchedulerConfig, debug : Boolean = false) {
       }
     }
     thread.start
-  }
-}
-
-object Scheduler
-{
-  def main(args : Array[String])
-  {
-    val configFile = if(args.length == 0) {
-      val configUrl = getClass.getClassLoader.getResource("ldif/local/neurowiki/scheduler-config.xml")
-      new File(configUrl.toString.stripPrefix("file:"))
-    } else
-      new File(args(args.length-1))
-
-    val scheduler = new Scheduler(SchedulerConfig.load(configFile))
-
-    while(true){
-      scheduler.evaluateJobs
-      Thread.sleep(10 * 1000)
-    }
   }
 }
 

@@ -1,7 +1,7 @@
 <ImportJob xmlns="http://www4.wiwiss.fu-berlin.de/bizer/ldif">
     <internalId>ABA.0</internalId>
     <dataSource>ABA</dataSource>
-    <refreshSchedule>always</refreshSchedule>
+    <refreshSchedule>onStartup</refreshSchedule>
     <quadImportJob>
         <dumpLocation>
             http://www.assembla.com/code/ldif/git/node/blob/ldif/ldif-singlemachine/src/test/resources/ldif/local/resources/sources/aba.nq.bz2

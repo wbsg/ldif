@@ -1,7 +1,7 @@
 <importJob xmlns="http://www4.wiwiss.fu-berlin.de/bizer/ldif">
     <internalId>dBpedia.0</internalId>
     <dataSource>dBpedia</dataSource>
-    <refreshSchedule>always</refreshSchedule>
+    <refreshSchedule>onStartup</refreshSchedule>
     <crawlImportJob>
       <seedURIs>
         <uri>http://dbpedia.org/resource/Stanley_Kubrick</uri>

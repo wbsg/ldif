@@ -34,6 +34,11 @@ object Ldif {
 
       if (scheduler.runOnce) {
         scheduler.evaluateJobs
+        while (!scheduler.allJobsCompleted) {
+            // wait for jobs to be completed
+            Thread.sleep(1000)
+        }
+        sys.exit(0)
       }
       else
         while(true){
