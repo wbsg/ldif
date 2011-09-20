@@ -142,7 +142,7 @@ object Node
 
   def createLanguageLiteral(value : String, language : String, graph : String = null) = Node(value, language, LanguageLiteral, graph)
 
-  def createBlankNode(value : String, graph : String) = Node(value, null, BlankNode, graph)
+   def createBlankNode(value : String, graph : String) = Node(NTriplesStringConverter.convertBnodeLabel(value), null, BlankNode, graph)
 
   def createUriNode(value : String, graph : String = null) = Node(value, null, UriNode, graph)
 
@@ -181,6 +181,15 @@ object Node
     case <Literal>{value @ _*}</Literal> => createLiteral(value.text,defaultGraph)
     case <BlankNode>{value @ _*}</BlankNode> => createBlankNode(value.text,defaultGraph)
   }
+
+//  /* Build a valid blank node identifier */
+//  private def cleanBlankNodeLabel (label : String) = {
+//    // see http://www.w3.org/TR/rdf-sparql-query/#rBLANK_NODE_LABEL
+//    var bnodeLabel = label
+//    if (!label.startsWith("b"))
+//      bnodeLabel = "b"+bnodeLabel
+//    bnodeLabel.replaceAll("[_:.-]","x").trim
+//  }
 
   sealed trait NodeType {val id: Int}
 

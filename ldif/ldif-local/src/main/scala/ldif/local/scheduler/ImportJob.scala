@@ -28,7 +28,7 @@ trait ImportJob {
     updateTime.insert(22, ':')
 
     //TODO create an unique blank node
-    val jobBlankNode = Node.createBlankNode(id.replace(".",""), provenanceGraph)
+    val jobBlankNode = Node.createBlankNode(id, provenanceGraph)
 
     val quads = new ListBuffer[Quad]
 

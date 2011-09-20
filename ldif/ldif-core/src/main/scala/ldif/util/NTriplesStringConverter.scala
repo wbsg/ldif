@@ -106,9 +106,18 @@ object NTriplesStringConverter {
     sb.toString
   }
 
-  def convertJenaBlankNodeLabelsToNTriplesLabels(jenaBNLabel: String): String = {
-    var converted = jenaBNLabel.replace('_', 'A')
-    converted = converted.replace('-', 'B')
-    "J" + converted.replace(':', 'C')
+//  def convertJenaBlankNodeLabelsToNTriplesLabels(jenaBNLabel: String): String = {
+//    var converted = jenaBNLabel.replace('_', 'A')
+//    converted = converted.replace('-', 'B')
+//    "J" + converted.replace(':', 'C')
+//  }
+
+  def convertBnodeLabel(label : String) : String = {
+    // see http://www.w3.org/TR/rdf-sparql-query/#rBLANK_NODE_LABEL
+    //TODO
+    var converedLabel = label
+    if (!label.startsWith("b"))
+      converedLabel = "b"+converedLabel
+    converedLabel.replaceAll("[_:.-]","X")
   }
 }
