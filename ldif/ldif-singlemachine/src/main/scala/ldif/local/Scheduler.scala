@@ -117,8 +117,10 @@ class Scheduler (val config : SchedulerConfig, debug : Boolean = false) {
           }
         }
       }
-      else
+      else {
+        runningImportJobs.replace(job.id, false)
         log.warning("Job " + job.id + " has not been imported - see log for details")
+      }
     }
   }
 
@@ -144,9 +146,11 @@ class Scheduler (val config : SchedulerConfig, debug : Boolean = false) {
     if (startup && schedule == "onStartup") {
       true
     }
+    else if (schedule == "never") {
+      false
+    }
     else {
       val changeFreqHours = Consts.changeFreqToHours.get(schedule)
-
       // Get last update run
       var nextUpdate = lastUpdate
 
