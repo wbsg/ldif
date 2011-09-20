@@ -85,7 +85,8 @@ class Scheduler (val config : SchedulerConfig, debug : Boolean = false) {
         log.info("Job " + job.id + " loaded in "+ stopWatch.getTimeSpanInSeconds + " s")
 
         var loop = true
-        var maxWaitingTime = Consts.changeFreqToHours(job.refreshSchedule) * 60 * 60
+        val changeFreqHours = Consts.changeFreqToHours.get(job.refreshSchedule).get
+        var maxWaitingTime = changeFreqHours.toLong * 60 * 60
         val waitingInterval = 1
 
         while(loop) {

@@ -1,7 +1,7 @@
 <LDIF>
-  <Properties>test.properties</Properties>
-  <Sources>sources</Sources>
-  <LinkSpecifications>linkSpecs</LinkSpecifications>
-  <Mappings>mappings</Mappings>
-  <Output>output.nq</Output>
+  <properties>test.properties</properties>
+  <sources>sources</sources>
+  <linkSpecifications>linkSpecs</linkSpecifications>
+  <mappings>mappings</mappings>
+  <output>output.nq</output>
 </LDIF>

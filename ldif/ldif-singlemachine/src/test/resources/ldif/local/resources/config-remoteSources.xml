@@ -1,13 +1,13 @@
 <LDIF>
-  <Properties>test.properties</Properties>
-  <RemoteSources>
-      <Source>http://www.assembla.com/code/ldif/git/node/blob/ldif/ldif-singlemachine/src/test/resources/ldif/local/resources/sources/aba.nq</Source>
-      <Source>http://www.assembla.com/code/ldif/git/node/blob/ldif/ldif-singlemachine/src/test/resources/ldif/local/resources/sources/kegg_genes.nq</Source>
-      <Source>http://www.assembla.com/code/ldif/git/node/blob/ldif/ldif-singlemachine/src/test/resources/ldif/local/resources/sources/kegg_pathway.nq</Source>
-      <Source>http://www.assembla.com/code/ldif/git/node/blob/ldif/ldif-singlemachine/src/test/resources/ldif/local/resources/sources/pharmgkb_reduced.nq</Source>
-      <Source>http://www.assembla.com/code/ldif/git/node/blob/ldif/ldif-singlemachine/src/test/resources/ldif/local/resources/sources/uniprot.nq</Source>
-  </RemoteSources>
-  <LinkSpecifications>linkSpecs</LinkSpecifications>
-  <Mappings>mappings/mappings.ttl</Mappings>
-  <Output>output.nq</Output>
+  <properties>test.properties</properties>
+  <remoteSources>
+      <source>http://www.assembla.com/code/ldif/git/node/blob/ldif/ldif-singlemachine/src/test/resources/ldif/local/resources/sources/aba.nq</source>
+      <source>http://www.assembla.com/code/ldif/git/node/blob/ldif/ldif-singlemachine/src/test/resources/ldif/local/resources/sources/kegg_genes.nq</source>
+      <source>http://www.assembla.com/code/ldif/git/node/blob/ldif/ldif-singlemachine/src/test/resources/ldif/local/resources/sources/kegg_pathway.nq</source>
+      <source>http://www.assembla.com/code/ldif/git/node/blob/ldif/ldif-singlemachine/src/test/resources/ldif/local/resources/sources/pharmgkb_reduced.nq</source>
+      <source>http://www.assembla.com/code/ldif/git/node/blob/ldif/ldif-singlemachine/src/test/resources/ldif/local/resources/sources/uniprot.nq</source>
+  </remoteSources>
+  <linkSpecifications>linkSpecs</linkSpecifications>
+  <mappings>mappings/mappings.ttl</mappings>
+  <output>output.nq</output>
 </LDIF>

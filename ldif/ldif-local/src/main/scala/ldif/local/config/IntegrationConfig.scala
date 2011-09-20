@@ -16,18 +16,18 @@ object IntegrationConfig
     val baseDir = configFile.getParent
     val xml = XML.loadFile(configFile)
 
-    val propertyFile = new File(baseDir + "/" + (xml \ "Properties" text))
+    val propertyFile = new File(baseDir + "/" + (xml \ "properties" text))
     val properties = ConfigProperties.loadProperties(propertyFile)
 
-    var runSchedule : String = (xml \ "RunSchedule" text)
+    var runSchedule : String = (xml \ "runSchedule" text)
     if (runSchedule == "" || runSchedule == null)
       runSchedule = "onStartup"
 
     IntegrationConfig(
-      sources = new File(baseDir + "/" + (xml \ "Sources" text)),
-      linkSpecDir = new File(baseDir + "/" + (xml \ "LinkSpecifications" text)),
-      mappingDir = new File(baseDir + "/" + (xml \ "Mappings" text)),
-      outputFile = new File(xml \ "Output" text),
+      sources = new File(baseDir + "/" + (xml \ "sources" text)),
+      linkSpecDir = new File(baseDir + "/" + (xml \ "linkSpecifications" text)),
+      mappingDir = new File(baseDir + "/" + (xml \ "mappings" text)),
+      outputFile = new File(xml \ "output" text),
       properties = properties,
       runSchedule = runSchedule
     )

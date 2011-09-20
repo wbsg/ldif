@@ -1,7 +1,7 @@
 <LDIF>
-  <Properties>test-tdb.properties</Properties>
-  <Sources>sources</Sources>
-  <LinkSpecifications>linkSpecs</LinkSpecifications>
-  <Mappings>mappings/mappings.ttl</Mappings>
-  <Output>output.nq</Output>
+  <properties>test-tdb.properties</properties>
+  <sources>sources</sources>
+  <linkSpecifications>linkSpecs</linkSpecifications>
+  <mappings>mappings/mappings.ttl</mappings>
+  <output>output.nq</output>
 </LDIF>

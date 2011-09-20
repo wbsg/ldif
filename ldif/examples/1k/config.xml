@@ -1,7 +1,7 @@
 <LDIF>
-  <Properties>test1k.properties</Properties>
-  <Sources>sources</Sources>
-  <LinkSpecifications>linkSpecs</LinkSpecifications>
-  <Mappings>mappings/ALL-to-Wiki.r2r.ttl</Mappings>
-  <Output>output1.nq</Output>
+  <properties>test1k.properties</properties>
+  <sources>sources</sources>
+  <linkSpecifications>linkSpecs</linkSpecifications>
+  <mappings>mappings/ALL-to-Wiki.r2r.ttl</mappings>
+  <output>output1.nq</output>
 </LDIF>
