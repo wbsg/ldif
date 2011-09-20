@@ -106,18 +106,29 @@ object NTriplesStringConverter {
     sb.toString
   }
 
-//  def convertJenaBlankNodeLabelsToNTriplesLabels(jenaBNLabel: String): String = {
-//    var converted = jenaBNLabel.replace('_', 'A')
-//    converted = converted.replace('-', 'B')
-//    "J" + converted.replace(':', 'C')
-//  }
-
   def convertBnodeLabel(label : String) : String = {
     // see http://www.w3.org/TR/rdf-sparql-query/#rBLANK_NODE_LABEL
-    //TODO
-    var converedLabel = label
-    if (!label.startsWith("b"))
-      converedLabel = "b"+converedLabel
-    converedLabel.replaceAll("[_:.-]","X")
+    val sb = new StringBuilder
+
+    val inputLength = label.length
+    var offset = 0
+
+    while (offset < inputLength)
+    {
+      val c = label.codePointAt(offset)
+      if ((offset == 0) && !((c >= 65 && c <= 90) || (c >= 97 && c <= 122)))
+        sb append "B"
+
+      if ((c >= 65 && c <= 90) || (c >= 97 && c <= 122) || (c >= 48 && c <= 57))
+        sb append c.toChar
+      else {
+        val hexString = c.toHexString.toUpperCase
+        sb append hexString
+      }
+
+      offset += Character.charCount(c)
+    }
+    sb.toString
+
   }
 }
