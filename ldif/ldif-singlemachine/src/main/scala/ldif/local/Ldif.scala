@@ -32,37 +32,24 @@ object Ldif {
       val config = SchedulerConfig.load(configFile)
       val scheduler = new Scheduler(config, debug)
 
+      // Evaluate jobs at most once. Evaluate import first, then integrate.
       if (scheduler.runOnce) {
-        scheduler.evaluateJobs
+        scheduler.evaluateImportJobs
         while (!scheduler.allJobsCompleted) {
             // wait for jobs to be completed
             Thread.sleep(1000)
         }
+        scheduler.evaluateIntegrationJob(false)
         sys.exit(0)
       }
-      else
+      else {
+        // Evaluate jobs every 10 sec, run as server
         while(true){
-          // evaluate jobs every 10 seconds
-          runInBackground(scheduler.evaluateJobs)
+          scheduler.evaluateJobs
           Thread.sleep(10 * 1000)
-        }
-    }
-  }
-
-  /* Evaluate an expression in the background  */
-  private def runInBackground(function : => Unit) {
-    val thread = new Thread {
-      private val listener: FatalErrorListener = FatalErrorListener
-
-      override def run {
-        try {
-          function
-        } catch {
-          case e: Exception => listener.reportError(e)
         }
       }
     }
-    thread.start
   }
 
 }

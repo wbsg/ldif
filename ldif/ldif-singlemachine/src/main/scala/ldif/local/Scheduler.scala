@@ -26,22 +26,37 @@ class Scheduler (val config : SchedulerConfig, debug : Boolean = false) {
   /* Evaluate updates/integration */
   def evaluateJobs() {
     synchronized {
-      if (integrationJob != null && checkUpdate(integrationJob)){
-        runningIntegrationJobs = true
-        runIntegration
-      }
-      for (job <- importJobs.filter(checkUpdate(_))) {
-        // check if this job is already running
-        if (!runningImportJobs.get(job.id)) {
-          runImport(job)
-        }
-      }
+      evaluateIntegrationJob(true)
+      evaluateImportJobs
       startup = false
+    }
+  }
+
+  def evaluateIntegrationJob(inBackground : Boolean) {
+    if (integrationJob != null && checkUpdate(integrationJob)) {
+      runningIntegrationJobs = true
+      if (inBackground)
+        runInBackground{runIntegration()}
+      else runIntegration()
+
+    }
+  }
+
+  def evaluateImportJobs {
+    for (job <- importJobs.filter(checkUpdate(_))) {
+      // check if this job is already running
+      if (!runningImportJobs.get(job.id)) {
+        runImport(job)
+      }
     }
   }
 
   /* Evaluate if all jobs should run only once (at startup) or never */
   def runOnce : Boolean = {
+    if (config.properties.getProperty("oneTimeExecution", "false") == "true") {
+      log.info("One time execution enabled")
+      return true
+    }
     for (job <- importJobs)
       if (job.refreshSchedule != "onStartup" && job.refreshSchedule != "never")
         return false
@@ -54,12 +69,9 @@ class Scheduler (val config : SchedulerConfig, debug : Boolean = false) {
 
   /* Execute the integration job */
   def runIntegration() {
-    runInBackground
-    {
       integrationJob.runIntegration
       log.info("Integration Job completed")
       runningIntegrationJobs = false
-    }
   }
 
   /* Execute an import job, update local source */
@@ -68,7 +80,7 @@ class Scheduler (val config : SchedulerConfig, debug : Boolean = false) {
     {
       runningImportJobs.replace(job.id, true)
       val stopWatch = new StopWatch
-      log.info("Running import job "+ job.id)
+      log.info("Running import job "+ job.id +" ("+job.refreshSchedule+")")
       stopWatch.getTimeSpanInSeconds()
 
       val tmpDumpFile = getTmpDumpFile(job)
