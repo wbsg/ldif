@@ -1,0 +1,212 @@
+@prefix map: <file:/C:/apps/kegg_genes/kegg.n3#> .
+@prefix db: <> .
+@prefix genes: <vocab/> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix d2rq: <http://www.wiwiss.fu-berlin.de/suhl/bizer/D2RQ/0.1#> .
+@prefix d2r: <http://sites.wiwiss.fu-berlin.de/suhl/bizer/d2r-server/config.rdf#> .
+@prefix jdbc: <http://d2rq.org/terms/jdbc/> .
+@prefix foaf: <http://xmlns.com/foaf/0.1/> .
+@prefix dbpedia: <http://dbpedia.org/ontology/> .
+@prefix drugbank: <http://www4.wiwiss.fu-berlin.de/drugbank/resource/drugbank/> .
+
+map:Server a d2r:Server;
+    rdfs:label "D2R Server publishing the KEGG GENES Dataset";
+    d2r:baseURI <http://wiking.vulcan.com/neurobase/kegg_genes/>;
+#    d2r:baseURI <http://www4.wiwiss.fu-berlin.de/kegg_genes/>;
+#    d2r:baseURI <http://localhost:2037/>;
+    d2r:port 2037;
+    .
+
+map:database a d2rq:Database;
+    d2rq:jdbcDriver "com.mysql.jdbc.Driver";
+    d2rq:username "root";
+    d2rq:jdbcDSN "jdbc:mysql://127.0.0.1/neurobase_kegg_genes_d2r?autoReconnect=true";
+    jdbc:keepAlive "3600"; # value in seconds
+    d2rq:password "";
+    d2rq:resultSizeLimit 500;    
+    .
+
+# Gene
+map:gene a d2rq:ClassMap;
+	d2rq:dataStorage map:database;
+	d2rq:uriPattern "gene/@@genes.combinedid@@";
+	d2rq:class genes:gene;
+	.
+	
+map:gene__id a d2rq:PropertyBridge;
+	d2rq:belongsToClassMap map:gene;
+	d2rq:property genes:GeneId;
+	d2rq:column "genes.combinedid";
+	d2rq:datatype xsd:string;
+	.
+	
+map:gene__organism a d2rq:PropertyBridge;
+	d2rq:belongsToClassMap map:gene;
+	d2rq:property genes:organism;
+	d2rq:column "genes.organism";
+	d2rq:datatype xsd:string;
+	.
+	
+map:gene__position a d2rq:PropertyBridge;
+	d2rq:belongsToClassMap map:gene;
+	d2rq:property genes:position;
+	d2rq:column "genes.position";
+	d2rq:datatype xsd:string;
+	.
+	
+map:gene__definition a d2rq:PropertyBridge;
+	d2rq:belongsToClassMap map:gene;
+	d2rq:property genes:definition;
+	d2rq:column "genes.definition";
+	d2rq:datatype xsd:string;
+	.
+	
+map:gene__aaseq a d2rq:PropertyBridge;
+	d2rq:belongsToClassMap map:gene;
+	d2rq:property genes:aaseq;
+	d2rq:column "genes.aaseq";
+	d2rq:datatype xsd:string;
+	.
+	
+map:gene__ntseq a d2rq:PropertyBridge;
+	d2rq:belongsToClassMap map:gene;
+	d2rq:property genes:ntseq;
+	d2rq:column "genes.ntseq";
+	d2rq:datatype xsd:string;
+	.
+	
+map:gene__classes a d2rq:PropertyBridge;
+	d2rq:belongsToClassMap map:gene;
+	d2rq:property genes:class;
+	d2rq:datatype xsd:string;
+	d2rq:column "genes_classes.name";
+    d2rq:join "genes.id <= genes_classes.genes_id";
+	.
+	
+map:gene__motifs a d2rq:PropertyBridge;
+	d2rq:belongsToClassMap map:gene;
+	d2rq:property genes:motif;
+	d2rq:datatype xsd:string;
+	d2rq:column "genes_motifs.name";
+    d2rq:join "genes.id <= genes_motifs.genes_id";
+	.
+	
+map:gene__names a d2rq:PropertyBridge;
+	d2rq:belongsToClassMap map:gene;
+	d2rq:property genes:name;
+	d2rq:datatype xsd:string;
+	d2rq:column "genes_names.name";
+    d2rq:join "genes.id <= genes_names.genes_id";
+	.
+	
+map:gene__pdbstructures a d2rq:PropertyBridge;
+	d2rq:belongsToClassMap map:gene;
+	d2rq:property genes:pdbStructure;
+	d2rq:datatype xsd:string;
+	d2rq:column "genes_pdbstructures.name";
+    d2rq:join "genes.id <= genes_pdbstructures.genes_id";
+	.
+	
+map:gene__dblink a d2rq:PropertyBridge;
+	d2rq:belongsToClassMap map:gene;
+	d2rq:property genes:externalLink;
+    d2rq:join "genes.id <= genes_dblinks.id";
+	d2rq:sqlExpression "CONCAT(genes_dblinks.db, ':', genes_dblinks.external_id)";
+	.
+	
+# Disease
+map:disease a d2rq:ClassMap;
+	d2rq:dataStorage map:database;
+	d2rq:uriPattern "disease/@@diseases.id@@";
+	d2rq:class genes:disease;
+	.
+	
+map:disease__id a d2rq:PropertyBridge;
+	d2rq:belongsToClassMap map:disease;
+	d2rq:property genes:id;
+	d2rq:column "diseases.id";
+	d2rq:datatype xsd:string;
+	.
+
+map:disease__label a d2rq:PropertyBridge;
+	d2rq:belongsToClassMap map:disease;
+	d2rq:property rdfs:label;
+	d2rq:column "diseases.name";
+	d2rq:datatype xsd:string;
+	.
+
+map:refDisease a d2rq:PropertyBridge;
+	d2rq:belongsToClassMap map:gene;
+	d2rq:refersToClassMap map:disease;
+    d2rq:property genes:hasDisease;
+    d2rq:join "genes.id <= genes_diseases.genes_id";
+    d2rq:join "genes_diseases.diseases_id => diseases.id";
+	.
+	
+# Orthology
+map:orthology a d2rq:ClassMap;
+	d2rq:dataStorage map:database;
+	d2rq:uriPattern "orthology/@@orthologies.id@@";
+	d2rq:class genes:orthology;
+	.
+	
+map:orthology__id a d2rq:PropertyBridge;
+	d2rq:belongsToClassMap map:orthology;
+	d2rq:property genes:id;
+	d2rq:column "orthologies.id";
+	d2rq:datatype xsd:string;
+	.
+
+map:orthology__label a d2rq:PropertyBridge;
+	d2rq:belongsToClassMap map:orthology;
+	d2rq:property rdfs:label;
+	d2rq:column "orthologies.name";
+	d2rq:datatype xsd:string;
+	.
+	
+map:orthology__dblink a d2rq:PropertyBridge;
+	d2rq:belongsToClassMap map:orthology;
+	d2rq:property genes:externalLink;
+    d2rq:join "orthologies.id <= orthologies_dblinks.id";
+	d2rq:sqlExpression "CONCAT(orthologies_dblinks.db, ':', orthologies_dblinks.external_id)";
+	.
+
+map:refOrthology a d2rq:PropertyBridge;
+	d2rq:belongsToClassMap map:gene;
+	d2rq:refersToClassMap map:orthology;
+    d2rq:property genes:hasOrthology;
+    d2rq:join "genes.id <= genes_orthologies.genes_id";
+    d2rq:join "genes_orthologies.orthologies_id => orthologies.id";
+	.
+	
+# Pathway
+map:pathway a d2rq:ClassMap;
+	d2rq:dataStorage map:database;
+	d2rq:uriPattern "pathway/@@pathways.id@@";
+	d2rq:class genes:pathway;
+	.
+	
+map:pathway__id a d2rq:PropertyBridge;
+	d2rq:belongsToClassMap map:pathway;
+	d2rq:property genes:id;
+	d2rq:column "pathways.id";
+	d2rq:datatype xsd:string;
+	.
+
+map:pathway__label a d2rq:PropertyBridge;
+	d2rq:belongsToClassMap map:pathway;
+	d2rq:property rdfs:label;
+	d2rq:column "pathways.name";
+	d2rq:datatype xsd:string;
+	.
+
+map:refPathway a d2rq:PropertyBridge;
+	d2rq:belongsToClassMap map:gene;
+	d2rq:refersToClassMap map:pathway;
+    d2rq:property genes:hasPathway;
+    d2rq:join "genes.id <= genes_pathways.genes_id";
+    d2rq:join "genes_pathways.pathways_id => pathways.id";
+	.

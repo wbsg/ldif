@@ -1,0 +1,54 @@
+
+# How to generate a Kegg Genes full dataset
+------------------------------
+
+Steps:
+
+0. Get all the KEGG GENES input data
+   A single archive of all the KEGG GENES input data that you can use for the D2R conversion (18 GB) is available here:
+   http://mes.smw-lde-eu.s3.amazonaws.com/kegg/genes.tar.bz2
+
+1. Import the Kegg Genes dataset in a mysql db
+   use a php script which takes .ent files as input (loop)
+   > screen import-organisms.sh
+
+2. Create an RDF dump of the entire database, using the d2r_kegg_genes.n3 mapping
+   > d2r-server-0.7/dump-rdf -m d2r_kegg_genes.n3 -f N-TRIPLE -b http://wiking.vulcan.com/neurobase/kegg_genes/resource/ -o kegg_genes_20110804_full.nt
+
+
+
+------------------------------
+Notes:
+general assumption: a mysql server is running localy (port 3600) and user root (no pwd) exists
+
+1.
+ a) import-organisms.sh code
+     #!/bin/bash
+     for i in ../genes/organisms/*/*.ent; do php db_import_kegg_genes.php $i; done
+     for i in ../genes/organisms_est/*/*.ent; do php db_import_kegg_genes.php $i; done
+     for i in ../genes/organisms_new/*/*.ent; do php db_import_kegg_genes.php $i; done
+
+ b) The db_import_kegg_genes.php script has been changed in order to import correctly all the organisms
+
+ c) The original php script (only organisms/mmu or organisms/hsa) is available here
+    http://projects.mediaeventservices.com/repositories/entry/smw-lde/trunk/UseCase/KEGG/GENES/db_import_kegg_genes.php
+    (depends on these http://projects.mediaeventservices.com/repositories/browse/smw-lde/trunk/UseCase/KEGG/importer)
+
+ d) Requires php5 and php5-mysql
+
+ e) Useful query to check the size of the mysql db
+    SELECT table_schema 'database', concat( round( sum( data_length + index_length ) / ( 1024 *1024 ) , 2 ) , 'M' ) size
+    FROM information_schema.TABLES WHERE ENGINE=('MyISAM' || 'InnoDB' ) GROUP BY table_schema;
+
+
+
+2.
+ a) The original d2r mapping document
+    http://projects.mediaeventservices.com/repositories/entry/smw-lde/trunk/UseCase/KEGG/GENES/d2r_kegg_genes.n3
+
+ b) Requires d2r-server
+    http://www4.wiwiss.fu-berlin.de/bizer/d2r-server/
+   (dump-rdf must be executable)
+
+ c) See also http://www4.wiwiss.fu-berlin.de/bizer/d2rq/spec/#dumprdf
+
