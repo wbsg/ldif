@@ -130,6 +130,10 @@ class Scheduler (val config : SchedulerConfig, debug : Boolean = false) {
         }
       }
       else {
+        if (!debug) {
+          FileUtils.deleteQuietly(tmpDumpFile)
+          FileUtils.deleteQuietly(tmpProvenanceFile)
+        }
         runningImportJobs.replace(job.id, false)
         log.warning("Job " + job.id + " has not been imported - see log for details")
       }

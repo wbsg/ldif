@@ -1,0 +1,8 @@
+<scheduler>
+  <properties>example1k.properties</properties>
+  <dataSources>dataSources</dataSources>
+  <importJobs>importJobs</importJobs>
+  <integrationJob>integration-config.xml</integrationJob>
+  <dumpLocation>dumps</dumpLocation>
+</scheduler>
+

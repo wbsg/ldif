@@ -22,7 +22,7 @@
     <xs:element name="source" type="xs:string" substitutionGroup="complexSource"/>
     <xs:element name="sources" type="xs:string" substitutionGroup="complexSource"/>
 
-    <xs:element name="LDIF">
+    <xs:element name="integrationJob">
         <xs:complexType>
             <xs:sequence>
 
@@ -36,7 +36,7 @@
 
                 <xs:element name="output" type="xs:string" />
 
-                <xs:element name="runSchedule" type="ldif:runScheduleType" />
+                <xs:element name="runSchedule" type="ldif:runScheduleType" minOccurs="0" />
 
             </xs:sequence>
         </xs:complexType>

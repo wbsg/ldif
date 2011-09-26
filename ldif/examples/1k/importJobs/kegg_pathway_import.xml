@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<importJob xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+            xsi:schemaLocation="http://www4.wiwiss.fu-berlin.de/ldif/ ../../xsd/ImportJob.xsd"
+            xmlns="http://www4.wiwiss.fu-berlin.de/ldif/">
+    <internalId>KeggPathway.0</internalId>
+    <dataSource>KeggPathway</dataSource>
+    <refreshSchedule>onStartup</refreshSchedule>
+    <quadImportJob>
+        <dumpLocation>examples/1k/sources/kegg_pathway_20101227_1000.nq</dumpLocation>
+    </quadImportJob>
+</importJob>
