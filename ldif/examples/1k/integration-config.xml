@@ -1,7 +1,7 @@
-<integration>
+<integrationJob>
   <properties>example1k.properties</properties>
   <sources>dumps</sources>
   <linkSpecifications>linkSpecs</linkSpecifications>
   <mappings>mappings</mappings>
   <output>output_example1k.nq</output>
-</integration>
+</integrationJob>
