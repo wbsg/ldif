@@ -1,6 +1,6 @@
 package ldif.local
 
-import config.{IntegrationConfig, SchedulerConfig}
+import config.SchedulerConfig
 import java.io.File
 import java.util.logging.Logger
 import ldif.util.FatalErrorListener

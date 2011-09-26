@@ -143,8 +143,11 @@ class Scheduler (val config : SchedulerConfig, debug : Boolean = false) {
 
 
   private def checkUpdate(schedule : String, lastUpdate : Calendar) : Boolean = {
-    if (startup && schedule == "onStartup") {
-      true
+    if (schedule == "onStartup") {
+      if (startup)
+        true
+      else
+        false
     }
     else if (schedule == "never") {
       false
