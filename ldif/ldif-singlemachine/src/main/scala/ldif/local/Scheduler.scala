@@ -222,7 +222,7 @@ class Scheduler (val config : SchedulerConfig, debug : Boolean = false) {
     }
   }
 
-  private def loadImportJob(file : File) = ImportJob.fromXML(XML.loadFile(file))
+  private def loadImportJob(file : File) = ImportJob.load(file)
 
   // Build local files for the import job
   private def getDumpFile(job : ImportJob) = new File(config.dumpLocationDir, job.id +".nq")

@@ -2,8 +2,9 @@ package ldif.local.config
 
 import java.util.logging.Logger
 import java.io.File
-import xml.{Elem, XML}
 import java.util.Properties
+import ldif.util.ValidatingXMLReader
+import xml.{Node, Elem, XML}
 
 case class SchedulerConfig (importJobsDir : File, integrationJob : File, dataSourcesDir : File, dumpLocationDir : File, properties : Properties)  {}
 
@@ -11,8 +12,13 @@ object SchedulerConfig
 {
   private val log = Logger.getLogger(getClass.getName)
 
-  def load(configFile : File) =
-  {
+  private val schemaLocation = "xsd/SchedulerConfig.xsd"
+
+  //TODO def empty = SchedulerConfig(Nil, Nil, Nil)
+
+  def load = new ValidatingXMLReader(fromFile, schemaLocation)
+
+  def fromFile(configFile : File) = {
     val baseDir = configFile.getParent
     val xml = XML.loadFile(configFile)
 
@@ -39,7 +45,7 @@ object SchedulerConfig
     )
   }
 
-  private def getFile (xml : Elem, key : String, baseDir : String) : File = {
+  private def getFile (xml : Node, key : String, baseDir : String) : File = {
     val value : String = (xml \ key text)
     var file : File = null
     if (value != ""){

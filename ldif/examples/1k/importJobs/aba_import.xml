@@ -6,6 +6,6 @@
     <dataSource>ABA</dataSource>
     <refreshSchedule>weekly</refreshSchedule>
     <quadImportJob>
-        <dumpLocation>examples/1k/sources/aba_mouse_20101010_1000.nq</dumpLocation>
+        <dumpLocation>examples/1k/ources/aba_mouse_20101010_1000.nq</dumpLocation>
     </quadImportJob>
 </importJob>

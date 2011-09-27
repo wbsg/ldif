@@ -4,6 +4,7 @@ import java.io.File
 import xml.XML
 import java.util.Properties
 import java.util.logging.Logger
+import ldif.util.ValidatingXMLReader
 
 case class IntegrationConfig(sources : File, linkSpecDir : File, mappingDir : File, outputFile : File,  properties : Properties, runSchedule : String) {}
 
@@ -11,7 +12,11 @@ object IntegrationConfig
 {
   private val log = Logger.getLogger(getClass.getName)
 
-  def load(configFile : File) =
+  private val schemaLocation = "xsd/IntegrationJob.xsd"
+
+  def load = new ValidatingXMLReader(fromFile, schemaLocation)
+
+  def fromFile(configFile : File) =
   {
     val baseDir = configFile.getParent
     val xml = XML.loadFile(configFile)

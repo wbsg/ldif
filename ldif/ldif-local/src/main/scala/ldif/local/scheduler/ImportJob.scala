@@ -5,7 +5,8 @@ import ldif.entity.Node
 import collection.mutable.{HashSet, ListBuffer, Set}
 import java.io._
 import java.util.Date
-import ldif.util.{Consts, Identifier}
+import xml.XML
+import ldif.util.{ValidatingXMLReader, Consts, Identifier}
 
 trait ImportJob {
   val id : Identifier
@@ -57,6 +58,14 @@ trait ImportJob {
 }
 
 object ImportJob {
+
+  private val schemaLocation = "xsd/ImportJob.xsd"
+
+  def load = new ValidatingXMLReader(fromFile, schemaLocation)
+
+  def fromFile(file : File) = {
+   fromXML(XML.loadFile(file))
+  }
 
   /* Build an Import Job from XML config */
   // - assume only one import job is defined

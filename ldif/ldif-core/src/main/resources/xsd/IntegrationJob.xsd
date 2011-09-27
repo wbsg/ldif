@@ -19,8 +19,8 @@
 
     <xs:element name="complexSource" abstract="true" />
 
-    <xs:element name="source" type="xs:string" substitutionGroup="complexSource"/>
-    <xs:element name="sources" type="xs:string" substitutionGroup="complexSource"/>
+    <xs:element name="source" type="xs:string" substitutionGroup="ldif:complexSource"/>
+    <xs:element name="sources" type="xs:string" substitutionGroup="ldif:complexSource"/>
 
     <xs:element name="integrationJob">
         <xs:complexType>
@@ -28,7 +28,7 @@
 
                 <xs:element name="properties" type="xs:string" minOccurs="0"/>
 
-                <xs:element ref="complexSource" maxOccurs="unbounded"/>
+                <xs:element ref="ldif:complexSource" maxOccurs="unbounded"/>
 
                 <xs:element name="linkSpecifications" type="xs:string" />
 
