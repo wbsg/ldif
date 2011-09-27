@@ -3,7 +3,7 @@
             xsi:schemaLocation="http://www4.wiwiss.fu-berlin.de/ldif/ ../../xsd/ImportJob.xsd"
             xmlns="http://www4.wiwiss.fu-berlin.de/ldif/">
     <internalId>musicbrainz.0</internalId>
-    <dataSource>MusicBrainz</dataSource>
+    <dataSource>MusicBrainz_Zitgeist</dataSource>
     <refreshSchedule>never</refreshSchedule>
     <crawlImportJob>
         <seedURIs>

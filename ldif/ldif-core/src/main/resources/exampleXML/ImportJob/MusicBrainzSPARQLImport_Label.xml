@@ -2,13 +2,13 @@
 <importJob xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
             xsi:schemaLocation="http://www4.wiwiss.fu-berlin.de/ldif/ ../../xsd/ImportJob.xsd"
             xmlns="http://www4.wiwiss.fu-berlin.de/ldif/">
-    <internalId>discogs.2</internalId>
-    <dataSource>Discogs</dataSource>
-    <refreshSchedule>onStartup</refreshSchedule>
+    <internalId>musicbrainz.1</internalId>
+    <dataSource>MusicBrainz_Talis</dataSource>
+    <refreshSchedule>never</refreshSchedule>
     <sparqlImportJob>
         <endpointLocation>http://api.talis.com/stores/musicbrainz/services/sparql</endpointLocation>
         <sparqlPatterns>
-            <pattern>?s a &lt;http://purl.org/ontology/mo/Record&gt;</pattern>
+            <pattern>?s a &lt;http://purl.org/ontology/mo/Label&gt;</pattern>
         </sparqlPatterns>
     </sparqlImportJob>
 </importJob>

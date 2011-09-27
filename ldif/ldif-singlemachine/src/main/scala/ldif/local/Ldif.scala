@@ -35,6 +35,7 @@ object Ldif {
       // Evaluate jobs at most once. Evaluate import first, then integrate.
       if (scheduler.runOnce) {
         scheduler.evaluateImportJobs
+        Thread.sleep(1000)
         while (!scheduler.allJobsCompleted) {
             // wait for jobs to be completed
             Thread.sleep(1000)
