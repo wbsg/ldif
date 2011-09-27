@@ -6,7 +6,7 @@
     <dataSource>Discogs</dataSource>
     <refreshSchedule>onStartup</refreshSchedule>
     <sparqlImportJob>
-        <endpointLocation>http://beta.kasabi.com/dataset/discogs/apis/sparql</endpointLocation>
+        <endpointLocation>http://api.talis.com/stores/musicbrainz/services/sparql</endpointLocation>
         <sparqlPatterns>
             <pattern>?s a &lt;http://purl.org/ontology/mo/Label&gt;</pattern>
         </sparqlPatterns>
