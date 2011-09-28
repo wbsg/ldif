@@ -88,7 +88,7 @@ provenance.</p>
 <h2><a href="http://www4.wiwiss.fu-berlin.de/bizer/ldif/releases/ldif-0.2.zip">Download
 LDIF</a><br>
 </h2>
-<small>v0.2, released 2011-08-25</small>
+<small>v0.3, released 2011-09-29</small>
 </div>
 <h2 id="news">News</h2>
 <ul>
@@ -354,18 +354,18 @@ genes and other expressions that are described in multiple datasets.</p>
 configuration. The configuration options are explained in the Section <a href="#config">Configuration</a> below. <br>
 </p>
 <ul>
-  <pre>&lt;LDIF&gt;<br>  &lt;properties&gt;test1k.properties&lt;/properties&gt;<br>  &lt;sources&gt;sources&lt;/sources&gt;<br>  &lt;linkSpecifications&gt;linkSpecs&lt;/linkSpecifications&gt;<br>  &lt;mappings&gt;mappings&lt;/mappings&gt;<br>  &lt;output&gt;output.nq&lt;/output&gt;<br>&lt;/LDIF&gt;</pre>
+  <pre>&lt;integrationJob&gt;<br>  &lt;properties&gt;test1k.properties&lt;/properties&gt;<br>  &lt;sources&gt;sources&lt;/sources&gt;<br>  &lt;linkSpecifications&gt;linkSpecs&lt;/linkSpecifications&gt;<br>  &lt;mappings&gt;mappings&lt;/mappings&gt;<br>  &lt;output&gt;output.nq&lt;/output&gt;<br>&lt;/integrationJob&gt;</pre>
 </ul>
 <p>Execution instructions:</p>
 <ul>
   <li>Change into the LDIF root dir.</li>
   <li>Under Unix type:</li>
   <ul>
-    <pre>bin/run examples/1k/config.xml</pre>
+    <pre>bin/ldif-integrate examples/1k/integration-config.xml</pre>
   </ul>
   <li>Under Windows type:</li>
   <ul>
-    <pre>bin\run.bat examples\1k\config.xml</pre>
+    <pre>bin\ldif-integrate.bat examples\1k\integration-config.xml</pre>
   </ul>
 </ul>
 <h3>Example Data Translation </h3>
@@ -442,7 +442,7 @@ that will change in future releases. <br>
 A typical config file looks like
 this:<br>
 </p>
-<pre>&lt;LDIF&gt;<br>  &lt;properties&gt;test.properties&lt;/properties&gt;<br>  &lt;sources&gt;sources&lt;/sources&gt;<br>  &lt;linkSpecifications&gt;linkSpecs&lt;/linkSpecifications&gt;<br>  &lt;mappings&gt;mappings&lt;/mappings&gt;<br>  &lt;output&gt;output.nq&lt;/output&gt;<br>&lt;/LDIF&gt;</pre>
+<pre>&lt;integrationJob&gt;<br>  &lt;properties&gt;test.properties&lt;/properties&gt;<br>  &lt;sources&gt;sources&lt;/sources&gt;<br>  &lt;linkSpecifications&gt;linkSpecs&lt;/linkSpecifications&gt;<br>  &lt;mappings&gt;mappings&lt;/mappings&gt;<br>  &lt;output&gt;output.nq&lt;/output&gt;<br>&lt;/integrationJob&gt;</pre>
 <p>It has the following elements:</p>
 <ul>
   <li><span style="font-style: italic;">Properties</span>: The path to
@@ -553,7 +553,7 @@ Scheduler for running import and integration tasks automatically<br>
 Configuration file XML schemas for validation<br>
 URI minting<br>
 </td>
-      <td> 9/27/2011</td>
+      <td> 9/29/2011</td>
     </tr>
     <tr class="odd">
       <td> 0.2</td>

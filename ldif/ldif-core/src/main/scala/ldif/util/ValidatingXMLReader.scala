@@ -40,8 +40,6 @@ class ValidatingXMLReader[T](deserializer: File => T, schemaPath: String) {
       if (schemaStream == null) throw new ValidationException("XML Schema for Link Specification not found")
       val schema = schemaFactory.newSchema(new StreamSource(schemaStream))
 
-      println(schema.toString)
-
       //Create parser
       val parserFactory = SAXParserFactory.newInstance()
       parserFactory.setNamespaceAware(true)
