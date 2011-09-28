@@ -1,6 +1,7 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
-<html><head>
-  <title>LDIF - Linked Data Integration Framework</title>
+<html><head><title>LDIF - Linked Data Integration Framework</title>
+
+  
 
   
   
@@ -55,9 +56,7 @@ table tr.even {background-color: #fff}
 table tr.odd {background-color: #f6f6f6}
   </style>
   
-  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-
-</head><body>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"></head><body>
 <div id="logo" align="right"><a href="http://www.wiwiss.fu-berlin.de/en/institute/pwo/bizer/index.html"><img src="img/fu-logo.gif" alt="Freie Universität Berlin Logo" border="0"></a>&nbsp;<br>
 <a href="http://mediaeventservices.com"><img src="img/logo.gif" alt="Media Event Services"></a></div>
 
@@ -85,19 +84,26 @@ Web into <br>
 a clean, local target representation while keeping track of data
 provenance.</p>
 <div id="download">
-<h2><a href="http://www4.wiwiss.fu-berlin.de/bizer/ldif/releases/ldif-0.2.zip">Download
+<h2><a href="http://www4.wiwiss.fu-berlin.de/bizer/ldif/releases/ldif-0.3.zip">Download
 LDIF</a><br>
 </h2>
 <small>v0.3, released 2011-09-29</small>
 </div>
 <h2 id="news">News</h2>
 <ul>
+  <li><strong>9/29/2011: Version 0.3 released.</strong> The third
+LDIF release provides access modules for replicating datasets locally
+via file download, crawling or SPARQL. It offers a URI minting feature
+to produce descriptive URIs and a scheduler to launch data import and
+integration jobs.<br>
+<strong></strong></li>
   <li><strong>8/25/2011: Version 0.2 released.</strong> The second
 LDIF release provides improved performance (faster data loading,
 parallelization of the data translation), smaller memory footprint, a
 new N-Triples output module, new performance evaluation results for use
 cases up to 100 million triples.<br>
   </li>
+
   <li><strong>6/29/2011: Version 0.1 released.</strong> This alpha
 version provides for translating data that is represented using
 different source vocabularies into a single target vocabulary and for
@@ -109,7 +115,10 @@ a single target URI.</li>
   <li><a href="#about">About LDIF</a></li>
   <li><a href="#components">LDIF components</a></li>
   <li><a href="#quickstart">Quick start</a></li>
-  <li><a href="#examples">Example: Using LDIF for integrating Life
+  <li><a href="#example1">Example 1: Using LDIF for integrating Data from the Music Domain<br>
+    </a></li>
+
+  <li><a href="#example2">Example 2: Using LDIF for integrating Life
 Science Data</a></li>
   <li><a href="#performance">Performance Evaluation</a> </li>
   <li><a href="#config">Configuration options</a></li>
@@ -302,9 +311,32 @@ page)</li>
 directory of LDIF:<br>
   </li>
 </ol>
-<pre>bin/run &lt;path-to-ldif-config-file&gt;<br><br>bin\run.bat &lt;path-to-ldif-config-file&gt;<br></pre>
+<pre>bin/ldif &lt;path-to-ldif-config-file&gt;<br><br>bin\ldif.bat &lt;path-to-ldif-config-file&gt;<br></pre>
 For details about the configuration file and parameters, see <a href="#config">Section 6</a>. A detailed example is given next.<br>
-<h2 id="examples"><a name="examples"></a>4. Example: Using LDIF to
+<h2 id="examples">4. Example: Using LDIF for integrating Data from the Music Domain</h2>
+<br><br>
+This example shows how LDIF is applied to integrate data originating
+from the following sources containing data from the music domain:<br>
+<ul>
+  <li><a href="http://dbpedia.org/">DBpedia<br>
+    </a></li>
+  <li><a href="http://rdf.freebase.com/">Freebase</a></li>
+  <li><a href="http://musicbrainz.dataincubator.org/">MusicBrainz</a> (at Talis)<br>
+  </li>
+  <li><a href="http://www.bbc.co.uk/music/artist/">BBC Music</a></li>
+</ul>
+Each source is accessed with the appropriate access module. The DBpedia
+dataset is downloaded, Freebase is crawled because of lack of other
+access possibilities, MusicBrainz and BBC Music are both accessed via
+SPARQL because no download of the dataset is available.<br>
+<br>
+The following configuration files for the different sources are used:<br>
+<ul>
+  <li>DBpedia<br>
+  </li>
+</ul>
+
+<h2 id="examples"><a name="example2"></a>5. Example: Using LDIF to
 integrate Life Science Data </h2>
 <br>
 <p>This example shows how LDIF is applied to integrate data originating
@@ -427,11 +459,11 @@ on line 10 in the output was produced by a complex mapping that had to
 consider all three quads of the input (lines 12-14).<br>
   </li>
 </ul>
-<h2 id="performance"><a name="performance"></a>5.
+<h2 id="performance"><a name="performance"></a>6.
 Performance Evaluation</h2>
 <p>We regularly carry out performance evaluations. For more
 details and the latest results please visit our <a href="benchmark.html">Benchmark results</a> page.</p>
-<h2 id="configuration"><a name="config"></a>6. Configuration
+<h2 id="configuration"><a name="config"></a>7. Configuration
 Options</h2>
 <p>This section describes how an LDIF configuration file looks like and
 which parameters you can modify to change the runtime behavior of LDIF.</p>
@@ -529,14 +561,14 @@ a triple output as N-Triple. Default: <span style="font-family: monospace;">nq</
   </li>
 </ul>
 <pre style="margin-left: 40px;"><span style="font-weight: bold;">outputFormat = nq | nt</span></pre>
-<h2 id="development"><a name="code"></a>7. Source
+<h2 id="development"><a name="code"></a>8. Source
 Code and Development</h2>
 <p>The latest source code is available from the <a href="http://www.assembla.com/spaces/ldif/wiki">LDIF development page</a>
 on Assembla.com.</p>
 <p>The framework can be used under the terms of the <a href="http://www.apache.org/licenses/LICENSE-2.0">Apache Software
 License</a>.
 </p>
-<h2 id="history"><a name="code"></a>8. Version history </h2>
+<h2 id="history"><a name="code"></a>9. Version history </h2>
 <p>
 </p>
 <table>
@@ -574,10 +606,10 @@ only for relevant data </td>
     </tr>
   </tbody>
 </table>
-<h2><a name="feedback" id="feedback"></a>9. Support and Feedback </h2>
+<h2><a name="feedback" id="feedback"></a>10. Support and Feedback </h2>
 <p>For questions and feedback please use the <a href="http://groups.google.com/group/ldif?hl=en">LDIF Google Group</a>.
 </p>
-<h2 id="relatedprojects"><a name="related"></a>10. References</h2>
+<h2 id="relatedprojects"><a name="related"></a>11. References</h2>
 <ul>
 </ul>
 <ul>
@@ -606,7 +638,7 @@ Christian Becker: <a href="http://www.wiwiss.fu-berlin.de/en/institute/pwo/bizer
 Consuming Linked Data, Bonn, Germany, October 2011.<span style="border-collapse: separate; color: rgb(0, 0, 0); font-family: 'Times New Roman'; font-style: normal; font-variant: normal; font-weight: normal; letter-spacing: normal; line-height: normal; orphans: 2; text-indent: 0px; text-transform: none; white-space: normal; widows: 2; word-spacing: 0px; font-size: medium;"><span style="color: rgb(51, 51, 51); font-family: Verdana,Arial,Helvetica,sans-serif; font-size: 11px; line-height: 15px;"><br>
     </span></span></li>
 </ol>
-<h2><a name="acknowledgments"></a>11. Acknowledgments </h2>
+<h2><a name="acknowledgments"></a>12. Acknowledgments </h2>
 <p>This work was supported in part by Vulcan Inc. as part of its <a href="http://www.projecthalo.com">Project Halo</a> and by the EU FP7
 project <a href="http://lod2.eu/">LOD2 - Creating Knowledge out of
 Interlinked Data</a> (Grant No. 257943). </p>
