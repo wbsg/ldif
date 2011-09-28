@@ -1,7 +1,8 @@
-<LDIF>
+<integrationJob xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xmlns="http://www4.wiwiss.fu-berlin.de/ldif/">
   <properties>test-provenance.properties</properties>
   <sources>sources-provenance</sources>
   <linkSpecifications>linkSpecs</linkSpecifications>
   <mappings>mappings/mappings.ttl</mappings>
   <output>output.nq</output>
-</LDIF>
+</integrationJob>
