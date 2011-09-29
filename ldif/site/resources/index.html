@@ -1,11 +1,6 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html><head><title>LDIF - Linked Data Integration Framework</title>
 
-
-
-  
-
-  
   
   <style>
 body { background: white; color: black; font-family: sans-serif; line-height: 1.4em; padding: 2.5em 3em; margin: 0; }
@@ -98,7 +93,7 @@ LDIF release provides access modules for replicating datasets locally
 via file download, crawling or SPARQL. It offers a URI minting feature
 to produce descriptive URIs and a scheduler to launch data import and
 integration jobs. Configuration files are validated via XML Schema before continuing execution.<br>
-<strong></strong></li>
+</li>
   <li><strong>8/25/2011: Version 0.2 released.</strong> The second
 LDIF release provides improved performance (faster data loading,
 parallelization of the data translation), smaller memory footprint, a
@@ -123,13 +118,13 @@ a single target URI.</li>
   <li><a href="#example2">Example 2: Using LDIF for integrating Life
 Science Data</a></li>
   <li><a href="#performance">Performance Evaluation</a> </li>
-  <li><a href="#config">Configuration options</a></li>
-  <li><a href="#code">Source code and development</a></li>
+  <li><a href="#configuration">Configuration options</a></li>
+  <li><a href="#development">Source code and development</a></li>
   <li><a href="#history">Version history</a></li>
   <li><a href="#feedback">Support and Feedback</a></li>
-  <li><a href="#related">References</a></li>
+  <li><a href="#references">References</a></li>
 </ol>
-<h2 id="about"><a name="about"></a>1. About LDIF<br>
+<h2 id="about">1. About LDIF<br>
 </h2>
 <p>The <a href="http://linkeddatabook.com/editions/1.0/index.html#htoc23">Web of
 Linked Data</a>
@@ -182,14 +177,14 @@ supported by LDIF.<br>
 <span class="Stil1"> </span> </p>
 <p style="text-align: left; margin-left: 120px;"><img style="border: 1px solid ; width: 650px; height: 496px;" alt="Example-architecture of an integration aware Linked Data application" src="img/linkeddataapp.png"></p>
 <p style="text-align: left; margin-left: 120px;">&nbsp;</p>
-<h2><a name="components"></a>2. LDIF Components<br>
+<h2 id="components">2. LDIF Components<br>
 </h2>
 <p>The LDIF Framework consists of the Runtime Environment and a set of
 pluggable modules. The pluggable modules are organized as data access
 components, a data transformation components and a data output
 components.
 </p>
-<p><img src="img/LDIFcomponents.png" height="92" width="299"></p>
+<p><img alt="LDIF components" src="img/LDIFcomponents.png" height="92" width="299"></p>
 Currently, we have implemented the following modules: <br>
 <h3>Web Data Access: Triple/Quad Dump Import</h3><br>
 
@@ -209,9 +204,7 @@ SPARQL access module. The relevant data to be queried can be further
 specified in the configuration file for a SPARQL import job. Data from
 each SPARQL import job gets tracked by its own named graph.<br>
 <h3>Data Access: N-Quads Loader<br>
-
 </h3>
-
 <p>The current version of LDIF expects input data to be represented as
 Named
 Graphs and be stored in <a href="http://sw.deri.org/2008/07/n-quads/">N-Quads
@@ -257,7 +250,7 @@ single target URI within the output data. In addition, it adds
 owl:sameAs links pointing at the original URIs, which makes it possible
 for applications to refer back to the data sources on the Web. If the
 LDIF input data already contains owl:sameAs links, the referenced
-URIsare normalized accordingly (optional, see <a href="#config">configuration</a>).
+URIsare normalized accordingly (optional, see <a href="#configuration">configuration</a>).
 Silk is a
 flexible identity
 resolution framework that allows the user to specify identity
@@ -298,16 +291,15 @@ memory. It is very fast but scales only depending on the amount of
 memory
 available. For instance, integrating 25 million triples required 5 GB
 memory within one of our <a href="benchmark.html">experiments</a>. </p>
-<h3><a name="nextSteps"></a>Next steps for LDIF</h3>
+<h3 id="nextSteps">Next steps for LDIF</h3>
 <p>Over the next months, we plan to extend LDIF along the
 following lines:<br>
 </p>
-  
-  <ol>
-  <li>Implement a <strong>Hadoop Version of the Runtime Environment </strong>in
+<ol>
+ <li>Implement a <strong>Hadoop Version of the Runtime Environment </strong>in
 order to be able to scale to really large amounts of input data.
 Processes and data will be distributed over a cluster of machines.</li>
-<li>Add a <strong>Data Quality Evaluation and Data Fusion Module</strong>
+  <li>Add a <strong>Data Quality Evaluation and Data Fusion Module</strong>
 which allows Web data to be filtered according to different data
 quality assessment policies and provides for fusing Web data according
 to different conflict resolution methods.</li>
@@ -317,7 +309,7 @@ configuration parameters. We plan to make the workflow and its
 configuration more flexible in order to make it easier to include
 additional modules that cover other data integration aspects. </li>
 </ol>
-<h2 id="quickstart"><a name="quickstart"></a>3. Quick start</h2>
+<h2 id="quickstart">3. Quick start</h2>
 <br>
 In order to experiment with LDIF follow these steps:<br>
 <ol>
@@ -329,8 +321,8 @@ directory of LDIF:<br>
   </li>
 </ol>
 <pre>bin/ldif &lt;path-to-scheduler-config-file&gt;<br><br>bin\ldif.bat &lt;path-to-scheduler-config-file&gt;<br></pre>
-For details about the configuration file and parameters, see <a href="#config">Section 6</a>. A detailed example is given next.<br>
-<h2 id="examples"><a name="example1"></a>4. Example: Using LDIF for integrating Data from the Music Domain</h2>
+For details about the configuration file and parameters, see <a href="#configuration">Section 6</a>. A detailed example is given next.<br>
+<h2 id="example1">4. Example: Using LDIF for integrating Data from the Music Domain</h2>
 <br><br>
 This example shows how LDIF is applied to integrate data originating
 from the following sources containing data from the music domain:<br>
@@ -346,8 +338,7 @@ dataset is downloaded, Freebase is crawled because of lack of other
 access possibilities, MusicBrainz and BBC Music are both accessed via
 SPARQL because no download of the dataset is available and crawling is
 in general inferior, because you might not gather all the instances you
-are interested in.<br>
-<br>
+are interested in.<br/>
 The following configuration files are used for importing the different sources<br>
 <ul>
   <li>DBpedia
@@ -364,14 +355,16 @@ The following configuration files are used for importing the different sources<b
       <a href="http://www.assembla.com/code/ldif/git/nodes/ldif/examples/music/ldif-config/ImportJob/BBCSPARQLImportMusicArtist.xml">Sparql-MusicArtist</a> , <a href="http://www.assembla.com/code/ldif/git/nodes/ldif/examples/music/ldif-config/ImportJob/BBCSPARQLImportRecord.xml">Sparql-Record</a>, <a href="http://www.assembla.com/code/ldif/git/nodes/ldif/examples/music/ldif-config/ImportJob/BBCSPARQLImportBirth.xml">Sparql-Birth</a>, <a href="http://www.assembla.com/code/ldif/git/nodes/ldif/examples/music/ldif-config/ImportJob/BBCSPARQLImportDeath.xml">Sparql-Death</a>
 
   </li>
+</ul>
 
 </ul>In order to run the example, please download LDIF and run the following commands:<br>
 <ul>
 <li>Change into the LDIF root dir.</li><li>Under Unix type:</li><ul><pre>bin/ldif examples/music/ldif-config/schedulerConfig.xml</pre></ul><li>Under Windows type:</li><ul><pre>bin\ldif.bat examples\music\ldif-config\schedulerConfig.xml</pre></ul>
-</ul>Please note that the execution of the import jobs can take several days, mainly because of the crawl job.<br>
- 
+</ul>
+Please note that the execution of the import jobs can take several days, mainly because of the crawl job.<br>
 
-<h2 id="examples"><a name="example2"></a>5. Example: Using LDIF to
+
+<h2 id="example2">5. Example: Using LDIF to
 integrate Life Science Data </h2>
 <br>
 <p>This example shows how LDIF is applied to integrate data originating
@@ -412,7 +405,7 @@ genes and other expressions that are described in multiple datasets.</p>
   <li><a href="http://www.assembla.com/code/ldif/git/nodes/ldif/examples/life-science/linkSpecs/pathways.xml">pathways.xml</a></li>
 </ul>
 <p>To run the example, please download LDIF and use the following LDIF
-configuration. The configuration options are explained in the Section <a href="#config">Configuration</a> below. <br>
+configuration. The configuration options are explained in the Section <a href="#configuration">Configuration</a> below. <br>
 </p>
 <ul>
   <pre>&lt;integrationJob&gt;<br>  &lt;properties&gt;life-science.properties&lt;/properties&gt;<br>  &lt;sources&gt;sources&lt;/sources&gt;<br>  &lt;linkSpecifications&gt;linkSpecs&lt;/linkSpecifications&gt;<br>  &lt;mappings&gt;mappings&lt;/mappings&gt;<br>  &lt;output&gt;output.nq&lt;/output&gt;<br>&lt;/integrationJob&gt;</pre>
@@ -488,116 +481,159 @@ on line 10 in the output was produced by a complex mapping that had to
 consider all three quads of the input (lines 12-14).<br>
   </li>
 </ul>
-<h2 id="performance"><a name="performance"></a>6.
-Performance Evaluation</h2>
+<h2 id="performance">6. Performance Evaluation</h2>
 <p>We regularly carry out performance evaluations. For more
 details and the latest results please visit our <a href="benchmark.html">Benchmark results</a> page.</p>
-<h2 id="configuration"><a name="config"></a>7. Configuration
+<h2 id="configuration">7. Configuration
 Options</h2>
-<p>This section describes how an LDIF configuration file looks like and
+<p>This section describes how an LDIF configuration files look like and
 which parameters you can modify to change the runtime behavior of LDIF.</p>
-<h3>LDIF configuration file</h3>
-<p>LDIF is configured with an XML file, whose current structure is very
-simple because the integration flow is static at the moment - something
-that will change in future releases. <br>
-A typical config file looks like
-this:<br>
-</p>
-<pre>&lt;integrationJob&gt;<br>  &lt;properties&gt;test.properties&lt;/properties&gt;<br>  &lt;sources&gt;sources&lt;/sources&gt;<br>  &lt;linkSpecifications&gt;linkSpecs&lt;/linkSpecifications&gt;<br>  &lt;mappings&gt;mappings&lt;/mappings&gt;<br>  &lt;output&gt;output.nq&lt;/output&gt;<br>&lt;/integrationJob&gt;</pre>
+
+<h3>Schedule Job Configuration</h3>
+<p>A Schedule Job updates the local sources and it is configured with an XML document, whose structure is described by this <a href="http://www.assembla.com/code/ldif/git/nodes/ldif/ldif-core/src/main/resources/xsd/SchedulerConfig.xsd">XML Schema</a>.</p>
+
+<p>A typical configuration document looks like this:</p>
+<pre>&lt;scheduler&gt;<br>  &lt;properties&gt;scheduler.properties&lt;/properties&gt;<br>  &lt;dataSources&gt;datasources&lt;/dataSources&gt;<br>  &lt;importJobs&gt;importJobs&lt;/importJobs&gt;<br>  &lt;integrationJobs&gt;integration-config.xml&lt;/integrationJob&gt;<br>  &lt;dumpLocation&gt;dumps&lt;/dumpLocation&gt;<br>&lt;/scheduler&gt;</pre>
+
 <p>It has the following elements:</p>
 <ul>
-  <li><span style="font-style: italic;">Properties</span>: The path to
-a Java properties file for configuration parameters. See the <a href="#configurationproperties">following&nbsp; section</a> for more
-details.<br>
-  </li>
-  <li><span style="font-style: italic;">Sources</span>: A directory
-containing the source data sets. These files in this directory must be
-in <a href="http://sw.deri.org/2008/07/n-quads/">N-Quads</a> format
-and may
-be compressed (.gz, .zip or .bz2).</li>
-  <li><span style="font-style: italic;">LinkSpecifications</span>: A
-directory containing the <a href="http://www.assembla.com/wiki/show/silk/Link_Specification_Language">Silk
-link specifications</a>.</li>
-  <li><span style="font-style: italic;">Mappings</span>: A directory
-containing the <a href="http://www4.wiwiss.fu-berlin.de/bizer/r2r/spec/index.html#mappings">R2R
-mappings</a>.</li>
-  <li><span style="font-style: italic;">Output</span>: The name of the
-file to which the
-output should be written.<br>
-  </li>
+  <li><i>properties</i> - the path to a Java properties file for configuration parameters, see below for more details; </li>
+  <li><i>dataSources</i> - a directory containing the Data Sources configurations;</li>
+  <li><i>importJobs</i> - a directory containing the Import Jobs configurations;</li>
+  <li><i>integrationJob</i> - a document containing the Integration Job configurations;</li>
+  <li><i>dumpLocation</i> - a directory where the local dumps should be loaded.</li>
 </ul>
-<p>All the paths are relative to the config file location. In this case
-there is a root directory with the config file and the test.properties
-file in it. Furthermore the following directories would be nested in
-the root directory: linkSpecs, sources and mappings. As you can see,
-currently the datasets have to be in a local directory. More
-sophisticated data access will be implemented with the coming <a href="#nextSteps">Data
-Access Modules</a>.<br>
+<p>All the paths are relative to the config file location.</p>
+
+<h4>Configuration Properties</h4>
+<p>In the Schedule Job configuration file you can specify a (Java) properties file to further tweak certain parameters concerning the workflow.
+    Here is a list with all properties that can be set at the moment and the possible values for each property:</p>
+<ul>
+  <li><p><i>provenanceGraphURI</i> <br/> Specify the graph containing the provenance information. As of LDIF V0.3, Quads from this graph are only written to the final output dataset, but are
+      processed any further in the integration workflow. Default graph name: <span style="font-family: monospace;">http://www4.wiwiss.fu-berlin.de/ldif/provenance</span></p>
+  <pre>provenanceGraphURI = http://www4.wiwiss.fu-berlin.de/ldif/provenance</pre></li>
+</ul>
+
+<ul>
+  <li><p><i>oneTimeExecution</i> <br/>If _true_, the Scheduler executes all the Jobs at most once. Import Jobs are evaluated first and then (as all of these are finished)
+      the Integration Job starts. Default: <span style="font-family: monospace;">false</span></p>
+  <pre>oneTimeExecution = true | false</pre></li>
+</ul>
+
+
+<h3>Integration Job Configuration</h3>
+<p>An Integration Job is configured with an XML document, whose structure is described by this <a href="http://www.assembla.com/code/ldif/git/nodes/ldif/ldif-core/src/main/resources/xsd/IntegrationJob.xsd">XML Schema</a>.
+<br/>The current structure is very simple because the integration flow is static at the moment - something that will change in future releases.</p>
+
+<p>A typical configuration document looks like this:</p>
+<pre>&lt;integrationJob&gt;<br>  &lt;properties&gt;test.properties&lt;/properties&gt;<br>  &lt;sources&gt;sources&lt;/sources&gt;<br>  &lt;linkSpecifications&gt;linkSpecs&lt;/linkSpecifications&gt;<br>  &lt;mappings&gt;mappings&lt;/mappings&gt;<br>  &lt;output&gt;output.nq&lt;/output&gt;<br>  &lt;runSchedule&gt;daily&lt;/runSchedule&gt;<br>&lt;/integrationJob&gt;</pre>
+
+<p>It has the following elements:</p>
+<ul>
+  <li><i>properties</i> - the path to a Java properties file for configuration parameters, see below for more details; </li>
+  <li><i>sources</i> - a directory containing the source data sets, these files in this directory must be in <a href="http://sw.deri.org/2008/07/n-quads/">N-Quads</a> format
+      and may be compressed (.gz, .zip or .bz2);</li>
+  <li><i>linkSpecifications</i> - a directory containing the <a href="http://www.assembla.com/wiki/show/silk/Link_Specification_Language">Silk link specifications</a>;</li>
+  <li><i>mappings</i> - a directory containing the <a href="http://www4.wiwiss.fu-berlin.de/bizer/r2r/spec/index.html#mappings">R2R mappings</a>;</li>
+  <li><i>output</i> - the name of the file to which the output should be written;</li>
+  <li><i>runSchedule</i> - how often the integration is expected to be run.</li>
+</ul>
+
+<p> All the paths are relative to the config file location.
+In this case there is a root directory with the config file and the test.properties file in it.
+Furthermore the following directories would be nested in the root directory: linkSpecs, sources and mappings.
+Datasets have to be in a local directory.</p>
+
+<h4><a name="configurationproperties"></a>Configuration Properties</h4>
+<p>In the Integration Job configuration file you can specify a (Java) properties file to further tweak certain parameters concerning the integration workflow.
+   Here is a list with all properties that can be set at the moment and the possible values for each property:</p>
+
+<ul>
+  <li><p><i>output</i><br/>
+    Specify if all input quads from the input should be included in the output file or only the quads that were mapped/translated by LDIF.
+    Default: <span style="font-family: monospace;">mapped-only</span></p>
+  <pre>output = all | mapped-only</pre></li>
+</ul>
+
+<ul>
+  <li><p><i>rewriteURIs</i><br/>
+      Specify if URI aliases in the input data should be rewritten to a single target URI in the output data.
+      Default: <span style="font-family: monospace;">true</span></p>
+  <pre>rewriteURIs = true | false</pre></li>
+</ul>
+
+<ul>
+  <li><p><i>provenanceGraphURI</i> <br/>
+      Specify the graph containing the provenance information. As of LDIF V0.3, Quads from this graph are only written to the final output dataset, but are
+      processed any further in the integration workflow. Default graph name: <span style="font-family: monospace;">http://www4.wiwiss.fu-berlin.de/ldif/provenance</span></p>
+  <pre>provenanceGraphURI = http://www4.wiwiss.fu-berlin.de/ldif/provenance</pre></li>
+</ul>
+<ul>
+  <li><p><i>validateSources</i><br/>
+      Source datasets, R2R mappings and Silk link specifications are all validated before starting with the actual integration.
+      Since the syntax validation of the sources (N-Triples / N-Quads files) takes some time (about 15s/GB),
+      if you already know that they are correct, it is possible to disable this step by setting the property to false.
+      Default:  <span style="font-family: monospace;">true</span></p>
+  <pre>validateSources = true | false</pre></li>
+</ul>
+
+
+<ul>
+  <li><p><i>useExternalSameAsLinks</i><br/>
+  Besides discovering equal entities in the identity resolution phase, LDIF also offers the opportunity to input these relationships in form of owl:sameAs links.
+  The NT/N-Quads file with these sameAs-links has to be placed in the source directory with the other datasets.
+  If you don’t want to use sameAs-links from the input data, set this property to false. Default: <span style="font-family: monospace;">true</span></p>
+  <pre>useExternalSameAsLinks = true | false</pre></li>
+</ul>
+
+<ul>
+  <li><p><i>outputFormat</i><br/>
+  Although the default output format is N-Quads, LDIF also offers a triple output as N-Triple. Default: <span style="font-family: monospace;">nq</span></p>
+  <pre>outputFormat = nq | nt</pre></li>
+</ul>
+
+<ul>
+  <li><p><i>uriMinting</i><br/>
+  Specify if output resources should be given an URI within the target namespace. URI minting. Default: <span style="font-family: monospace;">false</span></p>
+  <pre>uriMinting = true | false</pre></li>
+</ul>
+
+<ul>
+  <li><p><i>uriMintNamespace</i><br/>
+  Specify the namespace into which output resources are translated, if URI minting is enabled. Default: <span style="font-family: monospace;">http://www4.wiwiss.fu-berlin.de/ldif/resource/</span></p>
+  <pre>uriMintNamespace = http://www4.wiwiss.fu-berlin.de/ldif/resource/</pre></li>
+</ul>
+
+<ul>
+  <li><p><i>uriMintLabelPredicate</i><br/>
+  Specify the predicates of the resources to translate which are defining the local name of the URI, may be more than one, separated by blank spaces.</p>
+  <pre>uriMintLabelPredicate = http://www4.wiwiss.fu-berlin.de/ldif/property/ID http://www4.wiwiss.fu-berlin.de/ldif/property/Label</pre></li>
+</ul>
+
+<h3>Import Job Configuration</h3>
+<p>An Import Job is configured with an XML document, whose structure is described by this <a href="http://www.assembla.com/code/ldif/git/nodes/ldif/ldif-core/src/main/resources/xsd/ImportJob.xsd">XML Schema</a>.
+<br/>
+LDIF supports four different mechanisms to import external data:
+    <ul>
+    <li>Quad Import Job – import N-Quad dumps</li>
+    <li>Triple Import Job – import RDF/N-Triple dumps</li>
+    <li>Crawl Import Job – import by dereferencing URIs as RDF data, using the LDspider Web Crawling Framework</li>
+    <li>SPARQL Import Job – import by quering a SPARQL endpoint</li>
+    </ul>
 </p>
-<h3><a name="configurationproperties"></a>Configuration Properties</h3>
-<p>In the LDIF configuration file you can specify a (Java) properties
-file to further tweak certain parameters concerning the integration
-workflow. Here is a list with all properties that can be set at the
-moment and the possible values for each property:<br>
-</p>
-<ul>
-  <li>Specify if all input quads from the input should be included in
-the output file or only the quads that were mapped/translated by LDIF.
-Default: <span style="font-family: monospace;">mapped-only</span></li>
-</ul>
-<pre style="margin-left: 40px;"><span style="font-weight: bold;">output = all | mapped-only</span><br></pre>
-<ul>
-  <li>Specify if URI aliases in the input data should be rewritten to a
-single target URI in the output data. Default: <span style="font-family: monospace;">true</span></li>
-</ul>
-<pre style="margin-left: 40px;"><span style="font-weight: bold;">rewriteURIs = true | false</span><br></pre>
-<ul>
-  <li>
-    <p>Specify the graph containing the provenance information. As of
-LDIF V0.3, Quads
-from this graph are only written to the final output dataset, but are
-processed any further in the integration workflow. Default graph name: <span style="font-family: monospace;">http://www4.wiwiss.fu-berlin.de/ldif/provenance</span></p>
-  </li>
-</ul>
-<pre style="margin-left: 40px;"><span style="font-weight: bold;">provenanceGraphURI = http://www4.wiwiss.fu-berlin.de/ldif/provenance</span><br></pre>
-<ul>
-  <li>
-    <p>Source datasets, R2R mappings and Silk link specifications
-are all validated before starting with the actual integration. Since
-the syntax validation of the sources (N-Triples / N-Quads files) takes
-some time (about 15s/GB), if you already know that they are correct, it
-is
-possible to disable this step by setting the property to <span style="font-family: monospace;">false</span>. Default:&nbsp;<span style="font-family: monospace;">true</span> <span style="font-family: monospace;"></span></p>
-  </li>
-</ul>
-<pre style="margin-left: 40px;"><span style="font-weight: bold;">validateSources = true | false</span></pre>
-<ul>
-  <li>
-    <p>Besides discovering equal entities in the identity
-resolution phase, LDIF also offers the opportunity to input these
-relationships in form of owl:sameAs links. The NT/N-Quads file with
-these sameAs-links has to be placed in the source directory with the
-other datasets. If you don't want to use sameAs-links from the input
-data, set this property to <span style="font-family: monospace;">false</span>.
-Default:&nbsp;<span style="font-family: monospace;">true</span> <span style="font-family: monospace;"></span></p>
-  </li>
-</ul>
-<pre style="margin-left: 40px;"><span style="font-weight: bold;">useExternalSameAsLinks = true | false</span><br></pre>
-<ul>
-  <li>
-    <p>Although the default output format is N-Quads, LDIF also offers
-a triple output as N-Triple. Default: <span style="font-family: monospace;">nq</span> <span style="font-family: monospace;"></span></p>
-  </li>
-</ul>
-<pre style="margin-left: 40px;"><span style="font-weight: bold;">outputFormat = nq | nt</span></pre>
-<h2 id="development"><a name="code"></a>8. Source
+<p>A typical config file for a Quad Import Job looks like this: </p>
+
+<h3>Data Source Configuration</h3>
+<p> </p>
+
+<h2 id="development">8. Source
 Code and Development</h2>
 <p>The latest source code is available from the <a href="http://www.assembla.com/spaces/ldif/wiki">LDIF development page</a>
 on Assembla.com.</p>
 <p>The framework can be used under the terms of the <a href="http://www.apache.org/licenses/LICENSE-2.0">Apache Software
 License</a>.
 </p>
-<h2 id="history"><a name="code"></a>9. Version history </h2>
+<h2 id="history">9. Version history </h2>
 <p>
 </p>
 <table>
@@ -635,10 +671,10 @@ only for relevant data </td>
     </tr>
   </tbody>
 </table>
-<h2><a name="feedback" id="feedback"></a>10. Support and Feedback </h2>
+<h2 id="feedback">10. Support and Feedback </h2>
 <p>For questions and feedback please use the <a href="http://groups.google.com/group/ldif?hl=en">LDIF Google Group</a>.
 </p>
-<h2 id="relatedprojects"><a name="related"></a>11. References</h2>
+<h2 id="references">11. References</h2>
 <ul>
 </ul>
 <ul>
@@ -664,10 +700,10 @@ Server - Adding missing Links while consuming Linked Data</a> ( <a href="http://
   <li>Andreas Schultz, Andrea Matteini, Robert Isele, Christian Bizer,
 Christian Becker: <a href="http://www.wiwiss.fu-berlin.de/en/institute/pwo/bizer/research/publications/Schultz-etal-Cold2011-LDIF-Paper.pdf">LDIF
 - Linked Data Integration Framework</a>. 2nd International Workshop on
-Consuming Linked Data, Bonn, Germany, October 2011.<span style="border-collapse: separate; color: rgb(0, 0, 0); font-family: 'Times New Roman'; font-style: normal; font-variant: normal; font-weight: normal; letter-spacing: normal; line-height: normal; orphans: 2; text-indent: 0px; text-transform: none; white-space: normal; widows: 2; word-spacing: 0px; font-size: medium;"><span style="color: rgb(51, 51, 51); font-family: Verdana,Arial,Helvetica,sans-serif; font-size: 11px; line-height: 15px;"><br>
+Consuming Linked Data, Bonn, Germany, October 2011.<span style="border-collapse: separate; color: rgb(0, 0, 0); font-family:'Times New Roman'; font-style: normal; font-variant: normal; font-weight: normal; letter-spacing: normal; line-height: normal; orphans: 2; text-indent: 0px; text-transform: none; white-space: normal; widows: 2; word-spacing: 0px; font-size: medium;"><span style="color: rgb(51, 51, 51); font-family: Verdana,Arial,Helvetica,sans-serif; font-size: 11px; line-height: 15px;"><br>
     </span></span></li>
 </ol>
-<h2><a name="acknowledgments"></a>12. Acknowledgments </h2>
+<h2 id="acknowledgments">12. Acknowledgments </h2>
 <p>This work was supported in part by Vulcan Inc. as part of its <a href="http://www.projecthalo.com">Project Halo</a> and by the EU FP7
 project <a href="http://lod2.eu/">LOD2 - Creating Knowledge out of
 Interlinked Data</a> (Grant No. 257943). </p>
