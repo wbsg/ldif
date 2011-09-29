@@ -1,8 +1,6 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html><head><title>LDIF - Linked Data Integration Framework</title>
 
-
-  
   <style>
 body { background: white; color: black; font-family: sans-serif; line-height: 1.4em; padding: 2.5em 3em; margin: 0; }
 :link { color: #00c; }
@@ -198,7 +196,7 @@ LDIF generates a provenance graph for a triple dump import, whereas it
 takes the given graphs from a quad dump import as provenance graphs.<br>
 <h3>Web Data Access: Crawler Import</h3>
 <br>
-Datasets that can only be accessed via dereferencable URIs are a good candidate for a crawler. In LDIF we thus integrated <a href="http://code.google.com/p/ldspider/">LDSpider</a> for crawl import jobs. The configuration files for crawl import jobs are specified in the <a href="index.html#config">configuration</a> section. Each crawled URI is put into a seperate named graph for provenance tracking.<br>
+Datasets that can only be accessed via dereferencable URIs are a good candidate for a crawler. In LDIF we thus integrated <a href="http://code.google.com/p/ldspider/">LDSpider</a> for crawl import jobs. The configuration files for crawl import jobs are specified in the <a href="#configuration">configuration</a> section. Each crawled URI is put into a seperate named graph for provenance tracking.<br>
 <h3>Web Data Access: SPARQL Import<br>
 </h3>
 <br>Data sources that can be accessed via SPARQL are replicated by
@@ -324,8 +322,8 @@ directory of LDIF:<br>
   </li>
 </ol>
 <pre>bin/ldif &lt;path-to-scheduler-config-file&gt;<br><br>bin\ldif.bat &lt;path-to-scheduler-config-file&gt;<br></pre>
-For details about the configuration file and parameters, see <a href="#config">Section 6</a>. A detailed example is given next.<br>
-<h2 id="examples"><a name="example1"></a>4. Example: Using LDIF to
+For details about the configuration file and parameters, see <a href="#configuration">Section 6</a>. A detailed example is given next.<br>
+<h2 id="example1">4. Example: Using LDIF to
 integrate Life Science Data </h2>
 
 <br>
