@@ -7,14 +7,12 @@ body { background: white; color: black; font-family: sans-serif; line-height: 1.
 :visited { color: #609; }
 a:link img { border: none; }
 a:visited img { border: none; }
-h1, h2, h3 { background: white; color: #800; }
+h1, h2, h3, h4 { background: white; color: #800; }
 h1 { font: 170% sans-serif; margin: 0; }
 h2 { clear: both; font: 140% sans-serif; margin: 2.5em 0 -0.5em 0; }
 h3 { font: 120% sans-serif; margin: 1.5em 0 -0.5em 0; }
-h4 { font: bold 100% sans-serif; }
-h5 { font: italic 100% sans-serif; }
-h6 { font: small-caps 100% sans-serif; }
-.hide { display: none; }
+h4 { font: italic 100% sans-serif; margin: 0.9em 0 -0.6em 0; }
+h5 { font: small-caps 100% sans-serif; }
 pre { background: #fff6bb; font-family: monospace; line-height: 1.2em; padding: 1em 2em; }
 dt { font-weight: bold; margin-top: 0; margin-bottom: 0; }
 dd { margin-top: 0; margin-bottom: 0; }
@@ -115,8 +113,8 @@ a single target URI.</li>
   <li><a href="#quickstart">Quick start</a></li>
   <li><a href="#example1">Integration example: Using LDIF for integrating Life Science Data </a></li>
   <li><a href="#example2">Integration example: Using LDIF for integrating Data from the Music Domain</a></li>
-  <li><a href="#performance">Performance Evaluation</a> </li>
   <li><a href="#configuration">Configuration options</a></li>
+  <li><a href="#performance">Performance Evaluation</a> </li>
   <li><a href="#development">Source code and development</a></li>
   <li><a href="#history">Version history</a></li>
   <li><a href="#feedback">Support and Feedback</a></li>
@@ -154,71 +152,64 @@ data. </p>
 application developers with these tasks. With LDIF, we try to fill this
 gap and provide an an open-source Linked Data Integration Framework
 that can be used by Linked Data applications to translate Web data and
-normalize URI while keeping track of data provenance.<br>
-<br>
+normalize URI while keeping track of data provenance.
+</p>
+<p>
 LDIF provides an expressive mapping language for translating data from
 the various vocabularies that are used on the Web into a consistent,
 local target vocabulary. LDIF includes an identity resolution component
 which discovers URI aliases in the input data and replaces them with a
 single target URI based on user-provided matching heuristics. For
 provenance tracking, the LDIF framework employs the Named Graphs data
-model.<br>
+model.
 </p>
-<p>The figure below shows the schematic <a href="http://linkeddatabook.com/editions/1.0/index.html#htoc84">architecture
-of
-Linked Data applications</a>
+<p>The figure below shows the schematic <a href="http://linkeddatabook.com/editions/1.0/index.html#htoc84">architecture of Linked Data applications</a>
 that
 implement the crawling/data warehousing pattern. The figure highlights
 the steps of the data integration process that are currently
-supported by LDIF.<br>
-<br>
-<span class="Stil1"> </span> </p>
-<p style="text-align: left; margin-left: 120px;"><img style="border: 1px solid ; width: 650px; height: 496px;" alt="Example-architecture of an integration aware Linked Data application" src="img/linkeddataapp.png"></p>
-<p style="text-align: left; margin-left: 120px;">&nbsp;</p>
-<h2 id="components">2. LDIF Components<br>
-</h2>
+supported by LDIF.</p>
+<p style="text-align: left; margin-left: 120px;"><img alt="Example-architecture of an integration aware Linked Data application" src="img/linkeddataapp.png"></p>
+
+<h2 id="components">2. LDIF Components</h2>
 <p>The LDIF Framework consists of the Runtime Environment and a set of
 pluggable modules. The pluggable modules are organized as data access
 components, a data transformation components and a data output
 components.
 </p>
-<p><img alt="LDIF components" src="img/LDIFcomponents.png" height="92" width="299"></p>
-Currently, we have implemented the following modules: <br>
-<h3>Web Data Access: Triple/Quad Dump Import</h3><br>
+<img alt="LDIF components" src="img/LDIFcomponents.png" height="92" width="299">
+<p></p>Currently, we have implemented the following modules: </p>
 
-In order to get a local replication of datasets from the Web of Data
+<h3>Data Access</h3>
+
+<p>LDIF provides access modules for replicating datasets locally via file download, crawling or SPARQL and build provenance metadata for those.
+   The integration task expects input data to be represented as Named Graphs and be stored in <a href="http://sw.deri.org/2008/07/n-quads/">N-Quads format</a> accessible locally.
+   </p>
+
+<h4>Triple/Quad Dump Import</h4>
+<p>In order to get a local replication of datasets from the Web of Data
 the simplest way is to download a file containing the data set. The
 triple/quad dump import does exactly this, with the difference that
 LDIF generates a provenance graph for a triple dump import, whereas it
-takes the given graphs from a quad dump import as provenance graphs.<br>
-<h3>Web Data Access: Crawler Import</h3>
-<br>
-Datasets that can only be accessed via dereferencable URIs are a good candidate for a crawler. In LDIF we thus integrated <a href="http://code.google.com/p/ldspider/">LDSpider</a> for crawl import jobs. The configuration files for crawl import jobs are specified in the <a href="#configuration">configuration</a> section. Each crawled URI is put into a seperate named graph for provenance tracking.<br>
-<h3>Web Data Access: SPARQL Import<br>
-</h3>
-<br>Data sources that can be accessed via SPARQL are replicated by
+takes the given graphs from a quad dump import as provenance graphs.</p>
+
+<h4>Crawler Import</h4>
+<p>
+Datasets that can only be accessed via dereferencable URIs are a good candidate for a crawler.
+    In LDIF we thus integrated <a href="http://code.google.com/p/ldspider/">LDSpider</a> for crawl import jobs.
+    The configuration files for crawl import jobs are specified in the <a href="#configuration">configuration</a> section.
+    Each crawled URI is put into a seperate named graph for provenance tracking.</p>
+
+<h4>SPARQL Import</h4>
+<p>Data sources that can be accessed via SPARQL are replicated by
 LDIF's
 SPARQL access module. The relevant data to be queried can be further
 specified in the configuration file for a SPARQL import job. Data from
-each SPARQL import job gets tracked by its own named graph.<br>
-<h3>Data Access: N-Quads Loader<br>
-</h3>
-<p>The current version of LDIF expects input data to be represented as
-Named
-Graphs and be stored in <a href="http://sw.deri.org/2008/07/n-quads/">N-Quads
-format</a> accessible by a URL. The graph URI is used for
-provenance tracking. Provenance meta-information describing the graphs
-can be provided within a specific provenance graph. The name of
-this provenance graph can be set in the configuration file. LDIF does
-not make any assumptions about the provenance vocabulary that is used
-to describe the graphs, meaning that you can use your provenance
-vocabulary of choice. Currently, the provenance information is just
-copied to the final output. In future releases, we will use the
-provenance information for data quality assessment and data fusion (see
-<a href="#nextSteps">Next Steps</a>).<br>
-</p>
-<h3>Transformation: R2R Data Translation
-</h3>
+each SPARQL import job gets tracked by its own named graph.</p>
+
+
+<h3>Transformation</h3>
+<p>LDIF provides trasformation modules for vocabulary mapping and identity resolution.</p>
+<h4>R2R Data Translation</h4>
 <p>LDIF employs the <a href="http://www4.wiwiss.fu-berlin.de/bizer/r2r/">R2R Framework</a>
 to translate Web data that is represented using terms from different
 vocabularies into a single target vocabulary. Vocabulary mappings are
@@ -237,7 +228,8 @@ representation (evaluation in [2]). </p>
 The <a href="http://www4.wiwiss.fu-berlin.de/bizer/r2r/spec/">specification
 and user manual</a> is provided as a separate document.<br>
 </p>
-<h3>Transformation: Silk Identity Resolution </h3>
+
+<h4>Silk Identity Resolution </h4>
 <p>
 LDIF employs the <a href="http://www4.wiwiss.fu-berlin.de/bizer/silk/">Silk
 Link Discovery Framework</a>
@@ -257,19 +249,26 @@ the declarative <a href="http://www4.wiwiss.fu-berlin.de/bizer/silk/spec/">Silk 
 Specification Language</a>.</p>
 <p>An overview and examples can be found on the <a href="http://www4.wiwiss.fu-berlin.de/bizer/silk/">Silk website</a>.<br>
 </p>
-<h3 style="text-align: left;">Data Output: N-Quads Writer<br>
-</h3>
+
+
+<h3>Data Output</h3>
+
+<h4>N-Quads Writer</h4>
 <p>The N-Quads writer dumps the final output of the integration
 workflow into a single N-Quads file. This file contains the translated
 versions of all graphs from the input graph set as well as the content
-of the provenance graph and sameAs-links. <br>
+of the provenance graph and sameAs-links.
+Currently, the provenance information is just copied to the final output.
+    In future releases, we will use the provenance information for data quality assessment and data fusion (see
+<a href="#nextSteps">Next Steps</a>).
 </p>
-<h3 style="text-align: left;">Data Output: N-Triples Writer<br>
-</h3>
+
+<h4>N-Triples Writer</h4>
 <p>The N-Triples writer dumps the final output of the integration
-workflow into a single N-Triples file.<br>
+workflow into a single N-Triples file.
 </p>
-<h3 style="text-align: left;">Runtime Environment </h3>
+
+<h3>Runtime Environment </h3>
 <p style="text-align: left;"> The Runtime Environment manages the data
 flow between the various stages and the caching of the intermediate
 results. In order to parallelize the data processing, the data is
@@ -289,6 +288,8 @@ memory. It is very fast but scales only depending on the amount of
 memory
 available. For instance, integrating 25 million triples required 5 GB
 memory within one of our <a href="benchmark.html">experiments</a>. </p>
+
+
 <h3 id="nextSteps">Next steps for LDIF</h3>
 <p>Over the next months, we plan to extend LDIF along the
 following lines:<br>
@@ -320,6 +321,7 @@ directory of LDIF:<br>
 </ol>
 <pre>bin/ldif &lt;path-to-scheduler-config-file&gt;<br><br>bin\ldif.bat &lt;path-to-scheduler-config-file&gt;<br></pre>
 For details about the configuration file and parameters, see <a href="#configuration">Section 6</a>. A detailed example is given next.<br>
+
 <h2 id="example1">4. Example: Using LDIF to
 integrate Life Science Data </h2>
 
@@ -475,7 +477,7 @@ The following configuration files are used for importing the different sources<b
 </ul>
 The target vocabulary is a mix of existing ontologies like FOAF, Music
 Ontology, Dublin Core, DBpedia etc. The main instances we integrate are
-of type music artist and record/album.&nbsp; Minor classes like music
+of type music artist and record/album. Minor classes like music
 label and genre are integrated from fewer sources.<br>
 <br>
 The following Silk identity resolution heuristics are used to find
@@ -489,13 +491,9 @@ In order to run the example, please download LDIF and run the following commands
 <ul>
 <li>Change into the LDIF root dir.</li><li>Under Unix type:</li><ul><pre>bin/ldif examples/music/ldif-config/schedulerConfig.xml</pre></ul><li>Under Windows type:</li><ul><pre>bin\ldif.bat examples\music\ldif-config\schedulerConfig.xml</pre></ul>
 </ul>Please note that the execution of the import jobs can take several days, mainly because of the crawl job.<br>
-<h2 id="performance"><a name="performance"></a>6.
-Performance Evaluation</h2>
-<p>We regularly carry out performance evaluations. For more
-details and the latest results please visit our <a href="benchmark.html">Benchmark results</a> page.</p>
 
 
-<h2 id="configuration">7. Configuration
+<h2 id="configuration">6. Configuration
 Options</h2>
 <p>This section describes how an LDIF configuration files look like and
 which parameters you can modify to change the runtime behavior of LDIF.</p>
@@ -668,6 +666,9 @@ URI, may be more than one, separated by blank spaces.</p>
 <p>A Data Source is configured with an XML document, whose structure is described by this  <a href="http://www.assembla.com/code/ldif/git/nodes/ldif/ldif-core/src/main/resources/xsd/DataSource.xsd">XML Schema</a>.</p>
 <pre>&lt;dataSource&gt;<br>    &lt;label&gt;dBpedia&lt;/label&gt;<br>    &lt;description&gt;DBpedia ist an RDF version of Wikipedia&lt;/description&gt;<br>   &lt;homepage&gt;http://dbpedia.org&lt;/homepage&gt;<br>&lt;/dataSource&gt;<br></pre>
 
+<h2 id="performance">7. Performance Evaluation</h2>
+<p>We regularly carry out performance evaluations. For more
+details and the latest results please visit our <a href="benchmark.html">Benchmark results</a> page.</p>
 
 <h2 id="development">8. Source
 Code and Development</h2>
