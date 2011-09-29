@@ -117,11 +117,11 @@ a single target URI.</li>
   <li><a href="#about">About LDIF</a></li>
   <li><a href="#components">LDIF components</a></li>
   <li><a href="#quickstart">Quick start</a></li>
-  <li><a href="#example1">Example 1: Using LDIF for integrating Data from the Music Domain<br>
+  <li><a href="#example1">Integration example: </a><a href="#example1">Using LDIF for integrating Life
+Science Data</a><a href="#example1">
     </a></li>
 
-  <li><a href="#example2">Example 2: Using LDIF for integrating Life
-Science Data</a></li>
+  <li><a href="#example2">Integration example: </a><a href="#example2">Using LDIF for integrating Data from the Music Domain</a><a href="#example2"></a></li>
   <li><a href="#performance">Performance Evaluation</a> </li>
   <li><a href="#config">Configuration options</a></li>
   <li><a href="#code">Source code and development</a></li>
@@ -330,7 +330,124 @@ directory of LDIF:<br>
 </ol>
 <pre>bin/ldif &lt;path-to-scheduler-config-file&gt;<br><br>bin\ldif.bat &lt;path-to-scheduler-config-file&gt;<br></pre>
 For details about the configuration file and parameters, see <a href="#config">Section 6</a>. A detailed example is given next.<br>
-<h2 id="examples"><a name="example1"></a>4. Example: Using LDIF for integrating Data from the Music Domain</h2>
+<h2 id="examples"><a name="example1"></a>4. Example: Using LDIF to
+integrate Life Science Data </h2>
+
+<br>
+
+<p>This example shows how LDIF is applied to integrate data originating
+from five Life Science sources. </p>
+
+<p>The example is taken from a joined project with <a href="http://www.vulcan.com/TemplateHome.aspx?contentId=1">Vulcan Inc</a>.
+and <a href="http://www.ontoprise.de/">ontoprise GmbH</a> about
+extending <a href="http://www.wiwiss.fu-berlin.de/en/institute/pwo/bizer/research/publications/BeckerBizerErdmannGreaves-SMW-LDE-Poster-ISWC2010.pdf">Semantic
+Media Wiki+ with a Linked Data Integration Framework</a>. <br>
+<br>
+In this example, the following data sources are translated into a
+common <a href="resources/Wiki.owl">Wiki ontology</a>:</p>
+
+<ul>
+<li><a href="http://mouse.brain-map.org/">Allen Mouse Brain Atlas</a>
+is a growing collection of online public resources integrating
+extensive gene expression and neuroanatomical data. </li><li><a href="http://www.genome.jp/kegg/genes.html">KEGG GENES</a>, a
+collection of gene catalogs for all complete genomes generated from
+publicly available resources, mostly NCBI RefSeq</li><li><a href="http://www.genome.jp/kegg/pathway.html">KEGG Pathway</a>,
+a collection of pathway maps representing knowledge on the molecular
+interaction and reaction networks</li><li><a href="http://pharmgkb.org/">PharmGKB</a>, which provides data
+on gene information, disease and drug pathways, and SNP variants</li><li><a href="http://www.uniprot.org/">Uniprot</a>, which provides
+information on protein sequence and function </li>
+</ul>
+
+<p>The following mapping file provides for translating the vocabularies
+used by the source datasets into the Wiki ontology. </p>
+
+<ul>
+<li>R2R mapping file: <a href="http://www.assembla.com/code/ldif/git/nodes/ldif/examples/life-science/mappings/ALL-to-Wiki.r2r.ttl">ALL-toWiki.r2r.ttl</a>
+    <span style="text-decoration: underline;"></span></li>
+</ul>
+
+<p>The following Silk identity resolution heuristics are used to find
+genes and other expressions that are described in multiple datasets.</p>
+
+<ul>
+<li><a href="http://www.assembla.com/code/ldif/git/nodes/ldif/examples/life-science/linkSpecs/genes.xml">genes.xml</a>,</li><li><a href="http://www.assembla.com/code/ldif/git/nodes/ldif/examples/life-science/linkSpecs/diseases.xml">diseases.xml</a>,</li><li><a href="http://www.assembla.com/code/ldif/git/nodes/ldif/examples/life-science/linkSpecs/pathways.xml">pathways.xml</a></li>
+</ul>
+
+<p>To run the example, please download LDIF and use the following LDIF
+configuration. The configuration options are explained in the Section <a href="index.html#config">Configuration</a> below. <br>
+</p>
+
+<ul>
+<pre>&lt;integrationJob&gt;<br>  &lt;properties&gt;life-science.properties&lt;/properties&gt;<br>  &lt;sources&gt;sources&lt;/sources&gt;<br>  &lt;linkSpecifications&gt;linkSpecs&lt;/linkSpecifications&gt;<br>  &lt;mappings&gt;mappings&lt;/mappings&gt;<br>  &lt;output&gt;output.nq&lt;/output&gt;<br>&lt;/integrationJob&gt;</pre>
+</ul>
+
+<p>Execution instructions:</p>
+
+<ul>
+<li>Change into the LDIF root dir.</li><li>Under Unix type:</li><ul><pre>bin/ldif-integrate examples/life-science/integration-config.xml</pre></ul><li>Under Windows type:</li><ul><pre>bin\ldif-integrate.bat examples\life-science\integration-config.xml</pre></ul>
+</ul>
+
+<h3>Example Data Translation </h3>
+
+<p>In the following, we explain the data translation that is performed
+for the example of one entity that is described in two input datasets:</p>
+
+<ul>
+<li><strong>Example <span style="font-style: italic;">input</span> </strong>(reduced
+to two source datasets, represented using the <a href="http://www4.wiwiss.fu-berlin.de/bizer/TriG/">TriG Syntax</a>):<br>
+  </li>
+</ul>
+
+<pre style="margin-left: 40px;">01:  @prefix aba-voc: &lt;http://brain-map.org/gene/0.1#&gt; .<br>02:  @prefix rdfs: &lt;http://www.w3.org/2000/01/rdf-schema#&gt; .<br>03:  @prefix uniprot: &lt;http://purl.uniprot.org/core/&gt; . <br>04: &nbsp;<br>05:  &lt;file:///aba_mouse_20101010_1000.nq&gt; {<br>06:    &lt;http://brain-map.org/mouse/brain/Oprk1.xml&gt; aba-voc:entrezgeneid "<span style="font-weight: bold;">18387</span>" ;<br>07:      aba-voc:gene-aliases _:Ab12290 .<br>08:   _:Ab12290 &lt;http://brain-map.org/gene/0.1#aliassymbol&gt; "<span style="font-weight: bold;">Oprk1</span>" .<br>09:  }<br>10:<br>11:  &lt;file:///datasets/uniprot-organism-human-reviewed-complete_1000.nq&gt; {<br>12:    &lt;http://purl.uniprot.org/uniprot/P61981&gt; rdfs:seeAlso &lt;http://purl.uniprot.org/geneid/<span style="font-weight: bold;">18387</span>&gt; .<br>13:    &lt;http://purl.uniprot.org/geneid/<span style="font-weight: bold;">18387</span>&gt; uniprot:database "GeneID" .<br>14:    &lt;http://purl.uniprot.org/uniprot/P61981&gt; uniprot:encodedBy &lt;file:///storage/datasets/uniprot-organism-human-reviewed-complete.rdf#_503237333438003B&gt; .<br>15:  }<br></pre>
+
+<ul>
+<li><strong>Example <span style="font-style: italic;">output</span> :</strong><br>
+  </li>
+</ul>
+
+<pre style="margin-left: 40px;">01: @prefix smwprop: &lt;http://mywiki/resource/property/&gt; .<br>02: @prefix xsd: &lt;http://www.w3.org/2001/XMLSchema#&gt; .<br>03: <br>04: &lt;file:///aba_mouse_20101010_1000.nq&gt; {<br>05:  &nbsp;&lt;http://brain-map.org/mouse/brain/Oprk1.xml&gt; smwprop:EntrezGeneId "<span style="font-weight: bold;">18387</span>"^^xsd:int .<br>06:  &nbsp;&lt;http://brain-map.org/mouse/brain/Oprk1.xml&gt; smwprop:GeneSymbol "<span style="font-weight: bold;">Oprk1</span>"^^xsd:string .<br>07: }<br>08: <br>09: &lt;file:///datasets/uniprot-organism-human-reviewed-complete_1000.nq&gt; {<br>10:   &lt;http://brain-map.org/mouse/brain/Oprk1.xml&gt; smwprop:EntrezGeneId "<span style="font-weight: bold;">18387</span>"^^xsd:int .<br>11:   &lt;http://brain-map.org/mouse/brain/Oprk1.xml&gt; <span style="font-family: monospace;">owl:sameAs </span><span style="font-family: monospace;">&lt;file:///storage/datasets/uniprot-organism-human-reviewed-complete.rdf#_503237333438003B&gt; .</span><br>12: }<br></pre>
+
+<p>The example input and output needs some explanation:</p>
+
+<ul>
+<li>There are two source graphs, each containing data from a
+different source: ABA (input: line 5 to 9) and Uniprot (input: line 11
+to 15).</li>
+</ul>
+
+<p>Identity resolution: </p>
+
+<ul>
+<li>Both graphs contain data about the same entity:</li><ul><li>In the ABA dataset the entity is identified using the URI <span style="font-family: monospace;">&lt;http://brain-map.org/mouse/brain/Oprk1.xml&gt;
+      </span>(input: line 6)</li><li>In the Uniprot dataset the entity is identified using the URI <span style="font-family: monospace;"></span><br>
+      <span style="font-family: monospace;">&lt;file:///storage/datasets/uniprot-organism-human-reviewed-complete.rdf#_503237333438003B&gt;</span>
+(input: line 14)</li></ul><li>Since the Silk identity resolution heuristic concludes that both
+URIs identify the same entity, the both URIs are replaced in the output
+with a single URI (in this case the ABA one, output: lines 5, 6 and 10).</li><li>The rewritten URI is linked by <span style="font-family: monospace;">owl:sameAs</span> to the original URI
+(output: line 11).<br>
+  </li>
+</ul>
+
+<p>Data Translation: </p>
+
+<ul>
+<li>In the target vocabulary Entrez Gene IDs should be
+represented using the smwprop:EntrezGeneId property. Property values
+should be represented as xsd:Integers. </li><li>Thus, the
+aba-voc:entrezgeneid triple in the first graph (line 6) is translated
+into a smwprop:EntrezGeneId triple in the output data (line 5) and a
+datatype URI is added to the literal. </li><li>The
+smwprop:GeneSymbol triple in line 6 of the output is generated by a
+structural transformation out of the two triples in lines 7 and 8 of
+the input data. </li><li>In the Uniprot case the <span style="font-family: monospace;">smwprop:EntrezGeneId</span>
+value was extracted from the URI string <span style="font-family: monospace;">&lt;http://purl.uniprot.org/geneid/18387&gt;
+    </span><span style="font-family: sans-serif;">(input: line 12)</span><span style="font-family: monospace;"><span style="font-family: sans-serif;">.
+    </span></span></li><li>The quad with the property <span style="font-family: monospace;">smwprop:EntrezGeneId</span>
+on line 10 in the output was produced by a complex mapping that had to
+consider all three quads of the input (lines 12-14).</li>
+</ul>
+<h2 id="examples"><a name="example2"></a>5. Example: Using LDIF for integrating Data from the Music Domain</h2>
+
 <br><br>
 This example shows how LDIF is applied to integrate data originating
 from the following sources containing data from the music domain:<br>
@@ -361,133 +478,26 @@ The following configuration files are used for importing the different sources<b
       , <a href="http://www.assembla.com/code/ldif/git/nodes/ldif/examples/music/ldif-config/ImportJob/MusicBrainzSPARQLImport_Label.xml">Sparql-Label</a>, <a href="http://www.assembla.com/code/ldif/git/nodes/ldif/examples/music/ldif-config/ImportJob/MusicBrainzSPARQLImport_Record.xml">Sparql-Record</a>
   </li>
   <li>BBC Music
-      <a href="http://www.assembla.com/code/ldif/git/nodes/ldif/examples/music/ldif-config/ImportJob/BBCSPARQLImportMusicArtist.xml">Sparql-MusicArtist</a> , <a href="http://www.assembla.com/code/ldif/git/nodes/ldif/examples/music/ldif-config/ImportJob/BBCSPARQLImportRecord.xml">Sparql-Record</a>, <a href="http://www.assembla.com/code/ldif/git/nodes/ldif/examples/music/ldif-config/ImportJob/BBCSPARQLImportBirth.xml">Sparql-Birth</a>, <a href="http://www.assembla.com/code/ldif/git/nodes/ldif/examples/music/ldif-config/ImportJob/BBCSPARQLImportDeath.xml">Sparql-Death</a>
+      <a href="http://www.assembla.com/code/ldif/git/nodes/ldif/examples/music/ldif-config/ImportJob/BBCSPARQLImportMusicArtist.xml">Sparql-MusicArtist</a> , <a href="http://www.assembla.com/code/ldif/git/nodes/ldif/examples/music/ldif-config/ImportJob/BBCSPARQLImportRecord.xml">Sparql-Record</a>, <a href="http://www.assembla.com/code/ldif/git/nodes/ldif/examples/music/ldif-config/ImportJob/BBCSPARQLImportBirth.xml">Sparql-Birth</a>, <a href="http://www.assembla.com/code/ldif/git/nodes/ldif/examples/music/ldif-config/ImportJob/BBCSPARQLImportDeath.xml">Sparql-Death</a></li>
 
+</ul>The following mapping file provides for translating the source datasets into our target vocabulary.<br>
+<ul>
+  <li>R2R mapping file: <a href="http://www.assembla.com/code/ldif/git/nodes/ldif/examples/music/ldif-config/mappings/mappings.ttl">mappings.ttl</a><br>
   </li>
-
-</ul>In order to run the example, please download LDIF and run the following commands:<br>
+</ul>
+The target vocabulary is a mix of existing ontologies like FOAF, Music Ontology, Dublin Core, DBpedia etc.<br>
+<br>
+The following Silk identity resolution heuristics are used to find
+genes and other expressions that are described in multiple datasets:<br>
+<ul>
+  <li><br>
+  </li>
+</ul>
+<br>
+In order to run the example, please download LDIF and run the following commands:<br>
 <ul>
 <li>Change into the LDIF root dir.</li><li>Under Unix type:</li><ul><pre>bin/ldif examples/music/ldif-config/schedulerConfig.xml</pre></ul><li>Under Windows type:</li><ul><pre>bin\ldif.bat examples\music\ldif-config\schedulerConfig.xml</pre></ul>
 </ul>Please note that the execution of the import jobs can take several days, mainly because of the crawl job.<br>
- 
-
-<h2 id="examples"><a name="example2"></a>5. Example: Using LDIF to
-integrate Life Science Data </h2>
-<br>
-<p>This example shows how LDIF is applied to integrate data originating
-from five Life Science sources. </p>
-<p>The example is taken from a joined project with <a href="http://www.vulcan.com/TemplateHome.aspx?contentId=1">Vulcan Inc</a>.
-and <a href="http://www.ontoprise.de/">ontoprise GmbH</a> about
-extending <a href="http://www.wiwiss.fu-berlin.de/en/institute/pwo/bizer/research/publications/BeckerBizerErdmannGreaves-SMW-LDE-Poster-ISWC2010.pdf">Semantic
-Media Wiki+ with a Linked Data Integration Framework</a>. <br>
-<br>
-In this example, the following data sources are translated into a
-common <a href="resources/Wiki.owl">Wiki ontology</a>:</p>
-<ul>
-  <li><a href="http://mouse.brain-map.org/">Allen Mouse Brain Atlas</a>
-is a growing collection of online public resources integrating
-extensive gene expression and neuroanatomical data. </li>
-  <li><a href="http://www.genome.jp/kegg/genes.html">KEGG GENES</a>, a
-collection of gene catalogs for all complete genomes generated from
-publicly available resources, mostly NCBI RefSeq</li>
-  <li><a href="http://www.genome.jp/kegg/pathway.html">KEGG Pathway</a>,
-a collection of pathway maps representing knowledge on the molecular
-interaction and reaction networks</li>
-  <li><a href="http://pharmgkb.org/">PharmGKB</a>, which provides data
-on gene information, disease and drug pathways, and SNP variants</li>
-  <li><a href="http://www.uniprot.org/">Uniprot</a>, which provides
-information on protein sequence and function </li>
-</ul>
-<p>The following mapping file provides for translating the vocabularies
-used by the source datasets into the Wiki ontology. </p>
-<ul>
-  <li>R2R mapping file: <a href="http://www.assembla.com/code/ldif/git/nodes/ldif/examples/life-science/mappings/ALL-to-Wiki.r2r.ttl">ALL-toWiki.r2r.ttl</a>
-    <span style="text-decoration: underline;"></span></li>
-</ul>
-<p>The following Silk identity resolution heuristics are used to find
-genes and other expressions that are described in multiple datasets.</p>
-<ul>
-  <li><a href="http://www.assembla.com/code/ldif/git/nodes/ldif/examples/life-science/linkSpecs/genes.xml">genes.xml</a>,</li>
-  <li><a href="http://www.assembla.com/code/ldif/git/nodes/ldif/examples/life-science/linkSpecs/diseases.xml">diseases.xml</a>,</li>
-  <li><a href="http://www.assembla.com/code/ldif/git/nodes/ldif/examples/life-science/linkSpecs/pathways.xml">pathways.xml</a></li>
-</ul>
-<p>To run the example, please download LDIF and use the following LDIF
-configuration. The configuration options are explained in the Section <a href="#config">Configuration</a> below. <br>
-</p>
-<ul>
-  <pre>&lt;integrationJob&gt;<br>  &lt;properties&gt;life-science.properties&lt;/properties&gt;<br>  &lt;sources&gt;sources&lt;/sources&gt;<br>  &lt;linkSpecifications&gt;linkSpecs&lt;/linkSpecifications&gt;<br>  &lt;mappings&gt;mappings&lt;/mappings&gt;<br>  &lt;output&gt;output.nq&lt;/output&gt;<br>&lt;/integrationJob&gt;</pre>
-</ul>
-<p>Execution instructions:</p>
-<ul>
-  <li>Change into the LDIF root dir.</li>
-  <li>Under Unix type:</li>
-  <ul>
-    <pre>bin/ldif-integrate examples/life-science/integration-config.xml</pre>
-  </ul>
-  <li>Under Windows type:</li>
-  <ul>
-    <pre>bin\ldif-integrate.bat examples\life-science\integration-config.xml</pre>
-  </ul>
-</ul>
-<h3>Example Data Translation </h3>
-<p>In the following, we explain the data translation that is performed
-for the example of one entity that is described in two input datasets:</p>
-<ul>
-  <li><strong>Example <span style="font-style: italic;">input</span> </strong>(reduced
-to two source datasets, represented using the <a href="http://www4.wiwiss.fu-berlin.de/bizer/TriG/">TriG Syntax</a>):<br>
-  </li>
-</ul>
-<pre style="margin-left: 40px;">01:  @prefix aba-voc: &lt;http://brain-map.org/gene/0.1#&gt; .<br>02:  @prefix rdfs: &lt;http://www.w3.org/2000/01/rdf-schema#&gt; .<br>03:  @prefix uniprot: &lt;http://purl.uniprot.org/core/&gt; . <br>04: &nbsp;<br>05:  &lt;file:///aba_mouse_20101010_1000.nq&gt; {<br>06:    &lt;http://brain-map.org/mouse/brain/Oprk1.xml&gt; aba-voc:entrezgeneid "<span style="font-weight: bold;">18387</span>" ;<br>07:      aba-voc:gene-aliases _:Ab12290 .<br>08:   _:Ab12290 &lt;http://brain-map.org/gene/0.1#aliassymbol&gt; "<span style="font-weight: bold;">Oprk1</span>" .<br>09:  }<br>10:<br>11:  &lt;file:///datasets/uniprot-organism-human-reviewed-complete_1000.nq&gt; {<br>12:    &lt;http://purl.uniprot.org/uniprot/P61981&gt; rdfs:seeAlso &lt;http://purl.uniprot.org/geneid/<span style="font-weight: bold;">18387</span>&gt; .<br>13:    &lt;http://purl.uniprot.org/geneid/<span style="font-weight: bold;">18387</span>&gt; uniprot:database "GeneID" .<br>14:    &lt;http://purl.uniprot.org/uniprot/P61981&gt; uniprot:encodedBy &lt;file:///storage/datasets/uniprot-organism-human-reviewed-complete.rdf#_503237333438003B&gt; .<br>15:  }<br></pre>
-<ul>
-  <li><strong>Example <span style="font-style: italic;">output</span> :</strong><br>
-  </li>
-</ul>
-<pre style="margin-left: 40px;">01: @prefix smwprop: &lt;http://mywiki/resource/property/&gt; .<br>02: @prefix xsd: &lt;http://www.w3.org/2001/XMLSchema#&gt; .<br>03: <br>04: &lt;file:///aba_mouse_20101010_1000.nq&gt; {<br>05:  &nbsp;&lt;http://brain-map.org/mouse/brain/Oprk1.xml&gt; smwprop:EntrezGeneId "<span style="font-weight: bold;">18387</span>"^^xsd:int .<br>06:  &nbsp;&lt;http://brain-map.org/mouse/brain/Oprk1.xml&gt; smwprop:GeneSymbol "<span style="font-weight: bold;">Oprk1</span>"^^xsd:string .<br>07: }<br>08: <br>09: &lt;file:///datasets/uniprot-organism-human-reviewed-complete_1000.nq&gt; {<br>10:   &lt;http://brain-map.org/mouse/brain/Oprk1.xml&gt; smwprop:EntrezGeneId "<span style="font-weight: bold;">18387</span>"^^xsd:int .<br>11:   &lt;http://brain-map.org/mouse/brain/Oprk1.xml&gt; <span style="font-family: monospace;">owl:sameAs </span><span style="font-family: monospace;">&lt;file:///storage/datasets/uniprot-organism-human-reviewed-complete.rdf#_503237333438003B&gt; .</span><br>12: }<br></pre>
-<p>The example input and output needs some explanation:</p>
-<ul>
-  <li>There are two source graphs, each containing data from a
-different source: ABA (input: line 5 to 9) and Uniprot (input: line 11
-to 15).</li>
-</ul>
-<p>Identity resolution: </p>
-<ul>
-  <li>Both graphs contain data about the same entity:</li>
-  <ul>
-    <li>In the ABA dataset the entity is identified using the URI <span style="font-family: monospace;">&lt;http://brain-map.org/mouse/brain/Oprk1.xml&gt;
-      </span>(input: line 6)</li>
-    <li>In the Uniprot dataset the entity is identified using the URI <span style="font-family: monospace;"></span><br>
-      <span style="font-family: monospace;">&lt;file:///storage/datasets/uniprot-organism-human-reviewed-complete.rdf#_503237333438003B&gt;</span>
-(input: line 14)</li>
-  </ul>
-  <li>Since the Silk identity resolution heuristic concludes that both
-URIs identify the same entity, the both URIs are replaced in the output
-with a single URI (in this case the ABA one, output: lines 5, 6 and 10).</li>
-  <li>The rewritten URI is linked by <span style="font-family: monospace;">owl:sameAs</span> to the original URI
-(output: line 11).<br>
-  </li>
-</ul>
-<p>Data Translation: </p>
-<ul>
-  <li>In the target vocabulary Entrez Gene IDs should be
-represented using the smwprop:EntrezGeneId property. Property values
-should be represented as xsd:Integers. </li>
-  <li>Thus, the
-aba-voc:entrezgeneid triple in the first graph (line 6) is translated
-into a smwprop:EntrezGeneId triple in the output data (line 5) and a
-datatype URI is added to the literal. </li>
-  <li>The
-smwprop:GeneSymbol triple in line 6 of the output is generated by a
-structural transformation out of the two triples in lines 7 and 8 of
-the input data. </li>
-  <li>In the Uniprot case the <span style="font-family: monospace;">smwprop:EntrezGeneId</span>
-value was extracted from the URI string <span style="font-family: monospace;">&lt;http://purl.uniprot.org/geneid/18387&gt;
-    </span><span style="font-family: sans-serif;">(input: line 12)</span><span style="font-family: monospace;"><span style="font-family: sans-serif;">.
-    </span></span></li>
-  <li>The quad with the property <span style="font-family: monospace;">smwprop:EntrezGeneId</span>
-on line 10 in the output was produced by a complex mapping that had to
-consider all three quads of the input (lines 12-14).<br>
-  </li>
-</ul>
 <h2 id="performance"><a name="performance"></a>6.
 Performance Evaluation</h2>
 <p>We regularly carry out performance evaluations. For more
