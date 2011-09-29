@@ -2,9 +2,9 @@ package ldif.local.config
 
 import java.util.logging.Logger
 import java.io.File
-import java.util.Properties
 import ldif.util.ValidatingXMLReader
-import xml.{Node, Elem, XML}
+import xml.{Node, XML}
+import java.util.Properties
 
 case class SchedulerConfig (importJobsDir : File, integrationJob : File, dataSourcesDir : File, dumpLocationDir : File, properties : Properties)  {}
 
@@ -14,7 +14,7 @@ object SchedulerConfig
 
   private val schemaLocation = "xsd/SchedulerConfig.xsd"
 
-  //TODO def empty = SchedulerConfig(Nil, Nil, Nil)
+  def empty = SchedulerConfig(null, null, null, null, new Properties)
 
   def load = new ValidatingXMLReader(fromFile, schemaLocation)
 

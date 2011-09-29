@@ -3,7 +3,7 @@ package ldif.local.scheduler
 import org.semanticweb.yars.util.CallbackNxOutputStream
 import java.io.{IOException, OutputStream}
 import org.semanticweb.yars.nx.Node
-import collection.mutable.{HashSet, ListBuffer, Set}
+import collection.mutable.{HashSet, Set}
 
 class CallbackOutputStream(val out : OutputStream) extends CallbackNxOutputStream(out) {
 

@@ -37,30 +37,26 @@ trait ImportJob {
     //TODO create an unique blank node
     val jobBlankNode = Node.createBlankNode(id, provenanceGraph)
 
-    val quads = new ListBuffer[Quad]
-    quads.append(Quad(jobBlankNode, Consts.rdfTypeProp, Node.createUriNode(Consts.importJobClass), provenanceGraph))
-    quads.append(Quad(jobBlankNode, Consts.importIdProp, Node.createLiteral(id), provenanceGraph))
-    quads.append(Quad(jobBlankNode, Consts.lastUpdateProp, Node.createTypedLiteral(updateTime.toString,"http://www.w3.org/2001/XMLSchema#dateTime"), provenanceGraph))
-    quads.append(Quad(jobBlankNode, Consts.hasDatasourceProp, Node.createLiteral(dataSource), provenanceGraph))
-    quads.append(Quad(jobBlankNode, Consts.hasImportTypeProp, Node.createLiteral(getType), provenanceGraph))
-    quads.append(Quad(jobBlankNode, Consts.hasOriginalLocationProp, Node.createLiteral(getOriginalLocation), provenanceGraph))
+    writer.write(Quad(jobBlankNode, Consts.rdfTypeProp, Node.createUriNode(Consts.importJobClass), provenanceGraph).toLine)
+    writer.write(Quad(jobBlankNode, Consts.importIdProp, Node.createLiteral(id), provenanceGraph).toLine)
+    writer.write(Quad(jobBlankNode, Consts.lastUpdateProp, Node.createTypedLiteral(updateTime.toString,"http://www.w3.org/2001/XMLSchema#dateTime"), provenanceGraph).toLine)
+    writer.write(Quad(jobBlankNode, Consts.hasDatasourceProp, Node.createLiteral(dataSource), provenanceGraph).toLine)
+    writer.write(Quad(jobBlankNode, Consts.hasImportTypeProp, Node.createLiteral(getType), provenanceGraph).toLine)
+    writer.write(Quad(jobBlankNode, Consts.hasOriginalLocationProp, Node.createLiteral(getOriginalLocation), provenanceGraph).toLine)
 
     // add graphs
     val importedGraph = Node.createUriNode(Consts.importedGraphClass)
     for (g <- importedGraphs.map(Node.createUriNode(_))) {
-      quads.append(Quad(g, Consts.hasImportJobProp, jobBlankNode, provenanceGraph))
-      quads.append(Quad(g, Consts.rdfTypeProp, importedGraph, provenanceGraph))
+      writer.write(Quad(g, Consts.hasImportJobProp, jobBlankNode, provenanceGraph).toLine)
+      writer.write(Quad(g, Consts.rdfTypeProp, importedGraph, provenanceGraph).toLine)
     }
-
-    for (quad <- quads)
-      writer.write(quad.toNQuadFormat+" . \n")
 
     // add graphs from file (in case)
     if (importedGraphsFile != null && importedGraphsFile.exists) {
       val lines = scala.io.Source.fromFile(importedGraphsFile).getLines
       for (g <- lines.map(Node.createUriNode(_))) {
-        writer.write(Quad(g, Consts.hasImportJobProp, jobBlankNode, provenanceGraph).toNQuadFormat+" . \n")
-        writer.write(Quad(g, Consts.rdfTypeProp, importedGraph, provenanceGraph).toNQuadFormat+" . \n")
+        writer.write(Quad(g, Consts.hasImportJobProp, jobBlankNode, provenanceGraph).toLine)
+        writer.write(Quad(g, Consts.rdfTypeProp, importedGraph, provenanceGraph).toLine)
       }
       importedGraphsFile.delete
     }

@@ -41,6 +41,8 @@ case class Quad(subject : Node, predicate : String, value : Node, graph : String
       subject==otherQuad.subject && predicate==otherQuad.predicate && value==otherQuad.value && graph==otherQuad.graph
     }
   }
+
+  def toLine = toNQuadFormat + " . \n"
 }
 
 class ForwardComparator extends Comparator[Quad] {

@@ -242,6 +242,9 @@ class Scheduler (val config : SchedulerConfig, debug : Boolean = false) {
       var integrationConfig = IntegrationConfig.load(configFile)
       // use dumpLocation as source directory for the integration job
       integrationConfig = integrationConfig.copy(sources = config.dumpLocationDir)
+      // if properties are not defined for the integration job, then use scheduler properties
+      if (integrationConfig.properties.size == 0)
+        integrationConfig = integrationConfig.copy(properties = config.properties)
       val integrationJob = new IntegrationJob(integrationConfig, debug)
       log.info("Integration job loaded from "+ configFile.getCanonicalPath)
       integrationJob
