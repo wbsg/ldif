@@ -372,38 +372,32 @@ information on protein sequence and function </li>
 <p>The following mapping file provides for translating the vocabularies
 used by the source datasets into the Wiki ontology. </p>
 <ul>
-  <li>R2R mapping file: <a href="http://www.assembla.com/code/ldif/git/nodes/ldif/ldif-singlemachine/src/main/resources/ldif/local/example/test2/mappings/ALL-to-Wiki.r2r.ttl?rev=176428845b9594e28a2f0362916de23cc821502c">ALL-toWiki.r2r.ttl</a>
+  <li>R2R mapping file: <a href="http://www.assembla.com/code/ldif/git/nodes/ldif/examples/life-science/mappings/ALL-to-Wiki.r2r.ttl">ALL-toWiki.r2r.ttl</a>
     <span style="text-decoration: underline;"></span></li>
 </ul>
 <p>The following Silk identity resolution heuristics are used to find
 genes and other expressions that are described in multiple datasets.</p>
 <ul>
-  <li><a href="http://www.assembla.com/code/ldif/git/nodes/ldif/ldif-singlemachine/src/main/resources/ldif/local/example/test2/linkSpecs/ABA-to-Wiki.silk.xml?rev=176428845b9594e28a2f0362916de23cc821502c">ABA-to-Wiki.silk.xml</a>,
-  </li>
-  <li><a href="http://www.assembla.com/code/ldif/git/nodes/ldif/ldif-singlemachine/src/main/resources/ldif/local/example/test2/linkSpecs/KEGG-GENES-to-Wiki.silk.xml?rev=176428845b9594e28a2f0362916de23cc821502c">KEGG-GENES-to-Wiki.silk.xml</a>,
-  </li>
-  <li><a href="http://www.assembla.com/code/ldif/git/nodes/ldif/ldif-singlemachine/src/main/resources/ldif/local/example/test2/linkSpecs/KEGG-Pathway-to-Wiki.silk.xml?rev=176428845b9594e28a2f0362916de23cc821502c">KEGG-Pathway-to-Wiki.silk.xml</a>,
-  </li>
-  <li><a href="http://www.assembla.com/code/ldif/git/nodes/ldif/ldif-singlemachine/src/main/resources/ldif/local/example/test2/linkSpecs/PharmGKB-to-Wiki.silk.xml?rev=176428845b9594e28a2f0362916de23cc821502c">PharmGKB-to-Wiki.silk.xml</a>,
-  </li>
-  <li><a href="http://www.assembla.com/code/ldif/git/nodes/ldif/ldif-singlemachine/src/main/resources/ldif/local/example/test2/linkSpecs/Uniprot-to-Wiki.silk.xml?rev=176428845b9594e28a2f0362916de23cc821502c">Uniprot-to-Wiki.silk.xml</a></li>
+  <li><a href="http://www.assembla.com/code/ldif/git/nodes/ldif/examples/life-science/linkSpecs/genes.xml">genes.xml</a>,</li>
+  <li><a href="http://www.assembla.com/code/ldif/git/nodes/ldif/examples/life-science/linkSpecs/diseases.xml">diseases.xml</a>,</li>
+  <li><a href="http://www.assembla.com/code/ldif/git/nodes/ldif/examples/life-science/linkSpecs/pathways.xml">pathways.xml</a></li>
 </ul>
 <p>To run the example, please download LDIF and use the following LDIF
 configuration. The configuration options are explained in the Section <a href="#config">Configuration</a> below. <br>
 </p>
 <ul>
-  <pre>&lt;integrationJob&gt;<br>  &lt;properties&gt;test1k.properties&lt;/properties&gt;<br>  &lt;sources&gt;sources&lt;/sources&gt;<br>  &lt;linkSpecifications&gt;linkSpecs&lt;/linkSpecifications&gt;<br>  &lt;mappings&gt;mappings&lt;/mappings&gt;<br>  &lt;output&gt;output.nq&lt;/output&gt;<br>&lt;/integrationJob&gt;</pre>
+  <pre>&lt;integrationJob&gt;<br>  &lt;properties&gt;life-science.properties&lt;/properties&gt;<br>  &lt;sources&gt;sources&lt;/sources&gt;<br>  &lt;linkSpecifications&gt;linkSpecs&lt;/linkSpecifications&gt;<br>  &lt;mappings&gt;mappings&lt;/mappings&gt;<br>  &lt;output&gt;output.nq&lt;/output&gt;<br>&lt;/integrationJob&gt;</pre>
 </ul>
 <p>Execution instructions:</p>
 <ul>
   <li>Change into the LDIF root dir.</li>
   <li>Under Unix type:</li>
   <ul>
-    <pre>bin/ldif-integrate examples/1k/integration-config.xml</pre>
+    <pre>bin/ldif-integrate examples/life-science/integration-config.xml</pre>
   </ul>
   <li>Under Windows type:</li>
   <ul>
-    <pre>bin\ldif-integrate.bat examples\1k\integration-config.xml</pre>
+    <pre>bin\ldif-integrate.bat examples\life-science\integration-config.xml</pre>
   </ul>
 </ul>
 <h3>Example Data Translation </h3>
