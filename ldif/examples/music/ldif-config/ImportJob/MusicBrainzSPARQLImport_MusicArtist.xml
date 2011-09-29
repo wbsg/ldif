@@ -4,7 +4,7 @@
             xmlns="http://www4.wiwiss.fu-berlin.de/ldif/">
     <internalId>musicbrainz.3</internalId>
     <dataSource>MusicBrainz_Talis</dataSource>
-    <refreshSchedule>never</refreshSchedule>
+    <refreshSchedule>onStartup</refreshSchedule>
     <sparqlImportJob>
         <endpointLocation>http://api.talis.com/stores/musicbrainz/services/sparql</endpointLocation>
         <sparqlPatterns>
