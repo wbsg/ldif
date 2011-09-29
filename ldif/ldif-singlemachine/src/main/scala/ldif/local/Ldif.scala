@@ -43,6 +43,7 @@ object Ldif {
         sys.exit(0)
       }
       else {
+        log.info("Running LDIF as server")
         // Evaluate jobs every 10 sec, run as server
         while(true){
           scheduler.evaluateJobs

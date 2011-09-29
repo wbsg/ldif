@@ -36,4 +36,6 @@ object Consts {
   val rdfTypeProp = "http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
   val importedGraphClass = "http://www4.wiwiss.fu-berlin.de/ldif/ImportedGraph"
   val importJobClass = "http://www4.wiwiss.fu-berlin.de/ldif/ImportJob"
+
+  val MAX_NUM_GRAPHS_IN_MEMORY = 100000
 }

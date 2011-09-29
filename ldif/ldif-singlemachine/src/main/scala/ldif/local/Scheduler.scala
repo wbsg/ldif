@@ -4,7 +4,6 @@ import config.{IntegrationConfig, SchedulerConfig}
 import datasources.dump.QuadParser
 import java.util.logging.Logger
 import scheduler.ImportJob
-import xml.XML
 import java.util.{Date, Calendar}
 import java.io._
 import java.util.concurrent.ConcurrentHashMap
@@ -193,21 +192,28 @@ class Scheduler (val config : SchedulerConfig, debug : Boolean = false) {
     if (provenanceFile.exists) {
       val lines = scala.io.Source.fromFile(provenanceFile).getLines
       val parser = new QuadParser
-
+      // loop and stop as the first lastUpdate quad is found
       for (quad <- lines.toTraversable.map(parser.parseLine(_))){
         if (quad.predicate.equals(Consts.lastUpdateProp))  {
           val lastUpdateStr = quad.value.value
-          if (lastUpdateStr.length != 25)
-            log.info("Date not in expected xml datetime format")
+          if (lastUpdateStr.length != 25)  {
+            log.warning("Job "+job.id+" - wrong datetime format for last update metadata")
+            return null
+          }
           else {
             val sb = new StringBuilder(lastUpdateStr).deleteCharAt(22)
             val lastUpdateDate = Consts.xsdDateTimeFormat.parse(sb.toString)
-            dateToCalendar(lastUpdateDate)
+            return dateToCalendar(lastUpdateDate)
           }
         }
       }
+      log.warning("Job "+job.id+" - provenance file does not contain last update metadata")
+      null
     }
-    null
+    else {
+      //log.warning("Job "+job.id+" - provenance file not found at "+provenanceFile.getCanonicalPath)
+      null
+    }
   }
 
   private def loadImportJobs(file : File) : Traversable[ImportJob] =  {
@@ -236,12 +242,15 @@ class Scheduler (val config : SchedulerConfig, debug : Boolean = false) {
       var integrationConfig = IntegrationConfig.load(configFile)
       // use dumpLocation as source directory for the integration job
       integrationConfig = integrationConfig.copy(sources = config.dumpLocationDir)
+      // if properties are not defined for the integration job, then use scheduler properties
+      if (integrationConfig.properties.size == 0)
+        integrationConfig = integrationConfig.copy(properties = config.properties)
       val integrationJob = new IntegrationJob(integrationConfig, debug)
       log.info("Integration job loaded from "+ configFile.getCanonicalPath)
       integrationJob
     }
     else {
-      log.warning("Configuration file not found")
+      log.warning("Integration job configuration file not found")
       null
     }
   }

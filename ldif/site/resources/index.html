@@ -289,7 +289,7 @@ URI for each node. Each transformation module specifies which paths
 should be included into the entities it processes. Splitting the work
 into fine-granular entities, allows LDIF to parallelize the work into
 multiple threats and will, in the next release, allow thework to be
-parallelized on multiple machines using Hadoop. For the LDIF V0.2
+parallelized on multiple machines using Hadoop. For the LDIF V0.3
 release, we have implemented only an
 in-memory version of the runtime environment. This implementation keeps
 all intermediate results in
@@ -298,8 +298,7 @@ memory
 available. For instance, integrating 25 million triples required 5 GB
 memory within one of our <a href="benchmark.html">experiments</a>. </p>
 <h3><a name="nextSteps"></a>Next steps for LDIF</h3>
-<p>LDIF V0.2 provides data translation and identity resolution
-functionality. Over the next months, we plan to extend LDIF along the
+<p>Over the next months, we plan to extend LDIF along the
 following lines:<br>
 </p>
   
@@ -328,15 +327,14 @@ page)</li>
 directory of LDIF:<br>
   </li>
 </ol>
-<pre>bin/ldif &lt;path-to-ldif-config-file&gt;<br><br>bin\ldif.bat &lt;path-to-ldif-config-file&gt;<br></pre>
+<pre>bin/ldif &lt;path-to-scheduler-config-file&gt;<br><br>bin\ldif.bat &lt;path-to-scheduler-config-file&gt;<br></pre>
 For details about the configuration file and parameters, see <a href="#config">Section 6</a>. A detailed example is given next.<br>
-<h2 id="examples">4. Example: Using LDIF for integrating Data from the Music Domain</h2>
+<h2 id="examples"><a name="example1"></a>4. Example: Using LDIF for integrating Data from the Music Domain</h2>
 <br><br>
 This example shows how LDIF is applied to integrate data originating
 from the following sources containing data from the music domain:<br>
 <ul>
-  <li><a href="http://dbpedia.org/">DBpedia<br>
-    </a></li>
+  <li><a href="http://dbpedia.org/">DBpedia</a></li>
   <li><a href="http://rdf.freebase.com/">Freebase</a></li>
   <li><a href="http://musicbrainz.dataincubator.org/">MusicBrainz</a> (at Talis)<br>
   </li>
@@ -347,14 +345,23 @@ dataset is downloaded, Freebase is crawled because of lack of other
 access possibilities, MusicBrainz and BBC Music are both accessed via
 SPARQL because no download of the dataset is available.<br>
 <br>
-The following configuration files for the different sources are used:<br>
+The following configuration files are used for importing the different sources<br>
 <ul>
-  <li>DBpedia: DataSource<br>
-</li>
-  <li>Freebase: DataSource<br>
+  <li>DBpedia
+      <a href="http://www.assembla.com/code/ldif/git/nodes/ldif/examples/music/ldif-config/ImportJob/DBpediaDumpImport.xml">Dump</a>
   </li>
-  <li>MusicBrainz</li>
-  <li>BBC Music</li>
+  <li>Freebase
+      <a href="http://www.assembla.com/code/ldif/git/nodes/ldif/examples/music/ldif-config/ImportJob/FreebaseCrawlImport.xml">Crawl</a>
+  </li>
+  <li>MusicBrainz
+      <a href="http://www.assembla.com/code/ldif/git/nodes/ldif/examples/music/ldif-config/ImportJob/MusicBrainzSPARQLImport_MusicArtist.xml">Sparql-MusicArtist</a>
+      ...
+  </li>
+  <li>BBC Music
+      <a href="http://www.assembla.com/code/ldif/git/nodes/ldif/examples/music/ldif-config/ImportJob/BBCSPARQLImportMusicArtist.xml">Sparql-MusicArtist</a>
+      ...
+
+  </li>
 
 </ul>In order to run the example, please download LDIF and run the following commands:<br>
 <ul>
@@ -393,38 +400,32 @@ information on protein sequence and function </li>
 <p>The following mapping file provides for translating the vocabularies
 used by the source datasets into the Wiki ontology. </p>
 <ul>
-  <li>R2R mapping file: <a href="http://www.assembla.com/code/ldif/git/nodes/ldif/ldif-singlemachine/src/main/resources/ldif/local/example/test2/mappings/ALL-to-Wiki.r2r.ttl?rev=176428845b9594e28a2f0362916de23cc821502c">ALL-toWiki.r2r.ttl</a>
+  <li>R2R mapping file: <a href="http://www.assembla.com/code/ldif/git/nodes/ldif/examples/life-science/mappings/ALL-to-Wiki.r2r.ttl">ALL-toWiki.r2r.ttl</a>
     <span style="text-decoration: underline;"></span></li>
 </ul>
 <p>The following Silk identity resolution heuristics are used to find
 genes and other expressions that are described in multiple datasets.</p>
 <ul>
-  <li><a href="http://www.assembla.com/code/ldif/git/nodes/ldif/ldif-singlemachine/src/main/resources/ldif/local/example/test2/linkSpecs/ABA-to-Wiki.silk.xml?rev=176428845b9594e28a2f0362916de23cc821502c">ABA-to-Wiki.silk.xml</a>,
-  </li>
-  <li><a href="http://www.assembla.com/code/ldif/git/nodes/ldif/ldif-singlemachine/src/main/resources/ldif/local/example/test2/linkSpecs/KEGG-GENES-to-Wiki.silk.xml?rev=176428845b9594e28a2f0362916de23cc821502c">KEGG-GENES-to-Wiki.silk.xml</a>,
-  </li>
-  <li><a href="http://www.assembla.com/code/ldif/git/nodes/ldif/ldif-singlemachine/src/main/resources/ldif/local/example/test2/linkSpecs/KEGG-Pathway-to-Wiki.silk.xml?rev=176428845b9594e28a2f0362916de23cc821502c">KEGG-Pathway-to-Wiki.silk.xml</a>,
-  </li>
-  <li><a href="http://www.assembla.com/code/ldif/git/nodes/ldif/ldif-singlemachine/src/main/resources/ldif/local/example/test2/linkSpecs/PharmGKB-to-Wiki.silk.xml?rev=176428845b9594e28a2f0362916de23cc821502c">PharmGKB-to-Wiki.silk.xml</a>,
-  </li>
-  <li><a href="http://www.assembla.com/code/ldif/git/nodes/ldif/ldif-singlemachine/src/main/resources/ldif/local/example/test2/linkSpecs/Uniprot-to-Wiki.silk.xml?rev=176428845b9594e28a2f0362916de23cc821502c">Uniprot-to-Wiki.silk.xml</a></li>
+  <li><a href="http://www.assembla.com/code/ldif/git/nodes/ldif/examples/life-science/linkSpecs/genes.xml">genes.xml</a>,</li>
+  <li><a href="http://www.assembla.com/code/ldif/git/nodes/ldif/examples/life-science/linkSpecs/diseases.xml">diseases.xml</a>,</li>
+  <li><a href="http://www.assembla.com/code/ldif/git/nodes/ldif/examples/life-science/linkSpecs/pathways.xml">pathways.xml</a></li>
 </ul>
 <p>To run the example, please download LDIF and use the following LDIF
 configuration. The configuration options are explained in the Section <a href="#config">Configuration</a> below. <br>
 </p>
 <ul>
-  <pre>&lt;integrationJob&gt;<br>  &lt;properties&gt;test1k.properties&lt;/properties&gt;<br>  &lt;sources&gt;sources&lt;/sources&gt;<br>  &lt;linkSpecifications&gt;linkSpecs&lt;/linkSpecifications&gt;<br>  &lt;mappings&gt;mappings&lt;/mappings&gt;<br>  &lt;output&gt;output.nq&lt;/output&gt;<br>&lt;/integrationJob&gt;</pre>
+  <pre>&lt;integrationJob&gt;<br>  &lt;properties&gt;life-science.properties&lt;/properties&gt;<br>  &lt;sources&gt;sources&lt;/sources&gt;<br>  &lt;linkSpecifications&gt;linkSpecs&lt;/linkSpecifications&gt;<br>  &lt;mappings&gt;mappings&lt;/mappings&gt;<br>  &lt;output&gt;output.nq&lt;/output&gt;<br>&lt;/integrationJob&gt;</pre>
 </ul>
 <p>Execution instructions:</p>
 <ul>
   <li>Change into the LDIF root dir.</li>
   <li>Under Unix type:</li>
   <ul>
-    <pre>bin/ldif-integrate examples/1k/integration-config.xml</pre>
+    <pre>bin/ldif-integrate examples/life-science/integration-config.xml</pre>
   </ul>
   <li>Under Windows type:</li>
   <ul>
-    <pre>bin\ldif-integrate.bat examples\1k\integration-config.xml</pre>
+    <pre>bin\ldif-integrate.bat examples\life-science\integration-config.xml</pre>
   </ul>
 </ul>
 <h3>Example Data Translation </h3>
@@ -552,7 +553,7 @@ single target URI in the output data. Default: <span style="font-family: monospa
 <ul>
   <li>
     <p>Specify the graph containing the provenance information. As of
-LDIF V0.2, Quads
+LDIF V0.3, Quads
 from this graph are only written to the final output dataset, but are
 processed any further in the integration workflow. Default graph name: <span style="font-family: monospace;">http://www4.wiwiss.fu-berlin.de/ldif/provenance</span></p>
   </li>

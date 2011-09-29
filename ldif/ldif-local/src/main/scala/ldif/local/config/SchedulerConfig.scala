@@ -2,9 +2,9 @@ package ldif.local.config
 
 import java.util.logging.Logger
 import java.io.File
-import java.util.Properties
 import ldif.util.ValidatingXMLReader
-import xml.{Node, Elem, XML}
+import xml.{Node, XML}
+import java.util.Properties
 
 case class SchedulerConfig (importJobsDir : File, integrationJob : File, dataSourcesDir : File, dumpLocationDir : File, properties : Properties)  {}
 
@@ -14,7 +14,7 @@ object SchedulerConfig
 
   private val schemaLocation = "xsd/SchedulerConfig.xsd"
 
-  //TODO def empty = SchedulerConfig(Nil, Nil, Nil)
+  def empty = SchedulerConfig(null, null, null, null, new Properties)
 
   def load = new ValidatingXMLReader(fromFile, schemaLocation)
 
@@ -45,11 +45,14 @@ object SchedulerConfig
     )
   }
 
-  private def getFile (xml : Node, key : String, baseDir : String) : File = {
+  private def getFile (xml : Node, key : String, baseDir : String = null) : File = {
     val value : String = (xml \ key text)
     var file : File = null
     if (value != ""){
-      val tmpFile = new File(baseDir + "/" + value)
+      var tmpFilePath = value
+      if (baseDir != null)
+        tmpFilePath = baseDir + "/" + tmpFilePath
+      val tmpFile = new File(tmpFilePath)
       if (tmpFile.exists) {
         file = tmpFile
       }
@@ -58,7 +61,7 @@ object SchedulerConfig
       }
     }
     else{
-      log.warning("\'"+key+"\' is not defined in the configuration file")
+      log.warning("\'"+key+"\' is not defined in the Scheduler config")
     }
     file
   }

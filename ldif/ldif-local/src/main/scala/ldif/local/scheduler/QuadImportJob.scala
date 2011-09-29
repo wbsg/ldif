@@ -1,10 +1,10 @@
 package ldif.local.scheduler
 
 import ldif.local.datasources.dump.DumpLoader
-import ldif.util.Identifier
 import xml.Node
 import ldif.datasources.dump.QuadParser
 import java.io.{OutputStreamWriter, OutputStream}
+import ldif.util.{Consts, Identifier}
 
 case class QuadImportJob(dumpLocation : String, id : Identifier, refreshSchedule : String, dataSource : String) extends ImportJob {
 
@@ -21,6 +21,8 @@ case class QuadImportJob(dumpLocation : String, id : Identifier, refreshSchedule
         val quad = parser.parseLine(line)
         importedGraphs += quad.graph
         writer.write(quad.toNQuadFormat+" . \n")
+        if (importedGraphs.size >= Consts.MAX_NUM_GRAPHS_IN_MEMORY)
+          writeImportedGraphsToFile
     }
     writer.flush
     writer.close
