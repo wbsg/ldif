@@ -269,7 +269,7 @@ URI for each node. Each transformation module specifies which paths
 should be included into the entities it processes. Splitting the work
 into fine-granular entities, allows LDIF to parallelize the work into
 multiple threats and will, in the next release, allow thework to be
-parallelized on multiple machines using Hadoop. For the LDIF V0.2
+parallelized on multiple machines using Hadoop. For the LDIF V0.3
 release, we have implemented only an
 in-memory version of the runtime environment. This implementation keeps
 all intermediate results in
@@ -278,16 +278,11 @@ memory
 available. For instance, integrating 25 million triples required 5 GB
 memory within one of our <a href="benchmark.html">experiments</a>. </p>
 <h3><a name="nextSteps"></a>Next steps for LDIF</h3>
-<p>LDIF V0.2 provides data translation and identity resolution
-functionality. Over the next months, we plan to extend LDIF along the
+<p>Over the next months, we plan to extend LDIF along the
 following lines:<br>
 </p>
 <ol>
-  <li>Add <strong>Web Data Access Modules</strong> (Linked Data
-Crawler, SPARQL Endpoint Reader, Remote RDF File Loader) as well as a
-scheduling component which provides for regularly updating the local
-input data cache.</li>
-  <li>Implement a <strong>Hadoop Version of the Runtime Environment </strong>in
+ <li>Implement a <strong>Hadoop Version of the Runtime Environment </strong>in
 order to be able to scale to really large amounts of input data.
 Processes and data will be distributed over a cluster of machines.</li>
   <li>Add a <strong>Data Quality Evaluation and Data Fusion Module</strong>
@@ -311,15 +306,14 @@ page)</li>
 directory of LDIF:<br>
   </li>
 </ol>
-<pre>bin/ldif &lt;path-to-ldif-config-file&gt;<br><br>bin\ldif.bat &lt;path-to-ldif-config-file&gt;<br></pre>
+<pre>bin/ldif &lt;path-to-scheduler-config-file&gt;<br><br>bin\ldif.bat &lt;path-to-scheduler-config-file&gt;<br></pre>
 For details about the configuration file and parameters, see <a href="#config">Section 6</a>. A detailed example is given next.<br>
-<h2 id="examples">4. Example: Using LDIF for integrating Data from the Music Domain</h2>
+<h2 id="examples"><a name="example1"></a>4. Example: Using LDIF for integrating Data from the Music Domain</h2>
 <br><br>
 This example shows how LDIF is applied to integrate data originating
 from the following sources containing data from the music domain:<br>
 <ul>
-  <li><a href="http://dbpedia.org/">DBpedia<br>
-    </a></li>
+  <li><a href="http://dbpedia.org/">DBpedia</a></li>
   <li><a href="http://rdf.freebase.com/">Freebase</a></li>
   <li><a href="http://musicbrainz.dataincubator.org/">MusicBrainz</a> (at Talis)<br>
   </li>
@@ -330,9 +324,21 @@ dataset is downloaded, Freebase is crawled because of lack of other
 access possibilities, MusicBrainz and BBC Music are both accessed via
 SPARQL because no download of the dataset is available.<br>
 <br>
-The following configuration files for the different sources are used:<br>
+The following configuration files are used for importing the different sources<br>
 <ul>
-  <li>DBpedia<br>
+  <li>DBpedia
+      <a href="http://www.assembla.com/code/ldif/git/nodes/ldif/examples/music/ldif-config/ImportJob/DBpediaDumpImport.xml">Dump</a>
+  </li>
+  <li>Freebase
+      <a href="http://www.assembla.com/code/ldif/git/nodes/ldif/examples/music/ldif-config/ImportJob/FreebaseCrawlImport.xml">Crawl</a>
+  </li>
+  <li>MusicBrainz
+      <a href="http://www.assembla.com/code/ldif/git/nodes/ldif/examples/music/ldif-config/ImportJob/MusicBrainzSPARQLImport_MusicArtist.xml">Sparql-MusicArtist</a>
+      ...
+  </li>
+  <li>BBC Music
+      <a href="http://www.assembla.com/code/ldif/git/nodes/ldif/examples/music/ldif-config/ImportJob/BBCSPARQLImportMusicArtist.xml">Sparql-MusicArtist</a>
+      ...
   </li>
 </ul>
 
@@ -525,7 +531,7 @@ single target URI in the output data. Default: <span style="font-family: monospa
 <ul>
   <li>
     <p>Specify the graph containing the provenance information. As of
-LDIF V0.2, Quads
+LDIF V0.3, Quads
 from this graph are only written to the final output dataset, but are
 processed any further in the integration workflow. Default graph name: <span style="font-family: monospace;">http://www4.wiwiss.fu-berlin.de/ldif/provenance</span></p>
   </li>
