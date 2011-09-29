@@ -16,23 +16,34 @@
 <!--	<Blocking/> -->
 
 	<Interlinks>
-		<Interlink id="Bands">
-			<LinkType>owl:sameAs</LinkType>
 
-			<SourceDataset dataSource="SOURCE" var="a">
-				<RestrictTo>?a rdf:type mo:MusicGroup .</RestrictTo>
+        <Interlink id="MusicArtist">
+            <LinkType>owl:sameAs</LinkType>
+
+            <SourceDataset dataSource="SOURCE" var="a">
+				<RestrictTo>?a rdf:type mo:MusicArtist .</RestrictTo>
 			</SourceDataset>
 
 			<TargetDataset dataSource="TARGET" var="b">
-				<RestrictTo>?b rdf:type mo:MusicGroup .</RestrictTo>
+				<RestrictTo>?b rdf:type mo:MusicArtist .</RestrictTo>
 			</TargetDataset>
 
-			<LinkCondition>
+            <LinkCondition>
 				<Aggregate type="avg">
-					<Compare metric="jaccard">
-						<Input path="?a/dbpedia-owl:bandMember/rdfs:label" />
-						<Input path="?b/dbpedia-owl:bandMember/rdfs:label" />
-					</Compare>
+                    <Aggregate type="max">
+					    <Compare metric="jaccard">
+    						<Input path="?a/dbpedia-owl:bandMember/rdfs:label" />
+    						<Input path="?b/dbpedia-owl:bandMember/rdfs:label" />
+    					</Compare>
+                        <Compare metric="date" threshold="0">
+                             <Input path="?a/dbpedia-owl:birthDate" />
+	    					<Input path="?b/dbpedia-owl:birthDate" />
+                        </Compare>
+                        <Compare metric="jaccard">
+                            <Input path="?a/foaf:made/rdfs:label" />
+					    	<Input path="?b/foaf:made/rdfs:label" />
+                        </Compare>
+                    </Aggregate>
                     <Compare metric="equality">
                         <Input path="?a/rdfs:label" />
 						<Input path="?b/rdfs:label" />
@@ -42,7 +53,99 @@
 
 			<Filter threshold="0.7" />
 
-		</Interlink>
+        </Interlink>
+
+        <Interlink id="Label">
+            <LinkType>owl:sameAs</LinkType>
+
+            <SourceDataset dataSource="SOURCE" var="a">
+				<RestrictTo>?a rdf:type mo:Label .</RestrictTo>
+			</SourceDataset>
+
+			<TargetDataset dataSource="TARGET" var="b">
+				<RestrictTo>?b rdf:type mo:Label .</RestrictTo>
+			</TargetDataset>
+
+            <LinkCondition>
+                    <Compare metric="equality">
+                        <TransformInput function="lowerCase">
+                            <TransformInput function="alphaReduce">
+                                <Input path="?a/rdfs:label" />
+                            </TransformInput>
+                        </TransformInput>
+                        <TransformInput function="lowerCase">
+                            <TransformInput function="alphaReduce">
+						        <Input path="?b/rdfs:label" />
+                            </TransformInput>
+                        </TransformInput>
+                    </Compare>
+			</LinkCondition>
+
+			<Filter threshold="1.0" />
+
+        </Interlink>
+
+        <Interlink id="Genre">
+            <LinkType>owl:sameAs</LinkType>
+
+            <SourceDataset dataSource="SOURCE" var="a">
+				<RestrictTo>?a rdf:type dbpedia-owl:Genre .</RestrictTo>
+			</SourceDataset>
+
+			<TargetDataset dataSource="TARGET" var="b">
+				<RestrictTo>?b rdf:type dbpedia-owl:Genre .</RestrictTo>
+			</TargetDataset>
+
+            <LinkCondition>
+                    <Compare metric="equality">
+                        <TransformInput function="lowerCase">
+                            <TransformInput function="alphaReduce">
+                                <Input path="?a/rdfs:label" />
+                            </TransformInput>
+                        </TransformInput>
+                        <TransformInput function="lowerCase">
+                            <TransformInput function="alphaReduce">
+						        <Input path="?b/rdfs:label" />
+                            </TransformInput>
+                        </TransformInput>
+                    </Compare>
+			</LinkCondition>
+
+			<Filter threshold="1.0" />
+
+        </Interlink>
+
+        <Interlink id="Record">
+            <LinkType>owl:sameAs</LinkType>
+
+            <SourceDataset dataSource="SOURCE" var="a">
+				<RestrictTo>?a rdf:type mo:Record .</RestrictTo>
+			</SourceDataset>
+
+			<TargetDataset dataSource="TARGET" var="b">
+				<RestrictTo>?b rdf:type mo:Record .</RestrictTo>
+			</TargetDataset>
+
+            <LinkCondition>
+                <Aggregate type="avg">
+                    <Compare metric="equality">
+                        <TransformInput function="lowerCase">
+                            <Input path="?a/rdfs:label" />
+                        </TransformInput>
+                        <TransformInput function="lowerCase">
+			    	        <Input path="?b/rdfs:label" />
+                        </TransformInput>
+                    </Compare>
+                    <Compare metric="jaroWinkler">
+                        <Input path="?a\foaf:made/rdfs:label" />
+                        <Input path="?b\foaf:made/rdfs:label" />
+                    </Compare>
+                </Aggregate>
+			</LinkCondition>
+
+			<Filter threshold="0.8" />
+
+        </Interlink>
 
 	</Interlinks>
 
