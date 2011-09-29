@@ -39,12 +39,12 @@
                              <Input path="?a/dbpedia-owl:birthDate" />
 	    					<Input path="?b/dbpedia-owl:birthDate" />
                         </Compare>
-                        <Compare metric="jaccard">
+                        <Compare metric="jaccard" threshold="0.4">
                             <Input path="?a/foaf:made/rdfs:label" />
 					    	<Input path="?b/foaf:made/rdfs:label" />
                         </Compare>
                     </Aggregate>
-                    <Compare metric="equality">
+                    <Compare metric="equality" threshold="1.0">
                         <Input path="?a/rdfs:label" />
 						<Input path="?b/rdfs:label" />
                     </Compare>
@@ -67,7 +67,7 @@
 			</TargetDataset>
 
             <LinkCondition>
-                    <Compare metric="equality">
+                    <Compare metric="equality" threshold="1.0">
                         <TransformInput function="lowerCase">
                             <TransformInput function="alphaReduce">
                                 <Input path="?a/rdfs:label" />
@@ -81,7 +81,7 @@
                     </Compare>
 			</LinkCondition>
 
-			<Filter threshold="1.0" />
+			<Filter/>
 
         </Interlink>
 
@@ -97,7 +97,7 @@
 			</TargetDataset>
 
             <LinkCondition>
-                    <Compare metric="equality">
+                    <Compare metric="equality" threshold="1.0">
                         <TransformInput function="lowerCase">
                             <TransformInput function="alphaReduce">
                                 <Input path="?a/rdfs:label" />
@@ -111,7 +111,7 @@
                     </Compare>
 			</LinkCondition>
 
-			<Filter threshold="1.0" />
+			<Filter />
 
         </Interlink>
 
@@ -128,7 +128,7 @@
 
             <LinkCondition>
                 <Aggregate type="avg">
-                    <Compare metric="equality">
+                    <Compare metric="equality" threshold="1.0">
                         <TransformInput function="lowerCase">
                             <Input path="?a/rdfs:label" />
                         </TransformInput>
@@ -136,14 +136,14 @@
 			    	        <Input path="?b/rdfs:label" />
                         </TransformInput>
                     </Compare>
-                    <Compare metric="jaroWinkler">
+                    <Compare metric="jaroWinkler" threshold="0.8">
                         <Input path="?a\foaf:made/rdfs:label" />
                         <Input path="?b\foaf:made/rdfs:label" />
                     </Compare>
                 </Aggregate>
 			</LinkCondition>
 
-			<Filter threshold="0.8" />
+			<Filter />
 
         </Interlink>
 
