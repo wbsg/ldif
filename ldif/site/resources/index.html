@@ -1,6 +1,7 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html><head><title>LDIF - Linked Data Integration Framework</title>
 
+
   
   <style>
 body { background: white; color: black; font-family: sans-serif; line-height: 1.4em; padding: 2.5em 3em; margin: 0; }
@@ -475,12 +476,15 @@ The following configuration files are used for importing the different sources<b
   <li>R2R mapping file: <a href="http://www.assembla.com/code/ldif/git/nodes/ldif/examples/music/ldif-config/mappings/mappings.ttl">mappings.ttl</a><br>
   </li>
 </ul>
-The target vocabulary is a mix of existing ontologies like FOAF, Music Ontology, Dublin Core, DBpedia etc.<br>
+The target vocabulary is a mix of existing ontologies like FOAF, Music
+Ontology, Dublin Core, DBpedia etc. The main instances we integrate are
+of type music artist and record/album.&nbsp; Minor classes like music
+label and genre are integrated from fewer sources.<br>
 <br>
 The following Silk identity resolution heuristics are used to find
 genes and other expressions that are described in multiple datasets:<br>
 <ul>
-  <li><br>
+  <li>Silk link specification: <a href="http://www.assembla.com/code/ldif/git/nodes/ldif/examples/music/ldif-config/linkspecs/musicLinkSpec.xml">musicLinkSpec.xml</a><br>
   </li>
 </ul>
 <br>
@@ -503,15 +507,7 @@ which parameters you can modify to change the runtime behavior of LDIF.</p>
 <p>A Schedule Job updates the local sources and it is configured with an XML document, whose structure is described by this <a href="http://www.assembla.com/code/ldif/git/nodes/ldif/ldif-core/src/main/resources/xsd/SchedulerConfig.xsd">XML Schema</a>.</p>
 
 <p>A typical configuration document looks like this:</p>
-<pre>
-&lt;scheduler&gt;
-    &lt;properties&gt;scheduler.properties&lt;/properties&gt;
-    &lt;dataSources&gt;datasources&lt;/dataSources&gt;
-    &lt;importJobs&gt;importJobs&lt;/importJobs&gt;
-    &lt;integrationJobs&gt;integration-config.xml&lt;/integrationJob&gt;
-    &lt;dumpLocation&gt;dumps&lt;/dumpLocation&gt;
-&lt;/scheduler&gt;
-</pre>
+<pre>&lt;scheduler&gt;<br>    &lt;properties&gt;scheduler.properties&lt;/properties&gt;<br>    &lt;dataSources&gt;datasources&lt;/dataSources&gt;<br>    &lt;importJobs&gt;importJobs&lt;/importJobs&gt;<br>    &lt;integrationJobs&gt;integration-config.xml&lt;/integrationJob&gt;<br>    &lt;dumpLocation&gt;dumps&lt;/dumpLocation&gt;<br>&lt;/scheduler&gt;<br></pre>
 
 <p>It has the following elements:</p>
 <ul>
@@ -524,36 +520,34 @@ which parameters you can modify to change the runtime behavior of LDIF.</p>
 <p>All the paths are relative to the config file location.</p>
 
 <h4>Configuration Properties</h4>
-<p>In the Schedule Job configuration file you can specify a (Java) properties file to further tweak certain parameters concerning the workflow.
-    Here is a list with all properties that can be set at the moment and the possible values for each property:</p>
+<p>In the Schedule Job configuration file you can specify a (Java)
+properties file to further tweak certain parameters concerning the
+workflow. Here is a list with all properties that can be set at the
+moment and the possible values for each property:</p>
 <ul>
-  <li><p><i>provenanceGraphURI</i> <br/> Specify the graph containing the provenance information. As of LDIF V0.3, Quads from this graph are only written to the final output dataset, but are
-      processed any further in the integration workflow. Default graph name: <span style="font-family: monospace;">http://www4.wiwiss.fu-berlin.de/ldif/provenance</span></p>
+  <li><p><i>provenanceGraphURI</i> <br> Specify the graph
+containing the provenance information. As of LDIF V0.3, Quads from this
+graph are only written to the final output dataset, but are processed
+any further in the integration workflow. Default graph name: <span style="font-family: monospace;">http://www4.wiwiss.fu-berlin.de/ldif/provenance</span></p>
   <pre>provenanceGraphURI = http://www4.wiwiss.fu-berlin.de/ldif/provenance</pre></li>
 </ul>
 
 <ul>
-  <li><p><i>oneTimeExecution</i> <br/>If _true_, the Scheduler executes all the Jobs at most once. Import Jobs are evaluated first and then (as all of these are finished)
-      the Integration Job starts. Default: <span style="font-family: monospace;">false</span></p>
+  <li><p><i>oneTimeExecution</i> <br>If _true_, the Scheduler
+executes all the Jobs at most once. Import Jobs are evaluated first and
+then (as all of these are finished) the Integration Job starts.
+Default: <span style="font-family: monospace;">false</span></p>
   <pre>oneTimeExecution = true | false</pre></li>
 </ul>
 
 
 <h3>Integration Job Configuration</h3>
 <p>An Integration Job is configured with an XML document, whose structure is described by this <a href="http://www.assembla.com/code/ldif/git/nodes/ldif/ldif-core/src/main/resources/xsd/IntegrationJob.xsd">XML Schema</a>.
-<br/>The current structure is very simple because the integration flow is static at the moment - something that will change in future releases.</p>
+<br>The current structure is very simple because the integration flow
+is static at the moment - something that will change in future releases.</p>
 
 <p>A typical configuration document looks like this:</p>
-<pre>
-&lt;integrationJob&gt;
-    &lt;properties&gt;test.properties&lt;/properties&gt;
-    &lt;sources&gt;sources&lt;/sources&gt;
-    &lt;linkSpecifications&gt;linkSpecs&lt;/linkSpecifications&gt;
-    &lt;mappings&gt;mappings&lt;/mappings&gt;
-    &lt;output&gt;output.nq&lt;/output&gt;
-    &lt;runSchedule&gt;daily&lt;/runSchedule&gt;
-&lt;/integrationJob&gt;
-</pre>
+<pre>&lt;integrationJob&gt;<br>    &lt;properties&gt;test.properties&lt;/properties&gt;<br>    &lt;sources&gt;sources&lt;/sources&gt;<br>    &lt;linkSpecifications&gt;linkSpecs&lt;/linkSpecifications&gt;<br>    &lt;mappings&gt;mappings&lt;/mappings&gt;<br>    &lt;output&gt;output.nq&lt;/output&gt;<br>    &lt;runSchedule&gt;daily&lt;/runSchedule&gt;<br>&lt;/integrationJob&gt;<br></pre>
 
 <p>It has the following elements:</p>
 <ul>
@@ -572,31 +566,34 @@ Furthermore the following directories would be nested in the root directory: lin
 Datasets have to be in a local directory.</p>
 
 <h4><a name="configurationproperties"></a>Configuration Properties</h4>
-<p>In the Integration Job configuration file you can specify a (Java) properties file to further tweak certain parameters concerning the integration workflow.
-   Here is a list with all properties that can be set at the moment and the possible values for each property:</p>
+<p>In the Integration Job configuration file you can specify a (Java)
+properties file to further tweak certain parameters concerning the
+integration workflow. Here is a list with all properties that can be
+set at the moment and the possible values for each property:</p>
 
 <ul>
-  <li><p><i>output</i><br/>
-    Specify if all input quads from the input should be included in the output file or only the quads that were mapped/translated by LDIF.
-    Default: <span style="font-family: monospace;">mapped-only</span></p>
+  <li><p><i>output</i><br> Specify if all input quads from the
+input should be included in the output file or only the quads that were
+mapped/translated by LDIF. Default: <span style="font-family: monospace;">mapped-only</span></p>
   <pre>output = all | mapped-only</pre></li>
 </ul>
 
 <ul>
-  <li><p><i>rewriteURIs</i><br/>
+  <li><p><i>rewriteURIs</i><br>
       Specify if URI aliases in the input data should be rewritten to a single target URI in the output data.
       Default: <span style="font-family: monospace;">true</span></p>
   <pre>rewriteURIs = true | false</pre></li>
 </ul>
 
 <ul>
-  <li><p><i>provenanceGraphURI</i> <br/>
-      Specify the graph containing the provenance information. As of LDIF V0.3, Quads from this graph are only written to the final output dataset, but are
-      processed any further in the integration workflow. Default graph name: <span style="font-family: monospace;">http://www4.wiwiss.fu-berlin.de/ldif/provenance</span></p>
+  <li><p><i>provenanceGraphURI</i> <br> Specify the graph
+containing the provenance information. As of LDIF V0.3, Quads from this
+graph are only written to the final output dataset, but are processed
+any further in the integration workflow. Default graph name: <span style="font-family: monospace;">http://www4.wiwiss.fu-berlin.de/ldif/provenance</span></p>
   <pre>provenanceGraphURI = http://www4.wiwiss.fu-berlin.de/ldif/provenance</pre></li>
 </ul>
 <ul>
-  <li><p><i>validateSources</i><br/>
+  <li><p><i>validateSources</i><br>
       Source datasets, R2R mappings and Silk link specifications are all validated before starting with the actual integration.
       Since the syntax validation of the sources (N-Triples / N-Quads files) takes some time (about 15s/GB),
       if you already know that they are correct, it is possible to disable this step by setting the property to false.
@@ -606,34 +603,37 @@ Datasets have to be in a local directory.</p>
 
 
 <ul>
-  <li><p><i>useExternalSameAsLinks</i><br/>
-  Besides discovering equal entities in the identity resolution phase, LDIF also offers the opportunity to input these relationships in form of owl:sameAs links.
-  The NT/N-Quads file with these sameAs-links has to be placed in the source directory with the other datasets.
-  If you don’t want to use sameAs-links from the input data, set this property to false. Default: <span style="font-family: monospace;">true</span></p>
+  <li><p><i>useExternalSameAsLinks</i><br> Besides discovering
+equal entities in the identity resolution phase, LDIF also offers the
+opportunity to input these relationships in form of owl:sameAs links.
+The NT/N-Quads file with these sameAs-links has to be placed in the
+source directory with the other datasets. If you don’t want to use
+sameAs-links from the input data, set this property to false. Default: <span style="font-family: monospace;">true</span></p>
   <pre>useExternalSameAsLinks = true | false</pre></li>
 </ul>
 
 <ul>
-  <li><p><i>outputFormat</i><br/>
+  <li><p><i>outputFormat</i><br>
   Although the default output format is N-Quads, LDIF also offers a triple output as N-Triple. Default: <span style="font-family: monospace;">nq</span></p>
   <pre>outputFormat = nq | nt</pre></li>
 </ul>
 
 <ul>
-  <li><p><i>uriMinting</i><br/>
+  <li><p><i>uriMinting</i><br>
   Specify if output resources should be given an URI within the target namespace. URI minting. Default: <span style="font-family: monospace;">false</span></p>
   <pre>uriMinting = true | false</pre></li>
 </ul>
 
 <ul>
-  <li><p><i>uriMintNamespace</i><br/>
+  <li><p><i>uriMintNamespace</i><br>
   Specify the namespace into which output resources are translated, if URI minting is enabled. Default: <span style="font-family: monospace;">http://www4.wiwiss.fu-berlin.de/ldif/resource/</span></p>
   <pre>uriMintNamespace = http://www4.wiwiss.fu-berlin.de/ldif/resource/</pre></li>
 </ul>
 
 <ul>
-  <li><p><i>uriMintLabelPredicate</i><br/>
-  Specify the predicates of the resources to translate which are defining the local name of the URI, may be more than one, separated by blank spaces.</p>
+  <li><p><i>uriMintLabelPredicate</i><br> Specify the predicates
+of the resources to translate which are defining the local name of the
+URI, may be more than one, separated by blank spaces.</p>
   <pre>uriMintLabelPredicate = http://www4.wiwiss.fu-berlin.de/ldif/property/ID http://www4.wiwiss.fu-berlin.de/ldif/property/Label</pre></li>
 </ul>
 
@@ -641,61 +641,35 @@ Datasets have to be in a local directory.</p>
 <p>An Import Job is configured with an XML document, whose structure is described by this <a href="http://www.assembla.com/code/ldif/git/nodes/ldif/ldif-core/src/main/resources/xsd/ImportJob.xsd">XML Schema</a>.</p>
 
 <p>LDIF supports four different mechanisms to import external data:
-    <ul>
+    </p><ul>
     <li>Quad Import Job – import N-Quad dumps</li>
     <li>Triple Import Job – import RDF/N-Triple dumps</li>
     <li>Crawl Import Job – import by dereferencing URIs as RDF data, using the LDspider Web Crawling Framework</li>
     <li>SPARQL Import Job – import by quering a SPARQL endpoint</li>
     </ul>
-</p>
+
 
 <p>A typical config file for a Quad Import Job looks like this: </p>
-<pre>
-&lt;importJob xmlns="http://www4.wiwiss.fu-berlin.de/bizer/ldif"&gt;
-    &lt;internalId&gt;dBpedia.0&lt;/internalId&gt;
-    &lt;dataSource&gt;dBpedia&lt;/dataSource&gt;
-    &lt;refreshSchedule&gt;daily&lt;/refreshSchedule&gt;
-    &lt;quadImportJob&gt;
-      &lt;dumpLocation&gt;http://dbpedia.org/dump.nq&lt;/dumpLocation&gt;
-    &lt;/quadImportJob&gt;
-&lt;/importJob&gt;
-</pre>
+<pre>&lt;importJob xmlns="http://www4.wiwiss.fu-berlin.de/bizer/ldif"&gt;<br>    &lt;internalId&gt;dBpedia.0&lt;/internalId&gt;<br>    &lt;dataSource&gt;dBpedia&lt;/dataSource&gt;<br>    &lt;refreshSchedule&gt;daily&lt;/refreshSchedule&gt;<br>    &lt;quadImportJob&gt;<br>      &lt;dumpLocation&gt;http://dbpedia.org/dump.nq&lt;/dumpLocation&gt;<br>    &lt;/quadImportJob&gt;<br>&lt;/importJob&gt;<br></pre>
 
 <h4>Provenance Metadata</h4>
 <p>Provenance metadata structure is described by this <a href="http://www.assembla.com/code/ldif/git/nodes/ldif/ldif-core/src/main/resources/owl/provenance.owl">ontology</a>.</p>
 
 <p>For each imported graph, provenance information will contain:
-<ul>
+</p><ul>
     <li>import date and time,</li>
     <li>chosen import type,</li>
     <li>original location (only for Quad and Triple Import Jobs).</li>
 </ul>
-</p>
+
 
 <p>A typical provenance graph for a Quad Import Job looks like this:</p>
 
-<pre>
-&lt;http://dbpedia.org/graphA&gt; &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#type&gt; &lt;http://www4.wiwiss.fu-berlin.de/ldif/ImportedGraph&gt; &lt;http://www4.wiwiss.fu-berlin.de/ldif/provenance&gt; .
-&lt;http://dbpedia.org/graphA&gt; &lt;http://www4.wiwiss.fu-berlin.de/ldif/hasImportJob&gt; _:blanknode &lt;http://www4.wiwiss.fu-berlin.de/ldif/provenance&gt; .
-&lt;http://dbpedia.org/graphB&gt; &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#type&gt; &lt;http://www4.wiwiss.fu-berlin.de/ldif/ImportedGraph&gt; &lt;http://www4.wiwiss.fu-berlin.de/ldif/provenance&gt; .
-&lt;http://dbpedia.org/graphB&gt; &lt;http://www4.wiwiss.fu-berlin.de/ldif/hasImportJob&gt; _:blanknode &lt;http://www4.wiwiss.fu-berlin.de/ldif/provenance&gt; .
-_:blanknode &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#type&gt; &lt;http://www4.wiwiss.fu-berlin.de/ldif/ImportJob&gt; &lt;http://www4.wiwiss.fu-berlin.de/ldif/provenance&gt; .
-_:blanknode &lt;http://www4.wiwiss.fu-berlin.de/ldif/importId&gt; "dBpedia.0" &lt;http://www4.wiwiss.fu-berlin.de/ldif/provenance&gt; .
-_:blanknode &lt;http://www4.wiwiss.fu-berlin.de/ldif/lastUpdate&gt; "2011-09-21T19:01:00-05:00"^^&lt;http://www.w3.org/2001/XMLSchema#dateTime&gt; &lt;http://www4.wiwiss.fu-berlin.de/ldif/provenance&gt; .
-_:blanknode &lt;http://www4.wiwiss.fu-berlin.de/ldif/hasDatasource&gt; "dBpedia" &lt;http://www4.wiwiss.fu-berlin.de/ldif/provenance&gt; .
-_:blanknode &lt;http://www4.wiwiss.fu-berlin.de/ldif/hasImportType&gt; "quad" &lt;http://www4.wiwiss.fu-berlin.de/ldif/provenance&gt; .
-_:blanknode &lt;http://www4.wiwiss.fu-berlin.de/ldif/hasOriginalLocation&gt; "http://mes.smw-lde-eu.s3.amazonaws.com/dBpedia_dump.nt.bz2" &lt;http://www4.wiwiss.fu-berlin.de/ldif/provenance&gt; .
-</pre>
+<pre>&lt;http://dbpedia.org/graphA&gt; &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#type&gt; &lt;http://www4.wiwiss.fu-berlin.de/ldif/ImportedGraph&gt; &lt;http://www4.wiwiss.fu-berlin.de/ldif/provenance&gt; .<br>&lt;http://dbpedia.org/graphA&gt; &lt;http://www4.wiwiss.fu-berlin.de/ldif/hasImportJob&gt; _:blanknode &lt;http://www4.wiwiss.fu-berlin.de/ldif/provenance&gt; .<br>&lt;http://dbpedia.org/graphB&gt; &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#type&gt; &lt;http://www4.wiwiss.fu-berlin.de/ldif/ImportedGraph&gt; &lt;http://www4.wiwiss.fu-berlin.de/ldif/provenance&gt; .<br>&lt;http://dbpedia.org/graphB&gt; &lt;http://www4.wiwiss.fu-berlin.de/ldif/hasImportJob&gt; _:blanknode &lt;http://www4.wiwiss.fu-berlin.de/ldif/provenance&gt; .<br>_:blanknode &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#type&gt; &lt;http://www4.wiwiss.fu-berlin.de/ldif/ImportJob&gt; &lt;http://www4.wiwiss.fu-berlin.de/ldif/provenance&gt; .<br>_:blanknode &lt;http://www4.wiwiss.fu-berlin.de/ldif/importId&gt; "dBpedia.0" &lt;http://www4.wiwiss.fu-berlin.de/ldif/provenance&gt; .<br>_:blanknode &lt;http://www4.wiwiss.fu-berlin.de/ldif/lastUpdate&gt; "2011-09-21T19:01:00-05:00"^^&lt;http://www.w3.org/2001/XMLSchema#dateTime&gt; &lt;http://www4.wiwiss.fu-berlin.de/ldif/provenance&gt; .<br>_:blanknode &lt;http://www4.wiwiss.fu-berlin.de/ldif/hasDatasource&gt; "dBpedia" &lt;http://www4.wiwiss.fu-berlin.de/ldif/provenance&gt; .<br>_:blanknode &lt;http://www4.wiwiss.fu-berlin.de/ldif/hasImportType&gt; "quad" &lt;http://www4.wiwiss.fu-berlin.de/ldif/provenance&gt; .<br>_:blanknode &lt;http://www4.wiwiss.fu-berlin.de/ldif/hasOriginalLocation&gt; "http://mes.smw-lde-eu.s3.amazonaws.com/dBpedia_dump.nt.bz2" &lt;http://www4.wiwiss.fu-berlin.de/ldif/provenance&gt; .<br></pre>
 
 <h3>Data Source Configuration</h3>
 <p>A Data Source is configured with an XML document, whose structure is described by this  <a href="http://www.assembla.com/code/ldif/git/nodes/ldif/ldif-core/src/main/resources/xsd/DataSource.xsd">XML Schema</a>.</p>
-<pre>
-&lt;dataSource&gt;
-    &lt;label&gt;dBpedia&lt;/label&gt;
-    &lt;description&gt;DBpedia ist an RDF version of Wikipedia&lt;/description&gt;
-   &lt;homepage&gt;http://dbpedia.org&lt;/homepage&gt;
-&lt;/dataSource&gt;
-</pre>
+<pre>&lt;dataSource&gt;<br>    &lt;label&gt;dBpedia&lt;/label&gt;<br>    &lt;description&gt;DBpedia ist an RDF version of Wikipedia&lt;/description&gt;<br>   &lt;homepage&gt;http://dbpedia.org&lt;/homepage&gt;<br>&lt;/dataSource&gt;<br></pre>
 
 
 <h2 id="development">8. Source
@@ -772,7 +746,7 @@ Server - Adding missing Links while consuming Linked Data</a> ( <a href="http://
   <li>Andreas Schultz, Andrea Matteini, Robert Isele, Christian Bizer,
 Christian Becker: <a href="http://www.wiwiss.fu-berlin.de/en/institute/pwo/bizer/research/publications/Schultz-etal-Cold2011-LDIF-Paper.pdf">LDIF
 - Linked Data Integration Framework</a>. 2nd International Workshop on
-Consuming Linked Data, Bonn, Germany, October 2011.<span style="border-collapse: separate; color: rgb(0, 0, 0); font-family:'Times New Roman'; font-style: normal; font-variant: normal; font-weight: normal; letter-spacing: normal; line-height: normal; orphans: 2; text-indent: 0px; text-transform: none; white-space: normal; widows: 2; word-spacing: 0px; font-size: medium;"><span style="color: rgb(51, 51, 51); font-family: Verdana,Arial,Helvetica,sans-serif; font-size: 11px; line-height: 15px;"><br>
+Consuming Linked Data, Bonn, Germany, October 2011.<span style="border-collapse: separate; color: rgb(0, 0, 0); font-family: 'Times New Roman'; font-style: normal; font-variant: normal; font-weight: normal; letter-spacing: normal; line-height: normal; orphans: 2; text-indent: 0px; text-transform: none; white-space: normal; widows: 2; word-spacing: 0px; font-size: medium;"><span style="color: rgb(51, 51, 51); font-family: Verdana,Arial,Helvetica,sans-serif; font-size: 11px; line-height: 15px;"><br>
     </span></span></li>
 </ol>
 <h2 id="acknowledgments">12. Acknowledgments </h2>

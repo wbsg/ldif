@@ -1,0 +1,8 @@
+<integrationJob>
+    <properties>integration.properties</properties>
+    <sources>dump</sources>
+    <linkSpecifications>linkspecs</linkSpecifications>
+    <mappings>mappings</mappings>
+    <output>integrated_music_dataset.nq</output>
+    <runSchedule>onStartup</runSchedule>
+</integrationJob>
