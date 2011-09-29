@@ -4,7 +4,7 @@
             xmlns="http://www4.wiwiss.fu-berlin.de/ldif/">
     <internalId>bbc.0</internalId>
     <dataSource>BBC</dataSource>
-    <refreshSchedule>never</refreshSchedule>
+    <refreshSchedule>onStartup</refreshSchedule>
     <sparqlImportJob>
         <endpointLocation>http://api.talis.com/stores/bbc-backstage/services/sparql</endpointLocation>
         <sparqlPatterns>
