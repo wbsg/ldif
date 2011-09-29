@@ -35,7 +35,7 @@ object IntegrationConfig
       sources = getFile(xml, "sources", baseDir),
       linkSpecDir = getFile(xml, "linkSpecifications", baseDir),
       mappingDir = getFile(xml, "mappings", baseDir),
-      outputFile = getFile(xml, "output"),
+      outputFile = new File(xml \ "output" text),
       properties = properties,
       runSchedule = runSchedule
     )
@@ -57,7 +57,7 @@ object IntegrationConfig
       }
     }
     else{
-      log.warning("\'"+key+"\' is not defined in the configuration file")
+      log.warning("\'"+key+"\' is not defined in the IntegrationJob config")
     }
     file
   }

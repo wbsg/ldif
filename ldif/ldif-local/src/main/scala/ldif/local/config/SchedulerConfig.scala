@@ -45,11 +45,14 @@ object SchedulerConfig
     )
   }
 
-  private def getFile (xml : Node, key : String, baseDir : String) : File = {
+  private def getFile (xml : Node, key : String, baseDir : String = null) : File = {
     val value : String = (xml \ key text)
     var file : File = null
     if (value != ""){
-      val tmpFile = new File(baseDir + "/" + value)
+      var tmpFilePath = value
+      if (baseDir != null)
+        tmpFilePath = baseDir + "/" + tmpFilePath
+      val tmpFile = new File(tmpFilePath)
       if (tmpFile.exists) {
         file = tmpFile
       }
@@ -58,7 +61,7 @@ object SchedulerConfig
       }
     }
     else{
-      log.warning("\'"+key+"\' is not defined in the configuration file")
+      log.warning("\'"+key+"\' is not defined in the Scheduler config")
     }
     file
   }

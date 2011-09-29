@@ -250,7 +250,7 @@ class Scheduler (val config : SchedulerConfig, debug : Boolean = false) {
       integrationJob
     }
     else {
-      log.warning("Configuration file not found")
+      log.warning("Integration job configuration file not found")
       null
     }
   }
