@@ -320,7 +320,7 @@ directory of LDIF:<br>
   </li>
 </ol>
 <pre>bin/ldif &lt;path-to-scheduler-config-file&gt;<br><br>bin\ldif.bat &lt;path-to-scheduler-config-file&gt;<br></pre>
-For details about the configuration file and parameters, see <a href="#configuration">Section 6</a>. A detailed example is given next.<br>
+See the <a href="#configuration">configuration</a> section for more details. A detailed example is given next.<br>s
 
 <h2 id="example1">4. Example: Using LDIF to
 integrate Life Science Data </h2>
@@ -528,7 +528,7 @@ any further in the integration workflow. Default graph name: <span style="font-f
 </ul>
 
 <ul>
-  <li><p><i>oneTimeExecution</i> <br>If _true_, the Scheduler
+  <li><p><i>oneTimeExecution</i> <br>If <span style="font-family: monospace;">true</span>, the Scheduler
 executes all the Jobs at most once. Import Jobs are evaluated first and
 then (as all of these are finished) the Integration Job starts.
 Default: <span style="font-family: monospace;">false</span></p>
@@ -637,10 +637,10 @@ URI, may be more than one, separated by blank spaces.</p>
 
 <p>LDIF supports four different mechanisms to import external data:
     </p><ul>
-    <li>Quad Import Job – import N-Quad dumps</li>
-    <li>Triple Import Job – import RDF/N-Triple dumps</li>
-    <li>Crawl Import Job – import by dereferencing URIs as RDF data, using the LDspider Web Crawling Framework</li>
-    <li>SPARQL Import Job – import by quering a SPARQL endpoint</li>
+    <li><i>Quad Import Job</i> – import N-Quad dumps</li>
+    <li><i>Triple Import Job</i> – import RDF/N-Triple dumps</li>
+    <li><i>Crawl Import Job</i> – import by dereferencing URIs as RDF data, using the LDspider Web Crawling Framework</li>
+    <li><i>SPARQL Import Job</i> – import by quering a SPARQL endpoint</li>
     </ul>
 
 
