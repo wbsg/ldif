@@ -38,4 +38,9 @@ object Consts {
   val importJobClass = "http://www4.wiwiss.fu-berlin.de/ldif/ImportJob"
 
   val MAX_NUM_GRAPHS_IN_MEMORY = 100000
+
+  // SPARQL endpoint paramenter
+  val pageSize = 1000
+  val retryPause = 10 * 1000
+  val retryCount = 3
 }
