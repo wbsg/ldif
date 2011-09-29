@@ -492,6 +492,8 @@ In order to run the example, please download LDIF and run the following commands
 Performance Evaluation</h2>
 <p>We regularly carry out performance evaluations. For more
 details and the latest results please visit our <a href="benchmark.html">Benchmark results</a> page.</p>
+
+
 <h2 id="configuration">7. Configuration
 Options</h2>
 <p>This section describes how an LDIF configuration files look like and
@@ -501,7 +503,15 @@ which parameters you can modify to change the runtime behavior of LDIF.</p>
 <p>A Schedule Job updates the local sources and it is configured with an XML document, whose structure is described by this <a href="http://www.assembla.com/code/ldif/git/nodes/ldif/ldif-core/src/main/resources/xsd/SchedulerConfig.xsd">XML Schema</a>.</p>
 
 <p>A typical configuration document looks like this:</p>
-<pre>&lt;scheduler&gt;<br>  &lt;properties&gt;scheduler.properties&lt;/properties&gt;<br>  &lt;dataSources&gt;datasources&lt;/dataSources&gt;<br>  &lt;importJobs&gt;importJobs&lt;/importJobs&gt;<br>  &lt;integrationJobs&gt;integration-config.xml&lt;/integrationJob&gt;<br>  &lt;dumpLocation&gt;dumps&lt;/dumpLocation&gt;<br>&lt;/scheduler&gt;</pre>
+<pre>
+&lt;scheduler&gt;
+    &lt;properties&gt;scheduler.properties&lt;/properties&gt;
+    &lt;dataSources&gt;datasources&lt;/dataSources&gt;
+    &lt;importJobs&gt;importJobs&lt;/importJobs&gt;
+    &lt;integrationJobs&gt;integration-config.xml&lt;/integrationJob&gt;
+    &lt;dumpLocation&gt;dumps&lt;/dumpLocation&gt;
+&lt;/scheduler&gt;
+</pre>
 
 <p>It has the following elements:</p>
 <ul>
@@ -534,7 +544,16 @@ which parameters you can modify to change the runtime behavior of LDIF.</p>
 <br/>The current structure is very simple because the integration flow is static at the moment - something that will change in future releases.</p>
 
 <p>A typical configuration document looks like this:</p>
-<pre>&lt;integrationJob&gt;<br>  &lt;properties&gt;test.properties&lt;/properties&gt;<br>  &lt;sources&gt;sources&lt;/sources&gt;<br>  &lt;linkSpecifications&gt;linkSpecs&lt;/linkSpecifications&gt;<br>  &lt;mappings&gt;mappings&lt;/mappings&gt;<br>  &lt;output&gt;output.nq&lt;/output&gt;<br>  &lt;runSchedule&gt;daily&lt;/runSchedule&gt;<br>&lt;/integrationJob&gt;</pre>
+<pre>
+&lt;integrationJob&gt;
+    &lt;properties&gt;test.properties&lt;/properties&gt;
+    &lt;sources&gt;sources&lt;/sources&gt;
+    &lt;linkSpecifications&gt;linkSpecs&lt;/linkSpecifications&gt;
+    &lt;mappings&gt;mappings&lt;/mappings&gt;
+    &lt;output&gt;output.nq&lt;/output&gt;
+    &lt;runSchedule&gt;daily&lt;/runSchedule&gt;
+&lt;/integrationJob&gt;
+</pre>
 
 <p>It has the following elements:</p>
 <ul>
@@ -619,9 +638,9 @@ Datasets have to be in a local directory.</p>
 </ul>
 
 <h3>Import Job Configuration</h3>
-<p>An Import Job is configured with an XML document, whose structure is described by this <a href="http://www.assembla.com/code/ldif/git/nodes/ldif/ldif-core/src/main/resources/xsd/ImportJob.xsd">XML Schema</a>.
-<br/>
-LDIF supports four different mechanisms to import external data:
+<p>An Import Job is configured with an XML document, whose structure is described by this <a href="http://www.assembla.com/code/ldif/git/nodes/ldif/ldif-core/src/main/resources/xsd/ImportJob.xsd">XML Schema</a>.</p>
+
+<p>LDIF supports four different mechanisms to import external data:
     <ul>
     <li>Quad Import Job – import N-Quad dumps</li>
     <li>Triple Import Job – import RDF/N-Triple dumps</li>
@@ -629,10 +648,55 @@ LDIF supports four different mechanisms to import external data:
     <li>SPARQL Import Job – import by quering a SPARQL endpoint</li>
     </ul>
 </p>
+
 <p>A typical config file for a Quad Import Job looks like this: </p>
+<pre>
+&lt;importJob xmlns="http://www4.wiwiss.fu-berlin.de/bizer/ldif"&gt;
+    &lt;internalId&gt;dBpedia.0&lt;/internalId&gt;
+    &lt;dataSource&gt;dBpedia&lt;/dataSource&gt;
+    &lt;refreshSchedule&gt;daily&lt;/refreshSchedule&gt;
+    &lt;quadImportJob&gt;
+      &lt;dumpLocation&gt;http://dbpedia.org/dump.nq&lt;/dumpLocation&gt;
+    &lt;/quadImportJob&gt;
+&lt;/importJob&gt;
+</pre>
+
+<h4>Provenance Metadata</h4>
+<p>Provenance metadata structure is described by this <a href="http://www.assembla.com/code/ldif/git/nodes/ldif/ldif-core/src/main/resources/owl/provenance.owl">ontology</a>.</p>
+
+<p>For each imported graph, provenance information will contain:
+<ul>
+    <li>import date and time,</li>
+    <li>chosen import type,</li>
+    <li>original location (only for Quad and Triple Import Jobs).</li>
+</ul>
+</p>
+
+<p>A typical provenance graph for a Quad Import Job looks like this:</p>
+
+<pre>
+&lt;http://dbpedia.org/graphA&gt; &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#type&gt; &lt;http://www4.wiwiss.fu-berlin.de/ldif/ImportedGraph&gt; &lt;http://www4.wiwiss.fu-berlin.de/ldif/provenance&gt; .
+&lt;http://dbpedia.org/graphA&gt; &lt;http://www4.wiwiss.fu-berlin.de/ldif/hasImportJob&gt; _:blanknode &lt;http://www4.wiwiss.fu-berlin.de/ldif/provenance&gt; .
+&lt;http://dbpedia.org/graphB&gt; &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#type&gt; &lt;http://www4.wiwiss.fu-berlin.de/ldif/ImportedGraph&gt; &lt;http://www4.wiwiss.fu-berlin.de/ldif/provenance&gt; .
+&lt;http://dbpedia.org/graphB&gt; &lt;http://www4.wiwiss.fu-berlin.de/ldif/hasImportJob&gt; _:blanknode &lt;http://www4.wiwiss.fu-berlin.de/ldif/provenance&gt; .
+_:blanknode &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#type&gt; &lt;http://www4.wiwiss.fu-berlin.de/ldif/ImportJob&gt; &lt;http://www4.wiwiss.fu-berlin.de/ldif/provenance&gt; .
+_:blanknode &lt;http://www4.wiwiss.fu-berlin.de/ldif/importId&gt; "dBpedia.0" &lt;http://www4.wiwiss.fu-berlin.de/ldif/provenance&gt; .
+_:blanknode &lt;http://www4.wiwiss.fu-berlin.de/ldif/lastUpdate&gt; "2011-09-21T19:01:00-05:00"^^&lt;http://www.w3.org/2001/XMLSchema#dateTime&gt; &lt;http://www4.wiwiss.fu-berlin.de/ldif/provenance&gt; .
+_:blanknode &lt;http://www4.wiwiss.fu-berlin.de/ldif/hasDatasource&gt; "dBpedia" &lt;http://www4.wiwiss.fu-berlin.de/ldif/provenance&gt; .
+_:blanknode &lt;http://www4.wiwiss.fu-berlin.de/ldif/hasImportType&gt; "quad" &lt;http://www4.wiwiss.fu-berlin.de/ldif/provenance&gt; .
+_:blanknode &lt;http://www4.wiwiss.fu-berlin.de/ldif/hasOriginalLocation&gt; "http://mes.smw-lde-eu.s3.amazonaws.com/dBpedia_dump.nt.bz2" &lt;http://www4.wiwiss.fu-berlin.de/ldif/provenance&gt; .
+</pre>
 
 <h3>Data Source Configuration</h3>
-<p> </p>
+<p>A Data Source is configured with an XML document, whose structure is described by this  <a href="http://www.assembla.com/code/ldif/git/nodes/ldif/ldif-core/src/main/resources/xsd/DataSource.xsd">XML Schema</a>.</p>
+<pre>
+&lt;dataSource&gt;
+    &lt;label&gt;dBpedia&lt;/label&gt;
+    &lt;description&gt;DBpedia ist an RDF version of Wikipedia&lt;/description&gt;
+   &lt;homepage&gt;http://dbpedia.org&lt;/homepage&gt;
+&lt;/dataSource&gt;
+</pre>
+
 
 <h2 id="development">8. Source
 Code and Development</h2>
