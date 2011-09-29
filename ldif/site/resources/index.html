@@ -177,11 +177,11 @@ components, a data transformation components and a data output
 components.
 </p>
 <img alt="LDIF components" src="img/LDIFcomponents.png" height="92" width="299">
-<p></p>Currently, we have implemented the following modules: </p>
+<p>Currently, we have implemented the following modules: </p>
 
 <h3>Data Access</h3>
 
-<p>LDIF provides access modules for replicating datasets locally via file download, crawling or SPARQL and build provenance metadata for those.
+<p>LDIF provides access modules for replicating datasets locally via file download, crawling or SPARQL and building <a href="#provenance">provenance metadata</a>.  <br/>
    The integration task expects input data to be represented as Named Graphs and be stored in <a href="http://sw.deri.org/2008/07/n-quads/">N-Quads format</a> accessible locally.
    </p>
 
@@ -258,7 +258,7 @@ Specification Language</a>.</p>
 workflow into a single N-Quads file. This file contains the translated
 versions of all graphs from the input graph set as well as the content
 of the provenance graph and sameAs-links.
-Currently, the provenance information is just copied to the final output.
+<br/>Currently, the provenance information is just copied to the final output.
     In future releases, we will use the provenance information for data quality assessment and data fusion (see
 <a href="#nextSteps">Next Steps</a>).
 </p>
@@ -647,20 +647,18 @@ URI, may be more than one, separated by blank spaces.</p>
 <p>A typical config file for a Quad Import Job looks like this: </p>
 <pre>&lt;importJob xmlns="http://www4.wiwiss.fu-berlin.de/bizer/ldif"&gt;<br>    &lt;internalId&gt;dBpedia.0&lt;/internalId&gt;<br>    &lt;dataSource&gt;dBpedia&lt;/dataSource&gt;<br>    &lt;refreshSchedule&gt;daily&lt;/refreshSchedule&gt;<br>    &lt;quadImportJob&gt;<br>      &lt;dumpLocation&gt;http://dbpedia.org/dump.nq&lt;/dumpLocation&gt;<br>    &lt;/quadImportJob&gt;<br>&lt;/importJob&gt;<br></pre>
 
-<h4>Provenance Metadata</h4>
-<p>Provenance metadata structure is described by this <a href="http://www.assembla.com/code/ldif/git/nodes/ldif/ldif-core/src/main/resources/owl/provenance.owl">ontology</a>.</p>
-
-<p>For each imported graph, provenance information will contain:
+<h4 id="provenance">Provenance Metadata</h4>
+<p>The result of each import contains provenance metadata, whose structure is described by this <a href="http://www.assembla.com/code/ldif/git/nodes/ldif/ldif-core/src/main/resources/owl/provenance.owl">ontology</a>.
+    <br/>For each imported graph, provenance information will contain:
 </p><ul>
     <li>import date and time,</li>
     <li>chosen import type,</li>
     <li>original location (only for Quad and Triple Import Jobs).</li>
 </ul>
 
-
 <p>A typical provenance graph for a Quad Import Job looks like this:</p>
 
-<pre>&lt;http://dbpedia.org/graphA&gt; &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#type&gt; &lt;http://www4.wiwiss.fu-berlin.de/ldif/ImportedGraph&gt; &lt;http://www4.wiwiss.fu-berlin.de/ldif/provenance&gt; .<br>&lt;http://dbpedia.org/graphA&gt; &lt;http://www4.wiwiss.fu-berlin.de/ldif/hasImportJob&gt; _:blanknode &lt;http://www4.wiwiss.fu-berlin.de/ldif/provenance&gt; .<br>&lt;http://dbpedia.org/graphB&gt; &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#type&gt; &lt;http://www4.wiwiss.fu-berlin.de/ldif/ImportedGraph&gt; &lt;http://www4.wiwiss.fu-berlin.de/ldif/provenance&gt; .<br>&lt;http://dbpedia.org/graphB&gt; &lt;http://www4.wiwiss.fu-berlin.de/ldif/hasImportJob&gt; _:blanknode &lt;http://www4.wiwiss.fu-berlin.de/ldif/provenance&gt; .<br>_:blanknode &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#type&gt; &lt;http://www4.wiwiss.fu-berlin.de/ldif/ImportJob&gt; &lt;http://www4.wiwiss.fu-berlin.de/ldif/provenance&gt; .<br>_:blanknode &lt;http://www4.wiwiss.fu-berlin.de/ldif/importId&gt; "dBpedia.0" &lt;http://www4.wiwiss.fu-berlin.de/ldif/provenance&gt; .<br>_:blanknode &lt;http://www4.wiwiss.fu-berlin.de/ldif/lastUpdate&gt; "2011-09-21T19:01:00-05:00"^^&lt;http://www.w3.org/2001/XMLSchema#dateTime&gt; &lt;http://www4.wiwiss.fu-berlin.de/ldif/provenance&gt; .<br>_:blanknode &lt;http://www4.wiwiss.fu-berlin.de/ldif/hasDatasource&gt; "dBpedia" &lt;http://www4.wiwiss.fu-berlin.de/ldif/provenance&gt; .<br>_:blanknode &lt;http://www4.wiwiss.fu-berlin.de/ldif/hasImportType&gt; "quad" &lt;http://www4.wiwiss.fu-berlin.de/ldif/provenance&gt; .<br>_:blanknode &lt;http://www4.wiwiss.fu-berlin.de/ldif/hasOriginalLocation&gt; "http://mes.smw-lde-eu.s3.amazonaws.com/dBpedia_dump.nt.bz2" &lt;http://www4.wiwiss.fu-berlin.de/ldif/provenance&gt; .<br></pre>
+<pre>&lt;http://dbpedia.org/graphA&gt; &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#type&gt; &lt;http://www4.wiwiss.fu-berlin.de/ldif/ImportedGraph&gt; &lt;http://www4.wiwiss.fu-berlin.de/ldif/provenance&gt; .<br>&lt;http://dbpedia.org/graphA&gt; &lt;http://www4.wiwiss.fu-berlin.de/ldif/hasImportJob&gt; _:dbpedia0 &lt;http://www4.wiwiss.fu-berlin.de/ldif/provenance&gt; .<br>&lt;http://dbpedia.org/graphB&gt; &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#type&gt; &lt;http://www4.wiwiss.fu-berlin.de/ldif/ImportedGraph&gt; &lt;http://www4.wiwiss.fu-berlin.de/ldif/provenance&gt; .<br>&lt;http://dbpedia.org/graphB&gt; &lt;http://www4.wiwiss.fu-berlin.de/ldif/hasImportJob&gt; _:dbpedia0 &lt;http://www4.wiwiss.fu-berlin.de/ldif/provenance&gt; .<br>_:dbpedia0 &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#type&gt; &lt;http://www4.wiwiss.fu-berlin.de/ldif/ImportJob&gt; &lt;http://www4.wiwiss.fu-berlin.de/ldif/provenance&gt; .<br>_:dbpedia0 &lt;http://www4.wiwiss.fu-berlin.de/ldif/importId&gt; "dBpedia.0" &lt;http://www4.wiwiss.fu-berlin.de/ldif/provenance&gt; .<br>_:dbpedia0 &lt;http://www4.wiwiss.fu-berlin.de/ldif/lastUpdate&gt; "2011-09-21T19:01:00-05:00"^^&lt;http://www.w3.org/2001/XMLSchema#dateTime&gt; &lt;http://www4.wiwiss.fu-berlin.de/ldif/provenance&gt; .<br>_:dbpedia0 &lt;http://www4.wiwiss.fu-berlin.de/ldif/hasDatasource&gt; "dBpedia" &lt;http://www4.wiwiss.fu-berlin.de/ldif/provenance&gt; .<br>_:dbpedia0 &lt;http://www4.wiwiss.fu-berlin.de/ldif/hasImportType&gt; "quad" &lt;http://www4.wiwiss.fu-berlin.de/ldif/provenance&gt; .<br>_:dbpedia0 &lt;http://www4.wiwiss.fu-berlin.de/ldif/hasOriginalLocation&gt; "http://mes.smw-lde-eu.s3.amazonaws.com/dBpedia_dump.nt.bz2" &lt;http://www4.wiwiss.fu-berlin.de/ldif/provenance&gt; .<br></pre>
 
 <h3>Data Source Configuration</h3>
 <p>A Data Source is configured with an XML document, whose structure is described by this  <a href="http://www.assembla.com/code/ldif/git/nodes/ldif/ldif-core/src/main/resources/xsd/DataSource.xsd">XML Schema</a>.</p>

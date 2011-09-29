@@ -1,12 +1,12 @@
 package ldif.local.scheduler
 
-import ldif.util.Identifier
 import java.net.URI
 import java.util.logging.Logger
 import ldif.local.runtime.LocalNode
 import com.hp.hpl.jena.rdf.model.{Model, RDFNode}
 import java.io.{Writer, OutputStreamWriter, OutputStream}
 import com.hp.hpl.jena.query.QueryExecutionFactory
+import ldif.util.{Consts, Identifier}
 
 case class SparqlImportJob(conf : SparqlConfig, id :  Identifier, refreshSchedule : String, dataSource : String) extends ImportJob{
   private val log = Logger.getLogger(getClass.getName)
@@ -41,19 +41,28 @@ case class SparqlImportJob(conf : SparqlConfig, id :  Identifier, refreshSchedul
     while (loop) {
       val query = baseQuery + " OFFSET " + offset + " LIMIT " + math.min(conf.pageSize, conf.limit - offset)
 
-      try {
-        val results = QueryExecutionFactory.sparqlService(endpointUrl, query).execConstruct
-        loop = (results.size == conf.pageSize)
-        offset += results.size
-
-        write(results, writer)
-      }
-      catch {
-        case e:Exception => {
-          log.warning("Error executing query \n"+query+" \non "+endpointUrl+" \n"+e.getMessage)
-          return false
+      var retries = 1
+      val retryPause = Consts.retryPause
+      val retryCount = Consts.retryCount
+      var results : Model = null
+      while (results == null) {
+        try {
+          results = QueryExecutionFactory.sparqlService(endpointUrl, query).execConstruct
+        }
+        catch {
+          case e:Exception => {
+            log.warning("Error executing query - retrying in " + retryPause + " ms. (" + retries + "/" + retryCount + ")\n"+query+" \non "+endpointUrl+" \n"+e.getMessage)
+            retries += 1
+            if (retries > retryCount) {
+              return false
+            }
+            Thread.sleep(retryPause)
+          }
         }
       }
+      loop = (results.size == conf.pageSize)
+      offset += results.size
+      write(results, writer)
       log.info(id +" - loaded "+offset+" quads")
     }
     true
@@ -72,8 +81,6 @@ case class SparqlImportJob(conf : SparqlConfig, id :  Identifier, refreshSchedul
     }
     writer.flush
   }
-
-
 }
 
 object SparqlImportJob {
@@ -90,7 +97,7 @@ object SparqlImportJob {
 
 }
 
-case class SparqlConfig(endpointLocation : URI,  graphName : URI, sparqlPatterns : Traversable[String], limit : Int = Integer.MAX_VALUE, pageSize : Int = 1000) {
+case class SparqlConfig(endpointLocation : URI,  graphName : URI, sparqlPatterns : Traversable[String], limit : Int = Integer.MAX_VALUE, pageSize : Int = Consts.pageSize) {
 
   def buildQuery : String = {
     val isGraphDefined = graphName.toString.trim != ""
