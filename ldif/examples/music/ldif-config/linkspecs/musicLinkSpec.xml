@@ -31,7 +31,7 @@
             <LinkCondition>
 				<Aggregate type="avg">
                     <Aggregate type="max">
-					    <Compare metric="jaccard">
+					    <Compare metric="jaccard" threshold="0.4">
     						<Input path="?a/dbpedia-owl:bandMember/rdfs:label" />
     						<Input path="?b/dbpedia-owl:bandMember/rdfs:label" />
     					</Compare>
@@ -51,7 +51,7 @@
 				</Aggregate>
 			</LinkCondition>
 
-			<Filter threshold="0.7" />
+			<Filter />
 
         </Interlink>
 
