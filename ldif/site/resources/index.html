@@ -1,6 +1,7 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html><head><title>LDIF - Linked Data Integration Framework</title>
 
+
   <style>
 body { background: white; color: black; font-family: sans-serif; line-height: 1.4em; padding: 2.5em 3em; margin: 0; }
 :link { color: #00c; }
@@ -181,9 +182,10 @@ components.
 
 <h3>Data Access</h3>
 
-<p>LDIF provides access modules for replicating datasets locally via file download, crawling or SPARQL and building <a href="#provenance">provenance metadata</a>.  <br/>
-   The integration task expects input data to be represented as Named Graphs and be stored in <a href="http://sw.deri.org/2008/07/n-quads/">N-Quads format</a> accessible locally.
-   </p>
+<p>LDIF provides access modules for replicating datasets locally via file download, crawling or SPARQL. These different types of <a href="#importjob">import jobs</a> generate <a href="#provenance">provenance metadata</a>, which is tracked throughout the integration process. The integration task expects input data to be represented as Named Graphs and be stored in <a href="http://sw.deri.org/2008/07/n-quads/">N-Quads format</a>
+accessible locally. Thus the best way to achieve this representation
+together with the appropriate provenance data is to import external
+sets with one of the following methods: </p>
 
 <h4>Triple/Quad Dump Import</h4>
 <p>In order to get a local replication of datasets from the Web of Data
@@ -251,14 +253,16 @@ Specification Language</a>.</p>
 </p>
 
 
-<h3>Data Output</h3>
+<h3>Data Output<br>
+</h3><br>
+
 
 <h4>N-Quads Writer</h4>
 <p>The N-Quads writer dumps the final output of the integration
 workflow into a single N-Quads file. This file contains the translated
 versions of all graphs from the input graph set as well as the content
 of the provenance graph and sameAs-links.
-<br/>Currently, the provenance information is just copied to the final output.
+<br>Currently, the provenance information is just copied to the final output.
     In future releases, we will use the provenance information for data quality assessment and data fusion (see
 <a href="#nextSteps">Next Steps</a>).
 </p>
@@ -287,7 +291,11 @@ all intermediate results in
 memory. It is very fast but scales only depending on the amount of
 memory
 available. For instance, integrating 25 million triples required 5 GB
-memory within one of our <a href="benchmark.html">experiments</a>. </p>
+memory within one of our <a href="benchmark.html">experiments</a>. In version 0.3 of LDIF we added a <a href="#scheduler">scheduler</a>,
+which starts pending import or integration jobs. It offers several ways
+to express when and how often a certain job should be executed. These
+schedule times are stored with each job configuration.<br>
+</p>
 
 
 <h3 id="nextSteps">Next steps for LDIF</h3>
@@ -320,7 +328,8 @@ directory of LDIF:<br>
   </li>
 </ol>
 <pre>bin/ldif &lt;path-to-scheduler-config-file&gt;<br><br>bin\ldif.bat &lt;path-to-scheduler-config-file&gt;<br></pre>
-See the <a href="#configuration">configuration</a> section for more details. A detailed example is given next.<br>s
+See the <a href="#configuration">configuration</a> section for more details. A detailed example is given next.<br>
+
 
 <h2 id="example1">4. Example: Using LDIF to
 integrate Life Science Data </h2>
@@ -498,7 +507,7 @@ Options</h2>
 <p>This section describes how an LDIF configuration files look like and
 which parameters you can modify to change the runtime behavior of LDIF.</p>
 
-<h3>Schedule Job Configuration</h3>
+<h3><a name="scheduler"></a>Schedule Job Configuration</h3>
 <p>A Schedule Job updates the local sources and it is configured with an XML document, whose structure is described by this <a href="http://www.assembla.com/code/ldif/git/nodes/ldif/ldif-core/src/main/resources/xsd/SchedulerConfig.xsd">XML Schema</a>.</p>
 
 <p>A typical configuration document looks like this:</p>
@@ -536,7 +545,7 @@ Default: <span style="font-family: monospace;">false</span></p>
 </ul>
 
 
-<h3>Integration Job Configuration</h3>
+<h3><a name="integrationjob"></a>Integration Job Configuration</h3>
 <p>An Integration Job is configured with an XML document, whose structure is described by this <a href="http://www.assembla.com/code/ldif/git/nodes/ldif/ldif-core/src/main/resources/xsd/IntegrationJob.xsd">XML Schema</a>.
 <br>The current structure is very simple because the integration flow
 is static at the moment - something that will change in future releases.</p>
@@ -632,7 +641,7 @@ URI, may be more than one, separated by blank spaces.</p>
   <pre>uriMintLabelPredicate = http://www4.wiwiss.fu-berlin.de/ldif/property/ID http://www4.wiwiss.fu-berlin.de/ldif/property/Label</pre></li>
 </ul>
 
-<h3>Import Job Configuration</h3>
+<h3><a name="importjob"></a>Import Job Configuration</h3>
 <p>An Import Job is configured with an XML document, whose structure is described by this <a href="http://www.assembla.com/code/ldif/git/nodes/ldif/ldif-core/src/main/resources/xsd/ImportJob.xsd">XML Schema</a>.</p>
 
 <p>LDIF supports four different mechanisms to import external data:
@@ -649,7 +658,7 @@ URI, may be more than one, separated by blank spaces.</p>
 
 <h4 id="provenance">Provenance Metadata</h4>
 <p>The result of each import contains provenance metadata, whose structure is described by this <a href="http://www.assembla.com/code/ldif/git/nodes/ldif/ldif-core/src/main/resources/owl/provenance.owl">ontology</a>.
-    <br/>For each imported graph, provenance information will contain:
+    <br>For each imported graph, provenance information will contain:
 </p><ul>
     <li>import date and time,</li>
     <li>chosen import type,</li>

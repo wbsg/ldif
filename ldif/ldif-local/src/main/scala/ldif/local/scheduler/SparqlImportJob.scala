@@ -7,6 +7,7 @@ import com.hp.hpl.jena.rdf.model.{Model, RDFNode}
 import java.io.{Writer, OutputStreamWriter, OutputStream}
 import com.hp.hpl.jena.query.QueryExecutionFactory
 import ldif.util.{Consts, Identifier}
+import javax.xml.ws.http.HTTPException
 
 case class SparqlImportJob(conf : SparqlConfig, id :  Identifier, refreshSchedule : String, dataSource : String) extends ImportJob{
   private val log = Logger.getLogger(getClass.getName)
@@ -50,7 +51,13 @@ case class SparqlImportJob(conf : SparqlConfig, id :  Identifier, refreshSchedul
           results = QueryExecutionFactory.sparqlService(endpointUrl, query).execConstruct
         }
         catch {
-          case e:Exception => {
+          case e: HTTPException => {
+            // Only retry on server errors
+            if(e.getStatusCode < 500) {
+              log.warning("Error executing query: " + query + ". Error Code: " + e.getStatusCode + "(" + e.getMessage + ")")
+              return false
+            }
+
             log.warning("Error executing query - retrying in " + retryPause + " ms. (" + retries + "/" + retryCount + ")\n"+query+" \non "+endpointUrl+" \n"+e.getMessage)
             retries += 1
             if (retries > retryCount) {
