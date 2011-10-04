@@ -13,8 +13,6 @@
         <Prefix id="bio" namespace="http://rdf.freebase.com/ns/" />
 	</Prefixes>
 
-<!--	<Blocking/> -->
-
 	<Interlinks>
 
         <Interlink id="MusicArtist">

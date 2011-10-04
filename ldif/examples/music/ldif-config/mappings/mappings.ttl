@@ -16,6 +16,9 @@
 ### Simple mappings ###
 #######################
 
+# Simple one-to-one mappings are expressed with rdfs:subClassOf and rdfs:subPropertyOf
+# which R2R converts to R2R mappings when reading the file.
+
 ######################
 ### Class Mappings ###
 ######################
