@@ -4,7 +4,7 @@
            xmlns="http://www4.wiwiss.fu-berlin.de/ldif/">
     <properties>scheduler.properties</properties>
     <dataSources>DataSource</dataSources>
-    <importJobs>ImportJob</importJobs>
+    <importJobs>ImportJob-test</importJobs>
     <integrationJob>integrationJob.xml</integrationJob>
     <dumpLocation>dump</dumpLocation>
 </scheduler>
