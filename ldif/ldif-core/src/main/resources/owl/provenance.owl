@@ -1,0 +1,81 @@
+<rdf:RDF
+    xmlns     ="http://www4.wiwiss.fu-berlin.de/ldif/"
+    xml:base  ="http://www4.wiwiss.fu-berlin.de/ldif/"
+    xmlns:owl ="http://www.w3.org/2002/07/owl#"
+    xmlns:rdf ="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+    xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+>
+
+<owl:Ontology rdf:about=""/>
+
+<owl:Class rdf:ID="ImportedGraph">
+  <rdfs:subClassOf>
+    <owl:Restriction>
+      <owl:onProperty rdf:resource="#importId"/>
+      <owl:minCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:minCardinality>
+    </owl:Restriction>
+  </rdfs:subClassOf>
+</owl:Class>
+
+<owl:Class rdf:ID="ImportJob">
+ <rdfs:subClassOf>
+    <owl:Restriction>
+      <owl:onProperty rdf:resource="#importId"/>
+      <owl:minCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:minCardinality>
+    </owl:Restriction>
+  </rdfs:subClassOf>
+
+  <rdfs:subClassOf>
+    <owl:Restriction>
+      <owl:onProperty rdf:resource="#lastUpdate"/>
+      <owl:minCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:minCardinality>
+    </owl:Restriction>
+  </rdfs:subClassOf>
+
+  <rdfs:subClassOf>
+    <owl:Restriction>
+      <owl:onProperty rdf:resource="#hasImportType"/>
+      <owl:minCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:minCardinality>
+    </owl:Restriction>
+  </rdfs:subClassOf>
+
+  <rdfs:subClassOf>
+    <owl:Restriction>
+      <owl:onProperty rdf:resource="#hasOriginalLocation"/>
+      <owl:minCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">0</owl:minCardinality>
+    </owl:Restriction>
+  </rdfs:subClassOf>
+</owl:Class>
+
+<owl:ObjectProperty rdf:ID="hasImportJob">
+  <rdfs:domain rdf:resource="#ImportedGraph"/>
+  <rdfs:range rdf:resource="#ImportJob"/>
+</owl:ObjectProperty>
+
+<owl:DatatypeProperty rdf:ID="importId">
+  <rdfs:domain rdf:resource="#ImportJob" />
+  <rdfs:range  rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+</owl:DatatypeProperty>
+
+<owl:DatatypeProperty rdf:ID="lastUpdate">
+  <rdfs:domain rdf:resource="#ImportJob" />
+  <rdfs:range  rdf:resource="http://www.w3.org/2001/XMLSchema#dateTime"/>
+</owl:DatatypeProperty>
+
+<owl:DatatypeProperty rdf:ID="hasImportType">
+  <rdfs:domain rdf:resource="#ImportJob" />
+  <rdfs:range  rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+</owl:DatatypeProperty>
+
+<owl:DatatypeProperty rdf:ID="hasImportType">
+  <rdfs:domain rdf:resource="#ImportJob" />
+  <rdfs:range  rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+</owl:DatatypeProperty>
+
+<owl:DatatypeProperty rdf:ID="hasOriginalLocation">
+  <rdfs:domain rdf:resource="#ImportJob" />
+  <rdfs:range  rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+</owl:DatatypeProperty>
+
+</rdf:RDF>
+

@@ -1,15 +1,17 @@
-<ImportJob xmlns="http://www4.wiwiss.fu-berlin.de/bizer/ldif">
+<importJob  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://www4.wiwiss.fu-berlin.de/ldif/ ../xsd/ImportJob.xsd"
+           xmlns="http://www4.wiwiss.fu-berlin.de/ldif/">
     <internalId>dBpedia.0</internalId>
     <dataSource>dBpedia</dataSource>
-    <refreshSchedule>always</refreshSchedule>
+    <refreshSchedule>onStartup</refreshSchedule>
     <crawlImportJob>
       <seedURIs>
-        <URI>http://dbpedia.org/resource/Stanley_Kubrick</URI>
-        <URI>http://dbpedia.org/resource/David_Lynch</URI>
+        <uri>http://dbpedia.org/resource/Stanley_Kubrick</uri>
+        <uri>http://dbpedia.org/resource/David_Lynch</uri>
       </seedURIs>
       <predicatesToFollow>
-        <URI>http://dbpedia.org/ontology/spouse</URI>
+        <uri>http://dbpedia.org/ontology/spouse</uri>
       </predicatesToFollow>
       <levels>2</levels>
    </crawlImportJob>
-</ImportJob>
+</importJob>

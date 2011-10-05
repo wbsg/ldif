@@ -1,5 +1,6 @@
 package ldif.local
 
+import config.IntegrationConfig
 import datasources.dump.DumpLoader
 import de.fuberlin.wiwiss.r2r.{FileOrURISource, Repository}
 import scala.collection.mutable.{Map, HashMap}
@@ -14,26 +15,23 @@ object ConfigValidator {
   val fileError = "Error in reading mapping file"
   val mappingsError = "Erroneous mappings found"
 
-  def validateConfiguration(config: LdifConfiguration): Boolean = {
+  def validateConfiguration(config: IntegrationConfig): Boolean = {
     var fail = false
 
     try {
-      val r2rMappingsErrors = validateMappingFile(config.mappingFile)
+      val r2rMappingsErrors = validateMappingFile(config.mappingDir)
       var sourceFileErrors : Map[String, Seq[Pair[Int, String]]] = null
       if(r2rMappingsErrors._1!="Ok")
         fail = true
       validateSilkLinkSpecs(config.linkSpecDir)
 
-      val sourceValidation = configProperties.getPropertyValue("validateSources")
+      val sourceValidation = config.properties.getProperty("validateSources")
       if(sourceValidation!=null && sourceValidation.toLowerCase=="false") {
         println("-- Validation of source datasets disabled")
       }
       else {
-        // Sources validation (by default) is enable for local sources and disable for remote ones
-        if(sourceValidation!=null && sourceValidation.toLowerCase=="true")
-          sourceFileErrors = validateSourceFiles(config.sources)
-        else
-          sourceFileErrors = validateSourceFiles(config.getLocalSources)
+        // Sources validation
+        sourceFileErrors = validateSourceFiles(config.sources)
 
         for (err <- sourceFileErrors) {
           if(err._2.size > 0)
@@ -77,17 +75,17 @@ object ConfigValidator {
     }
   }
 
-  def validateSourceFiles(sources: Traversable[String]): Map[String, Seq[Pair[Int, String]]] = {
+  def validateSourceFiles(sources: File): Map[String, Seq[Pair[Int, String]]] = {
     val errorMap = new HashMap[String, Seq[Pair[Int, String]]]
-    for(source <- sources) {
+    for(source <- sources.listFiles) {
       try {
-        val reader = new BufferedReader(new InputStreamReader(new DumpLoader(source).getStream))
+        val reader = new BufferedReader(new InputStreamReader(DumpLoader.getFileStream(source)))
         val loader = new QuadFileLoader
         val errors = loader.validateQuadsMT(reader)
         if(errors.size > 0)
-          errorMap.put(source, errors)
+          errorMap.put(source.getCanonicalPath, errors)
       } catch {
-        case e: IOException => errorMap.put(source, List(Pair(0, "Error reading file: " + e.getMessage)))
+        case e: IOException => errorMap.put(source.getCanonicalPath, List(Pair(0, "Error reading file: " + e.getMessage)))
       }
     }
     return errorMap
@@ -98,7 +96,7 @@ object ConfigValidator {
 
     try {
       val repository = new Repository(new FileOrURISource(mappingFile))
-      val erroneousMappings = JavaConversions.asScalaMap(repository.validateMappings)
+      val erroneousMappings = JavaConversions.mapAsScalaMap(repository.validateMappings)
       if(erroneousMappings.size>0)
         mappingFileErrors = Pair(mappingsError, erroneousMappings)
     } catch {

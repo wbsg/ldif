@@ -5,9 +5,9 @@ import ldif.local.runtime._
 import ldif.local.runtime.impl.QuadQueue
 import ldif.entity._
 import java.util.concurrent.atomic.AtomicInteger
-import java.io.{CharConversionException, FileReader, BufferedReader}
-import ldif.util.NTriplesStringConverter
+import java.io.{FileReader, BufferedReader}
 import ldif.runtime.Quad
+import ldif.util.{StopWatch, NTriplesStringConverter}
 
 
 /**
@@ -129,24 +129,14 @@ object QuadFileParser {
     val queue = new QuadQueue
 
     println("Starting to read file...")
-    stopWatch.getTimeSpanInSeconds
+    val watch = new StopWatch
+    watch.getTimeSpanInSeconds
 
     readQuads(reader, queue)
 
     reader.close
 
-    println(stopWatch.getTimeSpanInSeconds + "s")
+    println(watch.getTimeSpanInSeconds + "s")
     println("Queue size: " + queue.size)
-  }
-}
-
-object stopWatch {
-  private var lastTime = System.currentTimeMillis
-
-  def getTimeSpanInSeconds(): Double = {
-    val newTime = System.currentTimeMillis
-    val span = newTime - lastTime
-    lastTime = newTime
-    span / 1000.0
   }
 }

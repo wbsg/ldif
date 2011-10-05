@@ -14,12 +14,12 @@ import java.io.{BufferedInputStream, FileNotFoundException, InputStream, File}
  **/
 
 @throws(classOf[Exception])
-class DumpLoader(sourceLocation:String) {
+object DumpLoader {
   private val log = Logger.getLogger(getClass.getName)
 
   //private val httpClient = HttpClientFactory.createHttpClient
 
-  def getStream = {
+  def getStream(sourceLocation : String) = {
     if (sourceLocation == null) {
       throw new Exception("Invalid data location" )
     }
@@ -52,8 +52,6 @@ class DumpLoader(sourceLocation:String) {
       throw new Exception("Unable to determine language for "+ sourceLocation	+ " based on file extension")
     }
 
-    log.info("Loading from " + sourceLocation + " using language " + lang)
-
     if (file != null)
       getFileStream(file)
     else if (url != null)
@@ -62,10 +60,9 @@ class DumpLoader(sourceLocation:String) {
       throw new Exception("Protocol \"" + url.getProtocol	+ "\" is not supported.")
   }
 
-  private def getFileStream(file:File) = {
-
+  def getFileStream(file : File) = {
+    log.info("Loading from " + file.getCanonicalPath)
     var inputStream:InputStream = null
-
     try {
       inputStream = new DecompressingStream(file).getStream
     } catch {
@@ -77,8 +74,8 @@ class DumpLoader(sourceLocation:String) {
     new BufferedInputStream(inputStream)
   }
 
-  private def getUrlStream(url:URL) = {
-
+  def getUrlStream(url : URL) = {
+    log.info("Loading from " + url.toString)
     var inputStream:InputStream = null
 
     try  {

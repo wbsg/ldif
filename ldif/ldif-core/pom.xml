@@ -41,7 +41,7 @@
       <dependency>
         <groupId>ldspider</groupId>
         <artifactId>ldspider</artifactId>
-        <version>281</version>
+        <version>285</version>
       </dependency>
 
    </dependencies>
@@ -91,9 +91,9 @@
                         <configuration>
                             <groupId>ldspider</groupId>
                             <artifactId>ldspider</artifactId>
-                            <version>281</version>
+                            <version>285</version>
                             <packaging>jar</packaging>
-                            <file>${project.basedir}/lib/ldspider-rev281.jar</file>
+                            <file>${project.basedir}/lib/ldspider-rev285.jar</file>
                         </configuration>
                     </execution>
                 </executions>

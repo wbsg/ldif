@@ -8,12 +8,12 @@ import java.io.{OutputStreamWriter, OutputStream}
 
 case class TripleImportJob(dumpLocation : String, id : Identifier, refreshSchedule : String, dataSource : String) extends ImportJob {
 
-  override def load(out : OutputStream) {
+  override def load(out : OutputStream) : Boolean = {
 
     val writer = new OutputStreamWriter(out)
 
     // get bufferReader from Url
-    val inputStream = new DumpLoader(dumpLocation).getStream
+    val inputStream = DumpLoader.getStream(dumpLocation)
     //val bufferedReader = new BufferedReader(new InputStreamReader(inputStream))
 
     val graph = id
@@ -28,6 +28,7 @@ case class TripleImportJob(dumpLocation : String, id : Identifier, refreshSchedu
     }
     writer.flush
     writer.close
+    true
   }
 
   override def getType = "triple"

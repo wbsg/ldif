@@ -1,5 +1,6 @@
 package ldif.local
 
+import config.IntegrationConfig
 import java.io.File
 import org.scalatest.FlatSpec
 import org.scalatest.matchers.ShouldMatchers
@@ -70,7 +71,8 @@ class IntegrationFlowTest extends FlatSpec with ShouldMatchers {
 
   protected def runLdif(configFile : File, debugMode: Boolean = false) = {
 
-    Main.runIntegrationFlow(configFile, debugMode)
-    LdifConfiguration.load(configFile).outputFile
+    val integrator = new IntegrationJob(IntegrationConfig.load(configFile), debugMode)
+    integrator.runIntegration
+    integrator.config.outputFile
   }
 }

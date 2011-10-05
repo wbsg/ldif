@@ -146,7 +146,7 @@ object JenaResultSetEntityBuilderHelper {
     } else if(node.isLiteral) {
       return convertLiteralNode(node, graphURI)
     } else if(node.isAnon) {
-      return Node.createBlankNode(NTriplesStringConverter.convertJenaBlankNodeLabelsToNTriplesLabels(node.asNode().getBlankNodeLabel), graphURI)
+      return Node.createBlankNode(node.asNode.getBlankNodeLabel, graphURI)
     } else
       throw new RuntimeException("Unknown node type for RDFNode: " + node) // Should never be the case
 

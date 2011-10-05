@@ -20,9 +20,9 @@ class QuadStoreEntityBuilder(store: QuadStoreTrait, entityDescriptions : Seq[Ent
 
   // If this is true, quads like provenance quads (or even all quads) are saved for later use (merge)
   private val saveQuads = config.otherQuadsWriter!=null
-  private val outputAllQuads = config.configProperties.getPropertyValue("output", "mapped-only").toLowerCase=="all"
-  private val provenanceGraph = config.configProperties.getPropertyValue("provenanceGraph", "http://www4.wiwiss.fu-berlin.de/ldif/provenance")
-  private val tmpDir = new File(config.configProperties.getPropertyValue("databaseLocation", System.getProperty("java.io.tmpdir")))
+  private val outputAllQuads = config.configProperties.getProperty("output", "mapped-only").toLowerCase=="all"
+  private val provenanceGraph = config.configProperties.getProperty("provenanceGraph", "http://www4.wiwiss.fu-berlin.de/ldif/provenance")
+  private val tmpDir = new File(config.configProperties.getProperty("databaseLocation", System.getProperty("java.io.tmpdir")))
 
   private val PHT = new PropertyHashTable(entityDescriptions)
 

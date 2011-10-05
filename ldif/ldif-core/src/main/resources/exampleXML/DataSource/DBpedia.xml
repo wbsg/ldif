@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<DataSource xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-            xsi:schemaLocation="http://www4.wiwiss.fu-berlin.de/ldif/ /home/andreas/projects/ldif/ldif/ldif-core/src/main/resources/xsd/DataSource.xsd"
-            xmlns="http://www4.wiwiss.fu-berlin.de/ldif/">
-    <Label>DBpedia</Label>
-    <Description>DBpedia is...</Description>
-    <Homepage>http://dbpedia.org</Homepage>
-</DataSource>

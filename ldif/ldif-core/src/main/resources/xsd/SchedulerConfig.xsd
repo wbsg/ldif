@@ -4,17 +4,19 @@
            elementFormDefault="qualified"
            targetNamespace="http://www4.wiwiss.fu-berlin.de/ldif/">
 
-<xs:element name="Scheduler">
+<xs:element name="scheduler">
     <xs:complexType>
       <xs:sequence>
 
-        <xs:element name="Properties" type="xs:string"  minOccurs="0" />
+        <xs:element name="properties" type="xs:string"  minOccurs="0" />
 
-        <xs:element name="DataSources" type="xs:string" minOccurs="0" />
+        <xs:element name="dataSources" type="xs:string" minOccurs="0" />
 
-        <xs:element name="ImportJobs" type="xs:string" />
+        <xs:element name="importJobs" type="xs:string" />
 
-        <xs:element name="DumpLocation" type="xs:string" />
+        <xs:element name="integrationJob" type="xs:string" />
+
+        <xs:element name="dumpLocation" type="xs:string" />
 
        </xs:sequence>
     </xs:complexType>

@@ -19,61 +19,61 @@
 
   <xs:simpleType name="internalIdType" >
     <xs:restriction base="xs:normalizedString" >
-        <xs:pattern value="[A-Za-z0-9_]"/>
+        <xs:pattern value="[A-Za-z0-9_.]+"/>
     </xs:restriction>
   </xs:simpleType>
 
-  <xs:element name="Job" abstract="true" />
+  <xs:element name="job" abstract="true" />
 
-  <xs:element name="QuadImportJob" substitutionGroup="ldif:Job">
+  <xs:element name="quadImportJob" substitutionGroup="ldif:job">
     <xs:complexType>
        <xs:sequence>
-        <xs:element name="DumpLocation" type="xs:string" />
+        <xs:element name="dumpLocation" type="xs:string" />
       </xs:sequence>
     </xs:complexType>
   </xs:element>
 
-  <xs:element name="TripleImportJob" substitutionGroup="ldif:Job">
+  <xs:element name="tripleImportJob" substitutionGroup="ldif:job">
     <xs:complexType>
        <xs:sequence>
-        <xs:element name="DumpLocation" type="xs:string" />
+        <xs:element name="dumpLocation" type="xs:string" />
       </xs:sequence>
     </xs:complexType>
   </xs:element>
 
-  <xs:element name="CrawlImportJob" substitutionGroup="ldif:Job">
+  <xs:element name="crawlImportJob" substitutionGroup="ldif:job">
     <xs:complexType>
       <xs:sequence>
-        <xs:element name="SeedURIs" >
+        <xs:element name="seedURIs" >
           <xs:complexType>
             <xs:sequence>
-              <xs:element name="URI" type="xs:anyURI" maxOccurs="unbounded" />
+              <xs:element name="uri" type="xs:anyURI" maxOccurs="unbounded" />
             </xs:sequence>
           </xs:complexType>
         </xs:element>
-        <xs:element name="PredicatesToFollow" minOccurs="0" >
+        <xs:element name="predicatesToFollow" minOccurs="0" >
           <xs:complexType>
             <xs:sequence>
-              <xs:element name="URI" type="xs:anyURI" maxOccurs="unbounded" />
+              <xs:element name="uri" type="xs:anyURI" maxOccurs="unbounded" />
             </xs:sequence>
           </xs:complexType>
         </xs:element>
-	<xs:element name="Levels" type="xs:unsignedShort" minOccurs="0" />
+	<xs:element name="levels" type="xs:unsignedShort" minOccurs="0" />
       </xs:sequence>
     </xs:complexType>
   </xs:element>
 
-  <xs:element name="SparqlImportJob" substitutionGroup="ldif:Job">
+  <xs:element name="sparqlImportJob" substitutionGroup="ldif:job">
     <xs:complexType>
       <xs:sequence>
-        <xs:element name="EndpointLocation" type="xs:anyURI" />
+        <xs:element name="endpointLocation" type="xs:anyURI" />
 
-        <xs:element name="GraphName" type="xs:anyURI" minOccurs="0" />
+        <xs:element name="graphName" type="xs:anyURI" minOccurs="0" />
 
-        <xs:element name="SparqlPatterns" minOccurs="0" >
+        <xs:element name="sparqlPatterns" minOccurs="0" >
           <xs:complexType>
             <xs:sequence>
-              <xs:element name="Pattern" type="xs:string" maxOccurs="unbounded" />
+              <xs:element name="pattern" type="xs:string" maxOccurs="unbounded" />
             </xs:sequence>
           </xs:complexType>
         </xs:element>
@@ -81,17 +81,17 @@
     </xs:complexType>
   </xs:element>
 
-  <xs:element name="ImportJob">
+  <xs:element name="importJob">
     <xs:complexType>
       <xs:sequence>
 
-        <xs:element name="InternalId" type="ldif:internalIdType" minOccurs="0" />
+        <xs:element name="internalId" type="ldif:internalIdType" minOccurs="0" />
 
-        <xs:element name="DataSource" type="xs:string" />
+        <xs:element name="dataSource" type="xs:string" />
 
-        <xs:element name="RefreshSchedule" type="ldif:refreshScheduleType" />
+        <xs:element name="refreshSchedule" type="ldif:refreshScheduleType" />
 
-        <xs:element ref="ldif:Job" />
+        <xs:element ref="ldif:job" />
 
        </xs:sequence>
     </xs:complexType>

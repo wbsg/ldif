@@ -21,10 +21,10 @@ import ldif.util.Consts
 class EntityQueueTest extends FlatSpec with ShouldMatchers {
   it should "read entities in the same order as they were written" in {
     val entityQueue = new EntityQueue(createEntityDescription)
-    entityQueue.write(createEntity("_:1"))
-    entityQueue.write(createEntity("_:2"))
-    entityQueue.read.resource.toString should equal ("_:1")
-    entityQueue.read.resource.toString should equal ("_:2")
+    entityQueue.write(createEntity("_:b1"))
+    entityQueue.write(createEntity("_:b2"))
+    entityQueue.read.resource.toString should equal ("_:b1")
+    entityQueue.read.resource.toString should equal ("_:b2")
   }
 
   private def createEntity(id: String): Entity = {

@@ -3,6 +3,8 @@
 @prefix dc: <http://purl.org/dc/elements/1.1/> .
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 @prefix testNamespace: <http://testNamespace/> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+
 
 mappings:renamePropertyMapping
    a r2r:Mapping ;
@@ -25,3 +27,5 @@ mappings:somePropMapping
   a r2r:Mapping ;
   r2r:sourcePattern "?SUBJ <http://someProp> ?o" ;
   r2r:targetPattern "?SUBJ <http://someMappedProp> ?o" .
+
+<http://testNamespace/someOldClass> rdfs:subClassOf <http://testNamespace/someFunkyNewClass> .

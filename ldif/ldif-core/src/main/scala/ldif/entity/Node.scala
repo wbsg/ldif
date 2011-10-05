@@ -142,7 +142,7 @@ object Node
 
   def createLanguageLiteral(value : String, language : String, graph : String = null) = Node(value, language, LanguageLiteral, graph)
 
-  def createBlankNode(value : String, graph : String) = Node(value, null, BlankNode, graph)
+   def createBlankNode(value : String, graph : String) = Node(NTriplesStringConverter.convertBnodeLabel(value), null, BlankNode, graph)
 
   def createUriNode(value : String, graph : String = null) = Node(value, null, UriNode, graph)
 
