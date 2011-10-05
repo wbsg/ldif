@@ -21,6 +21,7 @@ class EntityBuilder (entityDescriptions : IndexedSeq[EntityDescription], readers
   private val saveSameAsQuads = config.sameAsWriter!=null
   private val provenanceGraph = config.configProperties.getProperty("provenanceGraph", "http://www4.wiwiss.fu-berlin.de/ldif/provenance")
   private val useExternalSameAsLinks = config.configProperties.getProperty("useExternalSameAsLinks", "true").toLowerCase=="true"
+  private val ignoreProvenance = config.configProperties.getProperty("outputFormat", "nq").toLowerCase=="nt"
 
   // Property HT - Describes all the properties used in the Entity Description
   var PHT: PropertyHashTable = null
@@ -115,7 +116,7 @@ class EntityBuilder (entityDescriptions : IndexedSeq[EntityDescription], readers
   }
 
   private def saveQuadsForLater(quad: Quad) {
-    if(outputAllQuads || isProvenanceQuad(quad))
+    if(outputAllQuads || (isProvenanceQuad(quad) && (!ignoreProvenance)))
       config.otherQuadsWriter.write(quad)
   }
 

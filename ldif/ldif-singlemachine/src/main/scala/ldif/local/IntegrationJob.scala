@@ -318,12 +318,12 @@ object IntegrationJob {
 
   def main(args : Array[String])
   {
+    if(args.length == 0) {
+      System.err.println("Usage: IntegrationJob <integration job config file>")
+      System.exit(-1)
+    }
     var debug = false
-    val configFile = if(args.length == 0) {
-          val configUrl = getClass.getClassLoader.getResource("ldif/local/neurowiki/scheduler-config.xml")
-          new File(configUrl.toString.stripPrefix("file:"))
-        } else
-          new File(args(args.length-1))
+    val configFile = new File(args(args.length-1))
 
     if(args.length>=2 && args(0)=="--debug")
       debug = true

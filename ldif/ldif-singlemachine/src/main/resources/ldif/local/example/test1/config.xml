@@ -1,7 +1,10 @@
-<LDIF>
-  <Properties>test1.properties</Properties>
-  <Sources>sources</Sources>
-  <LinkSpecifications>linkSpecs</LinkSpecifications>
-  <Mappings>mappings</Mappings>
-  <Output>output_minimal</Output>
-</LDIF>
+<?xml version="1.0" encoding="utf-8"?>
+<integrationJob xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+            xmlns="http://www4.wiwiss.fu-berlin.de/ldif/">
+  <properties>test1.properties</properties>
+  <sources>sources</sources>
+  <linkSpecifications>linkSpecs</linkSpecifications>
+  <mappings>mappings</mappings>
+  <output>output_minimal</output>
+  <runSchedule>onStartup</runSchedule>
+</integrationJob>
