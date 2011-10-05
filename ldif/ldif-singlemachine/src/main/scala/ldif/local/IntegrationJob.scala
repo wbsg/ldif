@@ -5,7 +5,6 @@ import datasources.dump.{QuadFileLoader, DumpLoader}
 import java.util.logging.Logger
 import runtime._
 import impl._
-import de.fuberlin.wiwiss.r2r.{FileOrURISource, Repository}
 import ldif.modules.r2r.local.R2RLocalExecutor
 import ldif.modules.r2r.{R2RModule, R2RConfig}
 import util.StringPool
@@ -17,6 +16,8 @@ import de.fuberlin.wiwiss.ldif.local.EntityBuilderExecutor
 import ldif.util.{FatalErrorListener, Consts, StopWatch}
 import java.util.{Calendar, Properties}
 import java.io._
+import java.math.BigInteger
+import de.fuberlin.wiwiss.r2r.{JenaModelSource, EnumeratingURIGenerator, FileOrURISource, Repository}
 
 class IntegrationJob (val config : IntegrationConfig, debugMode : Boolean = false) {
   val log = Logger.getLogger(getClass.getName)
@@ -157,7 +158,10 @@ class IntegrationJob (val config : IntegrationConfig, debugMode : Boolean = fals
    * Transforms the Quads
    */
   private def mapQuads(mappingDir: File, readers: Seq[QuadReader]) : QuadReader = {
-    val repository = new Repository(new FileOrURISource(mappingDir))
+    val mappingSource = new FileOrURISource(mappingDir)
+    val uriGenerator = new EnumeratingURIGenerator("http://www4.wiwiss.fu-berlin.de/ldif/imported", BigInteger.ONE);
+    val importedMappingModel = Repository.importMappingDataFromSource(mappingSource, uriGenerator)
+    val repository = new Repository(new JenaModelSource(importedMappingModel))
     val executor = new R2RLocalExecutor
     val config = new R2RConfig(repository)
     val module = new R2RModule(config)

@@ -65,6 +65,7 @@ case class SparqlImportJob(conf : SparqlConfig, id :  Identifier, refreshSchedul
             }
             Thread.sleep(retryPause)
           }
+          //TODO: Add HttpException handling
         }
       }
       loop = (results.size == conf.pageSize)
