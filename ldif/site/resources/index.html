@@ -4,6 +4,7 @@
 
 
 
+
   <style>
 body { background: white; color: black; font-family: sans-serif; line-height: 1.4em; padding: 2.5em 3em; margin: 0; }
 :link { color: #00c; }
@@ -53,7 +54,7 @@ table tr.even {background-color: #fff}
 table tr.odd {background-color: #f6f6f6}
   </style>
   
-  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"></head><body>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><meta http-equiv="content-type" content="text/html; charset=utf-8"></head><body>
 <div id="logo" align="right"><a href="http://www.wiwiss.fu-berlin.de/en/institute/pwo/bizer/index.html"><img src="img/fu-logo.gif" alt="Freie Universität Berlin Logo" border="0"></a>&nbsp;<br>
 <a href="http://mediaeventservices.com"><img src="img/logo.gif" alt="Media Event Services"></a></div>
 
@@ -391,8 +392,7 @@ Default: <span style="font-family: monospace;">false</span></p>
 
 
 
-<h3><a name="integrationjob"></a>Integration Job Configuration&nbsp;
-(Scheduler und optionen/Prozess genauer bescheiben)<br>
+<h3><a name="integrationjob"></a>Integration Job Configuration<br>
 </h3>
 
 <p>An Integration Job is configured with an XML document, whose structure is described by this <a href="http://www.assembla.com/code/ldif/git/nodes/ldif/ldif-core/src/main/resources/xsd/IntegrationJob.xsd">XML Schema</a>.
@@ -416,7 +416,7 @@ is ignored - the only exception is if the <a href="#onetimexec"><span style="fon
 <ul>
 <li><i>properties</i> - the path to a Java properties file for configuration parameters, <a href="#configurationproperties">see below</a> for more details; </li><li><i>sources</i> - a directory containing the source data sets, these files in this directory must be in <a href="http://sw.deri.org/2008/07/n-quads/">N-Quads</a> format
       and may be compressed (.gz, .zip or .bz2);</li><li><i>linkSpecifications</i> - a directory containing the <a href="http://www.assembla.com/wiki/show/silk/Link_Specification_Language">Silk link specifications</a>;</li><li><i>mappings</i> - a directory containing the <a href="http://www4.wiwiss.fu-berlin.de/bizer/r2r/spec/index.html#mappings">R2R mappings</a>;</li><li><i>output</i> - the name of the file to which the output should be written;</li>
-  <li><i>runSchedule</i> - how often the integration is expected to be run. Valid values are: <span style="font-family: monospace;">onStartup</span>,<span style="font-family: monospace;"> always</span>,<span style="font-family: monospace;"> hourly</span>,<span style="font-family: monospace;"> daily</span>,<span style="font-family: monospace;"> weekly</span>,<span style="font-family: monospace;"> monthly</span>,<span style="font-family: monospace;"> yearly </span>and <span style="font-family: monospace;">never</span>. <meta http-equiv="content-type" content="text/html; charset=utf-8"><span class="Apple-style-span" style="border-collapse: separate; color: rgb(0, 0, 0); font-family: 'Times New Roman'; font-style: normal; font-variant: normal; font-weight: normal; letter-spacing: normal; line-height: normal; orphans: 2; text-indent: 0px; text-transform: none; white-space: normal; widows: 2; word-spacing: 0px; font-size: medium;"><span class="Apple-style-span" style="border-collapse: collapse; font-family: Arial,Helvetica,'Liberation Sans',FreeSans,sans-serif; font-size: 12px; line-height: 18px; text-align: left;"></span></span></li>
+  <li><i>runSchedule</i> - how often the integration is expected to be run. Valid values are: <span style="font-family: monospace;">onStartup</span>,<span style="font-family: monospace;"> always</span>,<span style="font-family: monospace;"> hourly</span>,<span style="font-family: monospace;"> daily</span>,<span style="font-family: monospace;"> weekly</span>,<span style="font-family: monospace;"> monthly</span>,<span style="font-family: monospace;"> yearly </span>and <span style="font-family: monospace;">never</span>. <span class="Apple-style-span" style="border-collapse: separate; color: rgb(0, 0, 0); font-family: 'Times New Roman'; font-style: normal; font-variant: normal; font-weight: normal; letter-spacing: normal; line-height: normal; orphans: 2; text-indent: 0px; text-transform: none; white-space: normal; widows: 2; word-spacing: 0px; font-size: medium;"><span class="Apple-style-span" style="border-collapse: collapse; font-family: Arial,Helvetica,'Liberation Sans',FreeSans,sans-serif; font-size: 12px; line-height: 18px; text-align: left;"></span></span></li>
 
 </ul>
 
@@ -516,10 +516,21 @@ no way to prevent name clashes at the moment.
 </ul>
 
 
-<h3><a name="importjob"></a>Import Job Configuration (todo alles ordentlich beschreiben inkl aller Parameter und speziell genauer wie man SPARQL macht)<br>
+<h3><a name="importjob"></a>Import Job Configuration<br>
 </h3>
 
-<p>An Import Job is configured with an XML document, whose structure is described by this <a href="http://www.assembla.com/code/ldif/git/nodes/ldif/ldif-core/src/main/resources/xsd/ImportJob.xsd">XML Schema</a>.</p>
+<p>An Import Job is configured with an XML document, whose structure is described by this <a href="http://www.assembla.com/code/ldif/git/nodes/ldif/ldif-core/src/main/resources/xsd/ImportJob.xsd">XML Schema</a>.<br>
+</p>
+<p>It has the following elements:</p>
+
+
+<ul>
+<li><i>internalId</i> - A unique ID, which will be used internally to track the import job and its files like data and provenance.<br>
+ </li><li><i>dataSource </i>- A reference to a <a href="#datasource">data source</a> to state from which source this job imports data.<br>
+</li><li><span style="font-style: italic;">One kind of importJob</span> - There has to be exactly one import job element, which can be either <span style="font-family: monospace;">quadImportJob</span>, <a href="http://www.assembla.com/wiki/show/silk/Link_Specification_Language"><br>
+</a></li><li><i>rrefreshSchedule</i> - how often the integration is expected to be run. Valid values are: <span style="font-family: monospace;">onStartup</span>,<span style="font-family: monospace;"> always</span>,<span style="font-family: monospace;"> hourly</span>,<span style="font-family: monospace;"> daily</span>,<span style="font-family: monospace;"> weekly</span>,<span style="font-family: monospace;"> monthly</span>,<span style="font-family: monospace;"> yearly </span>and <span style="font-family: monospace;">never</span>.</li>
+</ul>
+
 
 
 <p>LDIF supports four different mechanisms to import external data:
@@ -527,15 +538,63 @@ no way to prevent name clashes at the moment.
 <ul>
 <li><i>Quad Import Job</i> – import N-Quad dumps</li><li><i>Triple Import Job</i> – import RDF/N-Triple dumps</li><li><i>Crawl Import Job</i> – import by dereferencing URIs as RDF data, using the LDspider Web Crawling Framework</li><li><i>SPARQL Import Job</i> – import by quering a SPARQL endpoint</li>
 </ul>
+<h4>Quad Import<br>
+</h4>
+
 
 
 
 <p>A typical config file for a Quad Import Job looks like this: </p>
 
-<pre>&lt;importJob xmlns="http://www4.wiwiss.fu-berlin.de/bizer/ldif"&gt;<br>    &lt;internalId&gt;dBpedia.0&lt;/internalId&gt;<br>    &lt;dataSource&gt;dBpedia&lt;/dataSource&gt;<br>    &lt;refreshSchedule&gt;daily&lt;/refreshSchedule&gt;<br>    &lt;quadImportJob&gt;<br>      &lt;dumpLocation&gt;http://dbpedia.org/dump.nq&lt;/dumpLocation&gt;<br>    &lt;/quadImportJob&gt;<br>&lt;/importJob&gt;<br></pre>
+<pre>&lt;importJob xmlns="http://www4.wiwiss.fu-berlin.de/bizer/ldif"&gt;<br>    &lt;internalId&gt;dBpedia.0&lt;/internalId&gt;<br>    &lt;dataSource&gt;dBpedia&lt;/dataSource&gt;<br>    &lt;refreshSchedule&gt;daily&lt;/refreshSchedule&gt;<br>    <span style="font-weight: bold;">&lt;quadImportJob&gt;</span><br>      &lt;dumpLocation&gt;http://dbpedia.org/dump.nq&lt;/dumpLocation&gt;<br>    <span style="font-weight: bold;">&lt;/quadImportJob&gt;</span><br>&lt;/importJob&gt;<br></pre>
 
 
+<h4>Triple Import<br>
+</h4>
+
+
+
+
+
+<p>In a triple import you use the <span style="font-family: monospace;">tripleImportJob</span> element instead of the <span style="font-family: monospace;">quadImportJob</span> element: </p>
+
+
+<pre>&lt;importJob xmlns="http://www4.wiwiss.fu-berlin.de/bizer/ldif"&gt;<br>    &lt;internalId&gt;dBpedia.0&lt;/internalId&gt;<br>    &lt;dataSource&gt;dBpedia&lt;/dataSource&gt;<br>    &lt;refreshSchedule&gt;daily&lt;/refreshSchedule&gt;<br>    <span style="font-weight: bold;">&lt;tripleImportJob&gt;</span><br>      &lt;dumpLocation&gt;http://dbpedia.org/dump.nt&lt;/dumpLocation&gt;<br>    <span style="font-weight: bold;">&lt;/tripleImportJob&gt;</span><br>&lt;/importJob&gt;</pre><h4>SPARQL Import<br>
+</h4>
+
+
+
+
+
+<p>In a SPARQL import job the <span style="font-family: monospace;">sparqlImportJob </span>element
+specifies the endpoint that will be queried for data and a restriction
+pattern - note that angle brackets of URIs have to be escaped using <span style="font-family: monospace;">&amp;lt;</span> and <span style="font-family: monospace;">&amp;gt;</span>. This restriction pattern is joined with the pattern <span style="font-family: monospace;">?s ?p ?o</span>,
+which is also the only pattern in the Construct part of the generated
+SPARQL Construct query. This means that all triples are collected of
+the entities matching the restriction in the <span style="font-family: monospace;">pattern</span> element. <meta http-equiv="content-type" content="text/html; charset=utf-8"><span class="Apple-style-span" style="border-collapse: separate; color: rgb(0, 0, 0); font-family: 'Times New Roman'; font-style: normal; font-variant: normal; font-weight: normal; letter-spacing: normal; line-height: normal; orphans: 2; text-indent: 0px; text-transform: none; white-space: normal; widows: 2; word-spacing: 0px; font-size: medium;"><span class="Apple-style-span" style="border-collapse: collapse; font-family: Arial,Helvetica,'Liberation Sans',FreeSans,sans-serif; font-size: 12px; line-height: 18px; text-align: left;"></span></span>
+ </p>
+
+
+<pre>&lt;importJob xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"<br>            xmlns="http://www4.wiwiss.fu-berlin.de/ldif/"&gt;<br>    &lt;internalId&gt;musicbrainz.3&lt;/internalId&gt;<br>    &lt;dataSource&gt;MusicBrainz_Talis&lt;/dataSource&gt;<br>    &lt;refreshSchedule&gt;monthly&lt;/refreshSchedule&gt;<br>    <span style="font-weight: bold;">&lt;sparqlImportJob&gt;</span><br>        &lt;endpointLocation&gt;http://api.talis.com/stores/musicbrainz/services/sparql&lt;/endpointLocation&gt;<br>        &lt;sparqlPatterns&gt;<br>            &lt;pattern&gt;?s a &amp;lt;http://purl.org/ontology/mo/MusicArtist&amp;gt;&lt;/pattern&gt;<br>        &lt;/sparqlPatterns&gt;<br>    <span style="font-weight: bold;">&lt;/sparqlImportJob&gt;</span><br>&lt;/importJob&gt;
+</pre><h4>Crawler Import<br>
+</h4>
+
+
+
+
+
+<p>A crawl import job is configured by specifying one or more seed URIs
+as starting points of the crawl, predicates that the crawler should
+follow to discover new resources and optionally the maximum number of
+levels to crawl, meaning the maximum distance to one of the seed URIs.
+Of each crawled resource all received triples are stored.<br>
+ </p>
+
+
+<pre>&lt;importJob xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"<br>            xmlns="http://www4.wiwiss.fu-berlin.de/ldif/"&gt;<br>    &lt;internalId&gt;freebase.0&lt;/internalId&gt;<br>    &lt;dataSource&gt;Freebase&lt;/dataSource&gt;<br>    &lt;refreshSchedule&gt;onStartup&lt;/refreshSchedule&gt;<br>    <span style="font-weight: bold;">&lt;crawlImportJob&gt;</span><br>        &lt;seedURIs&gt;<br>            &lt;uri&gt;http://rdf.freebase.com/ns/en.dance-pop&lt;/uri&gt;<br>            &lt;uri&gt;http://rdf.freebase.com/ns/en.radiohead&lt;/uri&gt;<br>            &lt;uri&gt;http://rdf.freebase.com/ns/en.art_rock&lt;/uri&gt;<br>        &lt;/seedURIs&gt;<br>        &lt;predicatesToFollow&gt;<br>            &lt;uri&gt;http://rdf.freebase.com/ns/music.artist.genre&lt;/uri&gt;<br>            &lt;uri&gt;http://rdf.freebase.com/ns/music.genre.albums&lt;/uri&gt;<br>            &lt;uri&gt;http://rdf.freebase.com/ns/music.genre.artists&lt;/uri&gt;<br>            &lt;uri&gt;http://rdf.freebase.com/ns/music.album.genre&lt;/uri&gt;<br>            &lt;uri&gt;http://rdf.freebase.com/ns/music.album.artist&lt;/uri&gt;<br>            &lt;uri&gt;http://rdf.freebase.com/ns/music.artist.album&lt;/uri&gt;<br>            &lt;uri&gt;http://rdf.freebase.com/ns/influence.influence_node.influenced_by&lt;/uri&gt;<br>            &lt;uri&gt;http://rdf.freebase.com/ns/music.artist.label&lt;/uri&gt;<br>            &lt;uri&gt;http://rdf.freebase.com/ns/music.record_label.artist&lt;/uri&gt;<br>            &lt;uri&gt;http://rdf.freebase.com/ns/music.producer.releases_produced&lt;/uri&gt;<br>            &lt;uri&gt;http://rdf.freebase.com/ns/music.release.producers&lt;/uri&gt;<br>            &lt;uri&gt;http://rdf.freebase.com/ns/music.release.album&lt;/uri&gt;<br>            &lt;uri&gt;http://rdf.freebase.com/ns/music.producer.releases_produced&lt;/uri&gt;<br>        &lt;/predicatesToFollow&gt;<br>        &lt;levels&gt;5&lt;/levels&gt;<br>    <span style="font-weight: bold;">&lt;/crawlImportJob&gt;</span><br>&lt;/importJob&gt;</pre>
+<br>
 <h4 id="provenance">Provenance Metadata</h4>
+
 
 <p>The result of each import contains provenance metadata, whose structure is described by this <a href="http://www.assembla.com/code/ldif/git/nodes/ldif/ldif-core/src/main/resources/owl/provenance.owl">ontology</a>.
     <br>For each imported graph, provenance information will contain:
@@ -549,13 +608,11 @@ no way to prevent name clashes at the moment.
 
 
 <pre>&lt;http://dbpedia.org/graphA&gt; &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#type&gt; &lt;http://www4.wiwiss.fu-berlin.de/ldif/ImportedGraph&gt; &lt;http://www4.wiwiss.fu-berlin.de/ldif/provenance&gt; .<br>&lt;http://dbpedia.org/graphA&gt; &lt;http://www4.wiwiss.fu-berlin.de/ldif/hasImportJob&gt; _:dbpedia0 &lt;http://www4.wiwiss.fu-berlin.de/ldif/provenance&gt; .<br>&lt;http://dbpedia.org/graphB&gt; &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#type&gt; &lt;http://www4.wiwiss.fu-berlin.de/ldif/ImportedGraph&gt; &lt;http://www4.wiwiss.fu-berlin.de/ldif/provenance&gt; .<br>&lt;http://dbpedia.org/graphB&gt; &lt;http://www4.wiwiss.fu-berlin.de/ldif/hasImportJob&gt; _:dbpedia0 &lt;http://www4.wiwiss.fu-berlin.de/ldif/provenance&gt; .<br>_:dbpedia0 &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#type&gt; &lt;http://www4.wiwiss.fu-berlin.de/ldif/ImportJob&gt; &lt;http://www4.wiwiss.fu-berlin.de/ldif/provenance&gt; .<br>_:dbpedia0 &lt;http://www4.wiwiss.fu-berlin.de/ldif/importId&gt; "dBpedia.0" &lt;http://www4.wiwiss.fu-berlin.de/ldif/provenance&gt; .<br>_:dbpedia0 &lt;http://www4.wiwiss.fu-berlin.de/ldif/lastUpdate&gt; "2011-09-21T19:01:00-05:00"^^&lt;http://www.w3.org/2001/XMLSchema#dateTime&gt; &lt;http://www4.wiwiss.fu-berlin.de/ldif/provenance&gt; .<br>_:dbpedia0 &lt;http://www4.wiwiss.fu-berlin.de/ldif/hasDatasource&gt; "dBpedia" &lt;http://www4.wiwiss.fu-berlin.de/ldif/provenance&gt; .<br>_:dbpedia0 &lt;http://www4.wiwiss.fu-berlin.de/ldif/hasImportType&gt; "quad" &lt;http://www4.wiwiss.fu-berlin.de/ldif/provenance&gt; .<br>_:dbpedia0 &lt;http://www4.wiwiss.fu-berlin.de/ldif/hasOriginalLocation&gt; "http://mes.smw-lde-eu.s3.amazonaws.com/dBpedia_dump.nt.bz2" &lt;http://www4.wiwiss.fu-berlin.de/ldif/provenance&gt; .<br></pre>
+<h3 id="datasource">Data Source Configuration</h3>
+<p>A Data Source is configured with an XML document, whose structure is described by this  <a href="http://www.assembla.com/code/ldif/git/nodes/ldif/ldif-core/src/main/resources/xsd/DataSource.xsd">XML Schema</a>. It contains human readable information about a data source. The <span style="font-family: monospace;">label</span> element should be a unique string in each integration use case, because it will be referenced by the <a href="#importjob">import jobs</a>.<br>
+</p>
 
-
-<h3>Data Source Configuration</h3>
-
-<p>A Data Source is configured with an XML document, whose structure is described by this  <a href="http://www.assembla.com/code/ldif/git/nodes/ldif/ldif-core/src/main/resources/xsd/DataSource.xsd">XML Schema</a>.</p>
-
-<pre>&lt;dataSource&gt;<br>    &lt;label&gt;dBpedia&lt;/label&gt;<br>    &lt;description&gt;DBpedia ist an RDF version of Wikipedia&lt;/description&gt;<br>   &lt;homepage&gt;http://dbpedia.org&lt;/homepage&gt;<br>&lt;/dataSource&gt;<br></pre>
+<pre>&lt;dataSource&gt;<br>    &lt;label&gt;DBpedia&lt;/label&gt;<br>    &lt;description&gt;DBpedia ist an RDF version of Wikipedia&lt;/description&gt;<br>   &lt;homepage&gt;http://dbpedia.org&lt;/homepage&gt;<br>&lt;/dataSource&gt;<br></pre>
 
 
 <h3>Quick start<br>
@@ -641,12 +698,9 @@ sets:<br>
 In order to run the example, please download LDIF and run the following commands:<br>
 
 <ul>
-<li>Change into the LDIF root dir.</li><li>Under Unix type:</li><ul><pre>bin/ldif examples/music/ldif-config/schedulerConfig.xml</pre></ul><li>Under Windows type:</li><ul><pre>bin\ldif.bat examples\music\ldif-config\schedulerConfig.xml</pre></ul>
-</ul>
-Please note that the execution of the import jobs can take several
-days, mainly because of the crawl job. (todo: Möglichkeit das Abzukürzen: Wir
-haben zwei Konfigs eine test und eine volle, achtung volle kann mehre
-tage laufen)<br>
+<li>Change into the LDIF root dir.</li><li>Under Unix type:</li><ul><pre>bin/ldif examples/music/ldif-config/schedulerConfig-test.xml</pre></ul><li>Under Windows type:</li><ul><pre>bin\ldif.bat examples\music\ldif-config\schedulerConfig-test.xml</pre></ul>
+</ul>In the LDIF release we offer two different versions of the config files. The <span style="font-family: monospace;">schedulerConfig-test.xml</span> points to a truncated version of the crawl jobs. If you want to run the full configuration then replace the config file with <span style="font-family: monospace;">schedulerConfig.xml</span>. Please note that the execution of the import jobs for the full configuration can take several
+days, mainly due to the crawl job.<br>
 
 
 
@@ -677,7 +731,7 @@ on gene information, disease and drug pathways, and SNP variants</li><li><a href
 information on protein sequence and function </li>
 </ul>
 
-<p>Todo: Schreiben dass data sets im relase sind.<br>
+<p>A subset of these datasets can be found in the sub-directory <span style="font-family: monospace;">examples/life-science/sources</span> of the LDIF release.<br>
 </p>
 <p>The following mapping file provides for translating the vocabularies
 used by the source data sets into the Wiki ontology. </p>
