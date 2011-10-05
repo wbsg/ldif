@@ -8,6 +8,7 @@ import java.io.{Writer, OutputStreamWriter, OutputStream}
 import com.hp.hpl.jena.query.QueryExecutionFactory
 import ldif.util.{Consts, Identifier}
 import javax.xml.ws.http.HTTPException
+import com.hp.hpl.jena.sparql.engine.http.QueryExceptionHTTP
 
 case class SparqlImportJob(conf : SparqlConfig, id :  Identifier, refreshSchedule : String, dataSource : String) extends ImportJob{
   private val log = Logger.getLogger(getClass.getName)
@@ -65,7 +66,19 @@ case class SparqlImportJob(conf : SparqlConfig, id :  Identifier, refreshSchedul
             }
             Thread.sleep(retryPause)
           }
-          //TODO: Add HttpException handling
+          case e: QueryExceptionHTTP => {
+            // Only retry on server errors
+            if(e.getResponseCode < 500) {
+              log.warning("Error executing query: " + query + ". Error Code: " + e.getResponseCode + "(" + e.getResponseMessage + ")")
+              return false
+            }
+            log.warning("Error executing query - retrying in " + retryPause + " ms. (" + retries + "/" + retryCount + ")\n"+query+" \non "+endpointUrl+" \n"+e.getResponseMessage)
+            retries += 1
+            if (retries > retryCount) {
+              return false
+            }
+            Thread.sleep(retryPause)
+          }
         }
       }
       loop = (results.size == conf.pageSize)
