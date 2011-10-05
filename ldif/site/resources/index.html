@@ -5,6 +5,7 @@
 
 
 
+
   <style>
 body { background: white; color: black; font-family: sans-serif; line-height: 1.4em; padding: 2.5em 3em; margin: 0; }
 :link { color: #00c; }
@@ -54,7 +55,7 @@ table tr.even {background-color: #fff}
 table tr.odd {background-color: #f6f6f6}
   </style>
   
-  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><meta http-equiv="content-type" content="text/html; charset=utf-8"></head><body>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta http-equiv="content-type" content="text/html; charset=utf-8"></head><body>
 <div id="logo" align="right"><a href="http://www.wiwiss.fu-berlin.de/en/institute/pwo/bizer/index.html"><img src="img/fu-logo.gif" alt="Freie Universität Berlin Logo" border="0"></a>&nbsp;<br>
 <a href="http://mediaeventservices.com"><img src="img/logo.gif" alt="Media Event Services"></a></div>
 
@@ -571,12 +572,11 @@ specifies the endpoint that will be queried for data and a restriction
 pattern - note that angle brackets of URIs have to be escaped using <span style="font-family: monospace;">&amp;lt;</span> and <span style="font-family: monospace;">&amp;gt;</span>. This restriction pattern is joined with the pattern <span style="font-family: monospace;">?s ?p ?o</span>,
 which is also the only pattern in the Construct part of the generated
 SPARQL Construct query. This means that all triples are collected of
-the entities matching the restriction in the <span style="font-family: monospace;">pattern</span> element. <meta http-equiv="content-type" content="text/html; charset=utf-8"><span class="Apple-style-span" style="border-collapse: separate; color: rgb(0, 0, 0); font-family: 'Times New Roman'; font-style: normal; font-variant: normal; font-weight: normal; letter-spacing: normal; line-height: normal; orphans: 2; text-indent: 0px; text-transform: none; white-space: normal; widows: 2; word-spacing: 0px; font-size: medium;"><span class="Apple-style-span" style="border-collapse: collapse; font-family: Arial,Helvetica,'Liberation Sans',FreeSans,sans-serif; font-size: 12px; line-height: 18px; text-align: left;"></span></span>
+the entities matching the restriction in the <span style="font-family: monospace;">pattern</span> element. <span class="Apple-style-span" style="border-collapse: separate; color: rgb(0, 0, 0); font-family: 'Times New Roman'; font-style: normal; font-variant: normal; font-weight: normal; letter-spacing: normal; line-height: normal; orphans: 2; text-indent: 0px; text-transform: none; white-space: normal; widows: 2; word-spacing: 0px; font-size: medium;"><span class="Apple-style-span" style="border-collapse: collapse; font-family: Arial,Helvetica,'Liberation Sans',FreeSans,sans-serif; font-size: 12px; line-height: 18px; text-align: left;"></span></span>
  </p>
 
 
-<pre>&lt;importJob xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"<br>            xmlns="http://www4.wiwiss.fu-berlin.de/ldif/"&gt;<br>    &lt;internalId&gt;musicbrainz.3&lt;/internalId&gt;<br>    &lt;dataSource&gt;MusicBrainz_Talis&lt;/dataSource&gt;<br>    &lt;refreshSchedule&gt;monthly&lt;/refreshSchedule&gt;<br>    <span style="font-weight: bold;">&lt;sparqlImportJob&gt;</span><br>        &lt;endpointLocation&gt;http://api.talis.com/stores/musicbrainz/services/sparql&lt;/endpointLocation&gt;<br>        &lt;sparqlPatterns&gt;<br>            &lt;pattern&gt;?s a &amp;lt;http://purl.org/ontology/mo/MusicArtist&amp;gt;&lt;/pattern&gt;<br>        &lt;/sparqlPatterns&gt;<br>    <span style="font-weight: bold;">&lt;/sparqlImportJob&gt;</span><br>&lt;/importJob&gt;
-</pre><h4>Crawler Import<br>
+<pre>&lt;importJob xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"<br>            xmlns="http://www4.wiwiss.fu-berlin.de/ldif/"&gt;<br>    &lt;internalId&gt;musicbrainz.3&lt;/internalId&gt;<br>    &lt;dataSource&gt;MusicBrainz_Talis&lt;/dataSource&gt;<br>    &lt;refreshSchedule&gt;monthly&lt;/refreshSchedule&gt;<br>    <span style="font-weight: bold;">&lt;sparqlImportJob&gt;</span><br>        &lt;endpointLocation&gt;http://api.talis.com/stores/musicbrainz/services/sparql&lt;/endpointLocation&gt;<br>        &lt;sparqlPatterns&gt;<br>            &lt;pattern&gt;?s a &amp;lt;http://purl.org/ontology/mo/MusicArtist&amp;gt;&lt;/pattern&gt;<br>        &lt;/sparqlPatterns&gt;<br>    <span style="font-weight: bold;">&lt;/sparqlImportJob&gt;</span><br>&lt;/importJob&gt;<br></pre><h4>Crawler Import<br>
 </h4>
 
 
@@ -821,19 +821,19 @@ on line 10 in the output was produced by a complex mapping that had to
 consider all three quads of the input (lines 12-14).<br>
 </li>
 </ul>
-<h2 id="performance">7. Performance Evaluation</h2>
+<h2 id="performance">5. Performance Evaluation</h2>
 
 <p>We regularly carry out performance evaluations. For more
 details and the latest results please visit our <a href="benchmark.html">Benchmark results</a> page.</p>
 
-<h2 id="development">8. Source
+<h2 id="development">6. Source
 Code and Development</h2>
 <p>The latest source code is available from the <a href="http://www.assembla.com/spaces/ldif/wiki">LDIF development page</a>
 on Assembla.com.</p>
 <p>The framework can be used under the terms of the <a href="http://www.apache.org/licenses/LICENSE-2.0">Apache Software
 License</a>.
 </p>
-<h2 id="history">9. Version history </h2>
+<h2 id="history">7. Version history </h2>
 <p>
 </p>
 <table>
@@ -872,10 +872,10 @@ only for relevant data </td>
     </tr>
   </tbody>
 </table>
-<h2 id="feedback">10. Support and Feedback </h2>
+<h2 id="feedback">8. Support and Feedback </h2>
 <p>For questions and feedback please use the <a href="http://groups.google.com/group/ldif?hl=en">LDIF Google Group</a>.
 </p>
-<h2 id="references">11. References</h2>
+<h2 id="references">9. References</h2>
 <ul>
 </ul>
 <ul>
@@ -903,7 +903,7 @@ Westfields, USA, October 2009. </li>
 Server - Adding missing Links while consuming Linked Data</a> ( <a href="http://www.wiwiss.fu-berlin.de/en/institute/pwo/bizer/research/publications/IseleJentzschBizer-Silk-Cold2010-Talk.pdf">Slides</a>
 ). 1st International Workshop on Consuming Linked Data (COLD
 2010), Shanghai, November 2010.</li></ol>
-<h2 id="acknowledgments">12. Acknowledgments </h2>
+<h2 id="acknowledgments">10. Acknowledgments </h2>
 <p>This work was supported in part by Vulcan Inc. as part of its <a href="http://www.projecthalo.com">Project Halo</a> and by the EU FP7
 project <a href="http://lod2.eu/">LOD2 - Creating Knowledge out of
 Interlinked Data</a> (Grant No. 257943). </p>
