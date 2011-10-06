@@ -6,7 +6,7 @@
 		<Prefix id="rdfs" namespace="http://www.w3.org/2000/01/rdf-schema#" />
 		<Prefix id="owl" namespace="http://www.w3.org/2002/07/owl#" />
 		<Prefix id="mo" namespace="http://purl.org/ontology/mo/" />
-		<Prefix id="dbpedia-owl" namespace="http://dbpedia.org/ontology/" />
+		<Prefix id="dbpediaowl" namespace="http://dbpedia.org/ontology/" />
 		<Prefix id="dc" namespace="http://purl.org/dc/elements/1.1/" />
         <Prefix id="foaf" namespace="http://xmlns.com/foaf/0.1/" />
         <Prefix id="freebase" namespace="http://rdf.freebase.com/ns/" />
@@ -27,15 +27,15 @@
 			</TargetDataset>
 
             <LinkCondition>
-				<Aggregate type="avg">
+				<Aggregate type="average">
                     <Aggregate type="max">
 					    <Compare metric="jaccard" threshold="0.4">
-    						<Input path="?a/dbpedia-owl:bandMember/rdfs:label" />
-    						<Input path="?b/dbpedia-owl:bandMember/rdfs:label" />
+    						<Input path="?a/dbpediaowl:bandMember/rdfs:label" />
+    						<Input path="?b/dbpediaowl:bandMember/rdfs:label" />
     					</Compare>
                         <Compare metric="date" threshold="0">
-                             <Input path="?a/dbpedia-owl:birthDate" />
-	    					<Input path="?b/dbpedia-owl:birthDate" />
+                             <Input path="?a/dbpediaowl:birthDate" />
+	    					<Input path="?b/dbpediaowl:birthDate" />
                         </Compare>
                         <Compare metric="jaccard" threshold="0.4">
                             <Input path="?a/foaf:made/rdfs:label" />
@@ -87,11 +87,11 @@
             <LinkType>owl:sameAs</LinkType>
 
             <SourceDataset dataSource="SOURCE" var="a">
-				<RestrictTo>?a rdf:type dbpedia-owl:Genre .</RestrictTo>
+				<RestrictTo>?a rdf:type dbpediaowl:Genre .</RestrictTo>
 			</SourceDataset>
 
 			<TargetDataset dataSource="TARGET" var="b">
-				<RestrictTo>?b rdf:type dbpedia-owl:Genre .</RestrictTo>
+				<RestrictTo>?b rdf:type dbpediaowl:Genre .</RestrictTo>
 			</TargetDataset>
 
             <LinkCondition>
@@ -125,7 +125,7 @@
 			</TargetDataset>
 
             <LinkCondition>
-                <Aggregate type="avg">
+                <Aggregate type="average">
                     <Compare metric="equality" threshold="1.0">
                         <TransformInput function="lowerCase">
                             <Input path="?a/rdfs:label" />
