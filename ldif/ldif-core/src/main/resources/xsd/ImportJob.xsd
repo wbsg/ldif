@@ -58,7 +58,8 @@
             </xs:sequence>
           </xs:complexType>
         </xs:element>
-	<xs:element name="levels" type="xs:unsignedShort" minOccurs="0" />
+	    <xs:element name="levels" type="xs:unsignedShort" minOccurs="0" />
+        <xs:element name="resourceLimit" type="xs:unsignedInt" minOccurs="0" />
       </xs:sequence>
     </xs:complexType>
   </xs:element>
