@@ -1,20 +1,13 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
-<html><head><title>LDIF - Linked Data Integration Framework</title>
-
-
-
-
-
-
+<html><head><title>LDIF &ndash; Linked Data Integration Framework</title>
   <style>
 body { background: white; color: black; font-family: sans-serif; line-height: 1.4em; padding: 2.5em 3em; margin: 0; }
-:link { color: #00c; }
-:visited { color: #609; }
+:link, :visited { color: #00c; }
 a:link img { border: none; }
 a:visited img { border: none; }
 h1, h2, h3, h4 { background: white; color: #800; }
 h1 { font: 170% sans-serif; margin: 0; }
-h2 { clear: both; font: 140% sans-serif; margin: 2.5em 0 -0.5em 0; }
+h2 { clear: both; font: 140% sans-serif; margin: 1.5em 0 -0.5em 0; }
 h3 { font: 120% sans-serif; margin: 1.5em 0 -0.5em 0; }
 h4 { font: italic 100% sans-serif; margin: 0.9em 0 -0.6em 0; }
 h5 { font: small-caps 100% sans-serif; }
@@ -26,13 +19,21 @@ ul.toc { list-style-type: none; }
 ol.toc li a { text-decoration: none; }
 .note { color: red; }
 #header { border-bottom: 1px solid #ccc; }
-#logo { float: right; }
+#logo { float: right; margin-bottom: 10px; }
 #authors { clear: right; float: right; font-size: 80%; text-align: right; }
-#content { clear: both; margin: 2em auto 0 0; text-align: justify }
-#download, #demo { float: left; font-family: sans-serif; margin: 1em 0 1.5em; text-align: center; width: 50%; }
-#download h2, #demo h2 { font-size: 125%; margin: 1.5em 0 -0.2em 0; }
+#content { margin: 2em auto 0 0; text-align: justify }
+#download { width: 200px; text-align: center; margin-left: auto; margin-right: auto; }
+/*#download, #demo { float: left; font-family: sans-serif; margin: 0.5em 0 1.5em; text-align: center; width: 50%; }
+#download h2, #demo h2 { font-size: 125%; margin: 1.5em 0 -0.2em 0; }*/
 #download small, #demo small { color: #888; font-size: 80%; }
 #footer { border-top: 1px solid #ccc; color: #aaa; margin: 2em 0 0; }
+#top-container { height: 150px; width: 750px; padding: 20px; }
+#purpose { font-size: 110%; letter-spacing: 0.05em; word-spacing: 0.15em; width: 700px; margin: 0 auto 40px auto; }
+.box { border: 1px solid #D3D3D3; }
+.box:hover { background: none repeat scroll 0 0 #FCFDFF; box-shadow: 0 0 9px 1px #DFEFFF; }
+.box a:link, .box a:visited, .box a:hover, .box a:active { color: #1C5489; display: block; font-size: 110%; margin-left: 5px; min-height: 30px; padding: 15px 5px 5px 5px; text-decoration: none; }		
+.box a:hover, .box a:active { color: #16426B !important; cursor: pointer; text-decoration: none !important; }
+
 @media Print {
 * { font-size: 92%; }
 body { padding: 0; line-height: 1.2em; }
@@ -60,38 +61,50 @@ table tr.odd {background-color: #f6f6f6}
 <a href="http://mediaeventservices.com"><img src="img/logo.gif" alt="Media Event Services"></a></div>
 
 <div id="header">
-<h1 style="font-size: 250%;">LDIF - Linked Data Integration Framework </h1>
+<h1 style="font-size: 250%;">LDIF &ndash; Linked Data Integration Framework </h1>
 </div>
 
-<div id="tagline">A component for building Linked Data applications
+<div id="tagline">A framework for building Linked Data applications
 </div>
 
 <div id="authors"><a href="http://www.wiwiss.fu-berlin.de/en/institute/pwo/bizer/team/SchultzAndreas.html">Andreas
 Schultz</a><br>
-<a href="mailto:andrea.matteini@gmail.com">Andrea Matteini</a><br>
+<a href="mailto:a.matteini@mes-info.de">Andrea Matteini</a><br>
 <a href="http://www.wiwiss.fu-berlin.de/en/institute/pwo/bizer/team/IseleRobert.html">Robert
 Isele</a><br>
 <a href="http://www.wiwiss.fu-berlin.de/en/institute/pwo/bizer/team/BizerChristian.html">Chris
 Bizer</a><br>
-<a href="http://www.wiwiss.fu-berlin.de/en/institute/pwo/bizer/team/BeckerChristian.html">Christian
+<a href="mailto:c.becker@mes-info.de">Christian
 Becker</a><br>
 </div>
 
 <div id="content">
-<p>The LDIF - Framework translates heterogeneous Linked Data from the
-Web into <br>
-a clean, local target representation while keeping track of data
-provenance.</p>
-<div id="download">
-<h2><a href="http://www4.wiwiss.fu-berlin.de/bizer/ldif/releases/ldif-0.3.zip">Download
-LDIF</a><br>
-</h2>
-<small>v0.3, released 2011-09-29</small>
+<div id="top-container">
+<div id="purpose">LDIF translates heterogeneous Linked Data from the
+Web into a clean, local target representation while keeping track of data
+provenance.</div>
+<div id="download" class="box">
+<a href="http://www4.wiwiss.fu-berlin.de/bizer/ldif/releases/ldif-0.3.zip">Download LDIF</a>
+<small>v0.3, released 2011-10-05</small>
 </div>
+</div>
+
+<h2>Quick start</h2>
+
+<br>
+To see LDIF in action, follow these steps:<br>
+<ul>
+  <li><a href="http://www4.wiwiss.fu-berlin.de/bizer/ldif/releases/ldif-0.3.zip">Download the latest release</a></li>
+  <li>Unpack the archive and change into the extracted directory <tt>ldif-0.3</tt></li>
+  <li>Start the integration of the <a href="#example1">Music Example</a>
+  	<ul><li>Under Linux / Mac OS type:</li><pre>bin/ldif examples/music/ldif-config/schedulerConfig-test.xml</pre><li>Under Windows type:</li><pre>bin\ldif.bat examples\music\ldif-config\schedulerConfig-test.xml</pre></ul>
+  </li>
+</ul>
+
 <h2 id="news">News</h2>
 <ul>
   
-  <li><strong>9/29/2011: Version 0.3 released.</strong> The
+  <li><strong>10/05/2011: Version 0.3 released.</strong> The
 third
 LDIF release provides data access modules for gathering data from the
 Web via file download, crawling or accessing SPARQL endpoints. Web data
@@ -121,22 +134,18 @@ a single target URI.</li>
   <li><a href="#about">About LDIF</a></li>
   <li><a href="#components">LDIF components</a></li>
   <li><a href="index.html#configuration">Configuration options</a></li>
-  <li><a href="#examples">Integration examples</a><br>
+  <li><a href="#examples">Examples</a><br>
   </li>
-
-  
-  
   <ul>
-    <li><a href="#example1">Using LDIF for integrating Data from the Music Domain</a></li>
-    <li><a href="#example2">Using LDIF for integrating Life Science Data </a></li>
+    <li><a href="#example1">Using LDIF to integrate Data from the Music Domain</a></li>
+    <li><a href="#example2">Using LDIF to integrate Life Science Data </a></li>
   </ul>
-
-  
   <li><a href="#performance">Performance Evaluation</a> </li>
   <li><a href="#development">Source code and development</a></li>
   <li><a href="#history">Version history</a></li>
   <li><a href="#feedback">Support and Feedback</a></li>
   <li><a href="#references">References</a></li>
+  <li><a href="#acknowledgments">Acknowledgments</a></li>
 </ol>
 <h2 id="about">1. About LDIF<br>
 </h2>
@@ -172,15 +181,20 @@ gap and provide an an open-source Linked Data Integration Framework
 that can be used by Linked Data applications to translate Web data and
 normalize URI while keeping track of data provenance.
 </p>
-<p>
-LDIF provides an expressive mapping language for translating data from
+
+<p>The LDIF integration pipeline consists of the following steps:
+<ol>
+	<li><b>Collect Data</b>: Access modules locally replicate data sets via file download, crawling or SPARQL.</li>
+	<li><b>Map to Schema</b>: An expressive mapping language allows for translating data from
 the various vocabularies that are used on the Web into a consistent,
-local target vocabulary. LDIF includes an identity resolution component
-which discovers URI aliases in the input data and replaces them with a
-single target URI based on user-provided matching heuristics. For
-provenance tracking, the LDIF framework employs the Named Graphs data
-model.
+local target vocabulary.</li>
+	<li><b>Resolve Identities</b>: An identity resolution component discovers URI aliases in the input data and replaces them with a
+single target URI based on user-provided matching heuristics.</li>
+	<li><b>Output</b>: LDIF outputs the integrated data in a single file. For provenance tracking, LDIF employs the Named Graphs data model.</li>
+</ol>
 </p>
+
+
 <p>The figure below shows the schematic <a href="http://linkeddatabook.com/editions/1.0/index.html#htoc84">architecture of Linked Data applications</a>
 that
 implement the crawling/data warehousing pattern. The figure highlights
@@ -614,21 +628,6 @@ Of each crawled resource all received triples are stored.<br>
 
 <pre>&lt;dataSource&gt;<br>    &lt;label&gt;DBpedia&lt;/label&gt;<br>    &lt;description&gt;DBpedia ist an RDF version of Wikipedia&lt;/description&gt;<br>   &lt;homepage&gt;http://dbpedia.org&lt;/homepage&gt;<br>&lt;/dataSource&gt;<br></pre>
 
-
-<h3>Quick start<br>
-</h3>
-
-<br>
-In order to experiment with LDIF follow these steps:<br>
-<ol>
-  <li>Download the latest release (download link at the top of this
-page)</li>
-  <li>Unpack the archive to an arbitrary location</li>
-  <li>To run the command line tool type the following in the root
-directory of LDIF:<br>
-  </li>
-</ol>
-<pre>bin/ldif &lt;path-to-scheduler-config-file&gt;<br><br>bin\ldif.bat &lt;path-to-scheduler-config-file&gt;<br></pre>Two detailed example is given next.<br>
 <h2 id="examples">4. Examples</h2><br>
 
 This section provides two LDIF usage examples.<br>
@@ -641,7 +640,7 @@ resolution modules.</li><li>The <a href="#example2">Life Science example</a> sho
 
 </li>
 </ol>
-<h3 id="example1">4.1 Using LDIF for integrating Data from the Music Domain</h3>
+<h3 id="example1">4.1 Using LDIF to integrate Data from the Music Domain</h3>
 <br>
 <br>
 
@@ -661,7 +660,7 @@ are interested in.<br>
 
 <br>
 
-The following configuration files are used for importing the different sources<br>
+The following configuration files are used for importing the different sources:<br>
 
 <ul>
 <li>DBpedia
@@ -674,7 +673,7 @@ The following configuration files are used for importing the different sources<b
   </li><li>BBC Music
       <a href="http://www.assembla.com/code/ldif/git/nodes/ldif/examples/music/ldif-config/ImportJob/BBCSPARQLImportMusicArtist.xml">Sparql-MusicArtist</a> , <a href="http://www.assembla.com/code/ldif/git/nodes/ldif/examples/music/ldif-config/ImportJob/BBCSPARQLImportRecord.xml">Sparql-Record</a>, <a href="http://www.assembla.com/code/ldif/git/nodes/ldif/examples/music/ldif-config/ImportJob/BBCSPARQLImportBirth.xml">Sparql-Birth</a>, <a href="http://www.assembla.com/code/ldif/git/nodes/ldif/examples/music/ldif-config/ImportJob/BBCSPARQLImportDeath.xml">Sparql-Death</a></li>
 </ul>
-The following mapping file provides for translating the source data sets into our target vocabulary.<br>
+The following mapping file provides for translating the source data sets into our target vocabulary:<br>
 
 <ul>
 <li>R2R mapping file: <a href="http://www.assembla.com/code/ldif/git/nodes/ldif/examples/music/ldif-config/mappings/mappings.ttl">mappings.ttl</a></li></ul>The target vocabulary is a mix of existing ontologies like FOAF, Music
@@ -698,7 +697,7 @@ sets:<br>
 In order to run the example, please download LDIF and run the following commands:<br>
 
 <ul>
-<li>Change into the LDIF root dir.</li><li>Under Unix type:</li><ul><pre>bin/ldif examples/music/ldif-config/schedulerConfig-test.xml</pre></ul><li>Under Windows type:</li><ul><pre>bin\ldif.bat examples\music\ldif-config\schedulerConfig-test.xml</pre></ul>
+<li>Change into the LDIF root dir.</li><li>Under Linux / Mac OS type:</li><ul><pre>bin/ldif examples/music/ldif-config/schedulerConfig-test.xml</pre></ul><li>Under Windows type:</li><ul><pre>bin\ldif.bat examples\music\ldif-config\schedulerConfig-test.xml</pre></ul>
 </ul>In the LDIF release we offer two different versions of the config files. The <span style="font-family: monospace;">schedulerConfig-test.xml</span> points to a truncated version of the crawl jobs. If you want to run the full configuration then replace the config file with <span style="font-family: monospace;">schedulerConfig.xml</span>. Please note that the execution of the import jobs for the full configuration can take several
 days, mainly due to the crawl job.<br>
 
@@ -711,7 +710,7 @@ integrate Life Science Data<br>
 <p>This example shows how LDIF is applied to integrate data originating
 from five Life Science sources. </p>
 
-<p>The example is taken from a joined project with <a href="http://www.vulcan.com/TemplateHome.aspx?contentId=1">Vulcan Inc</a>.
+<p>The example is taken from a joint project with <a href="http://www.vulcan.com/TemplateHome.aspx?contentId=1">Vulcan Inc</a>.
 and <a href="http://www.ontoprise.de/">ontoprise GmbH</a> about
 extending <a href="http://www.wiwiss.fu-berlin.de/en/institute/pwo/bizer/research/publications/BeckerBizerErdmannGreaves-SMW-LDE-Poster-ISWC2010.pdf">Semantic
 Media Wiki+ with a Linked Data Integration Framework</a>. <br>
@@ -758,7 +757,7 @@ configuration. The configuration options are explained in the Section <a href="#
 <p>Execution instructions:</p>
 
 <ul>
-<li>Change into the LDIF root dir.</li><li>Under Unix type:</li><ul><pre>bin/ldif-integrate examples/life-science/integration-config.xml</pre></ul><li>Under Windows type:</li><ul><pre>bin\ldif-integrate.bat examples\life-science\integration-config.xml</pre></ul>
+<li>Change into the LDIF root dir.</li><li>Under Linux / Mac OS type:</li><ul><pre>bin/ldif-integrate examples/life-science/integration-config.xml</pre></ul><li>Under Windows type:</li><ul><pre>bin\ldif-integrate.bat examples\life-science\integration-config.xml</pre></ul>
 </ul>
 
 <h3>Example Data Translation </h3>
@@ -851,7 +850,7 @@ Configuration file XML schemas for validation<br>
 URI minting<br>
 Second use case from the music domain<br>
 </td>
-      <td> 9/29/2011</td>
+      <td> 10/05/2011</td>
     </tr>
     <tr class="odd">
       <td> 0.2</td>
@@ -902,7 +901,8 @@ Westfields, USA, October 2009. </li>
   <li>Robert Isele, Anja Jentzsch, Christian Bizer: <a href="http://www.wiwiss.fu-berlin.de/en/institute/pwo/bizer/research/publications/IseleJentzschBizer-Silk-Cold2010.pdf">Silk
 Server - Adding missing Links while consuming Linked Data</a> ( <a href="http://www.wiwiss.fu-berlin.de/en/institute/pwo/bizer/research/publications/IseleJentzschBizer-Silk-Cold2010-Talk.pdf">Slides</a>
 ). 1st International Workshop on Consuming Linked Data (COLD
-2010), Shanghai, November 2010.</li></ol>
+2010), Shanghai, November 2010.</li>
+  <li>William Smith, Christian Becker and Andreas Schultz: Neurowiki: How we integrated large datasets into SMW with R2R and Silk / LDIF ( Slides <a href="http://semantic-mediawiki.org/w/images/a/ac/SMWCon_2011_Neurowiki_Presentation.pdf">part 1</a>, <a href="http://semantic-mediawiki.org/w/images/b/b7/SMWCon_2011_Neurowiki_Becker_Schultz.pdf">part 2</a> ). SMWCon Fall 2011, Berlin, September 2011.</li></ol>
 <h2 id="acknowledgments">10. Acknowledgments </h2>
 <p>This work was supported in part by Vulcan Inc. as part of its <a href="http://www.projecthalo.com">Project Halo</a> and by the EU FP7
 project <a href="http://lod2.eu/">LOD2 - Creating Knowledge out of
