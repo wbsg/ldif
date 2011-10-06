@@ -700,21 +700,19 @@ sets:<br>
 
 <ul>
 <li>Silk link specification: <a href="http://www.assembla.com/code/ldif/git/nodes/ldif/examples/music/ldif-config/linkspecs/musicLinkSpec.xml">musicLinkSpec.xml</a><br>
-  </li>
+</li>
 </ul>
-
-<br>
 
 In order to run the example, please download LDIF and run the following commands:<br>
 
 <ul>
 <li>Change into the LDIF root dir.</li><li>Under Linux / Mac OS type:</li><ul><pre>bin/ldif examples/music/ldif-config/schedulerConfig-test.xml</pre></ul><li>Under Windows type:</li><ul><pre>bin\ldif.bat examples\music\ldif-config\schedulerConfig-test.xml</pre></ul>
-</ul>In the LDIF release we offer two different versions of the config files. The <span style="font-family: monospace;">schedulerConfig-test.xml</span> points to a truncated version of the crawl jobs. If you want to run the full configuration then replace the config file with <span style="font-family: monospace;">schedulerConfig.xml</span>. Please note that the execution of the import jobs for the full configuration can take several
-days, mainly due to the crawl job.<br>
-
-
-
-<br>
+</ul>In the LDIF release we offer two different versions of the config files. The <span style="font-family: monospace;">schedulerConfig-test.xml</span> points to a truncated version of the crawl jobs. If you want to run the full configuration then replace the config file with <span style="font-family: monospace;">schedulerConfig.xml</span>.
+Please note that the execution of the import jobs for the full
+configuration can take several
+days, mainly due to the crawl job. The truncated version takes about
+one hour for the import jobs to run - also mainly because of the crawl
+job.<br>
 <h3 id="example2">4.2 Using LDIF to
 integrate Life Science Data<br>
 </h3><br>
