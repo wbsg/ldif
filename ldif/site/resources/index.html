@@ -2,6 +2,7 @@
 <html><head><title>LDIF – Linked Data Integration Framework</title>
 
 
+
   <style>
 body { background: white; color: black; font-family: sans-serif; line-height: 1.4em; padding: 2.5em 3em; margin: 0; }
 :link, :visited { color: #00c; }
@@ -599,12 +600,12 @@ no way to prevent name clashes at the moment.
 specifies the endpoint that will be queried for data and a restriction
 pattern - note that angle brackets of URIs have to be escaped using <span style="font-family: monospace;">&amp;lt;</span> and <span style="font-family: monospace;">&amp;gt;</span>. This restriction pattern is joined with the pattern <span style="font-family: monospace;">?s ?p ?o</span>,
 which is also the only pattern in the Construct part of the generated
-SPARQL Construct query. This means that all triples are collected of
-the entities matching the restriction in the <span style="font-family: monospace;">pattern</span> element. <span class="Apple-style-span" style="border-collapse: separate; color: rgb(0, 0, 0); font-family: 'Times New Roman'; font-style: normal; font-variant: normal; font-weight: normal; letter-spacing: normal; line-height: normal; orphans: 2; text-indent: 0px; text-transform: none; white-space: normal; widows: 2; word-spacing: 0px; font-size: medium;"><span class="Apple-style-span" style="border-collapse: collapse; font-family: Arial,Helvetica,'Liberation Sans',FreeSans,sans-serif; font-size: 12px; line-height: 18px; text-align: left;"></span></span>
+SPARQL Construct query. This means that all the triples of
+the entities matching the restriction in the <span style="font-family: monospace;">pattern</span> element are collected. It is also possible to specify a graph with the <span style="font-family: monospace;">graphName</span> element and to restrict the number of imported triples with the <span style="font-family: monospace;">tripleLimit</span> element. All but the <span style="font-family: monospace;">endpointLocation</span> is optional.<span class="Apple-style-span" style="border-collapse: separate; color: rgb(0, 0, 0); font-family: 'Times New Roman'; font-style: normal; font-variant: normal; font-weight: normal; letter-spacing: normal; line-height: normal; orphans: 2; text-indent: 0px; text-transform: none; white-space: normal; widows: 2; word-spacing: 0px; font-size: medium;"><span class="Apple-style-span" style="border-collapse: collapse; font-family: Arial,Helvetica,'Liberation Sans',FreeSans,sans-serif; font-size: 12px; line-height: 18px; text-align: left;"></span></span>
  </p>
 
 
-<pre>&lt;importJob xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"<br>            xmlns="http://www4.wiwiss.fu-berlin.de/ldif/"&gt;<br>    &lt;internalId&gt;musicbrainz.3&lt;/internalId&gt;<br>    &lt;dataSource&gt;MusicBrainz_Talis&lt;/dataSource&gt;<br>    &lt;refreshSchedule&gt;monthly&lt;/refreshSchedule&gt;<br>    <span style="font-weight: bold;">&lt;sparqlImportJob&gt;</span><br>        &lt;endpointLocation&gt;http://api.talis.com/stores/musicbrainz/services/sparql&lt;/endpointLocation&gt;<br>        &lt;sparqlPatterns&gt;<br>            &lt;pattern&gt;?s a &amp;lt;http://purl.org/ontology/mo/MusicArtist&amp;gt;&lt;/pattern&gt;<br>        &lt;/sparqlPatterns&gt;<br>    <span style="font-weight: bold;">&lt;/sparqlImportJob&gt;</span><br>&lt;/importJob&gt;<br></pre><h4>Crawler Import<br>
+<pre>&lt;importJob xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"<br>            xmlns="http://www4.wiwiss.fu-berlin.de/ldif/"&gt;<br>    &lt;internalId&gt;musicbrainz.3&lt;/internalId&gt;<br>    &lt;dataSource&gt;MusicBrainz_Talis&lt;/dataSource&gt;<br>    &lt;refreshSchedule&gt;monthly&lt;/refreshSchedule&gt;<br>    <span style="font-weight: bold;">&lt;sparqlImportJob&gt;</span><br>        &lt;endpointLocation&gt;http://api.talis.com/stores/musicbrainz/services/sparql&lt;/endpointLocation&gt;<br>        &lt;tripleLimit&gt;100000&lt;/tripleLimit&gt;<br>        &lt;sparqlPatterns&gt;<br>            &lt;pattern&gt;?s a &amp;lt;http://purl.org/ontology/mo/MusicArtist&amp;gt;&lt;/pattern&gt;<br>        &lt;/sparqlPatterns&gt;<br>    <span style="font-weight: bold;">&lt;/sparqlImportJob&gt;</span><br>&lt;/importJob&gt;<br></pre><h4>Crawler Import<br>
 </h4>
 
 
