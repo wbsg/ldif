@@ -26,6 +26,7 @@ object ConfigValidator {
       validateSilkLinkSpecs(config.linkSpecDir)
 
       val sourceValidation = config.properties.getProperty("validateSources")
+      val discardFaultyQuads = config.properties.getProperty("discardFaultyQuads", "false").toLowerCase=="true"
       if(sourceValidation!=null && sourceValidation.toLowerCase=="false") {
         println("-- Validation of source datasets disabled")
       }
@@ -34,7 +35,7 @@ object ConfigValidator {
         sourceFileErrors = validateSourceFiles(config.sources)
 
         for (err <- sourceFileErrors) {
-          if(err._2.size > 0)
+          if(err._2.size > 0 && !discardFaultyQuads)
             fail = true
         }
       }

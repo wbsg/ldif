@@ -19,7 +19,7 @@ import ldif.runtime.Quad
  * To change this template use File | Settings | File Templates.
  */
 
-class QuadFileLoader(graphURI: String) {
+class QuadFileLoader(graphURI: String, discardFaultyQuads: Boolean = false) {
   private val log = Logger.getLogger(getClass.getName)
   val quadParser = new QuadParser(graphURI)
 
@@ -95,7 +95,7 @@ class QuadFileLoader(graphURI: String) {
 
   def readQuads(input: BufferedReader, quadQueue: QuadWriter) {
     var loop = true
-    var foundParseError = false
+    var faultyRead = false
 
     var counter = 1;
     var nrOfErrors = 0;
@@ -111,17 +111,18 @@ class QuadFileLoader(graphURI: String) {
           quad = parseQuadLine(line)
         } catch {
           case e: RuntimeException => {
-            foundParseError=true
+            if(!discardFaultyQuads)
+              faultyRead=true
             nrOfErrors += 1
             log.warning("Parse error found at line " + counter + ". Input line: " + line)
           }
         }
-        if(quad!=null && (!foundParseError)) {
+        if(quad!=null && (!faultyRead)) {
           quadQueue.write(quad) }
       }
       counter += 1
     }
-    if(foundParseError)
+    if(faultyRead)
       throw new RuntimeException("Found errors while parsing NT/NQ file. Found " + nrOfErrors + " parse errors. See log file for more details.")
   }
 
