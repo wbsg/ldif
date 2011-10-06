@@ -135,6 +135,7 @@ class IntegrationJob (val config : IntegrationConfig, debugMode : Boolean = fals
    */
   private def loadDumps(sources : File) : Seq[QuadReader] =
   {
+    val discardFaultyQuads = config.properties.getProperty("discardFaultyQuads", "false").toLowerCase=="true"
     if(sources.isDirectory) {
       val quadQueues =
         for (dump <- sources.listFiles) yield {
@@ -143,7 +144,7 @@ class IntegrationJob (val config : IntegrationConfig, debugMode : Boolean = fals
           {
             val inputStream = DumpLoader.getFileStream(dump)
             val bufferedReader = new BufferedReader(new InputStreamReader(inputStream))
-            val quadParser = new QuadFileLoader(dump.getName)
+            val quadParser = new QuadFileLoader(dump.getName, discardFaultyQuads)
             quadParser.readQuads(bufferedReader, quadQueue)
             quadQueue.finish
           }
