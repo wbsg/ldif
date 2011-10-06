@@ -9,6 +9,7 @@ import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner
 import org.scalatest.FlatSpec
 import org.scalatest.matchers.ShouldMatchers
+import de.fuberlin.wiwiss.ldif.mapreduce.MapTest
 
 import ldif.entity.Node
 
@@ -26,7 +27,7 @@ class TestTest extends FlatSpec with ShouldMatchers {
 
 
     it should "A simple test should work" in {
-      val mapper = new Test
+      val mapper = new MapTest
       val value = new Text("0001950000-001100000")
 //      val mocker = mock[OutputCollector[Text, IntWritable]]
 //      mapper.map(null, value, mocker, null)

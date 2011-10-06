@@ -12,7 +12,7 @@ import org.apache.hadoop.io._
  */
 
 
-class Test extends Mapper[LongWritable, Text, Text, IntWritable] {
+class MapTest extends Mapper[LongWritable, Text, Text, IntWritable] {
   def map(key: LongWritable, value: Text, context: Context) {
     val line = value.toString
     val year = line.substring(3,7)

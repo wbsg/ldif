@@ -14,7 +14,6 @@ class ProcessQuadsMapper(edmd: EntityDescriptionMetadata) extends Mapper[LongWri
     val property = quad.predicate
     val propertyInfos = edmd.propertyMap(property)
     if(propertyInfos!=null) {
-
       for(propertyInfo <- propertyInfos) {
         val pathType = if (propertyInfo.phase==0) EntityPathType else JoinPathType
         val subj = new NodeWritable(quad.subject)

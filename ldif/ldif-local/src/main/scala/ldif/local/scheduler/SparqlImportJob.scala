@@ -44,7 +44,7 @@ case class SparqlImportJob(conf : SparqlConfig, id :  Identifier, refreshSchedul
       val query = baseQuery + " OFFSET " + offset + " LIMIT " + math.min(conf.pageSize, conf.limit - offset)
 
       var retries = 1
-      val retryPause = Consts.retryPause
+      var retryPause = Consts.retryPause
       val retryCount = Consts.retryCount
       var results : Model = null
       while (results == null) {
@@ -53,9 +53,9 @@ case class SparqlImportJob(conf : SparqlConfig, id :  Identifier, refreshSchedul
         }
         catch {
           case e: HTTPException => {
-            // Only retry on server errors
-            if(e.getStatusCode < 500) {
-              log.warning("Error executing query: " + query + ". Error Code: " + e.getStatusCode + "(" + e.getMessage + ")")
+            // stop on client side errors
+            if(e.getStatusCode < 500 && e.getStatusCode >= 400) {
+              log.warning("Error executing query: " + query + ". Error Code: " + e.getStatusCode + " (" + e.getMessage + ")")
               return false
             }
 
@@ -65,10 +65,11 @@ case class SparqlImportJob(conf : SparqlConfig, id :  Identifier, refreshSchedul
               return false
             }
             Thread.sleep(retryPause)
+            retryPause *= 2
           }
           case e: QueryExceptionHTTP => {
-            // Only retry on server errors
-            if(e.getResponseCode < 500) {
+            // stop on client side errors
+            if(e.getResponseCode < 500 && e.getResponseCode >= 400) {
               log.warning("Error executing query: " + query + ". Error Code: " + e.getResponseCode + "(" + e.getResponseMessage + ")")
               return false
             }
@@ -78,6 +79,7 @@ case class SparqlImportJob(conf : SparqlConfig, id :  Identifier, refreshSchedul
               return false
             }
             Thread.sleep(retryPause)
+            retryPause *= 2
           }
         }
       }

@@ -41,6 +41,6 @@ object Consts {
 
   // SPARQL endpoint paramenter
   val pageSize = 1000
-  val retryPause = 10 * 1000
-  val retryCount = 3
+  val retryPause = 5 * 1000
+  val retryCount = 5
 }

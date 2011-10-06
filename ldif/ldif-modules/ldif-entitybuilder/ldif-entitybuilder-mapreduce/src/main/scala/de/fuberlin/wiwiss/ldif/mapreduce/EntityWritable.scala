@@ -12,7 +12,7 @@ import ldif.entity.{NodeWritable, Entity, Node, EntityDescription}
  * To change this template use File | Settings | File Templates.
  */
 
-class EntityWritable(var resource : NodeWritable, var entityDescription : EntityDescription, var resultTable: ArrayWritable, var entityDescriptionID: IntWritable, edmd: EntityDescriptionMetadata) extends WritableComparable[EntityWritable] with Entity {
+class EntityWritable(var resource : NodeWritable, var entityDescription : EntityDescription, var resultTable: ArrayWritable, var entityDescriptionID: IntWritable, edmd: EntityDescriptionMetadata) extends WritableComparable[EntityWritable] {
   def compareTo(other: EntityWritable) = {
     if(resource.compareTo(other.resource)==0)
       entityDescriptionID.compareTo(other.entityDescriptionID)
