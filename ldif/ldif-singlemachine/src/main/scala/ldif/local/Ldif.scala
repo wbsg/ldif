@@ -3,6 +3,7 @@ package ldif.local
 import config.SchedulerConfig
 import java.io.File
 import java.util.logging.Logger
+import org.apache.log4j.PropertyConfigurator
 
 object Ldif {
 
@@ -10,6 +11,7 @@ object Ldif {
 
   def main(args : Array[String])
   {
+    PropertyConfigurator.configureAndWatch("log4j.properties")
     var debug = false
     if(args.length<1) {
       println("No configuration file given.")
