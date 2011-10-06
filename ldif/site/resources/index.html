@@ -100,6 +100,8 @@ To see LDIF in action, follow these steps:<br>
   <li>Start the integration of the <a href="#example1">Music Example</a>
   	<ul><li>Under Linux / Mac OS type:</li><pre>bin/ldif examples/music/ldif-config/schedulerConfig-test.xml</pre><li>Under Windows type:</li><pre>bin\ldif.bat examples\music\ldif-config\schedulerConfig-test.xml</pre></ul>
   </li>
+  <li>Integration results will be written into <tt>integrated_music_dataset.nq</tt> in the working directory, containing both integrated data and <a href="#provenance">provenance metadata</a>. The example will run in about 40 minutes as crawling is time-intensive.</li>
+  <li>Learn more about LDIF configuration by looking at the <a href="#scheduler">Schedule Job Configuration</a> (<tt>examples/music/ldif-config/schedulerConfig-test.xml</tt>) and the <a href="#integrationjob">Integration Job Configuration</a> (<tt>examples/music/ldif-config/integrationJob.xml</tt>)</li>
 </ul>
 
 <h2 id="news">News</h2>
