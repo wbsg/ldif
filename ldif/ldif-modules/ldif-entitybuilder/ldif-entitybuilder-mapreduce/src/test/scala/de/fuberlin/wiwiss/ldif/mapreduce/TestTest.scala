@@ -1,7 +1,7 @@
 package de.fuberlin.wiwiss.ldif.mapreduce
 
 
-import org.specs2.mock.Mockito
+import org.specs.mock.Mockito
 import org.mockito.Mockito._
 import org.apache.hadoop.io._
 import org.apache.hadoop.mapred.OutputCollector
@@ -9,7 +9,6 @@ import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner
 import org.scalatest.FlatSpec
 import org.scalatest.matchers.ShouldMatchers
-import de.fuberlin.wiwiss.ldif.mapreduce.MapTest
 
 import ldif.entity.Node
 

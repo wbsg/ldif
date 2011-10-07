@@ -2,12 +2,13 @@ package de.fuberlin.wiwiss.ldif.mapreduce
 
 import org.apache.hadoop.fs.Path
 import org.apache.hadoop.mapreduce.Job
-import org.apache.hadoop.mapreduce.lib.input.FileInputFormat
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat
 import org.apache.hadoop.util._
 import org.apache.hadoop.io.Text
-import de.fuberlin.wiwiss.ldif.mapreduce.mappers._
 import org.apache.hadoop.conf._
+import org.apache.commons.io.FileUtils
+import org.apache.hadoop.mapreduce.lib.input.FileInputFormat
+import java.io.File
 
 /**
  * Created by IntelliJ IDEA.
@@ -39,6 +40,7 @@ class RunHadoop extends Configured with Tool {
 object RunHadoop {
   def main(args: Array[String]) {
     println("Starting...")
+    FileUtils.deleteDirectory(new File(args(1)))
     val start = System.currentTimeMillis
     val conf = new Configuration
     val res = ToolRunner.run(conf, new RunHadoop(), args)
