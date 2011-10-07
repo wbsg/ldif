@@ -4,7 +4,7 @@ import ldif.entity._
 
 class EntityLocal(val resource : Node, val entityDescription : EntityDescription, factumBuilder : FactumBuilder) extends Entity with Serializable {
 
-  override def factums(patternId : Int) =
+  override def factums(patternId : Int): Traversable[IndexedSeq[Node]] =
     factumBuilder.buildFactumTable(resource,entityDescription.patterns(patternId))
 }
 

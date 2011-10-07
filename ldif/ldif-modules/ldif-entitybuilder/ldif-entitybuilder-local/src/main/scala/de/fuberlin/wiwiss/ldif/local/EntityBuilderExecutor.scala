@@ -4,6 +4,7 @@ import ldif.module.Executor
 import de.fuberlin.wiwiss.ldif.EntityBuilderTask
 import ldif.local.runtime._
 import java.util.Properties
+import ldif.util.FatalErrorListener
 
 class EntityBuilderExecutor(configParameters: ConfigParameters = ConfigParameters(new Properties, null)) extends Executor {
 
@@ -33,7 +34,24 @@ class EntityBuilderExecutor(configParameters: ConfigParameters = ConfigParameter
     val eb = EntityBuilderFactory.getEntityBuilder(configParameters, task.entityDescriptions, reader)
 
     for ((ed, i) <- task.entityDescriptions.zipWithIndex )
-      eb.buildEntities(ed, writer(i))
+        eb.buildEntities(ed, writer(i))
+  }
 
+  /**
+   * Evaluates an expression in the background.
+   */
+  private def runInBackground(function : => Unit) {
+    val thread = new Thread {
+      private val listener: FatalErrorListener = FatalErrorListener
+
+      override def run {
+        try {
+          function
+        } catch {
+          case e: Exception => listener.reportError(e)
+        }
+      }
+    }
+    thread.start
   }
 }

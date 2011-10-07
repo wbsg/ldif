@@ -27,6 +27,6 @@
             <uri>http://rdf.freebase.com/ns/music.producer.releases_produced</uri>
         </predicatesToFollow>
         <levels>2</levels>
-        <resourceLimit>50000</resourceLimit>
+        <resourceLimit>50</resourceLimit>
     </crawlImportJob>
 </importJob>
