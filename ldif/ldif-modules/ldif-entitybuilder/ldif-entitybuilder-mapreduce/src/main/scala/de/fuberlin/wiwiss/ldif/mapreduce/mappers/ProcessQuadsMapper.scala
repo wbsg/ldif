@@ -1,18 +1,19 @@
-package de.fuberlin.wiwiss.ldif.mapreduce
+package de.fuberlin.wiwiss.ldif.mapreduce.mappers
 
+import de.fuberlin.wiwiss.ldif.mapreduce._
 import org.apache.hadoop.mapreduce.Mapper
 import ldif.datasources.dump.QuadParser
 import ldif.entity.NodeWritable
 import org.apache.hadoop.io._
 
-class ProcessQuadsMapper(edmd: EntityDescriptionMetadata) extends Mapper[LongWritable, Text, IntWritable, ValuePathWritable] {
+class ProcessQuadsMapper extends Mapper[LongWritable, Text, IntWritable, ValuePathWritable] {
   val parser = new QuadParser
   val values = new ArrayWritable(classOf[NodeWritable])
 
   def map(key: LongWritable, value: Text, context: Context) {
     val quad = parser.parseLine(value.toString)
     val property = quad.predicate
-    val propertyInfos = edmd.propertyMap(property)
+    val propertyInfos = List(PropertyInfo(0,0,true));//edmd.propertyMap(property)
     if(propertyInfos!=null) {
       for(propertyInfo <- propertyInfos) {
         val pathType = if (propertyInfo.phase==0) EntityPathType else JoinPathType

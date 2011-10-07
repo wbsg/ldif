@@ -3,7 +3,7 @@
             xsi:schemaLocation="http://www4.wiwiss.fu-berlin.de/ldif/ ../../xsd/IntegrationJob.xsd"
             xmlns="http://www4.wiwiss.fu-berlin.de/ldif/">
   <properties>life-science.properties</properties>
-  <sources>dumps</sources>
+  <sources>sources</sources>
   <linkSpecifications>linkSpecs</linkSpecifications>
   <mappings>mappings</mappings>
   <output>output_example1k.nq</output>

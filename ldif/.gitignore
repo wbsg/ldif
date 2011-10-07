@@ -3,8 +3,9 @@
 */**/target
 */*/*/target
 *.iml
+ldif-0.*
 .idea
-output
+output*
 ldif-modules/ldif-r2r/ldif-r2r-common/*.sh
 ldif-modules/ldif-r2r/ldif-r2r-local/src/test/resources/ldif.modules.r2r/.testMapping.ttl.swp
 new
@@ -12,3 +13,4 @@ log
 ldif-local/cpParserSource.sh
 ldif-modules/ldif-r2r/cpR2Rlib.sh
 ldif-singlemachine/output.nq
+tools/build_KeggGenes_dataset/*

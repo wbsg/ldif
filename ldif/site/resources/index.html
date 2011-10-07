@@ -5,6 +5,8 @@
 
 
 
+
+
   <style>
 body { background: white; color: black; font-family: sans-serif; line-height: 1.4em; padding: 2.5em 3em; margin: 0; }
 :link, :visited { color: #00c; }
@@ -92,22 +94,7 @@ provenance.</div>
 <a href="http://www4.wiwiss.fu-berlin.de/bizer/ldif/releases/ldif-0.3.zip">Download LDIF</a>
 <small>v0.3, released 2011-10-06</small>
 </div>
-</div>
-
-<h2>Quick start</h2>
-
-<br>
-To see LDIF in action, follow these steps:<br>
-<ul>
-  <li><a href="http://www4.wiwiss.fu-berlin.de/bizer/ldif/releases/ldif-0.3.zip">Download the latest release</a></li>
-  <li>Unpack the archive and change into the extracted directory <tt>ldif-0.3</tt></li>
-  <li>Start the integration of the <a href="#example1">Music Example</a>
-  	<ul><li>Under Linux / Mac OS type:</li><pre>bin/ldif examples/music/ldif-config/schedulerConfig-test.xml</pre><li>Under Windows type:</li><pre>bin\ldif.bat examples\music\ldif-config\schedulerConfig-test.xml</pre></ul>
-  </li>
-  <li>Integration results will be written into <tt>integrated_music_dataset.nq</tt> in the working directory, containing both integrated data and <a href="#provenance">provenance metadata</a>. The example will run in about 40 minutes as crawling is time-intensive.</li>
-  <li>Learn more about LDIF configuration by looking at the <a href="#scheduler">Schedule Job Configuration</a> (<tt>examples/music/ldif-config/schedulerConfig-test.xml</tt>) and the <a href="#integrationjob">Integration Job Configuration</a> (<tt>examples/music/ldif-config/integrationJob.xml</tt>)</li>
-</ul>
-
+</div><br>
 <h2 id="news">News</h2>
 <ul>
   
@@ -359,8 +346,22 @@ to different conflict resolution methods.</li>
 integration flow is static and can only be influenced by predefined
 configuration parameters. We plan to make the workflow and its
 configuration more flexible in order to make it easier to include
-additional modules that cover other data integration aspects. </li>
+additional modules that cover other data integration aspects.<br>
+</li>
 </ol>
+<h3>Quick start</h3>
+
+
+<br>
+
+To see LDIF in action, follow these steps:<br>
+
+<ul>
+<li><a href="http://www4.wiwiss.fu-berlin.de/bizer/ldif/releases/ldif-0.3.zip">Download the latest release</a></li><li>Unpack the archive and change into the extracted directory <tt>ldif-0.3</tt></li><li>Start the integration of the <a href="index.html#example1">Music Example</a>
+  	<ul><li>Under Linux / Mac OS type:</li><pre>bin/ldif examples/music/ldif-config/schedulerConfig-test.xml</pre><li>Under Windows type:</li><pre>bin\ldif.bat examples\music\ldif-config\schedulerConfig-test.xml</pre></ul>
+  </li><li>Integration results will be written into <tt>integrated_music_dataset.nq</tt> in the working directory, containing both integrated data and <a href="index.html#provenance">provenance metadata</a>. The example will run in about 5-20 minutes as crawling is time-intensive.</li><li>Learn more about LDIF configuration by looking at the <a href="index.html#scheduler">Schedule Job Configuration</a> (<tt>examples/music/ldif-config/schedulerConfig-test.xml</tt>) and the <a href="index.html#integrationjob">Integration Job Configuration</a> (<tt>examples/music/ldif-config/integrationJob.xml</tt>)</li>
+</ul>
+
 <h2 id="configuration">3. Configuration
 Options</h2>
 
@@ -714,10 +715,9 @@ In order to run the example, please download LDIF and run the following commands
 
 <ul>
 <li>Change into the LDIF root dir.</li><li>Under Linux / Mac OS type:</li><ul><pre>bin/ldif examples/music/ldif-config/schedulerConfig-test.xml</pre></ul><li>Under Windows type:</li><ul><pre>bin\ldif.bat examples\music\ldif-config\schedulerConfig-test.xml</pre></ul>
-</ul>In the LDIF release we offer two different versions of the config files. The <span style="font-family: monospace;">schedulerConfig-test.xml</span> points to a truncated version of the crawl jobs. If you want to run the full configuration then replace the config file with <span style="font-family: monospace;">schedulerConfig.xml</span>.
-Please note that the execution of the import jobs for the full
-configuration can take several
-days, mainly due to the crawl job. The truncated version takes about 10 to 20 minutes for the import jobs to run.<br>
+</ul>Please note that the execution of the import jobs can take about
+5-20 minutes, mainly due to crawling, which is relatively slow compared
+to other access methods.<br>
 <h3 id="example2">4.2 Using LDIF to
 integrate Life Science Data<br>
 </h3><br>

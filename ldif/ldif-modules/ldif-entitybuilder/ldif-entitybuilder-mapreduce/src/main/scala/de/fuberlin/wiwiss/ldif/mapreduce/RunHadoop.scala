@@ -1,5 +1,13 @@
-import org.apache.hadoop.conf._
+package de.fuberlin.wiwiss.ldif.mapreduce
+
+import org.apache.hadoop.fs.Path
+import org.apache.hadoop.mapreduce.Job
+import org.apache.hadoop.mapreduce.lib.input.FileInputFormat
+import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat
 import org.apache.hadoop.util._
+import org.apache.hadoop.io.Text
+import de.fuberlin.wiwiss.ldif.mapreduce.mappers._
+import org.apache.hadoop.conf._
 
 /**
  * Created by IntelliJ IDEA.
@@ -12,7 +20,19 @@ import org.apache.hadoop.util._
 
 class RunHadoop extends Configured with Tool {
   def run(args: Array[String]): Int = {
-    0
+    val config = getConf
+    val job = new Job(config, "Run Hadoop")
+
+    job.setJarByClass(classOf[RunHadoop])
+
+    job.setMapperClass(classOf[mappers.ProcessQuadsMapper])
+
+    val in = new Path(args(0))
+    val out = new Path(args(1))
+    FileInputFormat.addInputPath(job, in)
+    FileOutputFormat.setOutputPath(job, out)
+
+    return if(job.waitForCompletion(true)) 0 else 1
   }
 }
 
@@ -20,7 +40,9 @@ object RunHadoop {
   def main(args: Array[String]) {
     println("Starting...")
     val start = System.currentTimeMillis
-//    val res = ToolRunner.run(new RunHadoop(), args)
+    val conf = new Configuration
+    val res = ToolRunner.run(conf, new RunHadoop(), args)
     println("That's it. Took " + (System.currentTimeMillis-start)/1000.0 + "s")
+    sys.exit(res)
   }
 }
