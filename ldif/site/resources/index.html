@@ -1,13 +1,6 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html><head><title>LDIF – Linked Data Integration Framework</title>
-
-
-
-
-
-
-
-  <style>
+<style>
 body { background: white; color: black; font-family: sans-serif; line-height: 1.4em; padding: 2.5em 3em; margin: 0; }
 :link, :visited { color: #00c; }
 a:link img { border: none; }
@@ -28,18 +21,27 @@ ol.toc li a { text-decoration: none; }
 #header { border-bottom: 1px solid #ccc; }
 #logo { float: right; margin-bottom: 10px; }
 #authors { clear: right; float: right; font-size: 80%; text-align: right; }
+#logo, #authors { min-width: 250px; }
 #content { margin: 2em auto 0 0; text-align: justify }
-#download { width: 200px; text-align: center; margin-left: auto; margin-right: auto; }
-/*#download, #demo { float: left; font-family: sans-serif; margin: 0.5em 0 1.5em; text-align: center; width: 50%; }
-#download h2, #demo h2 { font-size: 125%; margin: 1.5em 0 -0.2em 0; }*/
-#download small, #demo small { color: #888; font-size: 80%; }
 #footer { border-top: 1px solid #ccc; color: #aaa; margin: 2em 0 0; }
 #top-container { height: 150px; width: 750px; padding: 20px; }
 #purpose { font-size: 110%; letter-spacing: 0.05em; word-spacing: 0.15em; width: 700px; margin: 0 auto 40px auto; }
-.box { border: 1px solid #D3D3D3; }
+#boxcontainer { width: 670px; margin-left: auto; margin-right: auto; }
+.box { border: 1px solid #D3D3D3; height: 75px; text-align: center; float: left; margin-right: 20px; }
 .box:hover { background: none repeat scroll 0 0 #FCFDFF; box-shadow: 0 0 9px 1px #DFEFFF; }
-.box a:link, .box a:visited, .box a:hover, .box a:active { color: #1C5489; display: block; font-size: 110%; margin-left: 5px; min-height: 30px; padding: 15px 5px 5px 5px; text-decoration: none; }		
+.box a:link, .box a:visited, .box a:hover, .box a:active { color: #1C5489; display: block; font-size: 110%; margin-left: 5px; min-height: 55px; padding: 9px 5px 5px 5px; text-decoration: none; }		
 .box a:hover, .box a:active { color: #16426B !important; cursor: pointer; text-decoration: none !important; }
+.box a span { display: block; margin-left: 40px; text-align: left; }
+.box a span small { color: #888; font-size: 70%; }
+
+#downloadbox { width: 210px; }
+#quickstartbox, #supportbox { width: 165px; }
+#downloadbox a span { padding: 10px 5px; }
+#quickstartbox a span, #supportbox a span { padding: 15px 5px; }
+
+#downloadbox a { background: url("img/arrow_down_32.png") no-repeat scroll 5px 20px transparent; }
+#quickstartbox a { background: url("img/clock_32.png") no-repeat scroll 5px 20px transparent; }
+#supportbox a { background: url("img/comment_32.png") no-repeat scroll 5px 20px transparent; }
 
 @media Print {
 * { font-size: 92%; }
@@ -90,11 +92,20 @@ Becker</a><br>
 <div id="purpose">LDIF translates heterogeneous Linked Data from the
 Web into a clean, local target representation while keeping track of data
 provenance.</div>
-<div id="download" class="box">
-<a href="http://www4.wiwiss.fu-berlin.de/bizer/ldif/releases/ldif-0.3.zip">Download LDIF</a>
-<small>v0.3, released 2011-10-06</small>
+
+<div id="boxcontainer">
+	<div id="downloadbox" class="box">
+	<a href="http://www4.wiwiss.fu-berlin.de/bizer/ldif/releases/ldif-0.3.zip"><span>Download LDIF<br/><small>v0.3, released 2011-10-06</small></span></a>
+	</div>
+	<div id="quickstartbox" class="box">
+	<a href="#quickstart"><span>Quick Start</span></a>
+	</div>
+	<div id="supportbox" class="box">
+	<a href="#feedback"><span>Get Support</span></a>
+	</div>
 </div>
-</div><br>
+
+</div>
 <h2 id="news">News</h2>
 <ul>
   
@@ -128,6 +139,7 @@ a single target URI.</li>
   <li><a href="#about">About LDIF</a></li>
   <li><a href="#components">LDIF components</a></li>
   <li><a href="index.html#configuration">Configuration options</a></li>
+  <li><a href="#quickstart">Quick start</a><br>
   <li><a href="#examples">Examples</a><br>
   </li>
   <ul>
@@ -283,9 +295,7 @@ Specification Language</a>.</p>
 </p>
 
 
-<h3>Data Output<br>
-</h3><br>
-
+<h3>Data Output</h3>
 
 <h4>N-Quads Writer</h4>
 <p>The N-Quads writer dumps the final output of the integration
@@ -349,18 +359,6 @@ configuration more flexible in order to make it easier to include
 additional modules that cover other data integration aspects.<br>
 </li>
 </ol>
-<h3>Quick start</h3>
-
-
-<br>
-
-To see LDIF in action, follow these steps:<br>
-
-<ul>
-<li><a href="http://www4.wiwiss.fu-berlin.de/bizer/ldif/releases/ldif-0.3.zip">Download the latest release</a></li><li>Unpack the archive and change into the extracted directory <tt>ldif-0.3</tt></li><li>Start the integration of the <a href="index.html#example1">Music Example</a>
-  	<ul><li>Under Linux / Mac OS type:</li><pre>bin/ldif examples/music/ldif-config/schedulerConfig-test.xml</pre><li>Under Windows type:</li><pre>bin\ldif.bat examples\music\ldif-config\schedulerConfig-test.xml</pre></ul>
-  </li><li>Integration results will be written into <tt>integrated_music_dataset.nq</tt> in the working directory, containing both integrated data and <a href="index.html#provenance">provenance metadata</a>. The example will run in about 5-20 minutes as crawling is time-intensive.</li><li>Learn more about LDIF configuration by looking at the <a href="index.html#scheduler">Schedule Job Configuration</a> (<tt>examples/music/ldif-config/schedulerConfig-test.xml</tt>) and the <a href="index.html#integrationjob">Integration Job Configuration</a> (<tt>examples/music/ldif-config/integrationJob.xml</tt>)</li>
-</ul>
 
 <h2 id="configuration">3. Configuration
 Options</h2>
@@ -647,7 +645,16 @@ specified. Of each crawled resource all received triples are stored.<br>
 
 <pre>&lt;dataSource&gt;<br>    &lt;label&gt;DBpedia&lt;/label&gt;<br>    &lt;description&gt;DBpedia ist an RDF version of Wikipedia&lt;/description&gt;<br>   &lt;homepage&gt;http://dbpedia.org&lt;/homepage&gt;<br>&lt;/dataSource&gt;<br></pre>
 
-<h2 id="examples">4. Examples</h2><br>
+<h2 id="quickstart">4. Quick start</h2>
+<p>To see LDIF in action, follow these steps:</p>
+
+<ul>
+<li><a href="http://www4.wiwiss.fu-berlin.de/bizer/ldif/releases/ldif-0.3.zip">Download the latest release</a></li><li>Unpack the archive and change into the extracted directory <tt>ldif-0.3</tt></li><li>Start the integration of the <a href="index.html#example1">Music Example</a>
+  	<ul><li>Under Linux / Mac OS type:</li><pre>bin/ldif examples/music/ldif-config/schedulerConfig-test.xml</pre><li>Under Windows type:</li><pre>bin\ldif.bat examples\music\ldif-config\schedulerConfig-test.xml</pre></ul>
+  </li><li>Integration results will be written into <tt>integrated_music_dataset.nq</tt> in the working directory, containing both integrated data and <a href="index.html#provenance">provenance metadata</a>. The example will run in about 5-20 minutes as crawling is time-intensive.</li><li>Learn more about LDIF configuration by looking at the <a href="index.html#scheduler">Schedule Job Configuration</a> (<tt>examples/music/ldif-config/schedulerConfig-test.xml</tt>) and the <a href="index.html#integrationjob">Integration Job Configuration</a> (<tt>examples/music/ldif-config/integrationJob.xml</tt>)</li>
+</ul>
+
+<h2 id="examples">5. Examples</h2><br>
 
 This section provides two LDIF usage examples.<br>
 
@@ -660,11 +667,8 @@ resolution modules.</li><li>The <a href="#example2">Life Science example</a> sho
 </li>
 </ol>
 <h3 id="example1">4.1 Using LDIF to integrate Data from the Music Domain</h3>
-<br>
-<br>
-
-This example shows how LDIF is applied to integrate data originating
-from the following remote sources describing musical artists, music albums, and music labels:<br>
+<p>This example shows how LDIF is applied to integrate data originating
+from the following remote sources describing musical artists, music albums, and music labels:</p>
 
 <ul>
 <li><a href="http://dbpedia.org/">DBpedia</a></li><li><a href="http://rdf.freebase.com/">Freebase</a></li><li><a href="http://musicbrainz.dataincubator.org/">MusicBrainz</a> (at Talis)<br>
@@ -834,19 +838,19 @@ on line 10 in the output was produced by a complex mapping that had to
 consider all three quads of the input (lines 12-14).<br>
 </li>
 </ul>
-<h2 id="performance">5. Performance Evaluation</h2>
+<h2 id="performance">6. Performance Evaluation</h2>
 
 <p>We regularly carry out performance evaluations. For more
 details and the latest results please visit our <a href="benchmark.html">Benchmark results</a> page.</p>
 
-<h2 id="development">6. Source
+<h2 id="development">7. Source
 Code and Development</h2>
 <p>The latest source code is available from the <a href="http://www.assembla.com/spaces/ldif/wiki">LDIF development page</a>
 on Assembla.com.</p>
 <p>The framework can be used under the terms of the <a href="http://www.apache.org/licenses/LICENSE-2.0">Apache Software
 License</a>.
 </p>
-<h2 id="history">7. Version history </h2>
+<h2 id="history">8. Version history </h2>
 <p>
 </p>
 <table>
@@ -885,10 +889,10 @@ only for relevant data </td>
     </tr>
   </tbody>
 </table>
-<h2 id="feedback">8. Support and Feedback </h2>
+<h2 id="feedback">9. Support and Feedback </h2>
 <p>For questions and feedback please use the <a href="http://groups.google.com/group/ldif?hl=en">LDIF Google Group</a>.
 </p>
-<h2 id="references">9. References</h2>
+<h2 id="references">10. References</h2>
 <ul>
 </ul>
 <ul>
@@ -919,10 +923,12 @@ Server - Adding missing Links while consuming Linked Data</a> ( <a href="http://
   <li>William
 Smith, Christian Becker and Andreas Schultz: Neurowiki: How we
 integrated large datasets into SMW with R2R and Silk / LDIF ( Slides <a href="http://semantic-mediawiki.org/w/images/a/ac/SMWCon_2011_Neurowiki_Presentation.pdf">part 1</a>, <a href="http://semantic-mediawiki.org/w/images/b/b7/SMWCon_2011_Neurowiki_Becker_Schultz.pdf">part 2</a> ). SMWCon Fall 2011, Berlin, September 2011.</li></ol>
-<h2 id="acknowledgments">10. Acknowledgments </h2>
+
+<h2 id="acknowledgments">11. Acknowledgments </h2>
 <p>This work was supported in part by Vulcan Inc. as part of its <a href="http://www.projecthalo.com">Project Halo</a> and by the EU FP7
 project <a href="http://lod2.eu/">LOD2 - Creating Knowledge out of
 Interlinked Data</a> (Grant No. 257943). </p>
+<p>WooFunction icon set licensed under <a href="http://www.gnu.org/licenses/gpl.html">GNU General Public License</a>.</p>
 </div>
 
 </body></html>
