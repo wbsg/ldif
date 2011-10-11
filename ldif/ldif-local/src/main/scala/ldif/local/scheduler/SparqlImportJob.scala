@@ -39,11 +39,9 @@ case class SparqlImportJob(conf : SparqlConfig, id :  Identifier, refreshSchedul
     val endpointUrl = conf.endpointLocation.toString
     var loop = true
     var offset : Long = 0
-    val useTripleLimit = conf.tripleLimit != -1
-    var reachedTripleLimit = false
 
     while (loop) {
-      val query = baseQuery + " OFFSET " + offset + " LIMIT " + math.min(conf.pageSize, conf.limit - offset)
+      val query = baseQuery + " OFFSET " + offset + " LIMIT " + math.min(conf.pageSize, conf.tripleLimit - offset)
 
       var retries = 1
       var retryPause = Consts.retryPause
@@ -86,10 +84,7 @@ case class SparqlImportJob(conf : SparqlConfig, id :  Identifier, refreshSchedul
         }
       }
       offset += results.size
-      if(useTripleLimit && offset >= conf.tripleLimit)
-        reachedTripleLimit = true
-
-      loop = (results.size == conf.pageSize && !reachedTripleLimit)
+      loop = (results.size == conf.pageSize) && !(offset == conf.tripleLimit)
       write(results, writer)
       log.info(id +" - loaded "+offset+" quads")
     }
@@ -116,20 +111,27 @@ object SparqlImportJob {
   def fromXML(node : xml.Node, id : Identifier, refreshSchedule : String, dataSource : String) : ImportJob = {
     val endpointLocation = new URI((node \ "endpointLocation") text)
     val graphName = new URI((node \ "graphName") text)
+
     val tripleLimitString =  ((node \ "tripleLimit") text)
-    var tripleLimit: Int = -1
-    if(tripleLimitString.length() > 0)
-      tripleLimit = tripleLimitString.toInt
+    var tripleLimit = Long.MaxValue
+    if(tripleLimitString.length > 0)
+      tripleLimit = tripleLimitString.toLong
+
+    val pageSizeString =  ((node \ "singleQueryTripleLimit") text)
+    var pageSize = Consts.pageSize
+    if(pageSizeString.length > 0)
+      pageSize = pageSizeString.toInt
+
     val sparqlPatterns = (node \ "sparqlPatterns" \ "pattern").map(x => x text).toTraversable
 
-    val sparqlConfig = SparqlConfig(endpointLocation, graphName, tripleLimit, sparqlPatterns)
+    val sparqlConfig = SparqlConfig(endpointLocation, graphName, sparqlPatterns, tripleLimit, pageSize)
     val job = new SparqlImportJob(sparqlConfig, id, refreshSchedule, dataSource)
     job
   }
 
 }
 
-case class SparqlConfig(endpointLocation : URI,  graphName : URI, tripleLimit: Int, sparqlPatterns : Traversable[String], limit : Int = Integer.MAX_VALUE, pageSize : Int = Consts.pageSize) {
+case class SparqlConfig(endpointLocation : URI,  graphName : URI, sparqlPatterns : Traversable[String], tripleLimit : Long = Long.MaxValue, pageSize : Int = Consts.pageSize) {
 
   def buildQuery : String = {
     val isGraphDefined = graphName.toString.trim != ""
