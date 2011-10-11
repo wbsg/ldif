@@ -18,10 +18,12 @@ class SparqlExecutorTest extends FlatSpec with ShouldMatchers {
   val executor = new SparqlExecutor
   val eq = task.entityDescriptions.map(new EntityQueue(_))
 
-  it should "build entities correctly" in {
-    executor.execute(task,null,eq)
-    eq.head.size should equal (1000)
-  }
+  /* Disabled - remote test */
+
+//  it should "build entities correctly" in {
+//    executor.execute(task,null,eq)
+//    eq.head.size should equal (1000)
+//  }
 
   private lazy val task = {
     val config = new SparqlConfig(Traversable(sourceUrl), IndexedSeq(ed("pharmGKB_ed.xml")))
