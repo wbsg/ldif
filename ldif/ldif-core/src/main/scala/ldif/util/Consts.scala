@@ -14,6 +14,8 @@ object Consts {
   val POOL_MAX_SIZE : Int = Int.MaxValue
   val DEFAULT_QUAD_QUEUE_CAPACITY: Int = 1000
 
+  val DEFAULT_ENTITY_QUEUE_CAPACITY : Int = 100
+
   val changeFreqToHours = HashMap(
                 "always" -> 0,
                 "hourly" -> 1,

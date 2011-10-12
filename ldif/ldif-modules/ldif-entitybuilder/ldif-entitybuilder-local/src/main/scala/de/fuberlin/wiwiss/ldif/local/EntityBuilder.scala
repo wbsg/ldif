@@ -7,10 +7,10 @@ import collection.mutable.{ArraySeq, ArrayBuffer, HashMap, Set, HashSet}
 import actors.{Future, Futures}
 import scala.collection.JavaConversions._
 import ldif.local.util.StringPool
-import java.util.{HashSet => JHashSet}
 import ldif.local.runtime.{LocalNode, EntityWriter, QuadReader, ConfigParameters}
 import ldif.runtime.Quad
-import ldif.util.{Consts, Uri}
+import ldif.util.{MemoryUsage, Consts, Uri}
+import java.util.{ArrayList, List, HashSet => JHashSet}
 
 class EntityBuilder (entityDescriptions : IndexedSeq[EntityDescription], readers : Seq[QuadReader], config: ConfigParameters) extends FactumBuilder with EntityBuilderTrait {
 
@@ -32,19 +32,41 @@ class EntityBuilder (entityDescriptions : IndexedSeq[EntityDescription], readers
 
   // if no restriction is defined, build an entity for each resource
   var allUriNodes : Set[Node] = null
-
+  var allEntities: List[EntityLocal] = null
+//  println("Memory used (before loading into hash tables): " + MemoryUsage.getMemoryUsage() +" MB")   //TODO: remove
   init
+//  println("Memory used (after loaded into hash tables): " + MemoryUsage.getMemoryUsage() +" MB")  //TODO: remove
 
   // Build entities and write those into the EntityWriter
   def buildEntities (ed : EntityDescription, writer : EntityWriter) {
     val startTime = now
+    val useAllUris = {
+      ed.restriction.operator match {
+        case None => true
+        case _ => false
+      }
+    }
 
-    // entityNodes <- combination (as in the restriction pattern) of all the subjSets
+    if(!useAllUris){
+      // entityNodes <- combination (as in the restriction pattern) of all the subjSets
     val entityNodes = getSubjSet(ed.restriction.operator) map (n => LocalNode.decompress(n))
-
     for (e <- entityNodes) {
-      val entity = new EntityLocal(e, ed, this)
-      writer.write(entity)
+        val entity = new EntityLocal(e, ed)
+        writer.write(entity)
+      }
+    }
+    else {
+      this.synchronized {
+        if(allEntities==null) {
+//          println("Memory used (before generating all entities): " + MemoryUsage.getMemoryUsage()+" MB")   //TODO: remove
+          allEntities = new ArrayList[EntityLocal]()
+          for(node <- allUriNodes)
+            allEntities.add(new EntityLocal(node, ed))
+        }
+      }
+//      println("Memory used (after generating all entities): " + MemoryUsage.getMemoryUsage()+" MB")   //TODO: remove
+      for(entity <- allEntities)
+        writer.write(entity)
     }
     writer.finish
 
@@ -65,6 +87,7 @@ class EntityBuilder (entityDescriptions : IndexedSeq[EntityDescription], readers
 
   // Init memory structures
   private def init {
+    EntityLocalMetadata.factumBuilder = this
     PHT = new PropertyHashTable(entityDescriptions)
     if(PHT.areAllUriNodesNeeded)
       allUriNodes = new JHashSet[Node]

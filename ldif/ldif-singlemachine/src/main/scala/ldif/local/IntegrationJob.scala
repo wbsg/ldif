@@ -13,11 +13,11 @@ import ldif.modules.silk.local.SilkLocalExecutor
 import ldif.entity.EntityDescription
 import de.fuberlin.wiwiss.ldif.{EntityBuilderModule, EntityBuilderConfig}
 import de.fuberlin.wiwiss.ldif.local.EntityBuilderExecutor
-import ldif.util.{FatalErrorListener, Consts, StopWatch}
 import java.util.{Calendar, Properties}
 import java.io._
 import java.math.BigInteger
 import de.fuberlin.wiwiss.r2r.{JenaModelSource, EnumeratingURIGenerator, FileOrURISource, Repository}
+import ldif.util.{MemoryUsage, FatalErrorListener, Consts, StopWatch}
 
 class IntegrationJob (val config : IntegrationConfig, debugMode : Boolean = false) {
   val log = Logger.getLogger(getClass.getName)
@@ -169,7 +169,9 @@ class IntegrationJob (val config : IntegrationConfig, debugMode : Boolean = fals
 
     val entityDescriptions = for(task <- module.tasks) yield task.mapping.entityDescription
     val entityReaders = buildEntities(readers, entityDescriptions.toSeq, configParameters)
+//    println("Memory used (after build entities): " + MemoryUsage.getMemoryUsage() +" MB")   //TODO: remove
     StringPool.reset
+//    println("Memory used (after resetting StringPool): " + MemoryUsage.getMemoryUsage() +" MB")   //TODO: remove
     println("Time needed to load dump and build entities for mapping phase: " + stopWatch.getTimeSpanInSeconds + "s")
 
     val outputFile = File.createTempFile("ldif-mapped-quads", ".bin")
@@ -217,7 +219,7 @@ class IntegrationJob (val config : IntegrationConfig, debugMode : Boolean = fals
   private def buildEntities(readers : Seq[QuadReader], entityDescriptions : Seq[EntityDescription], configParameters: ConfigParameters) : Seq[EntityReader] =
   {
     var entityWriters: Seq[EntityWriter] = null
-    val entityQueues = entityDescriptions.map(new EntityQueue(_))
+    val entityQueues = entityDescriptions.map(new EntityQueue(_, Consts.DEFAULT_ENTITY_QUEUE_CAPACITY))
     val fileEntityQueues = for(eD <- entityDescriptions) yield {
       val file = File.createTempFile("ldif_entities", ".dat")
       file.deleteOnExit

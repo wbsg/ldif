@@ -189,24 +189,18 @@ mp:moToDBpediaSingle
  r2r:sourcePattern "?SUBJ a mo:Record . ?SUBJ mo:release_type mo:single" ;
  r2r:targetPattern "?SUBJ a <http://dbpedia.org/ontology/Single> " .
 
-mp:moToDBpediaRuntime
- a r2r:Mapping ;
- r2r:prefixDefinitions "mo: <http://purl.org/ontology/mo/> . dbpedia-owl: <http://dbpedia.org/ontology/>" ;
- r2r:sourcePattern "?SUBJ mo:duration ?o" ;
- r2r:transformation "?c = ?o / 1000" ;
- r2r:targetPattern "?SUBJ dbpedia-owl:runtime ?'c'^^xsd:double" .
+#mp:moToDBpediaRuntime
+# a r2r:Mapping ;
+# r2r:prefixDefinitions "mo: <http://purl.org/ontology/mo/> . dbpedia-owl: <http://dbpedia.org/ontology/>" ;
+# r2r:sourcePattern "?SUBJ mo:duration ?o" ;
+# r2r:transformation "?c = ?o / 1000" ;
+# r2r:targetPattern "?SUBJ dbpedia-owl:runtime ?'c'^^xsd:double" .
 
 mp:moToFoafMember
  a r2r:Mapping ;
  r2r:prefixDefinitions "mo: <http://purl.org/ontology/mo/> . foaf: <http://xmlns.com/foaf/0.1/>" ;
  r2r:sourcePattern "?SUBJ mo:member_of ?o" ;
  r2r:targetPattern "?o foaf:member ?SUBJ " .
-
-mp:moToFoafMember
- a r2r:Mapping ;
- r2r:prefixDefinitions "mo: <http://purl.org/ontology/mo/> . foaf: <http://xmlns.com/foaf/0.1/>" ;
- r2r:sourcePattern "?SUBJ mo:member_of ?o" ;
- r2r:targetPattern "?o foaf:member ?SUBJ" .
 
 mp:freebaseToDBpediaBirthDate
  a r2r:Mapping ;
