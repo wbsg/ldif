@@ -47,14 +47,21 @@ class NodeWritable(var value: String, var datatypeOrLanguage: String, var nodeTy
 
   def readFields(input: DataInput) {
     value = input.readUTF
-    datatypeOrLanguage = input.readUTF
+    val dtOL = input.readUTF()
+    if(dtOL=="")
+      datatypeOrLanguage = null
+    else
+      datatypeOrLanguage = dtOL
     nodeType = Node.NodeTypeMap(input.readInt)
     graph = input.readUTF
   }
 
   def write(output: DataOutput) {
     output.writeUTF(value)
-    output.writeUTF(datatypeOrLanguage)
+    if(datatypeOrLanguage!=null)
+      output.writeUTF(datatypeOrLanguage)
+    else
+      output.writeUTF("")
     output.writeInt(nodeType.id)
     output.writeUTF(graph)
   }

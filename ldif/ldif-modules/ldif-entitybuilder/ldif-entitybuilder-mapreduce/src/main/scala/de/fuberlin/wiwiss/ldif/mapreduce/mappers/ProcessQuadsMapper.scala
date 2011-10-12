@@ -10,7 +10,7 @@ class ProcessQuadsMapper extends Mapper[LongWritable, Text, IntWritable, ValuePa
   val parser = new QuadParser
   val values = new ArrayWritable(classOf[NodeWritable])
 
-  def map(key: LongWritable, value: Text, context: Context) {
+  override def map(key: LongWritable, value: Text, context: Mapper[LongWritable, Text, IntWritable, ValuePathWritable]#Context) {
     val quad = parser.parseLine(value.toString)
     val property = quad.predicate
     val propertyInfos = List(PropertyInfo(0,0,true));//edmd.propertyMap(property)

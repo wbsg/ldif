@@ -1,14 +1,15 @@
 package de.fuberlin.wiwiss.ldif.mapreduce
 
+import mappers.ProcessQuadsMapper
 import org.apache.hadoop.fs.Path
 import org.apache.hadoop.mapreduce.Job
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat
 import org.apache.hadoop.util._
-import org.apache.hadoop.io.Text
 import org.apache.hadoop.conf._
 import org.apache.commons.io.FileUtils
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat
 import java.io.File
+import org.apache.hadoop.io.{IntWritable, Text}
 
 /**
  * Created by IntelliJ IDEA.
@@ -26,7 +27,9 @@ class RunHadoop extends Configured with Tool {
 
     job.setJarByClass(classOf[RunHadoop])
 
-    job.setMapperClass(classOf[mappers.ProcessQuadsMapper])
+    job.setMapperClass(classOf[ProcessQuadsMapper])
+    job.setMapOutputKeyClass(classOf[IntWritable])
+    job.setMapOutputValueClass(classOf[ValuePathWritable])
 
     val in = new Path(args(0))
     val out = new Path(args(1))
