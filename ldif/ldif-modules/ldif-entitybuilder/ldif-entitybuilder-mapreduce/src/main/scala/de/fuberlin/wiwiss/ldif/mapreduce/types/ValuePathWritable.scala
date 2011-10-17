@@ -27,16 +27,24 @@ case class ValuePathWritable (var pathID : IntWritable, var pathType: PathType, 
       case EntityPathType => "EntityPath"
       case JoinPathType => "JoinPath"
     }
-    builder.append(pt).append("(").append(pathID).append(", ").append(values.toString).append(")")
+    builder.append(pt).append("(pathID=").append(pathID.toString).append(", ").append(values.toString).append(")")
     builder.toString
   }
 }
 
-sealed trait PathType {val bytePathType: Int}
+sealed trait PathType {
+  val bytePathType: Int
+}
 
-case object EntityPathType extends PathType {val bytePathType = 0}
+case object EntityPathType extends PathType {
+  val bytePathType = 0
+  override def toString = "EntityPathType"
+}
 
-case object JoinPathType extends PathType {val bytePathType = 1}
+case object JoinPathType extends PathType {
+  val bytePathType = 1
+  override def toString = "JoinPathType"
+}
 
 case object PathTypeMap {
   val map = Map(0 -> EntityPathType, 1 -> JoinPathType)

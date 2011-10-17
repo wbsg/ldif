@@ -16,16 +16,16 @@ class ProcessQuadsMapper extends Mapper[LongWritable, Text, IntWritable, ValuePa
     if(quad==null)
       return
     val property = quad.predicate
-    val propertyInfos = List(PropertyInfo(0,0,true));//edmd.propertyMap(property)
+    val propertyInfos = List(PropertyInfo(0,1,true));//edmd.propertyMap(property)
     if(propertyInfos!=null) {
       for(propertyInfo <- propertyInfos) {
         val pathType = if (propertyInfo.phase==0) EntityPathType else JoinPathType
         val subj = new NodeWritable(quad.subject)
         val obj = new NodeWritable((quad.value))
         if(propertyInfo.isForward)
-          values.set(Array(subj, obj))
+          values.set(Array[Writable](subj, obj))
         else
-          values.set(Array(obj, subj))
+          values.set(Array[Writable](obj, subj))
         context.write(new IntWritable(propertyInfo.phase),
           new ValuePathWritable(new IntWritable(propertyInfo.pathId), pathType, values))
       }
