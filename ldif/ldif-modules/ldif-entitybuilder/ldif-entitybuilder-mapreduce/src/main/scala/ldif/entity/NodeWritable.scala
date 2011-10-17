@@ -17,6 +17,11 @@ class NodeWritable(var value: String, var datatypeOrLanguage: String, var nodeTy
   def this(node: Node) {
     this(node.value, node.datatypeOrLanguage, node.nodeType, node.graph)
   }
+
+  def this() {
+    this(null, null, null, null)
+  }
+
   def compareTo(otherNode: NodeWritable) = {
     // case: Both are Blank Nodes
     if(nodeType==BlankNode && otherNode.nodeType==BlankNode) {

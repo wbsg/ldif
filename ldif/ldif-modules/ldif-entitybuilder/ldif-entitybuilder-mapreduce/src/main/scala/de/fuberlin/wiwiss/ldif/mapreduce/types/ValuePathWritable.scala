@@ -1,13 +1,13 @@
-package de.fuberlin.wiwiss.ldif.mapreduce
+package de.fuberlin.wiwiss.ldif.mapreduce.types
 
 import ldif.entity.NodeWritable
 import java.io.{DataInput, DataOutput}
 import org.apache.hadoop.io.{IntWritable, ArrayWritable, Writable}
 import java.lang.Byte
 
-case class ValuePathWritable (var pathID : IntWritable, var pathType: PathType, var values : ArrayWritable) extends Writable {
+case class ValuePathWritable (var pathID : IntWritable, var pathType: PathType, var values : NodeArrayWritable) extends Writable {
 
-  def this() {this(new IntWritable(), EntityPathType, new ArrayWritable(classOf[ArrayWritable]))}
+  def this() {this(new IntWritable(), EntityPathType, new NodeArrayWritable)}
 
   def write(output : DataOutput) {
     pathID.write(output)

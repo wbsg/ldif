@@ -10,6 +10,7 @@ import org.apache.commons.io.FileUtils
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat
 import java.io.File
 import org.apache.hadoop.io.{IntWritable, Text}
+import types._
 
 /**
  * Created by IntelliJ IDEA.

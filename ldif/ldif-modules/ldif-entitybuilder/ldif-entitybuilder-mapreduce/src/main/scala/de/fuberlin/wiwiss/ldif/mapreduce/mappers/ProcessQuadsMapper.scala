@@ -5,13 +5,16 @@ import org.apache.hadoop.mapreduce.Mapper
 import ldif.datasources.dump.QuadParser
 import ldif.entity.NodeWritable
 import org.apache.hadoop.io._
+import de.fuberlin.wiwiss.ldif.mapreduce.types._
 
 class ProcessQuadsMapper extends Mapper[LongWritable, Text, IntWritable, ValuePathWritable] {
   val parser = new QuadParser
-  val values = new ArrayWritable(classOf[NodeWritable])
+  val values = new NodeArrayWritable
 
   override def map(key: LongWritable, value: Text, context: Mapper[LongWritable, Text, IntWritable, ValuePathWritable]#Context) {
     val quad = parser.parseLine(value.toString)
+    if(quad==null)
+      return
     val property = quad.predicate
     val propertyInfos = List(PropertyInfo(0,0,true));//edmd.propertyMap(property)
     if(propertyInfos!=null) {
