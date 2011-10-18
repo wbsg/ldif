@@ -17,14 +17,28 @@ import org.apache.hadoop.conf.Configuration
 
 object HadoopHelper {
   val tempDir = new File(System.getProperty("java.io.tmpdir"))
-  def distributeSerializableObject(objectToDistribute: Object, conf: Configuration) {
-    val tempFile = File.createTempFile("ldif_hadoop_", "ser", tempDir)
-    tempFile.deleteOnExit()
+  def distributeSerializableObject(objectToDistribute: Object, conf: Configuration, id: String) {
+    val tempFile = File.createTempFile("ldif_hadoop_", id, tempDir)
+//    tempFile.deleteOnExit()
     val objectWriter = new ObjectOutputStream(new FileOutputStream(tempFile))
     objectWriter.writeObject(objectToDistribute)
     objectWriter.close()
     DistributedCache.addCacheFile(tempFile.toURI, conf)
   }
 
-  def getDistributedFiles(conf: Configuration): Array[URI] = DistributedCache.getCacheFiles(conf)
+  def distributeSerializableObject(objectToDistribute: Object, conf: Configuration) {
+    distributeSerializableObject(objectToDistribute, conf, "ser")
+  }
+
+  def getDistributedFileURIs(conf: Configuration): Array[URI] = DistributedCache.getCacheFiles(conf)
+
+  def getDistributedFilePathForID(conf: Configuration, id: String): String = {
+    val files = DistributedCache.getCacheFiles(conf)
+    if(files!=null)
+      for(file <- files) {
+        if(file.toString.endsWith(id))
+          return file.getPath
+      }
+    throw new RuntimeException("No distributed file with ID=" + id + " found!")
+  }
 }

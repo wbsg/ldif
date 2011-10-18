@@ -8,7 +8,6 @@ import org.apache.hadoop.util._
 import org.apache.hadoop.conf._
 import org.apache.commons.io.FileUtils
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat
-import java.io.File
 import org.apache.hadoop.io.{IntWritable, Text}
 import de.fuberlin.wiwiss.ldif.mapreduce.types._
 import java.math.BigInteger
@@ -17,6 +16,7 @@ import ldif.entity.EntityDescription
 import de.fuberlin.wiwiss.ldif.mapreduce.{EntityDescriptionMetaDataExtractor, EntityDescriptionMetadata}
 import de.fuberlin.wiwiss.ldif.mapreduce.utils.HadoopHelper
 import scala.collection.JavaConversions._
+import java.io.{ObjectOutputStream, File}
 
 /**
  * Created by IntelliJ IDEA.
@@ -64,7 +64,7 @@ object RunHadoop {
     FileUtils.deleteDirectory(new File(args(1)))
     val start = System.currentTimeMillis
     val conf = new Configuration
-    HadoopHelper.distributeSerializableObject(edmd, conf)
+    HadoopHelper.distributeSerializableObject(edmd, conf, "edmd")
     val res = ToolRunner.run(conf, new RunHadoop(), args)
     println("That's it. Took " + (System.currentTimeMillis-start)/1000.0 + "s")
     sys.exit(res)
