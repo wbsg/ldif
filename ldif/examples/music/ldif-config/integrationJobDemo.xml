@@ -4,8 +4,8 @@
             xmlns="http://www4.wiwiss.fu-berlin.de/ldif/">
     <properties>integration.properties</properties>
     <sources>dump</sources>
-    <linkSpecifications>linkspecs</linkSpecifications>
-    <mappings>mappings</mappings>
+    <linkSpecifications>demo/linkspecs</linkSpecifications>
+    <mappings>demo/mappings</mappings>
     <output>integrated_music_dataset.nq</output>
     <runSchedule>onStartup</runSchedule>
 </integrationJob>

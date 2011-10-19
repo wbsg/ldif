@@ -6,6 +6,7 @@ import collection.immutable.HashMap
 object Consts {
   val DEFAULT_GRAPH = "http://www4.wiwiss.fu-berlin.de/ldif/defaultOutputGraph"
   val DEFAULT_PROVENANCE_GRAPH = "http://www4.wiwiss.fu-berlin.de/ldif/provenance"
+  val DEFAULT_IMPORTED_GRAPH_PREFIX = "http://www4.wiwiss.fu-berlin.de/ldif/graph#"
 
   val MAX_WAITING_TIME : Long = Long.MaxValue
 

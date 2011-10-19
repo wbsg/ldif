@@ -12,6 +12,7 @@ import com.hp.hpl.jena.sparql.engine.http.QueryExceptionHTTP
 
 case class SparqlImportJob(conf : SparqlConfig, id :  Identifier, refreshSchedule : String, dataSource : String) extends ImportJob{
   private val log = Logger.getLogger(getClass.getName)
+  private val graph = Consts.DEFAULT_IMPORTED_GRAPH_PREFIX+id
 
   override def load(out : OutputStream) : Boolean = {
     val writer = new OutputStreamWriter(out)
@@ -24,7 +25,7 @@ case class SparqlImportJob(conf : SparqlConfig, id :  Identifier, refreshSchedul
     log.info("Loading from " + conf.endpointLocation + ", graph: " + conf.graphName)
     log.info("Query: " + query)
 
-    importedGraphs += id
+    importedGraphs += graph
 
     val success = execQuery(query, writer)
     writer.close
@@ -100,7 +101,7 @@ case class SparqlImportJob(conf : SparqlConfig, id :  Identifier, refreshSchedul
       val s = LocalNode.fromRDFNode(stmt.getSubject.asInstanceOf[RDFNode])
       val p = stmt.getPredicate.getURI
       val o = LocalNode.fromRDFNode(stmt.getObject)
-      writer.write(s.toNQuadsFormat +" <"+ p +"> "+ o.toNQuadsFormat +" <"+ id +"> . \n")
+      writer.write(s.toNQuadsFormat +" <"+ p +"> "+ o.toNQuadsFormat +" <"+ graph +"> . \n")
     }
     writer.flush
   }

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<importJob xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+            xsi:schemaLocation="http://www4.wiwiss.fu-berlin.de/ldif/ ../../xsd/ImportJob.xsd"
+            xmlns="http://www4.wiwiss.fu-berlin.de/ldif/">
+    <internalId>freebase.0</internalId>
+    <dataSource>Freebase</dataSource>
+    <refreshSchedule>onStartup</refreshSchedule>
+    <crawlImportJob>
+        <seedURIs>
+            <uri>http://rdf.freebase.com/ns/blues</uri>
+            <!--<uri>http://rdf.freebase.com/ns/en.dance-pop</uri>-->
+     <!--       <uri>http://rdf.freebase.com/ns/en.art_rock</uri> -->
+        </seedURIs>
+        <predicatesToFollow>
+            <uri>http://rdf.freebase.com/ns/music.artist.genre</uri>
+            <!--<uri>http://rdf.freebase.com/ns/music.genre.albums</uri>-->
+            <uri>http://rdf.freebase.com/ns/music.genre.artists</uri>
+            <!--<uri>http://rdf.freebase.com/ns/music.album.genre</uri>-->
+            <uri>http://rdf.freebase.com/ns/music.album.artist</uri>
+            <!--<uri>http://rdf.freebase.com/ns/music.artist.album</uri>-->
+            <!--<uri>http://rdf.freebase.com/ns/influence.influence_node.influenced_by</uri>-->
+            <!--<uri>http://rdf.freebase.com/ns/music.artist.label</uri>-->
+            <!--<uri>http://rdf.freebase.com/ns/music.record_label.artist</uri>-->
+            <!--<uri>http://rdf.freebase.com/ns/music.producer.releases_produced</uri>-->
+            <!--<uri>http://rdf.freebase.com/ns/music.release.producers</uri>-->
+            <!--<uri>http://rdf.freebase.com/ns/music.release.album</uri>-->
+            <!--<uri>http://rdf.freebase.com/ns/music.producer.releases_produced</uri> -->
+        </predicatesToFollow>
+        <levels>1</levels>
+        <resourceLimit>100</resourceLimit>
+    </crawlImportJob>
+</importJob>
