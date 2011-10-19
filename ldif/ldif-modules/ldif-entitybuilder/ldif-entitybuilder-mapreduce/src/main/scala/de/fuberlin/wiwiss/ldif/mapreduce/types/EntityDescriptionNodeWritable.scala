@@ -1,4 +1,4 @@
-package de.fuberlin.wiwiss.ldif.mapreduce
+package de.fuberlin.wiwiss.ldif.mapreduce.types
 
 import java.io.{DataInput, DataOutput}
 import org.apache.hadoop.io.{IntWritable, WritableComparable}
