@@ -14,14 +14,16 @@
 ### Class mappings  ###
 #######################
 
-# to mo:MusicArtist (general)
+## to mo:MusicArtist ##
+
+ # general
  mp:MusicArtist
     a r2r:ClassMapping;
     r2r:prefixDefinitions "mo: <http://purl.org/ontology/mo/>." ;
     r2r:sourcePattern "?SUBJ a mo:MusicArtist" ;
     r2r:targetPattern "?SUBJ a mo:MusicArtist" .
 
-# to mo:MusicArtist (freebase)
+ # freebase
  mp:fbMusicArtist
     a r2r:ClassMapping;
     r2r:prefixDefinitions "mo: <http://purl.org/ontology/mo/>. fb: <http://rdf.freebase.com/ns/>" ;
@@ -29,11 +31,22 @@
     r2r:targetPattern "?SUBJ a mo:MusicArtist" .
 
 
+  # dbpedia
+  mp:dbMusicArtist
+    a r2r:ClassMapping;
+    r2r:prefixDefinitions "mo: <http://purl.org/ontology/mo/>. db: <http://dbpedia.org/ontology/>" ;
+    r2r:sourcePattern "?SUBJ a db:MusicalArtist" ;
+    r2r:targetPattern "?SUBJ a mo:MusicArtist" .
+
+
 #########################
 ### Property mappings ###
 #########################
 
-# to MusicArtist / rdfs:label (general)
+
+## to MusicArtist / rdfs:label ##
+
+ # general
  mp:ArtistLabel
     a r2r:Mapping ;
     r2r:mappingRef mp:MusicArtist;
@@ -41,12 +54,20 @@
     r2r:sourcePattern "?SUBJ rdfs:label ?o" ;
     r2r:targetPattern "?SUBJ rdfs:label ?o" .
 
-# to MusicArtist / rdfs:label (freebase)
- mp:freebaseLabel
+ # freebase
+ mp:fbLabel
   a r2r:Mapping ;
   r2r:mappingRef mp:fbMusicArtist;
-  r2r:prefixDefinitions "rdfs: <http://www.w3.org/2000/01/rdf-schema#>. mo: <http://purl.org/ontology/mo/>. fb: <http://rdf.freebase.com/ns/>" ;
+  r2r:prefixDefinitions "rdfs: <http://www.w3.org/2000/01/rdf-schema#>.  fb: <http://rdf.freebase.com/ns/>" ;
   r2r:sourcePattern "?SUBJ fb:type.object.name ?o" ;
+  r2r:targetPattern "?SUBJ rdfs:label ?o" .
+
+ # dbpedia
+ mp:dbLabel
+  a r2r:Mapping ;
+  r2r:mappingRef mp:dbMusicArtist;
+  r2r:prefixDefinitions "rdfs: <http://www.w3.org/2000/01/rdf-schema#>. dbprop: <http://dbpedia.org/property/> " ;
+  r2r:sourcePattern "?SUBJ rdfs:label ?o" ;
   r2r:targetPattern "?SUBJ rdfs:label ?o" .
 
 

@@ -7,7 +7,7 @@
     <refreshSchedule>onStartup</refreshSchedule>
     <crawlImportJob>
         <seedURIs>
-            <uri>http://rdf.freebase.com/ns/blues</uri>
+            <uri>http://rdf.freebase.com/ns/en.u2</uri>
             <!--<uri>http://rdf.freebase.com/ns/en.dance-pop</uri>-->
      <!--       <uri>http://rdf.freebase.com/ns/en.art_rock</uri> -->
         </seedURIs>
