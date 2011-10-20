@@ -1,3 +1,3 @@
 #!/bin/bash
 basedir=${0%/*}
-java -server -Xmx2G -Xms256M -cp $basedir/../:$basedir/../ldif-singlemachine/target/ldif-single-0.3-jar-with-dependencies.jar ldif.local.IntegrationJob $*
+java -server -Xmx2G -Xms256M -cp $basedir/../:$basedir/../ldif-singlemachine/target/ldif-single-0.3.1-jar-with-dependencies.jar ldif.local.IntegrationJob $*

@@ -1,12 +1,13 @@
 package ldif.local.scheduler
 
 import ldif.local.datasources.dump.DumpLoader
-import ldif.util.Identifier
 import xml.Node
 import ldif.datasources.dump.QuadParser
 import java.io.{OutputStreamWriter, OutputStream}
+import ldif.util.{Consts, Identifier}
 
 case class TripleImportJob(dumpLocation : String, id : Identifier, refreshSchedule : String, dataSource : String) extends ImportJob {
+  val graph = Consts.DEFAULT_IMPORTED_GRAPH_PREFIX+id
 
   override def load(out : OutputStream) : Boolean = {
 
@@ -16,7 +17,6 @@ case class TripleImportJob(dumpLocation : String, id : Identifier, refreshSchedu
     val inputStream = DumpLoader.getStream(dumpLocation)
     //val bufferedReader = new BufferedReader(new InputStreamReader(inputStream))
 
-    val graph = id
     importedGraphs += graph
 
     val parser = new QuadParser(graph)
