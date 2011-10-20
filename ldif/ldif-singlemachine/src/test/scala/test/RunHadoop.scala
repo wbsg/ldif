@@ -3,7 +3,6 @@ package test
 import de.fuberlin.wiwiss.ldif.mapreduce.mappers._
 import org.apache.hadoop.fs.Path
 import org.apache.hadoop.mapreduce.Job
-import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat
 import org.apache.hadoop.util._
 import org.apache.hadoop.conf._
 import org.apache.commons.io.FileUtils
@@ -17,6 +16,8 @@ import de.fuberlin.wiwiss.ldif.mapreduce.{EntityDescriptionMetaDataExtractor, En
 import de.fuberlin.wiwiss.ldif.mapreduce.utils.HadoopHelper
 import scala.collection.JavaConversions._
 import java.io.{ObjectOutputStream, File}
+import de.fuberlin.wiwiss.ldif.mapreduce.io._
+import org.apache.hadoop.mapreduce.lib.output.{TextOutputFormat, FileOutputFormat}
 
 /**
  * Created by IntelliJ IDEA.
@@ -33,10 +34,11 @@ class RunHadoop extends Configured with Tool {
     val job = new Job(config, "Run Hadoop")
 
     job.setJarByClass(classOf[RunHadoop])
-
+    job.setNumReduceTasks(0)
     job.setMapperClass(classOf[ProcessQuadsMapper])
     job.setMapOutputKeyClass(classOf[IntWritable])
     job.setMapOutputValueClass(classOf[ValuePathWritable])
+//    job.setOutputFormatClass(classOf[ValuePathMultipleSequenceFileOutput])
 
     val in = new Path(args(0))
     val out = new Path(args(1))

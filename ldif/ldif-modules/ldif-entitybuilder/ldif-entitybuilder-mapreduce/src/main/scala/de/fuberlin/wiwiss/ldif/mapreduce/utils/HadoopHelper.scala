@@ -1,8 +1,6 @@
 package de.fuberlin.wiwiss.ldif.mapreduce.utils
 
-import org.apache.hadoop.mapreduce.Job
 import org.apache.hadoop.filecache.DistributedCache
-import org.apache.hadoop.fs.FileUtil
 import java.io._
 import java.net.URI
 import org.apache.hadoop.conf.Configuration
