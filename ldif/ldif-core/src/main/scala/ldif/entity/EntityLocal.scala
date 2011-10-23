@@ -1,6 +1,4 @@
-package de.fuberlin.wiwiss.ldif.local
-
-import ldif.entity._
+package ldif.entity
 
 class EntityLocal(val resource : Node, val entityDescription : EntityDescription) extends Entity with Serializable {
 

@@ -1,6 +1,4 @@
-package de.fuberlin.wiwiss.ldif.local
-
-import ldif.entity.{Node, Path, FactumTable}
+package ldif.entity
 
 trait FactumBuilder{
 
