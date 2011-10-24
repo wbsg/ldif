@@ -28,7 +28,7 @@ object SchedulerConfig
     if (propertiesFile != null)
       properties = ConfigProperties.loadProperties(propertiesFile)
 
-    var dumpLocationDir = getFile(xml, "dumpLocation", baseDir, true)
+    val dumpLocationDir = getFile(xml, "dumpLocation", baseDir, true)
 
     val importJobsDir = getFile(xml, "importJobs", baseDir)
     val integrationJobDir = getFile(xml, "integrationJob", baseDir)
