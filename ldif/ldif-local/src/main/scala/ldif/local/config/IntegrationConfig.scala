@@ -5,7 +5,6 @@ import java.util.Properties
 import java.util.logging.Logger
 import ldif.util.ValidatingXMLReader
 import xml.{Node, XML}
-import com.hp.hpl.jena.xmloutput.impl.Abbreviated
 
 case class IntegrationConfig(sources : File, linkSpecDir : File, mappingDir : File, outputFile : File,  properties : Properties, runSchedule : String) {}
 

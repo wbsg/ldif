@@ -135,6 +135,13 @@
       <version>2.0.1</version>
     </dependency>
 
+      <!-- jena 2.6.4 use slf4j 1.5.8 - which is incompatible with slf4j 1.6.3 -->
+      <dependency>
+          <groupId>org.slf4j</groupId>
+          <artifactId>slf4j-api</artifactId>
+          <version>1.5.8</version>
+      </dependency>
+
   </dependencies>
 
   <repositories>

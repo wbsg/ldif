@@ -7,6 +7,7 @@
     <refreshSchedule>onStartup</refreshSchedule>
     <sparqlImportJob>
         <endpointLocation>http://api.talis.com/stores/musicbrainz/services/sparql</endpointLocation>
+        <tripleLimit>100000</tripleLimit>
         <sparqlPatterns>
             <pattern>?s a &lt;http://purl.org/ontology/mo/MusicArtist&gt;</pattern>
         </sparqlPatterns>

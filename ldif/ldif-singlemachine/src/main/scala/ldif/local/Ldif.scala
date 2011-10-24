@@ -2,16 +2,14 @@ package ldif.local
 
 import config.SchedulerConfig
 import java.io.File
-import java.util.logging.Logger
-import org.apache.log4j.PropertyConfigurator
+import org.slf4j.LoggerFactory;
+
 
 object Ldif {
-
-  private val log = Logger.getLogger(getClass.getName)
+  private val log = LoggerFactory.getLogger(getClass.getName)
 
   def main(args : Array[String])
   {
-    PropertyConfigurator.configureAndWatch("log4j.properties")
     var debug = false
     if(args.length<1) {
       println("No configuration file given.")
@@ -27,7 +25,7 @@ object Ldif {
       new File(args(args.length-1))
 
     if(!configFile.exists)
-      log.warning("Configuration file not found at "+ configFile.getCanonicalPath)
+      log.warn("Configuration file not found at "+ configFile.getCanonicalPath)
     else {
       // Setup Scheduler
       val config = SchedulerConfig.load(configFile)
