@@ -1,7 +1,7 @@
 package de.fuberlin.wiwiss.ldif.mapreduce.mappers
 
 import de.fuberlin.wiwiss.ldif.mapreduce._
-import org.apache.hadoop.mapreduce.Mapper
+import org.apache.hadoop.mapred._
 import ldif.datasources.dump.QuadParser
 import ldif.entity.NodeWritable
 import org.apache.hadoop.io._
@@ -10,14 +10,16 @@ import utils.HadoopHelper
 import org.apache.hadoop.conf.Configuration
 import java.io.{ObjectInputStream, FileInputStream}
 
-class ProcessQuadsMapper extends Mapper[LongWritable, Text, IntWritable, ValuePathWritable] {
+class ProcessQuadsMapper extends MapReduceBase with Mapper[LongWritable, Text, IntWritable, ValuePathWritable] {
   val parser = new QuadParser
   val values = new NodeArrayWritable
   var edmd: EntityDescriptionMetadata = null
 
-  override def map(key: LongWritable, value: Text, context: Mapper[LongWritable, Text, IntWritable, ValuePathWritable]#Context) {
-    if(edmd==null)
-      edmd = getEntityDescriptionMetaData(context.getConfiguration)
+  override def configure(job: JobConf) {
+    edmd = getEntityDescriptionMetaData(job)
+  }
+
+  override def map(key: LongWritable, value: Text, output: OutputCollector[IntWritable, ValuePathWritable], reporter: Reporter) {
     val quad = parser.parseLine(value.toString)
     if(quad==null)
       return
@@ -34,7 +36,7 @@ class ProcessQuadsMapper extends Mapper[LongWritable, Text, IntWritable, ValuePa
             values.set(Array[Writable](subj, obj))
           else
             values.set(Array[Writable](obj, subj))
-          context.write(new IntWritable(propertyInfo.phase),
+          output.collect(new IntWritable(propertyInfo.phase),
             new ValuePathWritable(new IntWritable(propertyInfo.pathId), pathType, values))
         }
     }

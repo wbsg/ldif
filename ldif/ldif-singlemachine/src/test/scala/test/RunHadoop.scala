@@ -2,11 +2,10 @@ package test
 
 import de.fuberlin.wiwiss.ldif.mapreduce.mappers._
 import org.apache.hadoop.fs.Path
-import org.apache.hadoop.mapreduce.Job
+import org.apache.hadoop.mapred._
 import org.apache.hadoop.util._
 import org.apache.hadoop.conf._
 import org.apache.commons.io.FileUtils
-import org.apache.hadoop.mapreduce.lib.input.FileInputFormat
 import org.apache.hadoop.io.{IntWritable, Text}
 import de.fuberlin.wiwiss.ldif.mapreduce.types._
 import java.math.BigInteger
@@ -17,7 +16,6 @@ import de.fuberlin.wiwiss.ldif.mapreduce.utils.HadoopHelper
 import scala.collection.JavaConversions._
 import java.io.{ObjectOutputStream, File}
 import de.fuberlin.wiwiss.ldif.mapreduce.io._
-import org.apache.hadoop.mapreduce.lib.output.{TextOutputFormat, FileOutputFormat}
 
 /**
  * Created by IntelliJ IDEA.
@@ -30,22 +28,26 @@ import org.apache.hadoop.mapreduce.lib.output.{TextOutputFormat, FileOutputForma
 
 class RunHadoop extends Configured with Tool {
   def run(args: Array[String]): Int = {
-    val config = getConf
-    val job = new Job(config, "Run Hadoop")
+    val conf = getConf
+    val job = new JobConf(conf, classOf[RunHadoop])
 
-    job.setJarByClass(classOf[RunHadoop])
+//    job.setJarByClass(classOf[RunHadoop])
     job.setNumReduceTasks(0)
     job.setMapperClass(classOf[ProcessQuadsMapper])
     job.setMapOutputKeyClass(classOf[IntWritable])
     job.setMapOutputValueClass(classOf[ValuePathWritable])
-//    job.setOutputFormatClass(classOf[ValuePathMultipleSequenceFileOutput])
+    job.setOutputKeyClass(classOf[IntWritable])
+    job.setOutputValueClass(classOf[ValuePathWritable])
+    job.setOutputFormat(classOf[ValuePathMultipleSequenceFileOutput])
 
     val in = new Path(args(0))
     val out = new Path(args(1))
     FileInputFormat.addInputPath(job, in)
     FileOutputFormat.setOutputPath(job, out)
 
-    return if(job.waitForCompletion(true)) 0 else 1
+    JobClient.runJob(job)
+
+    return 0
   }
 }
 
