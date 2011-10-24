@@ -32,7 +32,6 @@ class EntityBuilder (entityDescriptions : IndexedSeq[EntityDescription], readers
 
   // if no restriction is defined, build an entity for each resource
   var allUriNodes : Set[Node] = null
-  var allEntities: List[EntityLocal] = null
 //  println("Memory used (before loading into hash tables): " + MemoryUsage.getMemoryUsage() +" KB")   //TODO: remove
   init
 //  println("Memory used (after loaded into hash tables): " + MemoryUsage.getMemoryUsage() +" KB")  //TODO: remove
