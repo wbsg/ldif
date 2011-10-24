@@ -13,7 +13,7 @@ import org.apache.hadoop.io.IntWritable
  */
 
 class ValuePathMultipleSequenceFileOutput extends MultipleSequenceFileOutputFormat[IntWritable, ValuePathWritable] {
-  val pathSeparator = System.getProperty("path.separator")
+  val pathSeparator = System.getProperty("file.separator")
   override def generateFileNameForKeyValue(key: IntWritable, value: ValuePathWritable, filename: String): String = {
     "eb_join_iteration_" + key.get() + pathSeparator + filename
   }
