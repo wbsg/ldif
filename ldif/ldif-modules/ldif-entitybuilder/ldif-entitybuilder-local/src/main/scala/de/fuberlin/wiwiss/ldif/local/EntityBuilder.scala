@@ -33,13 +33,14 @@ class EntityBuilder (entityDescriptions : IndexedSeq[EntityDescription], readers
   // if no restriction is defined, build an entity for each resource
   var allUriNodes : Set[Node] = null
   var allEntities: List[EntityLocal] = null
-//  println("Memory used (before loading into hash tables): " + MemoryUsage.getMemoryUsage() +" MB")   //TODO: remove
+//  println("Memory used (before loading into hash tables): " + MemoryUsage.getMemoryUsage() +" KB")   //TODO: remove
   init
-//  println("Memory used (after loaded into hash tables): " + MemoryUsage.getMemoryUsage() +" MB")  //TODO: remove
+//  println("Memory used (after loaded into hash tables): " + MemoryUsage.getMemoryUsage() +" KB")  //TODO: remove
 
   // Build entities and write those into the EntityWriter
   def buildEntities (ed : EntityDescription, writer : EntityWriter) {
     val startTime = now
+//    writer.entityDescription = ed
     val useAllUris = {
       ed.restriction.operator match {
         case None => true
@@ -49,25 +50,16 @@ class EntityBuilder (entityDescriptions : IndexedSeq[EntityDescription], readers
 
     if(!useAllUris){
       // entityNodes <- combination (as in the restriction pattern) of all the subjSets
-    val entityNodes = getSubjSet(ed.restriction.operator) map (n => LocalNode.decompress(n))
-    for (e <- entityNodes) {
-        val entity = new EntityLocal(e, ed)
-        writer.write(entity)
+      val entityNodes = getSubjSet(ed.restriction.operator) map (n => LocalNode.decompress(n))
+      for (e <- entityNodes) {
+          val entity = new EntityLocal(e, ed)
+          writer.write(entity)
       }
     }
-    else {
-      this.synchronized {
-        if(allEntities==null) {
-//          println("Memory used (before generating all entities): " + MemoryUsage.getMemoryUsage()+" MB")   //TODO: remove
-          allEntities = new ArrayList[EntityLocal]()
-          for(node <- allUriNodes)
-            allEntities.add(new EntityLocal(node, ed))
-        }
-      }
-//      println("Memory used (after generating all entities): " + MemoryUsage.getMemoryUsage()+" MB")   //TODO: remove
-      for(entity <- allEntities)
-        writer.write(entity)
-    }
+    else
+      for(node <- allUriNodes)
+        writer.write(new EntityLocal(node, ed))
+//    println("Memory used (after writing all entities): " + MemoryUsage.getMemoryUsage()+" KB")   //TODO: remove
     writer.finish
 
     log.fine("Build Entities took " + ((now - startTime)) + " ms")

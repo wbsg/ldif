@@ -8,6 +8,6 @@ object MemoryUsage {
     val used = runtime.totalMemory - runtime.freeMemory
     runtime.gc()
     Thread.sleep(2000)
-    return (math.min(used, runtime.totalMemory - runtime.freeMemory) / (1024*1024)).toLong
+    return (math.min(used, runtime.totalMemory - runtime.freeMemory) / (1024)).toLong
   }
 }

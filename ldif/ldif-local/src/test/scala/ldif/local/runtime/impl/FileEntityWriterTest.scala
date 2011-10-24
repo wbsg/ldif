@@ -27,6 +27,6 @@ class FileEntityWriterTest extends FlatSpec with ShouldMatchers {
     }
     val endUsage = MemoryUsage.getMemoryUsage()
     writer.finish
-    assert(endUsage < 5)
+    assert(endUsage < 5000)
   }
 }

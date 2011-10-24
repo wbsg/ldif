@@ -165,10 +165,6 @@ class IntegrationJob (val config : IntegrationConfig, debugMode : Boolean = fals
     val uriGenerator = new EnumeratingURIGenerator("http://www4.wiwiss.fu-berlin.de/ldif/imported", BigInteger.ONE);
     val importedMappingModel = Repository.importMappingDataFromSource(mappingSource, uriGenerator)
     val repository = new Repository(new JenaModelSource(importedMappingModel))
-    //TODO: DELETE
-    val bw = new BufferedWriter(new FileWriter("repository_output.ttl"))
-    repository.exportRepositoryData(bw, "TTL")
-    //
     val executor = new R2RLocalExecutor
     val config = new R2RConfig(repository)
     val module = new R2RModule(config)

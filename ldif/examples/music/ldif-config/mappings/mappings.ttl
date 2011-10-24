@@ -164,8 +164,6 @@ dbpedia-owl:genre rdfs:subPropertyOf dbpedia-owl:genre .
 
 foaf:made rdfs:subPropertyOf foaf:made .
 
-dbpedia-owl:album rdfs:subPropertyOf foaf:made .
- 
 <http://rdf.freebase.com/ns/music.artist.album> rdfs:subPropertyOf foaf:made .
 
 
@@ -213,5 +211,11 @@ mp:bioToDBpediaBirthDate
  r2r:prefixDefinitions "bio: <http://rdf.freebase.com/ns/> . dbpedia-owl: <http://dbpedia.org/ontology/> . foaf: <http://xmlns.com/foaf/0.1/>" ;
  r2r:sourcePattern "?SUBJ a foaf:Person . ?SUBJ bio:event ?event . ?event a bio:Birth . ?event bio:date ?o" ;
  r2r:targetPattern "?SUBJ dbpedia-owl:birthDate ?'o'^^xsd:date" .
+
+mp:dbpediaAlbumToFoafMade
+ a r2r:Mapping ;
+ r2r:prefixDefinitions "dbpedia-owl: <http://dbpedia.org/ontology/> . foaf: <http://xmlns.com/foaf/0.1/>" ;
+ r2r:sourcePattern "?SUBJ a dbpedia-owl:MusicalArtist . ?SUBJ dbpedia-owl:album ?o" ;
+ r2r:targetPattern "?SUBJ foaf:made ?o" .
 
 

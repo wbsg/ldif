@@ -58,7 +58,7 @@ class IntegrationFlowTest extends FlatSpec with ShouldMatchers {
     val validQuads = List(
       Quad(Node.createUriNode("http://dbpedia.org/resource/Beat_It"),
         "http://www.w3.org/2000/01/rdf-schema#label",
-        Node.createLanguageLiteral("Beat_It","sl"),
+        Node.createLanguageLiteral("Beat It","sl"),
         "http://www4.wiwiss.fu-berlin.de/ldif/graph#dbpedia.1"))
 
     val invalidQuad = List(
