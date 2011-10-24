@@ -57,7 +57,7 @@ class EntityBuilder (entityDescriptions : IndexedSeq[EntityDescription], readers
     }
     else
       for(node <- allUriNodes)
-        writer.write(new EntityLocal(node, ed))
+        writer.write(new EntityLocal(LocalNode.decompress(node), ed))
 //    println("Memory used (after writing all entities): " + MemoryUsage.getMemoryUsage()+" KB")   //TODO: remove
     writer.finish
 
@@ -103,12 +103,15 @@ class EntityBuilder (entityDescriptions : IndexedSeq[EntityDescription], readers
           saveIfSameAsQuad(quad)
 
         if(isRelevantQuad(quad))  {
-          addUriNodes(quad)
           counter += 1
+//          if(counter % 100000 == 0)
+//            println("Memory usage for " + counter + " loaded quads: " + MemoryUsage.getMemoryUsage() + "KB")
 
           val prop = StringPool.getCanonicalVersion(quad.predicate)
           val subj = LocalNode.intern(quad.subject)
           val obj = LocalNode.intern(quad.value)
+          addUriNode(subj)
+          addUriNode(obj)
 
           val v = PHT.get(prop)
 
@@ -121,7 +124,6 @@ class EntityBuilder (entityDescriptions : IndexedSeq[EntityDescription], readers
         }
       }
     }
-
     println("-- EntityBuilder: " + counter + " quads loaded into the entity builder.")
 
     //log.info("Read in Quads took " + ((now - startTime)) + " ms")
@@ -155,13 +157,9 @@ class EntityBuilder (entityDescriptions : IndexedSeq[EntityDescription], readers
   }
 
   // Gathers all instances from the (relevant) input quads
-  private def addUriNodes(quad:Quad) {
-    if(allUriNodes!=null){
-      if (quad.subject.isUriNode)
-        allUriNodes += quad.subject
-      if (quad.value.isUriNode)
-        allUriNodes += quad.value
-    }
+  private def addUriNode(node: Node) {
+    if(allUriNodes!=null && node.isUriNode)
+        allUriNodes += node
   }
 
   // Build the subject set from a given operator
