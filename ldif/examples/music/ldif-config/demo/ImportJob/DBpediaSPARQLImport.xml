@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<importJob xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+            xsi:schemaLocation="http://www4.wiwiss.fu-berlin.de/ldif/ ../../xsd/ImportJob.xsd"
+            xmlns="http://www4.wiwiss.fu-berlin.de/ldif/">
+    <internalId>dbpedia.2</internalId>
+    <dataSource>DBpedia</dataSource>
+    <refreshSchedule>never</refreshSchedule>
+    <sparqlImportJob>
+        <endpointLocation>http://dbpedia.org/sparql</endpointLocation>
+        <tripleLimit>10000</tripleLimit>
+        <sparqlPatterns>
+            <pattern>?s a &lt;http://dbpedia.org/ontology/MusicalArtist&gt;</pattern>
+            <!--<pattern>?s &lt;http://dbpedia.org/property/genre&gt; &lt;http://dbpedia.org/resource/Blues&gt;</pattern>-->
+            <pattern>?s &lt;http://dbpedia.org/ontology/birthPlace&gt; &lt;http://dbpedia.org/resource/Saint_Ann_Parish&gt;</pattern>
+        </sparqlPatterns>
+    </sparqlImportJob>
+</importJob>

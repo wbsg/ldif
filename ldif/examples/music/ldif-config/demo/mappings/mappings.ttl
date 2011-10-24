@@ -71,4 +71,27 @@
   r2r:targetPattern "?SUBJ rdfs:label ?o" .
 
 
+# to db:album
+
+
+ mp:dbMade
+ a r2r:Mapping ;
+ r2r:prefixDefinitions "mo: <http://purl.org/ontology/mo/> . foaf: <http://xmlns.com/foaf/0.1/> .  db: <http://dbpedia.org/ontology/>" ;
+ r2r:sourcePattern "?SUBJ a db:Single" ;
+ r2r:targetPattern "?SUBJ a db:Single" .
+
+ mp:dbSingle
+ a r2r:Mapping ;
+ r2r:prefixDefinitions "mo: <http://purl.org/ontology/mo/> . rdfs: <http://www.w3.org/2000/01/rdf-schema#>. foaf: <http://xmlns.com/foaf/0.1/> .  db: <http://dbpedia.org/ontology/>" ;
+ r2r:sourcePattern "?SUBJ a db:Single . ?SUBJ rdfs:label ?o  " ;
+ r2r:targetPattern "?SUBJ rdfs:label ?o " .
+
+  mp:dbMadeSingle
+ a r2r:Mapping ;
+ r2r:prefixDefinitions "mo: <http://purl.org/ontology/mo/> . foaf: <http://xmlns.com/foaf/0.1/> .  db: <http://dbpedia.org/ontology/>" ;
+ r2r:sourcePattern "?SUBJ db:writer ?a " ;
+ r2r:targetPattern "?a foaf:made ?SUBJ " .
+
+
+
 

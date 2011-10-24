@@ -2,14 +2,15 @@
 <importJob xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
             xsi:schemaLocation="http://www4.wiwiss.fu-berlin.de/ldif/ ../../xsd/ImportJob.xsd"
             xmlns="http://www4.wiwiss.fu-berlin.de/ldif/">
-    <internalId>musicbrainz.3</internalId>
-    <dataSource>MusicBrainz_Talis</dataSource>
+    <internalId>dbpedia.3</internalId>
+    <dataSource>DBpedia</dataSource>
     <refreshSchedule>onStartup</refreshSchedule>
     <sparqlImportJob>
-        <endpointLocation>http://api.talis.com/stores/musicbrainz/services/sparql</endpointLocation>
-        <tripleLimit>1000000</tripleLimit>
+        <endpointLocation>http://dbpedia.org/sparql</endpointLocation>
+        <tripleLimit>10000</tripleLimit>
         <sparqlPatterns>
-            <pattern>?s a &lt;http://purl.org/ontology/mo/MusicArtist&gt;</pattern>
+            <pattern>?s a &lt;http://dbpedia.org/ontology/Single&gt;</pattern>
+            <pattern>?s &lt;http://dbpedia.org/property/writer&gt; &lt;http://dbpedia.org/resource/Bob_Marley&gt;</pattern>
         </sparqlPatterns>
     </sparqlImportJob>
 </importJob>
