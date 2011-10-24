@@ -5,6 +5,7 @@ import java.util.Properties
 import java.util.logging.Logger
 import ldif.util.ValidatingXMLReader
 import xml.{Node, XML}
+import com.hp.hpl.jena.xmloutput.impl.Abbreviated
 
 case class IntegrationConfig(sources : File, linkSpecDir : File, mappingDir : File, outputFile : File,  properties : Properties, runSchedule : String) {}
 
@@ -41,19 +42,19 @@ object IntegrationConfig
     )
   }
 
-  private def getFile (xml : Node, key : String, baseDir : String = null) : File = {
+  private def getFile (xml : Node, key : String, baseDir : String) : File = {
     val value : String = (xml \ key text)
     var file : File = null
     if (value != ""){
-      var tmpFilePath = value
-      if (baseDir != null)
-        tmpFilePath = baseDir + "/" + tmpFilePath
-      val tmpFile = new File(tmpFilePath)
-      if (tmpFile.exists) {
-        file = tmpFile
+      val relativeFile = new File(baseDir + "/" + value)
+      val absoluteFile = new File(value)
+      if (relativeFile.exists || absoluteFile.exists) {
+        if (relativeFile.exists)
+          file = relativeFile
+        else file = absoluteFile
       }
       else {
-        log.warning("\'"+key+"\' path not found: "+ tmpFile.getCanonicalPath)
+        log.warning("\'"+key+"\' path not found. Searched: " + relativeFile.getCanonicalPath + ", " + absoluteFile.getCanonicalPath)
       }
     }
     else{

@@ -28,9 +28,7 @@ object SchedulerConfig
     if (propertiesFile != null)
       properties = ConfigProperties.loadProperties(propertiesFile)
 
-    val dumpLocationDir = new File(baseDir + "/" + (xml \ "dumpLocation" text))
-    if(!dumpLocationDir.exists && !dumpLocationDir.mkdirs)
-      log.severe("Could not create local dump directory at: " + dumpLocationDir.getCanonicalPath)
+    var dumpLocationDir = getFile(xml, "dumpLocation", baseDir, true)
 
     val importJobsDir = getFile(xml, "importJobs", baseDir)
     val integrationJobDir = getFile(xml, "integrationJob", baseDir)
@@ -45,19 +43,22 @@ object SchedulerConfig
     )
   }
 
-  private def getFile (xml : Node, key : String, baseDir : String = null) : File = {
+  private def getFile (xml : Node, key : String, baseDir : String, forceMkdir : Boolean = false) : File = {
     val value : String = (xml \ key text)
     var file : File = null
     if (value != ""){
-      var tmpFilePath = value
-      if (baseDir != null)
-        tmpFilePath = baseDir + "/" + tmpFilePath
-      val tmpFile = new File(tmpFilePath)
-      if (tmpFile.exists) {
-        file = tmpFile
+      val relativeFile = new File(baseDir + "/" + value)
+      val absoluteFile = new File(value)
+      if (relativeFile.exists || absoluteFile.exists) {
+        if (relativeFile.exists)
+          file = relativeFile
+        else file = absoluteFile
       }
       else {
-        log.warning("\'"+key+"\' path not found: "+ tmpFile.getCanonicalPath)
+        log.warning("\'"+key+"\' path not found. Searched: " + relativeFile.getCanonicalPath + ", " + absoluteFile.getCanonicalPath)
+        if (forceMkdir && relativeFile.mkdirs)
+          log.info("Created new directory at: "+ relativeFile.getCanonicalPath)
+        else  log.severe("Error creating directory at: " + relativeFile.getCanonicalPath)
       }
     }
     else{
