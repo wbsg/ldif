@@ -1,0 +1,63 @@
+#Mappings:
+
+@prefix r2r: <http://www4.wiwiss.fu-berlin.de/bizer/r2r/> .
+@prefix dbpedia-owl: <http://dbpedia.org/ontology/> .
+@prefix fb: <http://rdf.freebase.com/ns/> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix mo: <http://purl.org/ontology/mo/> .
+@prefix dc: <http://purl.org/dc/elements/1.1/> .
+@prefix foaf: <http://xmlns.com/foaf/0.1/> .
+@prefix bio: <http://rdf.freebase.com/ns/> .
+@prefix mp: <http://www4.wiwiss.fu-berlin.de/ldif/mappings/musicusecase/> .
+
+#######################
+### Simple mappings ###
+#######################
+
+# Simple one-to-one mappings are expressed with rdfs:subClassOf and rdfs:subPropertyOf
+# which R2R converts to R2R mappings when reading the file.
+# We only use rdfs:subPropertyOf and rdfs:subClassOf in order to express the direction of the mapping.
+# Using equivalence would also map from the object to the subject schema entity.
+
+######################
+### Class Mappings ###
+######################
+
+
+#__________ to mo:MusicArtist, mo:MusicGroup, mo:SoloMusicArtist __________#
+
+dbpedia-owl:MusicalArtist rdfs:subClassOf mo:MusicArtist .
+
+#__________ to mo:Record, dbpedia-owl:Album, dbpedia-owl:Single __________#
+
+dbpedia-owl:Single rdfs:subClassOf mo:Record .
+
+dbpedia-owl:Album rdfs:subClassOf mo:Record .
+
+dbpedia-owl:MusicalWork rdfs:subClassOf mo:Record .
+
+
+#########################
+### Property Mappings ###
+#########################
+
+#__________ to rdfs:label __________#
+
+foaf:name rdfs:subPropertyOf rdfs:label .
+
+rdfs:label rdfs:subPropertyOf rdfs:label .
+
+#__________ to dbpedia-owl:birthDate, dbpedia-owl:deathDate  __________#
+
+dbpedia-owl:birthDate rdfs:subPropertyOf dbpedia-owl:birthDate .
+
+dbpedia-owl:deathDate rdfs:subPropertyOf dbpedia-owl:deathDate .
+
+
+#__________ to dbpedia-owl:musicalArtist  __________#
+
+dbpedia-owl:musicalArtist rdfs:subPropertyOf dbpedia-owl:musicalArtist .
+
+

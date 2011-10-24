@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Silk xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+            xsi:noNamespaceSchemaLocation="../../xsd/LinkSpecificationLanguage.xsd" >
+	
+	<Prefixes>
+		<Prefix id="rdf" namespace="http://www.w3.org/1999/02/22-rdf-syntax-ns#" />
+		<Prefix id="rdfs" namespace="http://www.w3.org/2000/01/rdf-schema#" />
+		<Prefix id="owl" namespace="http://www.w3.org/2002/07/owl#" />
+		<Prefix id="mo" namespace="http://purl.org/ontology/mo/" />
+	</Prefixes>
+
+	<Interlinks >
+
+        <Interlink id="MusicArtist" >
+            <LinkType>owl:sameAs</LinkType>
+
+            <SourceDataset dataSource="SOURCE" var="a">
+				<RestrictTo>?a rdf:type mo:MusicArtist .</RestrictTo>
+			</SourceDataset>
+
+			<TargetDataset dataSource="TARGET" var="b">
+				<RestrictTo>?b rdf:type mo:MusicArtist .</RestrictTo>
+			</TargetDataset>
+
+            <LinkCondition />
+			<Filter />
+
+        </Interlink>
+      
+	</Interlinks>
+
+</Silk>

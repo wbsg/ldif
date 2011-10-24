@@ -46,7 +46,29 @@ class IntegrationFlowTest extends FlatSpec with ShouldMatchers {
     // quantity check
     //Source.fromFile(ldifOutput).getLines.size should equal(15205)
     // quality check
-    OutputValidator.contains(ldifOutput,provenanceQuads) should equal (true)
+    OutputValidator.contains(ldifOutput, provenanceQuads) should equal (true)
+  }
+
+  it should "handle entity descriptions without restriction correctly" in {
+    // Run LDIF
+    val configFile = loadConfig("ldif/local/resources/minimal/integrationJob.xml")
+    val ldifOutput = runLdif(configFile)
+
+    // Create provenance quads to look for
+    val validQuads = List(
+      Quad(Node.createUriNode("http://dbpedia.org/resource/Beat_It"),
+        "http://www.w3.org/2000/01/rdf-schema#label",
+        Node.createLanguageLiteral("Beat_It","sl"),
+        "http://www4.wiwiss.fu-berlin.de/ldif/graph#dbpedia.1"))
+
+    val invalidQuad = List(
+      Quad(Node.createUriNode("http://dbpedia.org/resource/Beat_It"),
+        "http://www.w3.org/2000/01/rdf-schema#label",
+        Node.createUriNode("http://dbpedia.org/resource/Michael_Jackson"),
+        "http://www4.wiwiss.fu-berlin.de/ldif/graph#dbpedia.1"))
+
+    OutputValidator.contains(ldifOutput, validQuads) should equal (true)
+    OutputValidator.contains(ldifOutput, invalidQuad) should equal (false)
   }
 
 //  it should "be correct with TDB backend" in {
