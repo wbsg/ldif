@@ -57,23 +57,25 @@ class EntityDescriptionMetaDataExtractor {
 
   private def extractPathInfo(path: Path, entityDescriptionIndex: Int, patternIndex: Int, pathIndex: Int, isRestrictionPath: Boolean) {
     val pathID = pathCounter.getAndIncrement
-    pathMap.put(pathID, PathInfo(entityDescriptionIndex, patternIndex, pathIndex, path, isRestrictionPath))
-    extractPropertyInfo(path,pathID)
+    val pathLength = extractPropertyInfo(path,pathID)
+    pathMap.put(pathID, PathInfo(entityDescriptionIndex, patternIndex, pathIndex, path, isRestrictionPath, pathLength))
+
   }
 
-  private def extractPropertyInfo(path: Path, pathId: Int) {
+  private def extractPropertyInfo(path: Path, pathId: Int): Int = {
+    var length = 0
     for((op,i) <- path.operators zipWithIndex) {
+      length += 1
             op match {
                case op:ForwardOperator => addPropertyInfo(op.property.toString, pathId, i, true)
                case op:BackwardOperator => addPropertyInfo(op.property.toString, pathId, i, false)
                case _ =>    // TODO support filters
             }
       }
+    length
   }
 
   private def addPropertyInfo(property: String, pathId: Int, phase: Int, isForward : Boolean) {
-    // TODO add join direction
-
     val propertyInfoList: ArrayBuffer[PropertyInfo] = propertyMap.getOrElseUpdate(property, new ArrayBuffer[PropertyInfo])
     propertyInfoList.append(PropertyInfo(pathId, phase, isForward))
   }

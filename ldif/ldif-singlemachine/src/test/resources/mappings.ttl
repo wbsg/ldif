@@ -28,9 +28,14 @@ mappings:somePropMapping
   r2r:sourcePattern "?SUBJ <http://someProp> ?o" ;
   r2r:targetPattern "?SUBJ <http://someMappedProp> ?o" .
 
-mappings:pathMapping
+mappings:oneHopPathMapping
   a r2r:Mapping ;
   r2r:sourcePattern "?SUBJ <http://a> ?i . ?i <http://b> ?o" ;
   r2r:targetPattern "?SUBJ <http://c> ?o" .
+
+mappings:twoHopPathMapping
+  a r2r:Mapping ;
+  r2r:sourcePattern "?SUBJ <http://a> ?i1 . ?i1 <http://c> ?i2 . ?i2 <http://d> ?o" ;
+  r2r:targetPattern "?SUBJ <http://e> ?o" .
 
 <http://testNamespace/someOldClass> rdfs:subClassOf <http://testNamespace/someFunkyNewClass> .

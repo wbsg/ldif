@@ -23,12 +23,12 @@ case class ValuePathWritable (var pathID : IntWritable, var pathType: PathType, 
 
   override def toString = {
     val builder = new StringBuilder
-    val pt = pathType match {
-      case EntityPathType => "EntityPath"
-      case JoinPathType => "JoinPath"
-    }
-    builder.append(pt).append("(pathID=").append(pathID.toString).append(", ").append(values.toString).append(")")
+    builder.append(pathType.toString).append("(pathID=").append(pathID.toString).append(", ").append(values.toString).append(")")
     builder.toString
+  }
+
+  def length(): Int = {
+    values.get.length-1
   }
 }
 
@@ -46,7 +46,12 @@ case object JoinPathType extends PathType {
   override def toString = "JoinPathType"
 }
 
+case object FinishedPathType extends PathType {
+  val bytePathType = 2
+  override def toString = "FinishedPathType"
+}
+
 case object PathTypeMap {
-  val map = Map(0 -> EntityPathType, 1 -> JoinPathType)
+  val map = Map(0 -> EntityPathType, 1 -> JoinPathType, 2 -> FinishedPathType)
   def apply(index: Int) = map(index)
 }

@@ -4,6 +4,7 @@ import org.apache.hadoop.filecache.DistributedCache
 import java.io._
 import java.net.URI
 import org.apache.hadoop.conf.Configuration
+import de.fuberlin.wiwiss.ldif.mapreduce.EntityDescriptionMetadata
 
 /**
  * Created by IntelliJ IDEA.
@@ -38,5 +39,14 @@ object HadoopHelper {
           return file.getPath
       }
     throw new RuntimeException("No distributed file with ID=" + id + " found!")
+  }
+
+  def getEntityDescriptionMetaData(conf: Configuration): EntityDescriptionMetadata = {
+    try {
+      val file = HadoopHelper.getDistributedFilePathForID(conf, "edmd")
+      return (new ObjectInputStream(new FileInputStream(file))).readObject().asInstanceOf[EntityDescriptionMetadata]
+    } catch {
+      case e: RuntimeException => throw new RuntimeException("No Entity Description Meta Data found/distributed. Reason: " + e.getMessage)
+    }
   }
 }

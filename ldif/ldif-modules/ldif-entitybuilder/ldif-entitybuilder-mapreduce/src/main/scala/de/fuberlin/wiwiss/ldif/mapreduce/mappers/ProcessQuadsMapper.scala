@@ -4,19 +4,24 @@ import de.fuberlin.wiwiss.ldif.mapreduce._
 import org.apache.hadoop.mapred._
 import ldif.datasources.dump.QuadParser
 import ldif.entity.NodeWritable
-import org.apache.hadoop.io._
+import lib.MultipleOutputs
 import de.fuberlin.wiwiss.ldif.mapreduce.types._
 import utils.HadoopHelper
 import org.apache.hadoop.conf.Configuration
 import java.io.{ObjectInputStream, FileInputStream}
+import org.apache.hadoop.io._
 
 class ProcessQuadsMapper extends MapReduceBase with Mapper[LongWritable, Text, IntWritable, ValuePathWritable] {
-  val parser = new QuadParser
-  val values = new NodeArrayWritable
-  var edmd: EntityDescriptionMetadata = null
+  private val parser = new QuadParser
+  private val values = new NodeArrayWritable
+  private var edmd: EntityDescriptionMetadata = null
+  private var mos: MultipleOutputs = null
+  private var collector: OutputCollector[IntWritable, ValuePathWritable] = null
+  private val phase: IntWritable = new IntWritable(0)
 
-  override def configure(job: JobConf) {
-    edmd = getEntityDescriptionMetaData(job)
+  override def configure(conf: JobConf) {
+    edmd = HadoopHelper.getEntityDescriptionMetaData(conf)
+    mos = new MultipleOutputs(conf)
   }
 
   override def map(key: LongWritable, value: Text, output: OutputCollector[IntWritable, ValuePathWritable], reporter: Reporter) {
@@ -29,26 +34,34 @@ class ProcessQuadsMapper extends MapReduceBase with Mapper[LongWritable, Text, I
       case None =>
       case Some(propertyInfos) =>
         for(propertyInfo <- propertyInfos) {
-          val pathType = if (propertyInfo.phase==0) EntityPathType else JoinPathType
+          val pathType = {
+            if(edmd.pathLength(propertyInfo.pathId)==1)
+              FinishedPathType
+            else if (propertyInfo.phase==0) EntityPathType
+            else JoinPathType
+          }
           val subj = new NodeWritable(quad.subject)
           val obj = new NodeWritable((quad.value))
           if(propertyInfo.isForward)
             values.set(Array[Writable](subj, obj))
           else
             values.set(Array[Writable](obj, subj))
-          output.collect(new IntWritable(propertyInfo.phase),
-            new ValuePathWritable(new IntWritable(propertyInfo.pathId), pathType, values))
+
+          if(pathType==FinishedPathType)
+            phase.set(0)
+          else
+            phase.set(propertyInfo.phase)
+          val path = new ValuePathWritable(new IntWritable(propertyInfo.pathId), pathType, values)
+          collector = mos.getCollector("text", reporter).asInstanceOf[OutputCollector[IntWritable, ValuePathWritable]]
+          collector.collect(phase, path)
+          collector = mos.getCollector("seq", reporter).asInstanceOf[OutputCollector[IntWritable, ValuePathWritable]]
+          collector.collect(phase, path)
         }
     }
        //TODO: Implement MultiOutput
   }
 
-  private def getEntityDescriptionMetaData(conf: Configuration): EntityDescriptionMetadata = {
-    try {
-      val file = HadoopHelper.getDistributedFilePathForID(conf, "edmd")
-      return (new ObjectInputStream(new FileInputStream(file))).readObject().asInstanceOf[EntityDescriptionMetadata]
-    } catch {
-      case e: RuntimeException => throw new RuntimeException("No Entity Description Meta Data found/distributed. Reason: " + e.getMessage)
-    }
+  override def close() {
+    mos.close()
   }
 }

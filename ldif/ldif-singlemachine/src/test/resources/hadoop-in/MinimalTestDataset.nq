@@ -17,3 +17,6 @@ _:bn <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://WhatEver> <Minima
 <http://testNamespace/resource1> <http://www.w3.org/2002/07/owl#sameAs> <http://testNamespace/resource0> .
 <http://pathResource> <http://a> _:bn2 .
 _:bn2 <http://b> "value at the end of the path" .
+<http://anotherPathResource> <http://a> _:bn4 .
+_:bn4 <http://c> _:bn3 .
+_:bn3 <http://d> "value even further away" .
