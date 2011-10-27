@@ -41,6 +41,7 @@ class ValuePathJoinReducer extends MapReduceBase with Reducer[PathJoinValueWrita
       value.pathType match {
         case EntityPathType => entityPaths.append(value.values.get)
         case JoinPathType => joinPaths.append(value.values.get()(1))
+        case _ => throw new RuntimeException("Cannot join paths with type: " + value.pathType)
       }
     }
 

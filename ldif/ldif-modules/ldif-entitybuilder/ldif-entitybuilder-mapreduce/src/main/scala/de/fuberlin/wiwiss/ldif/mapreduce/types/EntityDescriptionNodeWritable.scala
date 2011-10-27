@@ -4,10 +4,17 @@ import java.io.{DataInput, DataOutput}
 import org.apache.hadoop.io.{IntWritable, WritableComparable}
 import ldif.entity.NodeWritable
 
-class EntityDescriptionNodeWritable (var entityDescriptionID : IntWritable, var node : NodeWritable) extends WritableComparable[EntityDescriptionNodeWritable]{
+class EntityDescriptionNodeWritable(var entityDescriptionID : IntWritable, var node : NodeWritable) extends WritableComparable[EntityDescriptionNodeWritable]{
 
-  def compareTo(other: EntityDescriptionNodeWritable) = {
-    entityDescriptionID.compareTo(other.entityDescriptionID) & node.compareTo(other.node)
+  def this() {
+    this(new IntWritable(), new NodeWritable())
+  }
+
+  override def compareTo(other: EntityDescriptionNodeWritable): Int = {
+    if(entityDescriptionID.compareTo(other.entityDescriptionID)!=0)
+      return entityDescriptionID.compareTo(other.entityDescriptionID)
+    else
+      return node.compareTo(other.node)
   }
 
   def readFields(input: DataInput) {
@@ -18,5 +25,10 @@ class EntityDescriptionNodeWritable (var entityDescriptionID : IntWritable, var 
   def write(output: DataOutput) {
     entityDescriptionID.write(output)
     node.write(output)
+  }
+
+  def set(entityDescriptionID: IntWritable,  node: NodeWritable) {
+    this.entityDescriptionID = entityDescriptionID
+    this.node = node
   }
 }
