@@ -22,7 +22,7 @@ class FileEntityWriterTest extends FlatSpec with ShouldMatchers {
     val tmpFile = File.createTempFile("ldif-test", "test")
     tmpFile.deleteOnExit
     val writer = new FileEntityWriter(null, tmpFile)
-    for(i <- 1 to 1000000) {
+    for(i <- 1 to 100000) {
       writer.write(new EntityLocal(Node.createUriNode("http://" + i, ""), null))
     }
     val endUsage = MemoryUsage.getMemoryUsage()

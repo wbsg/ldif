@@ -20,23 +20,20 @@ object JenaResultSetEntityBuilderHelper {
 
   // (1)
   def buildEntitiesFromResultSet(resultSets: Seq[ResultSet], entityDescription: EntityDescription, entityWriter: EntityWriter, graphVars: Seq[Seq[String]]): Boolean = {
-    for(resultSet <- resultSets)
-      while(resultSet.hasNext)
-        resultSet.next()
-//    val nrOfQueries = resultSets.size
-//    val resultManagers = for((resultSet, graphVar) <- resultSets zip graphVars) yield new ResultSetManager(resultSet, graphVar)
-//    var entityResults = for(rManager <- resultManagers) yield rManager.getNextEntityData
-//
-//    while(entityResults.filter(_ != None).size > 0) {
-//      val entity = ResultSetManager.pickSmallestEntity(entityResults)
-//      val graph = getGraph(entity, entityResults)
-//      val factumTable = initFactumTable(nrOfQueries)
-//      assignResultsForEntity(entity, entityResults, factumTable)
-//      entityResults = updateEntityResults(entity, entityResults, resultManagers)
-//
-//      entityWriter.write(EntityLocalComplete(LocalNode.createResourceNode(entity, graph), entityDescription, factumTable))
-//    }
-//
+    val nrOfQueries = resultSets.size
+    val resultManagers = for((resultSet, graphVar) <- resultSets zip graphVars) yield new ResultSetManager(resultSet, graphVar)
+    var entityResults = for(rManager <- resultManagers) yield rManager.getNextEntityData
+
+    while(entityResults.filter(_ != None).size > 0) {
+      val entity = ResultSetManager.pickSmallestEntity(entityResults)
+      val graph = getGraph(entity, entityResults)
+      val factumTable = initFactumTable(nrOfQueries)
+      assignResultsForEntity(entity, entityResults, factumTable)
+      entityResults = updateEntityResults(entity, entityResults, resultManagers)
+
+      entityWriter.write(EntityLocalComplete(LocalNode.createResourceNode(entity, graph), entityDescription, factumTable))
+    }
+
     entityWriter.finish
     true
   }

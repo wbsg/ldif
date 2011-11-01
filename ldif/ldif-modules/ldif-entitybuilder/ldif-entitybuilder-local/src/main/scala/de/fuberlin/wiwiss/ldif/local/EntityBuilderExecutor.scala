@@ -5,6 +5,7 @@ import de.fuberlin.wiwiss.ldif.EntityBuilderTask
 import ldif.local.runtime._
 import java.util.Properties
 import ldif.util.{MemoryUsage, FatalErrorListener}
+import scala.collection.JavaConversions._
 
 class EntityBuilderExecutor(configParameters: ConfigParameters = ConfigParameters(new Properties, null)) extends Executor {
 
@@ -32,12 +33,17 @@ class EntityBuilderExecutor(configParameters: ConfigParameters = ConfigParameter
   override def execute(task : EntityBuilderTask, reader : Seq[QuadReader], writer : Seq[EntityWriter])
   {
     val eb = EntityBuilderFactory.getEntityBuilder(configParameters, task.entityDescriptions, reader)
+    val inmemory = configParameters.configProperties.getProperty("entityBuilderType", "in-memory")=="in-memory"
 
 //    println("Memory used (before build entities): " + MemoryUsage.getMemoryUsage())   //TODO: remove
-    for ((ed, i) <- task.entityDescriptions.zipWithIndex )
-      runInBackground {
+    for ((ed, i) <- task.entityDescriptions.zipWithIndex ) {
+      if(inmemory)
+        runInBackground {
+          eb.buildEntities(ed, writer(i))
+        }
+      else
         eb.buildEntities(ed, writer(i))
-      }
+    }
   }
 
   /**

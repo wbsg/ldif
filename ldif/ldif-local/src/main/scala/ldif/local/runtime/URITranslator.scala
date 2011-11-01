@@ -8,13 +8,14 @@ package ldif.local.runtime
  * To change this template use File | Settings | File Templates.
  */
 
-import impl.{MultiQuadReader, FileQuadReader, QuadQueue}
+import impl._
 import scala.collection.mutable.{Map, HashMap, HashSet, Set}
 import ldif.entity._
 import java.util.logging.Logger
 import java.net.URLEncoder
 import ldif.runtime.Quad
 import java.util.Properties
+import java.io.File
 
 object URITranslator {
 
@@ -30,9 +31,11 @@ object URITranslator {
     (sNew, oNew)
   }
 
-  private def rewriteURIs(quadsReader: QuadReader, uriMap: Map[String, String]): QuadQueue = {
+  private def rewriteURIs(quadsReader: QuadReader, uriMap: Map[String, String]): QuadReader = {
     val entityGraphChecker = new EntityGraphChecker
-    val quadOutput = new QuadQueue
+    val file = File.createTempFile("ldif_rewritten_output", ".dat")
+    file.deleteOnExit
+    val quadOutput = new FileQuadWriter(file)
     var counter = 0
 
     log.info("Start URI translation...")
@@ -50,7 +53,8 @@ object URITranslator {
       }
     }
     log.info("End URI translation: Processed " + counter + " quads.")
-    quadOutput
+    quadOutput.finish
+    new FileQuadReader(quadOutput.outputFile)
   }
 
   def translateQuads(quadsReader: QuadReader, linkReader: QuadReader, configProperties: Properties): QuadReader = {
@@ -68,9 +72,7 @@ object URITranslator {
     else
       uriMap = generateUriMap(linkReader)
 
-    val quadOutput: QuadQueue = rewriteURIs(quadsReaderPassTwo, uriMap)
-
-    quadOutput
+    rewriteURIs(quadsReaderPassTwo, uriMap)
   }
 
 //  private def generateMintedUriMap(linkReader: QuadReader, quadsReader: QuadReader, configProperties: ConfigProperties): Map[String, String] = {

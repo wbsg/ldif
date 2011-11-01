@@ -3,6 +3,7 @@ package de.fuberlin.wiwiss.ldif.local
 import java.io.{IOException, File}
 import ldif.entity.EntityDescription
 import ldif.local.runtime.EntityWriter
+import org.apache.commons.io.FileUtils
 
 /**
  * Created by IntelliJ IDEA.
@@ -31,6 +32,7 @@ trait QuadStoreTrait {
 
   def createTemporaryDatabaseDirectory(rootDirectory: String): File = {
     val rootDir = new File(rootDirectory)
+    FileUtils.forceMkdir(rootDir)
     var tempDir: File = null
 
     tempDir = File.createTempFile("database_", System.nanoTime().toString, rootDir);

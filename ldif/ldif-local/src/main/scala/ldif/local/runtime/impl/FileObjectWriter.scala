@@ -15,7 +15,7 @@ class FileObjectWriter[T <: AnyRef](val outputFile: File, val endObject: T) {
   var counter = 0
   val objectOutput = new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream(outputFile)))
 
-  def finish = {write(endObject); objectOutput.flush(); objectOutput.reset(); objectOutput.close()}
+  def finish = { write(endObject); objectOutput.reset(); objectOutput.flush(); objectOutput.close()}
 
   def write(obj: T) = {
     objectOutput.writeObject(obj)

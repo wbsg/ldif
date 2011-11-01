@@ -23,7 +23,8 @@ class EntityDescriptionMetaDataExtractor {
     }
 
     val entityDescriptionMap = for((ed, index) <- entityDescriptions.zipWithIndex) yield (ed, index)
-    EntityDescriptionMetadata(entityDescriptions.toIndexedSeq, pathMap.clone.toMap, propertyMap.clone.toMap, entityDescriptionMap.toMap)
+    val idToEntityDescriptionMap = for((ed, index) <- entityDescriptions.zipWithIndex) yield (index, ed)
+    EntityDescriptionMetadata(entityDescriptions.toIndexedSeq, pathMap.clone.toMap, propertyMap.clone.toMap, entityDescriptionMap.toMap, idToEntityDescriptionMap.toMap)
   }
 
   private def extractEntityDescriptionMetaData(entityDescription: EntityDescription, entityDescriptionIndex : Int) {

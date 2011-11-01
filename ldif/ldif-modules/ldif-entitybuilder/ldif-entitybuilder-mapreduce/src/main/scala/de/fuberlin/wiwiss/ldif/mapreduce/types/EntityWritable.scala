@@ -1,9 +1,9 @@
 package de.fuberlin.wiwiss.ldif.mapreduce.types
 
 import java.io.{DataInput, DataOutput}
-import org.apache.hadoop.io.{ArrayWritable, IntWritable, WritableComparable}
 import ldif.entity.{NodeWritable, Node, EntityDescription}
 import de.fuberlin.wiwiss.ldif.mapreduce.EntityDescriptionMetadata
+import org.apache.hadoop.io.{IntWritable, ArrayWritable, WritableComparable}
 
 /**
  * Created by IntelliJ IDEA.
@@ -13,7 +13,11 @@ import de.fuberlin.wiwiss.ldif.mapreduce.EntityDescriptionMetadata
  * To change this template use File | Settings | File Templates.
  */
 
-class EntityWritable(var resource : NodeWritable, var entityDescription : EntityDescription, var resultTable: ArrayWritable, var entityDescriptionID: IntWritable, edmd: EntityDescriptionMetadata) extends WritableComparable[EntityWritable] {
+class EntityWritable(var resource : NodeWritable, var resultTable: ArrayWritable, var entityDescriptionID: IntWritable) extends WritableComparable[EntityWritable] {
+  def this() {
+    this(new NodeWritable(), new ArrayArrayWritable(), new IntWritable())
+  }
+
   def compareTo(other: EntityWritable) = {
     if(resource.compareTo(other.resource)==0)
       entityDescriptionID.compareTo(other.entityDescriptionID)
@@ -23,14 +27,12 @@ class EntityWritable(var resource : NodeWritable, var entityDescription : Entity
 
   def readFields(in: DataInput) {
     resource.readFields(in)
-    entityDescription = edmd.entityDescriptions(in.readInt())
     resultTable.readFields(in)
     entityDescriptionID.readFields(in)
   }
 
   def write(out: DataOutput) {
     resource.write(out)
-    out.writeInt(edmd.entityDescriptionMap(entityDescription))
     resultTable.write(out)
     entityDescriptionID.write(out)
   }

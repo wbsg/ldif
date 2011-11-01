@@ -1,8 +1,8 @@
 package de.fuberlin.wiwiss.ldif.mapreduce.io
 
 import org.apache.hadoop.mapred.lib.MultipleTextOutputFormat
-import org.apache.hadoop.io.IntWritable
-import de.fuberlin.wiwiss.ldif.mapreduce.types.ValuePathWritable
+import org.apache.hadoop.io.{NullWritable, IntWritable}
+import de.fuberlin.wiwiss.ldif.mapreduce.types.{EntityWritable, ValuePathWritable}
 
 /**
  * Created by IntelliJ IDEA.
@@ -12,9 +12,9 @@ import de.fuberlin.wiwiss.ldif.mapreduce.types.ValuePathWritable
  * To change this template use File | Settings | File Templates.
  */
 
-class EntityMultipleTextFileOutput extends MultipleTextOutputFormat[IntWritable, ValuePathWritable] {
+class EntityMultipleTextFileOutput extends MultipleTextOutputFormat[IntWritable, EntityWritable] {
   val fileSeparator = System.getProperty("file.separator")
-  override def generateFileNameForKeyValue(key: IntWritable, value: ValuePathWritable, filename: String): String = {
+  override def generateFileNameForKeyValue(key: IntWritable, value: EntityWritable, filename: String): String = {
     EntityMultipleTextFileOutput.generateDirectoryName(key.get) + fileSeparator + filename
   }
 }
