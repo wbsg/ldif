@@ -556,10 +556,10 @@ no way to prevent name clashes at the moment.
 
 
 <ul>
-<li><i>internalId</i> - A unique ID, which will be used internally to track the import job and its files like data and provenance.<br>
- </li><li><i>dataSource </i>- A reference to a <a href="#datasource">data source</a> to state from which source this job imports data.<br>
-</li><li><span style="font-style: italic;">One kind of importJob</span> - There has to be exactly one import job element, which can be either <span style="font-family: monospace;">quadImportJob</span>, <a href="http://www.assembla.com/wiki/show/silk/Link_Specification_Language"><br>
-</a></li><li><i>rrefreshSchedule</i> - how often the integration is expected to be run. Valid values are: <span style="font-family: monospace;">onStartup</span>,<span style="font-family: monospace;"> always</span>,<span style="font-family: monospace;"> hourly</span>,<span style="font-family: monospace;"> daily</span>,<span style="font-family: monospace;"> weekly</span>,<span style="font-family: monospace;"> monthly</span>,<span style="font-family: monospace;"> yearly </span>and <span style="font-family: monospace;">never</span>.</li>
+<li><i>internalId</i> - A unique ID, which will be used internally to track the import job and its files like data and provenance;<br>
+ </li><li><i>dataSource </i>- A reference to a <a href="#datasource">data source</a> to state from which source this job imports data;<br>
+</li><li><span style="font-style: italic;">one kind of importJob</span> - There has to be exactly one import job element, which can be either <span style="font-family: monospace;">quadImportJob</span>, <span style="font-family: monospace;">tripleImportJob</span>, <span style="font-family: monospace;">crawlImportJob</span> or <span style="font-family: monospace;">sparqlImportJob</span>;</li>
+<li><i>refreshSchedule</i> - how often the integration is expected to be run. Valid values are: <span style="font-family: monospace;">onStartup</span>,<span style="font-family: monospace;"> always</span>,<span style="font-family: monospace;"> hourly</span>,<span style="font-family: monospace;"> daily</span>,<span style="font-family: monospace;"> weekly</span>,<span style="font-family: monospace;"> monthly</span>,<span style="font-family: monospace;"> yearly </span>and <span style="font-family: monospace;">never</span>.</li>
 </ul>
 
 
@@ -567,14 +567,12 @@ no way to prevent name clashes at the moment.
 <p>LDIF supports four different mechanisms to import external data:
     </p>
 <ul>
-<li><i>Quad Import Job</i> – import N-Quad dumps</li><li><i>Triple Import Job</i> – import RDF/N-Triple dumps</li><li><i>Crawl Import Job</i> – import by dereferencing URIs as RDF data, using the LDspider Web Crawling Framework</li><li><i>SPARQL Import Job</i> – import by quering a SPARQL endpoint</li>
+    <li><i>Quad Import Job</i> – import N-Quad dumps</li>
+    <li><i>Triple Import Job</i> – import RDF/N-Triple dumps</li>
+    <li><i>Crawl Import Job</i> – import by dereferencing URIs as RDF data, using the LDspider Web Crawling Framework</li>
+    <li><i>SPARQL Import Job</i> – import by quering a SPARQL endpoint</li>
 </ul>
-<h4>Quad Import<br>
-</h4>
-
-
-
-
+<h4>Quad Import</h4>
 <p>A typical config file for a Quad Import Job looks like this: </p>
 
 <pre>&lt;importJob xmlns="http://www4.wiwiss.fu-berlin.de/bizer/ldif"&gt;<br>    &lt;internalId&gt;dBpedia.0&lt;/internalId&gt;<br>    &lt;dataSource&gt;dBpedia&lt;/dataSource&gt;<br>    &lt;refreshSchedule&gt;daily&lt;/refreshSchedule&gt;<br>    <span style="font-weight: bold;">&lt;quadImportJob&gt;</span><br>      &lt;dumpLocation&gt;http://dbpedia.org/dump.nq&lt;/dumpLocation&gt;<br>    <span style="font-weight: bold;">&lt;/quadImportJob&gt;</span><br>&lt;/importJob&gt;<br></pre>
@@ -634,6 +632,9 @@ specified. Of each crawled resource all received triples are stored.<br>
 <li>import date and time,</li><li>chosen import type,</li><li>original location (only for Quad and Triple Import Jobs).</li>
 </ul>
 
+
+<p>A typical provenance graph for a Crawl Import Job looks like this:</p>
+<img src="img/Freebase-Provenance.png" alt="Provenance graph"/>
 
 <p>A typical provenance graph for a Quad Import Job looks like this:</p>
 
@@ -722,6 +723,13 @@ In order to run the example, please download LDIF and run the following commands
 </ul>Please note that the execution of the import jobs can take about
 5-20 minutes, mainly due to crawling, which is relatively slow compared
 to other access methods.<br>
+
+<p>
+The following graph shows a portion of the LDIF output:
+</p>
+<img src="img/Bob-Marley-graphs.png" alt="LDIF output for music use case" />
+
+
 <h3 id="example2">5.2 Using LDIF to integrate Life Science Data</h3>
 <p>This example shows how LDIF is applied to integrate data originating
 from five Life Science sources. </p>
