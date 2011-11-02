@@ -1,4 +1,4 @@
-package de.fuberlin.wiwiss.ldif.mapreduce.types
+package ldif.mapreduce.types
 
 import ldif.entity.NodeWritable
 import java.io.{DataInput, DataOutput}

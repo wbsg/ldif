@@ -3,9 +3,15 @@ package de.fuberlin.wiwiss.ldif.mapreduce
 /**
  * Created by IntelliJ IDEA.
  * User: andreas
- * Date: 26.07.11
- * Time: 17:42
+ * Date: 11/2/11
+ * Time: 10:31 AM
  * To change this template use File | Settings | File Templates.
  */
 
-case class PropertyMetaData(property: String, pathIDs: Seq[Int])
+class ResultBuilder {
+
+}
+
+object ResultBuilder {
+
+}

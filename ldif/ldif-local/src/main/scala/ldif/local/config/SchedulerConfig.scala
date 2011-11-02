@@ -5,7 +5,6 @@ import java.io.File
 import ldif.util.ValidatingXMLReader
 import xml.{Node, XML}
 import java.util.Properties
-import org.apache.commons.io.FileUtils
 
 case class SchedulerConfig (importJobsDir : File, integrationJob : File, dataSourcesDir : File, dumpLocationDir : File, properties : Properties)  {}
 
@@ -30,7 +29,6 @@ object SchedulerConfig
       properties = ConfigProperties.loadProperties(propertiesFile)
 
     val dumpLocationDir = getFile(xml, "dumpLocation", baseDir, true)
-    println("DumpLocation: " + dumpLocationDir.getAbsolutePath)
 
     val importJobsDir = getFile(xml, "importJobs", baseDir)
     val integrationJobDir = getFile(xml, "integrationJob", baseDir)

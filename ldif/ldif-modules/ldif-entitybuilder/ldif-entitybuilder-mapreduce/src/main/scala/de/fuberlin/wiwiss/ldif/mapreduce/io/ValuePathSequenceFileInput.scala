@@ -1,8 +1,8 @@
 package de.fuberlin.wiwiss.ldif.mapreduce.io
 
 import org.apache.hadoop.mapred.SequenceFileInputFormat
-import de.fuberlin.wiwiss.ldif.mapreduce.types.ValuePathWritable
 import org.apache.hadoop.io.IntWritable
+import ldif.mapreduce.types.ValuePathWritable
 
 /**
  * Created by IntelliJ IDEA.

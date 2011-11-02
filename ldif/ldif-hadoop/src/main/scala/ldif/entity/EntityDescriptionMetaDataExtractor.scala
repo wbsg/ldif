@@ -1,10 +1,8 @@
-package de.fuberlin.wiwiss.ldif.mapreduce
+package ldif.entity
 
 import java.util.concurrent.atomic.AtomicInteger
-import ldif.entity.{Path, Restriction, EntityDescription}
 import ldif.entity.Restriction._
 import scala.collection.mutable.{ArrayBuffer, HashMap, Seq => MSeq}
-import ldif.entity.{BackwardOperator, ForwardOperator}
 
 
 class EntityDescriptionMetaDataExtractor {
@@ -12,6 +10,7 @@ class EntityDescriptionMetaDataExtractor {
   // propertyMap stores information of (pathID, phaseNr)
   var propertyMap = new HashMap[String, ArrayBuffer[PropertyInfo]]()
   var pathMap = new HashMap[Int, PathInfo]()
+  var pathIdMap = new HashMap[Path, Int]()
 
   def extract(entityDescriptions: Seq[EntityDescription]): EntityDescriptionMetadata = {
     pathCounter = new AtomicInteger(0)
@@ -58,22 +57,23 @@ class EntityDescriptionMetaDataExtractor {
 
   private def extractPathInfo(path: Path, entityDescriptionIndex: Int, patternIndex: Int, pathIndex: Int, isRestrictionPath: Boolean) {
     val pathID = pathCounter.getAndIncrement
-    val pathLength = extractPropertyInfo(path,pathID)
-    pathMap.put(pathID, PathInfo(entityDescriptionIndex, patternIndex, pathIndex, path, isRestrictionPath, pathLength))
-
+    val properties = extractPropertyInfo(path,pathID)
+    pathMap.put(pathID, PathInfo(entityDescriptionIndex, patternIndex, pathIndex, path, isRestrictionPath, properties.length, properties))
+    pathIdMap.put(path, pathID)
   }
 
-  private def extractPropertyInfo(path: Path, pathId: Int): Int = {
-    var length = 0
+  private def extractPropertyInfo(path: Path, pathId: Int): Seq[String] = {
+    val properties = new ArrayBuffer[String]()
     for((op,i) <- path.operators zipWithIndex) {
-      length += 1
-            op match {
-               case op:ForwardOperator => addPropertyInfo(op.property.toString, pathId, i, true)
-               case op:BackwardOperator => addPropertyInfo(op.property.toString, pathId, i, false)
-               case _ =>    // TODO support filters
-            }
+      op match {
+          case op:ForwardOperator => addPropertyInfo(op.property.toString, pathId, i, true)
+            properties.append(op.property.toString)
+          case op:BackwardOperator => addPropertyInfo(op.property.toString, pathId, i, false)
+            properties.append(op.property.toString)
+          case _ =>    // TODO support filters
+        }
       }
-    length
+    properties
   }
 
   private def addPropertyInfo(property: String, pathId: Int, phase: Int, isForward : Boolean) {

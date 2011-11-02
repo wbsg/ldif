@@ -1,6 +1,5 @@
-package de.fuberlin.wiwiss.ldif.mapreduce
+package ldif.entity
 
-import ldif.entity.{Path, EntityDescription}
 
 /**
  * Created by IntelliJ IDEA.

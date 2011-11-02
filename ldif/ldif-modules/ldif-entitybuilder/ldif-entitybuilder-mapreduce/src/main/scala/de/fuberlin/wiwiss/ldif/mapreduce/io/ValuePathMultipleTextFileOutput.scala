@@ -2,7 +2,7 @@ package de.fuberlin.wiwiss.ldif.mapreduce.io
 
 import org.apache.hadoop.mapred.lib.MultipleTextOutputFormat
 import org.apache.hadoop.io.IntWritable
-import de.fuberlin.wiwiss.ldif.mapreduce.types.{FinishedPathType, ValuePathWritable}
+import ldif.mapreduce.types.{FinishedPathType, ValuePathWritable}
 
 /**
  * Created by IntelliJ IDEA.

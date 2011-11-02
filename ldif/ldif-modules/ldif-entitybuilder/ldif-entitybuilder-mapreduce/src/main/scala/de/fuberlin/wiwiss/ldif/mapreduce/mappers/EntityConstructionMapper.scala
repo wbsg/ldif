@@ -1,12 +1,10 @@
 package de.fuberlin.wiwiss.ldif.mapreduce.mappers
 
-import de.fuberlin.wiwiss.ldif.mapreduce.EntityDescriptionMetadata
-import org.apache.hadoop.mapred.lib.MultipleOutputs
-import de.fuberlin.wiwiss.ldif.mapreduce.utils.HadoopHelper
 import org.apache.hadoop.mapred._
-import ldif.entity.NodeWritable
-import de.fuberlin.wiwiss.ldif.mapreduce.types.{EntityDescriptionNodeWritable, PathJoinValueWritable, ValuePathWritable}
 import org.apache.hadoop.io.IntWritable
+import ldif.mapreduce.types._
+import ldif.entity.{EntityDescriptionMetadata, NodeWritable}
+import ldif.mapreduce.utils.HadoopHelper
 
 /**
  * Created by IntelliJ IDEA.

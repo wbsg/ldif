@@ -1,4 +1,4 @@
-package de.fuberlin.wiwiss.ldif.mapreduce.types
+package ldif.mapreduce.types
 
 import org.apache.hadoop.io.ArrayWritable
 import ldif.entity.NodeWritable

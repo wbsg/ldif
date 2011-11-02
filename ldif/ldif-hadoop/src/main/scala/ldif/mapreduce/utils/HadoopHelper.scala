@@ -1,10 +1,10 @@
-package de.fuberlin.wiwiss.ldif.mapreduce.utils
+package ldif.mapreduce.utils
 
 import org.apache.hadoop.filecache.DistributedCache
 import java.io._
 import java.net.URI
 import org.apache.hadoop.conf.Configuration
-import de.fuberlin.wiwiss.ldif.mapreduce.EntityDescriptionMetadata
+import ldif.entity.EntityDescriptionMetadata
 
 /**
  * Created by IntelliJ IDEA.

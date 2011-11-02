@@ -1,15 +1,12 @@
 package de.fuberlin.wiwiss.ldif.mapreduce.mappers
 
-import de.fuberlin.wiwiss.ldif.mapreduce._
 import org.apache.hadoop.mapred._
 import ldif.datasources.dump.QuadParser
-import ldif.entity.NodeWritable
 import lib.MultipleOutputs
-import de.fuberlin.wiwiss.ldif.mapreduce.types._
-import utils.HadoopHelper
-import org.apache.hadoop.conf.Configuration
-import java.io.{ObjectInputStream, FileInputStream}
 import org.apache.hadoop.io._
+import ldif.mapreduce.types._
+import ldif.entity.{EntityDescriptionMetadata, NodeWritable}
+import ldif.mapreduce.utils.HadoopHelper
 
 class ProcessQuadsMapper extends MapReduceBase with Mapper[LongWritable, Text, IntWritable, ValuePathWritable] {
   private val parser = new QuadParser
@@ -58,7 +55,6 @@ class ProcessQuadsMapper extends MapReduceBase with Mapper[LongWritable, Text, I
           collector.collect(phase, path)
         }
     }
-       //TODO: Implement MultiOutput
   }
 
   override def close() {

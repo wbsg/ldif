@@ -1,13 +1,12 @@
 package de.fuberlin.wiwiss.ldif.mapreduce.reducers
 
-import de.fuberlin.wiwiss.ldif.mapreduce.EntityDescriptionMetadata
-import org.apache.hadoop.mapred.lib.MultipleOutputs
-import de.fuberlin.wiwiss.ldif.mapreduce.utils.HadoopHelper
 import org.apache.hadoop.mapred._
 import org.apache.hadoop.io.{Writable, IntWritable}
-import de.fuberlin.wiwiss.ldif.mapreduce.types._
 import java.util.Iterator
 import collection.mutable.{HashMap, HashSet, ArrayBuffer}
+import ldif.mapreduce.types._
+import ldif.entity.{EntityDescriptionMetadata, EntityWritable}
+import ldif.mapreduce.utils.HadoopHelper
 
 /**
  * Created by IntelliJ IDEA.

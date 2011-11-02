@@ -1,8 +1,7 @@
-package de.fuberlin.wiwiss.ldif.mapreduce.types
+package ldif.entity
 
+import ldif.mapreduce.types.ArrayArrayWritable
 import java.io.{DataInput, DataOutput}
-import ldif.entity.{NodeWritable, Node, EntityDescription}
-import de.fuberlin.wiwiss.ldif.mapreduce.EntityDescriptionMetadata
 import org.apache.hadoop.io.{IntWritable, ArrayWritable, WritableComparable}
 
 /**
