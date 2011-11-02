@@ -1,7 +1,7 @@
 package de.fuberlin.wiwiss.ldif.mapreduce
 
 import ldif.mapreduce.types.ValuePathWritable
-import collection.mutable.HashMap
+import collection.mutable.{HashMap, Map}
 import ldif.entity._
 import collection.mutable.{HashSet, ArrayBuffer}
 
@@ -42,39 +42,80 @@ class ResultBuilder(edmd: EntityDescriptionMetadata) {
   }
 
   private def joinValuePaths(pathIndexes: Seq[Int], pathInfos: IndexedSeq[PathInfo], valuePaths: Seq[ValuePathWritable]): Traversable[IndexedSeq[NodeWritable]] = {
-    val result = joinValuePaths(0, pathIndexes, pathInfos, valuePaths)
-    if(result.length==0)
-      Traversable[IndexedSeq[NodeWritable]]()
-    else
-      result(0)._2
+    joinValuePaths(0, pathIndexes, pathInfos, valuePaths)
   }
 
-  private def joinValuePaths(level: Int,  pathIndexes: Seq[Int], pathInfos: IndexedSeq[PathInfo], valuePaths: Seq[ValuePathWritable]): IndexedSeq[Pair[NodeWritable, Traversable[IndexedSeq[NodeWritable]]]] = {
-
-    null
+  private def computePartialResultsForIndexPartitions(indexPartitions: Seq[Seq[Int]], nodePartition: Seq[ValuePathWritable], level: Int, pathInfos: IndexedSeq[PathInfo]): Seq[Seq[Seq[NodeWritable]]] = {
+    val opPartitions = partitionValuePathsByIndexPartitions(indexPartitions, nodePartition)
+    val partialResults = new ArrayBuffer[Seq[Seq[NodeWritable]]]()
+    for ((indexPartition, index) <- indexPartitions.zipWithIndex) {
+      // if there are no more joins for this partition (that is there is only one path in it) just return the values
+      if (indexPartition.length == 1)
+        partialResults.append(getPathValues(opPartitions(index)))
+      // Else repeat the joining on the next level
+      else
+        partialResults.append(joinValuePaths(level + 1, indexPartition, pathInfos, opPartitions(index)))
+    }
+    partialResults
+  }
+  //TODO: remove index of path that ends on this level
+  private def joinValuePaths(level: Int,  pathIndexes: Seq[Int], pathInfos: IndexedSeq[PathInfo], valuePaths: Seq[ValuePathWritable]): Seq[IndexedSeq[NodeWritable]] = {
+    val results = new ArrayBuffer[IndexedSeq[NodeWritable]]()
+    val addJoinNodeToResults = pathPointsToJoinNode(level, pathIndexes, pathInfos)
+    val indexPartitions = partitionPathIndexesByPathOperator(level, pathIndexes, pathInfos)
+    val nodePartitions = partitionValuePathsByNode(level, valuePaths)
+    for((node, nodePartition) <- nodePartitions) {
+      val partialResults = computePartialResultsForIndexPartitions(indexPartitions, nodePartition, level, pathInfos)
+      results ++= calculatePartialResultTable(partialResults, node, addJoinNodeToResults)
+    }
+    results
   }
 
-
-  private def partitionValuePathsByPath(pattern: IndexedSeq[Path], valuePaths: ArrayBuffer[ValuePathWritable], edmd: EntityDescriptionMetadata): IndexedSeq[ArrayBuffer[ValuePathWritable]] = {
-    val valuePathsPerPath = for (i <- 1 to pattern.length) yield new ArrayBuffer[ValuePathWritable]()
-    for (valuePath <- valuePaths)
-      valuePathsPerPath(edmd.pathMap(valuePath.pathID.get).pathIndex).append(valuePath)
-    valuePathsPerPath
+  private def pathPointsToJoinNode(level: Int, pathIndexes: Seq[Int], pathInfos: IndexedSeq[PathInfo]): Boolean = {
+    var itDoes = false
+    for(index <- pathIndexes if pathInfos(index).length==level)
+      itDoes = true
+    itDoes
   }
 
-  // Partition the paths by which property they follow (forward, backward)
-  private def partitionPathIndexesByPathOperator(level: Int, pathIndexes: Seq[Int], pathInfos: IndexedSeq[PathInfo]): Seq[Seq[Int]] = {
-    val pathOps = new HashSet[Pair[String, Boolean]]()
-    for(index <- pathIndexes)
-      pathOps.add(pathInfos(index).properties(level))
-    val partitions = new HashMap[(String, Boolean), Seq[Int]]()
-    for(pathOp <- pathOps)
-      partitions.put(pathOp, new ArrayBuffer[Int]())
-//    for(index <- )
+  private def calculatePartialResultTable(partialResults: Seq[Seq[Seq[NodeWritable]]], node: NodeWritable, addJoinNodeToResults: Boolean): Seq[IndexedSeq[NodeWritable]] = {
+//    partialResults match {
+//      case head::tail =>
+//    }
     null //TODO
   }
 
-  private def partitionValuePathsByNode(level: Int, pathIndexes: Seq[Int], propertyPathPerPath: IndexedSeq[PathInfo]): Seq[Seq[Int]] = {
-    null//TODO
+  private def getPathValues(valuePaths: Seq[ValuePathWritable]): Seq[Seq[NodeWritable]] = {
+    Seq(for(valuePath <- valuePaths; values = valuePath.values.get())
+      yield values(values.length-1).asInstanceOf[NodeWritable])
+  }
+
+  private def partitionValuePathsByIndexPartitions(indexPartitions: Seq[Seq[Int]], valuePaths: Seq[ValuePathWritable]): Seq[Seq[ValuePathWritable]] = {
+    val result = new Array[Seq[ValuePathWritable]](indexPartitions.length)
+    val indexToValuePathsMap = new HashMap[Int, ArrayBuffer[ValuePathWritable]]()
+    for((indexPartition, index) <- indexPartitions.zipWithIndex) {
+      val valuePaths = new ArrayBuffer[ValuePathWritable]()
+      result(index) = valuePaths
+      for(idx <- indexPartition)
+        indexToValuePathsMap(idx) = valuePaths
+    }
+    for(valuePath <- valuePaths)
+      indexToValuePathsMap(edmd.pathMap(valuePath.pathID.get).pathIndex).append(valuePath)
+    result
+  }
+
+  // Partition the paths by which property they follow (and forward, backward type)
+  private def partitionPathIndexesByPathOperator(level: Int, pathIndexes: Seq[Int], pathInfos: IndexedSeq[PathInfo]): Seq[Seq[Int]] = {
+    val partitions = new HashMap[(String, Boolean), ArrayBuffer[Int]]()
+    for(index <- pathIndexes)
+      partitions.getOrElseUpdate(pathInfos(index).properties(level), new ArrayBuffer[Int]()).append(index)
+    partitions.values.toSeq
+  }
+
+  private def partitionValuePathsByNode(level: Int, valuePaths: Seq[ValuePathWritable]): Map[NodeWritable, ArrayBuffer[ValuePathWritable]] = {
+    val partitions = new HashMap[NodeWritable, ArrayBuffer[ValuePathWritable]]
+    for(valuePath <- valuePaths)
+      partitions.getOrElseUpdate(valuePath.values.get()(level).asInstanceOf[NodeWritable], new ArrayBuffer[ValuePathWritable]()).append(valuePath)
+    partitions
   }
 }

@@ -1,4 +1,7 @@
 # ignore all target folders
+*.orig
+integrated*
+hadoop*
 */target
 */**/target
 */*/*/target
