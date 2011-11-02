@@ -29,3 +29,14 @@ mappings:somePropMapping
   r2r:targetPattern "?SUBJ <http://someMappedProp> ?o" .
 
 <http://testNamespace/someOldClass> rdfs:subClassOf <http://testNamespace/someFunkyNewClass> .
+
+mappings:complexStructureMapping
+  a r2r:Mapping ;
+  r2r:sourcePattern "?SUBJ <http://nameResource> ?nameResource . ?nameResource <http://last> ?n . ?nameResource <http://first> ?v . " ;
+  r2r:targetPattern "?SUBJ <http://cSM_Name> ?name" ;
+  r2r:transformation "?name = concat(?v, ' ', ?n)" .
+
+mappings:nextLevelRestrictionMapping
+  a r2r:Mapping ;
+  r2r:sourcePattern "?SUBJ <http://toRestrictedInstance> ?ri . ?ri a <http://RestrictionClass> . ?ri <http://check> ?check" ;
+  r2r:targetPattern "?SUBJ <http://check> ?check" .

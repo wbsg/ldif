@@ -16,14 +16,14 @@ class EntityDescriptionMetaDataExtractor {
     pathCounter = new AtomicInteger(0)
     propertyMap = new HashMap[String, ArrayBuffer[PropertyInfo]]()
     pathMap = new HashMap[Int, PathInfo]()
+    pathIdMap = new HashMap[Path, Int]()
 
     for((entityDescription, index) <- entityDescriptions zipWithIndex) {
       extractEntityDescriptionMetaData(entityDescription, index)
     }
 
     val entityDescriptionMap = for((ed, index) <- entityDescriptions.zipWithIndex) yield (ed, index)
-    val idToEntityDescriptionMap = for((ed, index) <- entityDescriptions.zipWithIndex) yield (index, ed)
-    EntityDescriptionMetadata(entityDescriptions.toIndexedSeq, pathMap.clone.toMap, propertyMap.clone.toMap, entityDescriptionMap.toMap, idToEntityDescriptionMap.toMap)
+    EntityDescriptionMetadata(entityDescriptions.toIndexedSeq, pathMap.clone.toMap, propertyMap.clone.toMap, entityDescriptionMap.toMap, pathIdMap.toMap)
   }
 
   private def extractEntityDescriptionMetaData(entityDescription: EntityDescription, entityDescriptionIndex : Int) {
@@ -62,14 +62,15 @@ class EntityDescriptionMetaDataExtractor {
     pathIdMap.put(path, pathID)
   }
 
-  private def extractPropertyInfo(path: Path, pathId: Int): Seq[String] = {
-    val properties = new ArrayBuffer[String]()
+  // return a sequence of the properties in the path and for each property a flag if it is a forward path
+  private def extractPropertyInfo(path: Path, pathId: Int): Seq[Pair[String, Boolean]] = {
+    val properties = new ArrayBuffer[Pair[String, Boolean]]()
     for((op,i) <- path.operators zipWithIndex) {
       op match {
           case op:ForwardOperator => addPropertyInfo(op.property.toString, pathId, i, true)
-            properties.append(op.property.toString)
+            properties.append((op.property.toString, true))
           case op:BackwardOperator => addPropertyInfo(op.property.toString, pathId, i, false)
-            properties.append(op.property.toString)
+            properties.append((op.property.toString, false))
           case _ =>    // TODO support filters
         }
       }

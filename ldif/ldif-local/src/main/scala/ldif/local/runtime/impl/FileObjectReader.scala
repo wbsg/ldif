@@ -12,7 +12,7 @@ import ldif.runtime.Quad
  */
 
 class FileObjectReader[T >: Null](val inputFile: File, val endObject: T) {
-  val objectInput = new ObjectInputStream(new BufferedInputStream(new FileInputStream(inputFile)))
+  val objectInput: ObjectInputStream = null
   var closed = false
   var bufferedObject: T = null
   var buffered = false
@@ -24,14 +24,17 @@ class FileObjectReader[T >: Null](val inputFile: File, val endObject: T) {
     if(buffered)
       return true
 
+    // Keep number of open files small
+    if(objectInput==null) openStream()
     val o = objectInput.readObject()
+
     if(!o.isInstanceOf[T])
       throw new RuntimeException("FileObjectReader read invalid object from stream. Object of class " + o.asInstanceOf[AnyRef].getClass + ": " + o)
 
     val obj = o.asInstanceOf[T]
     if(obj==endObject) {
       closed = true
-      objectInput.close()
+      close()
       false
     } else {
       bufferedObject = obj
@@ -56,5 +59,9 @@ class FileObjectReader[T >: Null](val inputFile: File, val endObject: T) {
 
   def size = throw new RuntimeException("Method 'size' not implemented in FileObjectReader")
 
-  def close() = objectInput.close()
+  def close() = if(objectInput!=null) objectInput.close()
+
+  private def openStream() {
+    new ObjectInputStream(new BufferedInputStream(new FileInputStream(inputFile)))
+  }
 }

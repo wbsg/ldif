@@ -12,7 +12,7 @@ package ldif.entity
 /**
  * @param propertyMap A Map from a property URI to a sequence of pairs of (path ID, phase number)
  */
-case class EntityDescriptionMetadata(entityDescriptions: IndexedSeq[EntityDescription], pathMap: Map[Int, PathInfo], propertyMap: Map[String, Seq[PropertyInfo]], entityDescriptionToIDMap: Map[EntityDescription, Int], idToEntityDescriptionMap: Map[Int,  EntityDescription]) {
+case class EntityDescriptionMetadata(entityDescriptions: IndexedSeq[EntityDescription], pathMap: Map[Int, PathInfo], propertyMap: Map[String, Seq[PropertyInfo]], entityDescriptionToIDMap: Map[EntityDescription, Int], pathIdMap: Map[Path, Int]) {
   def maxPhase(): Int = {
     var max = 0
     for(property <- propertyMap.values; propertyInfo <- property) {
@@ -24,5 +24,11 @@ case class EntityDescriptionMetadata(entityDescriptions: IndexedSeq[EntityDescri
 
   def pathLength(id: Int): Int = {
     pathMap(id).length
+  }
+
+  def getPathInfosForPattern(entityDescriptionId: Int, patternIndex: Int): IndexedSeq[PathInfo] = {
+    val pattern = entityDescriptions(entityDescriptionId).patterns(patternIndex)
+    for(path <- pattern)
+      yield pathMap.get(pathIdMap.get(path).get).get
   }
 }

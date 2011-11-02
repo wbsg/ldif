@@ -15,3 +15,16 @@ _:bn <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://WhatEver> <Minima
 <http://testNamespace/resource1> <http://www.w3.org/2002/07/owl#sameAs> <http://oooo> .
 #<http://oooo> <http://www.w3.org/2002/07/owl#sameAs> <http://testNamespace/resource1> .
 <http://testNamespace/resource1> <http://www.w3.org/2002/07/owl#sameAs> <http://testNamespace/resource0> .
+<http://multiName> <http://nameResource> <http://nameResource1> .
+<http://nameResource1> <http://first> "1. first name" .
+<http://nameResource1> <http://first> "2. first name" .
+<http://nameResource1> <http://last> "1. last name" .
+<http://nameResource1> <http://last> "2. last name" .
+<http://multiName> <http://nameResource> <http://nameResource2> .
+<http://nameResource2> <http://first> "one first name" .
+<http://nameResource2> <http://last> "one last name" .
+<http://nextLevelRestriction> <http://toRestrictedInstance> <http://restrictedInstance1> .
+<http://nextLevelRestriction> <http://toRestrictedInstance> <http://restrictedInstance2> .
+<http://restrictedInstance1> <http://check> "should be mapped" .
+<http://restrictedInstance1> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://RestrictionClass> .
+<http://restrictedInstance2> <http://check> "should NOT be mapped" .

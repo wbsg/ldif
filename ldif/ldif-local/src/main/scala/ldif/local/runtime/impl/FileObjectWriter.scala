@@ -13,14 +13,21 @@ import java.io.{File, FileOutputStream, BufferedOutputStream, ObjectOutputStream
 
 class FileObjectWriter[T <: AnyRef](val outputFile: File, val endObject: T) {
   var counter = 0
-  val objectOutput = new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream(outputFile)))
+  var objectOutput: ObjectOutputStream = null
 
   def finish = { write(endObject); objectOutput.reset(); objectOutput.flush(); objectOutput.close()}
 
   def write(obj: T) = {
+    // to reduce number of open files
+    if(objectOutput==null) openStream()
+
     objectOutput.writeObject(obj)
     counter += 1
     if(counter % 1000 == 0)
       objectOutput.reset()
+  }
+
+  private def openStream() {
+    objectOutput = new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream(outputFile)))
   }
 }

@@ -11,5 +11,5 @@ package ldif.entity
 /**
  * isRestrictionPath
  */
-case class PathInfo(entityDescriptionIndex: Int, patternIndex: Int, pathIndex: Int, path: Path, isRestrictionPath: Boolean, length: Int, properties: Seq[String])
+case class PathInfo(entityDescriptionIndex: Int, patternIndex: Int, pathIndex: Int, path: Path, isRestrictionPath: Boolean, length: Int, properties: Seq[Pair[String, Boolean]])
 
