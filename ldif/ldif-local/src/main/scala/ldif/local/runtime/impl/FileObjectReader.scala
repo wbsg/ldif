@@ -12,7 +12,7 @@ import ldif.runtime.Quad
  */
 
 class FileObjectReader[T >: Null](val inputFile: File, val endObject: T) {
-  val objectInput: ObjectInputStream = null
+  var objectInput: ObjectInputStream = null
   var closed = false
   var bufferedObject: T = null
   var buffered = false
@@ -62,6 +62,6 @@ class FileObjectReader[T >: Null](val inputFile: File, val endObject: T) {
   def close() = if(objectInput!=null) objectInput.close()
 
   private def openStream() {
-    new ObjectInputStream(new BufferedInputStream(new FileInputStream(inputFile)))
+    objectInput = new ObjectInputStream(new BufferedInputStream(new FileInputStream(inputFile)))
   }
 }
