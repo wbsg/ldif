@@ -129,7 +129,7 @@
                             <Input path="?b/rdfs:label" />
                         </TransformInput>
                     </Compare>
-                    <Compare metric="jaroWinkler" threshold="0.4">
+                    <Compare metric="equality">
                         <Input path="?a\foaf:made/rdfs:label" />
                         <Input path="?b\foaf:made/rdfs:label" />
                     </Compare>
