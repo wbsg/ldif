@@ -397,7 +397,7 @@ moment and the possible values for each property:</p>
 <ul>
 <li><p><i>provenanceGraphURI</i> <br> Specify the graph
 containing the provenance information. As of LDIF V0.3.1, Quads from this
-graph are only written to the final output data set, but are not processed
+graph are only written to the final output data set and are not processed
 any further in the integration workflow. Default graph name: <span style="font-family: monospace;">http://www4.wiwiss.fu-berlin.de/ldif/provenance</span></p>
   <pre>provenanceGraphURI = http://www4.wiwiss.fu-berlin.de/ldif/provenance</pre></li>
 </ul>
@@ -475,7 +475,7 @@ mapped/translated by LDIF. Default: <span style="font-family: monospace;">mapped
 <ul>
 <li><p><i>provenanceGraphURI</i> <br> Specify the graph
 containing the provenance information. As of LDIF V0.3.1, Quads from this
-graph are only written to the final output data set, but are not processed
+graph are only written to the final output data set and not processed
 any further in the integration workflow. Default graph name: <span style="font-family: monospace;">http://www4.wiwiss.fu-berlin.de/ldif/provenance</span></p>
   <pre>provenanceGraphURI = http://www4.wiwiss.fu-berlin.de/ldif/provenance</pre></li>
 </ul>
@@ -650,13 +650,13 @@ specified. Of each crawled resource all received triples are stored.<br>
 <p>To see LDIF in action, please follow these steps:</p>
 
 <ul>
-    <li><a href="http://www4.wiwiss.fu-berlin.de/bizer/ldif/releases/ldif-0.3.1.zip">Download the latest release</a>;</li>
-    <li>Unpack the archive and change into the extracted directory <tt>ldif-0.3.1</tt>;</li>
-    <li>Rn LDIF on the <a href="index.html#example1">Music example</a>:</li>
+    <li><a href="http://www4.wiwiss.fu-berlin.de/bizer/ldif/releases/ldif-0.3.1.zip">download the latest release</a></li>
+    <li>unpack the archive and change into the extracted directory <tt>ldif-0.3.1</tt></li>
+    <li>run LDIF on the <a href="index.html#example1">Music example</a></li>
     <ul>
-        <li>Under Linux / Mac OS type:</li>
+        <li>under Linux / Mac OS type:</li>
         <pre>bin/ldif examples/music/light/schedulerConfig.xml</pre>
-        <li>Under Windows type:</li>
+        <li>under Windows type:</li>
         <pre>bin\ldif.bat examples\music\light\schedulerConfig.xml</pre>
     </ul>
     </ul>
@@ -679,8 +679,7 @@ resolution modules.</li><li>The <a href="#example2">Life Science example</a> sho
 </li>
 </ol>
 <h3 id="example1">5.1 Using LDIF to integrate Data from the Music Domain</h3>
-<p>This example shows how LDIF is applied to integrate data originating
-from the following remote sources describing musical artists, music albums, labels and genres:</p>
+<p>This example shows how LDIF is applied to integrate data describing musical artists, music albums, labels and genres from the following remote sources:</p>
 
 <ul>
     <li><a href="http://dbpedia.org/">DBpedia</a></li>
@@ -698,53 +697,57 @@ in general inferior, because you might not gather all the instances you
 are interested in.</p>
 
 
-The following configuration files are used for importing the different sources:<br>
+The following import job configuration files are used for the different sources:<br>
 
 <ul>
     <li>DBpedia
-        <a href="http://www.assembla.com/code/ldif/git/nodes/ldif/examples/music/full/ImportJob/DBpediaDumpImport.xml">Dump-Properties</a>,
-        <a href="http://www.assembla.com/code/ldif/git/nodes/ldif/examples/music/full/ImportJob/DBpediaDumpImport_Types.xml">Dump-Types</a>
+        <a href="http://www.assembla.com/code/ldif/git/nodes/ldif/examples/music/full/ImportJobs/DBpediaDumpImport.xml">Dump-Properties</a>,
+        <a href="http://www.assembla.com/code/ldif/git/nodes/ldif/examples/music/full/ImportJobs/DBpediaDumpImport_Types.xml">Dump-Types</a>
     </li>
     <li>Freebase
-        <a href="http://www.assembla.com/code/ldif/git/nodes/ldif/examples/music/full/ImportJob/FreebaseCrawlImport.xml">Crawl</a>
+        <a href="http://www.assembla.com/code/ldif/git/nodes/ldif/examples/music/full/ImportJobs/FreebaseCrawlImport.xml">Crawl</a>
     </li>
     <li>MusicBrainz
-        <a href="http://www.assembla.com/code/ldif/git/nodes/ldif/examples/music/full/ImportJob/MusicBrainzSPARQLImport_MusicArtist.xml">Sparql-MusicArtist</a>,
-        <a href="http://www.assembla.com/code/ldif/git/nodes/ldif/examples/music/full/ImportJob/MusicBrainzSPARQLImport_Label.xml">Sparql-Label</a>,
-        <a href="http://www.assembla.com/code/ldif/git/nodes/ldif/examples/music/full/ImportJob/MusicBrainzSPARQLImport_Record.xml">Sparql-Record</a>
+        <a href="http://www.assembla.com/code/ldif/git/nodes/ldif/examples/music/full/ImportJobs/MusicBrainzSPARQLImport_MusicArtist.xml">Sparql-MusicArtist</a>,
+        <a href="http://www.assembla.com/code/ldif/git/nodes/ldif/examples/music/full/ImportJobs/MusicBrainzSPARQLImport_Label.xml">Sparql-Label</a>,
+
+        <a href="http://www.assembla.com/code/ldif/git/nodes/ldif/examples/music/full/ImportJobs/MusicBrainzSPARQLImport_Record.xml">Sparql-Record</a>
     </li>
     <li>BBC Music
-        <a href="http://www.assembla.com/code/ldif/git/nodes/ldif/examples/music/full/ImportJob/BBCSPARQLImportMusicArtist.xml">Sparql-MusicArtist</a> ,
-        <a href="http://www.assembla.com/code/ldif/git/nodes/ldif/examples/music/full/ImportJob/BBCSPARQLImportRecord.xml">Sparql-Record</a>,
-        <a href="http://www.assembla.com/code/ldif/git/nodes/ldif/examples/music/full/ImportJob/BBCSPARQLImportBirth.xml">Sparql-Birth</a>,
-        <a href="http://www.assembla.com/code/ldif/git/nodes/ldif/examples/music/full/ImportJob/BBCSPARQLImportDeath.xml">Sparql-Death</a>
+        <a href="http://www.assembla.com/code/ldif/git/nodes/ldif/examples/music/full/ImportJobs/BBCSPARQLImportMusicArtist.xml">Sparql-MusicArtist</a> ,
+        <a href="http://www.assembla.com/code/ldif/git/nodes/ldif/examples/music/full/ImportJobs/BBCSPARQLImportRecord.xml">Sparql-Record</a>,
+        <a href="http://www.assembla.com/code/ldif/git/nodes/ldif/examples/music/full/ImportJobs/BBCSPARQLImportBirth.xml">Sparql-Birth</a>,
+        <a href="http://www.assembla.com/code/ldif/git/nodes/ldif/examples/music/full/ImportJobs/BBCSPARQLImportDeath.xml">Sparql-Death</a>
     </li>
 </ul>
-The following mapping file provides for translating the source data sets into our target vocabulary:<br>
+
+<p>The following mapping file provides for translating the source data sets into our target vocabulary:</p>
 
 <ul>
-<li>R2R mapping file: <a href="http://www.assembla.com/code/ldif/git/nodes/ldif/examples/music/full/mappings/mappings.ttl">mappings.ttl</a></li></ul>The target vocabulary is a mix of existing ontologies like FOAF, Music
-Ontology, Dublin Core, DBpedia etc. The main instances we integrate are
-of type music artist and record/album. Minor classes like music
-label and genre are integrated from fewer sources.<br>
+<li>R2R mapping file: <a href="http://www.assembla.com/code/ldif/git/nodes/ldif/examples/music/full/mappings/mappings.ttl">mappings.ttl</a></li></ul>
 
-<br>
+<p>The target vocabulary is a mix of existing ontologies like FOAF, Music
+Ontology, Dublin Core, DBpedia etc. </p>
 
-The following Silk identity resolution heuristics are used to find
+<p>The following Silk identity resolution heuristics are used to find
 music artists, labels and albums that are described in multiple data
-sets:<br>
+sets:</p>
 
 <ul>
-<li>Silk link specification: <a href="http://www.assembla.com/code/ldif/git/nodes/ldif/examples/music/full/linkspecs/musicLinkSpec.xml">musicLinkSpec.xml</a><br>
-</li>
+    <li>Silk link specification: <a href="http://www.assembla.com/code/ldif/git/nodes/ldif/examples/music/full/linkspecs/musicLinkSpec.xml">musicLinkSpec.xml</a>
+    </li>
 </ul>
+
+<p> Music artist and record instances are integrated from all the sources. <br/>
+Labels and genres are integrated only from fewer sources since not all of them provide this information.
+For example MusicBrainz does <a href="http://musicbrainz.org/doc/General_FAQ#Why_does_MusicBrainz_not_support_genre_information.3F">not support</a> genre information.</p>
 
 <h4>Execution instructions</h4>
 
 <p>In order to run the example, please download LDIF and run the following commands:</p>
 
 <ul>
-    <li>change into the LDIF root dir;</li>
+    <li>change into the LDIF root directory;</li>
     <li>under Linux / Mac OS type:</li>
     <pre>bin/ldif examples/music/full/schedulerConfig.xml</pre>
     <li>under Windows type:</li>
@@ -755,9 +758,9 @@ sets:<br>
 3 hours, mainly due to crawling, which is relatively slow compared
 to other access methods.</p>
 
-<p> It is also available a light version for this use case, which runs in less than 5 minutes:</p>
+<p> It is also available a <i>light</i> version of the use case, which runs in less than 5 minutes:</p>
 <ul>
-    <li>change into the LDIF root dir;</li>
+    <li>change into the LDIF root directory;</li>
     <li>under Linux / Mac OS type:</li>
     <pre>bin/ldif examples/music/light/schedulerConfig.xml</pre>
     <li>under Windows type:</li>
@@ -825,7 +828,7 @@ configuration. The configuration options are explained in the Section <a href="#
 <h4>Execution instructions</h4>
 
 <ul>
-<li>Change into the LDIF root dir.</li><li>Under Linux / Mac OS type:</li><ul><pre>bin/ldif-integrate examples/life-science/integration-config.xml</pre></ul><li>Under Windows type:</li><ul><pre>bin\ldif-integrate.bat examples\life-science\integration-config.xml</pre></ul>
+<li>Change into the LDIF root directory.</li><li>under Linux / Mac OS type:</li><ul><pre>bin/ldif-integrate examples/life-science/integration-config.xml</pre></ul><li>under Windows type:</li><ul><pre>bin\ldif-integrate.bat examples\life-science\integration-config.xml</pre></ul>
 </ul>
 
 <h4>Examples of data translation </h4>
