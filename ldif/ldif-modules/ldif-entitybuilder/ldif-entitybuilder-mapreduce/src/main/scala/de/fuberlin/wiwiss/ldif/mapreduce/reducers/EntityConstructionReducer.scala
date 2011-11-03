@@ -28,12 +28,11 @@ class EntityConstructionReducer extends MapReduceBase with Reducer[EntityDescrip
 
   override def reduce(key: EntityDescriptionNodeWritable, values: Iterator[ValuePathWritable], output: OutputCollector[IntWritable, EntityWritable], reporter: Reporter) {
     val entityDescriptionID = key.entityDescriptionID.get
-    val patternPaths = new HashMap[Int, ValuePathWritable]
-    val restrictionPathValues = new HashSet[ValuePathWritable]
 
     val valuePaths = new ArrayBuffer[ValuePathWritable]()
     while(values.hasNext)
       valuePaths.append(values.next())
-    resultBuilder.computeResultTables(entityDescriptionID, valuePaths)
+    val result = resultBuilder.computeResultTables(entityDescriptionID, valuePaths)
+    output.collect(key.entityDescriptionID, new EntityWritable(key.node, EntityWritable.convertResultTable(result), key.entityDescriptionID))
   }
 }

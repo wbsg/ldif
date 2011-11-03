@@ -1,8 +1,8 @@
 package ldif.entity
 
-import ldif.mapreduce.types.ArrayArrayWritable
 import java.io.{DataInput, DataOutput}
-import org.apache.hadoop.io.{IntWritable, ArrayWritable, WritableComparable}
+import org.apache.hadoop.io.{Writable, IntWritable, ArrayWritable, WritableComparable}
+import ldif.mapreduce.types.{NodeArrayWritable, ArrayArrayWritable}
 
 /**
  * Created by IntelliJ IDEA.
@@ -37,15 +37,47 @@ class EntityWritable(var resource : NodeWritable, var resultTable: ArrayWritable
   }
 
   def factums(patternId: Int) = {
-    convertResultTable(resultTable)(patternId)
+    EntityWritable.convertResultTable(resultTable)(patternId)
+  }
+
+  override def hashCode = resource.hashCode() + 31 * entityDescriptionID.get()
+
+  override def toString(): String = {
+    val sb = new StringBuilder
+    sb.append("EntityWritable(").append(resource).append(")\n")
+    sb.append("   Results:\n   ")
+    sb.append(resultTable)
+    sb.toString
+  }
+}
+
+object EntityWritable {
+  def convertResultTable(resultTable: IndexedSeq[Traversable[IndexedSeq[NodeWritable]]]): ArrayWritable = {
+    val result = new ArrayArrayWritable()
+    result.set((for(patternResult <- resultTable)
+      yield convertPattern(patternResult)).toArray)
+    result
+  }
+
+  private def convertPattern(patternResult: Traversable[IndexedSeq[NodeWritable]]): ArrayWritable = {
+    val result = new ArrayArrayWritable()
+    result.set((for(row <- patternResult)
+      yield convertPath(row)).toArray)
+    result
+  }
+
+  private def convertPath(path: IndexedSeq[NodeWritable]): ArrayWritable = {
+    val result = new NodeArrayWritable()
+    result.set(path.toArray)
+    result
   }
 
   def convertResultTable(results: ArrayWritable): IndexedSeq[Traversable[IndexedSeq[Node]]] = {
-    for(pattern <- resultTable.get())
+    for(pattern <- results.get())
       yield convertPattern(pattern.asInstanceOf[ArrayWritable])
   }
 
-  def convertPattern(pattern: ArrayWritable): Traversable[IndexedSeq[Node]] = {
+  private def convertPattern(pattern: ArrayWritable): Traversable[IndexedSeq[Node]] = {
     for(path <- pattern.get())
       yield convertPath(path.asInstanceOf[ArrayWritable])
   }
@@ -53,7 +85,5 @@ class EntityWritable(var resource : NodeWritable, var resultTable: ArrayWritable
   private def convertPath(path: ArrayWritable): IndexedSeq[Node] = {
     for(node <- path.get()) yield node.asInstanceOf[Node]
   }
-
-  override def hashCode = resource.hashCode() + 31 * entityDescriptionID.get()
 }
 

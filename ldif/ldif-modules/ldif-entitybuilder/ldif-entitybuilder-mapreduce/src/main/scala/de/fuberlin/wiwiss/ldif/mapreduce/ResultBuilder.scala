@@ -25,6 +25,8 @@ class ResultBuilder(edmd: EntityDescriptionMetadata) {
     val resultTables = new ArrayBuffer[Traversable[IndexedSeq[NodeWritable]]]()
     val nrOfPatterns = edmd.entityDescriptions(entityDescriptionID).patterns.length
     val valuePathsPerPattern = new Array[ArrayBuffer[ValuePathWritable]](nrOfPatterns)
+    for(i <- 0 until valuePathsPerPattern.length)
+      valuePathsPerPattern(i) = new ArrayBuffer[ValuePathWritable]()
     // Partition the value paths by pattern (and filter out restriction value paths)
     for(valuePath <- valuePaths if edmd.pathMap(valuePath.pathID.get).patternIndex >= 0)
       valuePathsPerPattern(edmd.pathMap(valuePath.pathID.get).patternIndex).append(valuePath)
@@ -45,9 +47,9 @@ class ResultBuilder(edmd: EntityDescriptionMetadata) {
     joinValuePaths(0, pathIndexes, pathInfos, valuePaths)
   }
 
-  private def computePartialResultsForIndexPartitions(indexPartitions: Seq[Seq[Int]], nodePartition: Seq[ValuePathWritable], level: Int, pathInfos: IndexedSeq[PathInfo]): Seq[Seq[Seq[NodeWritable]]] = {
+  private def computePartialResultsForIndexPartitions(indexPartitions: Seq[Seq[Int]], nodePartition: Seq[ValuePathWritable], level: Int, pathInfos: IndexedSeq[PathInfo]): Seq[Seq[IndexedSeq[NodeWritable]]] = {
     val opPartitions = partitionValuePathsByIndexPartitions(indexPartitions, nodePartition)
-    val partialResults = new ArrayBuffer[Seq[Seq[NodeWritable]]]()
+    val partialResults = new ArrayBuffer[Seq[IndexedSeq[NodeWritable]]]()
     for ((indexPartition, index) <- indexPartitions.zipWithIndex) {
       // if there are no more joins for this partition (that is there is only one path in it) just return the values
       if (indexPartition.length == 1)
@@ -78,16 +80,38 @@ class ResultBuilder(edmd: EntityDescriptionMetadata) {
     itDoes
   }
 
-  private def calculatePartialResultTable(partialResults: Seq[Seq[Seq[NodeWritable]]], node: NodeWritable, addJoinNodeToResults: Boolean): Seq[IndexedSeq[NodeWritable]] = {
-//    partialResults match {
-//      case head::tail =>
-//    }
-    null //TODO
+  private def calculatePartialResultTable(partialResults: Seq[Seq[IndexedSeq[NodeWritable]]], node: NodeWritable, addJoinNodeToResults: Boolean): Seq[IndexedSeq[NodeWritable]] = {
+    val results = calculatePartialResultTable(partialResults)
+    if(addJoinNodeToResults) {
+      for(result <- results)
+        yield node :: result.toList
+    }
+    results
   }
 
-  private def getPathValues(valuePaths: Seq[ValuePathWritable]): Seq[Seq[NodeWritable]] = {
-    Seq(for(valuePath <- valuePaths; values = valuePath.values.get())
-      yield values(values.length-1).asInstanceOf[NodeWritable])
+  private def calculatePartialResultTable(partialResults: Seq[Seq[IndexedSeq[NodeWritable]]]): Seq[IndexedSeq[NodeWritable]] = {
+    partialResults.toList match {
+      case head::Nil => head
+      case head::tail => {
+        val tailResults = calculatePartialResultTable(tail)
+        for(headResult <- head; tailResult <- tailResults)
+          yield addHeadResultToTailResult(headResult.toList, tailResult.toList).toIndexedSeq
+      }
+      case Nil => throw new RuntimeException("There always have to be partial results. Something's wrong.")
+    }
+  }
+
+  private def addHeadResultToTailResult(headResult: List[NodeWritable], tailResult: List[NodeWritable]): List[NodeWritable] = {
+    headResult match {
+      case head::Nil => head :: tailResult
+      case head::tail => head :: addHeadResultToTailResult (tail, tailResult)
+      case Nil => tailResult
+    }
+  }
+
+  private def getPathValues(valuePaths: Seq[ValuePathWritable]): Seq[IndexedSeq[NodeWritable]] = {
+    Seq((for(valuePath <- valuePaths; values = valuePath.values.get())
+      yield values(values.length-1).asInstanceOf[NodeWritable]).toIndexedSeq)
   }
 
   private def partitionValuePathsByIndexPartitions(indexPartitions: Seq[Seq[Int]], valuePaths: Seq[ValuePathWritable]): Seq[Seq[ValuePathWritable]] = {
