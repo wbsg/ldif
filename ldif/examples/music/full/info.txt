@@ -1,0 +1,54 @@
+Here are some data about the full music use case execution.
+
+-----------
+# Imports #
+-----------
+
+Job id          Type    Import  Dump   Dump     Notes
+                        time    size   quads
+                        (min)   (B)
+---------------------------------------------------------
+bbc.0 		    sparql	1	    3M      14K     (birth)
+bbc.1 	    	sparql	1	    741K	4K      (death)
+bbc.2 	    	sparql	25  	117M	552K    (artist)
+bbc.3 		    sparql	10  	25M	    132K    (record)
+
+dbpedia.0   	triple	5   	3.1G	17.5M   (mappingbased_properties_en)
+dbpedia.1       triple  2       1.7G    9.2M    (instances_types_en)
+
+freebase.0  	crawl 	80  	120M    653K
+
+musicbrainz.0	sparql	160 	238M    1M      (artist)
+musicbrainz.1	sparql	15  	75M	    333K    (label)
+musicbrainz.2	sparql	125 	232M	1M      (release)
+----------------------------------------------------------
+total                           5.6G    30M
+
+
+---------------
+# Integration #
+---------------
+Requires 6GB of memory (-Xmx6G)
+
+Executions takes about 30 min.
+
+Generates 5984 links (Record 2178, Label 2267, Artist 1374, Genre 165).
+
+Example of generated links, from silk debug output:
+
+Genre - links only freebase and dbpedia
+<http://rdf.freebase.com/ns/en.jazz_fusion> <http://www.w3.org/2002/07/owl#sameAs> <http://dbpedia.org/resource/Jazz_fusion>
+
+Label - links dbpedia, freebase and MusicBrainz
+<http://rdf.freebase.com/ns/en.sub_pop> <http://www.w3.org/2002/07/owl#sameAs> <http://dbpedia.org/resource/Sub_Pop>
+<http://dbpedia.org/resource/Chainsaw_Records> <http://www.w3.org/2002/07/owl#sameAs> <http://musicbrainz.dataincubator.org/label/43d88126-3737-41c2-87c5-77a970a4481c>
+
+Record - links all sources
+<http://dbpedia.org/resource/John_Wesley_Harding_%28song%29> <http://www.w3.org/2002/07/owl#sameAs> <http://musicbrainz.dataincubator.org/release/050fec95-1332-42bd-baad-059e0dfa0247>
+<http://rdf.freebase.com/ns/en.infinity_land> <http://www.w3.org/2002/07/owl#sameAs> <http://api.talis.com/stores/bbc-backstage/items/1262520039378#self>
+
+Artist - links all sources
+<http://musicbrainz.dataincubator.org/artist/ddc7e73b-2872-45fe-81e3-4f643607a42c> <http://www.w3.org/2002/07/owl#sameAs> <http://www.bbc.co.uk/music/artists/ddc7e73b-2872-45fe-81e3-4f643607a42c#artist>
+<http://www.bbc.co.uk/music/artists/2d499150-1c42-4ffb-a90c-1cc635519d33#artist> <http://www.w3.org/2002/07/owl#sameAs> <http://dbpedia.org/resource/Cheryl_Cole>
+<http://rdf.freebase.com/ns/en.iggy_pop> <http://www.w3.org/2002/07/owl#sameAs> <http://dbpedia.org/resource/Iggy_Pop>
+

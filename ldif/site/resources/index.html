@@ -108,7 +108,7 @@ provenance.</div>
 </div>
 <h2 id="news">News</h2>
 <ul>
-  <li><strong>11/01/2011: Version 0.3.1 released.</strong> Minor release: updated the music use case, optimized Entity Builder memory usage.
+  <li><strong>11/03/2011: Version 0.3.1 released.</strong> Minor release: updated the music use case, optimized Entity Builder memory usage.
   <li><strong>10/06/2011: Version 0.3 released.</strong> The
 third
 LDIF release provides data access modules for gathering data from the
@@ -296,7 +296,7 @@ Specification Language</a>.</p>
 
 
 <h3>Data Output</h3>
-
+<p>Two output formats are currently supported by LDIF.</p>
 <h4>N-Quads Writer</h4>
 <p>The N-Quads writer dumps the final output of the integration
 workflow into a single N-Quads file. This file contains the translated
@@ -396,8 +396,8 @@ moment and the possible values for each property:</p>
 
 <ul>
 <li><p><i>provenanceGraphURI</i> <br> Specify the graph
-containing the provenance information. As of LDIF V0.3, Quads from this
-graph are only written to the final output data set and are not processed
+containing the provenance information. As of LDIF V0.3.1, Quads from this
+graph are only written to the final output data set, but are not processed
 any further in the integration workflow. Default graph name: <span style="font-family: monospace;">http://www4.wiwiss.fu-berlin.de/ldif/provenance</span></p>
   <pre>provenanceGraphURI = http://www4.wiwiss.fu-berlin.de/ldif/provenance</pre></li>
 </ul>
@@ -474,8 +474,8 @@ mapped/translated by LDIF. Default: <span style="font-family: monospace;">mapped
 
 <ul>
 <li><p><i>provenanceGraphURI</i> <br> Specify the graph
-containing the provenance information. As of LDIF V0.3, Quads from this
-graph are only written to the final output data set, but are processed
+containing the provenance information. As of LDIF V0.3.1, Quads from this
+graph are only written to the final output data set, but are not processed
 any further in the integration workflow. Default graph name: <span style="font-family: monospace;">http://www4.wiwiss.fu-berlin.de/ldif/provenance</span></p>
   <pre>provenanceGraphURI = http://www4.wiwiss.fu-berlin.de/ldif/provenance</pre></li>
 </ul>
@@ -647,13 +647,24 @@ specified. Of each crawled resource all received triples are stored.<br>
 <pre>&lt;dataSource&gt;<br>    &lt;label&gt;DBpedia&lt;/label&gt;<br>    &lt;description&gt;DBpedia ist an RDF version of Wikipedia&lt;/description&gt;<br>   &lt;homepage&gt;http://dbpedia.org&lt;/homepage&gt;<br>&lt;/dataSource&gt;<br></pre>
 
 <h2 id="quickstart">4. Quick start</h2>
-<p>To see LDIF in action, follow these steps:</p>
+<p>To see LDIF in action, please follow these steps:</p>
 
 <ul>
-<li><a href="http://www4.wiwiss.fu-berlin.de/bizer/ldif/releases/ldif-0.3.1.zip">Download the latest release</a></li><li>Unpack the archive and change into the extracted directory <tt>ldif-0.3.1</tt></li><li>Start the integration of the <a href="index.html#example1">Music Example</a>
-  	<ul><li>Under Linux / Mac OS type:</li><pre>bin/ldif examples/music/full/schedulerConfig.xml</pre><li>Under Windows type:</li><pre>bin\ldif.bat examples\music\full\schedulerConfig.xml</pre></ul>
-  </li><li>Integration results will be written into <tt>integrated_music_dataset.nq</tt> in the working directory, containing both integrated data and <a href="index.html#provenance">provenance metadata</a>. The example will run in about 5-20 minutes as crawling is time-intensive.</li><li>Learn more about LDIF configuration by looking at the <a href="index.html#scheduler">Schedule Job Configuration</a> (<tt>examples/music/full/schedulerConfig.xml</tt>) and the <a href="index.html#integrationjob">Integration Job Configuration</a> (<tt>examples/music/full/integrationJob.xml</tt>)</li>
-</ul>
+    <li><a href="http://www4.wiwiss.fu-berlin.de/bizer/ldif/releases/ldif-0.3.1.zip">Download the latest release</a>;</li>
+    <li>Unpack the archive and change into the extracted directory <tt>ldif-0.3.1</tt>;</li>
+    <li>Rn LDIF on the <a href="index.html#example1">Music example</a>:</li>
+    <ul>
+        <li>Under Linux / Mac OS type:</li>
+        <pre>bin/ldif examples/music/light/schedulerConfig.xml</pre>
+        <li>Under Windows type:</li>
+        <pre>bin\ldif.bat examples\music\light\schedulerConfig.xml</pre>
+    </ul>
+    </ul>
+<p>The example will run in about 3 minutes. Integration results will be written into <tt>integrated_music_light.nq</tt> in the working directory, containing both integrated data and <a href="index.html#provenance">provenance metadata</a>.
+ <br/>
+Learrn more about LDIF configuration by looking at the <a href="index.html#scheduler">Schedule Job Configuration</a> (<tt>examples/music/light/schedulerConfig.xml</tt>) and the <a href="index.html#integrationjob">Integration Job Configuration</a> (<tt>examples/music/light/integrationJob.xml</tt>)
+    </p>
+
 
 <h2 id="examples">5. Examples</h2><br>
 
@@ -753,6 +764,7 @@ to other access methods.</p>
     <pre>bin\ldif.bat examples\music\light\schedulerConfig.xml</pre>
 </ul>
 
+<h4>Output</h4>
 <p>
 The following graph shows a portion of the LDIF output describing Bob Marley:
 </p>
