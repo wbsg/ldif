@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<dataSource xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-            xsi:schemaLocation="http://www4.wiwiss.fu-berlin.de/ldif/ ../../xsd/DataSource.xsd"
-            xmlns="http://www4.wiwiss.fu-berlin.de/ldif/">
-    <label>MusicBrainz_Talis</label>
-    <description>MusicBrainz at Talis</description>
-</dataSource>
