@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<importJob xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+            xsi:schemaLocation="http://www4.wiwiss.fu-berlin.de/ldif/ ../../xsd/ImportJob.xsd"
+            xmlns="http://www4.wiwiss.fu-berlin.de/ldif/">
+    <internalId>dbpedia.0</internalId>
+    <dataSource>DBpedia</dataSource>
+    <refreshSchedule>onStartup</refreshSchedule>
+    <tripleImportJob>
+        <dumpLocation>http://downloads.dbpedia.org/3.7/en/mappingbased_properties_en.nt.bz2</dumpLocation>
+    </tripleImportJob>
+</importJob>

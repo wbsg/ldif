@@ -7,27 +7,16 @@
     <refreshSchedule>onStartup</refreshSchedule>
     <crawlImportJob>
         <seedURIs>
-            <!--<uri>http://rdf.freebase.com/ns/en.u2</uri>-->
             <uri>http://rdf.freebase.com/ns/en.bob_marley</uri>
-            <!--<uri>http://rdf.freebase.com/ns/en.dance-pop</uri>-->
-     <!--       <uri>http://rdf.freebase.com/ns/en.art_rock</uri> -->
         </seedURIs>
         <predicatesToFollow>
             <uri>http://rdf.freebase.com/ns/music.artist.genre</uri>
             <uri>http://rdf.freebase.com/ns/music.genre.albums</uri>
             <uri>http://rdf.freebase.com/ns/music.genre.artists</uri>
-            <!--<uri>http://rdf.freebase.com/ns/music.album.genre</uri>-->
             <uri>http://rdf.freebase.com/ns/music.album.artist</uri>
             <uri>http://rdf.freebase.com/ns/music.artist.album</uri>
-            <!--<uri>http://rdf.freebase.com/ns/influence.influence_node.influenced_by</uri>-->
-            <!--<uri>http://rdf.freebase.com/ns/music.artist.label</uri>-->
-            <!--<uri>http://rdf.freebase.com/ns/music.record_label.artist</uri>-->
-            <!--<uri>http://rdf.freebase.com/ns/music.producer.releases_produced</uri>-->
-            <!--<uri>http://rdf.freebase.com/ns/music.release.producers</uri>-->
-            <!--<uri>http://rdf.freebase.com/ns/music.release.album</uri>-->
-            <!--<uri>http://rdf.freebase.com/ns/music.producer.releases_produced</uri> -->
         </predicatesToFollow>
         <levels>2</levels>
-        <resourceLimit>100</resourceLimit>
+        <resourceLimit>100000</resourceLimit>
     </crawlImportJob>
 </importJob>

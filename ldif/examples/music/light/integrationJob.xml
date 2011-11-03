@@ -3,9 +3,9 @@
            xsi:schemaLocation="http://www4.wiwiss.fu-berlin.de/ldif/ ../xsd/IntegrationJob.xsd"
             xmlns="http://www4.wiwiss.fu-berlin.de/ldif/">
     <properties>integration.properties</properties>
-    <sources>dump</sources>
-    <linkSpecifications>demo/linkspecs</linkSpecifications>
-    <mappings>demo/mappings</mappings>
-    <output>integrated_music_dataset.nq</output>
+    <sources>dumps</sources>
+    <linkSpecifications>linkspecs</linkSpecifications>
+    <mappings>mappings</mappings>
+    <output>integrated_music_light.nq</output>
     <runSchedule>onStartup</runSchedule>
 </integrationJob>

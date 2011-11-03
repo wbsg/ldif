@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<importJob xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+            xsi:schemaLocation="http://www4.wiwiss.fu-berlin.de/ldif/ ../../xsd/ImportJob.xsd"
+            xmlns="http://www4.wiwiss.fu-berlin.de/ldif/">
+    <internalId>freebase.3</internalId>
+    <dataSource>Freebase</dataSource>
+    <refreshSchedule>onStartup</refreshSchedule>
+    <crawlImportJob>
+        <seedURIs>
+            <uri>http://rdf.freebase.com/ns/m/0fpjn6x</uri>
+            <uri>http://rdf.freebase.com/ns/m/0g8jgq</uri>
+            <uri>http://rdf.freebase.com/ns/m/03hg_q0</uri>
+            <uri>http://rdf.freebase.com/ns/m/04dr87</uri>
+            <uri>http://rdf.freebase.com/ns/m/07rsm9</uri>
+            <uri>http://rdf.freebase.com/ns/m/042jyc</uri>
+            <uri>http://rdf.freebase.com/ns/m/0l0vb4</uri>
+            <uri>http://rdf.freebase.com/ns/m/05mfp6</uri>
+        </seedURIs>
+        <predicatesToFollow>
+            <uri>http://rdf.freebase.com/ns/music.artist.genre</uri>
+            <uri>http://rdf.freebase.com/ns/music.genre.albums</uri>
+            <uri>http://rdf.freebase.com/ns/music.genre.artists</uri>
+            <uri>http://rdf.freebase.com/ns/music.album.artist</uri>
+            <uri>http://rdf.freebase.com/ns/music.artist.album</uri>
+        </predicatesToFollow>
+        <levels>2</levels>
+        <resourceLimit>100000</resourceLimit>
+    </crawlImportJob>
+</importJob>
