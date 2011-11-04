@@ -11,6 +11,7 @@ import de.fuberlin.wiwiss.ldif.mapreduce.mappers._
 import de.fuberlin.wiwiss.ldif.mapreduce.reducers._
 import org.apache.hadoop.fs.Path
 import org.apache.hadoop.mapred._
+import lib.MultipleOutputs
 import org.apache.hadoop.util._
 import org.apache.hadoop.conf._
 import org.apache.commons.io.FileUtils
@@ -51,6 +52,8 @@ class RunPhase4 extends Configured with Tool {
 
     job.setInputFormat(classOf[ValuePathSequenceFileInput])
     job.setOutputFormat(classOf[EntityMultipleTextFileOutput])
+    //Debugging
+    MultipleOutputs.addNamedOutput(job, "debug", classOf[TextOutputFormat[IntWritable, ValuePathWritable]], classOf[IntWritable], classOf[ValuePathWritable])
 
     for(i <- 0 to math.max(0, maxPhase-1)) {
       var in = new Path(args(1) + fileSeparator + i + fileSeparator, ValuePathMultipleSequenceFileOutput.generateDirectoryNameForFinishedValuePaths(i))

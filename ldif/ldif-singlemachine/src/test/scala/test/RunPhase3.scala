@@ -31,7 +31,8 @@ class RunPhase3 extends Configured with Tool {
     val conf = getConf
     val job = new JobConf(conf, classOf[RunPhase3])
 
-    val phase = args(0).toInt
+    val maxPhase = args(0).toInt
+    val phase = args(1).toInt
 
     job.setMapperClass(classOf[ValuePathJoinMapper])
     job.setReducerClass(classOf[ValuePathJoinReducer])
@@ -50,22 +51,26 @@ class RunPhase3 extends Configured with Tool {
     // For debugging
     MultipleOutputs.addNamedOutput(job, "text", classOf[ValuePathMultipleTextFileOutput], classOf[IntWritable], classOf[ValuePathWritable])
 
-    // Add the JoinPaths for this phase (which were put into phase: (phase+1))
-    var in = new Path(args(1), JoinValuePathMultipleSequenceFileOutput.generateDirectoryName(phase+1))
-    FileInputFormat.addInputPath(job, in)
+    /* Add the JoinPaths for this phase (which were put into phase: (phase+1))
+     * Don't do this if there is no join phase (maxPhase==0)
+      */
+    if(maxPhase>0) {
+      var in = new Path(args(2), JoinValuePathMultipleSequenceFileOutput.generateDirectoryName(phase+1))
+      FileInputFormat.addInputPath(job, in)
+    }
 
     if(phase==0) {
       // Add the initial EntityPaths for first phase
-      in = new Path(args(1), JoinValuePathMultipleSequenceFileOutput.generateDirectoryName(phase))
+      var in = new Path(args(2), JoinValuePathMultipleSequenceFileOutput.generateDirectoryName(phase))
       FileInputFormat.addInputPath(job, in)
     } else {
       // Add the constructed EntityPaths from the previous phase
-      in = new Path(RunPhase3.generateOutputPath(args(2), phase-1), ValuePathMultipleSequenceFileOutput.generateDirectoryNameForValuePathsInConstruction(phase-1))
+      var in = new Path(RunPhase3.generateOutputPath(args(3), phase-1), ValuePathMultipleSequenceFileOutput.generateDirectoryNameForValuePathsInConstruction(phase-1))
       FileInputFormat.addInputPath(job, in)
     }
 
 
-    val out = new Path(RunPhase3.generateOutputPath(args(2), phase))
+    val out = new Path(RunPhase3.generateOutputPath(args(3), phase))
     FileOutputFormat.setOutputPath(job, out)
 
     JobClient.runJob(job)
@@ -93,12 +98,12 @@ object RunPhase3 {
     HadoopHelper.distributeSerializableObject(edmd, conf, "edmd")
 
     var res = 0
+    FileUtils.deleteDirectory(new File(args(1)))
     // maxPhase - 1 because: nrOfJoins == maxPhase - 1
-    for(i <- 0 to edmd.maxPhase-1) {
+    for(i <- 0 to math.max(0, edmd.maxPhase-1)) {
       println("Running iteration: " + i)
-      FileUtils.deleteDirectory(new File(generateOutputPath(args(1), i)))
       println(generateOutputPath("Output directory: " + args(1), i))
-      res = ToolRunner.run(conf, new RunPhase3(), (i.toString :: args.toList).toArray)
+      res = ToolRunner.run(conf, new RunPhase3(), (edmd.maxPhase.toString :: i.toString :: args.toList).toArray)
     }
     println("That's it. Took " + (System.currentTimeMillis-start)/1000.0 + "s")
     sys.exit(res)

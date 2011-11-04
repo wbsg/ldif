@@ -6,7 +6,7 @@ import ldif.util.NTriplesStringConverter
 import ldif.util.MD5Helper
 import ldif.util.Consts
 
-final case class Node(value : String, datatypeOrLanguage : String, nodeType : Node.NodeType, graph : String) //extends Ordered[Node]
+final case class Node(value : String, datatypeOrLanguage : String, nodeType : Node.NodeType, graph : String) extends NodeTrait
 {
   def datatype = nodeType match
   {
@@ -20,54 +20,8 @@ final case class Node(value : String, datatypeOrLanguage : String, nodeType : No
     case _ => null
   }
 
-  def isResource = {
-    if(nodeType==UriNode || nodeType==BlankNode)
-      true
-    else
-      false
-  }
-
-  def isUriNode = {
-    nodeType==UriNode
-  }
-
-  def isBlankNode = {
-    nodeType==BlankNode
-  }
-
   def modifyGraph(graph: String): Node = {
     Node(this.value, this.datatypeOrLanguage, this.nodeType, graph)
-  }
-
-  override def equals(other: Any): Boolean = {
-    if (this.asInstanceOf[AnyRef] eq other.asInstanceOf[AnyRef])
-      true
-    if (!(other.isInstanceOf[Node]))
-      false
-    else {
-      var otherNode: Node = other.asInstanceOf[Node]
-      var result = (otherNode.nodeType == nodeType) && compareDTorLang(this.datatypeOrLanguage, otherNode.datatypeOrLanguage) && (this.value.equals(otherNode.value))
-      if(nodeType== BlankNode)
-        result = result && (graph == otherNode.graph)
-      result
-    }
-  }
-
-
-  private def compareDTorLang(v1: String, v2: String): Boolean = {
-    if (v1 == null)
-      v2 == null
-    else v1.equals(v2)
-  }
-
-  override def hashCode: Int = {
-//    var hash: Int = 1
-    return value.hashCode
-//    hash = hash * 31 + (if (datatypeOrLanguage == null) 0 else datatypeOrLanguage.hashCode)
-//    hash = hash * 31 + nodeType.hashCode
-//    if(nodeType==BlankNode)
-//      hash = hash * 31 + graph.hashCode
-//    hash
   }
 
   def toXML =  nodeType match {
@@ -79,57 +33,7 @@ final case class Node(value : String, datatypeOrLanguage : String, nodeType : No
       case UriNode => <Uri>{value}</Uri>
   }
 
-  override def toString = nodeType match {
-    case Literal => "\"" + value + "\""
-    case TypedLiteral => "\"" + value + "\"^^<" + datatypeOrLanguage + ">"
-    case LanguageLiteral => "\"" + value + "\"@" + datatypeOrLanguage
-    case BlankNode => "_:"+ value
-    case UriNode => "<" + value + ">"
-  }
-
-  def toNQuadsFormat = nodeType match {
-    case Literal => "\"" + NTriplesStringConverter.convertToEscapedString(value) + "\""
-    case TypedLiteral => "\"" + NTriplesStringConverter.convertToEscapedString(value) + "\"^^<" + NTriplesStringConverter.convertToEscapedString(datatypeOrLanguage) + ">"
-    case LanguageLiteral => "\"" + NTriplesStringConverter.convertToEscapedString(value) + "\"@" + datatypeOrLanguage
-    case BlankNode => "_:"+ value
-    case UriNode => "<" + NTriplesStringConverter.convertToEscapedString(value) + ">"
-  }
-
-  def toNTriplesFormat = nodeType match {
-    case Literal => "\"" + NTriplesStringConverter.convertToEscapedString(value) + "\""
-    case TypedLiteral => "\"" + NTriplesStringConverter.convertToEscapedString(value) + "\"^^<" + NTriplesStringConverter.convertToEscapedString(datatypeOrLanguage) + ">"
-    case LanguageLiteral => "\"" + NTriplesStringConverter.convertToEscapedString(value) + "\"@" + datatypeOrLanguage
-    case BlankNode => "_:g" + MD5Helper.md5(graph) + value
-    case UriNode => "<" + NTriplesStringConverter.convertToEscapedString(value) + ">"
-  }
-
-  def compare(otherNode: Node) = {
-    // case: Both are Blank Nodes
-    if(nodeType==BlankNode && otherNode.nodeType==BlankNode) {
-      if(value!=otherNode.value)
-        value.compare(otherNode.value)
-      else
-        graph.compare(otherNode.graph)
-    } else if(nodeType==BlankNode || otherNode.nodeType==BlankNode) { // case: only one is a Blank Node
-      if(nodeType==BlankNode)
-        -1
-      else
-        1
-    } else { // case: no Blank Nodes involved
-      if(nodeType!=otherNode.nodeType)
-        nodeType.id.compare(otherNode.nodeType.id)
-      else if(value!=otherNode.value)
-        value.compare(otherNode.value)
-      else if(datatypeOrLanguage!=null && otherNode.datatypeOrLanguage!=null)
-        datatypeOrLanguage.compare(otherNode.datatypeOrLanguage)
-      else if(datatypeOrLanguage!=null && otherNode.datatypeOrLanguage==null)
-        1
-      else if(datatypeOrLanguage==null && otherNode.datatypeOrLanguage!=null)
-        -1
-      else
-        0
-    }
-  }
+  def compare(other: Node): Int = super.compare(other)
 }
 
 object Node

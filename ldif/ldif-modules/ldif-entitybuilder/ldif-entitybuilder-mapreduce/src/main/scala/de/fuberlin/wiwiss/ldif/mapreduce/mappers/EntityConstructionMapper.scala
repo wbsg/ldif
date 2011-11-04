@@ -1,6 +1,7 @@
 package de.fuberlin.wiwiss.ldif.mapreduce.mappers
 
 import org.apache.hadoop.mapred._
+import lib.MultipleOutputs
 import org.apache.hadoop.io.IntWritable
 import ldif.mapreduce.types._
 import ldif.entity.{EntityDescriptionMetadata, NodeWritable}
@@ -18,14 +19,22 @@ class EntityConstructionMapper extends MapReduceBase with Mapper[IntWritable, Va
   var edmd: EntityDescriptionMetadata = null
   val entityDescriptionID = new IntWritable()
   val entityDescriptionNode = new EntityDescriptionNodeWritable()
+//  private var mos: MultipleOutputs = null
 
   override def configure(conf: JobConf) {
     edmd = HadoopHelper.getEntityDescriptionMetaData(conf)
+//    mos = new MultipleOutputs(conf)
   }
 
   override def map(key: IntWritable, value: ValuePathWritable, output: OutputCollector[EntityDescriptionNodeWritable, ValuePathWritable], reporter: Reporter) {
     entityDescriptionID.set(edmd.pathMap(value.pathID.get).entityDescriptionIndex)
     entityDescriptionNode.set(entityDescriptionID, value.values.get()(0).asInstanceOf[NodeWritable])
+//    val collector = mos.getCollector("debug", reporter).asInstanceOf[OutputCollector[IntWritable, ValuePathWritable]]
+//    collector.collect(entityDescriptionID, value)
     output.collect(new EntityDescriptionNodeWritable(entityDescriptionID, value.values.get()(0).asInstanceOf[NodeWritable]), value)
   }
+
+//  override def close() {
+//    mos.close()
+//  }
 }
