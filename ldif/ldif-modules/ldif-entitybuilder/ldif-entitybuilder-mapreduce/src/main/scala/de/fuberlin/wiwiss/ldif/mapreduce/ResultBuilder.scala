@@ -15,6 +15,9 @@ import ldif.entity.Restriction._
  */
 
 class ResultBuilder(edmd: EntityDescriptionMetadata) {
+  /**
+   * Checks if the entity fulfills the restriction definition
+   */
   def checkRestriction(entityDescriptionID: Int, valuePaths: Seq[ValuePathWritable]): Boolean = {
     val restriction = edmd.entityDescriptions(entityDescriptionID).restriction
     if(restriction.operator == None)
@@ -77,7 +80,7 @@ class ResultBuilder(edmd: EntityDescriptionMetadata) {
   }
 
   /**
-   * Generate the result tables for all patterns (not restriction) for the entity description and the given value paths
+   * Generate the result tables for all patterns (not restriction) for the entity description and the given value paths. TODO: Maybe add empty result for restriction only patterns
    */
   def computeResultTables(entityDescriptionID: Int, valuePaths: Seq[ValuePathWritable]): IndexedSeq[Traversable[IndexedSeq[NodeWritable]]] = {
     val resultTables = new ArrayBuffer[Traversable[IndexedSeq[NodeWritable]]]()
@@ -94,7 +97,7 @@ class ResultBuilder(edmd: EntityDescriptionMetadata) {
     resultTables
   }
 
-  def computeResultTable(entityDescriptionID: Int, patternIndex: Int, edmd: EntityDescriptionMetadata, valuePaths: ArrayBuffer[ValuePathWritable]): Traversable[IndexedSeq[NodeWritable]] = {
+  private def computeResultTable(entityDescriptionID: Int, patternIndex: Int, edmd: EntityDescriptionMetadata, valuePaths: ArrayBuffer[ValuePathWritable]): Traversable[IndexedSeq[NodeWritable]] = {
     val pattern = edmd.entityDescriptions(entityDescriptionID).patterns(patternIndex)
     val pathInfos = edmd.getPathInfosForPattern(entityDescriptionID, patternIndex)
     val pathsIndexes = (0 to (pattern.length-1)).toSeq

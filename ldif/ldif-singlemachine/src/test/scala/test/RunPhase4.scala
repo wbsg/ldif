@@ -9,7 +9,6 @@ package test
  */
 import de.fuberlin.wiwiss.ldif.mapreduce.mappers._
 import de.fuberlin.wiwiss.ldif.mapreduce.reducers._
-import org.apache.hadoop.fs.Path
 import org.apache.hadoop.mapred._
 import lib.MultipleOutputs
 import org.apache.hadoop.util._
@@ -24,6 +23,8 @@ import java.io.{ObjectOutputStream, File}
 import de.fuberlin.wiwiss.ldif.mapreduce.io._
 import ldif.entity.{EntityDescriptionMetaDataExtractor, EntityDescription}
 import ldif.mapreduce.utils.HadoopHelper
+import org.apache.hadoop.hdfs.DistributedFileSystem
+import org.apache.hadoop.fs.{FileSystem, Path}
 
 /**
  * Created by IntelliJ IDEA.
@@ -36,6 +37,7 @@ import ldif.mapreduce.utils.HadoopHelper
 class RunPhase4 extends Configured with Tool {
   def run(args: Array[String]): Int = {
     val conf = getConf
+    val fileSystem = FileSystem.get(conf)
     val job = new JobConf(conf, classOf[RunPhase4])
     val maxPhase = args(0).toInt
     val fileSeparator = System.getProperty("file.separator")
@@ -57,7 +59,8 @@ class RunPhase4 extends Configured with Tool {
 
     for(i <- 0 to math.max(0, maxPhase-1)) {
       var in = new Path(args(1) + fileSeparator + i + fileSeparator, ValuePathMultipleSequenceFileOutput.generateDirectoryNameForFinishedValuePaths(i))
-      FileInputFormat.addInputPath(job, in)
+      if(fileSystem.exists(in))
+        FileInputFormat.addInputPath(job, in)
     }
 
     val out = new Path(args(2))

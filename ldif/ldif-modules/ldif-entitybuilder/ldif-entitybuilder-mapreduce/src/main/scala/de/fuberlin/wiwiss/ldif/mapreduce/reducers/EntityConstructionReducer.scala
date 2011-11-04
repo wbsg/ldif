@@ -29,7 +29,7 @@ class EntityConstructionReducer extends MapReduceBase with Reducer[EntityDescrip
     edmd = HadoopHelper.getEntityDescriptionMetaData(conf)
     resultBuilder = new ResultBuilder(edmd)
     // For debugging
-//    mos = new MultipleOutputs(conf)
+    mos = new MultipleOutputs(conf)
     config = conf
   }
 
@@ -41,6 +41,7 @@ class EntityConstructionReducer extends MapReduceBase with Reducer[EntityDescrip
       val value = values.next()
       valuePaths.append(WritableUtils.clone(value, config))
     }
+    // For debugging
 //    for(value <- valuePaths) {
 //      val collector = mos.getCollector("debug", reporter).asInstanceOf[OutputCollector[IntWritable, ValuePathWritable]]
 //      collector.collect(key.entityDescriptionID, value)
@@ -61,7 +62,7 @@ class EntityConstructionReducer extends MapReduceBase with Reducer[EntityDescrip
     return true
   }
 
-//  override def close() {
-//    mos.close()
-//  }
+  override def close() {
+    mos.close()
+  }
 }
