@@ -79,6 +79,11 @@ object RunPhase4 {
   }
 
   def main(args: Array[String]) {
+    val res = runPhase(args)
+    sys.exit(res)
+  }
+
+  def runPhase(args: Array[String]): Int = {
     println("Starting phase 4 of the EntityBuilder: assembling entities")
     val entityDescriptions = getEntityDescriptions
     val edmd = (new EntityDescriptionMetaDataExtractor).extract(entityDescriptions)
@@ -92,6 +97,6 @@ object RunPhase4 {
     FileUtils.deleteDirectory(new File(args(1)))
     res = ToolRunner.run(conf, new RunPhase4(), (maxPhase.toString :: args.toList).toArray)
     println("That's it. Took " + (System.currentTimeMillis-start)/1000.0 + "s")
-    sys.exit(res)
+    res
   }
 }

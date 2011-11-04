@@ -5,11 +5,11 @@ import lib.MultipleOutputs
 import java.util.Iterator
 import collection.mutable.{HashMap, HashSet, ArrayBuffer}
 import ldif.mapreduce.types._
-import ldif.entity.{EntityDescriptionMetadata, EntityWritable}
 import ldif.mapreduce.utils.HadoopHelper
 import de.fuberlin.wiwiss.ldif.mapreduce.ResultBuilder
 import org.apache.hadoop.io.{WritableUtils, Writable, IntWritable}
 import org.apache.hadoop.conf.Configuration
+import ldif.entity.{NodeWritable, EntityDescriptionMetadata, EntityWritable}
 
 /**
  * Created by IntelliJ IDEA.
@@ -48,8 +48,17 @@ class EntityConstructionReducer extends MapReduceBase with Reducer[EntityDescrip
     val passesRestriction = resultBuilder.checkRestriction(entityDescriptionID, valuePaths)
     if(passesRestriction) {
       val result = resultBuilder.computeResultTables(entityDescriptionID, valuePaths)
-      output.collect(key.entityDescriptionID, new EntityWritable(key.node, EntityWritable.convertResultTable(result), key.entityDescriptionID))
+      if(hasResults(entityDescriptionID, result))
+        output.collect(key.entityDescriptionID, new EntityWritable(key.node, EntityWritable.convertResultTable(result), key.entityDescriptionID))
     }
+  }
+
+  private def hasResults(entityDescriptionID: Int, results: IndexedSeq[Traversable[IndexedSeq[NodeWritable]]]): Boolean = {
+    val entityDescription = edmd.entityDescriptions(entityDescriptionID)
+    for(patternIndex <- 0 until entityDescription.patterns.length)
+      if(entityDescription.patterns(patternIndex).length>0 && results(patternIndex).size==0)
+        return false
+    return true
   }
 
 //  override def close() {

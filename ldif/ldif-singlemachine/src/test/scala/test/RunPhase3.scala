@@ -89,7 +89,16 @@ object RunPhase3 {
   }
 
   def main(args: Array[String]) {
-    println("Starting...")
+    val res = runPhase(args)
+    sys.exit(res)
+  }
+
+  def generateOutputPath(out: String,  phase: Int): String = {
+    out + "/" + phase
+  }
+
+  def runPhase(args: Array[String]): Int = {
+    println("Starting phase 3 of the EntityBuilder: Joining value paths")
     val entityDescriptions = getEntityDescriptions
     val edmd = (new EntityDescriptionMetaDataExtractor).extract(entityDescriptions)
 
@@ -106,10 +115,6 @@ object RunPhase3 {
       res = ToolRunner.run(conf, new RunPhase3(), (edmd.maxPhase.toString :: i.toString :: args.toList).toArray)
     }
     println("That's it. Took " + (System.currentTimeMillis-start)/1000.0 + "s")
-    sys.exit(res)
-  }
-
-  def generateOutputPath(out: String,  phase: Int): String = {
-    out + "/" + phase
+    res
   }
 }

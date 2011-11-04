@@ -64,7 +64,12 @@ object RunPhase2 {
   }
 
   def main(args: Array[String]) {
-    println("Starting...")
+    val res = runPhase(args)
+    sys.exit(res)
+  }
+
+  def runPhase(args: Array[String]): Int = {
+    println("Starting phase 2 of the EntityBuilder: Filtering quads and creating initial value paths")
     val entityDescriptions = getEntityDescriptions
     val edmd = (new EntityDescriptionMetaDataExtractor).extract(entityDescriptions)
 
@@ -74,6 +79,6 @@ object RunPhase2 {
     HadoopHelper.distributeSerializableObject(edmd, conf, "edmd")
     val res = ToolRunner.run(conf, new RunPhase2(), args)
     println("That's it. Took " + (System.currentTimeMillis-start)/1000.0 + "s")
-    sys.exit(res)
+    res
   }
 }
