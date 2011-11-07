@@ -10,13 +10,13 @@ class EntityDescriptionMetaDataExtractor {
   // propertyMap stores information of (pathID, phaseNr)
   var propertyMap = new HashMap[String, ArrayBuffer[PropertyInfo]]()
   var pathMap = new HashMap[Int, PathInfo]()
-  var pathIdMap = new HashMap[Path, Int]()
+  var pathIdMap = new HashMap[Int, Int]()
 
   def extract(entityDescriptions: Seq[EntityDescription]): EntityDescriptionMetadata = {
     pathCounter = new AtomicInteger(0)
     propertyMap = new HashMap[String, ArrayBuffer[PropertyInfo]]()
     pathMap = new HashMap[Int, PathInfo]()
-    pathIdMap = new HashMap[Path, Int]()
+    pathIdMap = new HashMap[Int, Int]()
 
     for((entityDescription, index) <- entityDescriptions zipWithIndex) {
       extractEntityDescriptionMetaData(entityDescription, index)
@@ -59,7 +59,7 @@ class EntityDescriptionMetaDataExtractor {
     val pathID = pathCounter.getAndIncrement
     val properties = extractPropertyInfo(path,pathID)
     pathMap.put(pathID, PathInfo(entityDescriptionIndex, patternIndex, pathIndex, path, isRestrictionPath, properties.length, properties))
-    pathIdMap.put(path, pathID)
+    pathIdMap.put(path.gid, pathID)
   }
 
   // return a sequence of the properties in the path and for each property a flag if it is a forward path

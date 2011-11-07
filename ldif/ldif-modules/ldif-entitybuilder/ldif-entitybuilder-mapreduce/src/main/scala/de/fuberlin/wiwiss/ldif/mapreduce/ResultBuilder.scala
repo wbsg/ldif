@@ -37,7 +37,7 @@ class ResultBuilder(edmd: EntityDescriptionMetadata) {
   }
 
   private def checkCondition(path: Path, nodes: Set[Node], restrictionPaths: Seq[ValuePathWritable]): Boolean = {
-    val valuePathNodeSet = getValuesForPath(edmd.pathIdMap.get(path).get, restrictionPaths)
+    val valuePathNodeSet = getValuesForPath(edmd.pathIdMap.get(path.gid).get, restrictionPaths)
     for(node <- nodes if valuePathNodeSet.contains(node))
       return true
     false
@@ -67,7 +67,7 @@ class ResultBuilder(edmd: EntityDescriptionMetadata) {
   }
 
   private def checkExists(path: Path, restrictionPaths: Seq[ValuePathWritable]): Boolean = {
-    val pathId = edmd.pathIdMap(path)
+    val pathId = edmd.pathIdMap(path.gid)
     for(valuePath <- restrictionPaths)
       if(valuePath.pathID.get==pathId)
         return true
