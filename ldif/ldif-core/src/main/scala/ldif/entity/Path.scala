@@ -18,23 +18,23 @@ case class Path(variable : String, operators : List[PathOperator])
   /**
    * This version of equals checks if this path equals another path in a global fashion
    */
-  override def equals(other: Any): Boolean = {
-    if(other.isInstanceOf[Path] && gid==other.asInstanceOf[Path].gid)
-      return true
-    else
-      return false
-  }
+//  override def equals(other: Any): Boolean = {
+//    if(other.isInstanceOf[Path] && gid==other.asInstanceOf[Path].gid)
+//      return true
+//    else
+//      return false
+//  }
 
-  override def hashCode = gid.hashCode()
+//  override def hashCode = gid.hashCode()
 
   override def toString = serialize(Prefixes.empty)
 
   /**
    * Tests if this path equals another path
    */
-//  override def equals(other : Any) = other.isInstanceOf[Path] && toString == other.toString
+  override def equals(other : Any) = other.isInstanceOf[Path] && toString == other.toString
 
-//  override def hashCode = toString.hashCode
+  override def hashCode = toString.hashCode
 }
 
 object Path

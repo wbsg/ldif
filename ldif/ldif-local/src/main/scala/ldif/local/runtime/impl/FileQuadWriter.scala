@@ -13,12 +13,4 @@ import ldif.runtime.Quad
  * To change this template use File | Settings | File Templates.
  */
 
-class FileQuadWriter(val outputFile: File) extends QuadWriter {
-  val objectOutput = new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream(outputFile)))
-
-  def finish = {write(NoQuadsLeft); objectOutput.flush(); objectOutput.close()}
-
-  def write(quad: Quad) = {
-    objectOutput.writeObject(quad)
-  }
-}
+class FileQuadWriter(outputFile: File) extends FileObjectWriter[Quad](outputFile, NoQuadsLeft) with QuadWriter

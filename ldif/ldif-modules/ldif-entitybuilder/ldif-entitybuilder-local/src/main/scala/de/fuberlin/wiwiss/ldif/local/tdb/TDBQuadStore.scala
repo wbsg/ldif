@@ -21,7 +21,7 @@ import com.hp.hpl.jena.query.ARQ
 class TDBQuadStore(databaseRoot: File) extends QuadStoreTrait {
   private var storeStarted = false
   private var dataset: Dataset = null
-//  ARQ.setTrue(ARQ.spillOnDiskSortingThreshold)
+  ARQ.setTrue(ARQ.spillOnDiskSortingThreshold)
   private val tempDatabaseDir = createTemporaryDatabaseDirectory(databaseRoot.getCanonicalPath)
 
   def loadDataset(datasetFile: File) {
@@ -72,8 +72,8 @@ class TDBQuadStore(databaseRoot: File) extends QuadStoreTrait {
   }
 
   private def executeAllQueries(queryExecutions: Seq[QueryExecution]): Seq[ResultSet] = {
-//    for(queryExecution <- queryExecutions)
-//      queryExecution.getContext.set(ARQ.spillOnDiskSortingThreshold, 100l)
+    for(queryExecution <- queryExecutions)
+      queryExecution.getContext.set(ARQ.spillOnDiskSortingThreshold, 10000l)
     for(queryExecution <- queryExecutions) yield queryExecution.execSelect
   }
 }
