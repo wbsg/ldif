@@ -195,7 +195,11 @@ class IntegrationJob (val config : IntegrationConfig, debugMode : Boolean = fals
   private def generateLinks(linkSpecDir : File, reader : QuadReader) : QuadReader =
   {
     val silkModule = SilkModule.load(linkSpecDir)
-    val silkExecutor = new SilkLocalExecutor
+    val inmemory = config.properties.getProperty("entityBuilderType", "in-memory")=="in-memory"
+    val silkExecutor = if(inmemory)
+        new SilkLocalExecutor
+      else
+        new SilkLocalExecutor(true)
 
     val entityDescriptions = silkModule.tasks.toIndexedSeq.map(silkExecutor.input).flatMap{ case StaticEntityFormat(ed) => ed }
     val entityReaders = buildEntities(Seq(reader), entityDescriptions, ConfigParameters(config.properties))

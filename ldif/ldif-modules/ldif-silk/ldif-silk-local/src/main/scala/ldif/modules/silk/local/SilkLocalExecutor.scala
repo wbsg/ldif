@@ -3,16 +3,19 @@ package ldif.modules.silk.local
 import ldif.module.Executor
 import ldif.modules.silk.{CreateEntityDescriptions, SilkTask}
 import de.fuberlin.wiwiss.silk.util.SourceTargetPair
-import de.fuberlin.wiwiss.silk.instance.{Instance, MemoryInstanceCache, InstanceSpecification}
+import de.fuberlin.wiwiss.silk.instance.{Instance, MemoryInstanceCache, InstanceSpecification, FileInstanceCache}
 import de.fuberlin.wiwiss.silk.datasource.Source
 import de.fuberlin.wiwiss.silk.{OutputTask, FilterTask, MatchTask, LoadTask}
 import de.fuberlin.wiwiss.silk.output.Output
 import ldif.local.runtime._
+import java.io.File
+import org.apache.commons.io.FileUtils
+import ldif.local.util.TemporaryFileCreator
 
 /**
  * Executes Silk on a local machine.
  */
-class SilkLocalExecutor extends Executor
+class SilkLocalExecutor(useFileInstanceCache: Boolean = false) extends Executor
 {
   private val numThreads = 8
 //  private val numThreads = Runtime.getRuntime.availableProcessors
@@ -36,6 +39,8 @@ class SilkLocalExecutor extends Executor
   /**
    * Executes a Silk task.
    */
+
+
   override def execute(task : SilkTask, reader : Seq[EntityReader], writer : QuadWriter)
   {
     val blocking = task.silkConfig.silkConfig.blocking
@@ -45,10 +50,19 @@ class SilkLocalExecutor extends Executor
     val instanceSpecs = InstanceSpecification.retrieve(linkSpec)
 
     //Create instance caches
-    val caches = SourceTargetPair(
-      new MemoryInstanceCache(instanceSpecs.source, blocking.map(_.blocks).getOrElse(1)),
-      new MemoryInstanceCache(instanceSpecs.target, blocking.map(_.blocks).getOrElse(1))
-    )
+    val caches = if(useFileInstanceCache) {
+      val tempSource = TemporaryFileCreator.createTemporaryDirectory("ldif_silk_s", "", true)
+      val tempTarget = TemporaryFileCreator.createTemporaryDirectory("ldif_silk_t", "", true)
+      SourceTargetPair(
+        new FileInstanceCache(instanceSpecs.source, tempSource, true, blocking.map(_.blocks).getOrElse(1)),
+        new FileInstanceCache(instanceSpecs.target, tempTarget, true, blocking.map(_.blocks).getOrElse(1))
+      )
+    } else
+      SourceTargetPair(
+        new MemoryInstanceCache(instanceSpecs.source, blocking.map(_.blocks).getOrElse(1)),
+        new MemoryInstanceCache(instanceSpecs.target, blocking.map(_.blocks).getOrElse(1))
+      )
+
 
     //Load instances into cache
     val sources = SourceTargetPair.fromSeq(reader).map(reader => Source("id", LdifDataSource(reader)))
