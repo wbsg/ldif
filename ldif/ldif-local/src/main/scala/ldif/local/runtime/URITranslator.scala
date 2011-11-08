@@ -305,7 +305,7 @@ case class EntityCluster(var entity: String, entitySet: Set[String]) {
   def setGlobalEntityIfLarger(uri: String) {
     parentCluster match {
       case null => if(uri > entity) entity = uri
-      case parent => parent.setGlobalEntity(uri)
+      case parent => parent.setGlobalEntityIfLarger(uri)
     }
   }
 

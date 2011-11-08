@@ -28,7 +28,7 @@ mappings:somePropMapping
   r2r:sourcePattern "?SUBJ <http://someProp> ?o" ;
   r2r:targetPattern "?SUBJ <http://someMappedProp> ?o" .
 
-<http://testNamespace/someOldClass> rdfs:subClassOf <http://testNamespace/someFunkyNewClass> .
+# <http://testNamespace/someOldClass> rdfs:subClassOf <http://testNamespace/someFunkyNewClass> .
 
 mappings:complexStructureMapping
   a r2r:Mapping ;
