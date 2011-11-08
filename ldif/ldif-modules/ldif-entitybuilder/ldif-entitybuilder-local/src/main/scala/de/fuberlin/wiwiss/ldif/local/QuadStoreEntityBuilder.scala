@@ -24,6 +24,10 @@ class QuadStoreEntityBuilder(store: QuadStoreTrait, entityDescriptions : Seq[Ent
   private val provenanceGraph = config.configProperties.getProperty("provenanceGraph", "http://www4.wiwiss.fu-berlin.de/ldif/provenance")
   private val tmpDir = new File(config.configProperties.getProperty("databaseLocation", System.getProperty("java.io.tmpdir")))
 
+  private val saveSameAsQuads = config.sameAsWriter!=null
+  private val useExternalSameAsLinks = config.configProperties.getProperty("useExternalSameAsLinks", "true").toLowerCase=="true"
+  private val ignoreProvenance = config.configProperties.getProperty("outputFormat", "nq").toLowerCase=="nt"
+
   private val PHT = new PropertyHashTable(entityDescriptions)
 
   initStore
@@ -55,12 +59,11 @@ class QuadStoreEntityBuilder(store: QuadStoreTrait, entityDescriptions : Seq[Ent
         if(saveQuads)
           saveQuadsForLater(quad)
 
-        val prop = new Uri(quad.predicate).toString
+        if(useExternalSameAsLinks)
+          saveIfSameAsQuad(quad)
 
-        PHT.get(prop) match {
-          case Some(_) => writer.write(quad.toNQuadFormat); writer.write(" . \n")
-          case None => //do nothing
-        }
+        if(isRelevantQuad(quad))
+          writer.write(quad.toLine)
       }
     }
     writer.flush
@@ -71,7 +74,7 @@ class QuadStoreEntityBuilder(store: QuadStoreTrait, entityDescriptions : Seq[Ent
   }
 
   private def saveQuadsForLater(quad: Quad) {
-    if(outputAllQuads || isProvenanceQuad(quad))
+    if(outputAllQuads || (isProvenanceQuad(quad) && (!ignoreProvenance)))
       config.otherQuadsWriter.write(quad)
   }
 
@@ -83,6 +86,11 @@ class QuadStoreEntityBuilder(store: QuadStoreTrait, entityDescriptions : Seq[Ent
       false
   }
 
+  private def saveIfSameAsQuad(quad: Quad) {
+    if(saveSameAsQuads && quad.predicate=="http://www.w3.org/2002/07/owl#sameAs")
+      config.sameAsWriter.write(quad)
+  }
+
   private def isProvenanceQuad(quad: Quad): Boolean = {
     if(quad.graph==provenanceGraph)
       true
@@ -92,6 +100,8 @@ class QuadStoreEntityBuilder(store: QuadStoreTrait, entityDescriptions : Seq[Ent
 
   def buildEntities(ed: EntityDescription, writer: EntityWriter) = {
     val start = now
+    log.info("Starting to build entities...")
     store.queryStore(ed, writer)//TODO: Maybe handle return value
+    log.info("Finished building entities in " + (now - start)/1000.0 + "s")
   }
 }

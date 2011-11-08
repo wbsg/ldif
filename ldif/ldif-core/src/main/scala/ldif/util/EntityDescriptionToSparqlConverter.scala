@@ -172,6 +172,7 @@ class EntityDescriptionToSparqlConverter {
   private def createSelectString(index: Int, pattern: IndexedSeq[IndexedPath]): StringBuilder = {
     val sb = new StringBuilder
     sb.append("SELECT ") //TODO: Have maybe two versions
+    sb.append(EntityDescriptionToSparqlConverter.afterSelect)
     for(path <- pattern) {
       sb.append("?").append(EntityDescriptionToSparqlConverter.resultVarBaseName).append(path.index).append(" ")
       if (!useGraph) sb.append("?").append(EntityDescriptionToSparqlConverter.resultVarBaseName).append(path.index).append("graph ")
@@ -251,6 +252,7 @@ class EntityDescriptionToSparqlConverter {
 object EntityDescriptionToSparqlConverter {
   val entityVar = "?SUBJ"
   val resultVarBaseName = "ldifvar"
+  val afterSelect = ""
 
   /**
    * Converts Entity Description into one or more SPARQL queries
