@@ -31,7 +31,7 @@ object JenaResultSetEntityBuilderHelper {
       assignResultsForEntity(entity, entityResults, factumTable)
       entityResults = updateEntityResults(entity, entityResults, resultManagers)
 
-      entityWriter.write(EntityLocalComplete(LocalNode.createResourceNode(entity, graph), entityDescription, factumTable))
+      entityWriter.write(EntityLocalComplete(entity, entityDescription, factumTable))
     }
 
     entityWriter.finish
@@ -51,16 +51,16 @@ object JenaResultSetEntityBuilderHelper {
       assignResultsForEntity(entity, entityResults, factumTable)
       entityResults = updateEntityResults(entity, entityResults, resultManagers, graph)
 
-      entityWriter.write(EntityLocalComplete(LocalNode.createResourceNode(entity, graph), entityDescription, factumTable))
+      entityWriter.write(EntityLocalComplete(entity, entityDescription, factumTable))
     }
 
     entityWriter.finish
     true
   }
 
-  private def assignResultsForEntity(entityURI: String, entityResults: Seq[Option[EntityData]], factumTable: Array[Traversable[IndexedSeq[Node]]]) {
+  private def assignResultsForEntity(entity: Node, entityResults: Seq[Option[EntityData]], factumTable: Array[Traversable[IndexedSeq[Node]]]) {
     for(i <- 0 to (entityResults.size-1))
-      if(entityResults(i)!=None && entityResults(i).get.entityURI==entityURI)
+      if(entityResults(i)!=None && entityResults(i).get.entity==entity)
         factumTable(i) = entityResults(i).get.factumTable
   }
 
@@ -71,16 +71,16 @@ object JenaResultSetEntityBuilderHelper {
     array
   }
 
-  private def getGraph(entityURI: String, entityResults: Seq[Option[EntityData]]): String = {
+  private def getGraph(entity: Node, entityResults: Seq[Option[EntityData]]): String = {
     for(entityResult <- entityResults)
-      if(entityResult!=None && entityResult.get.entityURI==entityURI)
+      if(entityResult!=None && entityResult.get.entity==entity)
         return entityResult.get.graphURI
     throw new RuntimeException("This should not happen ;)")
   }
 
-  private def updateEntityResults(entityURI: String, entityResults: Seq[Option[EntityData]], resultManagers: Seq[ResultSetManager], graph : String = null): Seq[Option[EntityData]] = {
+  private def updateEntityResults(entity: Node, entityResults: Seq[Option[EntityData]], resultManagers: Seq[ResultSetManager], graph : String = null): Seq[Option[EntityData]] = {
     for((entityResult, resultManager) <- entityResults zip resultManagers) yield {
-      if(entityResult!=None && entityResult.get.entityURI==entityURI)
+      if(entityResult!=None && entityResult.get.entity==entity)
         if (graph != null)
           // (2)
           resultManager.getNextEntityData(graph)
@@ -92,14 +92,14 @@ object JenaResultSetEntityBuilderHelper {
     }
   }
 
-  def getFactumRow(entity: String, entityGraph: String, resultSet: QuerySolution, nrOfSUBJGraphVars: Int): IndexedSeq[Node] = {
+  def getFactumRow(entity: Node, entityGraph: String, resultSet: QuerySolution, nrOfSUBJGraphVars: Int): IndexedSeq[Node] = {
     val resultVarBaseName = EntityDescriptionToSparqlConverter.resultVarBaseName
     val row = new Row
     var nrOfVars: Int = 0
     for(v <- resultSet.varNames) if(v.startsWith(resultVarBaseName) &&  v.substring(resultVarBaseName.length).forall(Character.isDigit(_))) nrOfVars += 1
 
     if(nrOfVars==0)
-      row.append(Node.createUriNode(entity, entityGraph))
+      row.append(entity)
     for(index <- 1 to nrOfVars) {
       val node = resultSet.get(resultVarBaseName + index)
       val graph = resultSet.get(resultVarBaseName + index + "graph")
@@ -110,14 +110,14 @@ object JenaResultSetEntityBuilderHelper {
   }
 
   // (2)
-  def getFactumRow(entity: String, entityGraph: String, resultSet: QuerySolution): IndexedSeq[Node] = {
+  def getFactumRow(entity: Node, entityGraph: String, resultSet: QuerySolution): IndexedSeq[Node] = {
     val resultVarBaseName = EntityDescriptionToSparqlConverter.resultVarBaseName
     val row = new Row
     var nrOfVars: Int = 0
     for(v <- resultSet.varNames) if(v.startsWith(resultVarBaseName) &&  v.substring(resultVarBaseName.length).forall(Character.isDigit(_))) nrOfVars += 1
 
     if(nrOfVars==0)
-      row.append(Node.createUriNode(entity, entityGraph))
+      row.append(entity)
     for(index <- 1 to nrOfVars) {
       val node = resultSet.get(resultVarBaseName + index)
       row.append(convertNode(node, entityGraph))
@@ -165,7 +165,7 @@ object JenaResultSetEntityBuilderHelper {
   }
 
   class ResultSetManager(resultSet: ResultSet, graphvars : Seq[String]) {
-    var entity: String = null
+    var entity: Node = null
     var entityGraph: String = null
     var factumTable = new HashSet[IndexedSeq[Node]]
 
@@ -174,9 +174,8 @@ object JenaResultSetEntityBuilderHelper {
 
       while(resultSet.hasNext) {
         val querySolution = resultSet.next
-        val subj = querySolution.getResource("SUBJ").getURI
-        if(subj!=null) {//TODO: Support Blank nodes as entites
         val graph = getAGraph(querySolution)
+        val subj = convertNode(querySolution.getResource("SUBJ"), graph)
 
         val factumRow = getFactumRow(subj, graph, querySolution, graphvars.size)
         if(entity!=subj && entity!=null) {
@@ -189,7 +188,6 @@ object JenaResultSetEntityBuilderHelper {
         if(returnEntityData != null) {
           return Some(returnEntityData)
         }
-        }//TODO: see above
       }
 
       if(entity!=null) {
@@ -218,7 +216,7 @@ object JenaResultSetEntityBuilderHelper {
 
       while(resultSet.hasNext) {
         val querySolution = resultSet.next
-        val subj = querySolution.getResource("SUBJ").getURI
+        val subj = convertNode(querySolution.getResource("SUBJ"), graph)
 
         val factumRow = getFactumRow(subj, graph, querySolution)
         if(entity!=subj && entity!=null) {
@@ -246,17 +244,17 @@ object JenaResultSetEntityBuilderHelper {
   }
 
   object ResultSetManager {
-    def pickSmallestEntity(dataOfEntities: Seq[Option[EntityData]]): String = {
-      var minEntity: String = dataOfEntities.filter(_ != None).head.get.entityURI
+    def pickSmallestEntity(dataOfEntities: Seq[Option[EntityData]]): Node = {
+      var minEntity: Node = dataOfEntities.filter(_ != None).head.get.entity
       for(data <- dataOfEntities)
-        if(data != None && (data.get.entityURI < minEntity))
-          minEntity = data.get.entityURI
+        if(data != None && (data.get.entity.compare(minEntity)<0))
+          minEntity = data.get.entity
 
       return minEntity
     }
   }
 
-  case class EntityData(val entityURI: String, val graphURI: String, val factumTable: Traversable[IndexedSeq[Node]])
+  case class EntityData(val entity: Node, val graphURI: String, val factumTable: Traversable[IndexedSeq[Node]])
 
   class Row extends ArrayBuffer[Node] {
     override def hashCode : Int  = {
