@@ -1,4 +1,4 @@
-package de.fuberlin.wiwiss.ldif
+package ldif
 
 import ldif.module.Module
 

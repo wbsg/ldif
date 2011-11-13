@@ -1,4 +1,4 @@
-package de.fuberlin.wiwiss.ldif
+package ldif
 
 import ldif.util.Identifier
 import ldif.module.ModuleTask

@@ -1,4 +1,4 @@
-package de.fuberlin.wiwiss.ldif.local.tdb
+package ldif.local.tdb
 
 import com.hp.hpl.jena.tdb.store.bulkloader2.{CmdIndexBuild, CmdNodeTableBuilder}
 import java.io._

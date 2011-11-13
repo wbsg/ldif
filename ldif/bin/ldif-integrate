@@ -1,3 +1,4 @@
 #!/bin/bash
 basedir=${0%/*}
-java -server -Xmx2G -Xms256M -cp $basedir/../:$basedir/../ldif-singlemachine/target/ldif-single-0.3.1-jar-with-dependencies.jar ldif.local.IntegrationJob $*
+java -server -Xmx2G -Xms256M -Dlogback.configurationFile=$basedir/../ldif-singlemachine/src/main/resources/logback.xml -cp $basedir/../:$basedir/../ldif-singlemachine/target/ldif-single-0.3.1-jar-with-dependencies.jar ldif.local.IntegrationJob $*
+

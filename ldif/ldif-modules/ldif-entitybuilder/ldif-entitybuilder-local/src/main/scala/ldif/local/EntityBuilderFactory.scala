@@ -1,4 +1,4 @@
-package de.fuberlin.wiwiss.ldif.local
+package ldif.local
 
 import ldif.local.runtime.{ConfigParameters, QuadReader}
 import ldif.entity.EntityDescription

@@ -1,4 +1,4 @@
-package de.fuberlin.wiwiss.ldif.local
+package ldif.local
 
 import ldif.entity.Node
 import collection.mutable.{HashMap, MultiMap, Set}

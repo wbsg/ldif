@@ -1,0 +1,729 @@
+Index: test/com/ontologycentral/ldspider/http/robot/Sitemap.java
+===================================================================
+--- test/com/ontologycentral/ldspider/http/robot/Sitemap.java	(revision 285)
++++ test/com/ontologycentral/ldspider/http/robot/Sitemap.java	(working copy)
+@@ -1,107 +1,107 @@
+-package com.ontologycentral.ldspider.http.robot;
+-
+-import java.net.URI;
+-import java.net.URISyntaxException;
+-import java.util.ArrayList;
+-import java.util.Collection;
+-import java.util.List;
+-import java.util.logging.Logger;
+-
+-import net.sourceforge.sitemaps.SitemapParser;
+-import net.sourceforge.sitemaps.SitemapUrl;
+-
+-import org.apache.commons.httpclient.HttpStatus;
+-import org.apache.http.Header;
+-import org.apache.http.HttpEntity;
+-import org.apache.http.HttpResponse;
+-import org.apache.http.client.methods.HttpGet;
+-import com.ontologycentral.ldspider.hooks.error.ErrorHandler;
+-import com.ontologycentral.ldspider.http.ConnectionManager;
+-
+-/**
+- * 
+- * @author andhar
+- *
+- */
+-		
+-public class Sitemap {
+-	Logger _log = Logger.getLogger(this.getClass().getName());
+-	
+-	net.sourceforge.sitemaps.Sitemap _sm;
+-	
+-	public Sitemap(ConnectionManager cm, ErrorHandler eh, String host) {
+-		URI u;
+-		try {
+-			u = new URI( "http://" + host + "/sitemap.xml" );
+-		} catch (URISyntaxException e) {
+-			_log.info(e.getMessage() + " " + host);
+-			return;
+-		}
+-
+-		HttpGet hget = new HttpGet(u);
+-
+-		long time1 = System.currentTimeMillis();
+-		long bytes = -1;
+-		int status = 0;
+-		String type = null;
+-		HttpResponse hres = null;
+-
+-		try {
+-			hres = cm.connect(hget);
+-			HttpEntity hen = hres.getEntity();
+-
+-			status = hres.getStatusLine().getStatusCode();
+-			
+-			Header ct = hres.getFirstHeader("Content-Type");
+-			if (ct != null) {
+-				type = hres.getFirstHeader("Content-Type").getValue();
+-			}
+-
+-			if (status == HttpStatus.SC_OK) {
+-				if (hen != null) {
+-					_sm = new net.sourceforge.sitemaps.Sitemap(u.toURL());
+-					SitemapParser sp = new SitemapParser();
+-//					sp.processSitemap(_sm, type, hen.getContent());
+-				} else {
+-					_sm = null;
+-				}
+-			} else {
+-				_log.info("no sitemap.xml for " + host);
+-			}
+-
+-			if (hen != null) {
+-				bytes = hen.getContentLength();
+-				hen.consumeContent();
+-			} else {
+-				hget.abort();
+-			}
+-		} catch (Exception e) {
+-			eh.handleError(u, e);
+-			hget.abort();			
+-		}
+-
+-		if (status != 0) {
+-			eh.handleStatus(u, status, hres.getAllHeaders(), (System.currentTimeMillis()-time1), bytes);
+-		}
+-	}
+-
+-	public List<URI> getURIs() {
+-		List<URI> li = new ArrayList<URI>();
+-		
+-		if (_sm != null) {
+-			Collection<SitemapUrl> col = _sm.getUrlList();
+-			for (SitemapUrl su : col) {
+-				URI u;
+-				try {
+-					u = su.getUrl().toURI();
+-					li.add(u);
+-				} catch (URISyntaxException e) {
+-					// TODO Auto-generated catch block
+-					e.printStackTrace();
+-				}
+-			}
+-    	}
+-		
+-		return li;
+-    }
+-}
+\ No newline at end of file
++//package com.ontologycentral.ldspider.http.robot;
++//
++//import java.net.URI;
++//import java.net.URISyntaxException;
++//import java.util.ArrayList;
++//import java.util.Collection;
++//import java.util.List;
++//import java.util.logging.Logger;
++//
++//import net.sourceforge.sitemaps.SitemapParser;
++//import net.sourceforge.sitemaps.SitemapUrl;
++//
++//import org.apache.commons.httpclient.HttpStatus;
++//import org.apache.http.Header;
++//import org.apache.http.HttpEntity;
++//import org.apache.http.HttpResponse;
++//import org.apache.http.client.methods.HttpGet;
++//import com.ontologycentral.ldspider.hooks.error.ErrorHandler;
++//import com.ontologycentral.ldspider.http.ConnectionManager;
++//
++///**
++// * 
++// * @author andhar
++// *
++// */
++//		
++//public class Sitemap {
++//	Logger _log = Logger.getLogger(this.getClass().getName());
++//	
++//	net.sourceforge.sitemaps.Sitemap _sm;
++//	
++//	public Sitemap(ConnectionManager cm, ErrorHandler eh, String host) {
++//		URI u;
++//		try {
++//			u = new URI( "http://" + host + "/sitemap.xml" );
++//		} catch (URISyntaxException e) {
++//			_log.info(e.getMessage() + " " + host);
++//			return;
++//		}
++//
++//		HttpGet hget = new HttpGet(u);
++//
++//		long time1 = System.currentTimeMillis();
++//		long bytes = -1;
++//		int status = 0;
++//		String type = null;
++//		HttpResponse hres = null;
++//
++//		try {
++//			hres = cm.connect(hget);
++//			HttpEntity hen = hres.getEntity();
++//
++//			status = hres.getStatusLine().getStatusCode();
++//			
++//			Header ct = hres.getFirstHeader("Content-Type");
++//			if (ct != null) {
++//				type = hres.getFirstHeader("Content-Type").getValue();
++//			}
++//
++//			if (status == HttpStatus.SC_OK) {
++//				if (hen != null) {
++//					_sm = new net.sourceforge.sitemaps.Sitemap(u.toURL());
++//					SitemapParser sp = new SitemapParser();
++////					sp.processSitemap(_sm, type, hen.getContent());
++//				} else {
++//					_sm = null;
++//				}
++//			} else {
++//				_log.info("no sitemap.xml for " + host);
++//			}
++//
++//			if (hen != null) {
++//				bytes = hen.getContentLength();
++//				hen.consumeContent();
++//			} else {
++//				hget.abort();
++//			}
++//		} catch (Exception e) {
++//			eh.handleError(u, e);
++//			hget.abort();			
++//		}
++//
++//		if (status != 0) {
++//			eh.handleStatus(u, status, hres.getAllHeaders(), (System.currentTimeMillis()-time1), bytes);
++//		}
++//	}
++//
++//	public List<URI> getURIs() {
++//		List<URI> li = new ArrayList<URI>();
++//		
++//		if (_sm != null) {
++//			Collection<SitemapUrl> col = _sm.getUrlList();
++//			for (SitemapUrl su : col) {
++//				URI u;
++//				try {
++//					u = su.getUrl().toURI();
++//					li.add(u);
++//				} catch (URISyntaxException e) {
++//					// TODO Auto-generated catch block
++//					e.printStackTrace();
++//				}
++//			}
++//    	}
++//		
++//		return li;
++//    }
++//}
+\ No newline at end of file
+Index: test/com/ontologycentral/ldspider/http/robot/SitemapTest.java
+===================================================================
+--- test/com/ontologycentral/ldspider/http/robot/SitemapTest.java	(revision 285)
++++ test/com/ontologycentral/ldspider/http/robot/SitemapTest.java	(working copy)
+@@ -1,20 +1,20 @@
+-package com.ontologycentral.ldspider.http.robot;
+-
+-import java.net.URI;
+-
+-import junit.framework.TestCase;
+-
+-import com.ontologycentral.ldspider.http.ConnectionManager;
+-
+-public class SitemapTest extends TestCase {
+-	public void testSitemap() throws Exception {
+-		URI u = new URI("http://www.google.com/bla");
+-	//"http://www.google.com/sitemap.xml");
+-
+-		ConnectionManager cm = new ConnectionManager(null, 0, null, null, 10);
+-
+-		Sitemaps s = new Sitemaps(cm);
+-
+-		System.out.println(s.getSitemapUris(u));
+-	}
+-}
+\ No newline at end of file
++//package com.ontologycentral.ldspider.http.robot;
++//
++//import java.net.URI;
++//
++//import junit.framework.TestCase;
++//
++//import com.ontologycentral.ldspider.http.ConnectionManager;
++//
++//public class SitemapTest extends TestCase {
++//	public void testSitemap() throws Exception {
++//		URI u = new URI("http://www.google.com/bla");
++//	//"http://www.google.com/sitemap.xml");
++//
++//		ConnectionManager cm = new ConnectionManager(null, 0, null, null, 10);
++//
++//		Sitemaps s = new Sitemaps(cm);
++//
++//		System.out.println(s.getSitemapUris(u));
++//	}
++//}
+\ No newline at end of file
+Index: test/com/ontologycentral/ldspider/http/robot/Sitemaps.java
+===================================================================
+--- test/com/ontologycentral/ldspider/http/robot/Sitemaps.java	(revision 285)
++++ test/com/ontologycentral/ldspider/http/robot/Sitemaps.java	(working copy)
+@@ -1,55 +1,55 @@
+-package com.ontologycentral.ldspider.http.robot;
+-
+-import java.net.URI;
+-import java.util.Collections;
+-import java.util.HashSet;
+-import java.util.List;
+-import java.util.Set;
+-import java.util.logging.Logger;
+-
+-import com.ontologycentral.ldspider.hooks.error.ErrorHandler;
+-import com.ontologycentral.ldspider.hooks.error.ErrorHandlerDummy;
+-import com.ontologycentral.ldspider.http.ConnectionManager;
+-
+-
+-/**
+- * 
+- * @author andhar
+- *
+- */
+-		
+-public class Sitemaps {
+-	Logger _log = Logger.getLogger(this.getClass().getName());
+-
+-	Set<String> _seen;
+-
+-	private ConnectionManager _cm;
+-	
+-    private ErrorHandler _eh;
+-
+-	public Sitemaps(ConnectionManager cm) {
+-		_cm = cm;
+-		
+-		_eh = new ErrorHandlerDummy();
+-		
+-		_seen = Collections.synchronizedSet(new HashSet<String>());
+-	}	
+-	
+-    public void setErrorHandler(ErrorHandler eh) {
+-        _eh = eh;
+-    }
+-    
+-    public List<URI> getSitemapUris(URI uri) {
+-    	String host = uri.getAuthority();
+-
+-		if (!_seen.contains(host)) {
+-			Sitemap s = new Sitemap(_cm, _eh, host);
+-    	
+-			_seen.add(host);
+-			
+-			return s.getURIs();
+-    	}
+-    	
+-		return null;
+-    }
+-}
+\ No newline at end of file
++//package com.ontologycentral.ldspider.http.robot;
++//
++//import java.net.URI;
++//import java.util.Collections;
++//import java.util.HashSet;
++//import java.util.List;
++//import java.util.Set;
++//import java.util.logging.Logger;
++//
++//import com.ontologycentral.ldspider.hooks.error.ErrorHandler;
++//import com.ontologycentral.ldspider.hooks.error.ErrorHandlerDummy;
++//import com.ontologycentral.ldspider.http.ConnectionManager;
++//
++//
++///**
++// * 
++// * @author andhar
++// *
++// */
++//		
++//public class Sitemaps {
++//	Logger _log = Logger.getLogger(this.getClass().getName());
++//
++//	Set<String> _seen;
++//
++//	private ConnectionManager _cm;
++//	
++//    private ErrorHandler _eh;
++//
++//	public Sitemaps(ConnectionManager cm) {
++//		_cm = cm;
++//		
++//		_eh = new ErrorHandlerDummy();
++//		
++//		_seen = Collections.synchronizedSet(new HashSet<String>());
++//	}	
++//	
++//    public void setErrorHandler(ErrorHandler eh) {
++//        _eh = eh;
++//    }
++//    
++//    public List<URI> getSitemapUris(URI uri) {
++//    	String host = uri.getAuthority();
++//
++//		if (!_seen.contains(host)) {
++//			Sitemap s = new Sitemap(_cm, _eh, host);
++//    	
++//			_seen.add(host);
++//			
++//			return s.getURIs();
++//    	}
++//    	
++//		return null;
++//    }
++//}
+\ No newline at end of file
+Index: test/com/ontologycentral/ldspider/hooks/sink/SinkSparulTest.java
+===================================================================
+--- test/com/ontologycentral/ldspider/hooks/sink/SinkSparulTest.java	(revision 285)
++++ test/com/ontologycentral/ldspider/hooks/sink/SinkSparulTest.java	(working copy)
+@@ -27,9 +27,9 @@
+ 	private static final String seedUri = "http://dbpedia.org/resource/Germany";
+ 	//private static final String seedUri = "http://libris.kb.se/data/bib/10294087";
+ 	
+-	private static final String sparqlEndpoint = "http://localhost:2020/sparql";
++	private static final String sparqlEndpoint = "http://localhost:8092/sparql";
+ 	
+-	private static final String sparulEndpoint = "http://localhost:2020/service/update";
++	private static final String sparulEndpoint = "http://localhost:8092/sparul";
+ 	
+ 	private static final String graph = "http://example.com/SinkSparulTestGraph";
+ 	
+Index: test/com/ontologycentral/ldspider/ABoxTBoxTest.java
+===================================================================
+--- test/com/ontologycentral/ldspider/ABoxTBoxTest.java	(revision 285)
++++ test/com/ontologycentral/ldspider/ABoxTBoxTest.java	(working copy)
+@@ -15,6 +15,8 @@
+ 
+ import com.ontologycentral.ldspider.frontier.BasicFrontier;
+ import com.ontologycentral.ldspider.frontier.Frontier;
++import com.ontologycentral.ldspider.hooks.error.ErrorHandler;
++import com.ontologycentral.ldspider.hooks.error.ErrorHandlerLogger;
+ import com.ontologycentral.ldspider.hooks.links.LinkFilterDomain;
+ import com.ontologycentral.ldspider.hooks.sink.SinkCallback;
+ 
+@@ -56,7 +58,8 @@
+ 		CallbackSet cb = new org.semanticweb.yars.util.CallbackSet();
+ 		Callback cbFile = new CallbackNxOutputStream(new FileOutputStream("output_rounds=" + rounds + "_mode=" + crawlingMode + "_stay=" + stayOnDomain + ".nx"));
+ 		c.setOutputCallback(new SinkCallback(new Callbacks(cb, cbFile)));
+-		
++		ErrorHandler eh = new ErrorHandlerLogger(System.out, null);
++		//c.setErrorHandler(eh);
+ 		//Run
+ 		c.evaluateBreadthFirst(frontier, rounds, 10000, 10000, crawlingMode);
+ 	}
+Index: src/com/ontologycentral/ldspider/http/LookupThread.java
+===================================================================
+--- src/com/ontologycentral/ldspider/http/LookupThread.java	(revision 285)
++++ src/com/ontologycentral/ldspider/http/LookupThread.java	(working copy)
+@@ -55,7 +55,7 @@
+ 	}
+ 	
+ 	public void run() {
+-		_log.info("starting thread ...");
++		_log.fine("starting thread ...");
+ 		
+ 		int i = 0;
+ 
+@@ -145,13 +145,13 @@
+ 								status = 0;
+ 							}
+ 						} else {
+-							_log.info("HttpEntity for " + lu + " is null");
++							_log.fine("HttpEntity for " + lu + " is null");
+ 						}
+ 					} else if (status == HttpStatus.SC_MOVED_PERMANENTLY || status == HttpStatus.SC_MOVED_TEMPORARILY || status == HttpStatus.SC_SEE_OTHER) { 
+ 						// treating all redirects the same but shouldn't: 301 -> rename context URI, 302 -> keep original context URI, 303 -> spec inconclusive
+ 						Header[] loc = hres.getHeaders("location");
+ 						String path = loc[0].getValue();
+-						_log.info("redirecting (" + status + ") to " + path);
++						_log.fine("redirecting (" + status + ") to " + path);
+ 						URI to = new URI(path);
+ 						
+ 						// handle local redirects
+@@ -188,6 +188,6 @@
+ 			lu = _q.poll();
+ 		}
+ 		
+-		_log.info("finished thread after fetching " + i + " uris");
++		_log.fine("finished thread after fetching " + i + " uris");
+ 	}
+ }
+\ No newline at end of file
+Index: src/com/ontologycentral/ldspider/http/internal/ResponseGzipUncompress.java
+===================================================================
+--- src/com/ontologycentral/ldspider/http/internal/ResponseGzipUncompress.java	(revision 285)
++++ src/com/ontologycentral/ldspider/http/internal/ResponseGzipUncompress.java	(working copy)
+@@ -70,7 +70,7 @@
+             HeaderElement[] codecs = ceheader.getElements();
+             for (int i = 0; i < codecs.length; i++) {
+                 if (codecs[i].getName().equalsIgnoreCase(GZIP_CODEC)) {
+-                	_log.info("gzip compression");
++                	_log.fine("gzip compression");
+                     response.setEntity(new GzipDecompressingEntity(response.getEntity())); 
+                     return;
+                 }
+Index: src/com/ontologycentral/ldspider/http/internal/CloseIdleConnectionThread.java
+===================================================================
+--- src/com/ontologycentral/ldspider/http/internal/CloseIdleConnectionThread.java	(revision 285)
++++ src/com/ontologycentral/ldspider/http/internal/CloseIdleConnectionThread.java	(working copy)
+@@ -17,15 +17,15 @@
+ 		_cm = cm; 
+ 		_st = sleepTime;
+ 		
+-		log.info("Initialised "+CloseIdleConnectionThread.class.getSimpleName()+" with sleepTime "+_st+" ms");
++		log.fine("Initialised "+CloseIdleConnectionThread.class.getSimpleName()+" with sleepTime "+_st+" ms");
+ 	}
+ 
+ 	public void run() {
+-		log.info("Starting "+CloseIdleConnectionThread.class.getSimpleName());
++		log.fine("Starting "+CloseIdleConnectionThread.class.getSimpleName());
+ 		_run = true;
+ 		
+ 		while(_run) {
+-			log.info("Closing expired and idle connections");
++			log.fine("Closing expired and idle connections");
+ 			_cm.closeExpiredConnections();
+ 			_cm.closeIdleConnections(0L, TimeUnit.SECONDS);
+ 
+@@ -38,12 +38,12 @@
+ 			}
+ 		}
+ 		
+-		log.info("Stopped "+CloseIdleConnectionThread.class.getSimpleName());
++		log.fine("Stopped "+CloseIdleConnectionThread.class.getSimpleName());
+ 	}
+ 	
+ 	public void shutdown() {
+ 		_run = false;
+-		log.info("Stopping "+CloseIdleConnectionThread.class.getSimpleName());
++		log.fine("Stopping "+CloseIdleConnectionThread.class.getSimpleName());
+ 		interrupt();
+ 	}
+ }
+Index: src/com/ontologycentral/ldspider/Crawler.java
+===================================================================
+--- src/com/ontologycentral/ldspider/Crawler.java	(revision 285)
++++ src/com/ontologycentral/ldspider/Crawler.java	(working copy)
+@@ -270,7 +270,7 @@
+ 			
+ 			m.shutdown();
+ 			
+-			_log.info("ROUND " + curRound + " DONE with " + _queue.size() + " uris remaining in queue");
++			_log.info("round " + curRound + " done - " + _queue.size() + " uris remaining in queue");
+ 			_log.fine("old queue: \n" + _queue.toString());
+ 
+ 			_queue.schedule(frontier);
+Index: src/com/ontologycentral/ldspider/hooks/links/LinkFilterDefault.java
+===================================================================
+--- src/com/ontologycentral/ldspider/hooks/links/LinkFilterDefault.java	(revision 285)
++++ src/com/ontologycentral/ldspider/hooks/links/LinkFilterDefault.java	(working copy)
+@@ -53,7 +53,7 @@
+ 	}
+ 	
+ 	public void endDocument() {
+-		_log.info("document done");
++		_log.fine("document done");
+ 	}
+ 
+ 	public synchronized void processStatement(Node[] nx) {
+@@ -118,7 +118,8 @@
+ 				if (add) {
+ 					_f.add(u);
+ 					_log.fine("adding " + nx[i].toString() + " to frontier");
+-					_eh.handleLink(nx[nx.length-1], nx[i]);
++					// Error handler is not defined
++					//_eh.handleLink(nx[nx.length-1], nx[i]);
+ 				}
+ 			} catch (URISyntaxException e) {
+ 				try {
+Index: src/com/ontologycentral/ldspider/queue/LoadBalancingQueue.java
+===================================================================
+--- src/com/ontologycentral/ldspider/queue/LoadBalancingQueue.java	(revision 285)
++++ src/com/ontologycentral/ldspider/queue/LoadBalancingQueue.java	(working copy)
+@@ -56,7 +56,7 @@
+ 	 * @param maxuris - cut off number of uris per pld
+ 	 */
+ 	public synchronized void schedule(Frontier f) {	
+-		_log.info("start scheduling depth " + _depth++ + "...");
++		_log.fine("start scheduling depth " + _depth++ + "...");
+ 
+ 		long time = System.currentTimeMillis();
+ 
+@@ -79,7 +79,7 @@
+ 		
+ 		_mintime = _maxtime = System.currentTimeMillis();
+ 		
+-		_log.info("scheduling depth " + _depth + " with " + size() + " uris and " + getSortedQueuePlds().size() + " plds done in " + (_mintime - time) + " ms");
++		_log.fine("scheduling depth " + _depth + " with " + size() + " uris and " + getSortedQueuePlds().size() + " plds done in " + (_mintime - time) + " ms");
+ 	}
+ 	
+ //	/**
+@@ -145,7 +145,7 @@
+ 			if (_current.isEmpty()) {
+ 				// queue is empty, done for this round
+ 				if (size() == 0) {
+-					_log.info("queue size is 0: " + toString());
++					_log.fine("queue size is 0: " + toString());
+ 					return null;
+ 				}
+ 				if (_current == POISON) {
+@@ -153,19 +153,19 @@
+ 				}
+ 		
+ 				if ((time1 - _mintime) < _mindelay) {
+-					_log.info("fetching plds too fast, rescheduling, remaining uris in queue " + size());
+-					_log.info(toString());
++					_log.fine("fetching plds too fast, rescheduling, remaining uris in queue " + size());
++					_log.fine(toString());
+ 					_current = POISON;
+ 					return null;
+ 				}
+ 				
+-				_log.info("queue turnaround in " + (time1-_mintime) + " ms");
++				_log.fine("queue turnaround in " + (time1-_mintime) + " ms");
+ 
+ 				_mintime = _maxtime = System.currentTimeMillis();
+ 				
+ 				_current.addAll(getSortedQueuePlds());
+ 			} else if ((time1 - _maxtime) > _maxdelay) {
+-				_log.info("skipped to start of queue in " + (time1-_maxtime) + " ms, queue size " + size());
++				_log.fine("skipped to start of queue in " + (time1-_maxtime) + " ms, queue size " + size());
+ 
+ 				_maxtime = System.currentTimeMillis();
+ 				
+@@ -187,7 +187,7 @@
+ 		
+ 		long time1 = System.currentTimeMillis();
+ 		
+-		_log.info("poll for " + next + " done in " + (time1 - time) + " ms");
++		_log.fine("poll for " + next + " done in " + (time1 - time) + " ms");
+ 
+ 		return next;
+ 	}
+Index: src/com/ontologycentral/ldspider/queue/BreadthFirstQueue.java
+===================================================================
+--- src/com/ontologycentral/ldspider/queue/BreadthFirstQueue.java	(revision 285)
++++ src/com/ontologycentral/ldspider/queue/BreadthFirstQueue.java	(working copy)
+@@ -60,7 +60,7 @@
+ 	 * @param maxuris - cut off number of uris per pld
+ 	 */
+ 	public synchronized void schedule(Frontier f) {	
+-		_log.info("start scheduling...");
++		_log.fine("start scheduling...");
+ 
+ 		long time = System.currentTimeMillis();
+ 		
+@@ -107,7 +107,7 @@
+ 
+ 		// maxplds means keep only the max number of plds with the largest amount of uris
+ 		List<String> lipld = getSortedQueuePlds();
+-		_log.debug("sorted pld list " + lipld.toString());
++		_log.fine("sorted pld list " + lipld.toString());
+ 		
+ 		if (_maxplds != -1) {
+ 			for (int i = _maxplds; i < lipld.size(); i++) {
+@@ -129,8 +129,8 @@
+ 		}
+ 		_time = System.currentTimeMillis();
+ 		
+-		_log.debug("scheduling " + _current.size() + " plds done in " + (_time - time) + " ms");
+-		_log.debug(toString());
++		_log.fine("scheduling " + _current.size() + " plds done in " + (_time - time) + " ms");
++		_log.fine(toString());
+ 	}
+ 		
+ 	/**
+@@ -165,14 +165,14 @@
+ 							
+ 				if ((time1 - _time) < CrawlerConstants.MIN_DELAY) {
+ 					try {
+-						_log.info("delaying queue " + CrawlerConstants.MIN_DELAY + " ms ...");
++						_log.fine("delaying queue " + CrawlerConstants.MIN_DELAY + " ms ...");
+ 						Thread.sleep(CrawlerConstants.MIN_DELAY);
+ 					} catch (InterruptedException e) {
+ 						e.printStackTrace();
+ 					}
+ 				}
+ 				
+-				_log.info("queue turnaround in " + (time1-_time) + " ms");
++				_log.fine("queue turnaround in " + (time1-_time) + " ms");
+ 
+ 				_time = System.currentTimeMillis();
+ 
+Index: src/com/ontologycentral/ldspider/queue/SpiderQueue.java
+===================================================================
+--- src/com/ontologycentral/ldspider/queue/SpiderQueue.java	(revision 285)
++++ src/com/ontologycentral/ldspider/queue/SpiderQueue.java	(working copy)
+@@ -73,7 +73,7 @@
+ 		}
+ 		
+ 		if (from.equals(to)) {
+-			_log.info("redirected to same uri " + from);
++			_log.fine("redirected to same uri " + from);
+ 			return;
+ 		}
+ 		
+@@ -81,7 +81,7 @@
+ //		_redirsRound.add(to);
+ 		
+ 		if (checkSeen(to) == false) {
+-			_log.info("adding " + to + " directly to queue");
++			_log.fine("adding " + to + " directly to queue");
+ 			addDirectly(to);
+ 		}
+ 	}
+@@ -98,7 +98,7 @@
+ 	URI obtainRedirect(URI from) {
+ 		URI to = _redirs.getRedirect(from);
+ 		if (from != to) {
+-			_log.info("redir from " + from + " to " + to);
++			_log.fine("redir from " + from + " to " + to);
+ 			return to;
+ 		}
+ 		
+Index: src/com/ontologycentral/ldspider/Monitor.java
+===================================================================
+--- src/com/ontologycentral/ldspider/Monitor.java	(revision 285)
++++ src/com/ontologycentral/ldspider/Monitor.java	(working copy)
+@@ -25,7 +25,7 @@
+ 	public void run() {
+ 		while (_stop != true) {
+ 			for (Thread t : _threads) {
+-				_pw.println(t.getName());
++				//_pw.println(t.getName());
+ 			}
+ 
+ 			try {
+Index: src/com/ontologycentral/ldspider/CrawlerConstants.java
+===================================================================
+--- src/com/ontologycentral/ldspider/CrawlerConstants.java	(revision 285)
++++ src/com/ontologycentral/ldspider/CrawlerConstants.java	(working copy)
+@@ -31,7 +31,7 @@
+ 
+ 	public static final int MAX_CONNECTIONS_PER_THREAD = 32;
+ 	
+-	public static final int RETRIES = 0;
++	public static final int RETRIES = 3;
+ 
+ 	public static final int MAX_REDIRECTS = 1;
+ 
+@@ -41,7 +41,7 @@
+ 	public static final int DEFAULT_NB_URIS = Integer.MAX_VALUE;
+ 	
+ 	// avoid hammering plds
+-	public static final long MIN_DELAY = 2*1000;
++	public static final long MIN_DELAY = 2*100;
+ 	// for bfs queue: max time after plds get re-visited
+ 	public static final long MAX_DELAY = 2*MIN_DELAY;
+ 	

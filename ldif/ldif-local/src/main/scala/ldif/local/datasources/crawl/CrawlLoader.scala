@@ -66,7 +66,7 @@ class CrawlLoader(seedUris : Traversable[URI], predicates : Traversable[URI] = T
         for (predicate <- predicates) {
           predicateNodes.add(new Resource(predicate.toString))
         }
-        log.info("Predicates to follow ("+predicates.size+"): " + predicates.mkString(" "))
+        log.fine("Predicates to follow ("+predicates.size+"): " + predicates.mkString(" "))
         crawler.setLinkFilter(new LinkFilterSelect(frontier, predicateNodes, true))
       }
 
@@ -75,7 +75,7 @@ class CrawlLoader(seedUris : Traversable[URI], predicates : Traversable[URI] = T
       // Run the crawler (with Frontier frontier, int depth, int maxuris, int maxplds)
       crawler.evaluateBreadthFirst(frontier, levels, limit, -1, Mode.ABOX_AND_TBOX)
 
-      log.info("Crawled seed: "+seed)
+      log.fine("Crawled seed: "+seed)
     }
   }
 }

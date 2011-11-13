@@ -1,4 +1,4 @@
-package de.fuberlin.wiwiss.ldif.local
+package ldif.local
 
 import java.io.{IOException, File}
 import ldif.entity.EntityDescription

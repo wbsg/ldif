@@ -1,11 +1,11 @@
-package de.fuberlin.wiwiss.ldif.local
+package ldif.local
 
 import ldif.module.Executor
-import de.fuberlin.wiwiss.ldif.EntityBuilderTask
 import ldif.local.runtime._
 import java.util.Properties
 import ldif.util.{MemoryUsage, FatalErrorListener}
 import scala.collection.JavaConversions._
+import ldif.EntityBuilderTask
 
 class EntityBuilderExecutor(configParameters: ConfigParameters = ConfigParameters(new Properties, null)) extends Executor {
 

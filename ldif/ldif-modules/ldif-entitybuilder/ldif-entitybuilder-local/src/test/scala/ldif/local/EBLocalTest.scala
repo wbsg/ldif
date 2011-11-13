@@ -1,4 +1,4 @@
-package de.fuberlin.wiwiss.ldif.local
+package ldif.local
 
 import org.scalatest.FlatSpec
 import org.scalatest.matchers.ShouldMatchers
@@ -6,7 +6,7 @@ import xml.XML
 import ldif.entity._
 import ldif.datasources.dump.{DumpModule, DumpConfig}
 import ldif.local.datasources.dump.DumpExecutor
-import de.fuberlin.wiwiss.ldif.{EntityBuilderModule, EntityBuilderConfig}
+import ldif.{EntityBuilderModule, EntityBuilderConfig}
 import ldif.util.Prefixes
 import org.scalatest.junit.JUnitRunner
 import org.junit.runner.RunWith

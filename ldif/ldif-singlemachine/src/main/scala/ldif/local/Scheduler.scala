@@ -79,7 +79,7 @@ class Scheduler (val config : SchedulerConfig, debug : Boolean = false) {
     {
       runningImportJobs.replace(job.id, true)
       val stopWatch = new StopWatch
-      log.info("Running import job "+ job.id +" ("+job.refreshSchedule+")")
+      log.info("Import Job "+ job.id +" started ("+job.getType+" / "+job.refreshSchedule+")")
       stopWatch.getTimeSpanInSeconds()
 
       val tmpDumpFile = getTmpDumpFile(job)
@@ -93,7 +93,7 @@ class Scheduler (val config : SchedulerConfig, debug : Boolean = false) {
         val provenanceGraph = config.properties.getProperty("provenanceGraphURI", Consts.DEFAULT_PROVENANCE_GRAPH)
         job.generateProvenanceInfo(new OutputStreamWriter(new FileOutputStream(tmpProvenanceFile)), provenanceGraph)
 
-        log.info("Job " + job.id + " loaded in "+ stopWatch.getTimeSpanInSeconds + " s")
+        log.info("Job " + job.id + " loaded in "+ stopWatch.getTimeSpanInSeconds + "s")
 
         var loop = true
         val changeFreqHours = Consts.changeFreqToHours.get(job.refreshSchedule).get

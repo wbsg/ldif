@@ -28,7 +28,7 @@ object ConfigValidator {
       val sourceValidation = config.properties.getProperty("validateSources")
       val discardFaultyQuads = config.properties.getProperty("discardFaultyQuads", "false").toLowerCase=="true"
       if(sourceValidation!=null && sourceValidation.toLowerCase=="false") {
-        println("-- Validation of source datasets disabled")
+        log.fine("Validation of source datasets disabled")
       }
       else {
         // Sources validation

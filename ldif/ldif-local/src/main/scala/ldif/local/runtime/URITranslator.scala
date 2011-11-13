@@ -52,7 +52,7 @@ object URITranslator {
         }
       }
     }
-    log.info("End URI translation: Processed " + counter + " quads.")
+    log.info("End URI translation: Processed " + counter + " quads")
     quadOutput.finish
     new FileQuadReader(quadOutput.outputFile)
   }
@@ -65,7 +65,7 @@ object URITranslator {
     val uriMinting = configProperties.getProperty("uriMinting", "false").toLowerCase=="true"
     if(uriMinting) {
       if (!quadsReader.isInstanceOf[ClonableQuadReader])
-        throw new RuntimeException("QuadReader for URI translator has to be a ClonableQuadReader.")
+        throw new RuntimeException("QuadReader for URI translator has to be a ClonableQuadReader")
       quadsReaderPassTwo = quadsReader.asInstanceOf[ClonableQuadReader].cloneReader
       uriMap = generateMintedUriMap(linkReader, quadsReader, configProperties)
     }

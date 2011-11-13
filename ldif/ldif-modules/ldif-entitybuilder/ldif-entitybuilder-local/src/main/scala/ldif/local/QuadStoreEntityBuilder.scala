@@ -1,4 +1,4 @@
-package de.fuberlin.wiwiss.ldif.local
+package ldif.local
 
 import ldif.entity.EntityDescription
 import java.util.logging.Logger

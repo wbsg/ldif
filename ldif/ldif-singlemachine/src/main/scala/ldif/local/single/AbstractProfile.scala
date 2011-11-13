@@ -1,6 +1,6 @@
 package ldif.local.single
 
-import de.fuberlin.wiwiss.ldif.local.EntityBuilder
+import ldif.local.EntityBuilder
 
 /**
  * Created by IntelliJ IDEA.

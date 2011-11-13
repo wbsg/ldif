@@ -1,4 +1,4 @@
-package de.fuberlin.wiwiss.ldif.local
+package ldif.local
 
 import ldif.entity._
 import java.util.logging.Logger
@@ -32,9 +32,9 @@ class EntityBuilder (entityDescriptions : IndexedSeq[EntityDescription], readers
 
   // if no restriction is defined, build an entity for each resource
   var allUriNodes : Set[Node] = null
-//  println("Memory used (before loading into hash tables): " + MemoryUsage.getMemoryUsage() +" KB")   //TODO: remove
+//  log.info("Memory used (before loading into hash tables): " + MemoryUsage.getMemoryUsage() +" KB")   //TODO: remove
   init
-//  println("Memory used (after loaded into hash tables): " + MemoryUsage.getMemoryUsage() +" KB")  //TODO: remove
+//  log.info("Memory used (after loaded into hash tables): " + MemoryUsage.getMemoryUsage() +" KB")  //TODO: remove
 
   // Build entities and write those into the EntityWriter
   def buildEntities (ed : EntityDescription, writer : EntityWriter) {
@@ -58,7 +58,7 @@ class EntityBuilder (entityDescriptions : IndexedSeq[EntityDescription], readers
     else
       for(node <- allUriNodes)
         writer.write(new EntityLocal(LocalNode.decompress(node), ed))
-//    println("Memory used (after writing all entities): " + MemoryUsage.getMemoryUsage()+" KB")   //TODO: remove
+//    log.info("Memory used (after writing all entities): " + MemoryUsage.getMemoryUsage()+" KB")   //TODO: remove
     writer.finish
 
     log.fine("Build Entities took " + ((now - startTime)) + " ms")
@@ -105,7 +105,7 @@ class EntityBuilder (entityDescriptions : IndexedSeq[EntityDescription], readers
         if(isRelevantQuad(quad))  {
           counter += 1
 //          if(counter % 100000 == 0)
-//            println("Memory usage for " + counter + " loaded quads: " + MemoryUsage.getMemoryUsage() + "KB")
+//            log.info("Memory usage for " + counter + " loaded quads: " + MemoryUsage.getMemoryUsage() + "KB")
 
           val prop = StringPool.getCanonicalVersion(quad.predicate)
           val subj = LocalNode.intern(quad.subject)
@@ -124,7 +124,7 @@ class EntityBuilder (entityDescriptions : IndexedSeq[EntityDescription], readers
         }
       }
     }
-    println("-- EntityBuilder: " + counter + " quads loaded into the entity builder.")
+    log.info("EntityBuilder: " + counter + " quads loaded into the entity builder")
 
     //log.info("Read in Quads took " + ((now - startTime)) + " ms")
     //log.info(" [ FHT ] \n > keySet = ("+FHT.keySet.size.toString+")")

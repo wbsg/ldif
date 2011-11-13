@@ -2,17 +2,20 @@ package ldif.local
 
 import config.SchedulerConfig
 import java.io.File
-import org.slf4j.LoggerFactory;
+import org.slf4j.LoggerFactory
+import ldif.util.LogUtil
+;
 
 
 object Ldif {
+  LogUtil.init
   private val log = LoggerFactory.getLogger(getClass.getName)
 
   def main(args : Array[String])
   {
     var debug = false
     if(args.length<1) {
-      println("No configuration file given.")
+      log.warn("No configuration file given.")
       System.exit(1)
     }
     else if(args.length>=2 && args(0)=="--debug")

@@ -18,12 +18,12 @@ case class SparqlImportJob(conf : SparqlConfig, id :  Identifier, refreshSchedul
     val writer = new OutputStreamWriter(out)
 
     if (conf.endpointLocation == null) {
-      log.warning("! Import failed for job "+ id +" - SPARQL endpoint location not defined")
+      log.warning("Import failed for job "+ id +" - SPARQL endpoint location not defined")
     }
 
     val query = conf.buildQuery
-    log.info("Loading from " + conf.endpointLocation + ", graph: " + conf.graphName)
-    log.info("Query: " + query)
+    log.info("Loading from " + conf.endpointLocation)
+    log.fine("Query: " + query)
 
     importedGraphs += graph
 

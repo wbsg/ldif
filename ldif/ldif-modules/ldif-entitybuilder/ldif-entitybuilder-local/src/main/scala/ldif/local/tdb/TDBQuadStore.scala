@@ -1,11 +1,11 @@
-package de.fuberlin.wiwiss.ldif.local.tdb
+package ldif.local.tdb
 
 import java.io.File
 import ldif.local.runtime.EntityWriter
 import com.hp.hpl.jena.tdb.TDBFactory
 import ldif.util.EntityDescriptionToSparqlConverter
 import ldif.entity.EntityDescription
-import de.fuberlin.wiwiss.ldif.local. QuadStoreTrait
+import ldif.local.QuadStoreTrait
 import com.hp.hpl.jena.query.{QueryExecution, ResultSet, QueryExecutionFactory, Dataset}
 import ldif.local.util.JenaResultSetEntityBuilderHelper
 import com.hp.hpl.jena.query.ARQ
