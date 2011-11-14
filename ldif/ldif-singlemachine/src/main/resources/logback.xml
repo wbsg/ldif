@@ -11,7 +11,7 @@
     <!-- Appends log events into a file -->
     <appender name="FILE" class="ch.qos.logback.core.FileAppender">
         <file>ldif.log</file>
-        <append>true</append>
+        <append>false</append>
         <layout class="ch.qos.logback.classic.PatternLayout">
             <Pattern>%d{HH:mm:ss.SS} [%thread] %-5level %logger{40} - %msg%n</Pattern>
         </layout>
@@ -22,7 +22,10 @@
     <logger name="ldif" level="INFO"/>
 
     <!-- Set silk level to INFO, but append only to FILE -->
-    <logger name="de.fuberlin.wiwiss.silk" level="INFO" additivity="false">
+    <logger name="de.fuberlin.wiwiss.silk.output" level="INFO" additivity="false">
+        <appender-ref ref="FILE"/>
+    </logger>
+    <logger name="de.fuberlin.wiwiss.silk.instance" level="INFO" additivity="false">
         <appender-ref ref="FILE"/>
     </logger>
 
