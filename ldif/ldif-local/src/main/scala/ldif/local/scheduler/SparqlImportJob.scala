@@ -40,9 +40,13 @@ case class SparqlImportJob(conf : SparqlConfig, id :  Identifier, refreshSchedul
     val endpointUrl = conf.endpointLocation.toString
     var loop = true
     var offset : Long = 0
+    var limit : Long = Consts.maxPageSize
 
     while (loop) {
-      val query = baseQuery + " OFFSET " + offset + " LIMIT " + math.min(conf.pageSize, conf.tripleLimit - offset)
+      var query = baseQuery
+      if (offset > 0)
+        query += " OFFSET " + offset + " LIMIT " + math.min(limit, conf.tripleLimit - offset)
+      else query +=  " LIMIT " + math.min(limit, conf.tripleLimit)
 
       var retries = 1
       var retryPause = Consts.retryPause
@@ -60,7 +64,7 @@ case class SparqlImportJob(conf : SparqlConfig, id :  Identifier, refreshSchedul
               return false
             }
 
-            log.warning("Error executing query - retrying in " + retryPause + " ms. (" + retries + "/" + retryCount + ")\n"+query+" \non "+endpointUrl+" \n"+e.getMessage)
+            log.warning("Error executing query - retrying in " + retryPause + " ms. (" + retries + "/" + retryCount + ")\n"+query+" \non "+endpointUrl+" \n"+e.getCause)
             retries += 1
             if (retries > retryCount) {
               return false
@@ -84,10 +88,15 @@ case class SparqlImportJob(conf : SparqlConfig, id :  Identifier, refreshSchedul
           }
         }
       }
+      if (offset == 0) {
+         // set page size for the sparql endpoint
+         limit = results.size
+      }
       offset += results.size
-      loop = (results.size == conf.pageSize) && !(offset == conf.tripleLimit)
+      loop = (results.size == limit) && !(offset == conf.tripleLimit)
       write(results, writer)
-      log.info(id +" - loaded "+offset+" quads")
+      if (loop)
+        log.info(id +" - loaded "+offset+" quads")
     }
     true
   }
@@ -118,21 +127,16 @@ object SparqlImportJob {
     if(tripleLimitString.length > 0)
       tripleLimit = tripleLimitString.toLong
 
-    val pageSizeString =  ((node \ "singleQueryTripleLimit") text)
-    var pageSize = Consts.pageSize
-    if(pageSizeString.length > 0)
-      pageSize = pageSizeString.toInt
-
     val sparqlPatterns = (node \ "sparqlPatterns" \ "pattern").map(x => x text).toTraversable
 
-    val sparqlConfig = SparqlConfig(endpointLocation, graphName, sparqlPatterns, tripleLimit, pageSize)
+    val sparqlConfig = SparqlConfig(endpointLocation, graphName, sparqlPatterns, tripleLimit)
     val job = new SparqlImportJob(sparqlConfig, id, refreshSchedule, dataSource)
     job
   }
 
 }
 
-case class SparqlConfig(endpointLocation : URI,  graphName : URI, sparqlPatterns : Traversable[String], tripleLimit : Long = Long.MaxValue, pageSize : Int = Consts.pageSize) {
+case class SparqlConfig(endpointLocation : URI,  graphName : URI, sparqlPatterns : Traversable[String], tripleLimit : Long = Long.MaxValue) {
 
   def buildQuery : String = {
     val isGraphDefined = graphName.toString.trim != ""

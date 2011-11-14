@@ -73,8 +73,6 @@
 
         <xs:element name="tripleLimit" type="xs:unsignedInt" minOccurs="0" />
 
-        <xs:element name="singleQueryTripleLimit" type="xs:unsignedInt" minOccurs="0" />
-
         <xs:element name="sparqlPatterns" minOccurs="0" >
           <xs:complexType>
             <xs:sequence>

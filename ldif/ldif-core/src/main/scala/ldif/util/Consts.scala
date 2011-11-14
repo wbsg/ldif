@@ -43,7 +43,7 @@ object Consts {
   val MAX_NUM_GRAPHS_IN_MEMORY = 100000
 
   // SPARQL endpoint paramenter
-  val pageSize = 1000
+  val maxPageSize = 5000
   val retryPause = 5 * 1000
   val retryCount = 5
 }
