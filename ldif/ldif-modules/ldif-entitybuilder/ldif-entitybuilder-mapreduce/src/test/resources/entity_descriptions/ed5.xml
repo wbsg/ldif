@@ -1,0 +1,7 @@
+<EntityDescription>
+    <Patterns>
+        <Pattern>
+            <Path>?SUBJ/&lt;http://a&gt;/&lt;http://b&gt;</Path>
+        </Pattern>
+    </Patterns>
+</EntityDescription>

@@ -33,15 +33,21 @@ object EntityDescription
   def fromXML(xml : Elem)(implicit prefixes : Prefixes = Prefixes.empty) =
   {
     EntityDescription(
-      restriction = Restriction.fromXML(xml \ "Restriction" head),
-      patterns =
-          for(patternNode <- (xml \ "Patterns" \ "Pattern").toIndexedSeq[scala.xml.Node]) yield
+      restriction = (xml \ "Restriction").headOption match {
+        case Some(r) => Restriction.fromXML(r)
+        case None => Restriction(None)
+      },
+      patterns = (xml \ "Patterns").headOption match {
+        case Some(p) =>
+          for(patternNode <- (p \ "Pattern").toIndexedSeq[scala.xml.Node]) yield
           {
             for(pathNode <- (patternNode \ "Path").toIndexedSeq[scala.xml.Node]) yield
             {
               Path.parse(pathNode.text)
             }
           }
+        case None => List().toIndexedSeq
+      }
     )
   }
 }

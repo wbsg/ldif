@@ -1,0 +1,12 @@
+<EntityDescription>
+    <Restriction>
+        Some(&lt;And&gt;&lt;Condition path=&quot;?SUBJ/&amp;lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#type&amp;gt;&quot;&gt;
+        &lt;Uri&gt;http://WhatEver&lt;/Uri&gt;
+        &lt;/Condition&gt;&lt;/And&gt;)
+    </Restriction>
+    <Patterns>
+        <Pattern>
+            <Path>?SUBJ/&lt;http://testNamespace/oldP&gt;</Path>
+        </Pattern>
+    </Patterns>
+</EntityDescription>
