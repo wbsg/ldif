@@ -46,7 +46,7 @@ object EntityDescription
               Path.parse(pathNode.text)
             }
           }
-        case None => List().toIndexedSeq
+        case None => IndexedSeq(IndexedSeq.empty[Path])
       }
     )
   }

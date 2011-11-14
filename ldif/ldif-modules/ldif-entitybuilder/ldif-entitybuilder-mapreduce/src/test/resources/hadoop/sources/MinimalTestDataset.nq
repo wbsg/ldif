@@ -1,0 +1,23 @@
+<http://testNamespace/resource2> <http://testNamespace/oldP> "same" <MinimalTestDatasetY> .
+<http://testNamespace/resource2> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://testNamespace/someOldClass> <MinimalTestDatasetY> .
+<http://testNamespace/resource2> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://WhatEver> <MinimalTestDatasetX> .
+<http://testNamespace/resource1> <http://testNamespace/oldP> "same" <MinimalTestDatasetX> .
+<http://testNamespace/resource1> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://testNamespace/someOldClass> <MinimalTestDatasetX> .
+<http://testNamespace/resource1> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://WhatEver> <MinimalTestDatasetX> .
+<http://testNamespace/resource1> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://WhatEver> <MinimalTestDatasetZ> .
+<http://testNamespace/resource0> <http://testNamespace/oldP> "different" <MinimalTestDatasetZ> .
+<http://testNamespace/resource0> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://testNamespace/someOldClass>  <MinimalTestDatasetZ> .
+_:bn <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://WhatEver> <MinimalTestDatasetX> .
+<http://oooo> <http://someProp> _:bla <someGraph>.
+<http://aaaa> <http://someProp> _:blo <someGraph>.
+<http://o1> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://WhatEver> <XY> .
+<http://o1> <http://v> "John" <WhatAboutThisOne> .
+<http://o1> <http://n> "Locke" <WhatAboutThatOne> .
+<http://testNamespace/resource1> <http://www.w3.org/2002/07/owl#sameAs> <http://oooo> .
+#<http://oooo> <http://www.w3.org/2002/07/owl#sameAs> <http://testNamespace/resource1> .
+<http://testNamespace/resource1> <http://www.w3.org/2002/07/owl#sameAs> <http://testNamespace/resource0> .
+<http://pathResource> <http://a> _:bn2 .
+_:bn2 <http://b> "value at the end of the path" .
+<http://anotherPathResource> <http://a> _:bn4 .
+_:bn4 <http://c> _:bn3 .
+_:bn3 <http://d> "value even further away" .

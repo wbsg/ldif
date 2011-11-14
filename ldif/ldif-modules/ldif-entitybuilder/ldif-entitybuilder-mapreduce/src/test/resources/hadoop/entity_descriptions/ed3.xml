@@ -1,0 +1,12 @@
+<EntityDescription>
+    <Restriction>
+        <Condition path="?SUBJ/rdf:type">
+            <Uri>http://WhatEver</Uri>
+        </Condition>
+    </Restriction>
+    <Patterns>
+        <Pattern>
+            <Path>?SUBJ/&lt;http://testNamespace/oldP&gt;</Path>
+        </Pattern>
+    </Patterns>
+</EntityDescription>

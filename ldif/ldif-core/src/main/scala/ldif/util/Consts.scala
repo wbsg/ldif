@@ -46,4 +46,7 @@ object Consts {
   val maxPageSize = 5000
   val retryPause = 5 * 1000
   val retryCount = 5
+
+  // System
+  val fileSeparator = System.getProperty("file.separator")
 }
