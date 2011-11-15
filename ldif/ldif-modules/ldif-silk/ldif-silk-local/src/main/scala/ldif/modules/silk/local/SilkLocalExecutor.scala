@@ -69,7 +69,7 @@ class SilkLocalExecutor(useFileInstanceCache: Boolean = false) extends Executor
     def indexFunction(instance: Instance) = linkSpec.condition.index(instance, 0.0)
 
     val loadTask = new LoadTask(sources, caches, instanceSpecs, if (blocking.isDefined) Some(indexFunction _) else None)
-    loadTask()//TODO: for profiling
+    loadTask()
 
     //Execute matching
     val matchTask = new MatchTask(linkSpec, caches, numThreads, true)
