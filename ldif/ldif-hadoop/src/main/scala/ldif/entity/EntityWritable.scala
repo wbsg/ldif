@@ -2,7 +2,7 @@ package ldif.entity
 
 import java.io.{DataInput, DataOutput}
 import org.apache.hadoop.io.{Writable, IntWritable, ArrayWritable, WritableComparable}
-import ldif.mapreduce.types.{NodeArrayWritable, ArrayArrayWritable}
+import ldif.hadoop.types.{NodeArrayWritable, ArrayArrayWritable}
 
 /**
  * Created by IntelliJ IDEA.

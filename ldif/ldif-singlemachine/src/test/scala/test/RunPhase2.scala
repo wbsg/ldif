@@ -8,14 +8,14 @@ import org.apache.hadoop.util._
 import org.apache.hadoop.conf._
 import org.apache.commons.io.FileUtils
 import org.apache.hadoop.io.{IntWritable, Text}
-import ldif.mapreduce.types._
+import ldif.hadoop.types._
 import java.math.BigInteger
 import de.fuberlin.wiwiss.r2r._
 import scala.collection.JavaConversions._
 import java.io.{ObjectOutputStream, File}
 import de.fuberlin.wiwiss.ldif.mapreduce.io._
 import ldif.entity.{EntityDescriptionMetaDataExtractor, EntityDescription}
-import ldif.mapreduce.utils.HadoopHelper
+import ldif.hadoop.utils.HadoopHelper
 
 /**
  * Created by IntelliJ IDEA.

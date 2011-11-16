@@ -42,11 +42,3 @@ case class StaticEntityFormat(entityDescriptions : Seq[EntityDescription]) exten
   type Reader = Seq[EntityReader]
   type Writer = Seq[EntityWriter]
 }
-
-
-
-
-
-
-
-

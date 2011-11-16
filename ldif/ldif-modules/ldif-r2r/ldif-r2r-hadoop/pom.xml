@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>ldif-r2r</artifactId>
+        <groupId>ldif</groupId>
+        <version>${ldif.version}</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+
+    <artifactId>ldif-r2r-hadoop</artifactId>
+    <packaging>jar</packaging>
+	<version>${ldif.version}</version>
+	<name>LDIF R2R Hadoop Module</name>
+
+    <dependencies>
+        <dependency>
+          <groupId>ldif</groupId>
+          <artifactId>ldif-hadoop</artifactId>
+          <version>${ldif.version}</version>
+        </dependency>
+    </dependencies>
+</project>

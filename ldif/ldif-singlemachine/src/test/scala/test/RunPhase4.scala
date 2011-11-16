@@ -9,22 +9,21 @@ package test
  */
 import de.fuberlin.wiwiss.ldif.mapreduce.mappers._
 import de.fuberlin.wiwiss.ldif.mapreduce.reducers._
-import org.apache.hadoop.mapred._
-import lib.MultipleOutputs
 import org.apache.hadoop.util._
 import org.apache.hadoop.conf._
 import org.apache.commons.io.FileUtils
 import org.apache.hadoop.io.{IntWritable, Text}
-import ldif.mapreduce.types._
+import ldif.hadoop.types._
 import java.math.BigInteger
 import de.fuberlin.wiwiss.r2r._
 import scala.collection.JavaConversions._
 import java.io.{ObjectOutputStream, File}
 import de.fuberlin.wiwiss.ldif.mapreduce.io._
 import ldif.entity.{EntityDescriptionMetaDataExtractor, EntityDescription}
-import ldif.mapreduce.utils.HadoopHelper
-import org.apache.hadoop.hdfs.DistributedFileSystem
+import ldif.hadoop.utils.HadoopHelper
 import org.apache.hadoop.fs.{FileSystem, Path}
+import org.apache.hadoop.mapred._
+import lib.MultipleOutputs
 
 /**
  * Created by IntelliJ IDEA.
@@ -38,35 +37,38 @@ class RunPhase4 extends Configured with Tool {
   def run(args: Array[String]): Int = {
     val conf = getConf
     val fileSystem = FileSystem.get(conf)
-    val job = new JobConf(conf, classOf[RunPhase4])
+    val jobConf = new JobConf(conf, classOf[RunPhase4])
+    val jobClient = new JobClient(jobConf)
     val maxPhase = args(0).toInt
     val fileSeparator = System.getProperty("file.separator")
 
-    job.setMapperClass(classOf[EntityConstructionMapper])
-    job.setReducerClass(classOf[EntityConstructionReducer])
-    job.setNumReduceTasks(1)
+    jobConf.setMapperClass(classOf[EntityConstructionMapper])
+    jobConf.setReducerClass(classOf[EntityConstructionReducer])
+    jobConf.setNumReduceTasks(1)
 
-    job.setMapOutputKeyClass(classOf[EntityDescriptionNodeWritable])
-    job.setMapOutputValueClass(classOf[ValuePathWritable])
+    jobConf.setMapOutputKeyClass(classOf[EntityDescriptionNodeWritable])
+    jobConf.setMapOutputValueClass(classOf[ValuePathWritable])
 
-    job.setOutputKeyClass(classOf[IntWritable])
-    job.setOutputValueClass(classOf[ValuePathWritable])
+    jobConf.setOutputKeyClass(classOf[IntWritable])
+    jobConf.setOutputValueClass(classOf[ValuePathWritable])
 
-    job.setInputFormat(classOf[ValuePathSequenceFileInput])
-    job.setOutputFormat(classOf[EntityMultipleTextFileOutput])
+    jobConf.setInputFormat(classOf[ValuePathSequenceFileInput])
+    jobConf.setOutputFormat(classOf[EntityMultipleTextFileOutput])
     //Debugging
-    MultipleOutputs.addNamedOutput(job, "debug", classOf[TextOutputFormat[IntWritable, ValuePathWritable]], classOf[IntWritable], classOf[ValuePathWritable])
+    MultipleOutputs.addNamedOutput(jobConf, "debug", classOf[TextOutputFormat[IntWritable, ValuePathWritable]], classOf[IntWritable], classOf[ValuePathWritable])
 
     for(i <- 0 to math.max(0, maxPhase-1)) {
       var in = new Path(args(1) + fileSeparator + i + fileSeparator, ValuePathMultipleSequenceFileOutput.generateDirectoryNameForFinishedValuePaths(i))
       if(fileSystem.exists(in))
-        FileInputFormat.addInputPath(job, in)
+        FileInputFormat.addInputPath(jobConf, in)
     }
 
     val out = new Path(args(2))
-    FileOutputFormat.setOutputPath(job, out)
+    FileOutputFormat.setOutputPath(jobConf, out)
 
-    JobClient.runJob(job)
+    val runningJob = JobClient.runJob(jobConf)
+//    val counters = runningJob.getCounters
+//    val countValue=counters.getGroup("LDIF nr. of entities per ED").getCounter("ED ID 6")
 
     return 0
   }
