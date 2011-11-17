@@ -54,11 +54,11 @@
         <artifactId>voldemort</artifactId>
         <version>0.81</version>
     </dependency-->
-    <dependency>
+    <!--dependency>
         <groupId>log4j</groupId>
         <artifactId>log4j</artifactId>
         <version>1.2.16</version>
-    </dependency>
+    </dependency-->
     <!--dependency>
         <groupId>org.jdom</groupId>
         <artifactId>jdom</artifactId>

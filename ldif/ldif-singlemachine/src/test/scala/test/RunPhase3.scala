@@ -1,7 +1,7 @@
 package test
 
-import ldif.hadoop.mappers._
-import ldif.hadoop.reducers._
+import ldif.hadoop.entitybuilder.mappers._
+import ldif.hadoop.entitybuilder.reducers._
 import org.apache.hadoop.fs.Path
 import org.apache.hadoop.mapred._
 import lib.{MultipleOutputs, NullOutputFormat}
@@ -14,7 +14,7 @@ import java.math.BigInteger
 import de.fuberlin.wiwiss.r2r._
 import scala.collection.JavaConversions._
 import java.io.{ObjectOutputStream, File}
-import ldif.hadoop.io._
+import ldif.hadoop.entitybuilder.io._
 import ldif.entity.{EntityDescriptionMetaDataExtractor, EntityDescription}
 import ldif.hadoop.utils.HadoopHelper
 
