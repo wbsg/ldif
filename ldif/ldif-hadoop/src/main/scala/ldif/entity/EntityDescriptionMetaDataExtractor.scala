@@ -5,7 +5,7 @@ import ldif.entity.Restriction._
 import scala.collection.mutable.{ArrayBuffer, HashMap, Seq => MSeq}
 
 
-class EntityDescriptionMetaDataExtractor {
+object EntityDescriptionMetaDataExtractor {
   var pathCounter = new AtomicInteger(0)
   // propertyMap stores information of (pathID, phaseNr)
   var propertyMap = new HashMap[String, ArrayBuffer[PropertyInfo]]()

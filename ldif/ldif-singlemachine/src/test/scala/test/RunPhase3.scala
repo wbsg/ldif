@@ -100,7 +100,7 @@ object RunPhase3 {
   def runPhase(args: Array[String]): Int = {
     println("Starting phase 3 of the EntityBuilder: Joining value paths")
     val entityDescriptions = getEntityDescriptions
-    val edmd = (new EntityDescriptionMetaDataExtractor).extract(entityDescriptions)
+    val edmd = EntityDescriptionMetaDataExtractor.extract(entityDescriptions)
 
     val start = System.currentTimeMillis
     val conf = new Configuration

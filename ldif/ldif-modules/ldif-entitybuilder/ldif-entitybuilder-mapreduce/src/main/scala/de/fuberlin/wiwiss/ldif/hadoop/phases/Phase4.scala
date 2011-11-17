@@ -63,7 +63,7 @@ object Phase4 {
   private val log = Logger.getLogger(getClass.getName)
 
   def runPhase(in : String, out : String, entityDescriptions : Seq[EntityDescription]) : Int = {
-    val edmd = (new EntityDescriptionMetaDataExtractor).extract(entityDescriptions)
+    val edmd = EntityDescriptionMetaDataExtractor.extract(entityDescriptions)
     runPhase(in,out,edmd)
   }
 

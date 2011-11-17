@@ -71,7 +71,7 @@ object RunPhase2 {
   def runPhase(args: Array[String]): Int = {
     println("Starting phase 2 of the EntityBuilder: Filtering quads and creating initial value paths")
     val entityDescriptions = getEntityDescriptions
-    val edmd = (new EntityDescriptionMetaDataExtractor).extract(entityDescriptions)
+    val edmd = EntityDescriptionMetaDataExtractor.extract(entityDescriptions)
 
     FileUtils.deleteDirectory(new File(args(1)))
     val start = System.currentTimeMillis

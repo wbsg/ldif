@@ -10,5 +10,6 @@
 <http://dbpedia.org/resource/Beat_It> <http://dbpedia.org/ontology/producer> <http://dbpedia.org/resource/Michael_Jackson> <http://www4.wiwiss.fu-berlin.de/ldif/graph#dbpedia.1>. 
 <http://dbpedia.org/resource/Beat_It> <http://dbpedia.org/ontology/writer> <http://dbpedia.org/resource/Michael_Jackson> <http://www4.wiwiss.fu-berlin.de/ldif/graph#dbpedia.1>. 
 <http://dbpedia.org/resource/Beat_It> <http://dbpedia.org/ontology/album> <http://dbpedia.org/resource/Thriller_%28album%29> <http://www4.wiwiss.fu-berlin.de/ldif/graph#dbpedia.1>. 
-<http://dbpedia.org/resource/Beat_It> <http://xmlns.com/foaf/0.1/name> "Beat It"@sl <http://www4.wiwiss.fu-berlin.de/ldif/graph#dbpedia.1>. 
+<http://dbpedia.org/resource/Beat_It> <http://xmlns.com/foaf/0.1/name> "Beat It"@sl <http://www4.wiwiss.fu-berlin.de/ldif/graph#dbpedia.1>.
+<http://dbpedia.org/resource/Beat_It> <http://www.w3.org/2002/07/owl#sameAs> <http://rdf.freebase.com/ns/en.beat_it> <http://www4.wiwiss.fu-berlin.de/ldif/graph#dbpedia.1>.
 

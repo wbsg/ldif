@@ -56,7 +56,7 @@ class IntegrationFlowTest extends FlatSpec with ShouldMatchers {
 
     // Create provenance quads to look for
     val validQuads = List(
-      Quad(Node.createUriNode("http://dbpedia.org/resource/Beat_It"),
+      Quad(Node.createUriNode("http://rdf.freebase.com/ns/en.beat_it"),
         "http://www.w3.org/2000/01/rdf-schema#label",
         Node.createLanguageLiteral("Beat It","sl"),
         "http://www4.wiwiss.fu-berlin.de/ldif/graph#dbpedia.1"))

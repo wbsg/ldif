@@ -1,12 +1,5 @@
 package test
 
-/**
- * Created by IntelliJ IDEA.
- * User: andreas
- * Date: 10/27/11
- * Time: 12:12 PM
- * To change this template use File | Settings | File Templates.
- */
 import de.fuberlin.wiwiss.ldif.mapreduce.mappers._
 import de.fuberlin.wiwiss.ldif.mapreduce.reducers._
 import org.apache.hadoop.util._
@@ -91,7 +84,7 @@ object RunPhase4 {
   def runPhase(args: Array[String]): Int = {
     println("Starting phase 4 of the EntityBuilder: assembling entities")
     val entityDescriptions = getEntityDescriptions
-    val edmd = (new EntityDescriptionMetaDataExtractor).extract(entityDescriptions)
+    val edmd = EntityDescriptionMetaDataExtractor.extract(entityDescriptions)
 
     val start = System.currentTimeMillis
     val conf = new Configuration

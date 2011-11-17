@@ -23,7 +23,7 @@ class EBHadoopTest extends FlatSpec with ShouldMatchers
   val edDir = resourceDir+Consts.fileSeparator+"entity_descriptions"
 
   val entityDescriptions = loadEDs(edDir)
-  val edmd = (new EntityDescriptionMetaDataExtractor).extract(entityDescriptions)
+  val edmd = EntityDescriptionMetaDataExtractor.extract(entityDescriptions)
 
   Phase2.runPhase(sourcesDir, ouputDirPrefix+"_2", edmd)
   Phase3.runPhase(ouputDirPrefix+"_2", ouputDirPrefix+"_3", edmd)
