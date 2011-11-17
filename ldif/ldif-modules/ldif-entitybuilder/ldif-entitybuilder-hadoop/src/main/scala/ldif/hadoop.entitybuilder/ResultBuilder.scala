@@ -1,4 +1,4 @@
-package ldif.hadoop
+package ldif.hadoop.entitybuilder
 
 import ldif.hadoop.types.ValuePathWritable
 import collection.mutable.{HashMap, Map, ArrayBuffer, HashSet}

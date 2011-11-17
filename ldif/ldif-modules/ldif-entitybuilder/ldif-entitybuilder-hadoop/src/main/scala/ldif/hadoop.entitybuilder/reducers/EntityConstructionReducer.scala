@@ -1,4 +1,4 @@
-package ldif.hadoop.reducers
+package ldif.hadoop.entitybuilder.reducers
 
 import org.apache.hadoop.mapred._
 import lib.MultipleOutputs
@@ -6,7 +6,7 @@ import java.util.Iterator
 import collection.mutable.{HashMap, HashSet, ArrayBuffer}
 import ldif.hadoop.types._
 import ldif.hadoop.utils.HadoopHelper
-import ldif.hadoop.ResultBuilder
+import ldif.hadoop.entitybuilder.ResultBuilder
 import org.apache.hadoop.io.{WritableUtils, Writable, IntWritable}
 import org.apache.hadoop.conf.Configuration
 import ldif.entity.{NodeWritable, EntityDescriptionMetadata, EntityWritable}

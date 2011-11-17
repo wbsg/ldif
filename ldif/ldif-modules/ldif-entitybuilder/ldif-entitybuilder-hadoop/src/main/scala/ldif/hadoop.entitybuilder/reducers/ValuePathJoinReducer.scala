@@ -1,4 +1,4 @@
-package ldif.hadoop.reducers
+package ldif.hadoop.entitybuilder.reducers
 
 import org.apache.hadoop.mapred._
 import lib.MultipleOutputs

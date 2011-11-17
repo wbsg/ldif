@@ -1,7 +1,7 @@
-package ldif.hadoop.phases
+package ldif.hadoop.entitybuilder.phases
 
-import ldif.hadoop.mappers._
-import ldif.hadoop.reducers._
+import ldif.hadoop.entitybuilder.mappers._
+import ldif.hadoop.entitybuilder.reducers._
 import org.apache.hadoop.mapred._
 import lib.MultipleOutputs
 import org.apache.hadoop.util._
@@ -10,7 +10,7 @@ import org.apache.commons.io.FileUtils
 import org.apache.hadoop.io.IntWritable
 import ldif.hadoop.types._
 import java.io.File
-import ldif.hadoop.io._
+import ldif.hadoop.entitybuilder.io._
 import ldif.hadoop.utils.HadoopHelper
 import org.apache.hadoop.fs.{FileSystem, Path}
 import ldif.util.Consts

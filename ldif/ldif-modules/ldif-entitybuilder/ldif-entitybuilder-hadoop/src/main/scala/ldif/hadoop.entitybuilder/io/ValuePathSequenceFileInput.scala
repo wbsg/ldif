@@ -1,4 +1,4 @@
-package ldif.hadoop.io
+package ldif.hadoop.entitybuilder.io
 
 import org.apache.hadoop.mapred.SequenceFileInputFormat
 import org.apache.hadoop.io.IntWritable

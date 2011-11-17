@@ -1,4 +1,4 @@
-package ldif.hadoop.mappers
+package ldif.hadoop.entitybuilder.mappers
 
 import org.apache.hadoop.mapred._
 import ldif.datasources.dump.QuadParser
