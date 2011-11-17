@@ -56,11 +56,13 @@ object SchedulerConfig
       }
       else {
         log.warning("\'"+key+"\' path not found. Searched: " + relativeFile.getCanonicalPath + ", " + absoluteFile.getCanonicalPath)
-        if (forceMkdir && relativeFile.mkdirs) {
-          file = relativeFile
-          log.info("Created new directory at: "+ relativeFile.getCanonicalPath)
+        if (forceMkdir) {
+          if (relativeFile.mkdirs) {
+            file = relativeFile
+            log.info("Created new directory at: "+ relativeFile.getCanonicalPath)
+          }
+          else log.severe("Error creating directory at: " + relativeFile.getCanonicalPath)
         }
-        else  log.severe("Error creating directory at: " + relativeFile.getCanonicalPath)
       }
     }
     else{

@@ -12,7 +12,7 @@
     <artifactId>ldif-r2r-hadoop</artifactId>
     <packaging>jar</packaging>
 	<version>${ldif.version}</version>
-	<name>LDIF R2R Hadoop Module</name>
+	<name>LDIF R2R Module - Hadoop</name>
 
     <dependencies>
         <dependency>
