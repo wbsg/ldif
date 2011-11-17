@@ -1,4 +1,4 @@
-package de.fuberlin.wiwiss.ldif.mapreduce
+package ldif.hadoop
 
 import ldif.hadoop.types.ValuePathWritable
 import collection.mutable.{HashMap, Map, ArrayBuffer, HashSet}

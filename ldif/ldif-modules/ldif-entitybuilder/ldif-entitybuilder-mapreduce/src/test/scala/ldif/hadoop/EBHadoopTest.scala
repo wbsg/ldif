@@ -4,7 +4,7 @@ import org.scalatest.FlatSpec
 import org.scalatest.matchers.ShouldMatchers
 import org.scalatest.junit.JUnitRunner
 import org.junit.runner.RunWith
-import de.fuberlin.wiwiss.ldif.mapreduce.phases._
+import ldif.hadoop.phases._
 import ldif.entity.{EntityDescription, EntityDescriptionMetaDataExtractor}
 import java.io.File
 import xml.{XML, Source}

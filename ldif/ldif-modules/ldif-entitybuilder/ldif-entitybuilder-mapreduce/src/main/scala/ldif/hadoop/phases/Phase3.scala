@@ -1,7 +1,7 @@
-package de.fuberlin.wiwiss.ldif.mapreduce.phases
+package ldif.hadoop.phases
 
-import de.fuberlin.wiwiss.ldif.mapreduce.mappers._
-import de.fuberlin.wiwiss.ldif.mapreduce.reducers._
+import ldif.hadoop.mappers._
+import ldif.hadoop.reducers._
 import org.apache.hadoop.fs.Path
 import org.apache.hadoop.mapred._
 import lib.{MultipleOutputs, NullOutputFormat}
@@ -11,7 +11,7 @@ import org.apache.commons.io.FileUtils
 import org.apache.hadoop.io.IntWritable
 import ldif.hadoop.types._
 import java.io.File
-import de.fuberlin.wiwiss.ldif.mapreduce.io._
+import ldif.hadoop.io._
 import ldif.hadoop.utils.HadoopHelper
 import ldif.util.Consts
 import ldif.entity.{EntityDescriptionMetadata, EntityDescription, EntityDescriptionMetaDataExtractor}

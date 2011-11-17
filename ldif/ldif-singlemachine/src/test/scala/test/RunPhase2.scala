@@ -1,6 +1,6 @@
 package test
 
-import de.fuberlin.wiwiss.ldif.mapreduce.mappers._
+import ldif.hadoop.mappers._
 import org.apache.hadoop.fs.Path
 import org.apache.hadoop.mapred._
 import lib.{NullOutputFormat, MultipleOutputs}
@@ -13,7 +13,7 @@ import java.math.BigInteger
 import de.fuberlin.wiwiss.r2r._
 import scala.collection.JavaConversions._
 import java.io.{ObjectOutputStream, File}
-import de.fuberlin.wiwiss.ldif.mapreduce.io._
+import ldif.hadoop.io._
 import ldif.entity.{EntityDescriptionMetaDataExtractor, EntityDescription}
 import ldif.hadoop.utils.HadoopHelper
 

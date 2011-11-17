@@ -1,4 +1,4 @@
-package de.fuberlin.wiwiss.ldif.mapreduce.reducers
+package ldif.hadoop.reducers
 
 import org.apache.hadoop.mapred._
 import lib.MultipleOutputs

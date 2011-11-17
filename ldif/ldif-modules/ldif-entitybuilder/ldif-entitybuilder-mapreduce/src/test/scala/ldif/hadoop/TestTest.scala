@@ -1,5 +1,4 @@
-package de.fuberlin.wiwiss.ldif.mapreduce
-
+package ldif.hadoop
 
 import org.specs.mock.Mockito
 import org.mockito.Mockito._

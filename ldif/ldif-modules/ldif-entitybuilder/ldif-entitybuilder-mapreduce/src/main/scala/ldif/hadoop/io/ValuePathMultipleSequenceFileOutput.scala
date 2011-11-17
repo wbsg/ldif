@@ -1,4 +1,4 @@
-package de.fuberlin.wiwiss.ldif.mapreduce.io
+package ldif.hadoop.io
 
 import org.apache.hadoop.mapred.lib.MultipleSequenceFileOutputFormat
 import org.apache.hadoop.io.IntWritable
