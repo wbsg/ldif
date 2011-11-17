@@ -8,7 +8,7 @@ package de.fuberlin.wiwiss.r2r
  * To change this template use File | Settings | File Templates.
  */
 
-import ldif.entity.Node
+import ldif.entity.{NodeTrait, Node}
 import ldif.local.runtime.QuadWriter
 import de.fuberlin.wiwiss.r2r.TripleElement.Type
 import scala.collection.JavaConversions._
@@ -44,7 +44,7 @@ class LDIFTargetPattern(targetPattern: TargetPattern) extends TargetPattern(targ
     return results
   }
 
-  private def createQuad(s: Node, predicate: Node, o: Node): Quad = {
+  private def createQuad(s: NodeTrait, predicate: NodeTrait, o: NodeTrait): Quad = {
     var graph: String = DEFAULT_GRAPH
     if(o.graph!=null && o.graph!=DEFAULT_GRAPH && o.graph!="")
       graph = o.graph
@@ -53,11 +53,11 @@ class LDIFTargetPattern(targetPattern: TargetPattern) extends TargetPattern(targ
     return Quad(s, predicate.value, o, graph)
   }
 
-  private def getObjects(tripleElement: TripleElement, results: LDIFVariableResults): Iterable[Node] = {
+  private def getObjects(tripleElement: TripleElement, results: LDIFVariableResults): Iterable[NodeTrait] = {
     val elemType = tripleElement.getType
     val lexValue = tripleElement.getValue(0)
 
-    val objects: List[Node] = elemType match {
+    val objects: List[NodeTrait] = elemType match {
       case Type.IRI=> List(Node.createUriNode(lexValue, DEFAULT_GRAPH))
       case Type.IRIVARIABLE => for(Node(uri, _, _, graph) <- results.getResults(lexValue).get) yield Node.createUriNode(uri, graph)
       case Type.DATATYPEVARIABLE => getDataTypeVariableValues(tripleElement,results)
@@ -82,31 +82,31 @@ class LDIFTargetPattern(targetPattern: TargetPattern) extends TargetPattern(targ
     objects
   }
 
-  private def convertToLiteral(element: Node): Node = {
+  private def convertToLiteral(element: NodeTrait): NodeTrait = {
     Node.createLiteral(element.value, element.graph)
   }
 
-  private def convertToUri(element: Node): Node = {
+  private def convertToUri(element: NodeTrait): NodeTrait = {
     Node.createUriNode(element.value, element.graph)
   }
 
-  private def convertNodesToUriNodes(nodes: List[Node]): List[Node] = {
+  private def convertNodesToUriNodes(nodes: List[NodeTrait]): List[NodeTrait] = {
     nodes map convertToUri
   }
 
-  private def convertNodesToLiteralNodes(nodes: List[Node]): List[Node] = {
+  private def convertNodesToLiteralNodes(nodes: List[NodeTrait]): List[NodeTrait] = {
     nodes map convertToLiteral
   }
 
-  private def getDataTypeVariableValues(element: TripleElement, results: LDIFVariableResults): List[Node] = {
+  private def getDataTypeVariableValues(element: TripleElement, results: LDIFVariableResults): List[NodeTrait] = {
     val varName = element.getValue(0)
     var values = results.getResults(varName).get
     val hint = getHints.get(varName)
 
     if(HelperFunctions.getWorkingDataTypeOfDataTypeString(hint)!=null) {
-      var convertedValues = List[Node]()
+      var convertedValues = List[NodeTrait]()
       for(node <- values) {
-        var convertedVal: Node = null
+        var convertedVal: NodeTrait = null
         try {
           convertedVal = Node.createTypedLiteral(HelperFunctions.convertValueToDataType(node.value, hint), hint, node.graph)
         } catch {
@@ -120,12 +120,12 @@ class LDIFTargetPattern(targetPattern: TargetPattern) extends TargetPattern(targ
     values
   }
 
-  private def getPredicate(tripleElement: TripleElement): Node = {
+  private def getPredicate(tripleElement: TripleElement): NodeTrait = {
     return Node.createUriNode(tripleElement.getValue(0), "")
   }
 
-  private def getSubjects(tripleElement: TripleElement, results: LDIFVariableResults): Iterable[Node] = {
-    var subjects = List[Node]()
+  private def getSubjects(tripleElement: TripleElement, results: LDIFVariableResults): Iterable[NodeTrait] = {
+    var subjects = List[NodeTrait]()
     val elemType = tripleElement.getType
 
     elemType match {

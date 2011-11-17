@@ -14,7 +14,7 @@ import ldif.util.NTriplesStringConverter
  */
 
 class NodeWritable(var value: String, var datatypeOrLanguage: String, var nodeType: Node.NodeType, var graph: String) extends NodeTrait with WritableComparable[NodeWritable] {
-  def this(node: Node) {
+  def this(node: NodeTrait) {
     this(node.value, node.datatypeOrLanguage, node.nodeType, node.graph)
   }
 

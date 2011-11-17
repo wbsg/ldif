@@ -1,4 +1,4 @@
-package ldif.hadoop.entitybuilder.io
+package ldif.hadoop.io
 
 import org.apache.hadoop.mapred.lib.MultipleTextOutputFormat
 import org.apache.hadoop.io.{NullWritable, IntWritable}
@@ -20,5 +20,5 @@ class EntityMultipleTextFileOutput extends MultipleTextOutputFormat[IntWritable,
 }
 
 object EntityMultipleTextFileOutput {
-  def generateDirectoryName(entityDescriptionID: Int) = "text_eb_entity_for_ed_" + entityDescriptionID
+  def generateDirectoryName(entityDescriptionID: Int) = "text_eb_entities_for_ed_" + entityDescriptionID
 }

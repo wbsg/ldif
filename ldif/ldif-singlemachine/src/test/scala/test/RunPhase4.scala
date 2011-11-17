@@ -17,6 +17,7 @@ import ldif.hadoop.utils.HadoopHelper
 import org.apache.hadoop.fs.{FileSystem, Path}
 import org.apache.hadoop.mapred._
 import lib.MultipleOutputs
+import ldif.hadoop.io.EntityMultipleTextFileOutput
 
 /**
  * Created by IntelliJ IDEA.

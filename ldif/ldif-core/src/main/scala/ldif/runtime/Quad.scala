@@ -1,13 +1,13 @@
 package ldif.runtime
 
-import ldif.entity.Node
 import ldif.util.NTriplesStringConverter
 import java.util.Comparator
+import ldif.entity.NodeTrait
 
 /**
  * An RDF quad.
  */
-case class Quad(subject : Node, predicate : String, value : Node, graph : String) {
+case class Quad(subject : NodeTrait, predicate : String, value : NodeTrait, graph : String) {
   def toNQuadFormat = {
     val sb = new StringBuilder
     sb ++= subject.toNQuadsFormat

@@ -16,5 +16,5 @@ class R2RModule(val config: R2RConfig) extends Module {
 
   type TaskType = R2RTask
 
-  def tasks: Traversable[R2RTask] = { for(mapping <- config.repository.getMappings.values.toIterable) yield new R2RTask(LDIFMapping(mapping))}
+  def tasks: Traversable[R2RTask] = { for(mapping <- config.ldifMappings) yield new R2RTask(mapping)}
 }

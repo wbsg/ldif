@@ -21,7 +21,7 @@ object URITranslator {
 
   private val log = Logger.getLogger(getClass.getName)
 
-  private def translateQuadURIs(s: Node, o: Node, uriMap: Map[String, String]): (Node, Node) = {
+  private def translateQuadURIs(s: NodeTrait, o: NodeTrait, uriMap: Map[String, String]): (NodeTrait, NodeTrait) = {
     var sNew = s
     var oNew = o
     if (s.nodeType == Node.UriNode)
@@ -177,20 +177,20 @@ object URITranslator {
     nameSpace + URLEncoder.encode(label.replace(' ', '_'), "UTF-8")
   }
 
-  private def checkAndWriteSameAsLinks(uriMap: Map[String, String], quadOutput: QuadWriter, entityGraphChecker: EntityGraphChecker, graph: String, nodes: Node*) {
+  private def checkAndWriteSameAsLinks(uriMap: Map[String, String], quadOutput: QuadWriter, entityGraphChecker: EntityGraphChecker, graph: String, nodes: NodeTrait*) {
     for(node <- nodes if node.nodeType==Node.UriNode && uriMap.contains(node.value))
       if(entityGraphChecker.addAndCheck(node.value, graph))
         writeSameAsLink(node, uriMap.get(node.value).get, graph, quadOutput)
   }
 
-  private def writeSameAsLink(subj: Node, obj: String, graph: String, quadWriter: QuadWriter) {
+  private def writeSameAsLink(subj: NodeTrait, obj: String, graph: String, quadWriter: QuadWriter) {
     val sameAsProperty = "http://www.w3.org/2002/07/owl#sameAs"
     val o = Node.createUriNode(obj, "")
     quadWriter.write(Quad(subj, sameAsProperty, o, graph))
   }
 
   // Returns translated URI if they are found in the map, or returns the original URI
-  private def translateURINode(uriNode: Node, uriMap: Map[String, String]): Node = {
+  private def translateURINode(uriNode: NodeTrait, uriMap: Map[String, String]): NodeTrait = {
     if(uriMap.contains(uriNode.value))
       Node.createUriNode(uriMap.get(uriNode.value).get, uriNode.graph)
     else

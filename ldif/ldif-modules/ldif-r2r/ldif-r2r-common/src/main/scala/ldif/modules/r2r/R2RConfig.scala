@@ -10,5 +10,10 @@ package ldif.modules.r2r
 
 import ldif.module.ModuleConfig
 import de.fuberlin.wiwiss.r2r._
+import scala.collection.JavaConversions._
 
-class R2RConfig(val repository: Repository) extends ModuleConfig
+class R2RConfig(val ldifMappings: IndexedSeq[LDIFMapping]) extends ModuleConfig {
+  def this(repository: Repository) {
+    this((for(mapping <- repository.getMappings.values()) yield LDIFMapping(mapping)).toIndexedSeq)
+  }
+}

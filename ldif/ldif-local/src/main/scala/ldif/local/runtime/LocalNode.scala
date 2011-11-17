@@ -2,9 +2,9 @@ package ldif.local.runtime
 
 import ldif.local.util.StringPool
 import com.hp.hpl.jena.rdf.model.{Resource, Literal, RDFNode}
-import ldif.entity.Node
 import ldif.util.Consts
 import java.util.Properties
+import ldif.entity.{NodeTrait, Node}
 
 /*
 * Object used to create Node using string canonicalization
@@ -42,7 +42,7 @@ object LocalNode
   }
 
   // Intern a Node (eventually compressed)
-  def intern(node : Node) : Node = {
+  def intern(node : NodeTrait) : Node = {
     var value = node.value
     if (node.isResource)
       value = intern(node.value)

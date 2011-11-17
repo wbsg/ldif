@@ -12,7 +12,7 @@ import ldif.hadoop.types.{NodeArrayWritable, ArrayArrayWritable}
  * To change this template use File | Settings | File Templates.
  */
 
-class EntityWritable(var resource : NodeWritable, var resultTable: ArrayWritable, var entityDescriptionID: IntWritable) extends WritableComparable[EntityWritable] {
+class EntityWritable(var resource : NodeWritable, var resultTable: ArrayWritable, var entityDescriptionID: IntWritable) extends WritableComparable[EntityWritable] with Entity {
   def this() {
     this(new NodeWritable(), new ArrayArrayWritable(), new IntWritable())
   }

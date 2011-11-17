@@ -12,7 +12,8 @@ import ldif.module.DataFormat
 import ldif.entity.EntityDescription
 import org.apache.hadoop.fs.Path
 
-class HadoopDataFormat extends DataFormat {
+class HadoopDataFormat extends DataFormat
+
 /**
  * Used when no input or output is needed e.g. the input of a data source.
  */
@@ -25,7 +26,7 @@ case class NoDataFormat() extends HadoopDataFormat
 /**
  * The Quad Format uses RDF Graphs of quads to represent the data.
  */
-case class GraphFormat() extends HadoopDataFormat
+case class QuadFormat() extends HadoopDataFormat
 {
   type Reader = Seq[Path]
   type Writer = Path
@@ -39,5 +40,4 @@ case class EntityFormat(entityDescriptions : Seq[EntityDescription]) extends Had
 {
   type Reader = Seq[Path]
   type Writer = Seq[Path]
-}
 }

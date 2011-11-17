@@ -8,8 +8,8 @@ import org.scalatest.junit.JUnitRunner
 import de.fuberlin.wiwiss.r2r._
 import ldif.local.runtime.impl.{QuadQueue, EntityQueue, NoEntitiesLeft}
 import ldif.entity._
-import collection.mutable.HashSet
 import CreatorHelperFunctions._
+import scala.collection.JavaConversions._
 
 /**
  * Created by IntelliJ IDEA.
@@ -25,7 +25,8 @@ class R2RLocalExecutorTest extends FlatSpec with ShouldMatchers {
   val repository = new Repository(new FileOrURISource("ldif.modules.r2r/testMapping.ttl"))
 
   val task = {
-    val config = new R2RConfig(repository)
+    val ldifMappings = (for(mapping <- repository.getMappings.values()) yield LDIFMapping(mapping)).toIndexedSeq
+    val config = new R2RConfig(ldifMappings)
     val module = new R2RModule(config)
     module.tasks.head
   }

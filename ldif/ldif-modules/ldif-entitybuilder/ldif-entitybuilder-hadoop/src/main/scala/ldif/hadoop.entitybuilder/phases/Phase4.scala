@@ -16,6 +16,7 @@ import org.apache.hadoop.fs.{FileSystem, Path}
 import ldif.util.Consts
 import ldif.entity.{EntityDescriptionMetadata, EntityDescription, EntityDescriptionMetaDataExtractor}
 import java.util.logging.Logger
+import ldif.hadoop.io.EntityMultipleTextFileOutput
 
 /**
  *  Hadoop EntityBuilder - Phase 4

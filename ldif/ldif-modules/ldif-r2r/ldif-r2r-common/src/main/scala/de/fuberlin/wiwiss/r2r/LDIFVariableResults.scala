@@ -1,8 +1,8 @@
 package de.fuberlin.wiwiss.r2r
 
 import scala.collection.mutable.Map
-import ldif.entity.{Node, FactumRow}
 import java.util.concurrent.atomic.AtomicInteger
+import ldif.entity.{NodeTrait, Node, FactumRow}
 
 /**
  * Created by IntelliJ IDEA.
@@ -13,10 +13,10 @@ import java.util.concurrent.atomic.AtomicInteger
  */
 
 class LDIFVariableResults() {
-	private val variableValues: Map[String, List[Node]] = Map()
-  private var bNodes: Map[String, Node] = Map()
+	private val variableValues: Map[String, List[NodeTrait]] = Map()
+  private var bNodes: Map[String, NodeTrait] = Map()
 
-	def addVariableResult(varName: String, results: List[Node]): Boolean = {
+	def addVariableResult(varName: String, results: List[NodeTrait]): Boolean = {
 		if(!variableValues.contains(varName)) {
 			variableValues.put(varName, results);
 			return true;
@@ -24,7 +24,7 @@ class LDIFVariableResults() {
 		return false;
 	}
 
-  def addVariableResult(varName: String, result: Node): Boolean = {
+  def addVariableResult(varName: String, result: NodeTrait): Boolean = {
 		if(!variableValues.contains(varName)) {
 			variableValues.put(varName, List(result));
 			return true;
@@ -32,7 +32,7 @@ class LDIFVariableResults() {
 		return false;
 	}
 
-	def getResults(varName: String): Option[List[Node]] = {
+	def getResults(varName: String): Option[List[NodeTrait]] = {
 		variableValues.get(varName)
 	}
 
@@ -44,7 +44,7 @@ class LDIFVariableResults() {
    * returns a unique blank node and binds it to the blank node identifier parameter.
    * Repeated request for the same identifier get the same blank node.
    */
-  def getBlankNode(identifier: String, graph: String): Node = {
+  def getBlankNode(identifier: String, graph: String): NodeTrait = {
     if(bNodes.contains(identifier))
       bNodes.get(identifier).get
     else {
