@@ -9,10 +9,10 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>ldif-entitybuilder-mapreduce</artifactId>
+    <artifactId>ldif-entitybuilder-hadoop</artifactId>
     <packaging>jar</packaging>
 	<version>${ldif.version}</version>
-	<name>LDIF EntityBuilder Module Map-Reduce</name>
+	<name>LDIF EntityBuilder Module Hadoop</name>
 
     <dependencies>
         <dependency>

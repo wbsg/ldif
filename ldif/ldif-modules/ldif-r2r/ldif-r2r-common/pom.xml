@@ -19,7 +19,7 @@
 	<artifactId>ldif-r2r-common</artifactId>
 	<packaging>jar</packaging>
 	<version>${ldif.version}</version>
-	<name>LDIF R2R Module Common</name>
+	<name>LDIF R2R Module - Common</name>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

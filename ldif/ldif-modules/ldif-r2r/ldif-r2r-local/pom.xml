@@ -11,7 +11,7 @@
 	<artifactId>ldif-r2r-local</artifactId>
 	<packaging>jar</packaging>
 	<version>${ldif.version}</version>
-	<name>LDIF R2R Module Locale</name>
+	<name>LDIF R2R Module - Local</name>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
