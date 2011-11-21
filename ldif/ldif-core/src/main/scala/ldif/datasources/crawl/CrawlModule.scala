@@ -1,5 +1,7 @@
-/* 
- * Copyright 2011 Freie Universität Berlin and MediaEvent Services GmbH & Co. K 
+/*
+ * LDIF
+ *
+ * Copyright 2011 Freie Universität Berlin, MediaEvent Services GmbH & Co. KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
