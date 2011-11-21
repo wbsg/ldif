@@ -8,7 +8,7 @@ import collection.parallel.ParIterable
 import ldif.util.Consts
 import ldif.runtime.Quad
 
-class LDIFMapping(val mapping: Mapping, val entityDescription: EntityDescription, variableToResultIndexMap: Map[String, Int]) {
+class LDIFMapping(val mapping: Mapping, val entityDescription: EntityDescription, variableToResultIndexMap: Map[String, Int]) extends Serializable {
   // Convert Target Patterns
   var targetPatterns = List[LDIFTargetPattern]()
   for(tp <- mapping.getTargetPatterns)
@@ -60,7 +60,7 @@ class LDIFMapping(val mapping: Mapping, val entityDescription: EntityDescription
       targetPattern.writeQuads(results, quadWriter)
   }
 
-  def getResults(row: IndexedSeq[Node]): LDIFVariableResults = {
+  def getResults(row: IndexedSeq[NodeTrait]): LDIFVariableResults = {
     val results = new LDIFVariableResults()
     for((variableName, index) <- variableToResultIndexMap)
       results.addVariableResult(variableName, row.get(index))

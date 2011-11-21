@@ -6,7 +6,7 @@ trait Entity extends Serializable
 
 //  def entityDescription : EntityDescription
 
-  def factums(patternId : Int) : Traversable[IndexedSeq[Node]]
+  def factums(patternId : Int) : Traversable[IndexedSeq[NodeTrait]]
 }
 
 

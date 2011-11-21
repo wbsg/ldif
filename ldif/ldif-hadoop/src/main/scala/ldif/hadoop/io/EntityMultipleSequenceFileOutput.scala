@@ -15,7 +15,7 @@ import org.apache.hadoop.mapred.lib.{MultipleSequenceFileOutputFormat, MultipleT
 class EntityMultipleSequenceFileOutput extends MultipleSequenceFileOutputFormat[IntWritable, EntityWritable] {
   val fileSeparator = System.getProperty("file.separator")
   override def generateFileNameForKeyValue(key: IntWritable, value: EntityWritable, filename: String): String = {
-    EntityMultipleTextFileOutput.generateDirectoryName(key.get) + fileSeparator + filename
+    EntityMultipleSequenceFileOutput.generateDirectoryName(key.get) + fileSeparator + filename
   }
 }
 

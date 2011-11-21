@@ -41,19 +41,31 @@ class EntityConstructionReducer extends MapReduceBase with Reducer[EntityDescrip
       val value = values.next()
       valuePaths.append(WritableUtils.clone(value, config))
     }
-    // For debugging
-//    for(value <- valuePaths) {
-//      val collector = mos.getCollector("debug", reporter).asInstanceOf[OutputCollector[IntWritable, ValuePathWritable]]
-//      collector.collect(key.entityDescriptionID, value)
-//    }
+
     val passesRestriction = resultBuilder.checkRestriction(entityDescriptionID, valuePaths)
     if(passesRestriction) {
       val result = resultBuilder.computeResultTables(entityDescriptionID, valuePaths)
       if(hasResults(entityDescriptionID, result)) {
+        val expandedResult = expandResultsForRestrictionOnlyPatterns(entityDescriptionID, result)
         reporter.incrCounter("LDIF nr. of entities per ED", "ED ID "+key.entityDescriptionID.get(), 1)
-        output.collect(key.entityDescriptionID, new EntityWritable(key.node, EntityWritable.convertResultTable(result), key.entityDescriptionID))
+        output.collect(key.entityDescriptionID, new EntityWritable(key.node, EntityWritable.convertResultTable(expandedResult), key.entityDescriptionID))
+        //For Debugging
+        val debugCollector = mos.getCollector("debug", reporter).asInstanceOf[OutputCollector[IntWritable, EntityWritable]]
+        debugCollector.collect(key.entityDescriptionID, new EntityWritable(key.node, EntityWritable.convertResultTable(expandedResult), key.entityDescriptionID))
       }
     }
+  }
+
+  private def expandResultsForRestrictionOnlyPatterns(entityDescriptionID: Int, results: IndexedSeq[Traversable[IndexedSeq[NodeWritable]]]): IndexedSeq[Traversable[IndexedSeq[NodeWritable]]] = {
+    val entityDescription = edmd.entityDescriptions(entityDescriptionID)
+    val expandedResults = new ArrayBuffer[Traversable[IndexedSeq[NodeWritable]]]()
+    for(patternIndex <- 0 until entityDescription.patterns.length) {
+      if(entityDescription.patterns(patternIndex).length>0)
+        expandedResults.append(results(patternIndex))
+      else
+        expandedResults.append(List(IndexedSeq[NodeWritable]()))
+    }
+    expandedResults
   }
 
   private def hasResults(entityDescriptionID: Int, results: IndexedSeq[Traversable[IndexedSeq[NodeWritable]]]): Boolean = {

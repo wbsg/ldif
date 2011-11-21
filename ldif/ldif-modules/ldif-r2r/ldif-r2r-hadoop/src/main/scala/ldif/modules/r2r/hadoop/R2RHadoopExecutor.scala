@@ -26,7 +26,8 @@ class R2RHadoopExecutor extends Executor {
 
   override def execute(task: R2RHadoopTask, reader: Seq[Path], writer: Path) {
     val mappings = task.ldifMappings
-
-    //Run Hadoop Job with given input and output path
+    val inputPath = reader.head.toString
+    val outputPath = writer.toString
+    RunHadoopR2RJob.execute(inputPath, outputPath, mappings)
   }
 }

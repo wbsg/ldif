@@ -2,7 +2,7 @@ package ldif.entity
 
 import java.io.{DataInput, DataOutput}
 import org.apache.hadoop.io.{Writable, IntWritable, ArrayWritable, WritableComparable}
-import ldif.hadoop.types.{NodeArrayWritable, ArrayArrayWritable}
+import ldif.hadoop.types.{ResultPatternArrayWritable, NodeArrayWritable, ResultTableArrayWritable}
 
 /**
  * Created by IntelliJ IDEA.
@@ -12,9 +12,9 @@ import ldif.hadoop.types.{NodeArrayWritable, ArrayArrayWritable}
  * To change this template use File | Settings | File Templates.
  */
 
-class EntityWritable(var resource : NodeWritable, var resultTable: ArrayWritable, var entityDescriptionID: IntWritable) extends WritableComparable[EntityWritable] with Entity {
+class EntityWritable(var resource : NodeWritable, var resultTable: ResultTableArrayWritable, var entityDescriptionID: IntWritable) extends WritableComparable[EntityWritable] with Entity {
   def this() {
-    this(new NodeWritable(), new ArrayArrayWritable(), new IntWritable())
+    this(new NodeWritable(), new ResultTableArrayWritable(), new IntWritable())
   }
 
   def compareTo(other: EntityWritable) = {
@@ -44,7 +44,7 @@ class EntityWritable(var resource : NodeWritable, var resultTable: ArrayWritable
 
   override def toString(): String = {
     val sb = new StringBuilder
-    sb.append("EntityWritable(").append(resource).append(")\n")
+    sb.append("EntityWritable(").append(resource).append(", ").append(resource.graph).append(")\n")
     sb.append("   Results:\n   ")
     sb.append(resultTable)
     sb.toString
@@ -52,15 +52,15 @@ class EntityWritable(var resource : NodeWritable, var resultTable: ArrayWritable
 }
 
 object EntityWritable {
-  def convertResultTable(resultTable: IndexedSeq[Traversable[IndexedSeq[NodeWritable]]]): ArrayWritable = {
-    val result = new ArrayArrayWritable()
+  def convertResultTable(resultTable: IndexedSeq[Traversable[IndexedSeq[NodeWritable]]]): ResultTableArrayWritable = {
+    val result = new ResultTableArrayWritable()
     result.set((for(patternResult <- resultTable)
       yield convertPattern(patternResult)).toArray)
     result
   }
 
   private def convertPattern(patternResult: Traversable[IndexedSeq[NodeWritable]]): ArrayWritable = {
-    val result = new ArrayArrayWritable()
+    val result = new ResultPatternArrayWritable()
     result.set((for(row <- patternResult)
       yield convertPath(row)).toArray)
     result
@@ -72,18 +72,18 @@ object EntityWritable {
     result
   }
 
-  def convertResultTable(results: ArrayWritable): IndexedSeq[Traversable[IndexedSeq[Node]]] = {
+  def convertResultTable(results: ArrayWritable): IndexedSeq[Traversable[IndexedSeq[NodeTrait]]] = {
     for(pattern <- results.get())
       yield convertPattern(pattern.asInstanceOf[ArrayWritable])
   }
 
-  private def convertPattern(pattern: ArrayWritable): Traversable[IndexedSeq[Node]] = {
+  private def convertPattern(pattern: ArrayWritable): Traversable[IndexedSeq[NodeTrait]] = {
     for(path <- pattern.get())
       yield convertPath(path.asInstanceOf[ArrayWritable])
   }
 
-  private def convertPath(path: ArrayWritable): IndexedSeq[Node] = {
-    for(node <- path.get()) yield node.asInstanceOf[Node]
+  private def convertPath(path: ArrayWritable): IndexedSeq[NodeTrait] = {
+    for(node <- path.get()) yield node.asInstanceOf[NodeTrait]
   }
 }
 

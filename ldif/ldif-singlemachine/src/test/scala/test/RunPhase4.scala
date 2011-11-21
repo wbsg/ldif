@@ -12,12 +12,12 @@ import de.fuberlin.wiwiss.r2r._
 import scala.collection.JavaConversions._
 import java.io.{ObjectOutputStream, File}
 import ldif.hadoop.entitybuilder.io._
-import ldif.entity.{EntityDescriptionMetaDataExtractor, EntityDescription}
 import ldif.hadoop.utils.HadoopHelper
 import org.apache.hadoop.fs.{FileSystem, Path}
 import org.apache.hadoop.mapred._
 import lib.MultipleOutputs
-import ldif.hadoop.io.EntityMultipleTextFileOutput
+import ldif.hadoop.io.{EntityMultipleSequenceFileOutput, EntityMultipleTextFileOutput}
+import ldif.entity.{EntityWritable, EntityDescriptionMetaDataExtractor, EntityDescription}
 
 /**
  * Created by IntelliJ IDEA.
@@ -44,12 +44,12 @@ class RunPhase4 extends Configured with Tool {
     jobConf.setMapOutputValueClass(classOf[ValuePathWritable])
 
     jobConf.setOutputKeyClass(classOf[IntWritable])
-    jobConf.setOutputValueClass(classOf[ValuePathWritable])
+    jobConf.setOutputValueClass(classOf[EntityWritable])
 
     jobConf.setInputFormat(classOf[ValuePathSequenceFileInput])
-    jobConf.setOutputFormat(classOf[EntityMultipleTextFileOutput])
+    jobConf.setOutputFormat(classOf[EntityMultipleSequenceFileOutput])
     //Debugging
-    MultipleOutputs.addNamedOutput(jobConf, "debug", classOf[TextOutputFormat[IntWritable, ValuePathWritable]], classOf[IntWritable], classOf[ValuePathWritable])
+    MultipleOutputs.addNamedOutput(jobConf, "debug", classOf[EntityMultipleTextFileOutput], classOf[IntWritable], classOf[EntityWritable])
 
     for(i <- 0 to math.max(0, maxPhase-1)) {
       var in = new Path(args(1) + fileSeparator + i + fileSeparator, ValuePathMultipleSequenceFileOutput.generateDirectoryNameForFinishedValuePaths(i))

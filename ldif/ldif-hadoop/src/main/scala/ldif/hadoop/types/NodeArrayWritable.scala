@@ -12,6 +12,7 @@ import ldif.entity.NodeWritable
  */
 
 class NodeArrayWritable extends ArrayWritable(classOf[NodeWritable]) {
+
   override def toString = {
     val builder = new StringBuilder
     builder.append("NodeArrayWritable(")

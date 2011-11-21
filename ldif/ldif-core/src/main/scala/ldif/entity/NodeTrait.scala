@@ -52,10 +52,10 @@ trait NodeTrait {
   override def equals(other: Any): Boolean = {
     if (this.asInstanceOf[AnyRef] eq other.asInstanceOf[AnyRef])
       true
-    if (!(other.isInstanceOf[Node]))
+    if (!(other.isInstanceOf[NodeTrait]))
       false
     else {
-      var otherNode: Node = other.asInstanceOf[Node]
+      var otherNode: NodeTrait = other.asInstanceOf[NodeTrait]
       var result = (otherNode.nodeType == nodeType) && compareDTorLang(this.datatypeOrLanguage, otherNode.datatypeOrLanguage) && (this.value.equals(otherNode.value))
       if(nodeType== BlankNode)
         result = result && (graph == otherNode.graph)
