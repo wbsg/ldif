@@ -34,7 +34,7 @@ import ldif.hadoop.utils.HadoopHelper
 import ldif.util.Consts
 import ldif.entity.{EntityDescriptionMetadata, EntityDescription, EntityDescriptionMetaDataExtractor}
 import scala.Array
-import java.util.logging.Logger
+import org.slf4j.LoggerFactory
 
 /**
  *  Hadoop EntityBuilder - Phase 3
@@ -97,7 +97,7 @@ class Phase3 extends Configured with Tool {
 }
 
 object Phase3 {
-  private val log = Logger.getLogger(getClass.getName)
+  private val log = LoggerFactory.getLogger(getClass.getName)
 
   def runPhase(in : String, out : String, entityDescriptions : Seq[EntityDescription]) : Int = {
     val edmd = EntityDescriptionMetaDataExtractor.extract(entityDescriptions)

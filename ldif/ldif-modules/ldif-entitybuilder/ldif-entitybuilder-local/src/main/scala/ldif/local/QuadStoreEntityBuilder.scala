@@ -19,7 +19,7 @@
 package ldif.local
 
 import ldif.entity.EntityDescription
-import java.util.logging.Logger
+import org.slf4j.LoggerFactory
 import ldif.util.Uri
 import ldif.local.runtime.{ConfigParameters, QuadReader, EntityWriter}
 import java.io.{BufferedWriter, FileWriter, IOException, File}
@@ -34,7 +34,7 @@ import ldif.runtime.Quad
  */
 
 class QuadStoreEntityBuilder(store: QuadStoreTrait, entityDescriptions : Seq[EntityDescription], readers : Seq[QuadReader], config: ConfigParameters) extends EntityBuilderTrait {
-  private val log = Logger.getLogger(getClass.getName)
+  private val log = LoggerFactory.getLogger(getClass.getName)
 
   // If this is true, quads like provenance quads (or even all quads) are saved for later use (merge)
   private val saveQuads = config.otherQuadsWriter!=null

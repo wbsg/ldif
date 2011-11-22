@@ -32,7 +32,7 @@ import ldif.hadoop.entitybuilder.io._
 import ldif.hadoop.utils.HadoopHelper
 import org.apache.hadoop.fs.{FileSystem, Path}
 import ldif.util.Consts
-import java.util.logging.Logger
+import org.slf4j.LoggerFactory
 import ldif.entity.{EntityWritable, EntityDescriptionMetadata, EntityDescription, EntityDescriptionMetaDataExtractor}
 import ldif.hadoop.io.{EntityMultipleSequenceFileOutput, EntityMultipleTextFileOutput}
 
@@ -82,7 +82,7 @@ class Phase4 extends Configured with Tool {
 }
 
 object Phase4 {
-  private val log = Logger.getLogger(getClass.getName)
+  private val log = LoggerFactory.getLogger(getClass.getName)
 
   def runPhase(in : String, out : String, entityDescriptions : Seq[EntityDescription]) : Int = {
     val edmd = EntityDescriptionMetaDataExtractor.extract(entityDescriptions)

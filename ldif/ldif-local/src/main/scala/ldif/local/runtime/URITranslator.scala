@@ -29,7 +29,7 @@ package ldif.local.runtime
 import impl._
 import scala.collection.mutable.{Map, HashMap, HashSet, Set}
 import ldif.entity._
-import java.util.logging.Logger
+import org.slf4j.LoggerFactory
 import java.net.URLEncoder
 import ldif.runtime.Quad
 import java.util.Properties
@@ -37,7 +37,7 @@ import java.io.File
 
 object URITranslator {
 
-  private val log = Logger.getLogger(getClass.getName)
+  private val log = LoggerFactory.getLogger(getClass.getName)
 
   private def translateQuadURIs(s: NodeTrait, o: NodeTrait, uriMap: Map[String, String]): (NodeTrait, NodeTrait) = {
     var sNew = s
@@ -124,7 +124,7 @@ object URITranslator {
 //      generateUriMap(entityToClusterMap)
 //    }
 //    else {
-//      log.severe("Missing values for uriMintNamespace and/or uriMintLabelPredicate")
+//      log.error("Missing values for uriMintNamespace and/or uriMintLabelPredicate")
 //      throw new RuntimeException("Missing values for uriMintNamespace and/or uriMintLabelPredicate")
 //    }
 //  }
@@ -186,7 +186,7 @@ object URITranslator {
       generateMintedURIMap(entityToClusterMap, mintValues, mintingPropertiesNamespace)
     }
     else {
-      log.severe("Missing values for uriMintNamespace and/or uriMintLabelPredicate")
+      log.error("Missing values for uriMintNamespace and/or uriMintLabelPredicate")
       throw new RuntimeException("Missing values for uriMintNamespace and/or uriMintLabelPredicate")
     }
   }

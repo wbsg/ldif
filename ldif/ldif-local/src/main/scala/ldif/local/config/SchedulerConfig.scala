@@ -18,7 +18,7 @@
 
 package ldif.local.config
 
-import java.util.logging.Logger
+import org.slf4j.LoggerFactory
 import java.io.File
 import ldif.util.ValidatingXMLReader
 import xml.{Node, XML}
@@ -28,7 +28,7 @@ case class SchedulerConfig (importJobsDir : File, integrationJob : File, dataSou
 
 object SchedulerConfig
 {
-  private val log = Logger.getLogger(getClass.getName)
+  private val log = LoggerFactory.getLogger(getClass.getName)
 
   private val schemaLocation = "xsd/SchedulerConfig.xsd"
 
@@ -73,18 +73,18 @@ object SchedulerConfig
         else file = absoluteFile
       }
       else {
-        log.warning("\'"+key+"\' path not found. Searched: " + relativeFile.getCanonicalPath + ", " + absoluteFile.getCanonicalPath)
+        log.warn("\'"+key+"\' path not found. Searched: " + relativeFile.getCanonicalPath + ", " + absoluteFile.getCanonicalPath)
         if (forceMkdir) {
           if (relativeFile.mkdirs) {
             file = relativeFile
             log.info("Created new directory at: "+ relativeFile.getCanonicalPath)
           }
-          else log.severe("Error creating directory at: " + relativeFile.getCanonicalPath)
+          else log.error("Error creating directory at: " + relativeFile.getCanonicalPath)
         }
       }
     }
     else{
-      log.warning("\'"+key+"\' is not defined in the Scheduler config")
+      log.warn("\'"+key+"\' is not defined in the Scheduler config")
     }
     file
   }

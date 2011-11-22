@@ -25,10 +25,10 @@ import java.util.Date
 import xml.XML
 import ldif.util.{ValidatingXMLReader, Consts, Identifier}
 import java.io._
-import java.util.logging.Logger
+import org.slf4j.LoggerFactory
 
 trait ImportJob {
-  private val log = Logger.getLogger(getClass.getName)
+  private val log = LoggerFactory.getLogger(getClass.getName)
   val id : Identifier
   val refreshSchedule : String
   val dataSource : String
@@ -87,7 +87,7 @@ trait ImportJob {
   /* Write importedGraphs to a temporary file and empty importedGraphs */
   protected def writeImportedGraphsToFile {
     if (importedGraphsFile == null) {
-      log.warning("Imported dump for "+id+" contains more than "+ Consts.MAX_NUM_GRAPHS_IN_MEMORY +" different graphs. Provenance metadata could contain duplicates.")
+      log.warn("Imported dump for "+id+" contains more than "+ Consts.MAX_NUM_GRAPHS_IN_MEMORY +" different graphs. Provenance metadata could contain duplicates.")
       importedGraphsFile= File.createTempFile(id+"_importedGraph_"+Consts.simpleDateFormat.format(new Date()),"")
     }
     // append graph names to tmp file

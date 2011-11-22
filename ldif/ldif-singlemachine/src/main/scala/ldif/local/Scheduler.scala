@@ -20,7 +20,7 @@ package ldif.local
 
 import config.{IntegrationConfig, SchedulerConfig}
 import datasources.dump.QuadParser
-import java.util.logging.Logger
+import org.slf4j.LoggerFactory
 import scheduler.ImportJob
 import java.util.{Date, Calendar}
 import java.io._
@@ -29,7 +29,7 @@ import org.apache.commons.io.FileUtils
 import ldif.util.{Consts, StopWatch, FatalErrorListener}
 
 class Scheduler (val config : SchedulerConfig, debug : Boolean = false) {
-  private val log = Logger.getLogger(getClass.getName)
+  private val log = LoggerFactory.getLogger(getClass.getName)
 
   // load jobs
   private val importJobs = loadImportJobs(config.importJobsDir)
@@ -152,7 +152,7 @@ class Scheduler (val config : SchedulerConfig, debug : Boolean = false) {
           FileUtils.deleteQuietly(tmpProvenanceFile)
         }
         runningImportJobs.replace(job.id, false)
-        log.warning("Job " + job.id + " has not been imported - see log for details")
+        log.warn("Job " + job.id + " has not been imported - see log for details")
       }
     }
   }
@@ -215,7 +215,7 @@ class Scheduler (val config : SchedulerConfig, debug : Boolean = false) {
         if (quad.predicate.equals(Consts.lastUpdateProp))  {
           val lastUpdateStr = quad.value.value
           if (lastUpdateStr.length != 25)  {
-            log.warning("Job "+job.id+" - wrong datetime format for last update metadata")
+            log.warn("Job "+job.id+" - wrong datetime format for last update metadata")
             return null
           }
           else {
@@ -225,11 +225,11 @@ class Scheduler (val config : SchedulerConfig, debug : Boolean = false) {
           }
         }
       }
-      log.warning("Job "+job.id+" - provenance file does not contain last update metadata")
+      log.warn("Job "+job.id+" - provenance file does not contain last update metadata")
       null
     }
     else {
-      //log.warning("Job "+job.id+" - provenance file not found at "+provenanceFile.getCanonicalPath)
+      //log.warn("Job "+job.id+" - provenance file not found at "+provenanceFile.getCanonicalPath)
       null
     }
   }
@@ -268,7 +268,7 @@ class Scheduler (val config : SchedulerConfig, debug : Boolean = false) {
       integrationJob
     }
     else {
-      log.warning("Integration job configuration file not found")
+      log.warn("Integration job configuration file not found")
       null
     }
   }
@@ -281,7 +281,7 @@ class Scheduler (val config : SchedulerConfig, debug : Boolean = false) {
       try {
         FileUtils.moveFile(source, dest)
       } catch {
-        case ex:IOException => log.severe("IO error occurs moving a file: \n" +source.getCanonicalPath+ " -> " +dest.getCanonicalPath)
+        case ex:IOException => log.error("IO error occurs moving a file: \n" +source.getCanonicalPath+ " -> " +dest.getCanonicalPath)
       }
     }
     else {
@@ -290,7 +290,7 @@ class Scheduler (val config : SchedulerConfig, debug : Boolean = false) {
         FileUtils.copyFile(source, dest)
       } catch {
         case ex: IOException =>  {
-          log.severe("IO error occurs copying a file: \n"+source.getCanonicalPath+" to "+dest.getCanonicalPath)
+          log.error("IO error occurs copying a file: \n"+source.getCanonicalPath+" to "+dest.getCanonicalPath)
         }
       }
     }

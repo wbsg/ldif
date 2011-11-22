@@ -36,7 +36,7 @@ class EBLocalTest extends FlatSpec with ShouldMatchers
 {
   testInMemory
   testInMemoryPlusFiles
-  //testTDB
+  // testTDB     // TODO - this test should pass
 
   // Test in memory execution
   def testInMemory  {
@@ -52,14 +52,15 @@ class EBLocalTest extends FlatSpec with ShouldMatchers
     // Run the entity builder
     runEB(prop, eqs)
 
-    // Test results
+    // Check results
     checkEntityQuantity(eqs, "in-memory")
     checkEntityQuality(eqs, "in-memory")
 
   }
 
+  // Test in memory execution (write output to files)
   def testInMemoryPlusFiles {
-    println("Running in-memory + files test")
+    println("Running in-memory test (write output to files)")
     // Create entity queue writers
     val eqWriters =
       for(ed <- TestUtils.eds) yield {
@@ -79,20 +80,16 @@ class EBLocalTest extends FlatSpec with ShouldMatchers
     val eqReaders = eqWriters.map((entityWriter) =>
       new FileEntityReader(entityWriter.entityDescription, entityWriter.inputFile))
 
-    // Test results
+    // Check results
     checkEntityQuality(eqReaders, "in-memory+files")
-
   }
 
   // Test quad store execution (TDB)
   def testTDB {
-    // Create entity queue writers
-    val eqWriters =
-      for(ed <- TestUtils.eds) yield {
-        val file = File.createTempFile("ldif_entities", ".dat")
-        file.deleteOnExit
-        new FileEntityWriter(ed, file)
-      }
+    println("Running quad-store test")
+    // Create entity queues
+    val eqs =
+      for (ed <- TestUtils.eds) yield new EntityQueue(ed)
 
     // Configure the entity builder
     val prop = new Properties
@@ -101,14 +98,11 @@ class EBLocalTest extends FlatSpec with ShouldMatchers
     //  prop.setProperty("databaseLocation", "/tmp/tdbtest")
 
     // Run the entity builder
-    runEB(prop, eqWriters)
+    runEB(prop, eqs)
 
-    // Create entity queue readers
-    val eqReaders = eqWriters.map((entityWriter) =>
-      new FileEntityReader(entityWriter.entityDescription, entityWriter.inputFile))
-
-    // Test results
-    checkEntityQuality(eqReaders, "quad-store")
+    // Check results
+    checkEntityQuantity(eqs, "quad-store")
+    checkEntityQuality(eqs, "quad-store")
   }
 
 
@@ -161,7 +155,7 @@ class EBLocalTest extends FlatSpec with ShouldMatchers
           sortedNodes.head.value should equal ("bla")
           sortedNodes.head.graph should equal ("someGraph")
           sortedNodes.last.value should equal ("blo")
-          sortedNodes.head.graph should equal ("someOtherGraph")
+          sortedNodes.last.graph should equal ("someOtherGraph")
 
         }
         else

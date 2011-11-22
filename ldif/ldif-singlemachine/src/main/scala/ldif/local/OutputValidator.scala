@@ -22,7 +22,7 @@ import datasources.dump.QuadParser
 import runtime._
 import java.io.File
 import collection.mutable.{HashMap, MultiMap, Set}
-import java.util.logging.Logger
+import org.slf4j.LoggerFactory
 import ldif.runtime.Quad
 
 /*
@@ -31,7 +31,7 @@ import ldif.runtime.Quad
 
 object OutputValidator {
 
-  private val log = Logger.getLogger(getClass.getName)
+  private val log = LoggerFactory.getLogger(getClass.getName)
 
   def compare(ldifOutputFile : File, otherOutputFile : File) : Int =  {
     log.info("Output validation started")
@@ -76,12 +76,12 @@ object OutputValidator {
         for (elem <- ldifHT.get(p).get.toSeq)
           if(!elems.contains(elem)) {
             err += 1
-            log.warning("Quad not found: "+elem._1+" <"+p+"> "+elem._2)
+            log.warn("Quad not found: "+elem._1+" <"+p+"> "+elem._2)
           }
       }
       else {
         err += ldifHT.get(p).get.size
-        log.warning("Property not found: "+p)
+        log.warn("Property not found: "+p)
       }
     }
 
@@ -92,12 +92,12 @@ object OutputValidator {
         for (elem <- otherHT.get(p).get.toSeq)
           if(!elems.contains(elem)) {
             err += 1
-            log.warning("Quad not found: "+elem._1+" <"+p+"> "+elem._2)
+            log.warn("Quad not found: "+elem._1+" <"+p+"> "+elem._2)
           }
       }
       else {
         err += otherHT.get(p).get.size
-        log.warning("Property not found: "+p)
+        log.warn("Property not found: "+p)
       }
     }
 
@@ -110,7 +110,7 @@ object OutputValidator {
         !sameAsMap.contains(obj) ||
         !sameAsMap.get(sub).equals(sameAsMap.get(obj))) {
         err += 1
-        log.warning("Link not found: "+sub+" <> "+obj)
+        log.warn("Link not found: "+sub+" <> "+obj)
       }
     }
 
@@ -121,15 +121,15 @@ object OutputValidator {
         if (s.equals(sub) || o.equals(sub) )
           if (!sameAsMap.get(s).equals(sameAsMap.get(o))) {
             err += 1
-            if (s.equals(sub)) log.warning("Link not found: "+sub+" <> "+o)
-            else log.warning("Link not found: "+sub+" <> "+s)
+            if (s.equals(sub)) log.warn("Link not found: "+sub+" <> "+o)
+            else log.warn("Link not found: "+sub+" <> "+s)
           }
       }
     }
 
     if (err == 0)
       log.info("Output is correct")
-    else log.warning("Output is NOT correct. "+ err +" error(s) found.")
+    else log.warn("Output is NOT correct. "+ err +" error(s) found.")
 
     err
   }
@@ -148,7 +148,7 @@ object OutputValidator {
           isContained(i) = true
     }
 
-    //log.warning("Quads missing: "+isContained.count(false))
+    //log.warn("Quads missing: "+isContained.count(false))
     isContained.filter(x => !x).isEmpty
   }
 

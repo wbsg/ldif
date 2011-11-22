@@ -20,7 +20,7 @@ package ldif.local.config
 
 import java.io.File
 import java.util.Properties
-import java.util.logging.Logger
+import org.slf4j.LoggerFactory
 import ldif.util.ValidatingXMLReader
 import xml.{Node, XML}
 
@@ -28,7 +28,7 @@ case class IntegrationConfig(sources : File, linkSpecDir : File, mappingDir : Fi
 
 object IntegrationConfig
 {
-  private val log = Logger.getLogger(getClass.getName)
+  private val log = LoggerFactory.getLogger(getClass.getName)
 
   private val schemaLocation = "xsd/IntegrationJob.xsd"
 
@@ -71,11 +71,11 @@ object IntegrationConfig
         else file = absoluteFile
       }
       else {
-        log.warning("\'"+key+"\' path not found. Searched: " + relativeFile.getCanonicalPath + ", " + absoluteFile.getCanonicalPath)
+        log.warn("\'"+key+"\' path not found. Searched: " + relativeFile.getCanonicalPath + ", " + absoluteFile.getCanonicalPath)
       }
     }
     else{
-      log.warning("\'"+key+"\' is not defined in the IntegrationJob config")
+      log.warn("\'"+key+"\' is not defined in the IntegrationJob config")
     }
     file
   }

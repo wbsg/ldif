@@ -32,11 +32,11 @@ import ldif.modules.r2r._
 import ldif.local.runtime.{GraphFormat, StaticEntityFormat, QuadWriter, EntityReader}
 import collection.mutable.ArrayBuffer
 import ldif.entity.Entity
-import java.util.logging.Logger
+import org.slf4j.LoggerFactory
 
 class R2RLocalExecutor extends Executor {
   val maxEntitesPerIterable = 1000
-  private val log = Logger.getLogger(getClass.getName)
+  private val log = LoggerFactory.getLogger(getClass.getName)
   type TaskType = R2RTask
   type InputFormat = StaticEntityFormat
   type OutputFormat = GraphFormat

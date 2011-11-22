@@ -22,7 +22,7 @@ import com.ontologycentral.ldspider.Crawler
 import com.ontologycentral.ldspider.Crawler.Mode
 import com.ontologycentral.ldspider.frontier.BasicFrontier
 import java.net.{URISyntaxException, URI}
-import java.util.logging.Logger
+import org.slf4j.LoggerFactory
 import ldif.local.runtime.QuadWriter
 import com.ontologycentral.ldspider.hooks.links.LinkFilterSelect
 import org.semanticweb.yars.nx.{Resource, Node}
@@ -39,7 +39,7 @@ import collection.mutable.Set
 
 @throws(classOf[Exception])
 class CrawlLoader(seedUris : Traversable[URI], predicates : Traversable[URI] = Traversable.empty[URI]) {
-  private val log = Logger.getLogger(getClass.getName)
+  private val log = LoggerFactory.getLogger(getClass.getName)
 
   /** Crawl and write to a file
    *
@@ -74,7 +74,7 @@ class CrawlLoader(seedUris : Traversable[URI], predicates : Traversable[URI] = T
         frontier.add(seed)
       } catch {
         case e:URISyntaxException => {
-          log.warning("URISyntaxException: " + e.getMessage)
+          log.warn("URISyntaxException: " + e.getMessage)
         }
       }
 
@@ -84,7 +84,7 @@ class CrawlLoader(seedUris : Traversable[URI], predicates : Traversable[URI] = T
         for (predicate <- predicates) {
           predicateNodes.add(new Resource(predicate.toString))
         }
-        log.fine("Predicates to follow ("+predicates.size+"): " + predicates.mkString(" "))
+        log.debug("Predicates to follow ("+predicates.size+"): " + predicates.mkString(" "))
         crawler.setLinkFilter(new LinkFilterSelect(frontier, predicateNodes, true))
       }
 
@@ -93,7 +93,7 @@ class CrawlLoader(seedUris : Traversable[URI], predicates : Traversable[URI] = T
       // Run the crawler (with Frontier frontier, int depth, int maxuris, int maxplds)
       crawler.evaluateBreadthFirst(frontier, levels, limit, -1, Mode.ABOX_AND_TBOX)
 
-      log.fine("Crawled seed: "+seed)
+      log.debug("Crawled seed: "+seed)
     }
   }
 }

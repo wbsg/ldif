@@ -19,7 +19,7 @@
 package ldif.local.datasources.dump
 
 import java.net.URL
-import java.util.logging.Logger
+import org.slf4j.LoggerFactory
 import java.io.{BufferedInputStream, FileNotFoundException, InputStream, File}
 
 //import org.apache.http.{HttpEntity, HttpResponse}
@@ -33,7 +33,7 @@ import java.io.{BufferedInputStream, FileNotFoundException, InputStream, File}
 
 @throws(classOf[Exception])
 object DumpLoader {
-  private val log = Logger.getLogger(getClass.getName)
+  private val log = LoggerFactory.getLogger(getClass.getName)
 
   //private val httpClient = HttpClientFactory.createHttpClient
 
@@ -85,7 +85,7 @@ object DumpLoader {
       inputStream = new DecompressingStream(file).getStream
     } catch {
       case e:FileNotFoundException => {
-        log.warning(file.getCanonicalPath + " vanished: " + e.getMessage)
+        log.warn(file.getCanonicalPath + " vanished: " + e.getMessage)
         throw e
       }
     }
@@ -100,7 +100,7 @@ object DumpLoader {
       inputStream = new DecompressingStream(url).getStream
     } catch {
       case e:Exception => {
-        log.warning(url + " did not provide any data")
+        log.warn(url + " did not provide any data")
         throw e
       }
     }

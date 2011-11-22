@@ -31,7 +31,7 @@ import java.io.File
 import ldif.hadoop.entitybuilder.io._
 import ldif.hadoop.utils.HadoopHelper
 import ldif.entity.{EntityDescription, EntityDescriptionMetadata, EntityDescriptionMetaDataExtractor}
-import java.util.logging.Logger
+import org.slf4j.LoggerFactory
 
 /**
  *  Hadoop EntityBuilder - Phase 2
@@ -67,7 +67,7 @@ class Phase2 extends Configured with Tool {
 }
 
 object Phase2 {
-  private val log = Logger.getLogger(getClass.getName)
+  private val log = LoggerFactory.getLogger(getClass.getName)
 
   def runPhase(in : String, out : String, entityDescriptions : Seq[EntityDescription]) : Int = {
     val edmd = EntityDescriptionMetaDataExtractor.extract(entityDescriptions)

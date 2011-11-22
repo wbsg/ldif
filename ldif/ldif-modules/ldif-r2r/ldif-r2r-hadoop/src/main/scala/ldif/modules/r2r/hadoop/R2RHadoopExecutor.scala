@@ -18,7 +18,7 @@
 
 package ldif.modules.r2r.hadoop
 
-import java.util.logging.Logger
+import org.slf4j.LoggerFactory
 import ldif.modules.r2r.R2RTask
 import ldif.hadoop.runtime._
 import org.apache.hadoop.fs.Path
@@ -33,7 +33,7 @@ import ldif.module.Executor
  */
 
 class R2RHadoopExecutor extends Executor {
-  private val log = Logger.getLogger(getClass.getName)
+  private val log = LoggerFactory.getLogger(getClass.getName)
   type TaskType = R2RHadoopTask
   type InputFormat = EntityFormat
   type OutputFormat = QuadFormat

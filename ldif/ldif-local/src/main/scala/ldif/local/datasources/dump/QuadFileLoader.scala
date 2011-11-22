@@ -18,7 +18,7 @@
 
 package ldif.local.datasources.dump
 
-import java.util.logging.Logger
+import org.slf4j.LoggerFactory
 import scala.collection.mutable.{ArrayBuffer, Map}
 import scala.Predef._
 import java.io.{File, BufferedReader}
@@ -38,7 +38,7 @@ import ldif.runtime.Quad
  */
 
 class QuadFileLoader(graphURI: String, discardFaultyQuads: Boolean = false) {
-  private val log = Logger.getLogger(getClass.getName)
+  private val log = LoggerFactory.getLogger(getClass.getName)
   val quadParser = new QuadParser(graphURI)
 
   def this() {
@@ -132,7 +132,7 @@ class QuadFileLoader(graphURI: String, discardFaultyQuads: Boolean = false) {
             if(!discardFaultyQuads)
               faultyRead=true
             nrOfErrors += 1
-            log.warning("Parse error found at line " + counter + ". Input line: " + line)
+            log.warn("Parse error found at line " + counter + ". Input line: " + line)
           }
         }
         if(quad!=null && (!faultyRead)) {
@@ -306,7 +306,7 @@ class QuadWriterActor(quadWriter: QuadWriter, finishMessage: FinishMessage) exte
   val s = System.currentTimeMillis
   val allErrors = new ArrayBuffer[Pair[Int, String]]
   var finishCounter = 0
-  private val log = Logger.getLogger(getClass.getName)
+  private val log = LoggerFactory.getLogger(getClass.getName)
 
   def act() {
     loop {

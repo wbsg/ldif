@@ -19,7 +19,7 @@
 package ldif.local.scheduler
 
 import java.net.URI
-import java.util.logging.Logger
+import org.slf4j.LoggerFactory
 import ldif.local.runtime.LocalNode
 import com.hp.hpl.jena.rdf.model.{Model, RDFNode}
 import java.io.{Writer, OutputStreamWriter, OutputStream}
@@ -29,19 +29,19 @@ import javax.xml.ws.http.HTTPException
 import com.hp.hpl.jena.sparql.engine.http.QueryExceptionHTTP
 
 case class SparqlImportJob(conf : SparqlConfig, id :  Identifier, refreshSchedule : String, dataSource : String) extends ImportJob{
-  private val log = Logger.getLogger(getClass.getName)
+  private val log = LoggerFactory.getLogger(getClass.getName)
   private val graph = Consts.DEFAULT_IMPORTED_GRAPH_PREFIX+id
 
   override def load(out : OutputStream) : Boolean = {
     val writer = new OutputStreamWriter(out)
 
     if (conf.endpointLocation == null) {
-      log.warning("Import failed for job "+ id +" - SPARQL endpoint location not defined")
+      log.warn("Import failed for job "+ id +" - SPARQL endpoint location not defined")
     }
 
     val query = conf.buildQuery
     log.info("Loading from " + conf.endpointLocation)
-    log.fine("Query: " + query)
+    log.debug("Query: " + query)
 
     importedGraphs += graph
 
@@ -78,11 +78,11 @@ case class SparqlImportJob(conf : SparqlConfig, id :  Identifier, refreshSchedul
           case e: HTTPException => {
             // stop on client side errors
             if(e.getStatusCode < 500 && e.getStatusCode >= 400) {
-              log.warning("Error executing query: " + query + ". Error Code: " + e.getStatusCode + " (" + e.getMessage + ")")
+              log.warn("Error executing query: " + query + ". Error Code: " + e.getStatusCode + " (" + e.getMessage + ")")
               return false
             }
 
-            log.warning("Error executing query - retrying in " + retryPause + " ms. (" + retries + "/" + retryCount + ")\n"+query+" \non "+endpointUrl+" \n"+e.getCause)
+            log.warn("Error executing query - retrying in " + retryPause + " ms. (" + retries + "/" + retryCount + ")\n"+query+" \non "+endpointUrl+" \n"+e.getCause)
             retries += 1
             if (retries > retryCount) {
               return false
@@ -93,10 +93,10 @@ case class SparqlImportJob(conf : SparqlConfig, id :  Identifier, refreshSchedul
           case e: QueryExceptionHTTP => {
             // stop on client side errors
             if(e.getResponseCode < 500 && e.getResponseCode >= 400) {
-              log.warning("Error executing query: " + query + ". Error Code: " + e.getResponseCode + "(" + e.getResponseMessage + ")")
+              log.warn("Error executing query: " + query + ". Error Code: " + e.getResponseCode + "(" + e.getResponseMessage + ")")
               return false
             }
-            log.warning("Error executing query - retrying in " + retryPause + " ms. (" + retries + "/" + retryCount + ")\n"+query+" \non "+endpointUrl+" \n"+e.getResponseMessage)
+            log.warn("Error executing query - retrying in " + retryPause + " ms. (" + retries + "/" + retryCount + ")\n"+query+" \non "+endpointUrl+" \n"+e.getResponseMessage)
             retries += 1
             if (retries > retryCount) {
               return false

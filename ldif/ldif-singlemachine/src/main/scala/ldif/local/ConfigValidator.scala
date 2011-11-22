@@ -24,12 +24,12 @@ import de.fuberlin.wiwiss.r2r.{FileOrURISource, Repository}
 import scala.collection.mutable.{Map, HashMap}
 import ldif.local.datasources.dump.QuadFileLoader
 import collection.JavaConversions
-import java.util.logging.Logger
+import org.slf4j.LoggerFactory
 import java.io._
 
 object ConfigValidator {
   val okMessage = "Ok"
-  val log = Logger.getLogger(getClass.getName)
+  val log = LoggerFactory.getLogger(getClass.getName)
   val fileError = "Error in reading mapping file"
   val mappingsError = "Erroneous mappings found"
 
@@ -46,7 +46,7 @@ object ConfigValidator {
       val sourceValidation = config.properties.getProperty("validateSources")
       val discardFaultyQuads = config.properties.getProperty("discardFaultyQuads", "false").toLowerCase=="true"
       if(sourceValidation!=null && sourceValidation.toLowerCase=="false") {
-        log.fine("Validation of source datasets disabled")
+        log.debug("Validation of source datasets disabled")
       }
       else {
         // Sources validation
@@ -76,10 +76,10 @@ object ConfigValidator {
     if(r2rMappingErrors._1=="Ok")
       return
 
-    log.warning("Found R2R errors in configuration: " + r2rMappingErrors._1)
+    log.warn("Found R2R errors in configuration: " + r2rMappingErrors._1)
     if(r2rMappingErrors._2 != null)
       for((mapping, errorString) <- r2rMappingErrors._2)
-        log.warning("Mapping <" + mapping + "> contains an error: " + errorString)
+        log.warn("Mapping <" + mapping + "> contains an error: " + errorString)
   }
 
   private def logSourceFileErrors(sourceErrors: Map[String, Seq[Pair[Int, String]]]) {
@@ -89,7 +89,7 @@ object ConfigValidator {
         errorString.append("There have been ").append(errorMap.size).append(" errors in input source ").append(source).append(":")
         for((lineNr, line) <- errorMap)
           errorString.append("\n  ").append("In line ").append(lineNr).append(": ").append(line)
-        log.warning(errorString.toString)
+        log.warn(errorString.toString)
       }
     }
   }

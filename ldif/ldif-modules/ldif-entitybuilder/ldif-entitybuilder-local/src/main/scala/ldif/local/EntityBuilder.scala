@@ -19,7 +19,7 @@
 package ldif.local
 
 import ldif.entity._
-import java.util.logging.Logger
+import org.slf4j.LoggerFactory
 import ldif.entity.Restriction._
 import collection.mutable.{ArraySeq, ArrayBuffer, HashMap, Set, HashSet}
 import actors.{Future, Futures}
@@ -32,7 +32,7 @@ import java.util.{ArrayList, List, HashSet => JHashSet}
 
 class EntityBuilder (entityDescriptions : IndexedSeq[EntityDescription], readers : Seq[QuadReader], config: ConfigParameters) extends FactumBuilder with EntityBuilderTrait {
 
-  private val log = Logger.getLogger(getClass.getName)
+  private val log = LoggerFactory.getLogger(getClass.getName)
   // If this is true, quads like provenance quads (or even all quads) are saved for later use (merge)
   private val outputAllQuads = config.configProperties.getProperty("output", "mapped-only").toLowerCase=="all"
   private val saveQuads = config.otherQuadsWriter!=null
@@ -79,7 +79,7 @@ class EntityBuilder (entityDescriptions : IndexedSeq[EntityDescription], readers
 //    log.info("Memory used (after writing all entities): " + MemoryUsage.getMemoryUsage()+" KB")   //TODO: remove
     writer.finish
 
-    log.fine("Build Entities took " + ((now - startTime)) + " ms")
+    log.debug("Build Entities took " + ((now - startTime)) + " ms")
   }
 
   // Build a factum table from a given resource uri and an entity description
@@ -391,7 +391,7 @@ class EntityBuilder (entityDescriptions : IndexedSeq[EntityDescription], readers
 
 class PropertyHashTable(entityDescriptions: Seq[EntityDescription]) {
   private val hashtable = new HashMap[String, PropertyType.Value]
-  private val log = Logger.getLogger(getClass.getName)
+  private val log = LoggerFactory.getLogger(getClass.getName)
   private var allUriNodesNeeded = false
 
   buildPHT
