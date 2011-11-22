@@ -1,4 +1,4 @@
-/* 
+/*
  * LDIF
  *
  * Copyright 2011 Freie Universität Berlin, MediaEvent Services GmbH & Co. KG
@@ -32,9 +32,9 @@ import ldif.hadoop.entitybuilder.io._
 import ldif.hadoop.utils.HadoopHelper
 import org.apache.hadoop.fs.{FileSystem, Path}
 import ldif.util.Consts
-import ldif.entity.{EntityDescriptionMetadata, EntityDescription, EntityDescriptionMetaDataExtractor}
 import java.util.logging.Logger
-import ldif.hadoop.io.EntityMultipleTextFileOutput
+import ldif.entity.{EntityWritable, EntityDescriptionMetadata, EntityDescription, EntityDescriptionMetaDataExtractor}
+import ldif.hadoop.io.{EntityMultipleSequenceFileOutput, EntityMultipleTextFileOutput}
 
 /**
  *  Hadoop EntityBuilder - Phase 4
@@ -45,34 +45,37 @@ class Phase4 extends Configured with Tool {
   def run(args: Array[String]): Int = {
     val conf = getConf
     val fileSystem = FileSystem.get(conf)
-    val job = new JobConf(conf, classOf[Phase4])
+    val jobConf = new JobConf(conf, classOf[Phase4])
+    val jobClient = new JobClient(jobConf)
     val maxPhase = args(0).toInt
 
-    job.setMapperClass(classOf[EntityConstructionMapper])
-    job.setReducerClass(classOf[EntityConstructionReducer])
-    job.setNumReduceTasks(1)
+    jobConf.setMapperClass(classOf[EntityConstructionMapper])
+    jobConf.setReducerClass(classOf[EntityConstructionReducer])
+    jobConf.setNumReduceTasks(1)
 
-    job.setMapOutputKeyClass(classOf[EntityDescriptionNodeWritable])
-    job.setMapOutputValueClass(classOf[ValuePathWritable])
+    jobConf.setMapOutputKeyClass(classOf[EntityDescriptionNodeWritable])
+    jobConf.setMapOutputValueClass(classOf[ValuePathWritable])
 
-    job.setOutputKeyClass(classOf[IntWritable])
-    job.setOutputValueClass(classOf[ValuePathWritable])
+    jobConf.setOutputKeyClass(classOf[IntWritable])
+    jobConf.setOutputValueClass(classOf[EntityWritable])
 
-    job.setInputFormat(classOf[ValuePathSequenceFileInput])
-    job.setOutputFormat(classOf[EntityMultipleTextFileOutput])
+    jobConf.setInputFormat(classOf[ValuePathSequenceFileInput])
+    jobConf.setOutputFormat(classOf[EntityMultipleSequenceFileOutput])
     //Debugging
-    MultipleOutputs.addNamedOutput(job, "debug", classOf[TextOutputFormat[IntWritable, ValuePathWritable]], classOf[IntWritable], classOf[ValuePathWritable])
+    MultipleOutputs.addNamedOutput(jobConf, "debug", classOf[EntityMultipleTextFileOutput], classOf[IntWritable], classOf[EntityWritable])
 
     for(i <- 0 to math.max(0, maxPhase-1)) {
       var in = new Path(args(1) + Consts.fileSeparator + i + Consts.fileSeparator, ValuePathMultipleSequenceFileOutput.generateDirectoryNameForFinishedValuePaths(i))
       if(fileSystem.exists(in))
-        FileInputFormat.addInputPath(job, in)
+        FileInputFormat.addInputPath(jobConf, in)
     }
 
     val out = new Path(args(2))
-    FileOutputFormat.setOutputPath(job, out)
+    FileOutputFormat.setOutputPath(jobConf, out)
 
-    JobClient.runJob(job)
+    val runningJob = JobClient.runJob(jobConf)
+    //    val counters = runningJob.getCounters
+    //    val countValue=counters.getGroup("LDIF nr. of entities per ED").getCounter("ED ID 6")
 
     return 0
   }

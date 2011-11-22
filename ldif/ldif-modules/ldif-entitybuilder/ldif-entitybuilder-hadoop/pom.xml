@@ -11,15 +11,20 @@
 
     <artifactId>ldif-entitybuilder-hadoop</artifactId>
     <packaging>jar</packaging>
-	<version>${ldif.version}</version>
-	<name>LDIF EntityBuilder Module Hadoop</name>
+    <version>${ldif.version}</version>
+    <name>LDIF EntityBuilder Module Hadoop</name>
 
     <dependencies>
         <dependency>
-          <groupId>ldif</groupId>
-          <artifactId>ldif-hadoop</artifactId>
-          <version>${ldif.version}</version>
+            <groupId>ldif</groupId>
+            <artifactId>ldif-hadoop</artifactId>
+            <version>${ldif.version}</version>
         </dependency>
-  </dependencies>
+        <dependency>
+            <groupId>ldif</groupId>
+            <artifactId>ldif-entitybuilder-common</artifactId>
+            <version>${ldif.version}</version>
+        </dependency>
+    </dependencies>
 
 </project>

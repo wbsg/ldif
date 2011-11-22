@@ -1,0 +1,5 @@
+<EntityDescription>
+    <Restriction>
+        <Condition path="?SUBJ/rdf:type"><Uri>http://WhatEver</Uri></Condition>
+    </Restriction>
+</EntityDescription>

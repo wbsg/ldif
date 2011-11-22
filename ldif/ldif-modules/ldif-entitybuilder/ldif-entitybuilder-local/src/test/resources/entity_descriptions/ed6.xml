@@ -1,0 +1,7 @@
+<EntityDescription>
+    <Restriction>
+        <Condition path="?SUBJ/rdf:type">
+            <Uri>http://testNamespace/someOldClass</Uri>
+        </Condition>
+    </Restriction>
+</EntityDescription>
