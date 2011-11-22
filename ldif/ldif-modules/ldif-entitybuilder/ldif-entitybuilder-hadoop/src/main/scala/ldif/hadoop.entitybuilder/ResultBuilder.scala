@@ -36,15 +36,15 @@ class ResultBuilder(edmd: EntityDescriptionMetadata) {
   /**
    * Checks if the entity fulfills the restriction definition
    */
-  def checkRestriction(entityDescriptionID: Int, valuePaths: Seq[ValuePathWritable]): Boolean = {
+  def checkRestriction(entityDescriptionID: Int, valuePaths: Seq[ValuePathWritable]): (Boolean, Option[NodeWritable]) = {
     val restriction = edmd.entityDescriptions(entityDescriptionID).restriction
     if(restriction.operator == None)
-      return true
+      return (true, None)
     val restrictionPaths = filterRestrictionValuePaths(valuePaths)
     return checkRestrictionOperator(restriction.operator.get, restrictionPaths)
   }
 
-  private def checkRestrictionOperator(operator: Operator, restrictionPaths: Seq[ValuePathWritable]): Boolean = {
+  private def checkRestrictionOperator(operator: Operator, restrictionPaths: Seq[ValuePathWritable]): (Boolean, Option[NodeWritable]) = {
     operator match {
       case Condition(path, values) => return checkCondition(path, values, restrictionPaths)
       case And(children) => return checkAnd(children, restrictionPaths)
@@ -54,42 +54,51 @@ class ResultBuilder(edmd: EntityDescriptionMetadata) {
     }
   }
 
-  private def checkCondition(path: Path, nodes: Set[Node], restrictionPaths: Seq[ValuePathWritable]): Boolean = {
-    val valuePathNodeSet = getValuesForPath(edmd.pathIdMap.get(path.gid).get, restrictionPaths)
-    for(node <- nodes if valuePathNodeSet.contains(node))
-      return true
-    false
+  private def checkCondition(path: Path, nodes: Set[Node], restrictionPaths: Seq[ValuePathWritable]): (Boolean, Option[NodeWritable]) = {
+    val valuePathNodeMap = getValuesForPath(edmd.pathIdMap.get(path.gid).get, restrictionPaths)
+    for(node <- nodes if valuePathNodeMap.contains(node))
+      return (true, valuePathNodeMap.get(node))
+    (false, None)
   }
 
-  private def getValuesForPath(pathId: Int, valuePaths: Seq[ValuePathWritable]): HashSet[NodeTrait] = {
-    val nodeSet = new HashSet[NodeTrait]()
+  private def getValuesForPath(pathId: Int, valuePaths: Seq[ValuePathWritable]): HashMap[NodeTrait, NodeWritable] = {
+    val nodeMap = new HashMap[NodeTrait, NodeWritable]()
     for(valuePath <- valuePaths if valuePath.pathID.get==pathId)
-      nodeSet.add(valuePath.values.get()(valuePath.length()).asInstanceOf[NodeTrait])
-    nodeSet
+      nodeMap.put(valuePath.values.get()(valuePath.length()).asInstanceOf[NodeTrait], valuePath.values.get()(0).asInstanceOf[NodeWritable])
+    nodeMap
   }
 
-  private def checkAnd(operators: Traversable[Operator], restrictionPaths: Seq[ValuePathWritable]): Boolean = {
-    for(operator <- operators if (!checkRestrictionOperator(operator, restrictionPaths)))
-      return false
-    true
+  private def checkAnd(operators: Traversable[Operator], restrictionPaths: Seq[ValuePathWritable]): (Boolean, Option[NodeWritable]) = {
+    var entityNode: Option[NodeWritable] = None
+    for(operator <- operators) {
+      val (success, eNode) = checkRestrictionOperator(operator, restrictionPaths)
+      if(!success)
+        return (false, None)
+      else if(entityNode==None)
+        entityNode = eNode
+    }
+    (true, entityNode)
   }
 
-  private def checkOr(operators: Traversable[Operator], restrictionPaths: Seq[ValuePathWritable]): Boolean = {
-    for(operator <- operators if (checkRestrictionOperator(operator, restrictionPaths)))
-      return true
-    false
+  private def checkOr(operators: Traversable[Operator], restrictionPaths: Seq[ValuePathWritable]): (Boolean, Option[NodeWritable]) = {
+    for(operator <- operators) {
+      val (boolResult, entityResult) = checkRestrictionOperator(operator, restrictionPaths)
+      if(boolResult)
+        return (true, entityResult)
+    }
+    (false, None)
   }
 
-  private def checkNot(operator: Operator, restrictionPaths: Seq[ValuePathWritable]): Boolean = {
-    !checkRestrictionOperator(operator, restrictionPaths)
+  private def checkNot(operator: Operator, restrictionPaths: Seq[ValuePathWritable]): (Boolean, Option[NodeWritable]) = {
+    (!checkRestrictionOperator(operator, restrictionPaths)._1, None)
   }
 
-  private def checkExists(path: Path, restrictionPaths: Seq[ValuePathWritable]): Boolean = {
+  private def checkExists(path: Path, restrictionPaths: Seq[ValuePathWritable]): (Boolean, Option[NodeWritable]) = {
     val pathId = edmd.pathIdMap(path.gid)
     for(valuePath <- restrictionPaths)
       if(valuePath.pathID.get==pathId)
-        return true
-    false
+        return (true, Some(valuePath.values.get().head.asInstanceOf[NodeWritable]))
+    (false, None)
   }
 
   private def filterRestrictionValuePaths(valuePaths: Seq[ValuePathWritable]): Seq[ValuePathWritable] = {

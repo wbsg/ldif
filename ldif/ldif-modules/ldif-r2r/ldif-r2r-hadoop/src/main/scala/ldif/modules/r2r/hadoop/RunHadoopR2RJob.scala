@@ -90,7 +90,7 @@ object RunHadoopR2RJob {
   }
 
   def main(args: Array[String]) {
-    val res = execute("outta_4", "outta_r2r", getMappings)
+    val res = execute(args(1)+"_4", args(1)+"_r2r", getMappings)
     sys.exit(res)
   }
 

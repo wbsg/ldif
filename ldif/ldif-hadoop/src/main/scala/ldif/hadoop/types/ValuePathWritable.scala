@@ -18,10 +18,10 @@
 
 package ldif.hadoop.types
 
-import ldif.entity.NodeWritable
 import java.io.{DataInput, DataOutput}
 import org.apache.hadoop.io.{IntWritable, ArrayWritable, Writable}
 import java.lang.Byte
+import ldif.entity.{NodeTrait, NodeWritable}
 
 case class ValuePathWritable (var pathID : IntWritable, var pathType: PathType, var values : NodeArrayWritable) extends Writable {
 
@@ -41,7 +41,8 @@ case class ValuePathWritable (var pathID : IntWritable, var pathType: PathType, 
 
   override def toString = {
     val builder = new StringBuilder
-    builder.append(pathType.toString).append("(pathID=").append(pathID.toString).append(", ").append(values.toString).append(")")
+    val graph = values.get()(0).asInstanceOf[NodeTrait].graph
+    builder.append(pathType.toString).append("(pathID=").append(pathID.toString).append(", graph=").append(graph).append(", ").append(values.toString).append(")")
     builder.toString
   }
 

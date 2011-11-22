@@ -60,16 +60,18 @@ class EntityConstructionReducer extends MapReduceBase with Reducer[EntityDescrip
       valuePaths.append(WritableUtils.clone(value, config))
     }
 
-    val passesRestriction = resultBuilder.checkRestriction(entityDescriptionID, valuePaths)
+    var (passesRestriction, entityNode) = resultBuilder.checkRestriction(entityDescriptionID, valuePaths)
     if(passesRestriction) {
       val result = resultBuilder.computeResultTables(entityDescriptionID, valuePaths)
+      if(entityNode==None)
+        entityNode = Some(key.node)
       if(hasResults(entityDescriptionID, result)) {
         val expandedResult = expandResultsForRestrictionOnlyPatterns(entityDescriptionID, result)
         reporter.incrCounter("LDIF nr. of entities per ED", "ED ID "+key.entityDescriptionID.get(), 1)
-        output.collect(key.entityDescriptionID, new EntityWritable(key.node, EntityWritable.convertResultTable(expandedResult), key.entityDescriptionID))
+        output.collect(key.entityDescriptionID, new EntityWritable(entityNode.get, EntityWritable.convertResultTable(expandedResult), key.entityDescriptionID))
         //For Debugging
         val debugCollector = mos.getCollector("debug", reporter).asInstanceOf[OutputCollector[IntWritable, EntityWritable]]
-        debugCollector.collect(key.entityDescriptionID, new EntityWritable(key.node, EntityWritable.convertResultTable(expandedResult), key.entityDescriptionID))
+        debugCollector.collect(key.entityDescriptionID, new EntityWritable(entityNode.get, EntityWritable.convertResultTable(expandedResult), key.entityDescriptionID))
       }
     }
   }

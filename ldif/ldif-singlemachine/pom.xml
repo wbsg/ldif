@@ -94,7 +94,13 @@
 
     <dependency>
       <groupId>ldif</groupId>
-      <artifactId>ldif-entitybuilder-mapreduce</artifactId>
+      <artifactId>ldif-entitybuilder-hadoop</artifactId>
+      <version>${ldif.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>ldif</groupId>
+      <artifactId>ldif-r2r-hadoop</artifactId>
       <version>${ldif.version}</version>
     </dependency>
 	
