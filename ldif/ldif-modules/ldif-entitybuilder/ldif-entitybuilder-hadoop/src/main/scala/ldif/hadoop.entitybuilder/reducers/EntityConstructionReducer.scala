@@ -55,6 +55,8 @@ class EntityConstructionReducer extends MapReduceBase with Reducer[EntityDescrip
     val entityDescriptionID = key.entityDescriptionID.get
 
     val valuePaths = new ArrayBuffer[ValuePathWritable]()
+    // all value paths of an entity are needed to build the result table
+    // Since Hadoop reuses objects in the iterator they have to be cloned
     while(values.hasNext) {
       val value = values.next()
       valuePaths.append(WritableUtils.clone(value, config))
@@ -66,26 +68,13 @@ class EntityConstructionReducer extends MapReduceBase with Reducer[EntityDescrip
       if(entityNode==None)
         entityNode = Some(key.node)
       if(hasResults(entityDescriptionID, result)) {
-        val expandedResult = expandResultsForRestrictionOnlyPatterns(entityDescriptionID, result)
         reporter.incrCounter("LDIF nr. of entities per ED", "ED ID "+key.entityDescriptionID.get(), 1)
-        output.collect(key.entityDescriptionID, new EntityWritable(entityNode.get, EntityWritable.convertResultTable(expandedResult), key.entityDescriptionID))
+        output.collect(key.entityDescriptionID, new EntityWritable(entityNode.get, EntityWritable.convertResultTable(result), key.entityDescriptionID))
         //For Debugging
         val debugCollector = mos.getCollector("debug", reporter).asInstanceOf[OutputCollector[IntWritable, EntityWritable]]
-        debugCollector.collect(key.entityDescriptionID, new EntityWritable(entityNode.get, EntityWritable.convertResultTable(expandedResult), key.entityDescriptionID))
+        debugCollector.collect(key.entityDescriptionID, new EntityWritable(entityNode.get, EntityWritable.convertResultTable(result), key.entityDescriptionID))
       }
     }
-  }
-
-  private def expandResultsForRestrictionOnlyPatterns(entityDescriptionID: Int, results: IndexedSeq[Traversable[IndexedSeq[NodeWritable]]]): IndexedSeq[Traversable[IndexedSeq[NodeWritable]]] = {
-    val entityDescription = edmd.entityDescriptions(entityDescriptionID)
-    val expandedResults = new ArrayBuffer[Traversable[IndexedSeq[NodeWritable]]]()
-    for(patternIndex <- 0 until entityDescription.patterns.length) {
-      if(entityDescription.patterns(patternIndex).length>0)
-        expandedResults.append(results(patternIndex))
-      else
-        expandedResults.append(List(IndexedSeq[NodeWritable]()))
-    }
-    expandedResults
   }
 
   private def hasResults(entityDescriptionID: Int, results: IndexedSeq[Traversable[IndexedSeq[NodeWritable]]]): Boolean = {
