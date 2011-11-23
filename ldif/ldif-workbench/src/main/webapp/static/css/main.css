@@ -1,0 +1,254 @@
+body
+{
+	margin: 0px;
+	padding: 0px;
+	font-family: Arial, "lucida console", sans-serif;
+	font-size: 13px;
+	background-color: #ffffff;
+	color: #000000;
+}
+
+th
+{
+	text-align: left;
+}
+
+a
+{
+	text-decoration: none;
+ 	color: #0000a0;
+    margin: 0px;
+}
+
+table
+{
+	border-collapse: collapse;
+}
+
+td
+{
+	border-top: 1px solid #606060;
+	border-bottom: 1px solid #606060;
+}
+
+pre
+{
+	font-family: "Courier New", Courier, monospace;
+}
+
+button
+{
+  margin-top: 0;
+}
+
+/* Tabbar
+----------------------------------*/
+#title
+{
+	font-size: 32px;
+	float: left;
+	position: relative;
+	padding-right: 30px;
+	color: #000;
+	font-family: Helvetica, Arial;
+}
+
+#tabbar
+{
+	/*border-top: 1px solid #505050; */
+    border-bottom: 1px solid #c7c6c6;
+	height: 35px;
+	color: #333;
+	padding-left: 15px;
+    margin-bottom: 2px;
+}
+
+.tab
+{
+	float: left;
+	margin-left: 5px;
+	padding-left: 5px;
+	padding-right: 5px;
+	line-height: 25px;
+	position: relative;
+	top: 9px;
+	background-color: #e7e6e6;
+	border: solid 1px #c7c6c6;
+    max-width: 350px;
+    font-family: Helvetica, Arial;
+}
+
+.tab a
+{
+	text-decoration: none;
+    color: #555555;
+}
+
+.tab:hover
+{
+	background-color: #ffffff;
+}
+
+.tab.selected
+{
+	background-color: #ffffff;
+    position: relative;
+    top: 5px;
+	border-bottom: 0px;
+    padding-bottom: 5px;
+}
+
+.tab.disabled {
+   color: #999999;
+}
+
+.tab.disabled:hover {background-color: #e7e6e6;}
+
+
+.tab:hover a, .tab.selected a
+{
+	/*color: #000000;*/
+}
+
+/* Toolbar
+----------------------------------*/
+
+#toolbar
+{
+  height: 40px;
+  background: url('../img/toolbar.png') repeat-x;
+  padding-left: 10px;
+  position: relative;
+  border-bottom: solid 1px #d7d6d6;
+  /* width: 100%; */
+  clear: both;
+}
+
+#toolbar ul
+{
+  padding: 0;
+  margin: 0;
+  list-style-type: none;
+}
+
+#toolbar li
+{
+  margin-top: 3px;
+  padding-right: 4px;
+  list-style-type: none;
+  float: left;
+}
+
+.ui-progressbar
+{
+  margin-top: 0;
+  width: 300px;
+}
+
+.ui-progressbar-value
+{
+  background-image: url(../img/progressbar.gif);
+}
+
+.progresstext
+{
+  color: gray;
+  font-weight: bold;
+  position: relative;
+  left: 10px;
+  top: -22px;
+  z-index: 1;
+}
+
+#about_dialog p {
+  margin-top: 10px;
+}
+
+#about_dialog p a {
+  text-decoration: underline;
+}
+
+a {
+  cursor: pointer;
+}
+
+
+button.action {
+  padding: 1px !important;
+}
+div.actions .ui-button-text {
+  margin-left: 4px !important;
+}
+
+.ui-button-icon-primary {
+  width: 16px;
+  height: 16px;
+  display: block;
+  float: left;
+  margin-left: 3px;
+}
+
+#content {
+  float: left;
+  min-width: 700px;
+  padding: 10px 10px;
+}
+
+#help {
+  float: right;
+  width: 150px;
+  background: white;
+  padding: 10px;
+  margin-right: 10px;
+  margin-top: 10px;
+  border: 1px solid #DBDBDB;
+}
+
+#show-help {
+  display: none;
+  float:right;
+  padding: 5px;
+}
+
+div#newproject {
+    margin-top: 0px;
+}
+
+
+
+
+
+
+
+
+.dialog {
+	margin-top: 10px;
+}
+
+input.text {
+    display: inline;
+    margin-bottom: 8px;
+    padding: .2em;
+    width: 355px;
+}
+
+.input-label {
+    display: block;
+    float: left;
+    padding: 0.2em 0;
+}
+.input {
+    float: left;
+}
+
+select {
+    display: inline;
+    margin-left: 0 !important;
+    margin-bottom: 6px;
+    padding: 1px;
+}
+
+.form-label {
+    margin: 15px 0px 12px 0px;
+    font-style: italic;
+}

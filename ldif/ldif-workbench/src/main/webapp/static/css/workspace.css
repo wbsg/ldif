@@ -1,0 +1,206 @@
+.import-icon {
+  background-image: url(../img/workspace/document-import.png);
+}
+.new-project-icon {
+  background-image: url(../img/workspace/document.png);
+}
+.edit-prefixes-icon {
+  background-image: url(../img/workspace/wrench-screwdriver.png);
+}
+.edit-icon {
+  background-image: url(../img/workspace/wrench.png);
+}
+.add-icon {
+  background-image: url(../img/workspace/plus.png);
+}
+.remove-icon {
+  background-image: url(../img/workspace/cross.png);
+}
+.export-icon {
+  background-image: url(../img/workspace/document-export.png);
+}
+.open-icon {
+  background-image: url(../img/workspace/document--pencil.png);
+}
+.add-ls-icon {
+  background-image: url(../img/workspace/document--plus.png);
+}
+.edit-form-icon {
+  background-image: url(../img/workspace/document--pencil.png);
+}
+.integrationjob-icon {
+  background-image: url("../img/workspace/block.png");
+}
+
+
+
+.run-schedule-icon {
+    background: url("../img/workspace/143.png") no-repeat !important;
+}
+.folder-icon {
+    background: url("../img/workspace/folder-horizontal-open.png") no-repeat !important;
+}
+.description-icon {
+    background: url("../img/workspace/pencil.png") no-repeat !important;
+}
+.homepage-icon {
+    background: url("../img/workspace/home-medium.png") no-repeat !important;
+}
+.datasource-icon {
+    background: url("../img/workspace/server.png") no-repeat !important;
+}
+.refresh-schedule-icon {
+    background: url("../img/workspace/alarm-clock-blue.png") no-repeat !important;
+}
+.properties-icon {
+    background: url("../img/workspace/folder-open-document-text.png") no-repeat !important;
+}
+.type-icon {
+    background: url("../img/workspace/arrow-in.png") no-repeat !important;
+}
+.dump-location-icon {
+    background: url("../img/workspace/arrow-step.png") no-repeat !important;
+}
+.levels-icon {
+    background: url("../img/workspace/082.png") no-repeat !important;
+}
+.endpoint-icon {
+    background: url("../img/workspace/arrow-step.png") no-repeat !important;
+}
+.limit-icon {
+    background: url("../img/workspace/076.png") no-repeat !important;
+}
+.data-source-icon {
+     background: url("../img/workspace/server.png") no-repeat !important;
+}
+.run-icon {
+    background: url("../img/workspace/control.png") no-repeat !important;
+}
+.foo-icon {
+    background: url("../img/workspace/160.png") no-repeat !important;
+}
+
+.file {
+    padding: 1px 0 1px 20px !important;
+}
+
+.filetree span.source {
+  background: url("../img/workspace/server.png") no-repeat !important;
+}
+.filetree span.output {
+  background: url("../img/workspace/server--arrow.png") no-repeat !important;
+}
+.filetree span.scheduler {
+  background: url("../img/workspace/clock-select.png") no-repeat;
+  height: 16px;
+  display: block;
+  padding: 1px 0 1px 18px;
+}
+.filetree span.integrationjob {
+  background: url("../img/workspace/document-block.png") no-repeat;
+  height: 16px;
+  display: block;
+  padding: 1px 0 1px 18px;
+}
+.filetree span.importjob {
+  background: url("../img/workspace/table-import.png") no-repeat;
+  height: 16px;
+  display: block;
+  padding: 1px 0 1px 20px;
+}
+.filetree span.uri {
+  background: url("../img/workspace/172.png") no-repeat;
+  height: 16px;
+  display: block;
+  padding: 1px 0 1px 20px;
+}
+.filetree span.conf {
+  background: url("../img/workspace/wrench-screwdriver.png") no-repeat;
+  height: 16px;
+  display: block;
+  padding: 1px 0 1px 20px;
+}
+.scheduler-icon {
+  background-image: url("../img/workspace/clock-select.png");
+}
+.integration-icon {
+  background-image: url("../img/workspace/document-block.png");
+}
+
+
+.help-icon {
+    background-image: url("../img/workspace/question-white.png");
+    height: 16px;
+    width: 16px;
+    display: inline;
+    position: absolute;
+    float: left;
+
+}
+.error-icon {
+    background-image: url("../img/workspace/exclamation-red.png");
+    height: 16px;
+    width: 16px;
+    display: inline;
+    position: absolute;
+    left: 25px;
+}
+
+.error {
+    width: 97%;
+}
+
+.description {
+    font-family: Verdana,Geneva,sans-serif;
+    font-size: 11px;
+    padding: 8px;
+    margin-bottom: 12px;
+    line-height: 14px;
+    float: left;
+}
+
+.title-icon {
+  height: 16px;
+  width: 16px;
+  float: left;
+  margin: 0 6px 0 -4px;
+}
+
+.dialog .error .message {
+    margin-left: 30px;
+}
+
+.info {
+    width: 92%;
+    margin-right: 16px;
+    float: left;
+}
+
+.ui-widget-content {
+    font-size: 1em !important;
+}
+
+.help {
+    background-image: url("../img/workspace/question.png");
+    height: 16px;
+    width: 16px;
+    position: absolute;
+    margin: 2px 3px 0;
+    display: inline;
+}
+
+.hidden {
+    display: none;
+}
+
+#tabs {
+    border: none;
+}
+
+.ui-tabs-panel {
+    padding: 0 0 0 9px !important;
+}
+.ui-tabs-nav {
+    margin-bottom: 12px !important;
+
+}

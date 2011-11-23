@@ -1,0 +1,386 @@
+<lift:surround with="default">
+    <lift:bind-at name="content">
+     <div id="content"></div>
+
+     <div style="display:none">
+        <div class="dialog" id="new-project-form">
+            <div style="clear: both"></div>
+                <div id="new-project-form-tabs">
+                <ul>
+                    <li><a href="#new-project-form-tabs-1">Create new</a></li>
+                    <li><a href="#new-project-form-tabs-2">Load from file</a></li>
+                </ul>
+                <div id="new-project-form-tabs-1">
+                    <form>
+                        <div class="input-label" style="width: 48px;">Name</div>
+                        <input type="text" name="name" class="text ui-widget-content ui-corner-all"/>
+                    </form>
+                </div>
+                <div id="new-project-form-tabs-2">
+                    <form>
+                        <div class="input-label" style="width: 48px;">Name</div>
+                        <input type="text" name="name" class="text ui-widget-content ui-corner-all"/>
+                        <div style="clear: both;"></div>
+
+                        <div class="input-label" style="width: 48px;">File</div>
+                        <input type="file" name="file" class="text ui-widget-content ui-corner-all"/>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="dialog" id="data-source-form">
+            <div class="description ui-state-highlight ui-corner-all">
+                <div class="info">
+                    A Data Source is configured with an XML document, whose structure is described by this
+                    <a href="http://www.assembla.com/code/ldif/git/nodes/ldif/ldif-core/src/main/resources/xsd/DataSource.xsd">XML Schema</a>.
+                    It contains human readable information about a data source. The label element should be a unique string in each integration use case, because it will be referenced by the import jobs.
+                </div>
+                <a class="help-icon" target="_blank" href="http://www4.wiwiss.fu-berlin.de/bizer/ldif/"></a>
+            </div>
+            <div style="clear: both"></div>
+
+        <div id="data-source-form-tabs">
+            <ul>
+                <li><a href="#data-source-form-tabs-1">Create new</a></li>
+                <li><a href="#data-source-form-tabs-2">Load from file</a></li>
+            </ul>
+            <div id="data-source-form-tabs-1">
+                <form>
+                    <div class="input-label" style="width: 90px;">Label</div>
+                    <input type="text" name="label" class="text ui-widget-content ui-corner-all"/>
+                    <span class="help"></span><div style="clear: both;"></div>
+
+                    <div class="input-label" style="width: 90px;">Description</div>
+                    <input type="text" name="description" class="text ui-widget-content ui-corner-all"/>
+                    <span class="help"></span><div style="clear: both;"></div>
+
+                    <div class="input-label" style="width: 90px;">Homepage</div>
+                    <input type="text" name="homepage" class="text ui-widget-content ui-corner-all"/>
+                    <span class="help"></span><div style="clear: both;"></div>
+
+                    <input type="hidden" name="projectName" value="" />
+                    <input type="hidden" name="projectIndex" value="" />
+                    <input type="hidden" name="dataSourceIndex" value="" />
+                </form>
+            </div>
+            <div id="data-source-form-tabs-2">
+                <form>
+                    <input type="file" name="file" class="text ui-widget-content ui-corner-all"/>
+                </form>
+            </div>
+        </div>
+        </div>
+
+        <div class="dialog" id="import-job-form">
+            <div class="description ui-state-highlight ui-corner-all">
+                <div class="info">
+                An Import Job is configured with an XML document, whose structure is described by this
+                <a href="http://www.assembla.com/code/ldif/git/nodes/ldif/ldif-core/src/main/resources/xsd/ImportJob.xsd" target="_blank">XML Schema</a>.
+                </div>
+                <a class="help-icon" target="_blank" href="http://www4.wiwiss.fu-berlin.de/bizer/ldif/"></a>
+            </div>
+            <div style="clear: both"></div>
+
+        <div id="import-job-form-tabs">
+            <ul>
+                <li><a href="#import-job-form-tabs-1">Create new</a></li>
+                <li><a href="#import-job-form-tabs-2">Load from file</a></li>
+            </ul>
+            <div id="import-job-form-tabs-1">
+            <form>
+                <div class="input-label" style="width: 130px;">internalId</div>
+                <input type="text" name="internalId" class="text ui-widget-content ui-corner-all"/>
+                <span class="help"></span><div style="clear: both;"></div>
+
+                <div class="input-label" style="width: 130px;">Data source</div>
+                <select name="dataSource" class="text ui-widget-content ui-corner-all"></select>
+                <span class="help"></span><div style="clear: both;"></div>
+
+                <div class="input-label" style="width: 130px;">Refresh schedule</div>
+                <select name="refreshSchedule" class="text ui-widget-content ui-corner-all">
+                    <option value="onStartup">onStartup</option>
+                    <option value="always">always</option>
+                    <option value="hourly">hourly</option>
+                    <option value="daily">daily</option>
+                    <option value="weekly">weekly</option>
+                    <option value="monthly">monthly</option>
+                    <option value="yearly ">yearly</option>
+                    <option value="never">never</option>
+                </select>
+                <span class="help"></span><div style="clear: both;"></div>
+
+                <div class="input-label" style="width: 130px;">Type</div>
+                <select name="type" class="text ui-widget-content ui-corner-all"
+                        onchange="$('#quadImportJob, #tripleImportJob, #sparqlImportJob, #crawlImportJob').hide(); $('#'+this.value).show();">
+                    <option value="quadImportJob">Quad Import</option>
+                    <option value="tripleImportJob">Triple Import</option>
+                    <option value="sparqlImportJob">SPARQL Import</option>
+                    <option value="crawlImportJob">Crawler Import</option>
+                </select>
+                <span class="help"></span><div style="clear: both;"></div>
+
+                <div id="quadImportJob">
+                    <div class="input-label" style="width: 130px;">Dump location</div>
+                    <input type="text" name="dumpLocation" class="text ui-widget-content ui-corner-all"/>
+                    <span class="help"></span><div style="clear: both;"></div>
+                </div>
+                <div id="tripleImportJob" style="display: none">
+                    <div class="input-label" style="width: 130px;">Dump location</div>
+                    <input type="text" name="dumpLocation" class="text ui-widget-content ui-corner-all"/>
+                    <span class="help"></span><div style="clear: both;"></div>
+                </div>
+                <div id="sparqlImportJob" style="display: none">
+                    <div class="input-label" style="width: 130px;">Endpoint location</div>
+                    <input type="text" name="endpointLocation" class="text ui-widget-content ui-corner-all"/>
+                    <span class="help"></span><div style="clear: both;"></div>
+
+                    <div class="input-label" style="width: 130px;">Triple limit</div>
+                    <input type="text" name="tripleLimit" class="text ui-widget-content ui-corner-all"/>
+                    <span class="help"></span><div style="clear: both;"></div>
+
+                    <div class="form-label">SPARQL patterns: <span class="help" id="sparql"></span></div>
+                    <div id="patterns">
+                        <div id="pattern0">
+                            <div class="input-label" style="width: 60px;">Pattern</div>
+                            <input type="text" name="pattern0" class="text ui-widget-content ui-corner-all"/>
+                            <button type="button" style="display: inline;" onclick="removePattern($(this).parent().attr('id'));">Remove</button>
+                        </div>
+                    </div>
+                    <button type="button" style="display: block; margin-left: 59px;" onclick="addPattern();">Add</button>
+                </div>
+                <div id="crawlImportJob" style="display: none">
+                    <div class="input-label" style="width: 130px;">Levels</div>
+                    <input type="text" name="levels" class="text ui-widget-content ui-corner-all"/>
+                    <span class="help"></span><div style="clear: both;"></div>
+
+                    <div class="input-label" style="width: 130px;">Resource limit</div>
+                    <input type="text" name="resourceLimit" class="text ui-widget-content ui-corner-all"/>
+                    <span class="help"></span><div style="clear: both;"></div>
+
+                    <div class="form-label">Seed URIs:<span class="help" id="seed"></span></div>
+                    <div id="seeds">
+                        <div id="seed0">
+                            <div class="input-label" style="width: 35px;">URI</div>
+                            <input type="text" name="seed0" class="text ui-widget-content ui-corner-all"/>
+                            <button type="button" style="display: inline;" onclick="removeSeed($(this).parent().attr('id'));">Remove</button>
+                        </div>
+                    </div>
+                    <button type="button" style="display: block; margin-left: 34px;" onclick="addSeed();">Add</button>
+                    <div class="form-label">Predicates to follow: <span class="help" id="predicate"></span></div>
+                    <div id="predicates">
+                        <div id="predicate0">
+                            <div class="input-label" style="width: 35px;">URI</div>
+                            <input type="text" name="predicate0" class="text ui-widget-content ui-corner-all"/>
+                            <button type="button" style="display: inline;" onclick="removePredicate($(this).parent().attr('id'));">Remove</button>
+                        </div>
+                    </div>
+                    <button type="button" style="display: block; margin-left: 34px;" onclick="addPredicate();">Add</button>
+                </div>
+
+                <input type="hidden" name="projectName" value="" />
+                <input type="hidden" name="projectIndex" value="" />
+                <input type="hidden" name="importJobIndex" value="" />
+            </form>
+            </div>
+            <div id="import-job-form-tabs-2">
+                <form>
+                    <input type="file" name="file" class="text ui-widget-content ui-corner-all"/>
+                </form>
+            </div>
+        </div>
+        </div>
+
+        <div class="dialog" id="integration-job-form">
+            <div class="description ui-state-highlight ui-corner-all">
+                <div class="info">
+                    An Integration Job is configured with an XML document, whose structure is described by this
+                    <a href="http://www.assembla.com/code/ldif/git/nodes/ldif/ldif-core/src/main/resources/xsd/IntegrationJob.xsd" target="_blank">XML Schema</a>.
+                    It should be noted that when an integration job starts, it only works on fully imported data. Data of import jobs that did not finish before the integration starts is ignored - the only exception is if the
+                    oneTimeExecution configuration property is set to true; then the integration waits for all import jobs to finish.
+
+                </div>
+                <a class="help-icon" target="_blank" href="http://www4.wiwiss.fu-berlin.de/bizer/ldif/"></a>
+            </div>
+            <div style="clear: both"></div>
+
+        <div id="integration-job-form-tabs">
+            <ul>
+                <li><a href="#integration-job-form-tabs-1">Create new</a></li>
+                <li><a href="#integration-job-form-tabs-2">Load from file</a></li>
+            </ul>
+            <div id="integration-job-form-tabs-1">
+        <form>
+                <div class="input-label" style="width: 135px;">Run schedule</div>
+                <select name="runSchedule" class="text ui-widget-content ui-corner-all">
+                    <option value="onStartup">onStartup</option>
+                    <option value="always">always</option>
+                    <option value="hourly">hourly</option>
+                    <option value="daily">daily</option>
+                    <option value="weekly">weekly</option>
+                    <option value="monthly">monthly</option>
+                    <option value="yearly ">yearly</option>
+                    <option value="never">never</option>
+                </select>
+                <span class="help"></span><div style="clear: both;"></div>
+
+                <div class="input-label" style="width: 135px;">Output</div>
+                <input type="text" name="output" class="text ui-widget-content ui-corner-all"/>
+                <span class="help"></span><div style="clear: both;"></div>
+
+                <div class="input-label" style="width: 135px;">Link specifications</div>
+                <input type="text" name="linkSpecifications" class="text ui-widget-content ui-corner-all"/>
+                <span class="help"></span><div style="clear: both;"></div>
+
+                <div class="input-label" style="width: 135px;">Mappings</div>
+                <input type="text" name="mappings" class="text ui-widget-content ui-corner-all"/>
+                <span class="help"></span><div style="clear: both;"></div>
+
+                <!--
+                    <div class="input-label" style="width: 135px;">Properties</div>
+                    <input type="text" name="properties" class="text ui-widget-content ui-corner-all"/>
+                    <span class="help"></span><div style="clear: both;"></div>
+
+                    <div class="input-label" style="width: 135px;">Data sources</div>
+                    <input type="text" name="sources" class="text ui-widget-content ui-corner-all"/>
+                    <span class="help"></span><div style="clear: both;"></div>
+                -->
+
+                <div class="form-label">Configuration properties:</div>
+                <div class="input-label" style="width: 190px;">Output</div>
+                <select name="output2" class="conf text ui-widget-content ui-corner-all">
+                    <option value="mapped-only">mapped-only</option>
+                    <option value="all">all</option>
+                </select>
+                <span class="help"></span><div style="clear: both;"></div>
+
+                <div class="input-label" style="width: 190px;">Rewrite URIs</div>
+                <select name="rewriteURIs" class="conf text ui-widget-content ui-corner-all">
+                    <option value="true">true</option>
+                    <option value="false">false</option>
+                </select>
+                <span class="help"></span><div style="clear: both;"></div>
+
+                <div class="input-label" style="width: 190px;">Provenance graph URI</div>
+                <input type="text" name="provenanceGraphURI" class="conf text ui-widget-content ui-corner-all"/>
+                <span class="help"></span><div style="clear: both;"></div>
+
+                <div class="input-label" style="width: 190px;">Validate sources</div>
+                <select name="validateSources" class="conf text ui-widget-content ui-corner-all">
+                    <option value="true">true</option>
+                    <option value="false">false</option>
+                </select>
+                <span class="help"></span><div style="clear: both;"></div>
+
+                <div class="input-label" style="width: 190px;">Discard faulty quads</div>
+                <select name="discardFaultyQuads" class="conf text ui-widget-content ui-corner-all">
+                    <option value="false">false</option>
+                    <option value="true">true</option>
+                </select>
+                <span class="help"></span><div style="clear: both;"></div>
+
+                <div class="input-label" style="width: 190px;">Use external sameAs-links</div>
+                <select name="useExternalSameAsLinks" class="conf text ui-widget-content ui-corner-all">
+                    <option value="true">true</option>
+                    <option value="false">false</option>
+                </select>
+                <span class="help"></span><div style="clear: both;"></div>
+
+                <div class="input-label" style="width: 190px;">Output format</div>
+                <select name="outputFormat" class="conf text ui-widget-content ui-corner-all">
+                    <option value="nq">nq</option>
+                    <option value="nt">nt</option>
+                </select>
+                <span class="help"></span><div style="clear: both;"></div>
+
+                <div class="input-label" style="width: 190px;">URI minting</div>
+                <select name="uriMinting" class="conf text ui-widget-content ui-corner-all">
+                    <option value="false">false</option>
+                    <option value="true">true</option>
+                </select>
+                <span class="help"></span><div style="clear: both;"></div>
+
+                <div class="input-label" style="width: 190px;">URI mint namespace</div>
+                <input type="text" name="uriMintNamespace" class="conf text ui-widget-content ui-corner-all"/>
+                <span class="help"></span><div style="clear: both;"></div>
+
+                <div class="form-label">Mint label predicates: <span class="help" id="mlpredicate"></span></div>
+                    <div id="mintlabel-predicates">
+                        <div id="mintlabel-predicate0">
+                            <div class="input-label" style="width: 35px;">URI</div>
+                            <input type="text" name="predicate0" class="text ui-widget-content ui-corner-all"/>
+                            <button type="button" style="display: inline;" onclick="removeMintLabelPredicate($(this).parent().attr('id'));">Remove</button>
+                        </div>
+                    </div>
+                    <button type="button" style="display: block; margin-left: 34px;" onclick="addMintLabelPredicate();">Add</button>
+
+                <input type="hidden" name="projectName" value="" />
+                <input type="hidden" name="projectIndex" value="" />
+            </form>
+            </div>
+            <div id="integration-job-form-tabs-2">
+                <form>
+                    <input type="file" name="file" class="text ui-widget-content ui-corner-all"/>
+                </form>
+            </div>
+        </div>
+        </div>
+
+        <div class="dialog" id="scheduler-form">
+            <div class="description ui-state-highlight ui-corner-all">
+                <div class="info">
+                    A Schedule Job updates the representation of external sources in the local cache and it is configured with an XML document, whose structure is described by this
+                    <a href="http://www.assembla.com/code/ldif/git/nodes/ldif/ldif-core/src/main/resources/xsd/SchedulerConfig.xsd" target="_blank">XML Schema</a>
+                    . The scheduler configuration is the top configuration file that references all the other configuration files like the for the import jobs for accessing remote sources and for the integration job.
+
+                </div>
+                <a class="help-icon" target="_blank" href="http://www4.wiwiss.fu-berlin.de/bizer/ldif/"></a>
+            </div>
+            <form>
+                <!--
+                    <div class="input-label" style="width: 125px;">Data sources</div>
+                    <input type="text" name="dataSources" class="text ui-widget-content ui-corner-all"/>
+                    <span class="help"></span><div style="clear: both;"></div>
+
+                    <div class="input-label" style="width: 125px;">Import jobs</div>
+                    <input type="text" name="importJobs" class="text ui-widget-content ui-corner-all"/>
+                    <span class="help"></span><div style="clear: both;"></div>
+
+                    <div class="input-label" style="width: 125px;">Integration job</div>
+                    <input type="text" name="integrationJob" class="text ui-widget-content ui-corner-all"/>
+                    <span class="help"></span><div style="clear: both;"></div>
+
+                    <div class="input-label" style="width: 125px;">Properties</div>
+                    <input type="text" name="properties" class="text ui-widget-content ui-corner-all"/>
+                    <span class="help"></span><div style="clear: both;"></div>
+                -->
+
+                <div class="input-label" style="width: 125px;">Dump location</div>
+                <input type="text" name="dumpLocation" class="text ui-widget-content ui-corner-all"/>
+                <span class="help"></span><div style="clear: both;"></div>
+
+                <div class="form-label">Configuration properties:</div>
+                    <div class="input-label" style="width: 160px;">Provenance graph URI</div>
+                    <input type="text" name="provenanceGraphURI" class="conf text ui-widget-content ui-corner-all"/>
+                    <span class="help"></span><div style="clear: both;"></div>
+
+                    <div class="input-label" style="width: 160px;">One time execution</div>
+                    <select name="oneTimeExecution" class="conf text ui-widget-content ui-corner-all">
+                        <option value="false">false</option>
+                        <option value="true">true</option>
+                    </select>
+                <span class="help"></span><div style="clear: both;"></div>
+
+                <input type="hidden" name="projectName" value="" />
+                <input type="hidden" name="projectIndex" value="" />
+            </form>
+        </div>
+
+        <div class="dialog" id="remove-form">
+            Delete ressource: <span class="ressource"></span>
+        </div>
+     </div> <!-- close display:none div-->
+
+    </lift:bind-at>
+</lift:surround>
+
