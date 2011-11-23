@@ -1,30 +1,25 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-	<modelVersion>4.0.0</modelVersion>
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
 
     <parent>
-      <groupId>ldif</groupId>
-      <artifactId>ldif-modules</artifactId>
-      <version>${ldif.version}</version>
+        <groupId>ldif</groupId>
+        <artifactId>ldif-modules</artifactId>
+        <version>0.3.1</version>
     </parent>
 
-   <modules>
-    <module>ldif-entitybuilder-common</module>
-    <module>ldif-entitybuilder-local</module>
-    <module>ldif-entitybuilder-hadoop</module>
-   </modules>
-
-	<artifactId>ldif-entitybuilder</artifactId>
-	<packaging>pom</packaging>
+    <artifactId>ldif-entitybuilder</artifactId>
+    <packaging>pom</packaging>
 	<version>${ldif.version}</version>
-	<name>LDIF EntityBuilder Module</name>
+    <name>LDIF EntityBuilder Module</name>
 
-	<dependencies>
-      <dependency>
-        <groupId>ldif</groupId>
-        <artifactId>ldif-core</artifactId>
-        <version>${ldif.version}</version>
-      </dependency>
-	</dependencies>
+    <modules>
+        <module>ldif-entitybuilder-common</module>
+        <module>ldif-entitybuilder-local</module>
+        <module>ldif-entitybuilder-hadoop</module>
+    </modules>
 
 </project>
