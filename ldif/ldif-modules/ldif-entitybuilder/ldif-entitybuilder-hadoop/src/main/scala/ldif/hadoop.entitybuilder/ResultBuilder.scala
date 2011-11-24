@@ -107,7 +107,7 @@ class ResultBuilder(edmd: EntityDescriptionMetadata) {
   }
 
   /**
-   * Generate the result tables for all patterns (not restriction) for the entity description and the given value paths. TODO: Maybe add empty result for restriction only patterns (right now done as postprocessing)
+   * Generate the result tables for all patterns (not restriction) for the entity description and the given value paths.
    */
   def computeResultTables(entityDescriptionID: Int, valuePaths: Seq[ValuePathWritable]): IndexedSeq[Traversable[IndexedSeq[NodeWritable]]] = {
     val resultTables = new ArrayBuffer[Traversable[IndexedSeq[NodeWritable]]]()
@@ -156,6 +156,7 @@ class ResultBuilder(edmd: EntityDescriptionMetadata) {
     val addJoinNodeToResults = pathPointsToJoinNode(level, pathIndexes, pathInfos)
     val indexPartitions = partitionPathIndexesByPathOperator(level, pathIndexes, pathInfos)
     val nodePartitions = partitionValuePathsByNode(level, valuePaths)
+
     for((node, nodePartition) <- nodePartitions) {
       val partialResults = computePartialResultsForIndexPartitions(indexPartitions, nodePartition, level, pathInfos)
       results ++= calculatePartialResultTable(partialResults, node, addJoinNodeToResults)

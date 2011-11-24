@@ -12,30 +12,30 @@ mappings:renamePropertyMapping
    r2r:targetPattern "?SUBJ <http://testNamespace/newP> ?o" ;
    r2r:targetPattern "?SUBJ a <http://testNamespace/someNewClass>" .
 
-# mappings:transformationMapping
-#   a r2r:Mapping ;
-#   r2r:sourcePattern "?SUBJ <http://v> ?v . ?SUBJ <http://n> ?n . " ;
-#   r2r:transformation "?name = concat(?v, ' ', ?n)" ;
-#   r2r:targetPattern "?SUBJ <http://name> ?name" .
-#
-# mappings:whateverClassMapping
-#   a r2r:Mapping ;
-#   r2r:sourcePattern "?SUBJ a <http://WhatEver>" ;
-#   r2r:targetPattern "?SUBJ a <http://testNamespace/WhatEverClass>" .
-#
-# mappings:somePropMapping
-#   a r2r:Mapping ;
-#   r2r:sourcePattern "?SUBJ <http://someProp> ?o" ;
-#   r2r:targetPattern "?SUBJ <http://someMappedProp> ?o" .
+mappings:transformationMapping
+  a r2r:Mapping ;
+  r2r:sourcePattern "?SUBJ <http://v> ?v . ?SUBJ <http://n> ?n . " ;
+  r2r:transformation "?name = concat(?v, ' ', ?n)" ;
+  r2r:targetPattern "?SUBJ <http://name> ?name" .
 
-# mappings:oneHopPathMapping
-#   a r2r:Mapping ;
-#   r2r:sourcePattern "?SUBJ <http://a> ?i . ?i <http://b> ?o" ;
-#   r2r:targetPattern "?SUBJ <http://c> ?o" .
+mappings:whateverClassMapping
+  a r2r:Mapping ;
+  r2r:sourcePattern "?SUBJ a <http://WhatEver>" ;
+  r2r:targetPattern "?SUBJ a <http://testNamespace/WhatEverClass>" .
 
-# mappings:twoHopPathMapping
-#   a r2r:Mapping ;
-#   r2r:sourcePattern "?SUBJ <http://a> ?i1 . ?i1 <http://c> ?i2 . ?i2 <http://d> ?o" ;
-#   r2r:targetPattern "?SUBJ <http://e> ?o" .
-#
+mappings:somePropMapping
+  a r2r:Mapping ;
+  r2r:sourcePattern "?SUBJ <http://someProp> ?o" ;
+  r2r:targetPattern "?SUBJ <http://someMappedProp> ?o" .
+
+mappings:oneHopPathMapping
+  a r2r:Mapping ;
+  r2r:sourcePattern "?SUBJ <http://a> ?i . ?i <http://b> ?o" ;
+  r2r:targetPattern "?SUBJ <http://c> ?o" .
+
+mappings:twoHopPathMapping
+  a r2r:Mapping ;
+  r2r:sourcePattern "?SUBJ <http://a> ?i1 . ?i1 <http://c> ?i2 . ?i2 <http://d> ?o" ;
+  r2r:targetPattern "?SUBJ <http://e> ?o" .
+
 <http://testNamespace/someOldClass> rdfs:subClassOf <http://testNamespace/someFunkyNewClass> .

@@ -116,8 +116,8 @@ object JenaResultSetEntityBuilderHelper {
     var nrOfVars: Int = 0
     for(v <- resultSet.varNames) if(v.startsWith(resultVarBaseName) &&  v.substring(resultVarBaseName.length).forall(Character.isDigit(_))) nrOfVars += 1
 
-    if(nrOfVars==0)
-      row.append(entity)
+//    if(nrOfVars==0)
+//      row.append(entity)
     for(index <- 1 to nrOfVars) {
       val node = resultSet.get(resultVarBaseName + index)
       val graph = resultSet.get(resultVarBaseName + index + "graph")
@@ -134,8 +134,8 @@ object JenaResultSetEntityBuilderHelper {
     var nrOfVars: Int = 0
     for(v <- resultSet.varNames) if(v.startsWith(resultVarBaseName) &&  v.substring(resultVarBaseName.length).forall(Character.isDigit(_))) nrOfVars += 1
 
-    if(nrOfVars==0)
-      row.append(entity)
+//    if(nrOfVars==0)
+//      row.append(entity)
     for(index <- 1 to nrOfVars) {
       val node = resultSet.get(resultVarBaseName + index)
       row.append(convertNode(node, entityGraph))

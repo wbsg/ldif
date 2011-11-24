@@ -36,7 +36,7 @@ class EBLocalTest extends FlatSpec with ShouldMatchers
 {
   testInMemory
   testInMemoryPlusFiles
-  // testTDB     // TODO - this test should pass
+  testTDB     // TODO - this test should pass
 
   // Test in memory execution
   def testInMemory  {
@@ -118,7 +118,7 @@ class EBLocalTest extends FlatSpec with ShouldMatchers
   def checkEntityQuantity (eqs : IndexedSeq[EntityReader], ebType : String)  {
     "EBLocal" should "create the correct number of entities "+ebType in  {
       eqs(0).size should equal (4)
-      eqs(1).size should equal (9)
+      eqs(1).size should equal (9) // TODO: This fails for TDB. Why is this 9?? 1 seems to be correct. 9 seems to be the overall entity count. (because of no restriction of entity)
       eqs(2).size should equal (9)
       eqs(3).size should equal (4)
       eqs(4).size should equal (9)
@@ -150,7 +150,7 @@ class EBLocalTest extends FlatSpec with ShouldMatchers
             factum.head
           }
 
-          val sortedNodes = nodes.toArray.sortBy(_.value)
+          val sortedNodes = nodes.toArray.sortBy(_.graph)
 
           sortedNodes.head.value should equal ("bla")
           sortedNodes.head.graph should equal ("someGraph")
