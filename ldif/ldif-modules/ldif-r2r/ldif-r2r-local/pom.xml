@@ -5,7 +5,7 @@
     <parent>
       <groupId>ldif</groupId>
       <artifactId>ldif-r2r</artifactId>
-      <version>${ldif.version}</version>
+      <version>0.3.1</version>
     </parent>
 
 	<artifactId>ldif-r2r-local</artifactId>

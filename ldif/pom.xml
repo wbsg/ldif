@@ -16,6 +16,14 @@
   <packaging>pom</packaging>
   <version>${ldif.version}</version>
   <name>LDIF</name>
+  <url>http://www4.wiwiss.fu-berlin.de/bizer/ldif/</url>
+
+    <licenses>
+        <license>
+            <name>The Apache Software License, Version 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+        </license>
+    </licenses>
 
   <modules>
     <module>ldif-core</module>
@@ -23,6 +31,7 @@
     <module>ldif-hadoop</module>
     <module>ldif-modules</module>
     <module>ldif-singlemachine</module>
+    <module>ldif-workbench</module>
   </modules>
 
   <build>
@@ -175,7 +184,6 @@
           <artifactId>logback-core</artifactId>
           <version>0.9.18</version>
       </dependency>
-
   </dependencies>
 
   <repositories>
@@ -201,7 +209,6 @@
       <name>Scala-tools Maven2 Repository</name>
       <url>http://scala-tools.org/repo-releases/</url>
     </pluginRepository>
-
 
   </pluginRepositories>
 
