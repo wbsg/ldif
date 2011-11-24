@@ -54,12 +54,12 @@ class EBHadoopTest extends FlatSpec with ShouldMatchers
   val eqs = readOuputFiles
   "EBHadoop" should "create the correct number of entities" in  {
 
-    for ((eq,i) <- eqs.zipWithIndex) println(eq.size +" <- " +entityDescriptions(i).toString)
+    //for ((eq,i) <- eqs.zipWithIndex) println(eq.size +" <- " +entityDescriptions(i).toString)
 
     eqs(0).size should equal (4)
     eqs(1).size should equal (1)
     eqs(2).size should equal (1)
-//    eqs(3).size should equal (4)  // TODO - this test should pass
+    eqs(3).size should equal (2)
     eqs(4).size should equal (1)
     eqs(5).size should equal (1)
     eqs(6).size should equal (3)
@@ -109,16 +109,16 @@ class EBHadoopTest extends FlatSpec with ShouldMatchers
         entity.factums(0).size should equal (0)
     }
 
-        //EntityDescription(Restriction(Some(Condition(?SUBJ/rdf:type,Set(<http://WhatEver>)))),
-        // Vector(Vector(?SUBJ/<http://testNamespace/oldP>)))
-        for(entity <- eqs(3)){
-          if (entity.resource.value == "http://testNamespace/resource2")
-            entity.factums(0).head.head.value should equal ("same")
-          else if (entity.resource.value == "http://testNamespace/resource1")
-            entity.factums(0).head.head.value should equal ("same")
-          else
-            entity.factums(0).size should equal (0)
-        }
+    //EntityDescription(Restriction(Some(Condition(?SUBJ/rdf:type,Set(<http://WhatEver>)))),
+    // Vector(Vector(?SUBJ/<http://testNamespace/oldP>)))
+    for(entity <- eqs(3)){
+      if (entity.resource.value == "http://testNamespace/resource2")
+        entity.factums(0).head.head.value should equal ("same")
+      else if (entity.resource.value == "http://testNamespace/resource1")
+        entity.factums(0).head.head.value should equal ("same")
+      else
+        entity.factums(0).size should equal (0)
+    }
 
     // EntityDescription(Restriction(None),Vector(Vector(?SUBJ/<http://a>/<http://c>/<http://d>)))
     for(entity <- eqs(4)){
@@ -172,8 +172,7 @@ class EBHadoopTest extends FlatSpec with ShouldMatchers
     val fileSystem = FileSystem.get(config)
 
     val outputFiles = loadOutput(new File(outputDirPrefix+"_4"))
-    //val eqs = outputFiles.map(_ => Seq.empty[Entity]).toArray    // TODO replace
-    val eqs = entityDescriptions.map(_ => Seq.empty[Entity]).toArray    // TODO remove
+    val eqs = outputFiles.map(_ => Seq.empty[Entity]).toArray
 
     for (file <- outputFiles)  {
       val reader = new SequenceFile.Reader(fileSystem, file, config)
@@ -181,7 +180,7 @@ class EBHadoopTest extends FlatSpec with ShouldMatchers
       val vv = reader.getValueClass.newInstance.asInstanceOf[EntityWritable]
       while (reader.next(kk, vv)) {
         eqs(kk.get) :+= vv
-        println( kk +" ) " +vv.resource.value +" \n"+ vv + "\n-----------------")
+        // println( kk +" ) " +vv.resource.value +" \n"+ vv + "\n-----------------")
       }
       reader.close
     }
