@@ -47,7 +47,7 @@ import ldif.hadoop.io.{QuadTextFileOutput, EntityMultipleSequenceFileOutput, Ent
  * This class represents a R2R Hadoop job that maps entities created by the Hadoop entity builder.
  * The output is written to one directory as quads.
  */
-class RunHadoopR2RJob extends Configured with Tool {//TODO finish
+class RunHadoopR2RJob extends Configured with Tool {
   def run(args: Array[String]): Int = {
     val conf = getConf
     val job = new JobConf(conf, classOf[RunHadoopR2RJob])
@@ -82,7 +82,9 @@ class RunHadoopR2RJob extends Configured with Tool {//TODO finish
 
 object RunHadoopR2RJob {
   private def getMappings: IndexedSeq[LDIFMapping] = {
-    val mappingSource = new FileOrURISource("ldif-singlemachine/src/test/resources/mappings.ttl")
+//    val mappingSource = new FileOrURISource("ldif-singlemachine/src/test/resources/mappings.ttl")
+    val mappingSource = new FileOrURISource("test_10k/mappings/ALL-to-Wiki.r2r.ttl")
+
     val uriGenerator = new EnumeratingURIGenerator("http://www4.wiwiss.fu-berlin.de/ldif/imported", BigInteger.ONE);
     val importedMappingModel = Repository.importMappingDataFromSource(mappingSource, uriGenerator)
     val repository = new Repository(new JenaModelSource(importedMappingModel))

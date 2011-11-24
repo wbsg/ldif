@@ -71,8 +71,8 @@ class EntityConstructionReducer extends MapReduceBase with Reducer[EntityDescrip
         reporter.incrCounter("LDIF nr. of entities per ED", "ED ID "+key.entityDescriptionID.get(), 1)
         output.collect(key.entityDescriptionID, new EntityWritable(entityNode.get, EntityWritable.convertResultTable(result), key.entityDescriptionID))
         //For Debugging
-        val debugCollector = mos.getCollector("debug", reporter).asInstanceOf[OutputCollector[IntWritable, EntityWritable]]
-        debugCollector.collect(key.entityDescriptionID, new EntityWritable(entityNode.get, EntityWritable.convertResultTable(result), key.entityDescriptionID))
+//        val debugCollector = mos.getCollector("debug", reporter).asInstanceOf[OutputCollector[IntWritable, EntityWritable]]
+//        debugCollector.collect(key.entityDescriptionID, new EntityWritable(entityNode.get, EntityWritable.convertResultTable(result), key.entityDescriptionID))
       }
     }
   }

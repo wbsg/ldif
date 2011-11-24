@@ -47,8 +47,8 @@ class ValuePathJoinMapper extends MapReduceBase with Mapper[IntWritable, ValuePa
     if(value.pathType==FinishedPathType) {
       collector = mos.getCollector("seq", reporter).asInstanceOf[OutputCollector[IntWritable, ValuePathWritable]]
       collector.collect(key, value)
-      collector = mos.getCollector("text", reporter).asInstanceOf[OutputCollector[IntWritable, ValuePathWritable]]
-      collector.collect(key, value)
+//      collector = mos.getCollector("text", reporter).asInstanceOf[OutputCollector[IntWritable, ValuePathWritable]]
+//      collector.collect(key, value)
     }
     else {
       val nodes = value.values.get

@@ -88,7 +88,8 @@ class RunPhase4 extends Configured with Tool {
 
 object RunPhase4 {
   private def getEntityDescriptions: Seq[EntityDescription] = {
-    val mappingSource = new FileOrURISource("mappings.ttl")
+//    val mappingSource = new FileOrURISource("mappings.ttl")
+    val mappingSource = new FileOrURISource("test_10k/mappings/ALL-to-Wiki.r2r.ttl")
     val uriGenerator = new EnumeratingURIGenerator("http://www4.wiwiss.fu-berlin.de/ldif/imported", BigInteger.ONE);
     val importedMappingModel = Repository.importMappingDataFromSource(mappingSource, uriGenerator)
     val repository = new Repository(new JenaModelSource(importedMappingModel))
