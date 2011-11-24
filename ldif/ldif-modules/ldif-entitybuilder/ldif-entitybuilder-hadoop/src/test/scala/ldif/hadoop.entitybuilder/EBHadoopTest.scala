@@ -56,10 +56,10 @@ class EBHadoopTest extends FlatSpec with ShouldMatchers
 
     for ((eq,i) <- eqs.zipWithIndex) println(eq.size +" <- " +entityDescriptions(i).toString)
 
-    // eqs(0).size should equal (4)  // TODO - this test should pass
+    eqs(0).size should equal (4)
     eqs(1).size should equal (1)
     eqs(2).size should equal (1)
-    // eqs(3).size should equal (4)  // TODO - this test should pass
+//    eqs(3).size should equal (4)  // TODO - this test should pass
     eqs(4).size should equal (1)
     eqs(5).size should equal (1)
     eqs(6).size should equal (3)
@@ -79,21 +79,18 @@ class EBHadoopTest extends FlatSpec with ShouldMatchers
     for(entity <- eqs(1)){
       if (entity.resource.value == "http://oooo") {
         val factums = entity.factums(0)
-        // TODO  - this test should pass
-        //        factums.size should equal (2)
-        //        val nodes = for (factum <- factums) yield
-        //        {
-        //          factum.size should equal (1)
-        //          factum.head
-        //        }
-        //
-        //        val sortedNodes = nodes.toArray.sortBy(_.value)
-        //
-        //        sortedNodes.head.value should equal ("bla")
-        //        sortedNodes.head.graph should equal ("someGraph")
-        //        sortedNodes.last.value should equal ("blo")
-        //        sortedNodes.head.graph should equal ("someOtherGraph")
+        factums.size should equal (2)
+        val nodes = for (factum <- factums) yield
+        {
+          factum.size should equal (1)
+          factum.head
+        }
+        val sortedNodes = nodes.toArray.sortBy(_.value)
 
+        sortedNodes.head.value should equal ("bla")
+        sortedNodes.head.graph should equal ("someGraph")
+        sortedNodes.last.value should equal ("blo")
+        sortedNodes.last.graph should equal ("someOtherGraph")
       }
       else
         entity.factums(0).size should equal (0)
@@ -112,17 +109,16 @@ class EBHadoopTest extends FlatSpec with ShouldMatchers
         entity.factums(0).size should equal (0)
     }
 
-    // TODO - this test should pass
-    //    //EntityDescription(Restriction(Some(Condition(?SUBJ/rdf:type,Set(<http://WhatEver>)))),
-    //    // Vector(Vector(?SUBJ/<http://testNamespace/oldP>)))
-    //    for(entity <- eqs(3)){
-    //      if (entity.resource.value == "http://testNamespace/resource2")
-    //        entity.factums(0).head.head.value should equal ("same")
-    //      else if (entity.resource.value == "http://testNamespace/resource1")
-    //        entity.factums(0).head.head.value should equal ("same")
-    //      else
-    //        entity.factums(0).size should equal (0)
-    //    }
+        //EntityDescription(Restriction(Some(Condition(?SUBJ/rdf:type,Set(<http://WhatEver>)))),
+        // Vector(Vector(?SUBJ/<http://testNamespace/oldP>)))
+        for(entity <- eqs(3)){
+          if (entity.resource.value == "http://testNamespace/resource2")
+            entity.factums(0).head.head.value should equal ("same")
+          else if (entity.resource.value == "http://testNamespace/resource1")
+            entity.factums(0).head.head.value should equal ("same")
+          else
+            entity.factums(0).size should equal (0)
+        }
 
     // EntityDescription(Restriction(None),Vector(Vector(?SUBJ/<http://a>/<http://c>/<http://d>)))
     for(entity <- eqs(4)){

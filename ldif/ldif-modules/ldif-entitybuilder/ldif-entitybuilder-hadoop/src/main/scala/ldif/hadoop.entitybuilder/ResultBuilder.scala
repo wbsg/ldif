@@ -201,8 +201,8 @@ class ResultBuilder(edmd: EntityDescriptionMetadata) {
   }
 
   private def getPathValues(valuePaths: Seq[ValuePathWritable]): Seq[IndexedSeq[NodeWritable]] = {
-    Seq((for(valuePath <- valuePaths; values = valuePath.values.get())
-      yield values(values.length-1).asInstanceOf[NodeWritable]).toIndexedSeq)
+    for(valuePath <- valuePaths; values = valuePath.values.get())
+      yield IndexedSeq(values(values.length-1).asInstanceOf[NodeWritable])
   }
 
   private def partitionValuePathsByIndexPartitions(indexPartitions: Seq[Seq[Int]], valuePaths: Seq[ValuePathWritable]): Seq[Seq[ValuePathWritable]] = {
