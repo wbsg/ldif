@@ -66,7 +66,7 @@ class Phase3 extends Configured with Tool {
 
     MultipleOutputs.addNamedOutput(job, "seq", classOf[ValuePathMultipleSequenceFileOutput], classOf[IntWritable], classOf[ValuePathWritable])
     // For debugging
-    MultipleOutputs.addNamedOutput(job, "text", classOf[ValuePathMultipleTextFileOutput], classOf[IntWritable], classOf[ValuePathWritable])
+    // MultipleOutputs.addNamedOutput(job, "text", classOf[ValuePathMultipleTextFileOutput], classOf[IntWritable], classOf[ValuePathWritable])
 
     /* Add the JoinPaths for this phase (which were put into phase: (phase+1))
      * Don't do this if there is no join phase (maxPhase==0)

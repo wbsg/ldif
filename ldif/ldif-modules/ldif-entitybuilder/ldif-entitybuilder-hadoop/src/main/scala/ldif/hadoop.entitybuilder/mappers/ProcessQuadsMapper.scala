@@ -67,8 +67,9 @@ class ProcessQuadsMapper extends MapReduceBase with Mapper[LongWritable, Text, I
           else
             phase.set(propertyInfo.phase)
           val path = new ValuePathWritable(new IntWritable(propertyInfo.pathId), pathType, values)
-          collector = mos.getCollector("text", reporter).asInstanceOf[OutputCollector[IntWritable, ValuePathWritable]]
-          collector.collect(phase, path)
+          // For debugging
+          // collector = mos.getCollector("text", reporter).asInstanceOf[OutputCollector[IntWritable, ValuePathWritable]]
+          // collector.collect(phase, path)
           collector = mos.getCollector("seq", reporter).asInstanceOf[OutputCollector[IntWritable, ValuePathWritable]]
           collector.collect(phase, path)
         }

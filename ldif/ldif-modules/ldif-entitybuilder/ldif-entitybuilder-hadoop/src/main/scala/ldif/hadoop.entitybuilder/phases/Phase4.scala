@@ -62,7 +62,7 @@ class Phase4 extends Configured with Tool {
     jobConf.setInputFormat(classOf[ValuePathSequenceFileInput])
     jobConf.setOutputFormat(classOf[EntityMultipleSequenceFileOutput])
     //Debugging
-    MultipleOutputs.addNamedOutput(jobConf, "debug", classOf[EntityMultipleTextFileOutput], classOf[IntWritable], classOf[EntityWritable])
+    //MultipleOutputs.addNamedOutput(jobConf, "debug", classOf[EntityMultipleTextFileOutput], classOf[IntWritable], classOf[EntityWritable])
 
     for(i <- 0 to math.max(0, maxPhase-1)) {
       var in = new Path(args(1) + Consts.fileSeparator + i + Consts.fileSeparator, ValuePathMultipleSequenceFileOutput.generateDirectoryNameForFinishedValuePaths(i))
