@@ -12,7 +12,7 @@ import java.io.{FileInputStream, File}
 import ldif.runtime.Quad
 import ldif.util.Prefixes
 import ldif.entity.{Node, Entity, EntityDescription}
-import ldif.modules.sieve.fusion.{TrustYourFriends, KeepFirst}
+import ldif.modules.sieve.fusion.{PassItOn, FusionFunction, TrustYourFriends, KeepFirst}
 
 /**
  * Executes Sieve on a local machine.
@@ -45,15 +45,24 @@ class SieveLocalExecutor(useFileInstanceCache: Boolean = false) extends Executor
   def createDummyEntityDescriptions(prefixes: Prefixes) : List[EntityDescription] = {
     // read from jar
     //val stream = getClass.getClassLoader.getResourceAsStream("ldif/modules/sieve/local/Music_EntityDescription.xml")
-    val stream = new FileInputStream("ldif/ldif-modules/ldif-sieve/ldif-sieve-local/src/test/resources/ldif/modules/sieve/local/Music_EntityDescription.xml");
-    if (stream!=null) {
-      val e = EntityDescription.fromXML(XML.load(stream))(prefixes)
+    //val stream = new FileInputStream("ldif/ldif-modules/ldif-sieve/ldif-sieve-local/src/test/resources/ldif/modules/sieve/local/Music_EntityDescription.xml");
+
+    //if (stream!=null) {
+      //val testxml = XML.load(stream);
+      val testXml = <EntityDescription>
+        <Patterns>
+          <Pattern>
+            <Path>?a/rdfs:label</Path>
+          </Pattern>
+        </Patterns>
+      </EntityDescription>
+      val e = EntityDescription.fromXML(testXml)(prefixes)
       log.info(e.toString);
       List(e)
-    } else {
-      log.error("EntityDescription returned null!");
-      List() //empty?
-    }
+    //} else {
+    //  log.error("EntityDescription returned null!");
+    //  List() //empty?
+    //}
   }
 
   def output(task : SieveTask) = new GraphFormat()
@@ -62,9 +71,10 @@ class SieveLocalExecutor(useFileInstanceCache: Boolean = false) extends Executor
    * Executes a Sieve task.
    */
   override def execute(task : SieveTask, reader : Seq[EntityReader], writer : QuadWriter) {
-    log.info("Fake executing Sieve...")
+    log.info("[FUSION] Executing Sieve...")
+    val fusionFunction = new PassItOn
     //val fusionFunction = new KeepFirst
-    val fusionFunction = new TrustYourFriends("http://www4.wiwiss.fu-berlin.de/ldif/graph#dbpedia.en");
+    //val fusionFunction = new TrustYourFriends("http://www4.wiwiss.fu-berlin.de/ldif/graph#dbpedia.en");
     reader.foreach( in => {
       var entity : Entity = NoEntitiesLeft;
       while ( { entity = in.read(); entity != NoEntitiesLeft} ) {
@@ -73,13 +83,14 @@ class SieveLocalExecutor(useFileInstanceCache: Boolean = false) extends Executor
         //log.info("Patterns: "+entity.entityDescription.patterns.size)
 
         //TODO deal with case where there are several patterns
-        fusionFunction.fuse(entity.factums(0)).foreach( n => { // for each property
-          if (n.nonEmpty) {
-            val propertyValue = n(0) //TODO deal with case where the path is a tree (more than one value)
-            val quad = new Quad(entity.resource, propertyName, propertyValue, propertyValue.graph);
-            writer.write(quad)
-          }
-        })
+        if (entity!=NoEntitiesLeft)
+          fusionFunction.fuse(entity.factums(0)).foreach( n => { // for each property
+            if (n.nonEmpty) {
+              val propertyValue = n(0) //TODO deal with case where the path is a tree (more than one value)
+              val quad = new Quad(entity.resource, propertyName, propertyValue, propertyValue.graph);
+              writer.write(quad)
+            }
+          })
 
       }
     })

@@ -41,8 +41,15 @@ class SieveLocalExecutorTest extends FlatSpec with ShouldMatchers
   {
     implicit val prefixes = Prefixes(task.sieveConfig.sieveConfig.prefixes)
 
-    val stream = getClass.getClassLoader.getResourceAsStream("ldif/modules/sieve/local/Music_EntityDescription.xml")
-
-    EntityDescription.fromXML(XML.load(stream))
+    //val stream = getClass.getClassLoader.getResourceAsStream("ldif/modules/sieve/local/Music_EntityDescription.xml")
+    //val testXml = XML.load(stream)
+    val testXml = <EntityDescription>
+      <Patterns>
+        <Pattern>
+          <Path>?a/rdfs:label</Path>
+        </Pattern>
+      </Patterns>
+    </EntityDescription>
+    EntityDescription.fromXML(testXml)
   }
 }
