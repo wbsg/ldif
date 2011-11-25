@@ -6,6 +6,8 @@
     <sources>dumps</sources>
     <linkSpecifications>linkspecs</linkSpecifications>
     <mappings>mappings</mappings>
+    <quality>quality</quality>
+    <fusion>fusion</fusion>
     <output>integrated_music_light.nq</output>
     <runSchedule>onStartup</runSchedule>
 </integrationJob>

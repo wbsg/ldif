@@ -1,0 +1,29 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>ldif</groupId>
+    <artifactId>ldif-sieve</artifactId>
+    <version>${ldif.version}</version>
+  </parent>
+
+	<artifactId>ldif-sieve-local</artifactId>
+	<packaging>jar</packaging>
+	<version>${ldif.version}</version>
+	<name>LDIF Sieve Module - Local</name>
+
+  <dependencies>
+    <dependency>
+      <groupId>ldif</groupId>
+      <artifactId>ldif-local</artifactId>
+      <version>${ldif.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>ldif</groupId>
+      <artifactId>ldif-sieve-common</artifactId>
+      <version>${ldif.version}</version>
+    </dependency>
+  </dependencies>
+
+</project>

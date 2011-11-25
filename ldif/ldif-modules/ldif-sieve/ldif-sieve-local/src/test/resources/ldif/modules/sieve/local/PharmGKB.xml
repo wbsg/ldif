@@ -1,0 +1,135 @@
+<Silk>
+	<Prefixes>
+		<Prefix id="rdf" namespace="http://www.w3.org/1999/02/22-rdf-syntax-ns#" />
+		<Prefix id="rdfs" namespace="http://www.w3.org/2000/01/rdf-schema#" />
+		<Prefix id="owl" namespace="http://www.w3.org/2002/07/owl#" />
+		<Prefix id="genes" namespace="http://wiking.vulcan.com/neurobase/kegg_genes/resource/vocab/" />
+		<Prefix id="smwprop" namespace="http://mywiki/resource/property/" />
+		<Prefix id="smwcat" namespace="http://mywiki/resource/category/" />
+		<Prefix id="wiki" namespace="http://www.example.com/smw#" />
+	</Prefixes>
+
+  <DataSources>
+    <DataSource id="SOURCE" type="sparqlEndpoint">
+        <Param name="endpointURI" value="http://hcls.deri.org/sparql" />
+        <Param name="graph" value="http://hcls.deri.org/resource/graph/tcm" />
+    </DataSource>
+
+    <DataSource id="TARGET" type="sparqlEndpoint">
+        <Param name="endpointURI" value="http://dbpedia.org/sparql" />
+        <Param name="retryCount" value="100" />
+    </DataSource>
+  </DataSources>
+
+	<Interlinks>
+		<Interlink id="genes">
+			<LinkType>owl:sameAs</LinkType>
+
+			<SourceDataset dataSource="SOURCE" var="a">
+				<RestrictTo>?a rdf:type smwcat:Gene</RestrictTo>
+			</SourceDataset>
+
+			<TargetDataset dataSource="TARGET" var="b">
+				<RestrictTo>?b rdf:type smwcat:Gene</RestrictTo>
+			</TargetDataset>
+
+			<LinkCondition>
+			<Aggregate type="max">
+					<Compare metric="equality">
+						<Input path="?a/smwprop:PharmGKBId" />
+						<Input path="?b/smwprop:PharmGKBId" />
+					</Compare>
+					<Compare metric="equality">
+						<Input path="?a/smwprop:EntrezGeneId" />
+						<Input path="?b/smwprop:EntrezGeneId" />
+					</Compare>
+					<Compare metric="equality">
+						<Input path="?a/smwprop:UniprotId" />
+						<Input path="?b/smwprop:UniprotId" />
+					</Compare>
+			</Aggregate>
+			</LinkCondition>
+
+			<Filter threshold="1.0" />
+
+		</Interlink>
+		<Interlink id="drugs">
+			<LinkType>owl:sameAs</LinkType>
+
+			<SourceDataset dataSource="SOURCE" var="b">
+				<RestrictTo>?b rdf:type smwcat:Drug</RestrictTo>
+			</SourceDataset>
+
+			<TargetDataset dataSource="TARGET" var="a">
+				<RestrictTo>?a rdf:type smwcat:Drug</RestrictTo>
+			</TargetDataset>
+
+			<LinkCondition>
+			<Aggregate type="max">
+					<Compare metric="equality">
+						<Input path="?a/smwprop:PharmGKBId" />
+						<Input path="?b/smwprop:PharmGKBId" />
+					</Compare>
+					<Compare metric="equality">
+						<Input path="?a/smwprop:DrugBankId" />
+						<Input path="?b/smwprop:DrugBankId" />
+					</Compare>
+			</Aggregate>
+			</LinkCondition>
+
+			<Filter threshold="1.0" />
+
+		</Interlink>
+		<Interlink id="diseases">
+			<LinkType>owl:sameAs</LinkType>
+
+			<SourceDataset dataSource="SOURCE" var="b">
+				<RestrictTo>?b rdf:type smwcat:Disease</RestrictTo>
+			</SourceDataset>
+
+			<TargetDataset dataSource="TARGET" var="a">
+				<RestrictTo>?a rdf:type smwcat:Disease</RestrictTo>
+			</TargetDataset>
+
+			<LinkCondition>
+			<Aggregate type="max">
+					<Compare metric="equality">
+						<Input path="?a/smwprop:PharmGKBId" />
+						<Input path="?b/smwprop:PharmGKBId" />
+					</Compare>
+					<Compare metric="equality">
+						<Input path="?a/smwprop:MeSHId" />
+						<Input path="?b/smwprop:MeSHId" />
+					</Compare>
+			</Aggregate>
+			</LinkCondition>
+
+			<Filter threshold="1.0" />
+
+		</Interlink>
+		<Interlink id="pathways">
+			<LinkType>owl:sameAs</LinkType>
+
+			<SourceDataset dataSource="SOURCE" var="b">
+				<RestrictTo>?b rdf:type smwcat:Pathway</RestrictTo>
+			</SourceDataset>
+
+			<TargetDataset dataSource="TARGET" var="a">
+				<RestrictTo>?a rdf:type smwcat:Pathway</RestrictTo>
+			</TargetDataset>
+
+			<LinkCondition>
+			<Aggregate type="max">
+					<Compare metric="equality">
+						<Input path="?a/smwprop:PharmGKBId" />
+						<Input path="?b/smwprop:PharmGKBId" />
+					</Compare>
+			</Aggregate>
+			</LinkCondition>
+
+			<Filter threshold="1.0" />
+
+		</Interlink>
+
+	</Interlinks>
+</Silk>

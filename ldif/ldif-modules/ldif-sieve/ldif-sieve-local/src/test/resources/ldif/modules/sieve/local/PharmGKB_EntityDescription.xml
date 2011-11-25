@@ -1,0 +1,18 @@
+<EntityDescription>
+  <Restriction>
+    <Condition path="?a/rdf:type">
+        <Uri>http://mywiki/resource/category/Gene</Uri>
+    </Condition>
+  </Restriction>
+  <Patterns>
+    <Pattern>
+      <Path>?a/smwprop:PharmGKBId</Path>
+    </Pattern>
+    <Pattern>
+      <Path>?a/smwprop:EntrezGeneId</Path>
+    </Pattern>
+    <Pattern>
+      <Path>?a/smwprop:UniprotId</Path>
+    </Pattern>
+  </Patterns>
+</EntityDescription>
