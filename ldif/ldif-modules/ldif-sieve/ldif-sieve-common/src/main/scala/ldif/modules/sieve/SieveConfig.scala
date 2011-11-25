@@ -1,42 +1,48 @@
 package ldif.modules.sieve
 
-import java.io.{InputStream, File}
+import fusion.PassItOn
 import ldif.util.Prefixes
+import java.io.{FileInputStream, InputStream, File}
+import sun.reflect.generics.reflectiveObjects.NotImplementedException
 
 /**
- * 
+ *
  * @author pablomendes
  */
 
 class SieveConfig(val prefixes: Prefixes, val sieveSpecs: Traversable[FusionSpecification]) {
 
-    def merge(c: SieveConfig) : SieveConfig = { //TODO implement
-        this
-    }
+  def merge(c: SieveConfig) : SieveConfig = { //TODO implement
+    throw new NotImplementedException
+    //this
+  }
 
 }
 
 object SieveConfig {
-    val stdPrefixes = Map("genes"->"http://wiking.vulcan.com/neurobase/kegg_genes/resource/vocab/",
-        "smwprop"->"http://mywiki/resource/property/",
-        "smwcat"->"http://mywiki/resource/category/",
-        "wiki"->"http://www.example.com/smw#",
-        "xsd" -> "http://www.w3.org/2001/XMLSchema#",
-        "rdf" -> "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
-        "rdfs" -> "http://www.w3.org/2000/01/rdf-schema#")
 
-    def load(configFile: File) : SieveConfig = { //TODO implement
+  val stdPrefixes = Map("dbpedia" -> "http://dbpedia.org/property/title/",
+    "genes"->"http://wiking.vulcan.com/neurobase/kegg_genes/resource/vocab/",
+    "smwprop"->"http://mywiki/resource/property/",
+    "smwcat"->"http://mywiki/resource/category/",
+    "wiki"->"http://www.example.com/smw#",
+    "xsd" -> "http://www.w3.org/2001/XMLSchema#",
+    "rdf" -> "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+    "rdfs" -> "http://www.w3.org/2000/01/rdf-schema#")
 
-        new SieveConfig(new Prefixes(stdPrefixes),List(new FusionSpecification("test")))
-    }
+  def load(configFile: File) : SieveConfig = {
+    load(new FileInputStream(configFile))
+  }
 
-    def load(configFile: InputStream) : SieveConfig = { //TODO implement
-        new SieveConfig(new Prefixes(stdPrefixes),List(new FusionSpecification("test")))
-    }
+  def load(configFile: InputStream) : SieveConfig = { //TODO implement config parser
+    val spec1 = new FusionSpecification("title_passItOn", IndexedSeq(new PassItOn))
+    val fusionSpecs = List(spec1)
+    new SieveConfig(new Prefixes(stdPrefixes),fusionSpecs)
+  }
 
-    def empty = {
-        new SieveConfig(Prefixes.stdPrefixes, List())
-    }
+  def empty = {
+    new SieveConfig(Prefixes.stdPrefixes, List(new FusionSpecification("Default", IndexedSeq(new PassItOn))))
+  }
 }
 
 //object LinkingConfig {

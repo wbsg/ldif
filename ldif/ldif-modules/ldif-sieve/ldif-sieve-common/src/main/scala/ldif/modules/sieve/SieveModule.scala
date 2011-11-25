@@ -2,12 +2,14 @@ package ldif.modules.sieve
 
 import ldif.module.Module
 import java.io.File
+import org.slf4j.LoggerFactory
 
 /**
  * Sieve Module.
  */
 class SieveModule(val config : SieveModuleConfig) extends Module
 {
+
   type ConfigType = SieveModuleConfig
 
   type TaskType = SieveTask
@@ -20,6 +22,8 @@ class SieveModule(val config : SieveModuleConfig) extends Module
 
 object SieveModule
 {
+  private val log = LoggerFactory.getLogger(getClass.getName)
+
   def load(file : File) : SieveModule =
   {
     //DefaultImplementations.register()
@@ -29,11 +33,13 @@ object SieveModule
 
   private def loadConfig(file : File) : SieveConfig =
   {
-    if(file.isFile)
+    if (file==null) log.error("Trying to load null config file into Sieve.");
+
+    if(file!=null && file.isFile)
     {
       SieveConfig.load(file)
     }
-    else if(file.isDirectory && file.listFiles.size > 0)
+    else if(file!=null && file.isDirectory && file.listFiles.size > 0)
     {
       file.listFiles.map(loadConfig).reduceLeft(_ merge _)
     }

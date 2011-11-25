@@ -9,6 +9,8 @@ import ldif.entity.{NodeTrait, Node}
 
 trait FusionFunction {
 
+  var name = classOf[FusionFunction].getClass.getSimpleName
+
   def sort (values: Traversable[IndexedSeq[NodeTrait]]) : Traversable[IndexedSeq[NodeTrait]] = {
     values
   }
