@@ -259,7 +259,7 @@ class IntegrationJob (val config : IntegrationConfig, debugMode : Boolean = fals
   {
     val sieveModule = SieveModule.load(sieveSpecDir)
 
-    sieveModule.config match {
+    sieveModule.config.sieveConfig match {
       case e: EmptySieveConfig => {
         val echo = new QuadQueue()
         inputQuadsReader.foreach(q => echo.write(q));
