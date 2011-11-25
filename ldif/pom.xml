@@ -91,9 +91,11 @@
           <!--<additionalClasspathElements>-->
             <!--<additionalClasspathElement>${basedir}/resources</additionalClasspathElement>-->
           <!--</additionalClasspathElements>-->
-          <systemPropertyVariables>
+          <redirectTestOutputToFile>true</redirectTestOutputToFile>
+          <!--systemPropertyVariables>
               <logback.configurationFile>logback.xml</logback.configurationFile>
-          </systemPropertyVariables>
+          </systemPropertyVariables-->
+
         </configuration>
       </plugin>
 

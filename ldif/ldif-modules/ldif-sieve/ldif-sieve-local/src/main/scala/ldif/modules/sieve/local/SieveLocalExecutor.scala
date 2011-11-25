@@ -44,9 +44,9 @@ class SieveLocalExecutor(useFileInstanceCache: Boolean = false) extends Executor
 
   def createDummyEntityDescriptions(prefixes: Prefixes) : List[EntityDescription] = {
     // read from jar
-    //val stream = getClass.getClassLoader.getResourceAsStream("ldif/modules/sieve/local/Music_EntityDescription.xml")
+    val stream = getClass.getClassLoader.getResourceAsStream("ldif/modules/sieve/local/Music_EntityDescription.xml")
     // read from file
-    val stream = new FileInputStream("/home/pablo/workspace/ldif/ldif/ldif-modules/ldif-sieve/ldif-sieve-local/src/test/resources/ldif/modules/sieve/local/Music_EntityDescription.xml");
+    //val stream = new FileInputStream("/home/pablo/workspace/ldif/ldif/ldif-modules/ldif-sieve/ldif-sieve-local/src/test/resources/ldif/modules/sieve/local/Music_EntityDescription.xml");
 
     if (stream!=null) {
       val testXml = XML.load(stream);
