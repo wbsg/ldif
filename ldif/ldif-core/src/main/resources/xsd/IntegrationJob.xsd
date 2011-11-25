@@ -34,6 +34,10 @@
 
                 <xs:element name="mappings" type="xs:string" />
 
+                <xs:element name="quality" type="xs:string" />
+
+                <xs:element name="fusion" type="xs:string" />
+
                 <xs:element name="output" type="xs:string" />
 
                 <xs:element name="runSchedule" type="ldif:runScheduleType" minOccurs="0" />

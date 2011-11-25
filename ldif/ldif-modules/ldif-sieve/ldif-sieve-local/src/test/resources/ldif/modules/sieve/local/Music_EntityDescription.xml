@@ -1,0 +1,12 @@
+<EntityDescription>
+    <!--Restriction>
+      <Condition path="?a/rdf:type">
+          <Uri>http://purl.org/ontology/mo/Record</Uri>
+      </Condition>
+    </Restriction-->
+  <Patterns>
+    <Pattern>
+      <Path>?a/rdfs:label</Path>
+    </Pattern>
+  </Patterns>
+</EntityDescription>
