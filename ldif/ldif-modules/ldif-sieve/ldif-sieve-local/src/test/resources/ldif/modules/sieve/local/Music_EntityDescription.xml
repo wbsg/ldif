@@ -4,9 +4,15 @@
           <Uri>http://purl.org/ontology/mo/Record</Uri>
       </Condition>
     </Restriction-->
-  <Patterns>
-    <Pattern>
-      <Path>?a/rdfs:label</Path>
-    </Pattern>
-  </Patterns>
+    <Patterns>
+        <Pattern>
+            <Path>?a/rdfs:label</Path>
+        </Pattern>
+    </Patterns>
+    <Patterns>
+        <Pattern>
+            <Path>?a/dbpedia:title</Path>
+        </Pattern>
+    </Patterns>
+
 </EntityDescription>

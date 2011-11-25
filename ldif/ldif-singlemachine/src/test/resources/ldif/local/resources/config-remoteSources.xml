@@ -9,5 +9,7 @@
   </remoteSources>
   <linkSpecifications>linkSpecs</linkSpecifications>
   <mappings>mappings/mappings.ttl</mappings>
+  <quality>quality</quality>
+  <fusion>fusion</fusion>
   <output>output.nq</output>
 </LDIF>

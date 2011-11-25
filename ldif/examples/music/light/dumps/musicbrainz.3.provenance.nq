@@ -1,0 +1,8 @@
+_:musicbrainz2E3 <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www4.wiwiss.fu-berlin.de/ldif/ImportJob> <http://www4.wiwiss.fu-berlin.de/ldif/provenance> . 
+_:musicbrainz2E3 <http://www4.wiwiss.fu-berlin.de/ldif/importId> "musicbrainz.3" <http://www4.wiwiss.fu-berlin.de/ldif/provenance> . 
+_:musicbrainz2E3 <http://www4.wiwiss.fu-berlin.de/ldif/lastUpdate> "2011-11-23T15:22:35+01:00"^^<http://www.w3.org/2001/XMLSchema#dateTime> <http://www4.wiwiss.fu-berlin.de/ldif/provenance> . 
+_:musicbrainz2E3 <http://www4.wiwiss.fu-berlin.de/ldif/hasDatasource> "MusicBrainz_Talis" <http://www4.wiwiss.fu-berlin.de/ldif/provenance> . 
+_:musicbrainz2E3 <http://www4.wiwiss.fu-berlin.de/ldif/hasImportType> "sparql" <http://www4.wiwiss.fu-berlin.de/ldif/provenance> . 
+_:musicbrainz2E3 <http://www4.wiwiss.fu-berlin.de/ldif/hasOriginalLocation> "http://api.talis.com/stores/musicbrainz/services/sparql" <http://www4.wiwiss.fu-berlin.de/ldif/provenance> . 
+<http://www4.wiwiss.fu-berlin.de/ldif/graph#musicbrainz.3> <http://www4.wiwiss.fu-berlin.de/ldif/hasImportJob> _:musicbrainz2E3 <http://www4.wiwiss.fu-berlin.de/ldif/provenance> . 
+<http://www4.wiwiss.fu-berlin.de/ldif/graph#musicbrainz.3> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www4.wiwiss.fu-berlin.de/ldif/ImportedGraph> <http://www4.wiwiss.fu-berlin.de/ldif/provenance> . 

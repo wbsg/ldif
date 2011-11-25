@@ -5,6 +5,8 @@
     <sources>sources</sources>
     <linkSpecifications>linkspecs</linkSpecifications>
     <mappings>mappings</mappings>
+    <quality>quality</quality>
+    <fusion>fusion</fusion>
     <output>result.nq</output>
     <runSchedule>onStartup</runSchedule>
 </integrationJob>
