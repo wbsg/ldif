@@ -18,6 +18,7 @@
 
 package ldif.local.runtime
 
+import impl.NoEntitiesLeft
 import ldif.runtime.Quad
 
 trait QuadReader
@@ -25,5 +26,11 @@ trait QuadReader
   def size : Int
   def read() : Quad
   def hasNext : Boolean
+
+  def foreach(f: Quad => Unit) {
+    while ( { hasNext } ) {
+      f(read)
+    }
+  }
 }
 

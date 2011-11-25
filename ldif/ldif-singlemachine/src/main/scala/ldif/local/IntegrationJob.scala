@@ -27,7 +27,6 @@ import ldif.modules.r2r.{R2RModule, R2RConfig}
 import util.StringPool
 import ldif.modules.silk.SilkModule
 import ldif.modules.silk.local.SilkLocalExecutor
-import ldif.modules.sieve.SieveModule
 import ldif.modules.sieve.local.SieveLocalExecutor
 import ldif.entity.EntityDescription
 import ldif.{EntityBuilderModule, EntityBuilderConfig}
@@ -37,6 +36,7 @@ import java.math.BigInteger
 import de.fuberlin.wiwiss.r2r.{JenaModelSource, EnumeratingURIGenerator, FileOrURISource, Repository}
 import org.slf4j.LoggerFactory
 import ldif.util._
+import ldif.modules.sieve.{SieveConfig, EmptySieveConfig, SieveModule}
 
 class IntegrationJob (val config : IntegrationConfig, debugMode : Boolean = false) {
 
@@ -255,29 +255,44 @@ class IntegrationJob (val config : IntegrationConfig, debugMode : Boolean = fals
     /**
      * Performs data fusion
      */
-    private def fuseQuads(sieveSpecDir : File, inputQuadsReader : QuadReader) : QuadReader =
-    {
-        val sieveModule = SieveModule.load(sieveSpecDir)
+  private def fuseQuads(sieveSpecDir : File, inputQuadsReader : QuadReader) : QuadReader =
+  {
+    val sieveModule = SieveModule.load(sieveSpecDir)
+
+    sieveModule.config match {
+      case e: EmptySieveConfig => {
+        val echo = new QuadQueue()
+        inputQuadsReader.foreach(q => echo.write(q));
+        return echo;
+      }
+      case c: SieveConfig => {
         val inMemory = config.properties.getProperty("entityBuilderType", "in-memory")=="in-memory"
         val sieveExecutor = new SieveLocalExecutor
 
         val entityDescriptions = sieveModule.tasks.toIndexedSeq.map(sieveExecutor.input).flatMap{ case StaticEntityFormat(ed) => ed }
+
+
         val entityReaders = buildEntities(Seq(inputQuadsReader), entityDescriptions, ConfigParameters(config.properties))
+
         StringPool.reset
         log.info("[FUSION] Time needed to build entities for fusion phase: " + stopWatch.getTimeSpanInSeconds + "s")
 
         val outputQueue = new QuadQueue
 
-            //runInBackground
+          //runInBackground
         {
-            for((sieveTask, readers) <- sieveModule.tasks.toList zip entityReaders.grouped(2).toList)
-            {
-                sieveExecutor.execute(sieveTask, readers, outputQueue)
-            }
+          for((sieveTask, readers) <- sieveModule.tasks.toList zip entityReaders.grouped(2).toList)
+          {
+            sieveExecutor.execute(sieveTask, readers, outputQueue)
+          }
         }
 
         outputQueue
+      }
     }
+
+
+  }
 
   /**
    * Build Entities.

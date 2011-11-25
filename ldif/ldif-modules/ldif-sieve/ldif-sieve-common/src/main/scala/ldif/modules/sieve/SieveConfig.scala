@@ -41,8 +41,12 @@ object SieveConfig {
   }
 
   def empty = {
-    new SieveConfig(Prefixes.stdPrefixes, List(new FusionSpecification("Default", IndexedSeq(new PassItOn))))
+    new EmptySieveConfig
   }
+}
+
+class EmptySieveConfig extends SieveConfig(Prefixes.stdPrefixes, List(new FusionSpecification("Default", IndexedSeq(new PassItOn)))) {
+
 }
 
 //object LinkingConfig {
