@@ -25,6 +25,7 @@ object Consts {
   val DEFAULT_GRAPH = "http://www4.wiwiss.fu-berlin.de/ldif/defaultOutputGraph"
   val DEFAULT_PROVENANCE_GRAPH = "http://www4.wiwiss.fu-berlin.de/ldif/provenance"
   val DEFAULT_IMPORTED_GRAPH_PREFIX = "http://www4.wiwiss.fu-berlin.de/ldif/graph#"
+  val SAMEAS_URI = "http://www.w3.org/2002/07/owl#sameAs"
 
   val MAX_WAITING_TIME : Long = Long.MaxValue
 
