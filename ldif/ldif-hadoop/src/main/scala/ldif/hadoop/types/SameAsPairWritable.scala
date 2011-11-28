@@ -11,7 +11,7 @@ import org.apache.hadoop.io.{Text, WritableComparable}
  * To change this template use File | Settings | File Templates.
  */
 
-class SameAsPairWritable(var from: String, var to: String, var toBeExtended: Boolean) extends WritableComparable[SameAsPairWritable] {
+class SameAsPairWritable(var from: String, var to: String, var isInLink: Boolean) extends WritableComparable[SameAsPairWritable] {
   def this() {
     this(null, null, true)
   }
@@ -19,13 +19,13 @@ class SameAsPairWritable(var from: String, var to: String, var toBeExtended: Boo
   def write(out: DataOutput) {
     out.writeUTF(from)
     out.writeUTF(to)
-    out.writeBoolean(toBeExtended)
+    out.writeBoolean(isInLink)
   }
 
   def readFields(in: DataInput) {
     from = in.readUTF()
     to = in.readUTF()
-    toBeExtended = in readBoolean()
+    isInLink = in readBoolean()
   }
 
   def compareTo(other: SameAsPairWritable) = {
@@ -33,5 +33,16 @@ class SameAsPairWritable(var from: String, var to: String, var toBeExtended: Boo
       to.compareTo(other.to)
     else
       from.compareTo(other.from)
+  }
+
+  override def equals(other: Any): Boolean = {
+    if(!other.isInstanceOf[SameAsPairWritable])
+      return false
+    else
+      compareTo(other.asInstanceOf[SameAsPairWritable])==0
+  }
+
+  override def hashCode(): Int = {
+    from.hashCode() + 31*to.hashCode()
   }
 }
