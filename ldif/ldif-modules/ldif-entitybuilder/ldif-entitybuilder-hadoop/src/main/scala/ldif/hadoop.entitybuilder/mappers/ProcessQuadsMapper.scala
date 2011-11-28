@@ -23,8 +23,8 @@ import ldif.datasources.dump.QuadParser
 import lib.MultipleOutputs
 import org.apache.hadoop.io._
 import ldif.hadoop.types._
-import ldif.entity.{EntityDescriptionMetadata, NodeWritable}
 import ldif.hadoop.utils.HadoopHelper
+import ldif.entity.{NodeTrait, EntityDescriptionMetadata, NodeWritable}
 
 class ProcessQuadsMapper extends MapReduceBase with Mapper[LongWritable, Text, IntWritable, ValuePathWritable] {
   private val parser = new QuadParser
@@ -49,8 +49,9 @@ class ProcessQuadsMapper extends MapReduceBase with Mapper[LongWritable, Text, I
       case None =>
       case Some(propertyInfos) =>
         for(propertyInfo <- propertyInfos) {
+          val pathLength = edmd.pathLength(propertyInfo.pathId)
           val pathType = {
-            if(edmd.pathLength(propertyInfo.pathId)==1)
+            if(pathLength==1)
               FinishedPathType
             else if (propertyInfo.phase==0) EntityPathType
             else JoinPathType
@@ -67,11 +68,17 @@ class ProcessQuadsMapper extends MapReduceBase with Mapper[LongWritable, Text, I
           else
             phase.set(propertyInfo.phase)
           val path = new ValuePathWritable(new IntWritable(propertyInfo.pathId), pathType, values)
-          // For debugging
-          // collector = mos.getCollector("text", reporter).asInstanceOf[OutputCollector[IntWritable, ValuePathWritable]]
-          // collector.collect(phase, path)
-          collector = mos.getCollector("seq", reporter).asInstanceOf[OutputCollector[IntWritable, ValuePathWritable]]
-          collector.collect(phase, path)
+          // Do not collect restricted paths that don't contain one of the restriction values
+          if(pathLength-1 != phase.get()
+            || (   propertyInfo.restrictionValues==None
+                || propertyInfo.restrictionValues.get.contains(values.get()(1).asInstanceOf[NodeTrait]))) {
+            collector = mos.getCollector("seq", reporter).asInstanceOf[OutputCollector[IntWritable, ValuePathWritable]]
+            collector.collect(phase, path)
+            // For debugging
+//            collector = mos.getCollector("text", reporter).asInstanceOf[OutputCollector[IntWritable, ValuePathWritable]]
+//            collector.collect(phase, path)
+
+          }
         }
     }
   }

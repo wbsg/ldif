@@ -75,7 +75,7 @@ object EntityDescriptionMetaDataExtractor {
 
   private def extractPathInfo(path: Path, entityDescriptionIndex: Int, patternIndex: Int, pathIndex: Int, isRestrictionPath: Boolean, restrictionValues: Option[Set[NodeTrait]] = None) {
     val pathID = pathCounter.getAndIncrement
-    val properties = extractPropertyInfo(path,pathID)
+    val properties = extractPropertyInfo(path,pathID, restrictionValues)
     pathMap.put(pathID, PathInfo(entityDescriptionIndex, patternIndex, pathIndex, path, isRestrictionPath, properties.length, properties))
     pathIdMap.put(path.gid, pathID)
   }

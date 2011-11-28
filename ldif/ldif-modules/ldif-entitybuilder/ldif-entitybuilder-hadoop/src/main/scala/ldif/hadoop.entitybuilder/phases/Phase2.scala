@@ -53,7 +53,7 @@ class Phase2 extends Configured with Tool {
     job.setOutputFormat(classOf[NullOutputFormat[IntWritable, ValuePathWritable]])
 
     MultipleOutputs.addNamedOutput(job, "seq", classOf[JoinValuePathMultipleSequenceFileOutput], classOf[IntWritable], classOf[ValuePathWritable])
-    //MultipleOutputs.addNamedOutput(job, "text", classOf[JoinValuePathMultipleTextFileOutput], classOf[IntWritable], classOf[ValuePathWritable])
+    MultipleOutputs.addNamedOutput(job, "text", classOf[JoinValuePathMultipleTextFileOutput], classOf[IntWritable], classOf[ValuePathWritable])
 
     val in = new Path(args(0))
     val out = new Path(args(1))
