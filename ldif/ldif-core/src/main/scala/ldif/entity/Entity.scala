@@ -22,7 +22,7 @@ trait Entity extends Serializable
 {
   def resource : NodeTrait
 
-  def entityDescription : EntityDescription
+//  def entityDescription : EntityDescription // Entity Descriptions can be accessed via the QuadReader
 
   def factums(patternId : Int) : Traversable[IndexedSeq[NodeTrait]]
 }

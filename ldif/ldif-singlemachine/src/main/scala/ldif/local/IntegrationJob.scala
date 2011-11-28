@@ -106,13 +106,13 @@ class IntegrationJob (val config : IntegrationConfig, debugMode : Boolean = fals
           integratedReader = executeURITranslation(allQuads, allSameAsLinks, config.properties)
 
         // Execute fusion phase
-        var fusionReader: QuadReader = executeFusionPhase(config, setupQuadReader(integratedReader))
-        if(debugMode==true)
-          fusionReader = writeDebugOutput("sieve-fusion", config.outputFile, fusionReader)
+//        var fusionReader: QuadReader = executeFusionPhase(config, setupQuadReader(integratedReader))
+//        if(debugMode==true)
+//          fusionReader = writeDebugOutput("sieve-fusion", config.outputFile, fusionReader)
 
         lastUpdate = Calendar.getInstance
 
-        writeOutput(config, fusionReader)
+        writeOutput(config, integratedReader)
       }
     }
   }

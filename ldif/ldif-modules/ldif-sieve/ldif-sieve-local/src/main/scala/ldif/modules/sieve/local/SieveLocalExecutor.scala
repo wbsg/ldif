@@ -76,6 +76,7 @@ class SieveLocalExecutor(useFileInstanceCache: Boolean = false) extends Executor
 
     // for each entity reader (one per input file?)
     reader.foreach( in => {
+      val nPatterns = in.entityDescription.patterns.length
 
       var entity : Entity = NoEntitiesLeft;
       while ( { entity = in.read(); entity != NoEntitiesLeft} ) {
@@ -86,8 +87,6 @@ class SieveLocalExecutor(useFileInstanceCache: Boolean = false) extends Executor
         if (entity==null) log.error("Is it normal that some entities will be intermittently null?")
 
         if (entity!=null && entity!=NoEntitiesLeft) {
-          val nPatterns = entity.entityDescription.patterns.size
-
           for (pattern <- 0 until nPatterns) {
             val factums = entity.factums(pattern)
             val fusionFunction = task.sieveSpec.fusionFunctions(pattern)

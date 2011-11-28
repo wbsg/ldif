@@ -20,8 +20,6 @@ package ldif.entity
 
 import org.apache.hadoop.io.WritableComparable
 import java.io.{DataInput, DataOutput}
-import Node._
-import ldif.util.NTriplesStringConverter
 
 /**
  * Created by IntelliJ IDEA.

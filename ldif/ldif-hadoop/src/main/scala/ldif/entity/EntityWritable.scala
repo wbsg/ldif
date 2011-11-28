@@ -21,7 +21,6 @@ package ldif.entity
 import java.io.{DataInput, DataOutput}
 import org.apache.hadoop.io.{Writable, IntWritable, ArrayWritable, WritableComparable}
 import ldif.hadoop.types.{ResultPatternArrayWritable, NodeArrayWritable, ResultTableArrayWritable}
-import sun.reflect.generics.reflectiveObjects.NotImplementedException
 
 /**
  * Created by IntelliJ IDEA.
@@ -53,12 +52,6 @@ class EntityWritable(var resource : NodeWritable, var resultTable: ResultTableAr
     resource.write(out)
     resultTable.write(out)
     entityDescriptionID.write(out)
-  }
-
-  //FIXME implement!
-  override def entityDescription : EntityDescription = {
-    throw new NotImplementedException
-    //new EntityDescription(new Restriction(None), IndexedSeq[IndexedSeq[Path]]())
   }
 
   def factums(patternId: Int) = {
