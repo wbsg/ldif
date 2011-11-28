@@ -276,7 +276,7 @@ class EntityBuilder (entityDescriptions : IndexedSeq[EntityDescription], readers
   }
 
   // Helper method: analyse the operator for an immutable set of nodes
-  private def evaluateOperator(op : PathOperator, values : collection.immutable.Set[Node]) : Set[Node] =   {
+  private def evaluateOperator(op : PathOperator, values : collection.immutable.Set[NodeTrait]) : Set[Node] =   {
     val srcNodes = HashSet(values.toArray:_*) map (n => LocalNode.intern(n))  //from immutable to mutable
     evaluateOperator(op, srcNodes, false)
   }
