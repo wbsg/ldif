@@ -20,7 +20,6 @@ package ldif.hadoop.entitybuilder.phases
 
 import ldif.hadoop.entitybuilder.mappers._
 import ldif.hadoop.entitybuilder.reducers._
-import org.apache.hadoop.fs.Path
 import org.apache.hadoop.mapred._
 import lib.{MultipleOutputs, NullOutputFormat}
 import org.apache.hadoop.util._
@@ -35,6 +34,7 @@ import ldif.util.Consts
 import ldif.entity.{EntityDescriptionMetadata, EntityDescription, EntityDescriptionMetaDataExtractor}
 import scala.Array
 import org.slf4j.LoggerFactory
+import org.apache.hadoop.fs.{FileSystem, Path}
 
 /**
  *  Hadoop EntityBuilder - Phase 3
@@ -47,6 +47,7 @@ class Phase3 extends Configured with Tool {
 
     val conf = getConf
     val job = new JobConf(conf, classOf[Phase3])
+    val fileSystem = FileSystem.get(conf)
 
     val maxPhase = args(0).toInt
     val phase = args(1).toInt
@@ -66,31 +67,37 @@ class Phase3 extends Configured with Tool {
 
     MultipleOutputs.addNamedOutput(job, "seq", classOf[ValuePathMultipleSequenceFileOutput], classOf[IntWritable], classOf[ValuePathWritable])
     // For debugging
-    // MultipleOutputs.addNamedOutput(job, "text", classOf[ValuePathMultipleTextFileOutput], classOf[IntWritable], classOf[ValuePathWritable])
+    MultipleOutputs.addNamedOutput(job, "text", classOf[ValuePathMultipleTextFileOutput], classOf[IntWritable], classOf[ValuePathWritable])
+
+    // Keep track if at least one input path was added
+    var inputPathAdded = false
 
     /* Add the JoinPaths for this phase (which were put into phase: (phase+1))
      * Don't do this if there is no join phase (maxPhase==0)
       */
     if(maxPhase>0) {
       var in = new Path(args(2), JoinValuePathMultipleSequenceFileOutput.generateDirectoryName(phase+1))
-      FileInputFormat.addInputPath(job, in)
+      if(fileSystem.exists(in)) {
+        FileInputFormat.addInputPath(job, in); inputPathAdded = true}
     }
 
     if(phase==0) {
       // Add the initial EntityPaths for first phase
       var in = new Path(args(2), JoinValuePathMultipleSequenceFileOutput.generateDirectoryName(phase))
-      FileInputFormat.addInputPath(job, in)
+      if(fileSystem.exists(in)) {
+        FileInputFormat.addInputPath(job, in); inputPathAdded = true}
     } else {
       // Add the constructed EntityPaths from the previous phase
       var in = new Path(args(3) + Consts.fileSeparator  + (phase-1), ValuePathMultipleSequenceFileOutput.generateDirectoryNameForValuePathsInConstruction(phase-1))
-      FileInputFormat.addInputPath(job, in)
+      if(fileSystem.exists(in)) {
+        FileInputFormat.addInputPath(job, in); inputPathAdded = true}
     }
-
 
     val out = new Path(args(3) + Consts.fileSeparator  + phase)
     FileOutputFormat.setOutputPath(job, out)
 
-    JobClient.runJob(job)
+    if(inputPathAdded)
+      JobClient.runJob(job)
 
     return 0
   }

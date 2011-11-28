@@ -81,19 +81,10 @@ class RunHadoopR2RJob extends Configured with Tool {
 }
 
 object RunHadoopR2RJob {
-  private def getMappings: IndexedSeq[LDIFMapping] = {
-//    val mappingSource = new FileOrURISource("ldif-singlemachine/src/test/resources/mappings.ttl")
-    val mappingSource = new FileOrURISource("test_10k/mappings/ALL-to-Wiki.r2r.ttl")
 
-    val uriGenerator = new EnumeratingURIGenerator("http://www4.wiwiss.fu-berlin.de/ldif/imported", BigInteger.ONE);
-    val importedMappingModel = Repository.importMappingDataFromSource(mappingSource, uriGenerator)
-    val repository = new Repository(new JenaModelSource(importedMappingModel))
-    (for(mapping <- repository.getMappings.values) yield LDIFMapping(mapping)).toIndexedSeq
-  }
-
-  def main(args: Array[String]) {
-    val res = execute(args(1)+"_4", args(1)+"_r2r", getMappings)
-    sys.exit(res)
+  def runHadoopR2RJob(inputPath: String, outputPath: String, mappings: IndexedSeq[LDIFMapping]): Int = {
+    val res = execute(outputPath+"_4", outputPath+"_r2r", mappings)
+    res
   }
 
   def execute(inputPath: String, outputPath: String, mappings: IndexedSeq[LDIFMapping]): Int = {

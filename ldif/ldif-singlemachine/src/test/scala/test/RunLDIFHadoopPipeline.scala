@@ -19,6 +19,11 @@
 package test
 
 import ldif.modules.r2r.hadoop.RunHadoopR2RJob
+import ldif.entity.EntityDescription
+import java.math.BigInteger
+import de.fuberlin.wiwiss.r2r._
+import scala.collection.JavaConversions._
+import ldif.hadoop.entitybuilder.RunHadoopEntityBuilder
 
 /**
  * Created by IntelliJ IDEA.
@@ -30,8 +35,29 @@ import ldif.modules.r2r.hadoop.RunHadoopR2RJob
 
 object RunLDIFHadoopPipeline {
   def main(args: Array[String]) {
-    RunHadoopEntityBuilder.main(args)
-    RunHadoopR2RJob.main(args)
+    val mappings = getMappings
+    RunHadoopEntityBuilder.runHadoopEntityBuilder(args(0), args(1), getEntityDescriptions(mappings))
+    RunHadoopR2RJob.runHadoopR2RJob(args(0), args(1), mappings)
   }
 
+  def runHadoopLDIF(in: String, out: String, mappings: IndexedSeq[LDIFMapping]): Int = {
+    val entityDescriptions = getEntityDescriptions(mappings)
+    RunHadoopEntityBuilder.runHadoopEntityBuilder(in, out, entityDescriptions)
+    RunHadoopR2RJob.runHadoopR2RJob(in, out, mappings)
+  }
+
+
+  private def getEntityDescriptions(mappings: IndexedSeq[LDIFMapping]): Seq[EntityDescription] = {
+    for(mapping <- mappings) yield mapping.entityDescription
+  }
+
+    private def getMappings: IndexedSeq[LDIFMapping] = {
+//    val mappingSource = new FileOrURISource("ldif-singlemachine/src/test/resources/mappings.ttl")
+    val mappingSource = new FileOrURISource("test_10k/mappings/ALL-to-Wiki.r2r.ttl")
+
+    val uriGenerator = new EnumeratingURIGenerator("http://www4.wiwiss.fu-berlin.de/ldif/imported", BigInteger.ONE);
+    val importedMappingModel = Repository.importMappingDataFromSource(mappingSource, uriGenerator)
+    val repository = new Repository(new JenaModelSource(importedMappingModel))
+    (for(mapping <- repository.getMappings.values) yield LDIFMapping(mapping)).toIndexedSeq
+  }
 }

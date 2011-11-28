@@ -46,9 +46,9 @@ class EBHadoopTest extends FlatSpec with ShouldMatchers
   val edmd = EntityDescriptionMetaDataExtractor.extract(entityDescriptions)
 
   // Run entity builder
-  Phase2.runPhase(sourcesDir, outputDirPrefix+"_2", edmd)
-  Phase3.runPhase(outputDirPrefix+"_2", outputDirPrefix+"_3", edmd)
-  Phase4.runPhase(outputDirPrefix+"_3", outputDirPrefix+"_4", edmd)
+  Phase2.runPhase(sourcesDir, outputDirPrefix+"/eb/phase2", edmd)
+  Phase3.runPhase(outputDirPrefix+"/eb/phase2", outputDirPrefix+"/eb/phase3", edmd)
+  Phase4.runPhase(outputDirPrefix+"/eb/phase3", outputDirPrefix+"/eb/output", edmd)
 
   // Check results
   val eqs = readOuputFiles
@@ -171,7 +171,7 @@ class EBHadoopTest extends FlatSpec with ShouldMatchers
     val config = new Configuration
     val fileSystem = FileSystem.get(config)
 
-    val outputFiles = loadOutput(new File(outputDirPrefix+"_4"))
+    val outputFiles = loadOutput(new File(outputDirPrefix+"/eb/output"))
     val eqs = outputFiles.map(_ => Seq.empty[Entity]).toArray
 
     for (file <- outputFiles)  {
