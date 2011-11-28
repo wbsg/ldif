@@ -240,12 +240,12 @@ class EntityDescriptionToSparqlConverter {
     }
   }
 
-  private def processCondition(path: Path, values: Set[Node], resourceFunction:() => String): String = {
+  private def processCondition(path: Path, values: Set[NodeTrait], resourceFunction:() => String): String = {
     return processConditionPath(EntityDescriptionToSparqlConverter.entityVar, path.operators, values, resourceFunction)
   }
 
   // return the SPARQL string representation of a Condition path
-  private def processConditionPath(resource: String, path: List[PathOperator], values: Set[Node], resourceFunction: () => String): String = {
+  private def processConditionPath(resource: String, path: List[PathOperator], values: Set[NodeTrait], resourceFunction: () => String): String = {
     path match {
       case operator::Nil => {
         val valueSetB = new StringBuilder

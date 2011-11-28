@@ -65,7 +65,7 @@ object EntityDescriptionMetaDataExtractor {
 
   private def extractPathInfoFromOperator(operator: Operator, entityDescriptionIndex: Int) {
     operator match {
-      case Condition(path, _) => extractPathInfo(path, entityDescriptionIndex, -1, -1, true)
+      case Condition(path, nodes) => extractPathInfo(path, entityDescriptionIndex, -1, -1, true, Some(nodes))
       case Not(operator) => extractPathInfoFromOperator(operator, entityDescriptionIndex)
       case And(operators) => operators.foreach(extractPathInfoFromOperator(_, entityDescriptionIndex))
       case Or(operators) => operators.foreach(extractPathInfoFromOperator(_, entityDescriptionIndex))
@@ -73,7 +73,7 @@ object EntityDescriptionMetaDataExtractor {
     }
   }
 
-  private def extractPathInfo(path: Path, entityDescriptionIndex: Int, patternIndex: Int, pathIndex: Int, isRestrictionPath: Boolean) {
+  private def extractPathInfo(path: Path, entityDescriptionIndex: Int, patternIndex: Int, pathIndex: Int, isRestrictionPath: Boolean, restrictionValues: Option[Set[NodeTrait]] = None) {
     val pathID = pathCounter.getAndIncrement
     val properties = extractPropertyInfo(path,pathID)
     pathMap.put(pathID, PathInfo(entityDescriptionIndex, patternIndex, pathIndex, path, isRestrictionPath, properties.length, properties))
@@ -81,13 +81,16 @@ object EntityDescriptionMetaDataExtractor {
   }
 
   // return a sequence of the properties in the path and for each property a flag if it is a forward path
-  private def extractPropertyInfo(path: Path, pathId: Int): Seq[Pair[String, Boolean]] = {
+  private def extractPropertyInfo(path: Path, pathId: Int, restrictionValues: Option[Set[NodeTrait]] = None): Seq[Pair[String, Boolean]] = {
     val properties = new ArrayBuffer[Pair[String, Boolean]]()
+    var restrictionValuesToAdd: Option[Set[NodeTrait]] = None
     for((op,i) <- path.operators zipWithIndex) {
+      if(restrictionValues!=None && i==path.operators.length-1)
+        restrictionValuesToAdd = restrictionValues
       op match {
-          case op:ForwardOperator => addPropertyInfo(op.property.toString, pathId, i, true)
+          case op:ForwardOperator => addPropertyInfo(op.property.toString, pathId, i, true, restrictionValuesToAdd)
             properties.append((op.property.toString, true))
-          case op:BackwardOperator => addPropertyInfo(op.property.toString, pathId, i, false)
+          case op:BackwardOperator => addPropertyInfo(op.property.toString, pathId, i, false, restrictionValuesToAdd)
             properties.append((op.property.toString, false))
           case _ =>    // TODO support filters
         }
@@ -95,11 +98,11 @@ object EntityDescriptionMetaDataExtractor {
     properties
   }
 
-  private def addPropertyInfo(property: String, pathId: Int, phase: Int, isForward : Boolean) {
+  private def addPropertyInfo(property: String, pathId: Int, phase: Int, isForward : Boolean, restrictionValues: Option[Set[NodeTrait]] = None) {
     val propertyInfoList: ArrayBuffer[PropertyInfo] = propertyMap.getOrElseUpdate(property, new ArrayBuffer[PropertyInfo])
-    propertyInfoList.append(PropertyInfo(pathId, phase, isForward))
+    propertyInfoList.append(PropertyInfo(pathId, phase, isForward, restrictionValues))
   }
 
 }
 
-case class PropertyInfo(pathId: Int, phase: Int, isForward: Boolean)
+case class PropertyInfo(pathId: Int, phase: Int, isForward: Boolean, restrictionValues: Option[Set[NodeTrait]])

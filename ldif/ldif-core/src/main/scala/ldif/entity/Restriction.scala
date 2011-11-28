@@ -61,7 +61,7 @@ object Restriction
   /**
    * A condition which evaluates to true if the provided path contains at least one of the given values.
    */
-  case class Condition(path : Path, values : Set[ldif.entity.Node]) extends Operator
+  case class Condition(path : Path, values : Set[ldif.entity.NodeTrait]) extends Operator
   {
     def toXml =
     {

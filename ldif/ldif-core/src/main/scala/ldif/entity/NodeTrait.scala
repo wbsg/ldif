@@ -35,6 +35,27 @@ trait NodeTrait {
   def nodeType : Node.NodeType
   def graph : String
 
+  def toXML =  nodeType match {
+    //TODO Literal language and datatype not supported in M1
+      case Literal => <Literal>{value}</Literal>
+      case TypedLiteral => <Literal>{value}</Literal>
+      case LanguageLiteral =>  <Literal>{value}</Literal>
+      case BlankNode => <BlankNode>{value}</BlankNode>
+      case UriNode => <Uri>{value}</Uri>
+  }
+
+  def datatype = nodeType match
+  {
+    case TypedLiteral => datatypeOrLanguage
+    case _ => null
+  }
+
+  def language = nodeType match
+  {
+    case LanguageLiteral => datatypeOrLanguage
+    case _ => null
+  }
+
   def compare(otherNode: NodeTrait) = {
     // case: Both are Blank Nodes
     if(nodeType==BlankNode && otherNode.nodeType==BlankNode) {

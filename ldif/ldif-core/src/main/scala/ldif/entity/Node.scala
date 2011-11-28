@@ -26,29 +26,8 @@ import ldif.util.Consts
 
 final case class Node(value : String, datatypeOrLanguage : String, nodeType : Node.NodeType, graph : String) extends NodeTrait
 {
-  def datatype = nodeType match
-  {
-    case TypedLiteral => datatypeOrLanguage
-    case _ => null
-  }
-
-  def language = nodeType match
-  {
-    case LanguageLiteral => datatypeOrLanguage
-    case _ => null
-  }
-
   def modifyGraph(graph: String): Node = {
     Node(this.value, this.datatypeOrLanguage, this.nodeType, graph)
-  }
-
-  def toXML =  nodeType match {
-    //TODO Literal language and datatype not supported in M1
-      case Literal => <Literal>{value}</Literal>
-      case TypedLiteral => <Literal>{value}</Literal>
-      case LanguageLiteral =>  <Literal>{value}</Literal>
-      case BlankNode => <BlankNode>{value}</BlankNode>
-      case UriNode => <Uri>{value}</Uri>
   }
 
   def compare(other: Node): Int = super.compare(other)
