@@ -14,7 +14,7 @@ import org.apache.hadoop.mapred.OutputCollector
  */
 
 object URITranslatorHelperMethods {
-  def extractAndOutputSameAsPairs(subj: String, obj: String, output: OutputCollector[Text, SameAsPairWritable]) {
+  def extractAndOutputSameAsPairs(subj: String, obj: String, output: OutputCollector[Text, SameAsPairWritable], debugOutput: OutputCollector[Text, SameAsPairWritable]) {
     val sameAsPair = new SameAsPairWritable()
     val uri = new Text()
     val from = subj
@@ -22,10 +22,12 @@ object URITranslatorHelperMethods {
 
     setSameAsPair(sameAsPair, from, to, true)
     uri.set(to)
+    debugOutput.collect(uri, sameAsPair) //DEBUG
     output.collect(uri, sameAsPair)
 
     setSameAsPair(sameAsPair, to, from, true)
     uri.set(from)
+    debugOutput.collect(uri, sameAsPair) //DEBUG
     output.collect(uri, sameAsPair)
 
     if(simpleCompare(from, to)) {
@@ -35,6 +37,7 @@ object URITranslatorHelperMethods {
       setSameAsPair(sameAsPair, to, from, false)
       uri.set(to)
     }
+    debugOutput.collect(uri, sameAsPair) //DEBUG
     output.collect(uri, sameAsPair)
   }
 

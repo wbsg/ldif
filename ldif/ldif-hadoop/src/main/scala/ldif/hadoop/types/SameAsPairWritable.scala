@@ -2,6 +2,7 @@ package ldif.hadoop.types
 
 import java.io.{DataOutput, DataInput}
 import org.apache.hadoop.io.{Text, WritableComparable}
+import ldif.util.Consts
 
 /**
  * Created by IntelliJ IDEA.
@@ -44,5 +45,13 @@ class SameAsPairWritable(var from: String, var to: String, var isInLink: Boolean
 
   override def hashCode(): Int = {
     from.hashCode() + 31*to.hashCode()
+  }
+
+  override def toString(): String = {
+    val sb = new StringBuilder
+    sb.append("<").append(from).append("> ")
+    sb.append("<").append(Consts.SAMEAS_URI).append("> ")
+    sb.append("<").append(to).append("> . isInLink=").append(isInLink)
+    sb.toString()
   }
 }

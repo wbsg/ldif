@@ -6,6 +6,7 @@ import org.apache.hadoop.mapred.{Reporter, OutputCollector, Mapper, MapReduceBas
 import ldif.util.Consts
 import ldif.hadoop.utils.URITranslatorHelperMethods
 import org.apache.hadoop.io.{NullWritable, Text, LongWritable}
+import org.apache.hadoop.mapred.lib.MultipleOutputs
 
 /**
  * Created by IntelliJ IDEA.
@@ -16,13 +17,15 @@ import org.apache.hadoop.io.{NullWritable, Text, LongWritable}
  */
 
 class SameAsPairsMapper extends MapReduceBase with Mapper[NullWritable, SameAsPairWritable, Text, SameAsPairWritable] {
-  private val parser = new QuadParser
-  private val sameAsPair = new SameAsPairWritable()
-  private val uri = new Text()
+  private var mos: MultipleOutputs = null
 
   override def map(key: NullWritable, sameAsPair: SameAsPairWritable, output: OutputCollector[Text, SameAsPairWritable], reporter: Reporter) {
     val subj = sameAsPair.from
     val obj = sameAsPair.to
-    URITranslatorHelperMethods.extractAndOutputSameAsPairs(subj, obj, output)
+    URITranslatorHelperMethods.extractAndOutputSameAsPairs(subj, obj, output, mos.getCollector("debug", reporter).asInstanceOf[OutputCollector[Text, SameAsPairWritable]])
+  }
+
+  override def close() {
+    mos.close()
   }
 }
