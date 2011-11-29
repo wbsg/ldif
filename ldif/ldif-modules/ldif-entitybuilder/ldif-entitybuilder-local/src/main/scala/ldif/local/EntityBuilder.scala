@@ -216,7 +216,7 @@ class EntityBuilder (entityDescriptions : IndexedSeq[EntityDescription], readers
     val tmpSet = new Array[Set[Node]](cond.path.operators.size)
     for ((op,i) <- cond.path.operators.toSeq.reverse.zipWithIndex){
       if (i==0) {
-        tmpSet(i) = evaluateOperator(op,cond.values.asInstanceOf[Set[Node]].toSet)
+        tmpSet(i) = evaluateOperator(op,cond.values)
       }
       else {
         tmpSet(i) = evaluateOperator(op,tmpSet(i-1),false)
