@@ -1,20 +1,18 @@
 package ldif.hadoop.runtime
 
 import org.apache.hadoop.mapred.lib.{MultipleOutputs, NullOutputFormat}
-import org.apache.hadoop.fs.Path
 import org.slf4j.LoggerFactory
 import org.apache.commons.io.FileUtils
 import java.io.File
 import org.apache.hadoop.conf.{Configuration, Configured}
-import ldif.hadoop.utils.HadoopHelper
 import org.apache.hadoop.util.{ToolRunner, Tool}
-import ldif.hadoop.mappers.ExtractSameAsPairsMapper
 import ldif.hadoop.types.{SameAsPairWritable, ValuePathWritable}
 import ldif.hadoop.reducers.JoinSameAsPairsReducer
 import org.apache.hadoop.io.{NullWritable, Text, IntWritable}
-import ldif.hadoop.io.{EntityMultipleTextFileOutput, SameAsPairTextOutputFormat, SameAsPairSequenceFileOutputFormat}
-import ldif.entity.{EntityWritable, EntityDescriptionMetadata, EntityDescriptionMetaDataExtractor, EntityDescription}
 import org.apache.hadoop.mapred._
+import ldif.hadoop.mappers.{SameAsPairsMapper, ExtractSameAsPairsMapper}
+import ldif.hadoop.io.{SameAsPairSequenceFileInputFormat, EntityMultipleTextFileOutput, SameAsPairTextOutputFormat, SameAsPairSequenceFileOutputFormat}
+import org.apache.hadoop.fs.{PathFilter, Path}
 
 /**
  * Created by IntelliJ IDEA.
@@ -31,12 +29,33 @@ class RunHadoopURITranslator extends Configured with Tool {
     var job = setInitialSameAsPairsExtractorJob(conf, args(0), args(1)+"/iteration1")
     JobClient.runJob(job)
 
+    job = setFollowingSameAsPairsJob(conf, args(1)+"/iteration1", args(1)+"/iteration2")
+    JobClient.runJob(job)
+
+    job = setFollowingSameAsPairsJob(conf, args(1)+"/iteration2", args(1)+"/iteration3")
+    JobClient.runJob(job)
+
+    job = setFollowingSameAsPairsJob(conf, args(1)+"/iteration3", args(1)+"/iteration4")
+    JobClient.runJob(job)
+
     return 0
   }
 
   private def setInitialSameAsPairsExtractorJob(conf: Configuration,inputPath: String, outputPath: String): JobConf = {
     val job = new JobConf(conf, classOf[RunHadoopURITranslator])
     job.setMapperClass(classOf[ExtractSameAsPairsMapper])
+    setSameAsPairsJob(job, inputPath, outputPath)
+  }
+
+  private def setFollowingSameAsPairsJob(conf: Configuration,inputPath: String, outputPath: String): JobConf = {
+    val job = new JobConf(conf, classOf[RunHadoopURITranslator])
+    job.setMapperClass(classOf[SameAsPairsMapper])
+    job.setInputFormat(classOf[SameAsPairSequenceFileInputFormat])
+    FileInputFormat.setInputPathFilter(job, classOf[DebugFileExcludeFilter])
+    setSameAsPairsJob(job, inputPath, outputPath)
+  }
+
+  private def setSameAsPairsJob(job: JobConf, inputPath: String, outputPath: String): JobConf = {
     job.setMapOutputKeyClass(classOf[Text])
     job.setMapOutputValueClass(classOf[SameAsPairWritable])
     job.setReducerClass(classOf[JoinSameAsPairsReducer])
@@ -72,5 +91,11 @@ object RunHadoopURITranslator {
   def main(args: Array[String]) {
     if(args.length>=2)
       runHadoopURITranslator(args(0), args(1))
+  }
+}
+
+class DebugFileExcludeFilter extends PathFilter {
+  def accept(path: Path) = {
+    path.getName.startsWith("part") || path.getName.startsWith("iteration")
   }
 }

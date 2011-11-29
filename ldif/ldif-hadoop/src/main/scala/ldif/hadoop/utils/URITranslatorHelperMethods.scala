@@ -20,31 +20,30 @@ object URITranslatorHelperMethods {
     val from = subj
     val to = obj
 
-    setSameAsPair(sameAsPair, from, to, true)
-    uri.set(to)
-    debugOutput.collect(uri, sameAsPair) //DEBUG
-    output.collect(uri, sameAsPair)
-
-    setSameAsPair(sameAsPair, to, from, true)
+    setSameAsPair(sameAsPair, from, to)
     uri.set(from)
     debugOutput.collect(uri, sameAsPair) //DEBUG
     output.collect(uri, sameAsPair)
 
-    if(simpleCompare(from, to)) {
-      setSameAsPair(sameAsPair, from, to, false)
-      uri.set(from)
-    } else {
-      setSameAsPair(sameAsPair, to, from, false)
-      uri.set(to)
-    }
+    setSameAsPair(sameAsPair, to, from)
+    uri.set(to)
     debugOutput.collect(uri, sameAsPair) //DEBUG
     output.collect(uri, sameAsPair)
+
+//    if(simpleCompare(from, to)) {
+//      setSameAsPair(sameAsPair, from, to, false)
+//      uri.set(from)
+//    } else {
+//      setSameAsPair(sameAsPair, to, from, false)
+//      uri.set(to)
+//    }
+//    debugOutput.collect(uri, sameAsPair) //DEBUG
+//    output.collect(uri, sameAsPair)
   }
 
-  private def setSameAsPair(sameAsPair: SameAsPairWritable, from: String, to: String, isInLink: Boolean): SameAsPairWritable = {
+  private def setSameAsPair(sameAsPair: SameAsPairWritable, from: String, to: String): SameAsPairWritable = {
     sameAsPair.from = from
     sameAsPair.to = to
-    sameAsPair.isInLink = isInLink
     return sameAsPair
   }
 

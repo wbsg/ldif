@@ -8,6 +8,7 @@ import org.apache.hadoop.io._
 import org.apache.hadoop.mapred.lib.MultipleOutputs
 import org.apache.hadoop.mapred._
 import ldif.hadoop.utils.{HadoopHelper, URITranslatorHelperMethods}
+import ldif.runtime.Quad
 
 /**
  * Created by IntelliJ IDEA.
@@ -26,7 +27,12 @@ class ExtractSameAsPairsMapper extends MapReduceBase with Mapper[LongWritable, T
   }
 
   override def map(key: LongWritable, quadString: Text, output: OutputCollector[Text, SameAsPairWritable], reporter: Reporter) {
-    val quad = parser.parseLine(quadString.toString)
+    var quad: Quad = null
+    try {
+      quad = parser.parseLine(quadString.toString)
+    } catch {
+      case e => quad = null
+    }
     if(quad!=null && quad.predicate==Consts.SAMEAS_URI)
       URITranslatorHelperMethods.extractAndOutputSameAsPairs(quad.subject.value, quad.value.value, output, mos.getCollector("debug", reporter).asInstanceOf[OutputCollector[Text, SameAsPairWritable]])
   }

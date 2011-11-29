@@ -12,21 +12,19 @@ import ldif.util.Consts
  * To change this template use File | Settings | File Templates.
  */
 
-class SameAsPairWritable(var from: String, var to: String, var isInLink: Boolean) extends WritableComparable[SameAsPairWritable] {
+class SameAsPairWritable(var from: String, var to: String) extends WritableComparable[SameAsPairWritable] {
   def this() {
-    this(null, null, true)
+    this(null, null)
   }
 
   def write(out: DataOutput) {
     out.writeUTF(from)
     out.writeUTF(to)
-    out.writeBoolean(isInLink)
   }
 
   def readFields(in: DataInput) {
     from = in.readUTF()
     to = in.readUTF()
-    isInLink = in readBoolean()
   }
 
   def compareTo(other: SameAsPairWritable) = {
@@ -51,7 +49,7 @@ class SameAsPairWritable(var from: String, var to: String, var isInLink: Boolean
     val sb = new StringBuilder
     sb.append("<").append(from).append("> ")
     sb.append("<").append(Consts.SAMEAS_URI).append("> ")
-    sb.append("<").append(to).append("> . isInLink=").append(isInLink)
+    sb.append("<").append(to).append("> .")
     sb.toString()
   }
 }

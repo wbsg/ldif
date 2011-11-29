@@ -2,11 +2,11 @@ package ldif.hadoop.mappers
 
 import ldif.hadoop.types.SameAsPairWritable
 import ldif.datasources.dump.QuadParser
-import org.apache.hadoop.mapred.{Reporter, OutputCollector, Mapper, MapReduceBase}
 import ldif.util.Consts
 import ldif.hadoop.utils.URITranslatorHelperMethods
 import org.apache.hadoop.io.{NullWritable, Text, LongWritable}
 import org.apache.hadoop.mapred.lib.MultipleOutputs
+import org.apache.hadoop.mapred._
 
 /**
  * Created by IntelliJ IDEA.
@@ -18,6 +18,10 @@ import org.apache.hadoop.mapred.lib.MultipleOutputs
 
 class SameAsPairsMapper extends MapReduceBase with Mapper[NullWritable, SameAsPairWritable, Text, SameAsPairWritable] {
   private var mos: MultipleOutputs = null
+
+  override def configure(conf: JobConf) {
+    mos = new MultipleOutputs(conf)
+  }
 
   override def map(key: NullWritable, sameAsPair: SameAsPairWritable, output: OutputCollector[Text, SameAsPairWritable], reporter: Reporter) {
     val subj = sameAsPair.from
