@@ -28,12 +28,13 @@ object SieveModule
   {
     //DefaultImplementations.register()
 
-    new SieveModule(new SieveModuleConfig(loadConfig(file)))
+    val config = if(file==null || !file.exists()) SieveConfig.empty else loadConfig(file)
+    new SieveModule(new SieveModuleConfig(config))
   }
 
   private def loadConfig(file : File) : SieveConfig =
   {
-    if (file==null) log.error("Trying to load null config file into Sieve.");
+    if (file==null) log.debug("Trying to load null config file into Sieve. Returning empty config.");
 
     if(file!=null && file.isFile)
     {

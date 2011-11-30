@@ -1,9 +1,11 @@
 package ldif.modules.sieve
 
-import fusion.PassItOn
+import fusion.{TrustYourFriends, PassItOn}
 import ldif.util.Prefixes
 import java.io.{FileInputStream, InputStream, File}
 import sun.reflect.generics.reflectiveObjects.NotImplementedException
+import ldif.entity.EntityDescription
+import org.slf4j.LoggerFactory
 
 /**
  *
@@ -21,7 +23,10 @@ class SieveConfig(val prefixes: Prefixes, val sieveSpecs: Traversable[FusionSpec
 
 object SieveConfig {
 
-  val stdPrefixes = Map("dbpedia" -> "http://dbpedia.org/property/title/",
+  private val log = LoggerFactory.getLogger(getClass.getName)
+
+  val stdPrefixes = Map("foaf" -> "http://xmlns.com/foaf/0.1/",
+    "dbpedia" -> "http://dbpedia.org/ontology/",
     "genes"->"http://wiking.vulcan.com/neurobase/kegg_genes/resource/vocab/",
     "smwprop"->"http://mywiki/resource/property/",
     "smwcat"->"http://mywiki/resource/category/",
@@ -34,18 +39,70 @@ object SieveConfig {
     load(new FileInputStream(configFile))
   }
 
+  /*
+<http://dbpedia.org/ontology/musicalArtist>
+<http://www.w3.org/1999/02/22-rdf-syntax-ns#type>
+<http://www.w3.org/2000/01/rdf-schema#label>
+<http://www.w3.org/2002/07/owl#sameAs>
+<http://xmlns.com/foaf/0.1/made>
+<http://xmlns.com/foaf/0.1/member>
+
+provenance triples:
+<http://www4.wiwiss.fu-berlin.de/ldif/hasDatasource>
+<http://www4.wiwiss.fu-berlin.de/ldif/hasImportJob>
+<http://www4.wiwiss.fu-berlin.de/ldif/hasImportType>
+<http://www4.wiwiss.fu-berlin.de/ldif/hasOriginalLocation>
+<http://www4.wiwiss.fu-berlin.de/ldif/importId>
+<http://www4.wiwiss.fu-berlin.de/ldif/lastUpdate>
+
+   */
   def load(configFile: InputStream) : SieveConfig = { //TODO implement config parser
-    val spec1 = new FusionSpecification("title_passItOn", IndexedSeq(new PassItOn))
+    val spec1 = new FusionSpecification("test",
+                      IndexedSeq(new TrustYourFriends("http://www4.wiwiss.fu-berlin.de/ldif/graph#dbpedia.en"), new PassItOn),
+                      IndexedSeq("http://www.w3.org/2000/01/rdf-schema#label", "http://xmlns.com/foaf/0.1/made")
+    )
     val fusionSpecs = List(spec1)
     new SieveConfig(new Prefixes(stdPrefixes),fusionSpecs)
   }
+
+  def createDummyEntityDescriptions(prefixes: Prefixes) : List[EntityDescription] = {
+    // read from jar
+    //val stream = getClass.getClassLoader.getResourceAsStream("ldif/modules/sieve/local/Music_EntityDescription.xml")
+    // read from file
+    //val stream = new FileInputStream("/home/pablo/workspace/ldif/ldif/ldif-modules/ldif-sieve/ldif-sieve-local/src/test/resources/ldif/modules/sieve/local/Music_EntityDescription.xml");
+
+    //if (stream!=null) {
+//      val testXml = XML.load(stream);
+      val testXml = <EntityDescription>
+        <Patterns>
+          <Pattern>
+            <Path>?a/rdfs:label</Path>
+          </Pattern>
+          <Pattern>
+            <Path>?a/foaf:made</Path>
+          </Pattern>
+        </Patterns>
+      </EntityDescription>
+
+      val e = EntityDescription.fromXML(testXml)(prefixes)
+      log.debug("[FUSION] "+e.toString);
+      List(e)
+//    } else {
+//      log.error("EntityDescription returned null!");
+//      List() //empty?
+//    }
+  }
+
 
   def empty = {
     new EmptySieveConfig
   }
 }
 
-class EmptySieveConfig extends SieveConfig(Prefixes.stdPrefixes, List(new FusionSpecification("Default", IndexedSeq(new PassItOn)))) {
+/*
+ This class should never be actually used for fusion. It simply signals that no config exists, and the framework should repeat the input.
+ */
+class EmptySieveConfig extends SieveConfig(Prefixes.stdPrefixes, List(new FusionSpecification("Default", IndexedSeq(new PassItOn), IndexedSeq("DEFAULT")))) {
 
 }
 

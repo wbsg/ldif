@@ -261,11 +261,13 @@ class IntegrationJob (val config : IntegrationConfig, debugMode : Boolean = fals
 
     sieveModule.config.sieveConfig match {
       case e: EmptySieveConfig => {
+        log.info("[FUSION] No Sieve configuration found. No fusion will be performed.")
         val echo = new QuadQueue()
         inputQuadsReader.foreach(q => echo.write(q));
         return echo;
       }
       case c: SieveConfig => {
+        log.debug("Sieve will perform fusion, config=%s.".format(sieveSpecDir.getAbsolutePath))
         val inMemory = config.properties.getProperty("entityBuilderType", "in-memory")=="in-memory"
         val sieveExecutor = new SieveLocalExecutor
 

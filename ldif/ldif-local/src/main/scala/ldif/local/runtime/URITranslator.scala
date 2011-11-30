@@ -34,6 +34,7 @@ import java.net.URLEncoder
 import ldif.runtime.Quad
 import java.util.Properties
 import java.io.{BufferedWriter, File}
+import ldif.entity.entityComparator.entityComparator
 
 object URITranslator {
 
@@ -116,21 +117,6 @@ object URITranslator {
     entityToClusterMap
   }
 
-  /**
-   * Count how many of the characters in a String are alpha-numeric [a-zA-Z0-9]
-   * Used as heuristic to measure how "readable" a String is to Anglo-Saxonic and Latin eyes.
-   * @author pablomendes
-   */
-  private def countAlphaNumChars(string: String) = {
-    var nLetters = 0;
-    val nChars = string.length()
-    for(i <- 0 until nChars) {
-      if(Character.isLetter(string.charAt(i)))
-        nLetters = nLetters + 1
-    };
-    nLetters.toDouble / nChars
-  }
-
   private def extractMaxMintValues(mintingPropertiesString: String, quadsReader: QuadReader, uriMintLanguageRestriction : String): HashMap[String, String] = {
     val acceptedLanguages = uriMintLanguageRestriction.split("\\s+").toSet
     val mintingProperties = Set(mintingPropertiesString.split("\\s+"): _*)
@@ -143,7 +129,7 @@ object URITranslator {
       if (mintingProperties.contains(quad.predicate)) {
         if (mintValues.contains(subject)) {
           // sort properties by the percentage of characters they have (changed from: alphanumeric sorting)
-          if (countAlphaNumChars(mintValues.get(subject).get) < countAlphaNumChars(value))
+          if (entityComparator.lessThan(mintValues.get(subject).get, value))
             //if properties contain a preferred language label, use that
             if (acceptedLanguages.size>0 && quad.value.nodeType==Node.LanguageLiteral) {
               if (acceptedLanguages.contains(quad.value.datatypeOrLanguage))
@@ -281,14 +267,14 @@ case class EntityCluster(var entity: String, entitySet: Set[String]) {
 
   // Moves all the entities to this cluster, making the other cluster obsolete
   def integrateCluster(other: EntityCluster, entityToClusterMap: Map[String, EntityCluster]) {
-    if(other.entity < entity)
+    if(entityComparator.lessThan(other.entity, entity))
       other.parentCluster = this
     else
       parentCluster = other
   }
 
   def integrateEntity(newEntity: String, entityToClusterMap: Map[String, EntityCluster]) {
-    if(entity > newEntity) {
+    if(entityComparator.lessThan(newEntity, entity)) {
       entitySet += newEntity
       entityToClusterMap.put(newEntity, this)
     }
@@ -350,3 +336,4 @@ class EntityGraphChecker {
     return true
   }
 }
+

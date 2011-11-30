@@ -4,6 +4,7 @@ import ldif.hadoop.types.SameAsPairWritable
 import ldif.runtime.Quad
 import org.apache.hadoop.io.Text
 import org.apache.hadoop.mapred.OutputCollector
+import ldif.entity.entityComparator.entityComparator
 
 /**
  * Created by IntelliJ IDEA.
@@ -39,6 +40,6 @@ object URITranslatorHelperMethods {
   }
 
   def simpleCompare(left: String, right: String): Boolean = {
-    left < right
+    entityComparator.lessThan(left, right)
   }
 }

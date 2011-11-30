@@ -3,18 +3,18 @@
 
     <!-- Appends log events on the console -->
     <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
-        <layout class="ch.qos.logback.classic.PatternLayout">
-            <Pattern>[%-4level] %msg%n</Pattern>
-        </layout>
+        <encoder>
+            <pattern>[%-4level] %msg%n</pattern>
+        </encoder>
     </appender>
 
     <!-- Appends log events into a file -->
     <appender name="FILE" class="ch.qos.logback.core.FileAppender">
         <file>ldif.log</file>
         <append>false</append>
-        <layout class="ch.qos.logback.classic.PatternLayout">
-            <Pattern>%d{HH:mm:ss.SS} [%thread] %-5level %logger{40} - %msg%n</Pattern>
-        </layout>
+        <encoder>
+            <pattern>%d{HH:mm:ss.SS} [%thread] %-5level %logger{40} - %msg%n</pattern>
+        </encoder>
     </appender>
 
 

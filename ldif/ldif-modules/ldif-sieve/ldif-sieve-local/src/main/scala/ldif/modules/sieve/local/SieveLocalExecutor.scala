@@ -5,7 +5,6 @@ import ldif.local.runtime._
 import impl.NoEntitiesLeft
 import org.apache.commons.io.FileUtils
 import ldif.local.util.TemporaryFileCreator
-import ldif.modules.sieve.SieveTask
 import xml.{XML, Source}
 import org.slf4j.LoggerFactory
 import java.io.{FileInputStream, File}
@@ -13,6 +12,7 @@ import ldif.runtime.Quad
 import ldif.util.Prefixes
 import ldif.entity.{Node, Entity, EntityDescription}
 import ldif.modules.sieve.fusion.{PassItOn, FusionFunction, TrustYourFriends, KeepFirst}
+import ldif.modules.sieve.{SieveConfig, SieveTask}
 
 /**
  * Executes Sieve on a local machine.
@@ -36,34 +36,11 @@ class SieveLocalExecutor(useFileInstanceCache: Boolean = false) extends Executor
     implicit val prefixes = task.sieveConfig.sieveConfig.prefixes
     //log.info("Prefixes:"+prefixes.toString)
 
+    // here we create entity descriptions from the task.sieveSpec
     //        val entityDescriptions = CreateEntityDescriptions(task.sieveSpec)
-    val entityDescriptions = createDummyEntityDescriptions(prefixes)
+    val entityDescriptions = SieveConfig.createDummyEntityDescriptions(prefixes)
 
     new StaticEntityFormat(entityDescriptions)
-  }
-
-  def createDummyEntityDescriptions(prefixes: Prefixes) : List[EntityDescription] = {
-    // read from jar
-    val stream = getClass.getClassLoader.getResourceAsStream("ldif/modules/sieve/local/Music_EntityDescription.xml")
-    // read from file
-    //val stream = new FileInputStream("/home/pablo/workspace/ldif/ldif/ldif-modules/ldif-sieve/ldif-sieve-local/src/test/resources/ldif/modules/sieve/local/Music_EntityDescription.xml");
-
-    if (stream!=null) {
-      val testXml = XML.load(stream);
-//      val testXml = <EntityDescription>
-//        <Patterns>
-//          <Pattern>
-//            <Path>?a/rdfs:label</Path>
-//          </Pattern>
-//        </Patterns>
-//      </EntityDescription>
-      val e = EntityDescription.fromXML(testXml)(prefixes)
-      log.debug("[FUSION] "+e.toString);
-      List(e)
-    } else {
-      log.error("EntityDescription returned null!");
-      List() //empty?
-    }
   }
 
   def output(task : SieveTask) = new GraphFormat()
@@ -81,24 +58,34 @@ class SieveLocalExecutor(useFileInstanceCache: Boolean = false) extends Executor
       var entity : Entity = NoEntitiesLeft;
       while ( { entity = in.read(); entity != NoEntitiesLeft} ) {
         //log.info("Sieve Entity: %s".format(entity.resource.toString))
-        val propertyName = "http://www.w3.org/2000/01/rdf-schema#label" //TODO comes from TaskDefinition
         //log.info("Patterns: "+entity.entityDescription.patterns.size)
 
-        if (entity==null) log.error("Is it normal that some entities will be intermittently null?")
+        if (entity==null) {
+          log.error("Is it normal that some entities will be intermittently null? %s".format(in.entityDescription))
+        }
 
         if (entity!=null && entity!=NoEntitiesLeft) {
-          for (pattern <- 0 until nPatterns) {
-            val factums = entity.factums(pattern)
-            val fusionFunction = task.sieveSpec.fusionFunctions(pattern)
+          for (patternId <- 0 until nPatterns) {
+            val factums = entity.factums(patternId)
+            val outputPropertyName = task.sieveSpec.outputPropertyNames(patternId)
+            val fusionFunction = task.sieveSpec.fusionFunctions(patternId)
             //log.debug("Patern %s: FusionFunction used: %s".format(pattern, fusionFunction))
 
-            fusionFunction.fuse(factums).foreach( n => { // for each property
-              if (n.nonEmpty) {
-                val propertyValue = n(0) //TODO deal with case where the path is a tree (more than one value)
-                val quad = new Quad(entity.resource, propertyName, propertyValue, propertyValue.graph);
-                writer.write(quad)
-              }
-            })
+            if (factums.size==1) { //nothing to fuse //TODO filterign can also be
+              val patternNodes = factums.head
+              val propertyValue = patternNodes(0)
+              val quad = new Quad(entity.resource, outputPropertyName, propertyValue, propertyValue.graph);
+              writer.write(quad)
+            } else {               // fuse multiple values into one value and write it out
+              fusionFunction.fuse(factums).foreach( patternNodes => { // for each property
+                if (patternNodes.nonEmpty) {
+                  val propertyValue = patternNodes(0) //TODO deal with case where the pattern is a tree (more than one path)
+                  val quad = new Quad(entity.resource, outputPropertyName, propertyValue, propertyValue.graph);
+                  writer.write(quad)
+                }
+              })
+            }
+
           }
         }
       }

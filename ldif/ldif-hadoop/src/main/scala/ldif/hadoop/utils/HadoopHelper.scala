@@ -20,9 +20,9 @@ package ldif.hadoop.utils
 
 import org.apache.hadoop.filecache.DistributedCache
 import java.io._
-import java.net.URI
 import org.apache.hadoop.conf.Configuration
 import ldif.entity.EntityDescriptionMetadata
+import org.apache.hadoop.fs.{Path, FileSystem}
 
 /**
  * Created by IntelliJ IDEA.
@@ -37,15 +37,24 @@ object HadoopHelper {
 
   def distributeSerializableObject(objectToDistribute: Object, conf: Configuration, id: String) {
     val tempFile = File.createTempFile("ldif_hadoop_", id, tempDir)
-//    tempFile.deleteOnExit()
+    //tempFile.deleteOnExit()
     val objectWriter = new ObjectOutputStream(new FileOutputStream(tempFile))
     objectWriter.writeObject(objectToDistribute)
     objectWriter.close()
-    DistributedCache.addCacheFile(tempFile.toURI, conf)
+
+    // upload the file to hdfs
+    val fs = FileSystem.get(conf)
+    val localPath = new Path(tempFile.getCanonicalPath)
+    val hdfsPath = new Path("/tmp/edmd")
+    fs.copyFromLocalFile(localPath, hdfsPath)
+
+    // add file to distributed cache
+    DistributedCache.addCacheFile(hdfsPath.toUri(), conf)
   }
 
   private def getDistributedFilePathForID(conf: Configuration, id: String): String = {
     val files = DistributedCache.getCacheFiles(conf)
+
     if(files!=null)
       for(file <- files) {
         if(file.toString.endsWith(id))
