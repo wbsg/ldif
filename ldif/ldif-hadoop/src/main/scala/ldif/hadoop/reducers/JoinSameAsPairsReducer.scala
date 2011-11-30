@@ -6,8 +6,9 @@ import java.util.Iterator
 import org.apache.hadoop.conf.Configuration
 import org.apache.hadoop.mapred._
 import lib.MultipleOutputs
-import ldif.hadoop.utils.URITranslatorHelperMethods
 import org.apache.hadoop.io.{Text, WritableUtils, NullWritable}
+import ldif.hadoop.utils.{HadoopHelper, URITranslatorHelperMethods}
+import ldif.hadoop.runtime.UriTranslatorIteration
 
 /**
  * Created by IntelliJ IDEA.
@@ -38,19 +39,23 @@ class JoinSameAsPairsReducer extends MapReduceBase with Reducer[Text, SameAsPair
         toMax = sameAsPair.to
     }
 
-    val debugOutput = mos.getCollector("debug", reporter).asInstanceOf[OutputCollector[Text, SameAsPairWritable]]
-    // Join and write out sameAsPairs if toMax > entity
-    if(URITranslatorHelperMethods.simpleCompare(joinEntity.toString, toMax)) {
-      output.collect(NullWritable.get(), new SameAsPairWritable(joinEntity.toString, toMax.toString))
-      debugOutput.collect(new Text(""), new SameAsPairWritable(joinEntity.toString, toMax.toString))
-      for(inSameAsPair <- sameAsPairSet)
-        if(URITranslatorHelperMethods.simpleCompare(inSameAsPair.to, toMax)){
-          inSameAsPair.from = inSameAsPair.to
-          inSameAsPair.to = toMax
-          output.collect(NullWritable.get(), inSameAsPair)
-          debugOutput.collect(new Text(""), inSameAsPair)
+//    val debugOutput = mos.getCollector("debug", reporter).asInstanceOf[OutputCollector[Text, SameAsPairWritable]]
+    // Join and write out sameAsPairs
+    for(sameAsPair <- sameAsPairSet)
+      if(URITranslatorHelperMethods.simpleCompare(sameAsPair.to, toMax)){
+        sameAsPair.from = sameAsPair.to
+        sameAsPair.to = toMax
+        if(!URITranslatorHelperMethods.simpleCompare(joinEntity.toString, toMax) && sameAsPairSet.size < sameAsPair.iteration) {
+          val finishedOutput = mos.getCollector("finished", reporter).asInstanceOf[OutputCollector[NullWritable, SameAsPairWritable]]
+          finishedOutput.collect(NullWritable.get(), sameAsPair)
+        } else {
+          output.collect(NullWritable.get(), sameAsPair)
+//          debugOutput.collect(new Text(""), sameAsPair)
         }
-    }
+      }
+    // The cluster size is the number of entities in the cluster
+    if(!URITranslatorHelperMethods.simpleCompare(joinEntity.toString, toMax))
+      reporter.incrCounter("Cluster number by size", (sameAsPairSet.size+1).toString, 1)
   }
 
   override def close() {

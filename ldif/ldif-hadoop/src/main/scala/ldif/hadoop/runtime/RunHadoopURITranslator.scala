@@ -7,12 +7,16 @@ import java.io.File
 import org.apache.hadoop.conf.{Configuration, Configured}
 import org.apache.hadoop.util.{ToolRunner, Tool}
 import ldif.hadoop.types.{SameAsPairWritable, ValuePathWritable}
-import ldif.hadoop.reducers.JoinSameAsPairsReducer
 import org.apache.hadoop.io.{NullWritable, Text, IntWritable}
 import org.apache.hadoop.mapred._
-import ldif.hadoop.mappers.{SameAsPairsMapper, ExtractSameAsPairsMapper}
 import ldif.hadoop.io.{SameAsPairSequenceFileInputFormat, EntityMultipleTextFileOutput, SameAsPairTextOutputFormat, SameAsPairSequenceFileOutputFormat}
 import org.apache.hadoop.fs.{PathFilter, Path}
+import collection.mutable.{Map, HashMap}
+import scala.collection.JavaConversions._
+import ldif.hadoop.utils.HadoopHelper
+import org.apache.hadoop.filecache.DistributedCache
+import ldif.hadoop.mappers.{WriteRemainingSameAsPairsMapper, SameAsPairsMapper, ExtractSameAsPairsMapper}
+import ldif.hadoop.reducers.{WriteRemainingSameAsPairsReducer, JoinSameAsPairsReducer}
 
 /**
  * Created by IntelliJ IDEA.
@@ -25,31 +29,81 @@ import org.apache.hadoop.fs.{PathFilter, Path}
 class RunHadoopURITranslator extends Configured with Tool {
   def run(args: Array[String]): Int = {
     val conf = getConf
+    var iteration = 1
+    HadoopHelper.distributeSerializableObject(UriTranslatorIteration(iteration), conf, "iteration")
+        HadoopHelper.distributeSerializableObject(UriTranslatorIteration(iteration+1), conf, "iteration"+iteration)
+
 
     var job = setInitialSameAsPairsExtractorJob(conf, args(0), args(1)+"/iteration1")
     JobClient.runJob(job)
 
-    job = setFollowingSameAsPairsJob(conf, args(1)+"/iteration1", args(1)+"/iteration2")
-    JobClient.runJob(job)
+    var loop = true
+    var clusterCounter: Map[Int, Long] = new HashMap[Int, Long]
+    while(loop) {
+      iteration+=1
+      HadoopHelper.distributeSerializableObject(UriTranslatorIteration(iteration), conf, "iteration"+iteration)
+      job = setFollowingSameAsPairsJob(conf, args(1)+"/iteration"+(iteration-1), args(1)+"/iteration"+iteration)
+      val runningJob = JobClient.runJob(job)
+      val counters = runningJob.getCounters
+      val newClusterCounter = computeClusterNumberBySizeCountersMap(counters)
+      if(compareClusterCounters(clusterCounter, newClusterCounter))
+        loop = false
+      else
+        clusterCounter = newClusterCounter
+    }
 
-    job = setFollowingSameAsPairsJob(conf, args(1)+"/iteration2", args(1)+"/iteration3")
-    JobClient.runJob(job)
-
-    job = setFollowingSameAsPairsJob(conf, args(1)+"/iteration3", args(1)+"/iteration4")
+    job = setFinishingSameAsPairsJob(conf, args(1)+"/iteration"+iteration, args(1)+"/iteration"+(iteration+1))
     JobClient.runJob(job)
 
     return 0
   }
 
+  private def compareClusterCounters(cCounters1: Map[Int, Long], cCounters2: Map[Int, Long]): Boolean = {
+    if(!isSubSetOfClusterCounters(cCounters1, cCounters2))
+      return false
+    if(!isSubSetOfClusterCounters(cCounters2, cCounters1))
+      return false
+    return true
+  }
+
+  private def isSubSetOfClusterCounters(left: Map[Int, Long], right: Map[Int, Long]): Boolean = {
+    for((counter, number) <- left) {
+      if(!right.contains(counter))
+        return false
+      else if(right.get(counter).get!=number)
+        return false
+    }
+    return true
+  }
+
+  private def computeClusterNumberBySizeCountersMap(counters: Counters): Map[Int, Long] = {
+    var clusterNumberBySizeCounters = new HashMap[Int, Long]
+    val clusterCounters = counters.getGroup("Cluster number by size")
+    for(counter <- clusterCounters)
+      clusterNumberBySizeCounters.put(counter.getName.toInt, counter.getCounter)
+    clusterNumberBySizeCounters
+  }
+
   private def setInitialSameAsPairsExtractorJob(conf: Configuration,inputPath: String, outputPath: String): JobConf = {
     val job = new JobConf(conf, classOf[RunHadoopURITranslator])
     job.setMapperClass(classOf[ExtractSameAsPairsMapper])
+    job.setReducerClass(classOf[JoinSameAsPairsReducer])
     setSameAsPairsJob(job, inputPath, outputPath)
   }
 
   private def setFollowingSameAsPairsJob(conf: Configuration,inputPath: String, outputPath: String): JobConf = {
     val job = new JobConf(conf, classOf[RunHadoopURITranslator])
     job.setMapperClass(classOf[SameAsPairsMapper])
+    job.setReducerClass(classOf[JoinSameAsPairsReducer])
+    job.setInputFormat(classOf[SameAsPairSequenceFileInputFormat])
+    FileInputFormat.setInputPathFilter(job, classOf[DebugFileExcludeFilter])
+    setSameAsPairsJob(job, inputPath, outputPath)
+  }
+
+  private def setFinishingSameAsPairsJob(conf: Configuration,inputPath: String, outputPath: String): JobConf = {
+    val job = new JobConf(conf, classOf[RunHadoopURITranslator])
+    job.setMapperClass(classOf[WriteRemainingSameAsPairsMapper])
+    job.setReducerClass(classOf[WriteRemainingSameAsPairsReducer])
     job.setInputFormat(classOf[SameAsPairSequenceFileInputFormat])
     FileInputFormat.setInputPathFilter(job, classOf[DebugFileExcludeFilter])
     setSameAsPairsJob(job, inputPath, outputPath)
@@ -58,7 +112,6 @@ class RunHadoopURITranslator extends Configured with Tool {
   private def setSameAsPairsJob(job: JobConf, inputPath: String, outputPath: String): JobConf = {
     job.setMapOutputKeyClass(classOf[Text])
     job.setMapOutputValueClass(classOf[SameAsPairWritable])
-    job.setReducerClass(classOf[JoinSameAsPairsReducer])
     job.setOutputKeyClass(classOf[NullWritable])
     job.setOutputValueClass(classOf[SameAsPairWritable])
     job.setOutputFormat(classOf[SameAsPairSequenceFileOutputFormat])
@@ -67,6 +120,7 @@ class RunHadoopURITranslator extends Configured with Tool {
     FileInputFormat.addInputPath(job, in)
     FileOutputFormat.setOutputPath(job, out)
     MultipleOutputs.addNamedOutput(job, "debug", classOf[TextOutputFormat[Text, SameAsPairWritable]], classOf[Text], classOf[SameAsPairWritable])
+    MultipleOutputs.addNamedOutput(job, "finished", classOf[TextOutputFormat[NullWritable, SameAsPairWritable]], classOf[NullWritable], classOf[SameAsPairWritable])
     job
   }
 }

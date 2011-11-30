@@ -34,6 +34,7 @@ import ldif.entity.EntityDescriptionMetadata
 
 object HadoopHelper {
   val tempDir = new File(System.getProperty("java.io.tmpdir"))
+
   def distributeSerializableObject(objectToDistribute: Object, conf: Configuration, id: String) {
     val tempFile = File.createTempFile("ldif_hadoop_", id, tempDir)
 //    tempFile.deleteOnExit()
@@ -43,14 +44,9 @@ object HadoopHelper {
     DistributedCache.addCacheFile(tempFile.toURI, conf)
   }
 
-  def distributeSerializableObject(objectToDistribute: Object, conf: Configuration) {
-    distributeSerializableObject(objectToDistribute, conf, "ser")
-  }
-
-  def getDistributedFileURIs(conf: Configuration): Array[URI] = DistributedCache.getCacheFiles(conf)
-
-  def getDistributedFilePathForID(conf: Configuration, id: String): String = {
+  private def getDistributedFilePathForID(conf: Configuration, id: String): String = {
     val files = DistributedCache.getCacheFiles(conf)
+    println("Print distributed cache")
     if(files!=null)
       for(file <- files) {
         if(file.toString.endsWith(id))
@@ -63,6 +59,15 @@ object HadoopHelper {
     try {
       val file = HadoopHelper.getDistributedFilePathForID(conf, "edmd")
       return (new ObjectInputStream(new FileInputStream(file))).readObject().asInstanceOf[EntityDescriptionMetadata]
+    } catch {
+      case e: RuntimeException => throw new RuntimeException("No Entity Description Meta Data found/distributed. Reason: " + e.getMessage)
+    }
+  }
+
+  def getDistributedObject(conf: Configuration, id: String): AnyRef = {
+    try {
+      val file = HadoopHelper.getDistributedFilePathForID(conf, id)
+      return (new ObjectInputStream(new FileInputStream(file))).readObject()
     } catch {
       case e: RuntimeException => throw new RuntimeException("No Entity Description Meta Data found/distributed. Reason: " + e.getMessage)
     }

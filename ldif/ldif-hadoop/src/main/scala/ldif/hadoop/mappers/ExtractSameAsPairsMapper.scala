@@ -34,7 +34,7 @@ class ExtractSameAsPairsMapper extends MapReduceBase with Mapper[LongWritable, T
       case e => quad = null
     }
     if(quad!=null && quad.predicate==Consts.SAMEAS_URI)
-      URITranslatorHelperMethods.extractAndOutputSameAsPairs(quad.subject.value, quad.value.value, output, mos.getCollector("debug", reporter).asInstanceOf[OutputCollector[Text, SameAsPairWritable]])
+      URITranslatorHelperMethods.extractAndOutputSameAsPairs(quad.subject.value, quad.value.value, output, 1, mos.getCollector("debug", reporter).asInstanceOf[OutputCollector[Text, SameAsPairWritable]])
   }
 
   override def close() {
