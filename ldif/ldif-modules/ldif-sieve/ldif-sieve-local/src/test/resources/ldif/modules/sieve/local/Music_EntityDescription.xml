@@ -8,10 +8,8 @@
         <Pattern>
             <Path>?a/rdfs:label</Path>
         </Pattern>
-    </Patterns>
-    <Patterns>
         <Pattern>
-            <Path>?a/dbpedia:title</Path>
+            <Path>?a/foaf:made</Path>
         </Pattern>
     </Patterns>
 
