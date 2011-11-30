@@ -12,19 +12,21 @@ import ldif.util.Consts
  * To change this template use File | Settings | File Templates.
  */
 
-class SameAsPairWritable(var from: String, var to: String) extends WritableComparable[SameAsPairWritable] {
+class SameAsPairWritable(var from: String, var to: String, var iteration: Int) extends WritableComparable[SameAsPairWritable] {
   def this() {
-    this(null, null)
+    this(null, null, 0)
   }
 
   def write(out: DataOutput) {
     out.writeUTF(from)
     out.writeUTF(to)
+    out.writeInt(iteration)
   }
 
   def readFields(in: DataInput) {
     from = in.readUTF()
     to = in.readUTF()
+    iteration = in.readInt()
   }
 
   def compareTo(other: SameAsPairWritable) = {

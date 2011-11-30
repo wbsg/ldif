@@ -52,7 +52,6 @@ class R2RMapper extends MapReduceBase with Mapper[IntWritable, EntityWritable, N
   }
 
   private def getMappings(conf: JobConf): IndexedSeq[LDIFMapping] = {
-    val file = HadoopHelper.getDistributedFilePathForID(conf, "mappings")
-    return (new ObjectInputStream(new FileInputStream(file))).readObject().asInstanceOf[IndexedSeq[LDIFMapping]]
+    return HadoopHelper.getDistributedObject(conf, "mappings").asInstanceOf[IndexedSeq[LDIFMapping]]
   }
 }

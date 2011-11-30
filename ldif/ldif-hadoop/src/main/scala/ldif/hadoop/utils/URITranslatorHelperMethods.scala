@@ -14,36 +14,27 @@ import org.apache.hadoop.mapred.OutputCollector
  */
 
 object URITranslatorHelperMethods {
-  def extractAndOutputSameAsPairs(subj: String, obj: String, output: OutputCollector[Text, SameAsPairWritable], debugOutput: OutputCollector[Text, SameAsPairWritable]) {
+  def extractAndOutputSameAsPairs(subj: String, obj: String, output: OutputCollector[Text, SameAsPairWritable], iteration: Int, debugOutput: OutputCollector[Text, SameAsPairWritable]) {
     val sameAsPair = new SameAsPairWritable()
     val uri = new Text()
     val from = subj
     val to = obj
 
-    setSameAsPair(sameAsPair, from, to)
+    setSameAsPair(sameAsPair, from, to, iteration)
     uri.set(from)
-    debugOutput.collect(uri, sameAsPair) //DEBUG
-    output.collect(uri, sameAsPair)
-
-    setSameAsPair(sameAsPair, to, from)
-    uri.set(to)
-    debugOutput.collect(uri, sameAsPair) //DEBUG
-    output.collect(uri, sameAsPair)
-
-//    if(simpleCompare(from, to)) {
-//      setSameAsPair(sameAsPair, from, to, false)
-//      uri.set(from)
-//    } else {
-//      setSameAsPair(sameAsPair, to, from, false)
-//      uri.set(to)
-//    }
 //    debugOutput.collect(uri, sameAsPair) //DEBUG
-//    output.collect(uri, sameAsPair)
+    output.collect(uri, sameAsPair)
+
+    setSameAsPair(sameAsPair, to, from, iteration)
+    uri.set(to)
+//    debugOutput.collect(uri, sameAsPair) //DEBUG
+    output.collect(uri, sameAsPair)
   }
 
-  private def setSameAsPair(sameAsPair: SameAsPairWritable, from: String, to: String): SameAsPairWritable = {
+  private def setSameAsPair(sameAsPair: SameAsPairWritable, from: String, to: String, iteration: Int): SameAsPairWritable = {
     sameAsPair.from = from
     sameAsPair.to = to
+    sameAsPair.iteration = iteration
     return sameAsPair
   }
 

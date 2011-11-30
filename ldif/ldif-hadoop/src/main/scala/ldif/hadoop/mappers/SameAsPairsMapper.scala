@@ -26,7 +26,8 @@ class SameAsPairsMapper extends MapReduceBase with Mapper[NullWritable, SameAsPa
   override def map(key: NullWritable, sameAsPair: SameAsPairWritable, output: OutputCollector[Text, SameAsPairWritable], reporter: Reporter) {
     val subj = sameAsPair.from
     val obj = sameAsPair.to
-    URITranslatorHelperMethods.extractAndOutputSameAsPairs(subj, obj, output, mos.getCollector("debug", reporter).asInstanceOf[OutputCollector[Text, SameAsPairWritable]])
+    val iteration = sameAsPair.iteration+1
+    URITranslatorHelperMethods.extractAndOutputSameAsPairs(subj, obj, output, iteration, mos.getCollector("debug", reporter).asInstanceOf[OutputCollector[Text, SameAsPairWritable]])
   }
 
   override def close() {
