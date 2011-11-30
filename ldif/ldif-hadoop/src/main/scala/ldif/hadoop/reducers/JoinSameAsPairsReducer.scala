@@ -55,10 +55,20 @@ class JoinSameAsPairsReducer extends MapReduceBase with Reducer[Text, SameAsPair
       }
     // The cluster size is the number of entities in the cluster
     if(!URITranslatorHelperMethods.simpleCompare(joinEntity.toString, toMax))
-      reporter.incrCounter("Cluster number by size", (sameAsPairSet.size+1).toString, 1)
+      reporter.incrCounter("Cluster number by size", counterStringGenerator.generate(sameAsPairSet.size+1).toString, 1)
   }
 
   override def close() {
     mos.close()
   }
+}
+
+object counterStringGenerator {
+  def generate(size: Int): String = {
+    val sizeString = size.toString
+    val padding = map.get(6-sizeString.length()).getOrElse("")
+    return padding + sizeString
+  }
+
+  private final val map = Map(0->"", 1->" ", 2->"  ", 3->"   ", 4->"    ", 5->"     ", 6->"      ")
 }

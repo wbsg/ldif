@@ -80,7 +80,7 @@ class RunHadoopURITranslator extends Configured with Tool {
     var clusterNumberBySizeCounters = new HashMap[Int, Long]
     val clusterCounters = counters.getGroup("Cluster number by size")
     for(counter <- clusterCounters)
-      clusterNumberBySizeCounters.put(counter.getName.toInt, counter.getCounter)
+      clusterNumberBySizeCounters.put(counter.getName.trim().toInt, counter.getCounter)
     clusterNumberBySizeCounters
   }
 
