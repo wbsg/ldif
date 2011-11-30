@@ -46,7 +46,6 @@ object HadoopHelper {
 
   private def getDistributedFilePathForID(conf: Configuration, id: String): String = {
     val files = DistributedCache.getCacheFiles(conf)
-    println("Print distributed cache")
     if(files!=null)
       for(file <- files) {
         if(file.toString.endsWith(id))

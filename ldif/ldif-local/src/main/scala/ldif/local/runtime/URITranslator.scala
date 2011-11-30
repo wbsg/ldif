@@ -33,7 +33,7 @@ import org.slf4j.LoggerFactory
 import java.net.URLEncoder
 import ldif.runtime.Quad
 import java.util.Properties
-import java.io.File
+import java.io.{BufferedWriter, File}
 
 object URITranslator {
 
@@ -91,6 +91,12 @@ object URITranslator {
       uriMap = generateUriMap(linkReader)
 
     rewriteURIs(quadsReaderPassTwo, uriMap)
+  }
+
+  def outputSameAsCluster(linkReader: QuadReader, output: BufferedWriter) {
+    val uriMap = generateUriMap(linkReader)
+    for((from, to)<-uriMap if from != to)
+      output.append("<"+from+"> <" + to + ">\n")
   }
 
   def rewriteGlobalEntitiesWithMintedURIs(linkReader: QuadReader, mintValues: HashMap[String, String], mintingPropertiesNamespace: String): Map[String, EntityCluster] = {
