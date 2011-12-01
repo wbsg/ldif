@@ -18,9 +18,9 @@
 
 package ldif.hadoop.io
 
-import org.apache.hadoop.mapred.SequenceFileInputFormat
 import ldif.hadoop.types.QuadWritable
 import org.apache.hadoop.io.NullWritable
+import org.apache.hadoop.mapred.{SequenceFileOutputFormat, SequenceFileInputFormat}
 
 /**
  * Created by IntelliJ IDEA.
@@ -31,3 +31,5 @@ import org.apache.hadoop.io.NullWritable
  */
 
 class QuadSequenceFileInput extends SequenceFileInputFormat[NullWritable, QuadWritable]
+
+class QuadSequenceFileOutput extends SequenceFileOutputFormat[NullWritable, QuadWritable]

@@ -54,4 +54,25 @@ class QuadWritable(var subject: NodeWritable, var property: Text, var obj: NodeW
     val sb = new StringBuilder
     sb.append(subject).append(" <").append(property.toString).append("> ").append(obj).append(" <").append(graph.toString).append("> .").toString()
   }
+
+  override def hashCode: Int = {
+    var code = subject.value.hashCode()
+    code = property.hashCode() + code * 31
+    code = obj.value.hashCode() + code * 31
+    code = graph.hashCode() + code * 31
+    return code
+  }
+
+  override def equals(other: Any): Boolean = {
+    if(!other.isInstanceOf[QuadWritable])
+      return false
+    val otherQuad = other.asInstanceOf[QuadWritable]
+    if(subject==otherQuad.subject &&
+       property.toString==otherQuad.property.toString &&
+       obj==otherQuad.obj &&
+       graph.toString==otherQuad.graph.toString)
+      return true
+    else
+      return false
+  }
 }
