@@ -15,8 +15,8 @@ import collection.mutable.{Map, HashMap}
 import scala.collection.JavaConversions._
 import ldif.hadoop.utils.HadoopHelper
 import org.apache.hadoop.filecache.DistributedCache
-import ldif.hadoop.mappers.{WriteRemainingSameAsPairsMapper, SameAsPairsMapper, ExtractSameAsPairsMapper}
 import ldif.hadoop.reducers.{WriteRemainingSameAsPairsReducer, JoinSameAsPairsReducer}
+import ldif.hadoop.mappers.{ConvertSameAsPairsToQuadsMapper, WriteRemainingSameAsPairsMapper, SameAsPairsMapper, ExtractSameAsPairsMapper}
 
 /**
  * Created by IntelliJ IDEA.
@@ -53,6 +53,9 @@ class RunHadoopURIClustering extends Configured with Tool {
     }
 
     job = setFinishingSameAsPairsJob(conf, args(1)+"/iteration"+iteration, args(1)+"/iteration"+(iteration+1))
+    JobClient.runJob(job)
+
+    job = setConversionsJob(conf, args(1)+"/iteration", args(1)+"/output", iteration+1)
     JobClient.runJob(job)
 
     return 0
@@ -120,7 +123,33 @@ class RunHadoopURIClustering extends Configured with Tool {
     FileInputFormat.addInputPath(job, in)
     FileOutputFormat.setOutputPath(job, out)
     MultipleOutputs.addNamedOutput(job, "debug", classOf[TextOutputFormat[Text, SameAsPairWritable]], classOf[Text], classOf[SameAsPairWritable])
-    MultipleOutputs.addNamedOutput(job, "finished", classOf[TextOutputFormat[NullWritable, SameAsPairWritable]], classOf[NullWritable], classOf[SameAsPairWritable])
+    MultipleOutputs.addNamedOutput(job, "finished", classOf[SameAsPairSequenceFileOutputFormat], classOf[NullWritable], classOf[SameAsPairWritable])
+    job
+  }
+
+  private def setConversionsJob(conf: Configuration, inputPath: String, outputPath: String, nrOfIteration: Int): JobConf = {
+    val job = new JobConf(conf, classOf[RunHadoopURIClustering])
+    job.setMapperClass(classOf[ConvertSameAsPairsToQuadsMapper])
+    job.setNumReduceTasks(0)
+    job.setInputFormat(classOf[SameAsPairSequenceFileInputFormat])
+    FileInputFormat.setInputPathFilter(job, classOf[FinishedClustersIncludeFilter])
+
+    job.setMapOutputKeyClass(classOf[NullWritable])
+    job.setMapOutputValueClass(classOf[SameAsPairWritable])
+
+    job.setOutputKeyClass(classOf[NullWritable])
+    job.setOutputValueClass(classOf[SameAsPairWritable])
+
+    job.setOutputFormat(classOf[TextOutputFormat[NullWritable, SameAsPairWritable]])
+
+    for(i <- 1 to  nrOfIteration) {
+      val in = new Path(inputPath+i)
+      FileInputFormat.addInputPath(job, in)
+    }
+
+    val out = new Path(outputPath)
+    FileOutputFormat.setOutputPath(job, out)
+
     job
   }
 }
@@ -128,7 +157,7 @@ class RunHadoopURIClustering extends Configured with Tool {
 object RunHadoopURIClustering {
   private val log = LoggerFactory.getLogger(getClass.getName)
 
-  def runHadoopURITranslator(in : String, out : String) : Int = {
+  def runHadoopURIClustering(in : String, out : String) : Int = {
     log.info("Starting URI Translator")
 
     FileUtils.deleteDirectory(new File(out))
@@ -144,12 +173,18 @@ object RunHadoopURIClustering {
 
   def main(args: Array[String]) {
     if(args.length>=2)
-      runHadoopURITranslator(args(0), args(1))
+      runHadoopURIClustering(args(0), args(1))
   }
 }
 
 class DebugFileExcludeFilter extends PathFilter {
   def accept(path: Path) = {
     path.getName.startsWith("part") || path.getName.startsWith("iteration")
+  }
+}
+
+class FinishedClustersIncludeFilter extends PathFilter {
+  def accept(path: Path) = {
+    path.getName.startsWith("finish") || path.getName.startsWith("iteration")
   }
 }
