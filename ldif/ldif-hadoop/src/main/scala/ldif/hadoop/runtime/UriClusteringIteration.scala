@@ -8,4 +8,4 @@ package ldif.hadoop.runtime
  * To change this template use File | Settings | File Templates.
  */
 
-case class UriTranslatorIteration(nr: Int)
+case class UriClusteringIteration(nr: Int)

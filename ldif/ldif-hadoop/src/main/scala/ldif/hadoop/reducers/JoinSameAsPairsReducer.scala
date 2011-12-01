@@ -8,7 +8,7 @@ import org.apache.hadoop.mapred._
 import lib.MultipleOutputs
 import org.apache.hadoop.io.{Text, WritableUtils, NullWritable}
 import ldif.hadoop.utils.{HadoopHelper, URITranslatorHelperMethods}
-import ldif.hadoop.runtime.UriTranslatorIteration
+import ldif.hadoop.runtime.UriClusteringIteration
 
 /**
  * Created by IntelliJ IDEA.

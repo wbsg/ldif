@@ -26,12 +26,12 @@ import ldif.hadoop.reducers.{WriteRemainingSameAsPairsReducer, JoinSameAsPairsRe
  * To change this template use File | Settings | File Templates.
  */
 
-class RunHadoopURITranslator extends Configured with Tool {
+class RunHadoopURIClustering extends Configured with Tool {
   def run(args: Array[String]): Int = {
     val conf = getConf
     var iteration = 1
-    HadoopHelper.distributeSerializableObject(UriTranslatorIteration(iteration), conf, "iteration")
-        HadoopHelper.distributeSerializableObject(UriTranslatorIteration(iteration+1), conf, "iteration"+iteration)
+    HadoopHelper.distributeSerializableObject(UriClusteringIteration(iteration), conf, "iteration")
+        HadoopHelper.distributeSerializableObject(UriClusteringIteration(iteration+1), conf, "iteration"+iteration)
 
 
     var job = setInitialSameAsPairsExtractorJob(conf, args(0), args(1)+"/iteration1")
@@ -41,7 +41,7 @@ class RunHadoopURITranslator extends Configured with Tool {
     var clusterCounter: Map[Int, Long] = new HashMap[Int, Long]
     while(loop) {
       iteration+=1
-      HadoopHelper.distributeSerializableObject(UriTranslatorIteration(iteration), conf, "iteration"+iteration)
+      HadoopHelper.distributeSerializableObject(UriClusteringIteration(iteration), conf, "iteration"+iteration)
       job = setFollowingSameAsPairsJob(conf, args(1)+"/iteration"+(iteration-1), args(1)+"/iteration"+iteration)
       val runningJob = JobClient.runJob(job)
       val counters = runningJob.getCounters
@@ -85,14 +85,14 @@ class RunHadoopURITranslator extends Configured with Tool {
   }
 
   private def setInitialSameAsPairsExtractorJob(conf: Configuration,inputPath: String, outputPath: String): JobConf = {
-    val job = new JobConf(conf, classOf[RunHadoopURITranslator])
+    val job = new JobConf(conf, classOf[RunHadoopURIClustering])
     job.setMapperClass(classOf[ExtractSameAsPairsMapper])
     job.setReducerClass(classOf[JoinSameAsPairsReducer])
     setSameAsPairsJob(job, inputPath, outputPath)
   }
 
   private def setFollowingSameAsPairsJob(conf: Configuration,inputPath: String, outputPath: String): JobConf = {
-    val job = new JobConf(conf, classOf[RunHadoopURITranslator])
+    val job = new JobConf(conf, classOf[RunHadoopURIClustering])
     job.setMapperClass(classOf[SameAsPairsMapper])
     job.setReducerClass(classOf[JoinSameAsPairsReducer])
     job.setInputFormat(classOf[SameAsPairSequenceFileInputFormat])
@@ -101,7 +101,7 @@ class RunHadoopURITranslator extends Configured with Tool {
   }
 
   private def setFinishingSameAsPairsJob(conf: Configuration,inputPath: String, outputPath: String): JobConf = {
-    val job = new JobConf(conf, classOf[RunHadoopURITranslator])
+    val job = new JobConf(conf, classOf[RunHadoopURIClustering])
     job.setMapperClass(classOf[WriteRemainingSameAsPairsMapper])
     job.setReducerClass(classOf[WriteRemainingSameAsPairsReducer])
     job.setInputFormat(classOf[SameAsPairSequenceFileInputFormat])
@@ -125,7 +125,7 @@ class RunHadoopURITranslator extends Configured with Tool {
   }
 }
 
-object RunHadoopURITranslator {
+object RunHadoopURIClustering {
   private val log = LoggerFactory.getLogger(getClass.getName)
 
   def runHadoopURITranslator(in : String, out : String) : Int = {
@@ -136,7 +136,7 @@ object RunHadoopURITranslator {
     val start = System.currentTimeMillis
     val conf = new Configuration
 
-    val res = ToolRunner.run(conf, new RunHadoopURITranslator(), Array(in, out))
+    val res = ToolRunner.run(conf, new RunHadoopURIClustering(), Array(in, out))
 
     log.info("That's it. Took " + (System.currentTimeMillis-start)/1000.0 + "s")
     res
