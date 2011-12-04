@@ -19,19 +19,17 @@
 package ldif.hadoop.entitybuilder.phases
 
 import ldif.hadoop.entitybuilder.mappers._
-import org.apache.hadoop.fs.Path
 import org.apache.hadoop.mapred._
 import lib.{NullOutputFormat, MultipleOutputs}
 import org.apache.hadoop.util._
 import org.apache.hadoop.conf._
-import org.apache.commons.io.FileUtils
 import org.apache.hadoop.io.IntWritable
 import ldif.hadoop.types._
-import java.io.File
 import ldif.hadoop.entitybuilder.io._
 import ldif.hadoop.utils.HadoopHelper
 import ldif.entity.{EntityDescription, EntityDescriptionMetadata, EntityDescriptionMetaDataExtractor}
 import org.slf4j.LoggerFactory
+import org.apache.hadoop.fs.{FileSystem, Path}
 
 /**
  *  Hadoop EntityBuilder - Phase 2
@@ -42,6 +40,8 @@ class Phase2 extends Configured with Tool {
   def run(args: Array[String]): Int = {
     val conf = getConf
     val job = new JobConf(conf, classOf[Phase2])
+
+    job.setJobName("HEB-Phase2")
 
     //    job.setJarByClass(classOf[RunHadoop])
     job.setNumReduceTasks(0)
@@ -77,12 +77,17 @@ object Phase2 {
   def runPhase(in : String, out : String, edmd : EntityDescriptionMetadata) : Int = {
     log.info("Starting phase 2 of the EntityBuilder: Filtering quads and creating initial value paths")
 
-    FileUtils.deleteDirectory(new File(out))
-
     val start = System.currentTimeMillis
     val conf = new Configuration
     HadoopHelper.distributeSerializableObject(edmd, conf, "edmd")
 
+    // remove existing output
+    val hdfs = FileSystem.get(conf)
+    val hdPath = new Path(out)
+    if (hdfs.exists(hdPath))
+      hdfs.delete(hdPath, true)
+
+    log.info("Output directory: " + out)
     val res = ToolRunner.run(conf, new Phase2(), Array(in, out))
 
     log.info("That's it. Took " + (System.currentTimeMillis-start)/1000.0 + "s")

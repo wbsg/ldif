@@ -30,7 +30,7 @@ import ldif.module.DataFormat
 import ldif.entity.EntityDescription
 import org.apache.hadoop.fs.Path
 
-class HadoopDataFormat extends DataFormat
+trait HadoopDataFormat extends DataFormat
 
 /**
  * Used when no input or output is needed e.g. the input of a data source.
@@ -51,10 +51,21 @@ case class QuadFormat() extends HadoopDataFormat
 }
 
 /**
+ * The dynamic entity format structures the data in entities of resources, where the format of the resource is dynamic
+ * i.e. the task can process/output any format requested by the runtime.
+ */
+case class DynamicEntityFormat() extends HadoopDataFormat
+{
+  type Reader = Seq[Path]
+  type Writer = Seq[Path]
+}
+
+
+/**
  * The entity format structures the data in entities of resources, where the format of the resources is defined statically by the concrete task.
  * The Runtime transforms the input data to the specified entity description prior to providing it to the task.
  */
-case class EntityFormat(entityDescriptions : Seq[EntityDescription]) extends HadoopDataFormat
+case class StaticEntityFormat(entityDescriptions : Seq[EntityDescription])  extends HadoopDataFormat
 {
   type Reader = Seq[Path]
   type Writer = Seq[Path]

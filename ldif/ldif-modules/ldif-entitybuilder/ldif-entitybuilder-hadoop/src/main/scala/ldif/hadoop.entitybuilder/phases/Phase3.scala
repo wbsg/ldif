@@ -24,10 +24,8 @@ import org.apache.hadoop.mapred._
 import lib.{MultipleOutputs, NullOutputFormat}
 import org.apache.hadoop.util._
 import org.apache.hadoop.conf._
-import org.apache.commons.io.FileUtils
 import org.apache.hadoop.io.IntWritable
 import ldif.hadoop.types._
-import java.io.File
 import ldif.hadoop.entitybuilder.io._
 import ldif.hadoop.utils.HadoopHelper
 import ldif.util.Consts
@@ -51,6 +49,8 @@ class Phase3 extends Configured with Tool {
 
     val maxPhase = args(0).toInt
     val phase = args(1).toInt
+
+    job.setJobName("HEB-Phase3/"+args(1))
 
     job.setMapperClass(classOf[ValuePathJoinMapper])
     job.setReducerClass(classOf[ValuePathJoinReducer])
@@ -114,11 +114,15 @@ object Phase3 {
   def runPhase(in : String, out : String, edmd : EntityDescriptionMetadata) : Int = {
     log.info("Starting phase 3 of the EntityBuilder: Joining value paths")
 
-    FileUtils.deleteDirectory(new File(out))
-
     val start = System.currentTimeMillis
     val conf = new Configuration
     HadoopHelper.distributeSerializableObject(edmd, conf, "edmd")
+
+    // remove existing output
+    val hdfs = FileSystem.get(conf)
+    val hdPath = new Path(out)
+    if (hdfs.exists(hdPath))
+      hdfs.delete(hdPath, true)
 
     var res = 0
 
@@ -130,6 +134,9 @@ object Phase3 {
     }
 
     log.info("That's it. Took " + (System.currentTimeMillis-start)/1000.0 + "s")
+
+    // delete output of the previous phase
+    hdfs.delete(new Path(in), true)
     res
   }
 }

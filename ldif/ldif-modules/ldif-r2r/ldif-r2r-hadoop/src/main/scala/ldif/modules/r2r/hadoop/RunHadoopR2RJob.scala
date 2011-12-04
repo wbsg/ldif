@@ -18,22 +18,15 @@
 
 package ldif.modules.r2r.hadoop
 
-import org.apache.hadoop.mapred.lib.{MultipleOutputs, NullOutputFormat}
 import org.apache.hadoop.mapred.{JobClient, FileOutputFormat, FileInputFormat, JobConf}
-import java.math.BigInteger
-import de.fuberlin.wiwiss.r2r.{JenaModelSource, Repository, EnumeratingURIGenerator, FileOrURISource}
 import de.fuberlin.wiwiss.r2r.LDIFMapping
-import ldif.entity.{EntityDescriptionMetaDataExtractor, EntityDescription}
-import org.apache.commons.io.FileUtils
-import java.io.File
 import org.apache.hadoop.conf.{Configuration, Configured}
 import ldif.hadoop.utils.HadoopHelper
 import org.apache.hadoop.util.{ToolRunner, Tool}
-import org.apache.hadoop.io.{NullWritable, IntWritable}
-import ldif.hadoop.types.{QuadWritable, ValuePathWritable}
+import org.apache.hadoop.io.NullWritable
+import ldif.hadoop.types.QuadWritable
 import org.apache.hadoop.fs.{FileSystem, Path}
-import scala.collection.JavaConversions._
-import ldif.hadoop.io.{QuadTextFileOutput, EntityMultipleSequenceFileOutput, EntitySequenceFileInput, QuadSequenceFileOutput}
+import ldif.hadoop.io.{QuadTextFileOutput, EntityMultipleSequenceFileOutput, EntitySequenceFileInput}
 
 /**
  * Created by IntelliJ IDEA.
@@ -54,6 +47,8 @@ class RunHadoopR2RJob extends Configured with Tool {
     val fileSystem = FileSystem.get(conf)
     val nrOfMappings = args(2).toInt
 
+    job.setJobName("R2R")
+
     job.setNumReduceTasks(0)
     job.setMapperClass(classOf[R2RMapper])
     job.setMapOutputKeyClass(classOf[NullWritable])
@@ -64,7 +59,7 @@ class RunHadoopR2RJob extends Configured with Tool {
     job.setInputFormat(classOf[EntitySequenceFileInput])
     job.setOutputFormat(classOf[QuadTextFileOutput])
 
-//    MultipleOutputs.addNamedOutput(job, "debug", classOf[QuadTextFileOutput], classOf[NullWritable], classOf[QuadWritable])
+    //    MultipleOutputs.addNamedOutput(job, "debug", classOf[QuadTextFileOutput], classOf[NullWritable], classOf[QuadWritable])
 
     for(i <- 0 until  nrOfMappings) {
       val in = new Path(args(0), EntityMultipleSequenceFileOutput.generateDirectoryName(i))
@@ -90,10 +85,16 @@ object RunHadoopR2RJob {
   def execute(inputPath: String, outputPath: String, mappings: IndexedSeq[LDIFMapping]): Int = {
     println("Starting R2R Job")
 
-    FileUtils.deleteDirectory(new File(outputPath))
     val start = System.currentTimeMillis
     val conf = new Configuration
     HadoopHelper.distributeSerializableObject(mappings, conf, "mappings")
+
+    // remove existing output
+    val hdfs = FileSystem.get(conf)
+    val hdPath = new Path(outputPath)
+    if (hdfs.exists(hdPath))
+      hdfs.delete(hdPath, true)
+
     val res = ToolRunner.run(conf, new RunHadoopR2RJob(), Array[String](inputPath, outputPath, mappings.length.toString))
     println("That's it. Took " + (System.currentTimeMillis-start)/1000.0 + "s")
     res

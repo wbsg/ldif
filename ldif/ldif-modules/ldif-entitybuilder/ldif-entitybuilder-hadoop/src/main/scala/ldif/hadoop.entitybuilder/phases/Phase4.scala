@@ -24,10 +24,8 @@ import org.apache.hadoop.mapred._
 import lib.MultipleOutputs
 import org.apache.hadoop.util._
 import org.apache.hadoop.conf._
-import org.apache.commons.io.FileUtils
 import org.apache.hadoop.io.IntWritable
 import ldif.hadoop.types._
-import java.io.File
 import ldif.hadoop.entitybuilder.io._
 import ldif.hadoop.utils.HadoopHelper
 import org.apache.hadoop.fs.{FileSystem, Path}
@@ -47,6 +45,8 @@ class Phase4 extends Configured with Tool {
     val fileSystem = FileSystem.get(conf)
     val jobConf = new JobConf(conf, classOf[Phase4])
     val maxPhase = args(0).toInt
+
+    jobConf.setJobName("HEB-Phase4")
 
     jobConf.setMapperClass(classOf[EntityConstructionMapper])
     jobConf.setReducerClass(classOf[EntityConstructionReducer])
@@ -91,17 +91,26 @@ object Phase4 {
   def runPhase(in : String, out : String, edmd : EntityDescriptionMetadata) : Int = {
     log.info("Starting phase 4 of the EntityBuilder: assembling entities")
 
-    FileUtils.deleteDirectory(new File(out))
+    log.info("Output directory: " + out)
 
     val start = System.currentTimeMillis
     val conf = new Configuration
     HadoopHelper.distributeSerializableObject(edmd, conf, "edmd")
+
+    // remove existing output
+    val hdfs = FileSystem.get(conf)
+    val hdPath = new Path(out)
+    if (hdfs.exists(hdPath))
+      hdfs.delete(hdPath, true)
 
     val maxPhase = edmd.maxPhase
 
     val res = ToolRunner.run(conf, new Phase4(), Array(maxPhase.toString, in, out))
 
     log.info("That's it. Took " + (System.currentTimeMillis-start)/1000.0 + "s")
+
+    // delete output of the previous phase
+    hdfs.delete(new Path(in), true)
     res
   }
 }
