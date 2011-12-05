@@ -60,7 +60,7 @@ class RunHadoopUriRewriting extends Configured with Tool {
 
 object RunHadoopUriRewriting {
 
-  def execute(datasetInputPath: String, sameAsLinksInputPath: String, outputPath: String): Int = {
+  def execute(datasetInputPath: String, sameAsLinksInputPath: String, outputPath: String): Int = {//TODO: Add using temp directory for intermediary results (also for other jobs)
     println("Starting Uri Rewriting...")
     val start = System.currentTimeMillis
     execute(datasetInputPath, sameAsLinksInputPath, outputPath+"/rewrittenSubjects", false)
