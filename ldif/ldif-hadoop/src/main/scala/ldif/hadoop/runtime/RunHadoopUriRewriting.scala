@@ -65,7 +65,7 @@ object RunHadoopUriRewriting {
     val start = System.currentTimeMillis
     execute(datasetInputPath, sameAsLinksInputPath, outputPath+"/rewrittenSubjects", false)
     val res = execute(outputPath+"/rewrittenSubjects", sameAsLinksInputPath, outputPath+"/output", true)
-    println("That's it. Took " + (System.currentTimeMillis-start)/1000.0 + "s")
+    println("That's it. Uri Rewriting took " + (System.currentTimeMillis-start)/1000.0 + "s")
     res
   }
 

@@ -6,10 +6,8 @@ import org.apache.commons.io.FileUtils
 import java.io.File
 import org.apache.hadoop.conf.{Configuration, Configured}
 import org.apache.hadoop.util.{ToolRunner, Tool}
-import ldif.hadoop.types.{SameAsPairWritable, ValuePathWritable}
 import org.apache.hadoop.io.{NullWritable, Text, IntWritable}
 import org.apache.hadoop.mapred._
-import ldif.hadoop.io.{SameAsPairSequenceFileInputFormat, EntityMultipleTextFileOutput, SameAsPairTextOutputFormat, SameAsPairSequenceFileOutputFormat}
 import org.apache.hadoop.fs.{PathFilter, Path}
 import collection.mutable.{Map, HashMap}
 import scala.collection.JavaConversions._
@@ -17,6 +15,8 @@ import ldif.hadoop.utils.HadoopHelper
 import org.apache.hadoop.filecache.DistributedCache
 import ldif.hadoop.reducers.{WriteRemainingSameAsPairsReducer, JoinSameAsPairsReducer}
 import ldif.hadoop.mappers.{ConvertSameAsPairsToQuadsMapper, WriteRemainingSameAsPairsMapper, SameAsPairsMapper, ExtractSameAsPairsMapper}
+import ldif.hadoop.io._
+import ldif.hadoop.types.{QuadWritable, SameAsPairWritable, ValuePathWritable}
 
 /**
  * Created by IntelliJ IDEA.
@@ -135,12 +135,12 @@ class RunHadoopURIClustering extends Configured with Tool {
     FileInputFormat.setInputPathFilter(job, classOf[FinishedClustersIncludeFilter])
 
     job.setMapOutputKeyClass(classOf[NullWritable])
-    job.setMapOutputValueClass(classOf[SameAsPairWritable])
+    job.setMapOutputValueClass(classOf[QuadWritable])
 
     job.setOutputKeyClass(classOf[NullWritable])
-    job.setOutputValueClass(classOf[SameAsPairWritable])
+    job.setOutputValueClass(classOf[QuadWritable])
 
-    job.setOutputFormat(classOf[TextOutputFormat[NullWritable, SameAsPairWritable]])
+    job.setOutputFormat(classOf[QuadSequenceFileOutput])
 
     for(i <- 1 to  nrOfIteration) {
       val in = new Path(inputPath+i)
@@ -158,7 +158,7 @@ object RunHadoopURIClustering {
   private val log = LoggerFactory.getLogger(getClass.getName)
 
   def runHadoopURIClustering(in : String, out : String) : Int = {
-    log.info("Starting URI Translator")
+    log.info("Starting URI Clustering...")
 
     FileUtils.deleteDirectory(new File(out))
 
@@ -167,7 +167,7 @@ object RunHadoopURIClustering {
 
     val res = ToolRunner.run(conf, new RunHadoopURIClustering(), Array(in, out))
 
-    log.info("That's it. Took " + (System.currentTimeMillis-start)/1000.0 + "s")
+    log.info("That's it. URI Clustering took " + (System.currentTimeMillis-start)/1000.0 + "s")
     res
   }
 

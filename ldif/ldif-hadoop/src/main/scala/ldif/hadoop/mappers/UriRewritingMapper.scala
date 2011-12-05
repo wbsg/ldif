@@ -7,6 +7,7 @@ import org.apache.hadoop.mapred.lib.MultipleOutputs
 import ldif.hadoop.utils.HadoopHelper
 import org.apache.hadoop.mapred._
 import ldif.util.Consts
+import ldif.hadoop.runtime.RewriteObjectUris
 
 /**
  * Created by IntelliJ IDEA.
@@ -22,7 +23,7 @@ class UriRewritingMapper extends MapReduceBase with Mapper[NullWritable, QuadWri
 
   override def configure(conf: JobConf) {
     mos = new MultipleOutputs(conf)
-    rewriteObjectNode = HadoopHelper.getDistributedObject(conf,"rewriteObjectUris").asInstanceOf[Boolean]
+    rewriteObjectNode = HadoopHelper.getDistributedObject(conf,"rewriteObjectUris").asInstanceOf[RewriteObjectUris].value
   }
 
   /**
@@ -30,7 +31,7 @@ class UriRewritingMapper extends MapReduceBase with Mapper[NullWritable, QuadWri
    */
   override def map(key: NullWritable, quad: QuadWritable, output: OutputCollector[NodeWritable, QuadWritable], reporter: Reporter) {
     var nodeToRewrite: NodeWritable = null
-    if(rewriteObjectNode && quad.property!=Consts.SAMEAS_URI)
+    if(rewriteObjectNode && quad.property.toString!=Consts.SAMEAS_URI)
       nodeToRewrite = quad.obj
     else
       nodeToRewrite = quad.subject

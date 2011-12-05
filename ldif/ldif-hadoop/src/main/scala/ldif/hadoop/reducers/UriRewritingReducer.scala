@@ -11,6 +11,7 @@ import collection.mutable.HashSet
 import ldif.util.Consts
 import org.apache.hadoop.io.{WritableUtils, NullWritable, Text}
 import ldif.entity.{Node, NodeWritable}
+import ldif.hadoop.runtime.RewriteObjectUris
 
 /**
  * Created by IntelliJ IDEA.
@@ -28,7 +29,7 @@ class UriRewritingReducer extends MapReduceBase with Reducer[NodeWritable, QuadW
   override def configure(conf: JobConf) {
     mos = new MultipleOutputs(conf)
     config = conf
-    rewriteObjectNode = HadoopHelper.getDistributedObject(conf,"rewriteObjectUris").asInstanceOf[Boolean]
+    rewriteObjectNode = HadoopHelper.getDistributedObject(conf,"rewriteObjectUris").asInstanceOf[RewriteObjectUris].value
   }
 
   /**
@@ -43,8 +44,9 @@ class UriRewritingReducer extends MapReduceBase with Reducer[NodeWritable, QuadW
       val quad: QuadWritable = quads.next()
       // Find the "largest" rewrite node in all (should usually be at most one) sameAs links
       // blank nodes are always smaller than nodes of other types
-      if(quad.property==Consts.SAMEAS_URI && (reWriteNode==null || reWriteNode.compare(quad.obj) < 0))
-        reWriteNode = WritableUtils.clone[NodeWritable](quad.obj, config)
+      if(quad.property.toString==Consts.SAMEAS_URI) {
+        if(reWriteNode==null || reWriteNode.compare(quad.obj) < 0)
+          reWriteNode = WritableUtils.clone[NodeWritable](quad.obj, config) }
       else
         quadSet.add(WritableUtils.clone[QuadWritable](quad, config))
     }
