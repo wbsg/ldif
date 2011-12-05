@@ -200,9 +200,8 @@ object URITranslator {
   }
 
   // Generate a Map from uri to "global" uri
-  private def generateUriMap(linkReader: QuadReader): Map[String, String] = {
+  def generateUriMap(linkReader: QuadReader): Map[String, String] = {
     val entityToClusterMap: Map[String, EntityCluster] = createEntityCluster(linkReader)
-
     generateUriMap(entityToClusterMap)
   }
 
@@ -246,7 +245,7 @@ object URITranslator {
         case (Some(cluster1), Some(cluster2)) => {
           val globalCluster1 = cluster1.getGlobalCluster
           if (globalCluster1 != cluster2.getGlobalCluster)
-            globalCluster1.integrateCluster(cluster2, entityToClusterMap)
+            globalCluster1.integrateCluster(cluster2.getGlobalCluster(), entityToClusterMap)
         }
       }
     }
