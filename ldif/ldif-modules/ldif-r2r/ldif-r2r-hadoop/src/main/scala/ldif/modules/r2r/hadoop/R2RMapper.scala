@@ -52,6 +52,6 @@ class R2RMapper extends MapReduceBase with Mapper[IntWritable, EntityWritable, N
   }
 
   private def getMappings(conf: JobConf): IndexedSeq[LDIFMapping] = {
-    return HadoopHelper.getDistributedObject(conf, "mappings").asInstanceOf[IndexedSeq[LDIFMapping]]
+    HadoopHelper.getDistributedObject(conf, "mappings").asInstanceOf[IndexedSeq[LDIFMapping]]
   }
 }

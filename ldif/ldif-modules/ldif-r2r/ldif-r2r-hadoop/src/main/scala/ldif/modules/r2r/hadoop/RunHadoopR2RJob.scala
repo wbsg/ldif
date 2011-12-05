@@ -27,6 +27,7 @@ import org.apache.hadoop.io.NullWritable
 import ldif.hadoop.types.QuadWritable
 import org.apache.hadoop.fs.{FileSystem, Path}
 import ldif.hadoop.io.{QuadTextFileOutput, EntityMultipleSequenceFileOutput, EntitySequenceFileInput}
+import org.slf4j.LoggerFactory
 
 /**
  * Created by IntelliJ IDEA.
@@ -76,6 +77,7 @@ class RunHadoopR2RJob extends Configured with Tool {
 }
 
 object RunHadoopR2RJob {
+  private val log = LoggerFactory.getLogger(getClass.getName)
 
   def runHadoopR2RJob(inputPath: String, outputPath: String, mappings: IndexedSeq[LDIFMapping]): Int = {
     val res = execute(outputPath+"_4", outputPath+"_r2r", mappings)
@@ -83,7 +85,7 @@ object RunHadoopR2RJob {
   }
 
   def execute(inputPath: String, outputPath: String, mappings: IndexedSeq[LDIFMapping]): Int = {
-    println("Starting R2R Job")
+    log.info("Starting R2R Job")
 
     val start = System.currentTimeMillis
     val conf = new Configuration
@@ -96,7 +98,7 @@ object RunHadoopR2RJob {
       hdfs.delete(hdPath, true)
 
     val res = ToolRunner.run(conf, new RunHadoopR2RJob(), Array[String](inputPath, outputPath, mappings.length.toString))
-    println("That's it. Took " + (System.currentTimeMillis-start)/1000.0 + "s")
+    log.info("That's it. Took " + (System.currentTimeMillis-start)/1000.0 + "s")
     res
   }
 }

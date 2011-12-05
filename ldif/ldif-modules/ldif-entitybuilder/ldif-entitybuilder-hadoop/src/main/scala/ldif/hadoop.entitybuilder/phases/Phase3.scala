@@ -54,6 +54,7 @@ class Phase3 extends Configured with Tool {
 
     job.setMapperClass(classOf[ValuePathJoinMapper])
     job.setReducerClass(classOf[ValuePathJoinReducer])
+    job.setNumReduceTasks(4)
 
     job.setMapOutputKeyClass(classOf[PathJoinValueWritable])
     job.setMapOutputValueClass(classOf[ValuePathWritable])
