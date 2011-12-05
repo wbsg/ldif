@@ -77,7 +77,9 @@ object HadoopHelper {
   def getDistributedObject(conf: Configuration, id: String): AnyRef = {
     try {
       val file = HadoopHelper.getDistributedFilePathForID(conf, id)
-      return (new ObjectInputStream(new FileInputStream(file))).readObject()
+      val fs = FileSystem.get(conf)
+      val inputStream = fs.open(new Path(file))
+      new ObjectInputStream(inputStream).readObject()
     } catch {
       case e: RuntimeException => throw new RuntimeException("No Entity Description Meta Data found/distributed. Reason: " + e.getMessage)
     }
