@@ -1,4 +1,4 @@
-/* 
+/*
  * LDIF
  *
  * Copyright 2011 Freie Universität Berlin, MediaEvent Services GmbH & Co. KG
@@ -16,20 +16,10 @@
  * limitations under the License.
  */
 
-package ldif.modules.r2r.hadoop
+package ldif.hadoop.runtime
 
-import ldif.module.ModuleTask
-import ldif.util.Identifier
-import de.fuberlin.wiwiss.r2r.LDIFMapping
+import java.util.Properties
 
-/**
- * Created by IntelliJ IDEA.
- * User: andreas
- * Date: 11/17/11
- * Time: 5:20 PM
- * To change this template use File | Settings | File Templates.
- */
+case class ConfigParameters(val configProperties: Properties)
 
-class R2RHadoopTask(val ldifMappings: IndexedSeq[LDIFMapping]) extends ModuleTask{
-  val name: Identifier = ldifMappings.head.mapping.getUri  //TODO use a proper identifier
-}
+

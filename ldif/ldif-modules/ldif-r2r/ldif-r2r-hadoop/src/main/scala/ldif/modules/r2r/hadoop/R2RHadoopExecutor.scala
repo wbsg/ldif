@@ -35,10 +35,10 @@ import ldif.module.Executor
 class R2RHadoopExecutor extends Executor {
   private val log = LoggerFactory.getLogger(getClass.getName)
   type TaskType = R2RHadoopTask
-  type InputFormat = EntityFormat
+  type InputFormat = StaticEntityFormat
   type OutputFormat = QuadFormat
 
-  def input(task: R2RHadoopTask) = EntityFormat(for(mapping <- task.ldifMappings) yield mapping.entityDescription)
+  def input(task: R2RHadoopTask) = StaticEntityFormat(for(mapping <- task.ldifMappings) yield mapping.entityDescription)
 
   def output(task: R2RHadoopTask) = new QuadFormat()
 

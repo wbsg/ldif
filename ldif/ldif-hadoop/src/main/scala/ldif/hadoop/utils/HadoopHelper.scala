@@ -22,7 +22,7 @@ import org.apache.hadoop.filecache.DistributedCache
 import java.io._
 import org.apache.hadoop.conf.Configuration
 import ldif.entity.EntityDescriptionMetadata
-import org.apache.hadoop.fs.{Path, FileSystem}
+import org.apache.hadoop.fs.{FileUtil, Path, FileSystem}
 
 /**
  * Created by IntelliJ IDEA.
@@ -42,14 +42,14 @@ object HadoopHelper {
     objectWriter.writeObject(objectToDistribute)
     objectWriter.close()
 
-    // upload the file to hdfs
+    // copy  local file to hdfs
     val fs = FileSystem.get(conf)
-    val localPath = new Path(tempFile.getCanonicalPath)
-    val hdfsPath = new Path("/tmp/edmd")
-    fs.copyFromLocalFile(localPath, hdfsPath)
+    val hdfsPath = new Path(tempFile.getCanonicalPath)
+    if (!fs.exists(hdfsPath))
+      FileUtil.copy(tempFile,fs, hdfsPath, false, conf)
 
     // add file to distributed cache
-    DistributedCache.addCacheFile(hdfsPath.toUri(), conf)
+    DistributedCache.addCacheFile(hdfsPath.toUri, conf)
   }
 
   private def getDistributedFilePathForID(conf: Configuration, id: String): String = {
@@ -66,7 +66,9 @@ object HadoopHelper {
   def getEntityDescriptionMetaData(conf: Configuration): EntityDescriptionMetadata = {
     try {
       val file = HadoopHelper.getDistributedFilePathForID(conf, "edmd")
-      return (new ObjectInputStream(new FileInputStream(file))).readObject().asInstanceOf[EntityDescriptionMetadata]
+      val fs = FileSystem.get(conf)
+      val inputStream = fs.open(new Path(file))
+      new ObjectInputStream(inputStream).readObject().asInstanceOf[EntityDescriptionMetadata]
     } catch {
       case e: RuntimeException => throw new RuntimeException("No Entity Description Meta Data found/distributed. Reason: " + e.getMessage)
     }
