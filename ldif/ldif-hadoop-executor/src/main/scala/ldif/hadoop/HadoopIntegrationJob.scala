@@ -51,6 +51,9 @@ class HadoopIntegrationJob(val config : HadoopIntegrationConfig, debug : Boolean
     // Execute linking phase
     val silkOutput = generateLinks(r2rOutput)
     log.info("Time needed to link data: " + stopWatch.getTimeSpanInSeconds + "s")
+
+    // Execute URI Translation
+
   }
 
   /**

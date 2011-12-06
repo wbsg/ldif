@@ -1,5 +1,7 @@
 package ldif.hadoop.runtime
 
+import ldif.util.Consts
+
 /**
  * Created by IntelliJ IDEA.
  * User: andreas
@@ -10,9 +12,10 @@ package ldif.hadoop.runtime
 
 object RunHadoopUriTranslation {
   def execute(datasetPath: String, sameasPath: String, outputPath: String) {
-    RunHadoopURIClustering.runHadoopURIClustering(sameasPath,outputPath+"/uriclustering")
-    RunHadoopQuadConverter.execute(datasetPath, outputPath+"/dataset")
-    RunHadoopUriRewriting.execute(outputPath+"/dataset", outputPath+"/uriclustering/output", outputPath+"/rewrittenUris")
+    val hadoopTmpDir = "hadoop_tmp"+Consts.fileSeparator+"uritranslation"
+    RunHadoopURIClustering.runHadoopURIClustering(sameasPath,hadoopTmpDir+"/uriclustering")
+//    RunHadoopQuadConverter.execute(datasetPath, ouputDirPrefix+"/dataset")
+    RunHadoopUriRewriting.execute(datasetPath, hadoopTmpDir+"/uriclustering", outputPath)
   }
 
   def main(args: Array[String]) = {

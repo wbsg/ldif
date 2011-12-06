@@ -32,12 +32,12 @@ class HadoopEntityBuilder (entityDescriptions : IndexedSeq[EntityDescription], r
   // Build entities
   def buildEntities (writer : Path) {
     val sourcesDir = readers.head.toString
-    val ouputDirPrefix = "ebTmpOutput"+Consts.fileSeparator+"output_phase"
+    val hadoopTmpDir = "hadoop_tmp"+Consts.fileSeparator+"output_phase"
 
     val edmd = EntityDescriptionMetaDataExtractor.extract(entityDescriptions)
 
-    Phase2.runPhase(sourcesDir, ouputDirPrefix+"_2", edmd, getsTextInput)
-    Phase3.runPhase(ouputDirPrefix+"_2", ouputDirPrefix+"_3", edmd)
-    Phase4.runPhase(ouputDirPrefix+"_3", writer.toString, edmd)
+    Phase2.runPhase(sourcesDir, hadoopTmpDir+"_2", edmd, getsTextInput)
+    Phase3.runPhase(hadoopTmpDir+"_2", hadoopTmpDir+"_3", edmd)
+    Phase4.runPhase(hadoopTmpDir+"_3", writer.toString, edmd)
   }
 }

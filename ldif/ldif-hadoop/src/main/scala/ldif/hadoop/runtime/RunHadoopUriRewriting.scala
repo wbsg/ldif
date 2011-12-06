@@ -17,6 +17,7 @@ import ldif.hadoop.io._
 import ldif.hadoop.mappers.{UriRewritingMapper, WriteRemainingSameAsPairsMapper, SameAsPairsMapper, ExtractSameAsPairsMapper}
 import ldif.hadoop.reducers.{UriRewritingReducer, WriteRemainingSameAsPairsReducer, JoinSameAsPairsReducer}
 import ldif.entity.NodeWritable
+import ldif.util.Consts
 
 /**
  * Created by IntelliJ IDEA.
@@ -59,19 +60,27 @@ class RunHadoopUriRewriting extends Configured with Tool {
 }
 
 object RunHadoopUriRewriting {
+  private val log = LoggerFactory.getLogger(getClass.getName)
 
-  def execute(datasetInputPath: String, sameAsLinksInputPath: String, outputPath: String): Int = {//TODO: Add using temp directory for intermediary results (also for other jobs)
-    println("Starting Uri Rewriting...")
+  def execute(datasetInputPath: String, sameAsLinksInputPath: String, outputPath: String): Int = {
+    log.info("Starting Uri Rewriting...")
+    val hadoopTmpDir = "hadoop_tmp"+Consts.fileSeparator+"urirewriting"
     val start = System.currentTimeMillis
-    execute(datasetInputPath, sameAsLinksInputPath, outputPath+"/rewrittenSubjects", false)
-    val res = execute(outputPath+"/rewrittenSubjects", sameAsLinksInputPath, outputPath+"/output", true)
-    println("That's it. Uri Rewriting took " + (System.currentTimeMillis-start)/1000.0 + "s")
+    execute(datasetInputPath, sameAsLinksInputPath, hadoopTmpDir+"/rewrittenSubjects", false)
+    val res = execute(hadoopTmpDir+"/rewrittenSubjects", sameAsLinksInputPath, outputPath, true)
+    log.info("That's it. Uri Rewriting took " + (System.currentTimeMillis-start)/1000.0 + "s")
     res
   }
 
   def execute(datasetInputPath: String, sameAsLinksInputPath: String, outputPath: String, rewriteObjectUris: Boolean): Int = {
-    FileUtils.deleteDirectory(new File(outputPath))
     val conf = new Configuration
+
+    // remove existing output
+    val hdfs = FileSystem.get(conf)
+    val hdPath = new Path(outputPath)
+    if (hdfs.exists(hdPath))
+      hdfs.delete(hdPath, true)
+
     HadoopHelper.distributeSerializableObject(RewriteObjectUris(rewriteObjectUris), conf, "rewriteObjectUris")
     val res = ToolRunner.run(conf, new RunHadoopUriRewriting(), Array[String](datasetInputPath, sameAsLinksInputPath, outputPath))
     res

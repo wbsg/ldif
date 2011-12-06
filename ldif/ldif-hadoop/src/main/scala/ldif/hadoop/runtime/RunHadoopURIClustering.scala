@@ -8,7 +8,6 @@ import org.apache.hadoop.conf.{Configuration, Configured}
 import org.apache.hadoop.util.{ToolRunner, Tool}
 import org.apache.hadoop.io.{NullWritable, Text, IntWritable}
 import org.apache.hadoop.mapred._
-import org.apache.hadoop.fs.{PathFilter, Path}
 import collection.mutable.{Map, HashMap}
 import scala.collection.JavaConversions._
 import ldif.hadoop.utils.HadoopHelper
@@ -17,6 +16,8 @@ import ldif.hadoop.reducers.{WriteRemainingSameAsPairsReducer, JoinSameAsPairsRe
 import ldif.hadoop.mappers.{ConvertSameAsPairsToQuadsMapper, WriteRemainingSameAsPairsMapper, SameAsPairsMapper, ExtractSameAsPairsMapper}
 import ldif.hadoop.io._
 import ldif.hadoop.types.{QuadWritable, SameAsPairWritable, ValuePathWritable}
+import ldif.util.Consts
+import org.apache.hadoop.fs.{FileSystem, PathFilter, Path}
 
 /**
  * Created by IntelliJ IDEA.
@@ -28,13 +29,14 @@ import ldif.hadoop.types.{QuadWritable, SameAsPairWritable, ValuePathWritable}
 
 class RunHadoopURIClustering extends Configured with Tool {
   def run(args: Array[String]): Int = {
+    val hadoopTmpDir = "hadoop_tmp"+Consts.fileSeparator+"uriclustering"
     val conf = getConf
     var iteration = 1
     HadoopHelper.distributeSerializableObject(UriClusteringIteration(iteration), conf, "iteration")
         HadoopHelper.distributeSerializableObject(UriClusteringIteration(iteration+1), conf, "iteration"+iteration)
 
 
-    var job = setInitialSameAsPairsExtractorJob(conf, args(0), args(1)+"/iteration1")
+    var job = setInitialSameAsPairsExtractorJob(conf, args(0), hadoopTmpDir+"/iteration1")
     JobClient.runJob(job)
 
     var loop = true
@@ -42,7 +44,7 @@ class RunHadoopURIClustering extends Configured with Tool {
     while(loop) {
       iteration+=1
       HadoopHelper.distributeSerializableObject(UriClusteringIteration(iteration), conf, "iteration"+iteration)
-      job = setFollowingSameAsPairsJob(conf, args(1)+"/iteration"+(iteration-1), args(1)+"/iteration"+iteration)
+      job = setFollowingSameAsPairsJob(conf, hadoopTmpDir+"/iteration"+(iteration-1), hadoopTmpDir+"/iteration"+iteration)
       val runningJob = JobClient.runJob(job)
       val counters = runningJob.getCounters
       val newClusterCounter = computeClusterNumberBySizeCountersMap(counters)
@@ -52,10 +54,10 @@ class RunHadoopURIClustering extends Configured with Tool {
         clusterCounter = newClusterCounter
     }
 
-    job = setFinishingSameAsPairsJob(conf, args(1)+"/iteration"+iteration, args(1)+"/iteration"+(iteration+1))
+    job = setFinishingSameAsPairsJob(conf, hadoopTmpDir+"/iteration"+iteration, hadoopTmpDir+"/iteration"+(iteration+1))
     JobClient.runJob(job)
 
-    job = setConversionsJob(conf, args(1)+"/iteration", args(1)+"/output", iteration+1)
+    job = setConversionsJob(conf, hadoopTmpDir+"/iteration", args(1)+"/output", iteration+1)
     JobClient.runJob(job)
 
     return 0
@@ -160,10 +162,14 @@ object RunHadoopURIClustering {
   def runHadoopURIClustering(in : String, out : String) : Int = {
     log.info("Starting URI Clustering...")
 
-    FileUtils.deleteDirectory(new File(out))
-
     val start = System.currentTimeMillis
     val conf = new Configuration
+
+    // remove existing output
+    val hdfs = FileSystem.get(conf)
+    val hdPath = new Path(out)
+    if (hdfs.exists(hdPath))
+      hdfs.delete(hdPath, true)
 
     val res = ToolRunner.run(conf, new RunHadoopURIClustering(), Array(in, out))
 
