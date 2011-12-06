@@ -4,7 +4,7 @@
             xmlns="http://www4.wiwiss.fu-berlin.de/ldif/">
     <properties>integration.properties</properties>
     <sources>examples/life-science/sources</sources>
-    <linkSpecifications>examples/life-science/linkspecs</linkSpecifications>
+    <linkSpecifications>examples/life-science/linkSpecs</linkSpecifications>
     <mappings>examples/life-science/mappings</mappings>
     <quality>quality</quality>
     <fusion>fusion</fusion>
