@@ -75,4 +75,6 @@ class QuadWritable(var subject: NodeWritable, var property: Text, var obj: NodeW
     else
       return false
   }
+
+  def asQuad = Quad(subject, property.toString, obj, graph.toString)
 }

@@ -25,7 +25,7 @@ import ldif.entity.{EntityDescriptionMetaDataExtractor, EntityDescription}
 import ldif.util.Consts
 import phases._
 
-class HadoopEntityBuilder (entityDescriptions : IndexedSeq[EntityDescription], readers : Seq[Path], config : ConfigParameters) {
+class HadoopEntityBuilder (entityDescriptions : IndexedSeq[EntityDescription], readers : Seq[Path], config : ConfigParameters, getsTextInput: Boolean = false) {
 
   private val log = LoggerFactory.getLogger(getClass.getName)
 
@@ -36,7 +36,7 @@ class HadoopEntityBuilder (entityDescriptions : IndexedSeq[EntityDescription], r
 
     val edmd = EntityDescriptionMetaDataExtractor.extract(entityDescriptions)
 
-    Phase2.runPhase(sourcesDir, ouputDirPrefix+"_2", edmd)
+    Phase2.runPhase(sourcesDir, ouputDirPrefix+"_2", edmd, getsTextInput)
     Phase3.runPhase(ouputDirPrefix+"_2", ouputDirPrefix+"_3", edmd)
     Phase4.runPhase(ouputDirPrefix+"_3", writer.toString, edmd)
   }

@@ -26,8 +26,8 @@ import org.apache.hadoop.util.{ToolRunner, Tool}
 import org.apache.hadoop.io.NullWritable
 import ldif.hadoop.types.QuadWritable
 import org.apache.hadoop.fs.{FileSystem, Path}
-import ldif.hadoop.io.{QuadTextFileOutput, EntityMultipleSequenceFileOutput, EntitySequenceFileInput}
 import org.slf4j.LoggerFactory
+import ldif.hadoop.io.{QuadSequenceFileOutput, QuadTextFileOutput, EntityMultipleSequenceFileOutput, EntitySequenceFileInput}
 
 /**
  * Created by IntelliJ IDEA.
@@ -58,7 +58,7 @@ class RunHadoopR2RJob extends Configured with Tool {
     job.setOutputValueClass(classOf[QuadWritable])
 
     job.setInputFormat(classOf[EntitySequenceFileInput])
-    job.setOutputFormat(classOf[QuadTextFileOutput])
+    job.setOutputFormat(classOf[QuadSequenceFileOutput])
 
     //    MultipleOutputs.addNamedOutput(job, "debug", classOf[QuadTextFileOutput], classOf[NullWritable], classOf[QuadWritable])
 

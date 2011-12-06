@@ -40,12 +40,16 @@ class Phase2 extends Configured with Tool {
   def run(args: Array[String]): Int = {
     val conf = getConf
     val job = new JobConf(conf, classOf[Phase2])
+    val getsTextInput = args(2).toBoolean
 
     job.setJobName("HEB-Phase2")
 
     //    job.setJarByClass(classOf[RunHadoop])
     job.setNumReduceTasks(0)
-    job.setMapperClass(classOf[ProcessQuadsMapper])
+    if(getsTextInput)
+      job.setMapperClass(classOf[ExtractAndProcessQuadsMapper])
+    else
+      job.setMapperClass(classOf[ProcessQuadsMapper])
     job.setMapOutputKeyClass(classOf[IntWritable])
     job.setMapOutputValueClass(classOf[ValuePathWritable])
     job.setOutputKeyClass(classOf[IntWritable])
@@ -69,12 +73,12 @@ class Phase2 extends Configured with Tool {
 object Phase2 {
   private val log = LoggerFactory.getLogger(getClass.getName)
 
-  def runPhase(in : String, out : String, entityDescriptions : Seq[EntityDescription]) : Int = {
+  def runPhase(in : String, out : String, entityDescriptions : Seq[EntityDescription], getsTextInput: Boolean = false) : Int = {
     val edmd = EntityDescriptionMetaDataExtractor.extract(entityDescriptions)
-    runPhase(in,out,edmd)
+    runPhase(in,out,edmd, getsTextInput)
   }
 
-  def runPhase(in : String, out : String, edmd : EntityDescriptionMetadata) : Int = {
+  def runPhase(in : String, out : String, edmd : EntityDescriptionMetadata, getsTextInput: Boolean) : Int = {
     log.info("Starting phase 2 of the EntityBuilder: Filtering quads and creating initial value paths")
 
     val start = System.currentTimeMillis
@@ -88,7 +92,7 @@ object Phase2 {
       hdfs.delete(hdPath, true)
 
     log.info("Output directory: " + out)
-    val res = ToolRunner.run(conf, new Phase2(), Array(in, out))
+    val res = ToolRunner.run(conf, new Phase2(), Array[String](in, out, getsTextInput.toString))
 
     log.info("That's it. Took " + (System.currentTimeMillis-start)/1000.0 + "s")
     res

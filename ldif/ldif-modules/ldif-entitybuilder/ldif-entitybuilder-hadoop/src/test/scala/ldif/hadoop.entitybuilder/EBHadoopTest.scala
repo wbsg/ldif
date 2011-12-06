@@ -46,7 +46,7 @@ class EBHadoopTest extends FlatSpec with ShouldMatchers
   val edmd = EntityDescriptionMetaDataExtractor.extract(entityDescriptions)
 
   // Run entity builder
-  Phase2.runPhase(sourcesDir, outputDirPrefix+"/eb/phase2", edmd)
+  Phase2.runPhase(sourcesDir, outputDirPrefix+"/eb/phase2", edmd, true)
   Phase3.runPhase(outputDirPrefix+"/eb/phase2", outputDirPrefix+"/eb/phase3", edmd)
   Phase4.runPhase(outputDirPrefix+"/eb/phase3", outputDirPrefix+"/eb/output", edmd)
 

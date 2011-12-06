@@ -66,7 +66,7 @@ class HadoopIntegrationJob(val config : HadoopIntegrationConfig, debug : Boolean
     val entityDescriptions = (for(mapping <- r2rTask.ldifMappings) yield mapping.entityDescription).toSeq
 
     val entitiesPath =  "ebOutput"
-    buildEntities(config.sources, entitiesPath, entityDescriptions, configParameters)
+    buildEntities(config.sources, entitiesPath, entityDescriptions, configParameters, getsTextInput = true)
     log.info("Time needed to load dump and build entities for mapping phase: " + stopWatch.getTimeSpanInSeconds + "s")
 
     val r2rOutput = "r2rOutput"
@@ -112,12 +112,12 @@ class HadoopIntegrationJob(val config : HadoopIntegrationConfig, debug : Boolean
   /**
    * Build Entities
    */
-  private def buildEntities(sourcesPath : String, entitiesPath : String, entityDescriptions : Seq[EntityDescription], configParameters: ConfigParameters) {
+  private def buildEntities(sourcesPath : String, entitiesPath : String, entityDescriptions : Seq[EntityDescription], configParameters: ConfigParameters, getsTextInput: Boolean = false) {
 
     val entityBuilderConfig = new EntityBuilderConfig(entityDescriptions.toIndexedSeq)
     val entityBuilderModule = new EntityBuilderModule(entityBuilderConfig)
     val entityBuilderTask = entityBuilderModule.tasks.head
-    val entityBuilderExecutor = new EntityBuilderHadoopExecutor(configParameters)
+    val entityBuilderExecutor = new EntityBuilderHadoopExecutor(configParameters, getsTextInput)
 
     entityBuilderExecutor.execute(entityBuilderTask, List(new Path(sourcesPath)), List(new Path(entitiesPath)))
   }
