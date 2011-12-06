@@ -25,6 +25,8 @@ import org.apache.hadoop.io._
 import ldif.hadoop.types._
 import ldif.hadoop.utils.HadoopHelper
 import ldif.entity.{NodeTrait, EntityDescriptionMetadata, NodeWritable}
+import ldif.datasources.dump.parser.ParseException
+import ldif.runtime.Quad
 
 class ExtractAndProcessQuadsMapper extends MapReduceBase with Mapper[LongWritable, Text, IntWritable, ValuePathWritable] {
   private val parser = new QuadParser
@@ -37,7 +39,12 @@ class ExtractAndProcessQuadsMapper extends MapReduceBase with Mapper[LongWritabl
   }
 
   override def map(key: LongWritable, value: Text, output: OutputCollector[IntWritable, ValuePathWritable], reporter: Reporter) {
-    val quad = parser.parseLine(value.toString)
+    var quad: Quad = null
+    try {
+      quad = parser.parseLine(value.toString)
+    } catch {
+      case e: Exception => quad = null
+    }
     if(quad==null)
       return
     ProcessQuads.processQuad(quad, reporter, edmd, mos)
