@@ -30,6 +30,7 @@ import ldif.hadoop.utils.HadoopHelper
 import ldif.entity.{EntityDescription, EntityDescriptionMetadata, EntityDescriptionMetaDataExtractor}
 import org.slf4j.LoggerFactory
 import org.apache.hadoop.fs.{FileSystem, Path}
+import ldif.hadoop.io.QuadSequenceFileInput
 
 /**
  *  Hadoop EntityBuilder - Phase 2
@@ -48,8 +49,10 @@ class Phase2 extends Configured with Tool {
     job.setNumReduceTasks(0)
     if(getsTextInput)
       job.setMapperClass(classOf[ExtractAndProcessQuadsMapper])
-    else
+    else {
       job.setMapperClass(classOf[ProcessQuadsMapper])
+      job.setInputFormat(classOf[QuadSequenceFileInput])
+    }
     job.setMapOutputKeyClass(classOf[IntWritable])
     job.setMapOutputValueClass(classOf[ValuePathWritable])
     job.setOutputKeyClass(classOf[IntWritable])
