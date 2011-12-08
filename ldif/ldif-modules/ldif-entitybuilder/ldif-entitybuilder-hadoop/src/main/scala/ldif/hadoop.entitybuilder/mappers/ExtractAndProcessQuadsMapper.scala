@@ -24,9 +24,9 @@ import lib.MultipleOutputs
 import org.apache.hadoop.io._
 import ldif.hadoop.types._
 import ldif.hadoop.utils.HadoopHelper
-import ldif.entity.{NodeTrait, EntityDescriptionMetadata, NodeWritable}
-import ldif.datasources.dump.parser.ParseException
+import ldif.entity.EntityDescriptionMetadata
 import ldif.runtime.Quad
+import ldif.util.Consts
 
 class ExtractAndProcessQuadsMapper extends MapReduceBase with Mapper[LongWritable, Text, IntWritable, ValuePathWritable] {
   private val parser = new QuadParser
@@ -47,7 +47,12 @@ class ExtractAndProcessQuadsMapper extends MapReduceBase with Mapper[LongWritabl
     }
     if(quad==null)
       return
-    ProcessQuads.processQuad(quad, reporter, edmd, mos)
+    if(quad.predicate == Consts.SAMEAS_URI)   {
+      val collector = mos.getCollector("sameas", reporter).asInstanceOf[OutputCollector[NullWritable, QuadWritable]]
+      collector.collect(NullWritable.get, new QuadWritable(quad))
+    }
+    else
+      ProcessQuads.processQuad(quad, reporter, edmd, mos)
   }
 
   override def close() {

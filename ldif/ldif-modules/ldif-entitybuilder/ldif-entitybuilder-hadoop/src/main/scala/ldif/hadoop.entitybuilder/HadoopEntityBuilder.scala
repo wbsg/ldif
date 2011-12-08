@@ -32,7 +32,7 @@ class HadoopEntityBuilder (entityDescriptions : IndexedSeq[EntityDescription], r
   // Build entities
   def buildEntities (writer : Path) {
     val sourcesDir = readers.head.toString
-    val hadoopTmpDir = "hadoop_tmp"+Consts.fileSeparator+"output_phase"
+    val hadoopTmpDir = "hadoop_tmp"+Consts.fileSeparator+"output_phase_"+System.currentTimeMillis()
 
     val edmd = EntityDescriptionMetaDataExtractor.extract(entityDescriptions)
 
