@@ -85,6 +85,8 @@ class EBLocalTest extends FlatSpec with ShouldMatchers
 
   // Test quad store execution (TDB)
   def testTDB {
+    if(System.getProperty("os.name")!="Linux")
+      return
     println("Running quad-store test")
     // Create entity queues
     val eqs =
