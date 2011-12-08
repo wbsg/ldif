@@ -8,15 +8,13 @@ import ldif.entity.entityComparator.entityComparator
 import ldif.hadoop.types.QuadWritable
 import java.util.Iterator
 import collection.mutable.HashSet
-import ldif.util.Consts
 import ldif.entity.{Node, NodeWritable}
 import ldif.hadoop.runtime.RewriteObjectUris
 import java.io.File
 import ldif.runtime.Quad
 import org.apache.hadoop.io.{Text, WritableUtils, NullWritable}
 import ldif.runtime.impl.{FileObjectReader, FileObjectWriter}
-import ldif.local.runtime.impl.{NoQuadsLeft, FileObjectWriter}
-import ldif.local.runtime.ClonableQuadReader
+import ldif.util.{MemoryUsage, Consts}
 
 /**
  * Created by IntelliJ IDEA.
@@ -74,21 +72,35 @@ class UriRewritingReducer extends MapReduceBase with Reducer[NodeWritable, QuadW
 }
 
 class QuadCollection {
-  var quadSet = new HashSet
+  var quadSet = new HashSet[QuadWritable]
+  var quadFileWriter: FileQuadWritableWriter = null
 
   def insert(quad: QuadWritable) {
+    if(MemoryUsage.getFreeMemoryInBytes() < 16777216)
+      spillToDisk
 
+  }
+
+  private def spillToDisk {
+    val tempFile = File.createTempFile("ldif-urirewriting-spill", ".dat")
+    tempFile.deleteOnExit()
+    quadFileWriter = new FileQuadWritableWriter(tempFile)
+    for(quad <- quadSet)
+      quadFileWriter.write(quad)
+    quadSet = null
   }
 
   def finish() {
-
+    if(quadFileWriter!=null)
+      quadFileWriter.finish
   }
 
-//  def foreach(f: QuadWritable => Unit) {
-//    while ( { hasNext } ) {
-//      f(read)
-//    }
-//  }
+  def foreach(f: QuadWritable => Unit) {
+
+    while ( { hasNext } ) {
+      f(read)
+    }
+  }
 }
 
 class FileQuadWritableWriter(outputFile: File) extends FileObjectWriter[QuadWritable](outputFile, NoQuadWritableLeft)
