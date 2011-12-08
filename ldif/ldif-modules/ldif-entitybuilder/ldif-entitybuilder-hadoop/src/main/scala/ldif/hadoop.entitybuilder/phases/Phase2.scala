@@ -103,6 +103,9 @@ object Phase2 {
 
     // move sameAs links in the ad-hoc direcotry
     val sameAsOutputFiles = hdfs.listStatus(hdPath).filterNot(_.isDir)
+    val sameAsPath = new Path(sameAs)
+    if (sameAsOutputFiles.length > 0 && !hdfs.exists(sameAsPath))
+      hdfs.mkdirs(sameAsPath)
     for (status <- sameAsOutputFiles)
       hdfs.rename(status.getPath, new Path(sameAs+Consts.fileSeparator+status.getPath.getName))
 
