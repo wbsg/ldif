@@ -26,7 +26,7 @@ class RunHadoopUriRewriting extends Configured with Tool {
   def run(args: Array[String]): Int = {
     val conf = getConf
     val job = new JobConf(conf, classOf[RunHadoopUriRewriting])
-
+    job.setJobName("UriRewriting")
     job.setMapperClass(classOf[UriRewritingMapper])
     job.setReducerClass(classOf[UriRewritingReducer])
     job.setMapOutputKeyClass(classOf[NodeWritable])

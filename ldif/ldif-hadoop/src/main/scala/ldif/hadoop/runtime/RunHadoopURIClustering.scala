@@ -98,6 +98,7 @@ class RunHadoopURIClustering extends Configured with Tool {
 
   private def setInitialSameAsPairsExtractorJob(conf: Configuration, inputPath: String, outputPath: String): JobConf = {
     val job = new JobConf(conf, classOf[RunHadoopURIClustering])
+    job.setJobName("UriClustering-InitSameAsPairExtractor")
     job.setMapperClass(classOf[ExtractSameAsPairsMapper])
     job.setReducerClass(classOf[JoinSameAsPairsReducer])
     setSameAsPairsJob(job, inputPath, outputPath)
@@ -105,6 +106,7 @@ class RunHadoopURIClustering extends Configured with Tool {
 
   private def setFollowingSameAsPairsJob(conf: Configuration, inputPath: String, outputPath: String): JobConf = {
     val job = new JobConf(conf, classOf[RunHadoopURIClustering])
+    job.setJobName("UriClustering-FollowingSameAsPairs")
     job.setMapperClass(classOf[SameAsPairsMapper])
     job.setReducerClass(classOf[JoinSameAsPairsReducer])
     job.setInputFormat(classOf[SameAsPairSequenceFileInputFormat])
@@ -114,6 +116,7 @@ class RunHadoopURIClustering extends Configured with Tool {
 
   private def setFinishingSameAsPairsJob(conf: Configuration, inputPath: String, outputPath: String): JobConf = {
     val job = new JobConf(conf, classOf[RunHadoopURIClustering])
+    job.setJobName("UriClustering-FinishSameAsPairs")
     job.setMapperClass(classOf[WriteRemainingSameAsPairsMapper])
     job.setReducerClass(classOf[WriteRemainingSameAsPairsReducer])
     job.setInputFormat(classOf[SameAsPairSequenceFileInputFormat])
@@ -138,6 +141,7 @@ class RunHadoopURIClustering extends Configured with Tool {
 
   private def setConversionsJob(conf: Configuration, inputPath: String, outputPath: String, nrOfIteration: Int): JobConf = {
     val job = new JobConf(conf, classOf[RunHadoopURIClustering])
+    job.setJobName("UriClustering-Conversions")
     job.setMapperClass(classOf[ConvertSameAsPairsToQuadsMapper])
     job.setNumReduceTasks(0)
     job.setInputFormat(classOf[SameAsPairSequenceFileInputFormat])
