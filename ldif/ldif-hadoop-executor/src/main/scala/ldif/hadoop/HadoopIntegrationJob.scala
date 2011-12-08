@@ -32,9 +32,9 @@ import ldif.modules.r2r.hadoop.{R2RHadoopModule, R2RHadoopExecutor}
 import ldif.modules.silk.SilkModule
 import ldif.modules.silk.local.SilkLocalExecutor
 import ldif.local.runtime.StaticEntityFormat
-import runtime.{RunHadoopUriTranslation, ConfigParameters}
 import org.apache.hadoop.fs.{FileSystem, Path}
 import org.apache.hadoop.conf.Configuration
+import runtime.{RunHadoopUriMinting, RunHadoopUriTranslation, ConfigParameters, RunHadoopQuadToTextConverter}
 
 class HadoopIntegrationJob(val config : HadoopIntegrationConfig, debug : Boolean = false) {
 
@@ -60,14 +60,24 @@ class HadoopIntegrationJob(val config : HadoopIntegrationConfig, debug : Boolean
     val silkOutput = generateLinks(r2rOutput)
     log.info("Time needed to link data: " + stopWatch.getTimeSpanInSeconds + "s")
 
-    val integratedPath = "integrated"
+    var integratedPath = "integrated"
 
     // Execute URI Translation
-    if(config.properties.getProperty("rewriteURIs", "true").toLowerCase=="true") {
+    if(config.properties.getProperty("rewriteURIs", "true").toLowerCase=="true" && sameAsLinksAvailable()) {
 //      translateUris(silkOutput, integratedPath)
       translateUris(r2rOutput, integratedPath)
       log.info("Time needed to translate URIs: " + stopWatch.getTimeSpanInSeconds + "s")
-    }
+    } else
+      integratedPath = r2rOutput
+    RunHadoopQuadToTextConverter.execute(integratedPath, integratedPath+"_NQuads")
+    RunHadoopUriMinting.execute(integratedPath, integratedPath+"_minted")
+  }
+
+  private def sameAsLinksAvailable(): Boolean = {
+    val conf = new Configuration
+    val hdfs = FileSystem.get(conf)
+    val hdPath = new Path(sameAsPath)
+    hdfs.exists(hdPath)
   }
 
 

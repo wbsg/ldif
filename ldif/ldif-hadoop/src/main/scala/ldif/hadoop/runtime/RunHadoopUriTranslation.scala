@@ -14,7 +14,6 @@ object RunHadoopUriTranslation {
   def execute(datasetPath: String, sameasPath: String, outputPath: String) {
     val hadoopTmpDir = "hadoop_tmp"+Consts.fileSeparator+"uritranslation"
     RunHadoopURIClustering.runHadoopURIClustering(sameasPath,hadoopTmpDir+"/uriclustering")
-//    RunHadoopQuadConverter.execute(datasetPath, ouputDirPrefix+"/dataset")
     RunHadoopUriRewriting.execute(datasetPath, hadoopTmpDir+"/uriclustering", outputPath)
   }
 
