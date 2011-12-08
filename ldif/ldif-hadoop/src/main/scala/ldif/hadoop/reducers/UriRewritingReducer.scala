@@ -42,7 +42,7 @@ class UriRewritingReducer extends MapReduceBase with Reducer[NodeWritable, QuadW
    * rewritten and also not output. The reducer also removes quad duplicates.
    */
   def reduce(entity: NodeWritable, quads: Iterator[QuadWritable], output: OutputCollector[NullWritable, QuadWritable], reporter: Reporter) {
-    val quadSet = new HashSet[QuadWritable]
+    val quadCollection = new QuadCollection
     var reWriteNode: NodeWritable = null
     while(quads.hasNext) {
       val quad: QuadWritable = quads.next()
@@ -52,10 +52,11 @@ class UriRewritingReducer extends MapReduceBase with Reducer[NodeWritable, QuadW
         if(reWriteNode==null || reWriteNode.compare(quad.obj) < 0)
           reWriteNode = WritableUtils.clone[NodeWritable](quad.obj, config) }
       else
-        quadSet.add(WritableUtils.clone[QuadWritable](quad, config))
+        quadCollection.add(WritableUtils.clone[QuadWritable](quad, config))
     }
+    quadCollection.finish()
 
-    for(quad <- quadSet) {
+    for(quad <- quadCollection) {
       // Don't rewrite quad if rewrite node is a blank node from another graph than the quad itself
       if(reWriteNode!=null && (reWriteNode.nodeType!=Node.BlankNode || reWriteNode.graph==quad.graph)) {
         if(rewriteObjectNode)
@@ -76,10 +77,13 @@ class QuadCollection {
   var quadSet = new HashSet[QuadWritable]
   var quadFileWriter: FileQuadWritableWriter = null
 
-  def insert(quad: QuadWritable) {
+  def add(quad: QuadWritable) {
     if(MemoryUsage.getFreeMemoryInBytes() < 16777216)
       spillToDisk
-
+    if(quadFileWriter==null)
+      quadSet.add(quad)
+    else
+      quadFileWriter.write(quad)
   }
 
   private def spillToDisk {
