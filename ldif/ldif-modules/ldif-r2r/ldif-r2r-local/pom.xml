@@ -10,7 +10,7 @@
 
 	<artifactId>ldif-r2r-local</artifactId>
 	<packaging>jar</packaging>
-	<version>${ldif.version}</version>
+	<version>0.3.1</version>
 	<name>LDIF R2R Module - Local</name>
 
 	<properties>
@@ -122,7 +122,7 @@
         <dependency>
             <groupId>ldif</groupId>
             <artifactId>ldif-r2r-common</artifactId>
-            <version>${ldif.version}</version>
+            <version>0.3.1</version>
         </dependency>
 	</dependencies>
 </project>

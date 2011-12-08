@@ -10,7 +10,7 @@
 
 	<artifactId>ldif-silk</artifactId>
 	<packaging>pom</packaging>
-	<version>${ldif.version}</version>
+	<version>0.3.1</version>
 	<name>LDIF Silk Module</name>
   
   <modules>
@@ -22,7 +22,7 @@
     <dependency>
       <groupId>ldif</groupId>
       <artifactId>ldif-core</artifactId>
-      <version>${ldif.version}</version>
+      <version>0.3.1</version>
     </dependency>
   </dependencies>
 

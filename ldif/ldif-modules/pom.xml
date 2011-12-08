@@ -16,7 +16,7 @@
   </modules>
 
 	<artifactId>ldif-modules</artifactId>
-	<version>${ldif.version}</version>
+	<version>0.3.1</version>
     <packaging>pom</packaging>
 	<name>LDIF Modules</name>
 

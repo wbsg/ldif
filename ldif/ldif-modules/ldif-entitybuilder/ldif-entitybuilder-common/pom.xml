@@ -10,14 +10,14 @@
 
 	<artifactId>ldif-entitybuilder-common</artifactId>
 	<packaging>jar</packaging>
-	<version>${ldif.version}</version>
+	<version>0.3.1</version>
 	<name>LDIF EntityBuilder Module Common</name>
 
     <dependencies>
         <dependency>
             <groupId>ldif</groupId>
             <artifactId>ldif-core</artifactId>
-            <version>${ldif.version}</version>
+            <version>0.3.1</version>
         </dependency>
     </dependencies>
 

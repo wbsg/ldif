@@ -14,7 +14,7 @@
   <groupId>ldif</groupId>
   <artifactId>ldif</artifactId>
   <packaging>pom</packaging>
-  <version>${ldif.version}</version>
+  <version>0.3.1</version>
   <name>LDIF</name>
   <url>http://www4.wiwiss.fu-berlin.de/bizer/ldif/</url>
 

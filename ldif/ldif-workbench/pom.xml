@@ -6,13 +6,13 @@
     <parent>
         <artifactId>ldif</artifactId>
         <groupId>ldif</groupId>
-        <version>${ldif.version}</version>
+        <version>0.3.1</version>
     </parent>
 
     <artifactId>ldif-workbench</artifactId>
 
     <name>LDIF Workbench</name>
-    <version>${ldif.version}</version>
+    <version>0.3.1</version>
     <packaging>war</packaging>
 
     <properties>

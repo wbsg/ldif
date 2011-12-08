@@ -10,7 +10,7 @@
 
 	<artifactId>ldif-sieve</artifactId>
 	<packaging>pom</packaging>
-	<version>${ldif.version}</version>
+	<version>0.3.1</version>
 	<name>LDIF Sieve Module</name>
   
   <modules>
@@ -22,7 +22,7 @@
     <dependency>
       <groupId>ldif</groupId>
       <artifactId>ldif-core</artifactId>
-      <version>${ldif.version}</version>
+      <version>0.3.1</version>
     </dependency>
   </dependencies>
 

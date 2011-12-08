@@ -16,7 +16,7 @@
 
 	<artifactId>ldif-r2r</artifactId>
 	<packaging>pom</packaging>
-	<version>${ldif.version}</version>
+	<version>0.3.1</version>
 	<name>LDIF R2R Module</name>
 
 	<properties>
@@ -78,12 +78,12 @@
         <dependency>
           <groupId>ldif</groupId>
           <artifactId>ldif-core</artifactId>
-          <version>${ldif.version}</version>
+          <version>0.3.1</version>
         </dependency>
         <dependency>
           <groupId>ldif</groupId>
           <artifactId>ldif-local</artifactId>
-          <version>${ldif.version}</version>
+          <version>0.3.1</version>
         </dependency>
 
 

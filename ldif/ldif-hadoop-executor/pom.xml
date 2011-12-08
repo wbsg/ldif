@@ -72,7 +72,7 @@
         <dependency>
             <groupId>ldif</groupId>
             <artifactId>ldif-core</artifactId>
-            <version>${ldif.version}</version>
+            <version>0.3.1</version>
         </dependency>
 
         <dependency>
@@ -92,13 +92,13 @@
         <dependency>
             <groupId>ldif</groupId>
             <artifactId>ldif-entitybuilder-hadoop</artifactId>
-            <version>${ldif.version}</version>
+            <version>0.3.1</version>
         </dependency>
 
         <dependency>
             <groupId>ldif</groupId>
             <artifactId>ldif-r2r-hadoop</artifactId>
-            <version>${ldif.version}</version>
+            <version>0.3.1</version>
         </dependency>
 
 
@@ -107,7 +107,7 @@
         <dependency>
             <groupId>ldif</groupId>
             <artifactId>ldif-singlemachine</artifactId>
-            <version>${ldif.version}</version>
+            <version>0.3.1</version>
         </dependency>
 
     </dependencies>
