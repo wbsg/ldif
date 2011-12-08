@@ -30,11 +30,18 @@ import org.apache.hadoop.fs.{FileSystem, PathFilter, Path}
 class RunHadoopURIClustering extends Configured with Tool {
   def run(args: Array[String]): Int = {
     val hadoopTmpDir = "hadoop_tmp"+Consts.fileSeparator+"uriclustering"
+
     val conf = getConf
+
+    // remove existing output
+    val hdfs = FileSystem.get(conf)
+    val hdPath = new Path(hadoopTmpDir)
+    if (hdfs.exists(hdPath))
+      hdfs.delete(hdPath, true)
+
     var iteration = 1
     HadoopHelper.distributeSerializableObject(UriClusteringIteration(iteration), conf, "iteration")
-        HadoopHelper.distributeSerializableObject(UriClusteringIteration(iteration+1), conf, "iteration"+iteration)
-
+    HadoopHelper.distributeSerializableObject(UriClusteringIteration(iteration+1), conf, "iteration"+iteration)
 
     var job = setInitialSameAsPairsExtractorJob(conf, args(0), hadoopTmpDir+"/iteration1")
     JobClient.runJob(job)
@@ -57,7 +64,7 @@ class RunHadoopURIClustering extends Configured with Tool {
     job = setFinishingSameAsPairsJob(conf, hadoopTmpDir+"/iteration"+iteration, hadoopTmpDir+"/iteration"+(iteration+1))
     JobClient.runJob(job)
 
-    job = setConversionsJob(conf, hadoopTmpDir+"/iteration", args(1)+"/output", iteration+1)
+    job = setConversionsJob(conf, hadoopTmpDir+"/iteration", args(1), iteration+1)
     JobClient.runJob(job)
 
     return 0
@@ -89,14 +96,14 @@ class RunHadoopURIClustering extends Configured with Tool {
     clusterNumberBySizeCounters
   }
 
-  private def setInitialSameAsPairsExtractorJob(conf: Configuration,inputPath: String, outputPath: String): JobConf = {
+  private def setInitialSameAsPairsExtractorJob(conf: Configuration, inputPath: String, outputPath: String): JobConf = {
     val job = new JobConf(conf, classOf[RunHadoopURIClustering])
     job.setMapperClass(classOf[ExtractSameAsPairsMapper])
     job.setReducerClass(classOf[JoinSameAsPairsReducer])
     setSameAsPairsJob(job, inputPath, outputPath)
   }
 
-  private def setFollowingSameAsPairsJob(conf: Configuration,inputPath: String, outputPath: String): JobConf = {
+  private def setFollowingSameAsPairsJob(conf: Configuration, inputPath: String, outputPath: String): JobConf = {
     val job = new JobConf(conf, classOf[RunHadoopURIClustering])
     job.setMapperClass(classOf[SameAsPairsMapper])
     job.setReducerClass(classOf[JoinSameAsPairsReducer])
@@ -105,7 +112,7 @@ class RunHadoopURIClustering extends Configured with Tool {
     setSameAsPairsJob(job, inputPath, outputPath)
   }
 
-  private def setFinishingSameAsPairsJob(conf: Configuration,inputPath: String, outputPath: String): JobConf = {
+  private def setFinishingSameAsPairsJob(conf: Configuration, inputPath: String, outputPath: String): JobConf = {
     val job = new JobConf(conf, classOf[RunHadoopURIClustering])
     job.setMapperClass(classOf[WriteRemainingSameAsPairsMapper])
     job.setReducerClass(classOf[WriteRemainingSameAsPairsReducer])

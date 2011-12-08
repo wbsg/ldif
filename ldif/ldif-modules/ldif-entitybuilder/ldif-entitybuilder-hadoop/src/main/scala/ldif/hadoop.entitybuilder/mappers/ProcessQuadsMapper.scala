@@ -1,6 +1,5 @@
 package ldif.hadoop.entitybuilder.mappers
 
-import ldif.datasources.dump.QuadParser
 import org.apache.hadoop.mapred.lib.MultipleOutputs
 import ldif.hadoop.utils.HadoopHelper
 import org.apache.hadoop.mapred._

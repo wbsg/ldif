@@ -50,7 +50,6 @@ class Phase4 extends Configured with Tool {
 
     jobConf.setMapperClass(classOf[EntityConstructionMapper])
     jobConf.setReducerClass(classOf[EntityConstructionReducer])
-    jobConf.setNumReduceTasks(4)
 
     jobConf.setMapOutputKeyClass(classOf[EntityDescriptionNodeWritable])
     jobConf.setMapOutputValueClass(classOf[ValuePathWritable])

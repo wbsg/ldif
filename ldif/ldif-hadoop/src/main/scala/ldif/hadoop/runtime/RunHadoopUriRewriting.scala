@@ -1,21 +1,16 @@
 package ldif.hadoop.runtime
 
-import org.apache.hadoop.conf.Configured._
 import ldif.hadoop.utils.HadoopHelper
-import collection.mutable.HashMap
 import org.apache.hadoop.conf.{Configuration, Configured}
-import org.apache.hadoop.io.{NullWritable, Text}
+import org.apache.hadoop.io.NullWritable
 import org.apache.hadoop.mapred._
-import lib.MultipleOutputs
 import org.slf4j.LoggerFactory
-import org.apache.commons.io.FileUtils
-import java.io.File
 import org.apache.hadoop.util.{ToolRunner, Tool}
 import org.apache.hadoop.fs.{FileSystem, Path}
-import ldif.hadoop.types.{QuadWritable, SameAsPairWritable}
+import ldif.hadoop.types.QuadWritable
 import ldif.hadoop.io._
-import ldif.hadoop.mappers.{UriRewritingMapper, WriteRemainingSameAsPairsMapper, SameAsPairsMapper, ExtractSameAsPairsMapper}
-import ldif.hadoop.reducers.{UriRewritingReducer, WriteRemainingSameAsPairsReducer, JoinSameAsPairsReducer}
+import ldif.hadoop.mappers.UriRewritingMapper
+import ldif.hadoop.reducers.UriRewritingReducer
 import ldif.entity.NodeWritable
 import ldif.util.Consts
 

@@ -23,14 +23,14 @@ import org.apache.hadoop.mapred._
 import lib.{NullOutputFormat, MultipleOutputs}
 import org.apache.hadoop.util._
 import org.apache.hadoop.conf._
-import org.apache.hadoop.io.IntWritable
 import ldif.hadoop.types._
 import ldif.hadoop.entitybuilder.io._
 import ldif.hadoop.utils.HadoopHelper
 import ldif.entity.{EntityDescription, EntityDescriptionMetadata, EntityDescriptionMetaDataExtractor}
 import org.slf4j.LoggerFactory
 import org.apache.hadoop.fs.{FileSystem, Path}
-import ldif.hadoop.io.QuadSequenceFileInput
+import ldif.hadoop.io.{QuadSequenceFileOutput, QuadSequenceFileInput}
+import org.apache.hadoop.io.{NullWritable, IntWritable}
 
 /**
  *  Hadoop EntityBuilder - Phase 2
@@ -61,6 +61,7 @@ class Phase2 extends Configured with Tool {
 
     MultipleOutputs.addNamedOutput(job, "seq", classOf[JoinValuePathMultipleSequenceFileOutput], classOf[IntWritable], classOf[ValuePathWritable])
     MultipleOutputs.addNamedOutput(job, "text", classOf[JoinValuePathMultipleTextFileOutput], classOf[IntWritable], classOf[ValuePathWritable])
+    MultipleOutputs.addNamedOutput(job, "sameas", classOf[QuadSequenceFileOutput], classOf[NullWritable], classOf[QuadWritable])
 
     val in = new Path(args(0))
     val out = new Path(args(1))
@@ -98,6 +99,9 @@ object Phase2 {
     val res = ToolRunner.run(conf, new Phase2(), Array[String](in, out, getsTextInput.toString))
 
     log.info("That's it. Took " + (System.currentTimeMillis-start)/1000.0 + "s")
+
+    // Move sameAs links
+    //TODO
     res
   }
 }
