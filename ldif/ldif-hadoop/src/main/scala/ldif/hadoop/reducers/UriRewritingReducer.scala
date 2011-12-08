@@ -96,12 +96,12 @@ class QuadCollection {
       quadFileWriter.finish
   }
 
-  def foreach(f: QuadWritable => Unit) {
-
-    while ( { hasNext } ) {
-      f(read)
-    }
-  }
+//  def foreach(f: QuadWritable => Unit) {
+//
+//    while ( { hasNext } ) {
+//      f(read)
+//    }
+//  }
 }
 
 class FileQuadWritableWriter(outputFile: File) extends FileObjectWriter[QuadWritable](outputFile, NoQuadWritableLeft)
