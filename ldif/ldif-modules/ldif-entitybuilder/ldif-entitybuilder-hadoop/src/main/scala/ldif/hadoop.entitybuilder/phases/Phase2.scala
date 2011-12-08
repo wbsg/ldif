@@ -28,9 +28,10 @@ import ldif.hadoop.entitybuilder.io._
 import ldif.hadoop.utils.HadoopHelper
 import ldif.entity.{EntityDescription, EntityDescriptionMetadata, EntityDescriptionMetaDataExtractor}
 import org.slf4j.LoggerFactory
-import org.apache.hadoop.fs.{FileSystem, Path}
 import ldif.hadoop.io.{QuadSequenceFileOutput, QuadSequenceFileInput}
 import org.apache.hadoop.io.{NullWritable, IntWritable}
+import org.apache.hadoop.fs.{FileSystem, Path}
+import ldif.util.Consts
 
 /**
  *  Hadoop EntityBuilder - Phase 2
@@ -77,12 +78,12 @@ class Phase2 extends Configured with Tool {
 object Phase2 {
   private val log = LoggerFactory.getLogger(getClass.getName)
 
-  def runPhase(in : String, out : String, entityDescriptions : Seq[EntityDescription], getsTextInput: Boolean = false) : Int = {
+  def runPhase(in : String, out : String, entityDescriptions : Seq[EntityDescription], sameAs : String, getsTextInput: Boolean = false) : Int = {
     val edmd = EntityDescriptionMetaDataExtractor.extract(entityDescriptions)
-    runPhase(in,out,edmd, getsTextInput)
+    runPhase(in,out,edmd, sameAs, getsTextInput)
   }
 
-  def runPhase(in : String, out : String, edmd : EntityDescriptionMetadata, getsTextInput: Boolean) : Int = {
+  def runPhase(in : String, out : String, edmd : EntityDescriptionMetadata, sameAs : String, getsTextInput: Boolean) : Int = {
     log.info("Starting phase 2 of the EntityBuilder: Filtering quads and creating initial value paths")
 
     val start = System.currentTimeMillis
@@ -100,8 +101,11 @@ object Phase2 {
 
     log.info("That's it. Took " + (System.currentTimeMillis-start)/1000.0 + "s")
 
-    // Move sameAs links
-    //TODO
+    // move sameAs links in the ad-hoc direcotry
+    val sameAsOutputFiles = hdfs.listStatus(hdPath).filterNot(_.isDir)
+    for (status <- sameAsOutputFiles)
+      hdfs.rename(status.getPath, new Path(sameAs+Consts.fileSeparator+status.getPath.getName))
+
     res
   }
 }

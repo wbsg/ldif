@@ -29,19 +29,27 @@ import ldif.entity.EntityDescription
 import ldif.util.{StopWatch, LogUtil}
 import ldif.{EntityBuilderModule, EntityBuilderConfig}
 import ldif.modules.r2r.hadoop.{R2RHadoopModule, R2RHadoopExecutor}
-import org.apache.hadoop.fs.Path
 import ldif.modules.silk.SilkModule
 import ldif.modules.silk.local.SilkLocalExecutor
-import runtime.ConfigParameters
 import ldif.local.runtime.StaticEntityFormat
+import runtime.{RunHadoopUriTranslation, ConfigParameters}
+import org.apache.hadoop.fs.{FileSystem, Path}
+import org.apache.hadoop.conf.Configuration
 
 class HadoopIntegrationJob(val config : HadoopIntegrationConfig, debug : Boolean = false) {
 
   private val log = LoggerFactory.getLogger(getClass.getName)
   val stopWatch = new StopWatch
-  val configParameters = ConfigParameters(config.properties)
+
+  val sameAsPath = "sameAsFromSources"
+
+  // Object to store all kinds of configuration data
+  var configParameters = ConfigParameters(config.properties, sameAsPath)
 
   def runIntegration() {
+
+    cleanup()
+
     stopWatch.getTimeSpanInSeconds()
 
     // Execute mapping phase
@@ -52,8 +60,23 @@ class HadoopIntegrationJob(val config : HadoopIntegrationConfig, debug : Boolean
     val silkOutput = generateLinks(r2rOutput)
     log.info("Time needed to link data: " + stopWatch.getTimeSpanInSeconds + "s")
 
-    // Execute URI Translation
+    val integratedPath = "integrated"
 
+    // Execute URI Translation
+    if(config.properties.getProperty("rewriteURIs", "true").toLowerCase=="true") {
+//      translateUris(silkOutput, integratedPath)
+      translateUris(r2rOutput, integratedPath)
+      log.info("Time needed to translate URIs: " + stopWatch.getTimeSpanInSeconds + "s")
+    }
+  }
+
+
+  /**
+   * Translates URIs
+   */
+  private def translateUris(inputPath : String, outputPath : String) {
+    val sameAsPath = config.sources         // TODO
+    RunHadoopUriTranslation.execute(inputPath, sameAsPath, outputPath)
   }
 
   /**
@@ -68,7 +91,7 @@ class HadoopIntegrationJob(val config : HadoopIntegrationConfig, debug : Boolean
     val r2rTask = r2rModule.tasks.head
     val entityDescriptions = (for(mapping <- r2rTask.ldifMappings) yield mapping.entityDescription).toSeq
 
-    val entitiesPath =  "ebOutput"
+    val entitiesPath =  "ebOutput-r2r"
     buildEntities(config.sources, entitiesPath, entityDescriptions, configParameters, getsTextInput = true)
     log.info("Time needed to load dump and build entities for mapping phase: " + stopWatch.getTimeSpanInSeconds + "s")
 
@@ -91,13 +114,13 @@ class HadoopIntegrationJob(val config : HadoopIntegrationConfig, debug : Boolean
   /**
    * Generates links.
    */
-  private def generateLinks(quadsDir : String) : String =  {
+  private def generateLinks(quadsPath : String) : String =  {
     val silkModule = SilkModule.load(new File(config.linkSpecDir))
     val silkExecutor = new SilkLocalExecutor
 
     val entityDescriptions = silkModule.tasks.toIndexedSeq.map(silkExecutor.input).flatMap{ case StaticEntityFormat(ed) => ed }
-    val entitiesPath =  "ebOutput"
-    buildEntities(quadsDir, entitiesPath, entityDescriptions, configParameters)
+    val entitiesPath =  "ebOutput-silk"
+    buildEntities(quadsPath, entitiesPath, entityDescriptions, configParameters)
     log.info("Time needed to build entities for linking phase: " + stopWatch.getTimeSpanInSeconds + "s")
 
     val silkOutput = "silkOutput"
@@ -123,6 +146,14 @@ class HadoopIntegrationJob(val config : HadoopIntegrationConfig, debug : Boolean
     val entityBuilderExecutor = new EntityBuilderHadoopExecutor(configParameters, getsTextInput)
 
     entityBuilderExecutor.execute(entityBuilderTask, List(new Path(sourcesPath)), List(new Path(entitiesPath)))
+  }
+
+
+  private def cleanup() {
+    val hdfs = FileSystem.get(new Configuration())
+    val hdPath = new Path(sameAsPath)
+    if (hdfs.exists(hdPath))
+      hdfs.delete(hdPath, true)
   }
 
 }
