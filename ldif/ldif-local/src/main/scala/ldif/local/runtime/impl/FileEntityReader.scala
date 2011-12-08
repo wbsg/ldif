@@ -21,6 +21,7 @@ package ldif.local.runtime.impl
 import java.io.File
 import ldif.entity.{EntityDescription, Entity}
 import ldif.local.runtime.EntityReader
+import ldif.runtime.impl.FileObjectReader
 
 /**
  * Created by IntelliJ IDEA.

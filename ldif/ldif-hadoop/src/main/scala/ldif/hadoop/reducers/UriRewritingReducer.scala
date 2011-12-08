@@ -9,9 +9,14 @@ import ldif.hadoop.types.QuadWritable
 import java.util.Iterator
 import collection.mutable.HashSet
 import ldif.util.Consts
-import org.apache.hadoop.io.{WritableUtils, NullWritable, Text}
 import ldif.entity.{Node, NodeWritable}
 import ldif.hadoop.runtime.RewriteObjectUris
+import java.io.File
+import ldif.runtime.Quad
+import org.apache.hadoop.io.{Text, WritableUtils, NullWritable}
+import ldif.runtime.impl.{FileObjectReader, FileObjectWriter}
+import ldif.local.runtime.impl.{NoQuadsLeft, FileObjectWriter}
+import ldif.local.runtime.ClonableQuadReader
 
 /**
  * Created by IntelliJ IDEA.
@@ -67,3 +72,28 @@ class UriRewritingReducer extends MapReduceBase with Reducer[NodeWritable, QuadW
     mos.close()
   }
 }
+
+class QuadCollection {
+  var quadSet = new HashSet
+
+  def insert(quad: QuadWritable) {
+
+  }
+
+  def finish() {
+
+  }
+
+//  def foreach(f: QuadWritable => Unit) {
+//    while ( { hasNext } ) {
+//      f(read)
+//    }
+//  }
+}
+
+class FileQuadWritableWriter(outputFile: File) extends FileObjectWriter[QuadWritable](outputFile, NoQuadWritableLeft)
+
+class FileQuadWritableReader(inputFile: File) extends FileObjectReader[QuadWritable](inputFile, NoQuadWritableLeft)
+
+case object NoQuadWritableLeft extends QuadWritable(null, new Text(""), null, new Text(""))
+

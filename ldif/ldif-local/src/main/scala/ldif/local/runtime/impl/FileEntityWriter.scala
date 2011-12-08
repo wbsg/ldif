@@ -21,6 +21,7 @@ package ldif.local.runtime.impl
 import java.io.File
 import ldif.local.runtime.EntityWriter
 import ldif.entity.{EntityDescription, Entity}
+import ldif.runtime.impl.FileObjectWriter
 
 /**
  * Created by IntelliJ IDEA.

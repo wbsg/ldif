@@ -47,8 +47,10 @@ class R2RMapper extends MapReduceBase with Mapper[IntWritable, EntityWritable, N
    */
   def map(key: IntWritable, value: EntityWritable, collector: OutputCollector[NullWritable, QuadWritable], reporter: Reporter) {
     val mapping = mappings(key.get())
-    for(quad <- mapping.executeMapping(value))
+    for(quad <- mapping.executeMapping(value)) {
       collector.collect(NullWritable.get(), new QuadWritable(quad))
+      reporter.getCounter("LDIF Stats", "R2R nr. of quads output").increment(1)
+    }
   }
 
   private def getMappings(conf: JobConf): IndexedSeq[LDIFMapping] = {

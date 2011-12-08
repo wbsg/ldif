@@ -31,4 +31,8 @@ object MemoryUsage {
     Thread.sleep(2000)
     return (math.min(used, runtime.totalMemory - runtime.freeMemory) / (1024)).toLong
   }
+
+  def getFreeMemoryInBytes(): Long = {
+    return Runtime.getRuntime.freeMemory
+  }
 }

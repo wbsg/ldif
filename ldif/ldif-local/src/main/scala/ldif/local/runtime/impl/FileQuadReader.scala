@@ -23,6 +23,7 @@ import ldif.local.runtime.ClonableQuadReader
 import java.io._
 import java.lang.RuntimeException
 import ldif.entity.Entity
+import ldif.runtime.impl.FileObjectReader
 
 /**
  * Created by IntelliJ IDEA.

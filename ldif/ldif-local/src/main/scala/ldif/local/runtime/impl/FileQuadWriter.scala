@@ -22,6 +22,7 @@ import ldif.local.runtime.QuadWriter
 import java.io.File
 import java.io.{ObjectOutputStream, FileOutputStream, BufferedOutputStream}
 import ldif.runtime.Quad
+import ldif.runtime.impl.FileObjectWriter
 
 /**
  * Created by IntelliJ IDEA.
