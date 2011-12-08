@@ -4,7 +4,6 @@ import org.apache.hadoop.conf.Configuration
 import org.apache.hadoop.mapred.lib.MultipleOutputs
 import ldif.hadoop.utils.HadoopHelper
 import org.apache.hadoop.mapred._
-import ldif.entity.entityComparator.entityComparator
 import ldif.hadoop.types.QuadWritable
 import java.util.Iterator
 import collection.mutable.HashSet
@@ -12,11 +11,8 @@ import ldif.util.Consts
 import ldif.entity.{Node, NodeWritable}
 import ldif.hadoop.runtime.RewriteObjectUris
 import java.io.File
-import ldif.runtime.Quad
 import org.apache.hadoop.io.{Text, WritableUtils, NullWritable}
 import ldif.runtime.impl.{FileObjectReader, FileObjectWriter}
-import ldif.local.runtime.impl.{NoQuadsLeft, FileObjectWriter}
-import ldif.local.runtime.ClonableQuadReader
 
 /**
  * Created by IntelliJ IDEA.
