@@ -97,9 +97,13 @@ class QuadCollection {
   }
 
   def foreach(f: QuadWritable => Unit) {
-
-    while ( { hasNext } ) {
-      f(read)
+    if(quadFileWriter==null)
+     for(quad <- quadSet)
+        f(quad)
+    else {
+      val quadFileReader = new FileQuadWritableReader(quadFileWriter.outputFile)
+      while(quadFileReader.hasNext)
+        f(quadFileReader.read())
     }
   }
 }
