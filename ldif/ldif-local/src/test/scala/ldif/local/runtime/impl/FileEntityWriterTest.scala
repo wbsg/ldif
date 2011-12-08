@@ -37,6 +37,7 @@ import java.io.File
 @RunWith(classOf[JUnitRunner])
 class FileEntityWriterTest extends FlatSpec with ShouldMatchers {
   it should "keep the memory foot print constant" in {
+    val startUsage = MemoryUsage.getMemoryUsage()
     val tmpFile = File.createTempFile("ldif-test", "test")
     tmpFile.deleteOnExit
     val writer = new FileEntityWriter(null, tmpFile)
@@ -45,6 +46,6 @@ class FileEntityWriterTest extends FlatSpec with ShouldMatchers {
     }
     val endUsage = MemoryUsage.getMemoryUsage()
     writer.finish
-    assert(endUsage < 5000)
+    assert((endUsage-startUsage) < 2000)
   }
 }

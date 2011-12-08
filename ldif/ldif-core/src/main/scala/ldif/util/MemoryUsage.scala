@@ -19,6 +19,9 @@
 package ldif.util
 
 object MemoryUsage {
+  /**
+   * Returns the memory usage in KB
+   */
   def getMemoryUsage(): Long = {
     val runtime = Runtime.getRuntime
     runtime.gc()
