@@ -8,6 +8,7 @@ import ldif.entity.entityComparator.entityComparator
 import ldif.hadoop.types.QuadWritable
 import java.util.Iterator
 import collection.mutable.HashSet
+import ldif.util.Consts
 import ldif.entity.{Node, NodeWritable}
 import ldif.hadoop.runtime.RewriteObjectUris
 import java.io.File
