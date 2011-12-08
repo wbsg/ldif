@@ -17,3 +17,8 @@ ldif-local/cpParserSource.sh
 ldif-modules/ldif-r2r/cpR2Rlib.sh
 ldif-singlemachine/output.nq
 tools/build_KeggGenes_dataset/*
+logback.xml
+pom.xml.bak
+*.log
+stdout
+stderr

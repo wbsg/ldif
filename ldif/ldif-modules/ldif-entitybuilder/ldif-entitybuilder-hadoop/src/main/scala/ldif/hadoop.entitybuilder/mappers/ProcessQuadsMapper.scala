@@ -67,6 +67,7 @@ object ProcessQuads {
           if (pathLength - 1 != phase.get()
             || (propertyInfo.restrictionValues == None
             || propertyInfo.restrictionValues.get.contains(values.get()(1).asInstanceOf[NodeTrait]))) {
+            reporter.getCounter("LDIF Stats","Nr. of value paths output").increment(1)
             val collector = mos.getCollector("seq", reporter).asInstanceOf[OutputCollector[IntWritable, ValuePathWritable]]
             collector.collect(phase, path)
             // For debugging
