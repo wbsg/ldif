@@ -42,6 +42,7 @@ object ProcessQuads {
     val propertyInfosValue = edmd.propertyMap.get(property)
     propertyInfosValue match {
       case None =>
+        reporter.getCounter("LDIF Stats","Nr. irrelevant quads filtered").increment(1)
       case Some(propertyInfos) =>
         for (propertyInfo <- propertyInfos) {
           val pathLength = edmd.pathLength(propertyInfo.pathId)

@@ -35,6 +35,7 @@ import ldif.runtime.Quad
 import java.util.Properties
 import java.io.{BufferedWriter, File}
 import ldif.entity.entityComparator.entityComparator
+import ldif.util.UriMintHelper
 
 object URITranslator {
 
@@ -107,9 +108,9 @@ object URITranslator {
       if (mintValues.contains(entity)) {
         val globalEntity = cluster.getGlobalEntity()
         if (entitiesAlreadyMinted(globalEntity))
-          cluster.setGlobalEntityIfLarger(mintURI(mintingPropertiesNamespace, mintValues.get(entity).get))
+          cluster.setGlobalEntityIfLarger(UriMintHelper.mintURI(mintingPropertiesNamespace, mintValues.get(entity).get))
         else {
-          cluster.setGlobalEntity(mintURI(mintingPropertiesNamespace, mintValues.get(entity).get))
+          cluster.setGlobalEntity(UriMintHelper.mintURI(mintingPropertiesNamespace, mintValues.get(entity).get))
           entitiesAlreadyMinted.add(globalEntity)
         }
         mintValues.remove(entity)
@@ -149,7 +150,7 @@ object URITranslator {
     val sameAsURIMap = generateUriMap(entityToClusterMap)
     for ((uri, mintValue) <- mintValues) {
       if (!sameAsURIMap.contains(uri))
-        sameAsURIMap.put(uri, mintURI(mintingPropertiesNamespace, mintValue))
+        sameAsURIMap.put(uri, UriMintHelper.mintURI(mintingPropertiesNamespace, mintValue))
     }
     sameAsURIMap
   }
@@ -173,10 +174,6 @@ object URITranslator {
       log.error("Missing values for uriMintNamespace and/or uriMintLabelPredicate")
       throw new RuntimeException("Missing values for uriMintNamespace and/or uriMintLabelPredicate")
     }
-  }
-
-  private def mintURI(nameSpace: String, label: String): String = {
-    nameSpace + URLEncoder.encode(label.replace(' ', '_'), "UTF-8")
   }
 
   private def checkAndWriteSameAsLinks(uriMap: Map[String, String], quadOutput: QuadWriter, entityGraphChecker: EntityGraphChecker, graph: String, nodes: NodeTrait*) {

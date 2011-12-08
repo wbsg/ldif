@@ -45,11 +45,13 @@ class ExtractAndProcessQuadsMapper extends MapReduceBase with Mapper[LongWritabl
     } catch {
       case e: Exception => quad = null
     }
+
     if(quad==null)
       return
     if(quad.predicate == Consts.SAMEAS_URI)   {
       val collector = mos.getCollector("sameas", reporter).asInstanceOf[OutputCollector[NullWritable, QuadWritable]]
       collector.collect(NullWritable.get, new QuadWritable(quad))
+      reporter.getCounter("LDIF Stats","SameAs links from data set").increment(1)
     }
     else
       ProcessQuads.processQuad(quad, reporter, edmd, mos)
