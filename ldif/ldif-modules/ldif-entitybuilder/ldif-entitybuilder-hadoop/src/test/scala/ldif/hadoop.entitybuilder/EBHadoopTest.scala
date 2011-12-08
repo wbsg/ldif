@@ -1,4 +1,4 @@
-/* 
+/*
  * LDIF
  *
  * Copyright 2011 Freie Universität Berlin, MediaEvent Services GmbH & Co. KG
@@ -24,12 +24,15 @@ import org.scalatest.junit.JUnitRunner
 import org.junit.runner.RunWith
 import ldif.hadoop.entitybuilder.phases._
 import java.io.File
+import runtime.ConfigParameters
 import xml.{XML, Source}
 import ldif.util.{Consts, Prefixes}
 import org.apache.hadoop.conf.Configuration
 import org.apache.hadoop.fs.{FileSystem, Path}
 import org.apache.hadoop.io.{IntWritable, SequenceFile}
 import ldif.entity.{Entity, EntityWritable, EntityDescription, EntityDescriptionMetaDataExtractor}
+import ldif.hadoop.entitybuilder.EntityBuilderHadoopExecutor
+import java.util.Properties
 
 /**
  * Unit Test for the Hadoop Entity Builder Module.
@@ -46,7 +49,9 @@ class EBHadoopTest extends FlatSpec with ShouldMatchers
   val edmd = EntityDescriptionMetaDataExtractor.extract(entityDescriptions)
 
   // Run entity builder
-  Phase2.runPhase(sourcesDir, outputDirPrefix+"/eb/phase2", edmd, true)
+  val hebe = new EntityBuilderHadoopExecutor(ConfigParameters(new Properties()))
+//  hebe.execute(TestUtils.task, TestUtils.quads, eqs)
+  Phase2.runPhase(sourcesDir, outputDirPrefix+"/eb/phase2", edmd, null, true)
   Phase3.runPhase(outputDirPrefix+"/eb/phase2", outputDirPrefix+"/eb/phase3", edmd)
   Phase4.runPhase(outputDirPrefix+"/eb/phase3", outputDirPrefix+"/eb/output", edmd)
 
