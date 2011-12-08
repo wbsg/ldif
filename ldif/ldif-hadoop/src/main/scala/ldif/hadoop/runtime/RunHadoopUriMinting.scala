@@ -11,9 +11,16 @@ import ldif.util.Consts
  */
 
 object RunHadoopUriMinting {
-  def execute(datasetPath: String, outputPath: String) {
+  def execute(datasetPath: String, outputPath: String, mintNamespace: String, mintPropertySet: Set[String]) {
     val hadoopTmpDir = "hadoop_tmp"+Consts.fileSeparator+"uriminting"
-    RunHadoopGenerateMintedURIs.execute(datasetPath, hadoopTmpDir+"/sameAs")
+    RunHadoopGenerateMintedURIs.execute(datasetPath, hadoopTmpDir+"/sameAs", mintNamespace, mintPropertySet)
     RunHadoopUriRewriting.execute(datasetPath, hadoopTmpDir+"/sameAs", outputPath)
+  }
+
+  // For debugging
+  def main(args: Array[String]) {
+    val mintPropertySet = Set("http://www.w3.org/2000/01/rdf-schema#label", "http://mywiki/resource/property/Label", "http://mywiki/resource/property/AlternativeLabel") //TODO: add from config
+    val mintNamespace = "http://minted/"
+    execute("r2rOutput", "r2rTest", mintNamespace, mintPropertySet)
   }
 }

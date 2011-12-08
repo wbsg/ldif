@@ -101,13 +101,15 @@ object Phase2 {
 
     log.info("That's it. Took " + (System.currentTimeMillis-start)/1000.0 + "s")
 
-    // move sameAs links in the ad-hoc direcotry
-    val sameAsOutputFiles = hdfs.listStatus(hdPath).filterNot(_.isDir)
-    val sameAsPath = new Path(sameAs)
-    if (sameAsOutputFiles.length > 0 && !hdfs.exists(sameAsPath))
-      hdfs.mkdirs(sameAsPath)
-    for (status <- sameAsOutputFiles)
-      hdfs.rename(status.getPath, new Path(sameAs+Consts.fileSeparator+status.getPath.getName))
+    // move sameAs links in the ad-hoc directory
+    if(sameAs!=null) {
+      val sameAsOutputFiles = hdfs.listStatus(hdPath).filterNot(_.isDir)
+      val sameAsPath = new Path(sameAs)
+      if (sameAsOutputFiles.length > 0 && !hdfs.exists(sameAsPath))
+        hdfs.mkdirs(sameAsPath)
+      for (status <- sameAsOutputFiles)
+        hdfs.rename(status.getPath, new Path(sameAs+Consts.fileSeparator+status.getPath.getName))
+    }
 
     res
   }

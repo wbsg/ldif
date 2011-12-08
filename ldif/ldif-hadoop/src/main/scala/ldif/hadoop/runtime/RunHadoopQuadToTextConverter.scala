@@ -66,7 +66,8 @@ object RunHadoopQuadToTextConverter {
     res
   }
 
+  // For Debugging
   def main(args: Array[String]) {
-    execute("r2rOutput", "r2rTest")
+    execute("r2rTest", "r2rTestText")
   }
 }

@@ -53,7 +53,7 @@ class RunHadoopGenerateMintedURIs extends Configured with Tool {
 object RunHadoopGenerateMintedURIs {
   private val log = LoggerFactory.getLogger(getClass.getName)
 
-  def execute(datasetInputPath: String, outputPath: String): Int = {
+  def execute(datasetInputPath: String, outputPath: String, mintNamespace: String, mintPropertySet: Set[String]): Int = {
     log.info("Starting To Generate Uri Minting Mappings...")
     val start = System.currentTimeMillis
     val conf = new Configuration
@@ -64,8 +64,8 @@ object RunHadoopGenerateMintedURIs {
     if (hdfs.exists(hdPath))
       hdfs.delete(hdPath, true)
 
-    HadoopHelper.distributeSerializableObject(Set("http://www.w3.org/2000/01/rdf-schema#label"), conf, "mintPropertySet")//TODO: ADD MINT PROPERTIES FROM CONFIG
-    HadoopHelper.distributeSerializableObject("http://minted/", conf, "mintNamespace")//TODO: ADD MINT NAMESPACE FROM CONFIG
+    HadoopHelper.distributeSerializableObject(mintPropertySet, conf, "mintPropertySet")
+    HadoopHelper.distributeSerializableObject(mintNamespace, conf, "mintNamespace")
     val res = ToolRunner.run(conf, new RunHadoopGenerateMintedURIs(), Array[String](datasetInputPath, outputPath))
 
     log.info("That's it. Generation of Uri Minting Mappings took " + (System.currentTimeMillis-start)/1000.0 + "s")

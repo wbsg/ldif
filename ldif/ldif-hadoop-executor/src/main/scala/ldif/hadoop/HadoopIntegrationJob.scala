@@ -69,8 +69,13 @@ class HadoopIntegrationJob(val config : HadoopIntegrationConfig, debug : Boolean
       log.info("Time needed to translate URIs: " + stopWatch.getTimeSpanInSeconds + "s")
     } else
       integratedPath = r2rOutput
-    RunHadoopQuadToTextConverter.execute(integratedPath, integratedPath+"_NQuads")
-    RunHadoopUriMinting.execute(integratedPath, integratedPath+"_minted")
+    val uriMinting = config.properties.getProperty("uriMinting", "false").toLowerCase=="true"
+    if(uriMinting) {
+      val (mintNamespace, mintPropertySet) = getMintValues(config)
+      RunHadoopUriMinting.execute(integratedPath, integratedPath+"_minted", mintNamespace, mintPropertySet)
+      integratedPath = integratedPath+"_minted"
+    }
+    RunHadoopQuadToTextConverter.execute(integratedPath, integratedPath+"_NQ")
   }
 
   private def sameAsLinksAvailable(): Boolean = {
@@ -78,6 +83,12 @@ class HadoopIntegrationJob(val config : HadoopIntegrationConfig, debug : Boolean
     val hdfs = FileSystem.get(conf)
     val hdPath = new Path(sameAsPath)
     hdfs.exists(hdPath)
+  }
+
+  private def getMintValues(config: HadoopIntegrationConfig): (String, Set[String]) = {
+    val mintNamespace = config.properties.getProperty("uriMintNamespace")
+    val mintPropertySet = config.properties.getProperty("uriMintLabelPredicate").split("\\s+").toSet
+    return (mintNamespace, mintPropertySet)
   }
 
 
