@@ -75,7 +75,7 @@ class HadoopIntegrationJob(val config : HadoopIntegrationConfig, debug : Boolean
    * Translates URIs
    */
   private def translateUris(inputPath : String, outputPath : String) {
-    val sameAsPath = config.sources         // TODO
+    // TODO merge sameAs from sources and silk output
     RunHadoopUriTranslation.execute(inputPath, sameAsPath, outputPath)
   }
 
