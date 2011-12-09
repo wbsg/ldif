@@ -20,12 +20,11 @@ package ldif.modules.silk
 
 import ldif.module.ModuleTask
 import ldif.util.Identifier
-import de.fuberlin.wiwiss.silk.linkspec.LinkSpecification
+import de.fuberlin.wiwiss.silk.config.LinkSpecification
 
 /**
  * Silk Task.
  */
-class SilkTask(val silkConfig : SilkModuleConfig, val linkSpec : LinkSpecification) extends ModuleTask
-{
+class SilkTask(val silkConfig : SilkModuleConfig, val linkSpec : LinkSpecification) extends ModuleTask {
   val name : Identifier = linkSpec.id.toString
 }

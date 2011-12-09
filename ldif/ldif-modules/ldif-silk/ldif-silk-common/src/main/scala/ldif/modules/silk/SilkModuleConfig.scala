@@ -19,9 +19,9 @@
 package ldif.modules.silk
 
 import ldif.module.ModuleConfig
-import de.fuberlin.wiwiss.silk.config.SilkConfig
+import de.fuberlin.wiwiss.silk.config.LinkingConfig
 
 /**
  * Silk Configuration.
  */
-case class SilkModuleConfig(silkConfig : SilkConfig) extends ModuleConfig
+case class SilkModuleConfig(silkConfig : LinkingConfig) extends ModuleConfig

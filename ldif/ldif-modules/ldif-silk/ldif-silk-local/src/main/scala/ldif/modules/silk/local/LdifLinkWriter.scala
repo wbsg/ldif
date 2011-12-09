@@ -20,16 +20,16 @@ package ldif.modules.silk.local
 
 import ldif.local.runtime.QuadWriter
 import ldif.entity.Node
-import de.fuberlin.wiwiss.silk.output.{Link, LinkWriter}
+import de.fuberlin.wiwiss.silk.output.LinkWriter
 import ldif.runtime.Quad
+import de.fuberlin.wiwiss.silk.entity.Link
 
 /**
  * A Silk Link Writer which writes all links to a LDIF Quad Writer.
  */
-class LdifLinkWriter(quadWriter : QuadWriter) extends LinkWriter
-{
-  def write(link : Link, predicateUri : String)
-  {
+class LdifLinkWriter(quadWriter : QuadWriter) extends LinkWriter {
+
+  def write(link: Link, predicateUri : String) {
     quadWriter.write(Quad(Node.createUriNode(link.source, null), predicateUri, Node.createUriNode(link.target, null), ""))
   }
 }

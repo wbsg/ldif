@@ -16,6 +16,7 @@
   <modules>
     <module>ldif-silk-common</module>
     <module>ldif-silk-local</module>
+    <module>ldif-silk-hadoop</module>
   </modules>
 
   <dependencies>

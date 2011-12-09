@@ -20,46 +20,37 @@ package ldif.modules.silk
 
 import ldif.module.Module
 import java.io.File
-import de.fuberlin.wiwiss.silk.impl.DefaultImplementations
-import de.fuberlin.wiwiss.silk.config.SilkConfig
+import de.fuberlin.wiwiss.silk.plugins.Plugins
+import de.fuberlin.wiwiss.silk.config.LinkingConfig
 
 /**
  * Silk Module.
  */
-class SilkModule(val config : SilkModuleConfig) extends Module
-{
+class SilkModule(val config : SilkModuleConfig) extends Module {
+
   type ConfigType = SilkModuleConfig
 
   type TaskType = SilkTask
 
-  lazy val tasks : Traversable[SilkTask] =
-  {
+  lazy val tasks : Traversable[SilkTask] = {
     for(linkSpec <- config.silkConfig.linkSpecs) yield new SilkTask(config, linkSpec)
   }
 }
 
-object SilkModule
-{
-  def load(file : File) : SilkModule =
-  {
-    DefaultImplementations.register()
+object SilkModule {
+
+  def load(file : File) : SilkModule = {
+    Plugins.register()
 
     new SilkModule(new SilkModuleConfig(loadConfig(file)))
   }
 
-  private def loadConfig(file : File) : SilkConfig =
-  {
+  private def loadConfig(file : File) : LinkingConfig = {
     if(file.isFile)
-    {
-      SilkConfig.load(file)
-    }
+      LinkingConfig.load(file)
     else if(file.isDirectory && file.listFiles.size > 0)
-    {
       file.listFiles.map(loadConfig).reduceLeft(_ merge _)
-    }
     else
-    {
-      SilkConfig.empty
-    }
+      LinkingConfig.empty
   }
 }

@@ -101,7 +101,11 @@
             <version>0.3.1</version>
         </dependency>
 
-
+      <dependency>
+          <groupId>ldif</groupId>
+          <artifactId>ldif-silk-hadoop</artifactId>
+          <version>0.3.1</version>
+      </dependency>
 
         <!--TO BE REMOVED -->
         <dependency>
