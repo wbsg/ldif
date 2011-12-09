@@ -78,12 +78,12 @@ class QuadCollection {
   var quadFileWriter: FileQuadWritableWriter = null
 
   def add(quad: QuadWritable) {
-    if(MemoryUsage.getFreeMemoryInBytes() < 16777216)
+    if(quadFileWriter==null && MemoryUsage.getFreeMemoryInBytes() < 16777216)
       spillToDisk
     if(quadFileWriter==null)
       quadSet.add(quad)
     else
-      quadFileWriter.write(quad)
+      quadFileWriter.write(quad.asQuad)
   }
 
   private def spillToDisk {
@@ -91,7 +91,7 @@ class QuadCollection {
     tempFile.deleteOnExit()
     quadFileWriter = new FileQuadWritableWriter(tempFile)
     for(quad <- quadSet)
-      quadFileWriter.write(quad)
+      quadFileWriter.write(quad.asQuad)
     quadSet = null
   }
 
@@ -107,14 +107,15 @@ class QuadCollection {
     else {
       val quadFileReader = new FileQuadWritableReader(quadFileWriter.outputFile)
       while(quadFileReader.hasNext)
-        f(quadFileReader.read())
+        f(new QuadWritable(quadFileReader.read()))
     }
   }
 }
 
-class FileQuadWritableWriter(outputFile: File) extends FileObjectWriter[QuadWritable](outputFile, NoQuadWritableLeft)
+class FileQuadWritableWriter(outputFile: File) extends FileObjectWriter[Quad](outputFile, NoQuadLeft)
 
-class FileQuadWritableReader(inputFile: File) extends FileObjectReader[QuadWritable](inputFile, NoQuadWritableLeft)
+class FileQuadWritableReader(inputFile: File) extends FileObjectReader[Quad](inputFile, NoQuadLeft)
 
-case object NoQuadWritableLeft extends QuadWritable(null, new Text(""), null, new Text(""))
+case object NoQuadLeft extends Quad(null, "", null, "")
+
 

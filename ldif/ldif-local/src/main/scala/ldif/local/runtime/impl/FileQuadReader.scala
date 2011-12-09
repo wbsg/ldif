@@ -1,4 +1,6 @@
-/* 
+package ldif.local.runtime.impl
+
+/*
  * LDIF
  *
  * Copyright 2011 Freie Universität Berlin, MediaEvent Services GmbH & Co. KG
@@ -15,8 +17,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-package ldif.local.runtime.impl
 
 import ldif.runtime.Quad
 import ldif.local.runtime.ClonableQuadReader

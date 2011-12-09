@@ -39,7 +39,7 @@ class UriMintValuePickerReducer extends MapReduceBase with Reducer[NodeWritable,
       if(entityComparator.lessThan(max, value))
         max = value
     }
-    val mintedNode = new NodeWritable(mintNamespace+UriMintHelper.mintURI (mintNamespace, max), null, Node.UriNode, entity.graph)
+    val mintedNode = new NodeWritable(UriMintHelper.mintURI(mintNamespace, max), null, Node.UriNode, entity.graph)
     sameAsQuad.subject = entity
     sameAsQuad.obj = mintedNode
     output.collect(NullWritable.get(), sameAsQuad)

@@ -20,7 +20,6 @@ package ldif.hadoop
 
 import config.HadoopIntegrationConfig
 import entitybuilder.EntityBuilderHadoopExecutor
-import io.EntityMultipleSequenceFileOutput
 import org.slf4j.LoggerFactory
 import java.io.File
 import java.math.BigInteger
@@ -31,11 +30,11 @@ import ldif.util.{StopWatch, LogUtil}
 import ldif.{EntityBuilderModule, EntityBuilderConfig}
 import ldif.modules.r2r.hadoop.{R2RHadoopModule, R2RHadoopExecutor}
 import ldif.modules.silk.SilkModule
-import ldif.hadoop.runtime.StaticEntityFormat
+import ldif.modules.silk.local.SilkLocalExecutor
+import ldif.local.runtime.StaticEntityFormat
 import runtime.{RunHadoopUriTranslation, ConfigParameters}
 import org.apache.hadoop.fs.{FileSystem, Path}
 import org.apache.hadoop.conf.Configuration
-import ldif.modules.silk.hadoop.SilkHadoopExecutor
 
 class HadoopIntegrationJob(val config : HadoopIntegrationConfig, debug : Boolean = false) {
 
@@ -117,20 +116,20 @@ class HadoopIntegrationJob(val config : HadoopIntegrationConfig, debug : Boolean
    */
   private def generateLinks(quadsPath : String) : String =  {
     val silkModule = SilkModule.load(new File(config.linkSpecDir))
-    val silkExecutor = new SilkHadoopExecutor
-    val tasks = silkModule.tasks.toIndexedSeq
-    
-    val entitiesDirectory =  "ebOutput-silk"
-    val entityDescriptions = tasks.map(silkExecutor.input).flatMap{ case StaticEntityFormat(ed) => ed }
-    val entityPaths = IndexedSeq.tabulate(tasks.size)(i => new Path(entitiesDirectory, EntityMultipleSequenceFileOutput.generateDirectoryName(i)))
-    val silkOutput = "silkOutput"
-    
-    buildEntities(quadsPath, entitiesDirectory, entityDescriptions, configParameters)
+    val silkExecutor = new SilkLocalExecutor
+
+    val entityDescriptions = silkModule.tasks.toIndexedSeq.map(silkExecutor.input).flatMap{ case StaticEntityFormat(ed) => ed }
+    val entitiesPath =  "ebOutput-silk"
+    buildEntities(quadsPath, entitiesPath, entityDescriptions, configParameters)
     log.info("Time needed to build entities for linking phase: " + stopWatch.getTimeSpanInSeconds + "s")
 
-//    for((silkTask, paths) <- tasks zip entityPaths.grouped(2).toList) {
-//      silkExecutor.execute(silkTask, paths, new Path(silkOutput))
-//    }
+    val silkOutput = "silkOutput"
+
+    // TODO - silk hadoop
+    //      for((silkTask, readers) <- silkModule.tasks.toList zip entityReaders.grouped(2).toList)
+    //      {
+    //        silkExecutor.execute(silkTask, readers, outputQueue)
+    //      }
 
     silkOutput
   }

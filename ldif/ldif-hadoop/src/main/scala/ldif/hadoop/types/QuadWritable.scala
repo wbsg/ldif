@@ -18,10 +18,10 @@
 
 package ldif.hadoop.types
 
-import ldif.entity.NodeWritable
 import ldif.runtime.Quad
 import org.apache.hadoop.io.{Writable, Text}
-import java.io.{DataOutput, DataInput}
+import java.io.{File, DataOutput, DataInput}
+import ldif.entity.{Node, NodeWritable}
 
 /**
  * Created by IntelliJ IDEA.
@@ -31,7 +31,7 @@ import java.io.{DataOutput, DataInput}
  * To change this template use File | Settings | File Templates.
  */
 
-class QuadWritable(var subject: NodeWritable, var property: Text, var obj: NodeWritable, var graph: Text) extends Writable{
+class QuadWritable(var subject: NodeWritable, var property: Text, var obj: NodeWritable, var graph: Text) extends Writable with Serializable {
   def this() {this(new NodeWritable(), new Text(), new NodeWritable(), new Text())}
 
   def this(quad: Quad) {this(new NodeWritable(quad.subject), new Text(quad.predicate), new NodeWritable(quad.value), new Text(quad.graph))}
@@ -52,7 +52,7 @@ class QuadWritable(var subject: NodeWritable, var property: Text, var obj: NodeW
 
   override def toString: String = {
     val sb = new StringBuilder
-    sb.append(subject).append(" <").append(property.toString).append("> ").append(obj).append(" <").append(graph.toString).append("> .").toString()
+    sb.append(subject.toNQuadsFormat).append(" <").append(property.toString).append("> ").append(obj.toNQuadsFormat).append(" <").append(graph.toString).append("> .").toString()
   }
 
   override def hashCode: Int = {
@@ -76,5 +76,9 @@ class QuadWritable(var subject: NodeWritable, var property: Text, var obj: NodeW
       return false
   }
 
-  def asQuad = Quad(subject, property.toString, obj, graph.toString)
+  def asQuad: Quad = {
+    val s = Node(subject.value, subject.datatypeOrLanguage, subject.nodeType, subject.graph)
+    val o = Node(obj.value, obj.datatypeOrLanguage, obj.nodeType, obj.graph)
+    return Quad(s, property.toString, o, graph.toString)
+  }
 }
