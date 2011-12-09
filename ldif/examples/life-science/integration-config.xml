@@ -8,5 +8,5 @@
   <mappings>mappings</mappings>
   <quality>quality</quality>
   <fusion>fusion</fusion>
-  <output>output_example1k.nq</output>
+  <output>integrated_life_science.nq</output>
 </integrationJob>
