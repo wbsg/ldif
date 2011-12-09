@@ -34,7 +34,7 @@ import ldif.modules.silk.SilkModule
 import org.apache.hadoop.fs.{FileSystem, Path}
 import org.apache.hadoop.conf.Configuration
 import ldif.modules.silk.hadoop.SilkHadoopExecutor
-import runtime.{StaticEntityFormat, RunHadoopUriTranslation, ConfigParameters}
+import runtime._
 
 class HadoopIntegrationJob(val config : HadoopIntegrationConfig, debug : Boolean = false) {
 
@@ -60,14 +60,44 @@ class HadoopIntegrationJob(val config : HadoopIntegrationConfig, debug : Boolean
     val silkOutput = generateLinks(r2rOutput)
     log.info("Time needed to link data: " + stopWatch.getTimeSpanInSeconds + "s")
 
-    val integratedPath = "integrated"
+    var integratedPath = "integrated"
 
-    // Execute URI Translation
-    if(config.properties.getProperty("rewriteURIs", "true").toLowerCase=="true") {
-//      translateUris(silkOutput, integratedPath)
+    // Execute URI Translation (if enabled)
+    if(config.properties.getProperty("rewriteURIs", "true").toLowerCase=="true" && sameAsLinksAvailable()) {
+      //TODO - integrate with silk
       translateUris(r2rOutput, integratedPath)
       log.info("Time needed to translate URIs: " + stopWatch.getTimeSpanInSeconds + "s")
+    } else
+      integratedPath = r2rOutput
+
+    // Execute URI Minting (if enabled)
+    if(config.properties.getProperty("uriMinting", "false").toLowerCase=="true") {
+      integratedPath = mintUris(integratedPath)
+      log.info("Time needed to mint URIs: " + stopWatch.getTimeSpanInSeconds + "s")
     }
+
+    writeOutput(integratedPath)
+  }
+
+
+  private def mintUris(in : String) : String = {
+    val mintedUriPath = in+"_minted"
+    val (mintNamespace, mintPropertySet) = getMintValues(config)
+    HadoopUriMinting.execute(in, mintedUriPath, mintNamespace, mintPropertySet)
+    mintedUriPath
+  }
+
+  private def sameAsLinksAvailable() : Boolean = {
+    val conf = new Configuration
+    val hdfs = FileSystem.get(conf)
+    val hdPath = new Path(sameAsPath)
+    hdfs.exists(hdPath)
+  }
+
+  private def getMintValues(config: HadoopIntegrationConfig): (String, Set[String]) = {
+    val mintNamespace = config.properties.getProperty("uriMintNamespace")
+    val mintPropertySet = config.properties.getProperty("uriMintLabelPredicate").split("\\s+").toSet
+    return (mintNamespace, mintPropertySet)
   }
 
 
@@ -105,7 +135,7 @@ class HadoopIntegrationJob(val config : HadoopIntegrationConfig, debug : Boolean
    * Build a mapping repository from a set of R2R mappings
    */
   private def getMappingsRepository : Repository = {
-    val mappingSource = new FileOrURISource(new File(config.mappingDir))
+    val mappingSource = new FileOrURISource(config.mappingDir)
     val uriGenerator = new EnumeratingURIGenerator("http://www4.wiwiss.fu-berlin.de/ldif/imported", BigInteger.ONE);
     val importedMappingModel = Repository.importMappingDataFromSource(mappingSource, uriGenerator)
     new Repository(new JenaModelSource(importedMappingModel))
@@ -115,7 +145,7 @@ class HadoopIntegrationJob(val config : HadoopIntegrationConfig, debug : Boolean
    * Generates links.
    */
   private def generateLinks(quadsPath : String) : String =  {
-    val silkModule = SilkModule.load(new File(config.linkSpecDir))
+    val silkModule = SilkModule.load(config.linkSpecDir)
     val silkExecutor = new SilkHadoopExecutor
     val tasks = silkModule.tasks.toIndexedSeq
 
@@ -155,6 +185,15 @@ class HadoopIntegrationJob(val config : HadoopIntegrationConfig, debug : Boolean
     val hdPath = new Path(sameAsPath)
     if (hdfs.exists(hdPath))
       hdfs.delete(hdPath, true)
+  }
+
+  private def writeOutput(outputPath : String)    {
+    val nqOutput = config.properties.getProperty("outputFormat", "nq").toLowerCase.equals("nq")
+
+    // convert output files from seq to nq
+    HadoopQuadToTextConverter.execute(outputPath, outputPath+"_NQ")
+
+    // TODO add output module
   }
 
 }

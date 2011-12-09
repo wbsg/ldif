@@ -21,11 +21,11 @@ package ldif.hadoop.entitybuilder.reducers
 import org.apache.hadoop.mapred._
 import lib.MultipleOutputs
 import java.util.Iterator
-import collection.mutable.{HashMap, HashSet, ArrayBuffer}
+import collection.mutable.ArrayBuffer
 import ldif.hadoop.types._
 import ldif.hadoop.utils.HadoopHelper
 import ldif.hadoop.entitybuilder.ResultBuilder
-import org.apache.hadoop.io.{WritableUtils, Writable, IntWritable}
+import org.apache.hadoop.io.{WritableUtils, IntWritable}
 import org.apache.hadoop.conf.Configuration
 import ldif.entity.{NodeWritable, EntityDescriptionMetadata, EntityWritable}
 
@@ -78,10 +78,11 @@ class EntityConstructionReducer extends MapReduceBase with Reducer[EntityDescrip
   }
 
   private def hasResults(entityDescriptionID: Int, results: IndexedSeq[Traversable[IndexedSeq[NodeWritable]]]): Boolean = {
-    val entityDescription = edmd.entityDescriptions(entityDescriptionID)
-    for(patternIndex <- 0 until entityDescription.patterns.length)
-      if(entityDescription.patterns(patternIndex).length>0 && results(patternIndex).size==0)
-        return false
+    // TODO why should the entity have values for each pattern?
+//    val entityDescription = edmd.entityDescriptions(entityDescriptionID)
+//    for(patternIndex <- 0 until entityDescription.patterns.length)
+//      if(entityDescription.patterns(patternIndex).length>0 && results(patternIndex).size==0)
+//        return false
     return true
   }
 

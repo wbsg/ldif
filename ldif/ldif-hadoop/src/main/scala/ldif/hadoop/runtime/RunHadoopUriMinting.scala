@@ -10,10 +10,10 @@ import ldif.util.Consts
  * To change this template use File | Settings | File Templates.
  */
 
-object RunHadoopUriMinting {
+object HadoopUriMinting {
   def execute(datasetPath: String, outputPath: String, mintNamespace: String, mintPropertySet: Set[String]) {
     val hadoopTmpDir = "hadoop_tmp"+Consts.fileSeparator+"uriminting"
-    RunHadoopGenerateMintedURIs.execute(datasetPath, hadoopTmpDir+"/sameAs", mintNamespace, mintPropertySet)
+    HadoopGenerateMintedURIs.execute(datasetPath, hadoopTmpDir+"/sameAs", mintNamespace, mintPropertySet)
     RunHadoopUriRewriting.execute(datasetPath, hadoopTmpDir+"/sameAs", outputPath)
   }
 

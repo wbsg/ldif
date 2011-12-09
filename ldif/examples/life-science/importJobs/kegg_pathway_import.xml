@@ -6,6 +6,6 @@
     <dataSource>KeggPathway</dataSource>
     <refreshSchedule>onStartup</refreshSchedule>
     <quadImportJob>
-        <dumpLocation>examples/1k/sources/kegg_pathway_20101227_1000.nq</dumpLocation>
+        <dumpLocation>examples/life-science/sources/kegg_pathway_20101227_1000.nq</dumpLocation>
     </quadImportJob>
 </importJob>

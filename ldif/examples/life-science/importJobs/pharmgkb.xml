@@ -6,6 +6,6 @@
     <dataSource>PharmGKB</dataSource>
     <refreshSchedule>hourly</refreshSchedule>
     <quadImportJob>
-        <dumpLocation>examples/1k/sources/pharmgkb_20101101_1000.nq</dumpLocation>
+        <dumpLocation>examples/life-science/sources/pharmgkb_20101101_1000.nq</dumpLocation>
     </quadImportJob>
 </importJob>

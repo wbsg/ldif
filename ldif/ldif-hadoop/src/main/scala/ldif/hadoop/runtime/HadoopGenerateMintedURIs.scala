@@ -1,18 +1,16 @@
 package ldif.hadoop.runtime
 
-import org.apache.hadoop.conf.Configured._
 import ldif.entity.NodeWritable
 import ldif.hadoop.types.QuadWritable
 import ldif.hadoop.io.{QuadSequenceFileOutput, QuadSequenceFileInput}
 import org.apache.hadoop.mapred.{JobClient, FileOutputFormat, FileInputFormat, JobConf}
 import org.slf4j.LoggerFactory
-import ldif.util.Consts
 import org.apache.hadoop.conf.{Configuration, Configured}
 import org.apache.hadoop.fs.{FileSystem, Path}
 import ldif.hadoop.utils.HadoopHelper
 import org.apache.hadoop.util.{ToolRunner, Tool}
-import ldif.hadoop.mappers.{UriMintValuePickMapper, UriRewritingMapper}
-import ldif.hadoop.reducers.{UriMintValuePickerReducer, UriRewritingReducer}
+import ldif.hadoop.mappers.UriMintValuePickMapper
+import ldif.hadoop.reducers.UriMintValuePickerReducer
 import org.apache.hadoop.io.{Text, NullWritable}
 
 /**
@@ -23,10 +21,12 @@ import org.apache.hadoop.io.{Text, NullWritable}
  * To change this template use File | Settings | File Templates.
  */
 
-class RunHadoopGenerateMintedURIs extends Configured with Tool {
+class HadoopGenerateMintedURIs extends Configured with Tool {
   def run(args: Array[String]): Int = {
     val conf = getConf
     val job = new JobConf(conf, classOf[RunHadoopUriRewriting])
+
+    job.setJobName("GenerateMintedUri")
 
     job.setMapperClass(classOf[UriMintValuePickMapper])
     job.setReducerClass(classOf[UriMintValuePickerReducer])
@@ -50,7 +50,7 @@ class RunHadoopGenerateMintedURIs extends Configured with Tool {
   }
 }
 
-object RunHadoopGenerateMintedURIs {
+object HadoopGenerateMintedURIs {
   private val log = LoggerFactory.getLogger(getClass.getName)
 
   def execute(datasetInputPath: String, outputPath: String, mintNamespace: String, mintPropertySet: Set[String]): Int = {
@@ -66,7 +66,7 @@ object RunHadoopGenerateMintedURIs {
 
     HadoopHelper.distributeSerializableObject(mintPropertySet, conf, "mintPropertySet")
     HadoopHelper.distributeSerializableObject(mintNamespace, conf, "mintNamespace")
-    val res = ToolRunner.run(conf, new RunHadoopGenerateMintedURIs(), Array[String](datasetInputPath, outputPath))
+    val res = ToolRunner.run(conf, new HadoopGenerateMintedURIs(), Array[String](datasetInputPath, outputPath))
 
     log.info("That's it. Generation of Uri Minting Mappings took " + (System.currentTimeMillis-start)/1000.0 + "s")
     res

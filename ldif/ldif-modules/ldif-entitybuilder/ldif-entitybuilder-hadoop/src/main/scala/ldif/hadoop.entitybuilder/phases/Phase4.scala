@@ -71,9 +71,7 @@ class Phase4 extends Configured with Tool {
     val out = new Path(args(2))
     FileOutputFormat.setOutputPath(jobConf, out)
 
-    val runningJob = JobClient.runJob(jobConf)
-    //    val counters = runningJob.getCounters
-    //    val countValue=counters.getGroup("LDIF nr. of entities per ED").getCounter("ED ID 6")
+    JobClient.runJob(jobConf)
 
     return 0
   }

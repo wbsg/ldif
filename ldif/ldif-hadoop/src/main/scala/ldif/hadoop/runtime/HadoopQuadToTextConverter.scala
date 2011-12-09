@@ -1,16 +1,15 @@
 package ldif.hadoop.runtime
 
-import org.apache.hadoop.conf.Configured._
 import ldif.hadoop.types.QuadWritable
-import org.apache.commons.io.FileUtils
-import java.io.File
 import org.apache.hadoop.conf.{Configuration, Configured}
 import org.apache.hadoop.util.{ToolRunner, Tool}
 import org.apache.hadoop.mapred._
-import ldif.hadoop.io.{QuadSequenceFileInput, QuadSequenceFileOutput}
-import lib.{NullOutputFormat, MultipleOutputs, IdentityMapper}
+import ldif.hadoop.io.QuadSequenceFileInput
+import lib.IdentityMapper
 import org.apache.hadoop.io.{Text, NullWritable}
 import org.apache.hadoop.fs.{FileSystem, Path}
+import ch.qos.logback.classic.pattern.ClassOfCallerConverter
+import org.slf4j.LoggerFactory
 
 /**
  * Created by IntelliJ IDEA.
@@ -20,13 +19,15 @@ import org.apache.hadoop.fs.{FileSystem, Path}
  * To change this template use File | Settings | File Templates.
  */
 
-class RunHadoopQuadToTextConverter extends Configured with Tool {
+class HadoopQuadToTextConverter extends Configured with Tool {
   def run(args: Array[String]): Int = {
     val conf = getConf
     val job = new JobConf(conf, classOf[RunHadoopUriRewriting])
 
+    job.setJobName("ConvertSeqToNq")
+
     job.setMapperClass(classOf[IdentityMapper[NullWritable, QuadWritable]])
-    job.setNumReduceTasks(0)
+    //job.setNumReduceTasks(0)
 
     job.setMapOutputKeyClass(classOf[NullWritable])
     job.setMapOutputValueClass(classOf[QuadWritable])
@@ -48,10 +49,11 @@ class RunHadoopQuadToTextConverter extends Configured with Tool {
   }
 }
 
-object RunHadoopQuadToTextConverter {
+object HadoopQuadToTextConverter {
+  private val log = LoggerFactory.getLogger(getClass.getName)
 
   def execute(inputPath: String, outputPath: String): Int = {
-    println("Starting quad to N-Quads conversion...")
+    log.info("Starting quad to N-Quads conversion...")
     val start = System.currentTimeMillis
     val conf = new Configuration
 
@@ -61,8 +63,8 @@ object RunHadoopQuadToTextConverter {
     if (hdfs.exists(hdPath))
       hdfs.delete(hdPath, true)
 
-    val res = ToolRunner.run(conf, new RunHadoopQuadToTextConverter, Array[String](inputPath, outputPath))
-    println("That's it. quad conversion took " + (System.currentTimeMillis-start)/1000.0 + "s")
+    val res = ToolRunner.run(conf, new HadoopQuadToTextConverter, Array[String](inputPath, outputPath))
+    log.info("That's it. quad conversion took " + (System.currentTimeMillis-start)/1000.0 + "s")
     res
   }
 
