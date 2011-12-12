@@ -45,6 +45,7 @@ class ValuePathJoinMapper extends MapReduceBase with Mapper[IntWritable, ValuePa
 
   def map(key: IntWritable, value: ValuePathWritable, output: OutputCollector[PathJoinValueWritable, ValuePathWritable], reporter: Reporter) {
     if(value.pathType==FinishedPathType) {
+      reporter.getCounter("LDIF stats", "Nr. of finished paths output").increment(1)
       collector = mos.getCollector("seq", reporter).asInstanceOf[OutputCollector[IntWritable, ValuePathWritable]]
       collector.collect(key, value)
       // Debugging
@@ -53,10 +54,14 @@ class ValuePathJoinMapper extends MapReduceBase with Mapper[IntWritable, ValuePa
     }
     else {
       val nodes = value.values.get
-      if(value.pathType==EntityPathType)
+      if(value.pathType==EntityPathType) {
+        reporter.getCounter("LDIF stats", "Nr. of entity paths output").increment(1)
         output.collect(new PathJoinValueWritable(value.pathID, nodes(nodes.length-1).asInstanceOf[NodeWritable]), value)
-      else
+      }
+      else {
+        reporter.getCounter("LDIF stats", "Nr. of join paths output").increment(1)
         output.collect(new PathJoinValueWritable(value.pathID, nodes(0).asInstanceOf[NodeWritable]), value)
+      }
     }
   }
 

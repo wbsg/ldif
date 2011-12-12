@@ -50,6 +50,7 @@ class EntityConstructionMapper extends MapReduceBase with Mapper[IntWritable, Va
     // Debugging
     val debugCollector = mos.getCollector("debugMap", reporter).asInstanceOf[OutputCollector[IntWritable, ValuePathWritable]]
     debugCollector.collect(entityDescriptionID, value)
+    reporter.getCounter("LDIF stats", "Nr. of valie paths output").increment(1)
     output.collect(new EntityDescriptionNodeWritable(entityDescriptionID, value.values.get()(0).asInstanceOf[NodeWritable]), value)
   }
 
