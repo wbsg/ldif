@@ -76,8 +76,9 @@ class ValuePathJoinReducer extends MapReduceBase with Reducer[PathJoinValueWrita
         val path = new ValuePathWritable(pathIDWritable, pathType, nodeValues)
         collector = mos.getCollector("seq", reporter).asInstanceOf[OutputCollector[IntWritable, ValuePathWritable]]
         collector.collect(new IntWritable(nextPhase), path)
-//        collector = mos.getCollector("text", reporter).asInstanceOf[OutputCollector[IntWritable, ValuePathWritable]]
-//        collector.collect(new IntWritable(nextPhase), path)
+        // Debugging
+        collector = mos.getCollector("text", reporter).asInstanceOf[OutputCollector[IntWritable, ValuePathWritable]]
+        collector.collect(new IntWritable(nextPhase), path)
       }
     }
   }

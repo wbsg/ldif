@@ -71,19 +71,18 @@ class EntityConstructionReducer extends MapReduceBase with Reducer[EntityDescrip
         reporter.incrCounter("LDIF nr. of entities per ED", "ED ID "+key.entityDescriptionID.get(), 1)
         output.collect(key.entityDescriptionID, new EntityWritable(entityNode.get, EntityWritable.convertResultTable(result), key.entityDescriptionID))
         //For Debugging
-//        val debugCollector = mos.getCollector("debug", reporter).asInstanceOf[OutputCollector[IntWritable, EntityWritable]]
-//        debugCollector.collect(key.entityDescriptionID, new EntityWritable(entityNode.get, EntityWritable.convertResultTable(result), key.entityDescriptionID))
+        val debugCollector = mos.getCollector("debugReduce", reporter).asInstanceOf[OutputCollector[IntWritable, EntityWritable]]
+        debugCollector.collect(key.entityDescriptionID, new EntityWritable(entityNode.get, EntityWritable.convertResultTable(result), key.entityDescriptionID))
       }
     }
   }
 
   private def hasResults(entityDescriptionID: Int, results: IndexedSeq[Traversable[IndexedSeq[NodeWritable]]]): Boolean = {
-    // TODO why should the entity have values for each pattern?
-//    val entityDescription = edmd.entityDescriptions(entityDescriptionID)
-//    for(patternIndex <- 0 until entityDescription.patterns.length)
-//      if(entityDescription.patterns(patternIndex).length>0 && results(patternIndex).size==0)
-//        return false
-    return true
+    val entityDescription = edmd.entityDescriptions(entityDescriptionID)
+    for(patternIndex <- 0 until entityDescription.patterns.length)
+      if(entityDescription.patterns(patternIndex).length==0 || (entityDescription.patterns(patternIndex).length>0 && results(patternIndex).size>0))
+        return true
+    return false
   }
 
   override def close() {

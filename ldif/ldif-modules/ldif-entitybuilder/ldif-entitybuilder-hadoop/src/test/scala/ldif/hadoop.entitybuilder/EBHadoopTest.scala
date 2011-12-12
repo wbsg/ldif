@@ -183,7 +183,9 @@ class EBHadoopTest extends FlatSpec with ShouldMatchers
       val reader = new SequenceFile.Reader(fileSystem, file, config)
       val kk = reader.getKeyClass.newInstance.asInstanceOf[IntWritable]
       val vv = reader.getValueClass.newInstance.asInstanceOf[EntityWritable]
+      println(eqs.size)
       while (reader.next(kk, vv)) {
+        println(kk.get)
         eqs(kk.get) :+= vv
         // println( kk +" ) " +vv.resource.value +" \n"+ vv + "\n-----------------")
       }

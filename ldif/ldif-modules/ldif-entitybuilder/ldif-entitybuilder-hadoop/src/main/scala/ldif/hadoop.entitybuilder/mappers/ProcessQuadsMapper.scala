@@ -71,9 +71,8 @@ object ProcessQuads {
             val collector = mos.getCollector("seq", reporter).asInstanceOf[OutputCollector[IntWritable, ValuePathWritable]]
             collector.collect(phase, path)
             // For debugging
-            //            collector = mos.getCollector("text", reporter).asInstanceOf[OutputCollector[IntWritable, ValuePathWritable]]
-            //            collector.collect(phase, path)
-
+            val tCollector = mos.getCollector("text", reporter).asInstanceOf[OutputCollector[IntWritable, ValuePathWritable]]
+            tCollector.collect(phase, path)
           }
         }
     }
