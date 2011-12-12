@@ -77,15 +77,15 @@ class ValuePathJoinReducer extends MapReduceBase with Reducer[PathJoinValueWrita
             EntityPathType
         }
         val path = new ValuePathWritable(pathIDWritable, pathType, nodeValues)
-        if(pathType==FinishedPathType)
-          reporter.getCounter("LDIF stats", "Nr. of finished paths output-r").increment(1)
-        else
-          reporter.getCounter("LDIF stats", "Nr. of entity paths output-r").increment(1)
+//        if(pathType==FinishedPathType)
+//          reporter.getCounter("LDIF stats", "Nr. of finished paths output-r").increment(1)
+//        else
+//          reporter.getCounter("LDIF stats", "Nr. of entity paths output-r").increment(1)
         collector = mos.getCollector("seq", reporter).asInstanceOf[OutputCollector[IntWritable, ValuePathWritable]]
         collector.collect(new IntWritable(nextPhase), path)
         // Debugging
-        collector = mos.getCollector("text", reporter).asInstanceOf[OutputCollector[IntWritable, ValuePathWritable]]
-        collector.collect(new IntWritable(nextPhase), path)
+//        collector = mos.getCollector("text", reporter).asInstanceOf[OutputCollector[IntWritable, ValuePathWritable]]
+//        collector.collect(new IntWritable(nextPhase), path)
       }
     }
   }
