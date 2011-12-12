@@ -49,4 +49,10 @@ class EntityDescriptionNodeWritable(var entityDescriptionID : IntWritable, var n
     this.entityDescriptionID = entityDescriptionID
     this.node = node
   }
+
+  override def hashCode(): Int = {
+    var hashCode = entityDescriptionID.hashCode
+    hashCode = 31*hashCode + node.hashCode
+    hashCode
+  }
 }

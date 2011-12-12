@@ -21,11 +21,12 @@ package ldif.hadoop.entitybuilder.reducers
 import org.apache.hadoop.mapred._
 import lib.MultipleOutputs
 import collection.mutable.ArrayBuffer
-import org.apache.hadoop.io.{IntWritable, Writable}
 import java.util.Iterator
 import ldif.hadoop.types._
 import ldif.entity.EntityDescriptionMetadata
 import ldif.hadoop.utils.HadoopHelper
+import org.apache.hadoop.conf.Configuration
+import org.apache.hadoop.io.{WritableUtils, IntWritable, Writable}
 
 /**
  * Created by IntelliJ IDEA.
@@ -41,10 +42,12 @@ class ValuePathJoinReducer extends MapReduceBase with Reducer[PathJoinValueWrita
   private val pathIDWritable = new IntWritable
   private val nodeValues = new NodeArrayWritable
   private var collector: OutputCollector[IntWritable, ValuePathWritable] = null
+  private var config: Configuration = null
 
   override def configure(conf: JobConf) {
     edmd = HadoopHelper.getEntityDescriptionMetaData(conf)
     mos = new MultipleOutputs(conf)
+    config = conf
   }
 
   override def reduce(key: PathJoinValueWritable, values: Iterator[ValuePathWritable], output: OutputCollector[IntWritable, ValuePathWritable], reporter: Reporter) {
@@ -55,10 +58,10 @@ class ValuePathJoinReducer extends MapReduceBase with Reducer[PathJoinValueWrita
     val finalPathLength = edmd.pathLength(pathID)
 
     while(values.hasNext) {
-      val value = values.next()
+      val value = WritableUtils.clone(values.next(), config)
       value.pathType match {
-        case EntityPathType => entityPaths.append(value.values.get)
-        case JoinPathType => joinPaths.append(value.values.get()(1))
+        case EntityPathType => entityPaths.append(value.values.get); reporter.getCounter("LDIF stats", "reducer: entity paths received").increment(1)
+        case JoinPathType => joinPaths.append(value.values.get()(1)); reporter.getCounter("LDIF stats", "reducer: join paths received").increment(1)
         case _ => throw new RuntimeException("Cannot join paths with type: " + value.pathType)
       }
     }
@@ -75,9 +78,9 @@ class ValuePathJoinReducer extends MapReduceBase with Reducer[PathJoinValueWrita
         }
         val path = new ValuePathWritable(pathIDWritable, pathType, nodeValues)
         if(pathType==FinishedPathType)
-          reporter.getCounter("LDIF stats", "Nr. of finished paths output").increment(1)
+          reporter.getCounter("LDIF stats", "Nr. of finished paths output-r").increment(1)
         else
-          reporter.getCounter("LDIF stats", "Nr. of entity paths output").increment(1)
+          reporter.getCounter("LDIF stats", "Nr. of entity paths output-r").increment(1)
         collector = mos.getCollector("seq", reporter).asInstanceOf[OutputCollector[IntWritable, ValuePathWritable]]
         collector.collect(new IntWritable(nextPhase), path)
         // Debugging

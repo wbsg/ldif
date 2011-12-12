@@ -41,4 +41,10 @@ class PathJoinValueWritable (var pathID : IntWritable, var node : NodeWritable) 
     pathID.write(output)
     node.write(output)
   }
+
+  override def hashCode(): Int = {
+    var hashCode = pathID.get()
+    hashCode = 31*hashCode + node.hashCode
+    return hashCode
+  }
 }
