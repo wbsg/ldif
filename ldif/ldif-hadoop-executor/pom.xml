@@ -107,12 +107,12 @@
           <version>0.3.1</version>
       </dependency>
 
-        <!--TO BE REMOVED -->
-        <dependency>
-            <groupId>ldif</groupId>
-            <artifactId>ldif-singlemachine</artifactId>
-            <version>0.3.1</version>
-        </dependency>
+        <!--<dependency>-->
+            <!--<groupId>org.apache.mrunit</groupId>-->
+            <!--<artifactId>mrunit</artifactId>-->
+            <!--<version>0.5.0-incubating</version>-->
+            <!--<scope>test</scope>-->
+        <!--</dependency>-->
 
     </dependencies>
 

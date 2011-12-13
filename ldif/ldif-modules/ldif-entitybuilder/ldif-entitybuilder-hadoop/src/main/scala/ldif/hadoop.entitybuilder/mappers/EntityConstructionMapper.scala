@@ -48,8 +48,8 @@ class EntityConstructionMapper extends MapReduceBase with Mapper[IntWritable, Va
     entityDescriptionID.set(edmd.pathMap(value.pathID.get).entityDescriptionIndex)
     entityDescriptionNode.set(entityDescriptionID, value.values.get()(0).asInstanceOf[NodeWritable])
     // Debugging
-    val debugCollector = mos.getCollector("debugMap", reporter).asInstanceOf[OutputCollector[IntWritable, ValuePathWritable]]
-    debugCollector.collect(entityDescriptionID, value)
+//    val debugCollector = mos.getCollector("debugMap", reporter).asInstanceOf[OutputCollector[IntWritable, ValuePathWritable]]
+//    debugCollector.collect(entityDescriptionID, value)
     output.collect(new EntityDescriptionNodeWritable(entityDescriptionID, value.values.get()(0).asInstanceOf[NodeWritable]), value)
   }
 

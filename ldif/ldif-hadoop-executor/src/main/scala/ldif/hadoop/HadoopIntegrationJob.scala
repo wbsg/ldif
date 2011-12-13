@@ -27,7 +27,6 @@ import java.math.BigInteger
 import ldif.modules.r2r.R2RConfig
 import de.fuberlin.wiwiss.r2r._
 import ldif.entity.EntityDescription
-import ldif.util.{StopWatch, LogUtil}
 import ldif.{EntityBuilderModule, EntityBuilderConfig}
 import ldif.modules.r2r.hadoop.{R2RHadoopModule, R2RHadoopExecutor}
 import ldif.modules.silk.SilkModule
@@ -36,20 +35,24 @@ import org.apache.hadoop.conf.Configuration
 import ldif.modules.silk.hadoop.SilkHadoopExecutor
 import runtime._
 import de.fuberlin.wiwiss.silk.util.DPair
+import ldif.util.{Consts, StopWatch, LogUtil}
 
 class HadoopIntegrationJob(val config : HadoopIntegrationConfig, debug : Boolean = false) {
 
   private val log = LoggerFactory.getLogger(getClass.getName)
   val stopWatch = new StopWatch
 
-  val sameAsPath = "sameAsFromSources"
+  val conf = new Configuration
+  val hdfs = FileSystem.get(conf)
+
+  val sameAsFromSources = clean("sameAsFromSources")
 
   // Object to store all kinds of configuration data
-  var configParameters = ConfigParameters(config.properties, sameAsPath)
+  var configParameters = ConfigParameters(config.properties, sameAsFromSources)
 
   def runIntegration() {
 
-    cleanup()
+    var outputPath : String = null
 
     stopWatch.getTimeSpanInSeconds()
 
@@ -61,23 +64,23 @@ class HadoopIntegrationJob(val config : HadoopIntegrationConfig, debug : Boolean
     val silkOutput = generateLinks(r2rOutput)
     log.info("Time needed to link data: " + stopWatch.getTimeSpanInSeconds + "s")
 
-    var integratedPath = "integrated"
+    // Prepare output data
+    val allQuads = r2rOutput   //TODO val allQuads = getAllQuads(r2rOutput, otherQuads)
+    val allSameAsLinks = getAllLinks(silkOutput, new Path(sameAsFromSources))
 
     // Execute URI Translation (if enabled)
-    if(config.properties.getProperty("rewriteURIs", "true").toLowerCase=="true" && sameAsLinksAvailable()) {
-      //TODO - integrate with silk
-      translateUris(r2rOutput, integratedPath)
+    if(config.properties.getProperty("rewriteURIs", "true").toLowerCase=="true") {
+      outputPath = translateUris(allQuads, allSameAsLinks)
       log.info("Time needed to translate URIs: " + stopWatch.getTimeSpanInSeconds + "s")
-    } else
-      integratedPath = r2rOutput
+    }
 
     // Execute URI Minting (if enabled)
     if(config.properties.getProperty("uriMinting", "false").toLowerCase=="true") {
-      integratedPath = mintUris(integratedPath)
+      outputPath = mintUris(outputPath)
       log.info("Time needed to mint URIs: " + stopWatch.getTimeSpanInSeconds + "s")
     }
 
-    writeOutput(integratedPath)
+    writeOutput(outputPath)
   }
 
 
@@ -86,13 +89,6 @@ class HadoopIntegrationJob(val config : HadoopIntegrationConfig, debug : Boolean
     val (mintNamespace, mintPropertySet) = getMintValues(config)
     HadoopUriMinting.execute(in, mintedUriPath, mintNamespace, mintPropertySet)
     mintedUriPath
-  }
-
-  private def sameAsLinksAvailable() : Boolean = {
-    val conf = new Configuration
-    val hdfs = FileSystem.get(conf)
-    val hdPath = new Path(sameAsPath)
-    hdfs.exists(hdPath)
   }
 
   private def getMintValues(config: HadoopIntegrationConfig): (String, Set[String]) = {
@@ -105,10 +101,35 @@ class HadoopIntegrationJob(val config : HadoopIntegrationConfig, debug : Boolean
   /**
    * Translates URIs
    */
-  private def translateUris(inputPath : String, outputPath : String) {
-    // TODO merge sameAs from sources and silk output
-    RunHadoopUriTranslation.execute(inputPath, sameAsPath, outputPath)
+  private def translateUris(inputPath : String, sameAsLinks : String) : String = {
+    val outputPath = "traslated"
+    RunHadoopUriTranslation.execute(inputPath, sameAsLinks, outputPath)
+    outputPath
   }
+
+
+  /**
+   * Merges sameAs links from sources and silk output
+   */
+  private def getAllLinks(sameAsFromSilk : Seq[Path], sameAsFromSource : Path) : String = {
+
+    val allSameAsLinks = clean(new Path("allSameAsLinks"))
+    hdfs.mkdirs(allSameAsLinks)
+
+    for (path <- sameAsFromSilk) {
+      val sameAsFromSilkSeq = hdfs.listStatus(path)
+      for (status <- sameAsFromSilkSeq)
+        hdfs.rename(status.getPath, new Path(allSameAsLinks+Consts.fileSeparator+path.getName+status.getPath.getName))
+      clean(path)
+    }
+    val sameAsFromSourceSeq = hdfs.listStatus(sameAsFromSource)
+    for (status <- sameAsFromSourceSeq)
+      hdfs.rename(status.getPath, new Path(allSameAsLinks+Consts.fileSeparator+status.getPath.getName))
+    clean(sameAsFromSource)
+
+    allSameAsLinks.toString
+  }
+
 
   /**
    * Transforms the Quads
@@ -145,9 +166,9 @@ class HadoopIntegrationJob(val config : HadoopIntegrationConfig, debug : Boolean
   /**
    * Generates links.
    */
-  private def generateLinks(quadsPath : String): Seq[Path] =  {
-    val entitiesDirectory =  "ebOutput-silk"
-    val outputDirectory = "silkOutput"
+  private def generateLinks(quadsPath : String) : Seq[Path] =  {
+    val entitiesDirectory =  clean("ebOutput-silk")
+    val outputDirectory = clean("silkOutput")
 
     val silkModule = SilkModule.load(config.linkSpecDir)
     val silkExecutor = new SilkHadoopExecutor
@@ -182,11 +203,15 @@ class HadoopIntegrationJob(val config : HadoopIntegrationConfig, debug : Boolean
   }
 
 
-  private def cleanup() {
-    val hdfs = FileSystem.get(new Configuration())
-    val hdPath = new Path(sameAsPath)
+  private def clean(path : String) : String =  {
+    clean(new Path(path))
+    path
+  }
+
+  private def clean(hdPath : Path) : Path =  {
     if (hdfs.exists(hdPath))
       hdfs.delete(hdPath, true)
+    hdPath
   }
 
   private def writeOutput(outputPath : String)    {
