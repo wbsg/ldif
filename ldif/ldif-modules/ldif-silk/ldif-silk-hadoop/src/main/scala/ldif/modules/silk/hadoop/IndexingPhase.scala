@@ -24,7 +24,7 @@ class IndexingPhase extends Mapper[IntWritable, EntityWritable, IndexWritable, E
                              entity: EntityWritable,
                              context: Mapper[IntWritable, EntityWritable, IndexWritable, EntityWritable]#Context) {
     
-    val index = linkSpec.rule.index(new LdifEntity(entity, entityDescs.select(key.get % 2 == 1)))
+    val index = linkSpec.rule.index(new LdifEntity(entity, entityDescs.select(key.get % 2 == 0)))
     context.write(new IndexWritable(index.flatten), entity)
   }
 }
