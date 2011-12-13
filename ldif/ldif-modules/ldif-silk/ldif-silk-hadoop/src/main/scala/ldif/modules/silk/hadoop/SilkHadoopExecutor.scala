@@ -30,8 +30,9 @@ class SilkHadoopExecutor extends Executor {
 
   override def execute(task: SilkTask, reader: Seq[Path], writer: Path) {
     val indexPath = new Path("silk_index/")
-    val sourceIndexPath = new Path(indexPath, task.name + "_source")
-    val targetIndexPath = new Path(indexPath, task.name + "_target")
+    //TODO find better way to create a unique path
+    val sourceIndexPath = new Path(indexPath, task.name + "_source" + UUID.randomUUID.toString)
+    val targetIndexPath = new Path(indexPath, task.name + "_target" + UUID.randomUUID.toString)
 
     runIndexingJob(task, reader(0), sourceIndexPath)
     runIndexingJob(task, reader(1), targetIndexPath)
@@ -54,6 +55,9 @@ class SilkHadoopExecutor extends Executor {
     job.setMapperClass(classOf[IndexingPhase])
 
     //Set Output
+    val hdfs = FileSystem.get(job.getConfiguration)
+    if (hdfs.exists(outputPath))
+      hdfs.delete(outputPath, true)
     FileOutputFormat.setOutputPath(job, outputPath)
 
     job.setOutputFormatClass(classOf[SequenceFileOutputFormat[IndexWritable, EntityWritable]])
