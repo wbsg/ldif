@@ -35,6 +35,7 @@ import org.apache.hadoop.fs.{FileSystem, Path}
 import org.apache.hadoop.conf.Configuration
 import ldif.modules.silk.hadoop.SilkHadoopExecutor
 import runtime._
+import de.fuberlin.wiwiss.silk.util.DPair
 
 class HadoopIntegrationJob(val config : HadoopIntegrationConfig, debug : Boolean = false) {
 
@@ -144,27 +145,28 @@ class HadoopIntegrationJob(val config : HadoopIntegrationConfig, debug : Boolean
   /**
    * Generates links.
    */
-  private def generateLinks(quadsPath : String) : String =  {
+  private def generateLinks(quadsPath : String): Seq[Path] =  {
+    val entitiesDirectory =  "ebOutput-silk"
+    val outputDirectory = "silkOutput"
+
     val silkModule = SilkModule.load(config.linkSpecDir)
     val silkExecutor = new SilkHadoopExecutor
     val tasks = silkModule.tasks.toIndexedSeq
-
-    val entitiesDirectory =  "ebOutput-silk"
     val entityDescriptions = tasks.map(silkExecutor.input).flatMap{ case StaticEntityFormat(ed) => ed }
-    val entityPaths = IndexedSeq.tabulate(tasks.size)(i => new Path(entitiesDirectory, EntityMultipleSequenceFileOutput.generateDirectoryName(i)))
-    println(entityPaths.mkString(","))
-    val silkOutput = "silkOutput"
 
     buildEntities(quadsPath, entitiesDirectory, entityDescriptions, configParameters)
     log.info("Time needed to build entities for linking phase: " + stopWatch.getTimeSpanInSeconds + "s")
 
-//    for((silkTask, paths) <- tasks zip entityPaths.grouped(2).toList) {
-//      silkExecutor.execute(silkTask, paths, new Path(silkOutput))
-//    }
+    for((silkTask, i) <- tasks.zipWithIndex) yield {
+      val sourcePath = new Path(entitiesDirectory, EntityMultipleSequenceFileOutput.generateDirectoryName(i * 2))
+      val targetPath = new Path(entitiesDirectory, EntityMultipleSequenceFileOutput.generateDirectoryName(i * 2 + 1))
+      val outputPath = new Path(outputDirectory, EntityMultipleSequenceFileOutput.generateDirectoryName(i))
 
-    silkOutput
+      silkExecutor.execute(silkTask, DPair(sourcePath, targetPath), outputPath)
+
+      outputPath
+    }
   }
-
 
   /**
    * Build Entities

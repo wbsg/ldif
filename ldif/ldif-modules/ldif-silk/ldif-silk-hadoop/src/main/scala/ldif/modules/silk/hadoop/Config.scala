@@ -3,19 +3,29 @@ package ldif.modules.silk.hadoop
 import org.apache.hadoop.conf.Configuration
 import xml.XML
 import java.io.StringReader
-import de.fuberlin.wiwiss.silk.config.{Prefixes, LinkSpecification}
+import de.fuberlin.wiwiss.silk.config.{LinkingConfig, Prefixes, LinkSpecification}
 
 object Config {
+
+  private val configParam = "silk.config"
+
   private val LinkSpecParam = "silk.linkSpec"
 
-  def writeLinkSpec(job: Configuration, linkSpec: LinkSpecification) {
-    job.set(LinkSpecParam, linkSpec.toXML.toString)
+  def write(job: Configuration, silkConfig : LinkingConfig, linkSpec: LinkSpecification) {
+    job.set(configParam, silkConfig.toXML.toString)
+    job.set(LinkSpecParam, linkSpec.id)
   }
-  
-  def readLinkSpec(job: Configuration) = {
-    val linkSpecStr = job.get(LinkSpecParam)
-    val linkSpecXml = XML.load(new StringReader(linkSpecStr))
 
-    LinkSpecification.fromXML(linkSpecXml)(Prefixes.empty)
+  def readLinkSpec(job: Configuration) = read(job)._2
+  
+  def read(job: Configuration): (LinkingConfig, LinkSpecification) = {
+    val configStr = job.get(configParam)
+    val configXML = XML.load(new StringReader(configStr))
+    val config = LinkingConfig.fromXML(configXML)
+
+    val linkSpecId = job.get(LinkSpecParam)
+    val linkSpec = config.linkSpec(linkSpecId)
+
+    (config, linkSpec)
   }
 }
