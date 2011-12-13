@@ -43,6 +43,7 @@ class SilkHadoopExecutor extends Executor {
   private def runIndexingJob(task: SilkTask, inputPath: Path, outputPath: Path) {
     val job = new Job()
     job.setJobName("Silk Indexing")
+    job.setJarByClass(classOf[SilkHadoopExecutor])
 
     // Distribute Configuration
     Config.write(job.getConfiguration, task.silkConfig.silkConfig, task.linkSpec)
@@ -71,6 +72,7 @@ class SilkHadoopExecutor extends Executor {
   private def runLinkGenerationJob(task: SilkTask, inputPaths: DPair[Path], outputPath: Path) {
     val job = new Job()
     job.setJobName("Silk Link Generation")
+    job.setJarByClass(classOf[SilkHadoopExecutor])
 
     // Distribute Configuration
     Config.write(job.getConfiguration, task.silkConfig.silkConfig, task.linkSpec)

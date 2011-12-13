@@ -4,6 +4,7 @@ import org.apache.hadoop.conf.Configuration
 import xml.XML
 import java.io.StringReader
 import de.fuberlin.wiwiss.silk.config.{LinkingConfig, Prefixes, LinkSpecification}
+import de.fuberlin.wiwiss.silk.plugins.Plugins
 
 object Config {
 
@@ -19,6 +20,8 @@ object Config {
   def readLinkSpec(job: Configuration) = read(job)._2
   
   def read(job: Configuration): (LinkingConfig, LinkSpecification) = {
+    Plugins.register()
+
     val configStr = job.get(configParam)
     val configXML = XML.load(new StringReader(configStr))
     val config = LinkingConfig.fromXML(configXML)

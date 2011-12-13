@@ -54,8 +54,13 @@ class EntityWritable(var resource : NodeWritable, var resultTable: ResultTableAr
     entityDescriptionID.write(out)
   }
 
-  def factums(patternId: Int) = {
-    EntityWritable.convertResultTable(resultTable)(patternId)
+  def factums(patternId: Int): Traversable[IndexedSeq[NodeTrait]] = {
+    try {
+      val patternResult = EntityWritable.convertResultTable(resultTable)
+      return patternResult(patternId)
+    } catch {
+      case e: Exception =>  throw new RuntimeException("Tried to access pattern that is not there. For entity " + resource + " of ED " + entityDescriptionID.get() + ". Actual nr. of patterns: " + resultTable.get().length, e)
+    }
   }
 
   override def hashCode = resource.hashCode() + 31 * entityDescriptionID.get()
