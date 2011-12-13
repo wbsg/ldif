@@ -52,6 +52,8 @@ class HadoopIntegrationJob(val config : HadoopIntegrationConfig, debug : Boolean
 
   def runIntegration() {
 
+    var outputPath : String = null
+
     stopWatch.getTimeSpanInSeconds()
 
     // Execute mapping phase
@@ -62,18 +64,15 @@ class HadoopIntegrationJob(val config : HadoopIntegrationConfig, debug : Boolean
     val silkOutput = generateLinks(r2rOutput)
     log.info("Time needed to link data: " + stopWatch.getTimeSpanInSeconds + "s")
 
-    var outputPath = r2rOutput
-
-    // val allQuads = getAllQuads(r2rOutput, otherQuads)
+    // Prepare output data
+    val allQuads = r2rOutput   //TODO val allQuads = getAllQuads(r2rOutput, otherQuads)
     val allSameAsLinks = getAllLinks(silkOutput, new Path(sameAsFromSources))
 
     // Execute URI Translation (if enabled)
     if(config.properties.getProperty("rewriteURIs", "true").toLowerCase=="true") {
-      //TODO - integrate with silk
-      outputPath = translateUris(r2rOutput, allSameAsLinks)
+      outputPath = translateUris(allQuads, allSameAsLinks)
       log.info("Time needed to translate URIs: " + stopWatch.getTimeSpanInSeconds + "s")
-    } else
-      outputPath = r2rOutput
+    }
 
     // Execute URI Minting (if enabled)
     if(config.properties.getProperty("uriMinting", "false").toLowerCase=="true") {

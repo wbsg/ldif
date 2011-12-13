@@ -107,13 +107,6 @@
           <version>0.3.1</version>
       </dependency>
 
-        <!--TO BE REMOVED -->
-        <dependency>
-            <groupId>ldif</groupId>
-            <artifactId>ldif-singlemachine</artifactId>
-            <version>0.3.1</version>
-        </dependency>
-
     </dependencies>
 
 </project>
