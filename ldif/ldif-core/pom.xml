@@ -21,16 +21,18 @@
 
 
   <dependencies>
-    <dependency>
-      <groupId>nxparser</groupId>
-      <artifactId>nxparser</artifactId>
-      <version>1.1</version>
-    </dependency>
-        <dependency>
+
+      <dependency>
+          <groupId>nxparser</groupId>
+          <artifactId>nxparser</artifactId>
+          <version>1.1</version>
+      </dependency>
+
+      <dependency>
           <groupId>org.antlr</groupId>
           <artifactId>antlr</artifactId>
           <version>3.2</version>
-        </dependency>
+      </dependency>
 
       <dependency>
           <groupId>bzip2</groupId>
@@ -39,12 +41,18 @@
       </dependency>
 
       <dependency>
-        <groupId>ldspider</groupId>
-        <artifactId>ldspider</artifactId>
-        <version>285+</version>
+          <groupId>ldspider</groupId>
+          <artifactId>ldspider</artifactId>
+          <version>285+</version>
       </dependency>
 
-   </dependencies>
+      <dependency>
+          <groupId>com.hp.hpl.jena</groupId>
+          <artifactId>jena</artifactId>
+          <version>2.6.5-SNAPSHOT</version>
+      </dependency>
+
+  </dependencies>
     
 
     <build>

@@ -32,7 +32,6 @@ import org.junit.runner.RunWith
 import org.scalatest.FlatSpec
 import org.scalatest.matchers.ShouldMatchers
 import ldif.entity._
-import ldif.local.runtime.QuadWriter
 import ldif.local.runtime.impl.QuadQueue
 import ldif.runtime.Quad
 

@@ -7,9 +7,9 @@
       <artifactId>ldif-r2r</artifactId>
       <version>0.3.1</version>
     </parent>
-    
+
     <dependencies>
-	<dependency>
+        <dependency>
             <groupId>r2rApi</groupId>
             <artifactId>r2rApi</artifactId>
             <version>0.2.3-SNAPSHOT</version>
