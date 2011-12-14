@@ -26,6 +26,7 @@ import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner
 import ldif.entity.Node
 import ldif.runtime.Quad
+import ldif.util.OutputValidator
 
 @RunWith(classOf[JUnitRunner])
 class IntegrationFlowTest extends FlatSpec with ShouldMatchers {

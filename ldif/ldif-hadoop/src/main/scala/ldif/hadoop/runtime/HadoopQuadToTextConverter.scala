@@ -8,7 +8,6 @@ import ldif.hadoop.io.QuadSequenceFileInput
 import lib.IdentityMapper
 import org.apache.hadoop.io.{Text, NullWritable}
 import org.apache.hadoop.fs.{FileSystem, Path}
-import ch.qos.logback.classic.pattern.ClassOfCallerConverter
 import org.slf4j.LoggerFactory
 
 /**
@@ -22,7 +21,7 @@ import org.slf4j.LoggerFactory
 class HadoopQuadToTextConverter extends Configured with Tool {
   def run(args: Array[String]): Int = {
     val conf = getConf
-    val job = new JobConf(conf, classOf[RunHadoopUriRewriting])
+    val job = new JobConf(conf, classOf[HadoopQuadToTextConverter])
 
     job.setJobName("ConvertSeqToNq")
 
