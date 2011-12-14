@@ -218,7 +218,7 @@ class HadoopIntegrationJob(val config : HadoopIntegrationConfig, debug : Boolean
     val nqOutput = config.properties.getProperty("outputFormat", "nq").toLowerCase.equals("nq")
 
     // convert output files from seq to nq
-    HadoopQuadToTextConverter.execute(outputPath, outputPath+"_NQ")
+    HadoopQuadToTextConverter.execute(outputPath, config.outputFile)
 
     // TODO add output module
   }

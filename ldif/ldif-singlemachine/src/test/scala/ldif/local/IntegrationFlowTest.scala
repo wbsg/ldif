@@ -37,13 +37,13 @@ class IntegrationFlowTest extends FlatSpec with ShouldMatchers {
     val ldifOutput = runLdif(configFile, true)
 
     // Load results to compare with
-    val ldimporterOuputUrl = getClass.getClassLoader.getResource("ldif/local/resources/results.nt")
+    val ldimporterOuputUrl = getClass.getClassLoader.getResource("ldif/local/resources/results.nq")
     val ldimporterOuputFile = new File(ldimporterOuputUrl.toString.stripPrefix("file:"))
 
     // quantity check
     //Source.fromFile(ldifOutput).getLines.size should equal(4835)
     // quality check
-    OutputValidator.compare(ldifOutput,ldimporterOuputFile) should equal (0)
+    OutputValidator.compare(ldifOutput,ldimporterOuputFile, true) should equal (0)
   }
 
   it should "handle rewriting and provenance correctly" in {

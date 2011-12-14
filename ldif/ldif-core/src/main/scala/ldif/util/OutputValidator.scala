@@ -44,25 +44,20 @@ object OutputValidator {
     for (quad <- otherOutputQuads.filter(_ != null))
     {
       if (quad.predicate.equals("http://www.w3.org/2002/07/owl#sameAs"))
-        sameAsMap.put(quad.value.toString,quad.subject.toString)
+        sameAsMap.put(quad.subject.toString, quad.value.toString)
       else
         otherHT.addBinding(quad.predicate, Pair(quad.subject.toString,quad.value.toString))
     }
 
     val ldifHT:MultiMap[String, Pair[String,String]] = new HashMap[String, Set[Pair[String,String]]] with MultiMap[String, Pair[String,String]]
     for (quad <- ldifOutputQuads.filter(_ != null)) {
-        // filter out provenance triples
-        //TODO should be configurable - see #37
-        if (!quad.graph.equals("http://www4.wiwiss.fu-berlin.de/ldif/provenance"))
-        {
-          var sub = quad.subject.toString
-          if (sameAsMap.contains(sub))
-            sub = sameAsMap.get(sub).get
-          var obj = quad.value.toString
-          if (sameAsMap.contains(obj))
-            obj = sameAsMap.get(obj).get
-          ldifHT.addBinding(quad.predicate, Pair(sub,obj))
-        }
+      var sub = quad.subject.toString
+      if (sameAsMap.contains(sub))
+        sub = sameAsMap.get(sub).get
+      var obj = quad.value.toString
+      if (sameAsMap.contains(obj))
+        obj = sameAsMap.get(obj).get
+      ldifHT.addBinding(quad.predicate, Pair(sub,obj))
     }
 
     var err = 0
