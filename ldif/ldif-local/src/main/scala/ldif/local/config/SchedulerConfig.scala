@@ -20,9 +20,9 @@ package ldif.local.config
 
 import org.slf4j.LoggerFactory
 import java.io.File
-import ldif.util.ValidatingXMLReader
 import xml.{Node, XML}
 import java.util.Properties
+import ldif.util.{ConfigProperties, ValidatingXMLReader}
 
 case class SchedulerConfig (importJobsDir : File, integrationJob : File, dataSourcesDir : File, dumpLocationDir : File, properties : Properties)  {}
 

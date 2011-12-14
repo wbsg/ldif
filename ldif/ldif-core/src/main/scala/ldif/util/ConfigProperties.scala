@@ -1,4 +1,6 @@
-/* 
+package ldif.util
+
+/*
  * LDIF
  *
  * Copyright 2011 Freie Universität Berlin, MediaEvent Services GmbH & Co. KG
@@ -15,8 +17,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-package ldif.local.config
 
 import org.slf4j.LoggerFactory
 import java.util.Properties
