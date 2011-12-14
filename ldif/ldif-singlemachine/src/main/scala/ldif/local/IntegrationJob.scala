@@ -49,13 +49,14 @@ class IntegrationJob (val config : IntegrationConfig, debugMode : Boolean = fals
   var lastUpdate : Calendar = null
 
   def runIntegration {
-    synchronized {
-      val sourceNumber = config.sources.listFiles.size
 
-      if (sourceNumber == 0) {
-        log.info("Integration Job skipped - No data source files found")
-      }
-      else {
+    if (config.sources == null || config.sources.listFiles.size == 0)
+      log.info("Integration Job skipped - No data source files found")
+
+    else
+      synchronized {
+        val sourceNumber = config.sources.listFiles.size
+
         log.info("Integration Job started (on "+ sourceNumber +" sources)")
 
         stopWatch.getTimeSpanInSeconds
@@ -114,7 +115,6 @@ class IntegrationJob (val config : IntegrationConfig, debugMode : Boolean = fals
 
         writeOutput(config, integratedReader)
       }
-    }
   }
 
   private def setupQuadReader(_clonedR2rReader: QuadReader): QuadReader = {
