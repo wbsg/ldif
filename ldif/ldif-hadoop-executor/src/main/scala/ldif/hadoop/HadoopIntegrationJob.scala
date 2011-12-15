@@ -36,11 +36,14 @@ import ldif.modules.silk.hadoop.SilkHadoopExecutor
 import runtime._
 import de.fuberlin.wiwiss.silk.util.DPair
 import ldif.util.{Consts, StopWatch, LogUtil}
+import java.util.Calendar
 
 class HadoopIntegrationJob(val config : HadoopIntegrationConfig, debug : Boolean = false) {
 
   private val log = LoggerFactory.getLogger(getClass.getName)
   val stopWatch = new StopWatch
+
+  var lastUpdate : Calendar = null
 
   val conf = new Configuration
   val hdfs = FileSystem.get(conf)
@@ -53,7 +56,14 @@ class HadoopIntegrationJob(val config : HadoopIntegrationConfig, debug : Boolean
 
   def runIntegration() {
 
-    var outputPath : String = null
+    val sourcesPath = new Path(config.sources)
+    val sourceNumber = hdfs.listStatus(sourcesPath).length
+    log.info("Hadoop Integration Job started")
+    log.info("- Input < "+ sourceNumber +" sources found in " + sourcesPath.toString)
+    log.info("- Output > "+ config.outputFile)
+    log.info("- Properties ")
+    for (key <- config.properties.keySet.toArray)
+      log.info("  - "+key +" : " + config.properties.getProperty(key.toString) )
 
     stopWatch.getTimeSpanInSeconds()
 
@@ -73,7 +83,7 @@ class HadoopIntegrationJob(val config : HadoopIntegrationConfig, debug : Boolean
      sameAsLinks = getAllLinks(silkOutput, new Path(externalSameAsLinksDir))
     else sameAsLinks = getAllLinks(silkOutput)
 
-    outputPath = r2rOutput
+    var outputPath = r2rOutput
 
     // Execute URI Translation (if enabled)
     if(config.properties.getProperty("rewriteURIs", "true").toLowerCase=="true") {
@@ -91,6 +101,8 @@ class HadoopIntegrationJob(val config : HadoopIntegrationConfig, debug : Boolean
     move(sameAsLinks, outputPath)
 
     writeOutput(outputPath)
+
+    lastUpdate = Calendar.getInstance
   }
 
 
