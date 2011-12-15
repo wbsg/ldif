@@ -25,7 +25,7 @@ import ldif.entity.{EntityDescriptionMetaDataExtractor, EntityDescription}
 import ldif.util.Consts
 import phases._
 
-class HadoopEntityBuilder (entityDescriptions : IndexedSeq[EntityDescription], readers : Seq[Path], config : ConfigParameters, getsTextInput: Boolean = false) {
+class HadoopEntityBuilder (entityDescriptions : IndexedSeq[EntityDescription], readers : Seq[Path], config : ConfigParameters) {
 
   private val log = LoggerFactory.getLogger(getClass.getName)
   private val provenanceGraph = config.configProperties.getProperty("provenanceGraph", "http://www4.wiwiss.fu-berlin.de/ldif/provenance")
@@ -39,7 +39,7 @@ class HadoopEntityBuilder (entityDescriptions : IndexedSeq[EntityDescription], r
 
     val edmd = EntityDescriptionMetaDataExtractor.extract(entityDescriptions)
 
-    Phase2.runPhase(sourcesDir, hadoopTmpDir+"_2", edmd, config.sameAsPath, config.allQuadsPath, getsTextInput)
+    Phase2.runPhase(sourcesDir, hadoopTmpDir+"_2", edmd, config.sameAsPath, config.allQuadsPath, config.getsTextInput)
     Phase3.runPhase(hadoopTmpDir+"_2", hadoopTmpDir+"_3", edmd)
     Phase4.runPhase(hadoopTmpDir+"_3", writer.toString, edmd)
   }

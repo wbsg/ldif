@@ -45,16 +45,11 @@ class HadoopIntegrationJob(val config : HadoopIntegrationConfig, debug : Boolean
   val conf = new Configuration
   val hdfs = FileSystem.get(conf)
 
-  var sameAsFromSourcesPath : String = null
-  if(config.properties.getProperty("useExternalSameAsLinks", "true").toLowerCase=="true")
-    sameAsFromSourcesPath = clean("sameAsFromSources")
+  val useExternalSameAsLinks = config.properties.getProperty("useExternalSameAsLinks", "true").toLowerCase=="true"
+  val outputAllQuads = config.properties.getProperty("output", "mapped-only").toLowerCase=="all"
 
-  var allQuadsPath : String = null
-  if(config.properties.getProperty("output", "mapped-only").toLowerCase=="all")
-    allQuadsPath = clean("allQuads")
-
-  // Object to store all kinds of configuration data
-  var configParameters = ConfigParameters(config.properties, sameAsFromSourcesPath, allQuadsPath)
+  val externalSameAsLinksDir = clean("sameAsFromSources")
+  val allQuadsDir = clean("allQuads")
 
   def runIntegration() {
 
@@ -71,11 +66,11 @@ class HadoopIntegrationJob(val config : HadoopIntegrationConfig, debug : Boolean
     log.info("Time needed to link data: " + stopWatch.getTimeSpanInSeconds + "s")
 
     // Prepare data to be translated
-    if(allQuadsPath != null)
-      move(allQuadsPath, r2rOutput)
+    if(outputAllQuads)
+      move(allQuadsDir, r2rOutput)
     var sameAsLinks : String = null
-    if(sameAsFromSourcesPath != null)
-     sameAsLinks = getAllLinks(silkOutput, new Path(sameAsFromSourcesPath))
+    if(useExternalSameAsLinks)
+     sameAsLinks = getAllLinks(silkOutput, new Path(externalSameAsLinksDir))
     else sameAsLinks = getAllLinks(silkOutput)
 
     // Execute URI Translation (if enabled)
@@ -156,7 +151,12 @@ class HadoopIntegrationJob(val config : HadoopIntegrationConfig, debug : Boolean
     val entityDescriptions = (for(mapping <- r2rTask.ldifMappings) yield mapping.entityDescription).toSeq
 
     val entitiesPath =  "ebOutput-r2r"
-    buildEntities(config.sources, entitiesPath, entityDescriptions, configParameters, getsTextInput = true)
+    var configParameters = ConfigParameters(config.properties, null, null, true)
+    if (useExternalSameAsLinks)
+      configParameters = configParameters.copy(sameAsPath = externalSameAsLinksDir)
+    if (outputAllQuads)
+      configParameters = configParameters.copy(allQuadsPath = allQuadsDir)
+    buildEntities(config.sources, entitiesPath, entityDescriptions, configParameters)
     log.info("Time needed to load dump and build entities for mapping phase: " + stopWatch.getTimeSpanInSeconds + "s")
 
     val r2rOutput = "r2rOutput"
@@ -187,6 +187,7 @@ class HadoopIntegrationJob(val config : HadoopIntegrationConfig, debug : Boolean
     val tasks = silkModule.tasks.toIndexedSeq
     val entityDescriptions = tasks.map(silkExecutor.input).flatMap{ case StaticEntityFormat(ed) => ed }
 
+    var configParameters = ConfigParameters(config.properties)
     buildEntities(quadsPath, entitiesDirectory, entityDescriptions, configParameters)
     log.info("Time needed to build entities for linking phase: " + stopWatch.getTimeSpanInSeconds + "s")
 
@@ -204,12 +205,12 @@ class HadoopIntegrationJob(val config : HadoopIntegrationConfig, debug : Boolean
   /**
    * Build Entities
    */
-  private def buildEntities(sourcesPath : String, entitiesPath : String, entityDescriptions : Seq[EntityDescription], configParameters: ConfigParameters, getsTextInput: Boolean = false) {
+  private def buildEntities(sourcesPath : String, entitiesPath : String, entityDescriptions : Seq[EntityDescription], configParameters: ConfigParameters) {
 
     val entityBuilderConfig = new EntityBuilderConfig(entityDescriptions.toIndexedSeq)
     val entityBuilderModule = new EntityBuilderModule(entityBuilderConfig)
     val entityBuilderTask = entityBuilderModule.tasks.head
-    val entityBuilderExecutor = new EntityBuilderHadoopExecutor(configParameters, getsTextInput)
+    val entityBuilderExecutor = new EntityBuilderHadoopExecutor(configParameters)
 
     entityBuilderExecutor.execute(entityBuilderTask, List(new Path(sourcesPath)), List(new Path(entitiesPath)))
   }

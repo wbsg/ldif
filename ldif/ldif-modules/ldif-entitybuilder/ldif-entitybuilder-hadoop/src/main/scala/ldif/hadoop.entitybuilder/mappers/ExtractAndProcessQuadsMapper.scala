@@ -38,8 +38,8 @@ class ExtractAndProcessQuadsMapper extends MapReduceBase with Mapper[LongWritabl
   override def configure(conf: JobConf) {
     edmd = HadoopHelper.getEntityDescriptionMetaData(conf)
     mos = new MultipleOutputs(conf)
-    collectAllQuads = conf.getBoolean("allQuads", false)
-    collectSameAs = conf.getBoolean("allQuads", false)
+    collectSameAs = conf.getBoolean("sameas", false)
+    collectAllQuads = conf.getBoolean("allquads", false)
   }
 
   override def map(key: LongWritable, value: Text, output: OutputCollector[IntWritable, ValuePathWritable], reporter: Reporter) {

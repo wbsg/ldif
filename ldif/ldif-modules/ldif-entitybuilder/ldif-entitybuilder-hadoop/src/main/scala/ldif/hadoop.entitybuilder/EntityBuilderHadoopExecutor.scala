@@ -25,7 +25,7 @@ import ldif.EntityBuilderTask
 import ldif.hadoop.runtime._
 import org.apache.hadoop.fs.Path
 
-class EntityBuilderHadoopExecutor(configParameters: ConfigParameters = ConfigParameters(new Properties), getsTextInput: Boolean = false) extends Executor {
+class EntityBuilderHadoopExecutor(configParameters: ConfigParameters = ConfigParameters(new Properties)) extends Executor {
 
   type TaskType = EntityBuilderTask
   type InputFormat = QuadFormat
@@ -49,7 +49,7 @@ class EntityBuilderHadoopExecutor(configParameters: ConfigParameters = ConfigPar
    * @param writer The writer of the output data
    */
   override def execute(task : EntityBuilderTask, reader : Seq[Path], writer : Seq[Path])  {
-    val eb = new HadoopEntityBuilder(task.entityDescriptions, reader, configParameters, getsTextInput)
+    val eb = new HadoopEntityBuilder(task.entityDescriptions, reader, configParameters)
     eb.buildEntities(writer.head)
   }
 

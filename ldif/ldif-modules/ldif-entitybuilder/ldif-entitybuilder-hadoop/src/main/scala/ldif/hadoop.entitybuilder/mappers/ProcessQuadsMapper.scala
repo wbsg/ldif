@@ -24,7 +24,7 @@ class ProcessQuadsMapper extends MapReduceBase with Mapper[NullWritable, QuadWri
   override def configure(conf: JobConf) {
     edmd = HadoopHelper.getEntityDescriptionMetaData(conf)
     mos = new MultipleOutputs(conf)
-    collectAllQuads = conf.getBoolean("allQuads", false)
+    collectAllQuads = conf.getBoolean("allquads", false)
   }
 
   override def map(nothing: NullWritable, quad: QuadWritable, output: OutputCollector[IntWritable, ValuePathWritable], reporter: Reporter) {

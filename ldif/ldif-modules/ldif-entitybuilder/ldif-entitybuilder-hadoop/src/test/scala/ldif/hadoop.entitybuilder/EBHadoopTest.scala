@@ -49,7 +49,7 @@ class EBHadoopTest extends FlatSpec with ShouldMatchers
   val edDir = resourceDir+Consts.fileSeparator+"entity_descriptions"+Consts.fileSeparator
 
   // Run entity builder
-  val hebe = new EntityBuilderHadoopExecutor(ConfigParameters(new Properties()), true)
+  val hebe = new EntityBuilderHadoopExecutor(ConfigParameters(new Properties(), null, null, true))
   hebe.execute(task, List(sourcesPath), List(outputPath))
 
   // Check results
