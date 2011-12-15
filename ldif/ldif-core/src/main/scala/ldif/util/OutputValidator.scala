@@ -43,7 +43,7 @@ object OutputValidator {
     val sameAsMap = new HashMap[String,String]
     for (quad <- otherOutputQuads.filter(_ != null))
     {
-      if (quad.predicate.equals("http://www.w3.org/2002/07/owl#sameAs"))
+      if (quad.predicate.equals(Consts.SAMEAS_URI))
         sameAsMap.put(quad.subject.toString, quad.value.toString)
       else
         otherHT.addBinding(quad.predicate, Pair(quad.subject.toString,quad.value.toString))
@@ -57,7 +57,8 @@ object OutputValidator {
       var obj = quad.value.toString
       if (sameAsMap.contains(obj))
         obj = sameAsMap.get(obj).get
-      ldifHT.addBinding(quad.predicate, Pair(sub,obj))
+      if (!quad.predicate.equals(Consts.SAMEAS_URI))       // TODO - check sameAs links properly
+       ldifHT.addBinding(quad.predicate, Pair(sub,obj))
     }
 
     var err = 0

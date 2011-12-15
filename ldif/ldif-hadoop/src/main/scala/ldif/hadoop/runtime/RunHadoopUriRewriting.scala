@@ -61,9 +61,19 @@ object RunHadoopUriRewriting {
     log.info("Starting Uri Rewriting...")
     val hadoopTmpDir = "hadoop_tmp"+Consts.fileSeparator+"urirewriting"
     val start = System.currentTimeMillis
+
+    val conf = new Configuration
+    val hdfs = FileSystem.get(conf)
+
     execute(datasetInputPath, sameAsLinksInputPath, hadoopTmpDir+"/rewrittenSubjects", false)
     val res = execute(hadoopTmpDir+"/rewrittenSubjects", sameAsLinksInputPath, outputPath, true)
     log.info("That's it. Uri Rewriting took " + (System.currentTimeMillis-start)/1000.0 + "s")
+
+    // move sameAs links to the output path
+    val sameAsLinksFiles = hdfs.listStatus(new Path(sameAsLinksInputPath)).filterNot(_.isDir)
+    for (status <- sameAsLinksFiles)
+      hdfs.rename(status.getPath, new Path(outputPath+Consts.fileSeparator+"sameas"+status.getPath.getName))
+
     res
   }
 

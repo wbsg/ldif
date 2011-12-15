@@ -24,7 +24,7 @@ class UriMintValuePickerReducer extends MapReduceBase with Reducer[NodeWritable,
   private var config: Configuration = null
   private var mos: MultipleOutputs = null
   private var mintNamespace: String = null
-  private val sameAsQuad = new QuadWritable(null, new Text(Consts.SAMEAS_URI), null, new Text("Minting"))
+  private val sameAsQuad = new QuadWritable(null, new Text(Consts.SAMEAS_URI), null, new Text(Consts.URI_MINTING_GRAPH))
 
   override def configure(conf: JobConf) {
     config = conf

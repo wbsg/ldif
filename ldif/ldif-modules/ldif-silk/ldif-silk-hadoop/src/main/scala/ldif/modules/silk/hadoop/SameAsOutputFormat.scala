@@ -10,6 +10,7 @@ import org.apache.hadoop.io.compress.{DefaultCodec, CompressionCodec}
 import org.apache.hadoop.io.SequenceFile.CompressionType
 import org.apache.hadoop.mapreduce.{RecordWriter, TaskAttemptContext}
 import org.apache.hadoop.mapreduce.lib.output.SequenceFileOutputFormat
+import ldif.util.Consts
 
 
 class SameAsOutputFormat extends SequenceFileOutputFormat[Text, EntityConfidence] {
@@ -27,7 +28,7 @@ class SameAsOutputFormat extends SequenceFileOutputFormat[Text, EntityConfidence
 
   private class LinkWriter(writer : SequenceFile.Writer) extends RecordWriter[Text, EntityConfidence] {
     override def write(sourceUri : Text, entitySimilarity : EntityConfidence) {
-      val line = "<" + sourceUri + "> <http://www.w3.org/2002/07/owl#sameAs> <" + entitySimilarity.targetUri + "> .\n"
+      val line = "<" + sourceUri + "> <http://www.w3.org/2002/07/owl#sameAs> <" + entitySimilarity.targetUri + "> <"+Consts.SILK_OUT_GRAPH+"> .\n"
       val quadParser = new QuadParser()
       writer.append(NullWritable.get, new QuadWritable(quadParser.parseLine(line)))
     }

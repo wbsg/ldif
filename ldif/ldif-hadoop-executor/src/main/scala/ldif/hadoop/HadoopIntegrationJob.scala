@@ -73,9 +73,11 @@ class HadoopIntegrationJob(val config : HadoopIntegrationConfig, debug : Boolean
      sameAsLinks = getAllLinks(silkOutput, new Path(externalSameAsLinksDir))
     else sameAsLinks = getAllLinks(silkOutput)
 
+    outputPath = r2rOutput
+
     // Execute URI Translation (if enabled)
     if(config.properties.getProperty("rewriteURIs", "true").toLowerCase=="true") {
-      outputPath = translateUris(r2rOutput, sameAsLinks)
+      outputPath = translateUris(outputPath, sameAsLinks)
       log.info("Time needed to translate URIs: " + stopWatch.getTimeSpanInSeconds + "s")
     }
 
@@ -86,16 +88,16 @@ class HadoopIntegrationJob(val config : HadoopIntegrationConfig, debug : Boolean
     }
 
     // add sameAs links to the output path
-    //move(sameAsLinks, outputPath)     // TODO
+    move(sameAsLinks, outputPath)
 
     writeOutput(outputPath)
   }
 
 
-  private def mintUris(in : String) : String = {
-    val mintedUriPath = in+"_minted"
+  private def mintUris(inputPath : String) : String = {
+    val mintedUriPath = inputPath+"_minted"
     val (mintNamespace, mintPropertySet) = getMintValues(config)
-    HadoopUriMinting.execute(in, mintedUriPath, mintNamespace, mintPropertySet)
+    HadoopUriMinting.execute(inputPath, mintedUriPath, mintNamespace, mintPropertySet)
     mintedUriPath
   }
 
@@ -110,7 +112,7 @@ class HadoopIntegrationJob(val config : HadoopIntegrationConfig, debug : Boolean
    * Translates URIs
    */
   private def translateUris(inputPath : String, sameAsLinks : String) : String = {
-    val outputPath = "traslated"
+    val outputPath = inputPath+"_traslated"
     RunHadoopUriTranslation.execute(inputPath, sameAsLinks, outputPath)
     outputPath
   }
