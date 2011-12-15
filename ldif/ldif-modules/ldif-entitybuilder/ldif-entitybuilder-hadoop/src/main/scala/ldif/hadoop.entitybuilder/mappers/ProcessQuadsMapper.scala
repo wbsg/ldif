@@ -19,14 +19,16 @@ import org.apache.hadoop.io._
 class ProcessQuadsMapper extends MapReduceBase with Mapper[NullWritable, QuadWritable, IntWritable, ValuePathWritable] {
   private var edmd: EntityDescriptionMetadata = null
   private var mos: MultipleOutputs = null
+  private var collectAllQuads : Boolean = false
 
   override def configure(conf: JobConf) {
     edmd = HadoopHelper.getEntityDescriptionMetaData(conf)
     mos = new MultipleOutputs(conf)
+    collectAllQuads = conf.getBoolean("allQuads", false)
   }
 
   override def map(nothing: NullWritable, quad: QuadWritable, output: OutputCollector[IntWritable, ValuePathWritable], reporter: Reporter) {
-    ProcessQuads.processQuad(quad.asQuad, reporter, edmd, mos)
+    ProcessQuads.processQuad(quad.asQuad, reporter, edmd, mos, collectAllQuads)
   }
 
   override def close() {
@@ -35,14 +37,19 @@ class ProcessQuadsMapper extends MapReduceBase with Mapper[NullWritable, QuadWri
 }
 
 object ProcessQuads {
-  def processQuad(quad: Quad, reporter: Reporter, edmd: EntityDescriptionMetadata, mos: MultipleOutputs) {
+  def processQuad(quad: Quad, reporter: Reporter, edmd: EntityDescriptionMetadata, mos: MultipleOutputs, collectAllQuads : Boolean) {
     val property = quad.predicate
     val values = new NodeArrayWritable
     val phase = new IntWritable(0)
     val propertyInfosValue = edmd.propertyMap.get(property)
     propertyInfosValue match {
-      case None =>
+      case None => {
+        if (collectAllQuads) {
+          val collector = mos.getCollector("allquads", reporter).asInstanceOf[OutputCollector[NullWritable, QuadWritable]]
+          collector.collect(NullWritable.get, new QuadWritable(quad))
+        }
         reporter.getCounter("LDIF Stats","Nr. irrelevant quads filtered").increment(1)
+      }
       case Some(propertyInfos) =>
         for (propertyInfo <- propertyInfos) {
           val pathLength = edmd.pathLength(propertyInfo.pathId)

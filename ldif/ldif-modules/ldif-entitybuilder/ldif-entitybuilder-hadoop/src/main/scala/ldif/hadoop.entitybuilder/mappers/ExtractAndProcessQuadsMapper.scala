@@ -32,10 +32,14 @@ class ExtractAndProcessQuadsMapper extends MapReduceBase with Mapper[LongWritabl
   private val parser = new QuadParser
   private var edmd: EntityDescriptionMetadata = null
   private var mos: MultipleOutputs = null
+  private var collectSameAs : Boolean = false
+  private var collectAllQuads : Boolean = false
 
   override def configure(conf: JobConf) {
     edmd = HadoopHelper.getEntityDescriptionMetaData(conf)
     mos = new MultipleOutputs(conf)
+    collectAllQuads = conf.getBoolean("allQuads", false)
+    collectSameAs = conf.getBoolean("allQuads", false)
   }
 
   override def map(key: LongWritable, value: Text, output: OutputCollector[IntWritable, ValuePathWritable], reporter: Reporter) {
@@ -49,12 +53,14 @@ class ExtractAndProcessQuadsMapper extends MapReduceBase with Mapper[LongWritabl
     if(quad==null)
       return
     if(quad.predicate == Consts.SAMEAS_URI)   {
-      val collector = mos.getCollector("sameas", reporter).asInstanceOf[OutputCollector[NullWritable, QuadWritable]]
-      collector.collect(NullWritable.get, new QuadWritable(quad))
-      reporter.getCounter("LDIF Stats","SameAs links from data set").increment(1)
+      if (collectSameAs) {
+        val collector = mos.getCollector("sameas", reporter).asInstanceOf[OutputCollector[NullWritable, QuadWritable]]
+        collector.collect(NullWritable.get, new QuadWritable(quad))
+      }
+      reporter.getCounter("LDIF Stats","SameAs links found in data set").increment(1)
     }
     else
-      ProcessQuads.processQuad(quad, reporter, edmd, mos)
+      ProcessQuads.processQuad(quad, reporter, edmd, mos, collectAllQuads)
   }
 
   override def close() {

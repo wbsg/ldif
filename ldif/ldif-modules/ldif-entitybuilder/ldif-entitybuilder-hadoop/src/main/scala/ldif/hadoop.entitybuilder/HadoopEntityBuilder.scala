@@ -39,7 +39,7 @@ class HadoopEntityBuilder (entityDescriptions : IndexedSeq[EntityDescription], r
 
     val edmd = EntityDescriptionMetaDataExtractor.extract(entityDescriptions)
 
-    Phase2.runPhase(sourcesDir, hadoopTmpDir+"_2", edmd, config.sameAsPath, getsTextInput)
+    Phase2.runPhase(sourcesDir, hadoopTmpDir+"_2", edmd, config.sameAsPath, config.allQuadsPath, getsTextInput)
     Phase3.runPhase(hadoopTmpDir+"_2", hadoopTmpDir+"_3", edmd)
     Phase4.runPhase(hadoopTmpDir+"_3", writer.toString, edmd)
   }

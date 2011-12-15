@@ -45,10 +45,16 @@ class HadoopIntegrationJob(val config : HadoopIntegrationConfig, debug : Boolean
   val conf = new Configuration
   val hdfs = FileSystem.get(conf)
 
-  val sameAsFromSources = clean("sameAsFromSources")
+  var sameAsFromSourcesPath : String = null
+  if(config.properties.getProperty("useExternalSameAsLinks", "true").toLowerCase=="true")
+    sameAsFromSourcesPath = clean("sameAsFromSources")
+
+  var allQuadsPath : String = null
+  if(config.properties.getProperty("output", "mapped-only").toLowerCase=="all")
+    allQuadsPath = clean("allQuads")
 
   // Object to store all kinds of configuration data
-  var configParameters = ConfigParameters(config.properties, sameAsFromSources)
+  var configParameters = ConfigParameters(config.properties, sameAsFromSourcesPath, allQuadsPath)
 
   def runIntegration() {
 
@@ -64,13 +70,17 @@ class HadoopIntegrationJob(val config : HadoopIntegrationConfig, debug : Boolean
     val silkOutput = generateLinks(r2rOutput)
     log.info("Time needed to link data: " + stopWatch.getTimeSpanInSeconds + "s")
 
-    // Prepare output data
-    val allQuads = r2rOutput   //TODO val allQuads = getAllQuads(r2rOutput, otherQuads)
-    val allSameAsLinks = getAllLinks(silkOutput, new Path(sameAsFromSources))
+    // Prepare data to be translated
+    if(allQuadsPath != null)
+      move(allQuadsPath, r2rOutput)
+    var sameAsLinks : String = null
+    if(sameAsFromSourcesPath != null)
+     sameAsLinks = getAllLinks(silkOutput, new Path(sameAsFromSourcesPath))
+    else sameAsLinks = getAllLinks(silkOutput)
 
     // Execute URI Translation (if enabled)
     if(config.properties.getProperty("rewriteURIs", "true").toLowerCase=="true") {
-      outputPath = translateUris(allQuads, allSameAsLinks)
+      outputPath = translateUris(r2rOutput, sameAsLinks)
       log.info("Time needed to translate URIs: " + stopWatch.getTimeSpanInSeconds + "s")
     }
 
@@ -79,6 +89,9 @@ class HadoopIntegrationJob(val config : HadoopIntegrationConfig, debug : Boolean
       outputPath = mintUris(outputPath)
       log.info("Time needed to mint URIs: " + stopWatch.getTimeSpanInSeconds + "s")
     }
+
+    // add sameAs links to the output path
+    //move(sameAsLinks, outputPath)     // TODO
 
     writeOutput(outputPath)
   }
@@ -111,7 +124,7 @@ class HadoopIntegrationJob(val config : HadoopIntegrationConfig, debug : Boolean
   /**
    * Merges sameAs links from sources and silk output
    */
-  private def getAllLinks(sameAsFromSilk : Seq[Path], sameAsFromSource : Path) : String = {
+  private def getAllLinks(sameAsFromSilk : Seq[Path], sameAsFromSource : Path = null) : String = {
 
     val allSameAsLinks = clean(new Path("allSameAsLinks"))
     hdfs.mkdirs(allSameAsLinks)
@@ -122,10 +135,9 @@ class HadoopIntegrationJob(val config : HadoopIntegrationConfig, debug : Boolean
         hdfs.rename(status.getPath, new Path(allSameAsLinks+Consts.fileSeparator+path.getName+status.getPath.getName))
       clean(path)
     }
-    val sameAsFromSourceSeq = hdfs.listStatus(sameAsFromSource)
-    for (status <- sameAsFromSourceSeq)
-      hdfs.rename(status.getPath, new Path(allSameAsLinks+Consts.fileSeparator+status.getPath.getName))
-    clean(sameAsFromSource)
+    if (sameAsFromSource != null) {
+      move(sameAsFromSource, allSameAsLinks, false)
+    }
 
     allSameAsLinks.toString
   }
@@ -221,6 +233,27 @@ class HadoopIntegrationJob(val config : HadoopIntegrationConfig, debug : Boolean
     HadoopQuadToTextConverter.execute(outputPath, config.outputFile)
 
     // TODO add output module
+  }
+
+  // Move files from one path to another
+  private def move (from : String, dest : String, cleanDest : Boolean = false) {
+    move(new Path(from), new Path(dest), cleanDest)
+  }
+
+  private def move (from : Path, dest : Path, cleanDest : Boolean) {
+    log.debug("Moving files from "+from.toString+" to "+ dest.toString)
+    // move files
+    val filesFrom = hdfs.listStatus(from).filterNot(_.isDir)
+
+    if (cleanDest && hdfs.exists(dest))
+      clean(dest)
+    if (!hdfs.exists(dest))
+      hdfs.mkdirs(dest)
+    for (status <- filesFrom)
+      hdfs.rename(status.getPath, new Path(dest.toString+Consts.fileSeparator+status.getPath.getName))
+
+    // remove the source
+    clean(from)
   }
 
 }

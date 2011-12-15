@@ -20,6 +20,6 @@ package ldif.hadoop.runtime
 
 import java.util.Properties
 
-case class ConfigParameters(val configProperties : Properties, val sameAsPath : String  = null)
+case class ConfigParameters(val configProperties : Properties, val sameAsPath : String  = null, val allQuadsPath : String = null)
 
 
