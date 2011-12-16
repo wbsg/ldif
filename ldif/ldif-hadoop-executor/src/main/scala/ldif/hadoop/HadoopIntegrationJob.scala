@@ -124,7 +124,7 @@ class HadoopIntegrationJob(val config : HadoopIntegrationConfig, debug : Boolean
    * Translates URIs
    */
   private def translateUris(inputPath : String, sameAsLinks : String) : String = {
-    val outputPath = inputPath+"_traslated"
+    val outputPath = inputPath+"_translated"
     RunHadoopUriTranslation.execute(inputPath, sameAsLinks, outputPath)
     outputPath
   }

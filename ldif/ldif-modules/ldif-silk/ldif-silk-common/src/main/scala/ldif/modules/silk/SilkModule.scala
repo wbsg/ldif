@@ -46,9 +46,9 @@ object SilkModule {
   }
 
   private def loadConfig(file : File) : LinkingConfig = {
-    if(file.isFile)
+    if(file!=null && file.isFile)
       LinkingConfig.load(file)
-    else if(file.isDirectory && file.listFiles.size > 0)
+    else if(file !=null && file.isDirectory && file.listFiles.size > 0)
       file.listFiles.map(loadConfig).reduceLeft(_ merge _)
     else
       LinkingConfig.empty
