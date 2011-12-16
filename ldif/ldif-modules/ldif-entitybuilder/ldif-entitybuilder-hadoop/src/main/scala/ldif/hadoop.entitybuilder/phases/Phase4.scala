@@ -91,25 +91,34 @@ object Phase4 {
 
     log.info("Output directory: " + out)
 
-    val start = System.currentTimeMillis
     val conf = new Configuration
-    HadoopHelper.distributeSerializableObject(edmd, conf, "edmd")
-
-    // remove existing output
     val hdfs = FileSystem.get(conf)
-    val hdPath = new Path(out)
-    if (hdfs.exists(hdPath))
-      hdfs.delete(hdPath, true)
 
-    val maxPhase = edmd.maxPhase
+    if (!hdfs.exists(new Path(in))) {
+      // skip phase if input dir is empty
+      log.info("Phase 4 skipped - No input resources found")
+      0
+    }
 
-    val res = ToolRunner.run(conf, new Phase4(), Array(maxPhase.toString, in, out))
+    else {
+      val start = System.currentTimeMillis
+      HadoopHelper.distributeSerializableObject(edmd, conf, "edmd")
 
-    log.info("That's it. Took " + (System.currentTimeMillis-start)/1000.0 + "s")
+      // remove existing output
+      val hdPath = new Path(out)
+      if (hdfs.exists(hdPath))
+        hdfs.delete(hdPath, true)
 
-    // delete output of the previous phase
-    //hdfs.delete(new Path(in), true)
-    res
+      val maxPhase = edmd.maxPhase
+
+      val res = ToolRunner.run(conf, new Phase4(), Array(maxPhase.toString, in, out))
+
+      log.info("That's it. Took " + (System.currentTimeMillis-start)/1000.0 + "s")
+
+      // delete output of the previous phase
+      //hdfs.delete(new Path(in), true)
+      res
+    }
   }
 }
 
