@@ -71,7 +71,7 @@ object RunHadoopUriRewriting {
 
     // move sameAs links to the output path
     val sameAsLinksFiles = hdfs.listStatus(new Path(sameAsLinksInputPath)).filterNot(_.isDir)
-    for (status <- sameAsLinksFiles)
+    for (status <- sameAsLinksFiles.filterNot(_.getPath.getName.startsWith("_")))
       hdfs.rename(status.getPath, new Path(outputPath+Consts.fileSeparator+"sameas"+status.getPath.getName))
 
     res
