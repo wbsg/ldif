@@ -142,7 +142,7 @@ class HadoopIntegrationJob(val config : HadoopIntegrationConfig, debug : Boolean
 
     for (path <- sameAsFromSilk) {
       val sameAsFromSilkSeq = hdfs.listStatus(path)
-      for (status <- sameAsFromSilkSeq.filter(_.getPath.getName.startsWith("part")))
+      for (status <- sameAsFromSilkSeq.filterNot(_.getPath.getName.startsWith("_")))
         hdfs.rename(status.getPath, new Path(allSameAsLinks+Consts.fileSeparator+path.getName+status.getPath.getName))
       clean(path)
     }
@@ -268,7 +268,7 @@ class HadoopIntegrationJob(val config : HadoopIntegrationConfig, debug : Boolean
       clean(dest)
     if (!hdfs.exists(dest))
       hdfs.mkdirs(dest)
-    for (status <- filesFrom)
+    for (status <- filesFrom.filterNot(_.getPath.getName.startsWith("_")))
       hdfs.rename(status.getPath, new Path(dest.toString+Consts.fileSeparator+status.getPath.getName))
 
     // remove the source
