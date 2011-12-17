@@ -54,7 +54,7 @@ object HadoopIntegrationConfig
       linkSpecDir = getFile(xml, "linkSpecifications", baseDir),
       mappingDir = getFile(xml, "mappings", baseDir),
       sieveSpecDir = getFile(xml, "fusion", baseDir),
-      outputFile =  baseDir + Consts.fileSeparator + (xml \ "output" text),
+      outputFile = (xml \ "output" text),
       properties = properties,
       runSchedule = runSchedule
     )

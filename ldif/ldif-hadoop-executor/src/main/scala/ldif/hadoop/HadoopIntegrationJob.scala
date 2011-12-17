@@ -110,6 +110,7 @@ class HadoopIntegrationJob(val config : HadoopIntegrationConfig, debug : Boolean
     val mintedUriPath = inputPath+"_minted"
     val (mintNamespace, mintPropertySet) = getMintValues(config)
     HadoopUriMinting.execute(inputPath, mintedUriPath, mintNamespace, mintPropertySet)
+    clean(inputPath)
     mintedUriPath
   }
 
@@ -126,6 +127,7 @@ class HadoopIntegrationJob(val config : HadoopIntegrationConfig, debug : Boolean
   private def translateUris(inputPath : String, sameAsLinks : String) : String = {
     val outputPath = inputPath+"_traslated"
     RunHadoopUriTranslation.execute(inputPath, sameAsLinks, outputPath)
+    clean(inputPath)
     outputPath
   }
 
@@ -140,7 +142,7 @@ class HadoopIntegrationJob(val config : HadoopIntegrationConfig, debug : Boolean
 
     for (path <- sameAsFromSilk) {
       val sameAsFromSilkSeq = hdfs.listStatus(path)
-      for (status <- sameAsFromSilkSeq)
+      for (status <- sameAsFromSilkSeq.filter(_.getPath.getName.startsWith("part")))
         hdfs.rename(status.getPath, new Path(allSameAsLinks+Consts.fileSeparator+path.getName+status.getPath.getName))
       clean(path)
     }
@@ -248,6 +250,8 @@ class HadoopIntegrationJob(val config : HadoopIntegrationConfig, debug : Boolean
     HadoopQuadToTextConverter.execute(outputPath, config.outputFile)
 
     // TODO add output module
+
+    clean(outputPath)
   }
 
   // Move files from one path to another
