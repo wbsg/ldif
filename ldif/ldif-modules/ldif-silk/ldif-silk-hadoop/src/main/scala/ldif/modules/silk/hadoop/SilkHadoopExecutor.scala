@@ -30,6 +30,7 @@ import de.fuberlin.wiwiss.silk.util.DPair
 import de.fuberlin.wiwiss.silk.hadoop.impl.EntityConfidence
 import org.apache.hadoop.io.{IntWritable, Text}
 import java.util.UUID
+import org.apache.hadoop.conf.Configuration
 
 class SilkHadoopExecutor extends Executor {
   type TaskType = SilkTask
@@ -56,6 +57,10 @@ class SilkHadoopExecutor extends Executor {
     runIndexingJob(task, reader(1), targetIndexPath)
 
     runLinkGenerationJob(task, DPair(sourceIndexPath, targetIndexPath), writer)
+
+    val hdfs = FileSystem.get(new Configuration)
+    hdfs.delete(indexPath, true)
+
   }
 
   private def runIndexingJob(task: SilkTask, inputPath: Path, outputPath: Path) {

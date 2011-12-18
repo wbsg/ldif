@@ -50,6 +50,8 @@ class HadoopIntegrationJob(val config : HadoopIntegrationConfig, debug : Boolean
 
   val useExternalSameAsLinks = config.properties.getProperty("useExternalSameAsLinks", "true").toLowerCase=="true"
   val outputAllQuads = config.properties.getProperty("output", "mapped-only").toLowerCase=="all"
+  val rewriteUris = config.properties.getProperty("rewriteURIs", "true").toLowerCase=="true"
+  val uriMinting = config.properties.getProperty("uriMinting", "false").toLowerCase=="true"
 
   val externalSameAsLinksDir = clean("sameAsFromSources")
   val allQuadsDir = clean("allQuads")
@@ -86,13 +88,15 @@ class HadoopIntegrationJob(val config : HadoopIntegrationConfig, debug : Boolean
     var outputPath = r2rOutput
 
     // Execute URI Translation (if enabled)
-    if(config.properties.getProperty("rewriteURIs", "true").toLowerCase=="true") {
+    if(rewriteUris) {
       outputPath = translateUris(outputPath, sameAsLinks)
       log.info("Time needed to translate URIs: " + stopWatch.getTimeSpanInSeconds + "s")
     }
 
     // Execute URI Minting (if enabled)
-    if(config.properties.getProperty("uriMinting", "false").toLowerCase=="true") {
+    if(uriMinting) {
+      // TODO collect minting-properties quads in the previous HEB-phase2 (both r2r and silk)
+      //      and use (only) those quads as input for the URI minting job
       outputPath = mintUris(outputPath)
       log.info("Time needed to mint URIs: " + stopWatch.getTimeSpanInSeconds + "s")
     }
@@ -105,7 +109,9 @@ class HadoopIntegrationJob(val config : HadoopIntegrationConfig, debug : Boolean
     lastUpdate = Calendar.getInstance
   }
 
-
+  /**
+   *  Mints URIs
+   */
   private def mintUris(inputPath : String) : String = {
     val mintedUriPath = inputPath+"_minted"
     val (mintNamespace, mintPropertySet) = getMintValues(config)
@@ -117,7 +123,7 @@ class HadoopIntegrationJob(val config : HadoopIntegrationConfig, debug : Boolean
   private def getMintValues(config: HadoopIntegrationConfig): (String, Set[String]) = {
     val mintNamespace = config.properties.getProperty("uriMintNamespace")
     val mintPropertySet = config.properties.getProperty("uriMintLabelPredicate").split("\\s+").toSet
-    return (mintNamespace, mintPropertySet)
+    (mintNamespace, mintPropertySet)
   }
 
 
@@ -144,8 +150,9 @@ class HadoopIntegrationJob(val config : HadoopIntegrationConfig, debug : Boolean
       val sameAsFromSilkSeq = hdfs.listStatus(path)
       for (status <- sameAsFromSilkSeq.filterNot(_.getPath.getName.startsWith("_")))
         hdfs.rename(status.getPath, new Path(allSameAsLinks+Consts.fileSeparator+path.getName+status.getPath.getName))
-      clean(path)
     }
+    clean(sameAsFromSilk.head.getParent)
+
     if (sameAsFromSource != null) {
       move(sameAsFromSource, allSameAsLinks, false)
     }
@@ -166,7 +173,7 @@ class HadoopIntegrationJob(val config : HadoopIntegrationConfig, debug : Boolean
     val r2rTask = r2rModule.tasks.head
     val entityDescriptions = (for(mapping <- r2rTask.ldifMappings) yield mapping.entityDescription).toSeq
 
-    val entitiesPath =  "ebOutput-r2r"
+    val entitiesPath =  clean("ebOutput-r2r")
     var configParameters = ConfigParameters(config.properties, null, null, true)
     if (useExternalSameAsLinks)
       configParameters = configParameters.copy(sameAsPath = externalSameAsLinksDir)
@@ -178,6 +185,7 @@ class HadoopIntegrationJob(val config : HadoopIntegrationConfig, debug : Boolean
     val r2rOutput = "r2rOutput"
     r2rExecutor.execute(r2rTask, Seq(new Path(entitiesPath)), new Path(r2rOutput))
 
+    clean(entitiesPath)
     r2rOutput
   }
 
@@ -213,6 +221,8 @@ class HadoopIntegrationJob(val config : HadoopIntegrationConfig, debug : Boolean
       val outputPath = new Path(outputDirectory, EntityMultipleSequenceFileOutput.generateDirectoryName(i))
 
       silkExecutor.execute(silkTask, DPair(sourcePath, targetPath), outputPath)
+
+      clean(entitiesDirectory)
 
       outputPath
     }
