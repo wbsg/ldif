@@ -21,13 +21,16 @@ package ldif.hadoop.entitybuilder.reducers
 import org.apache.hadoop.mapred._
 import lib.MultipleOutputs
 import java.util.Iterator
-import collection.mutable.ArrayBuffer
 import ldif.hadoop.types._
 import ldif.hadoop.utils.HadoopHelper
 import ldif.hadoop.entitybuilder.ResultBuilder
 import org.apache.hadoop.io.{WritableUtils, IntWritable}
 import org.apache.hadoop.conf.Configuration
 import ldif.entity.{NodeWritable, EntityDescriptionMetadata, EntityWritable}
+import collection.mutable.{HashSet, ArrayBuffer}
+import ldif.util.MemoryUsage
+import java.util.logging.Logger
+import org.slf4j.LoggerFactory
 
 /**
  * Created by IntelliJ IDEA.
@@ -37,6 +40,10 @@ import ldif.entity.{NodeWritable, EntityDescriptionMetadata, EntityWritable}
  * To change this template use File | Settings | File Templates.
  */
 
+/**
+ * This Reducer builds entities out of the value paths from phases 2 and 3. Under the assumption that all the value paths per entity
+ * fit into memory, large entities (with about 1M value paths) can't be constructed.
+ */
 class EntityConstructionReducer extends MapReduceBase with Reducer[EntityDescriptionNodeWritable, ValuePathWritable, IntWritable, EntityWritable] {
   var edmd: EntityDescriptionMetadata = null
   var resultBuilder: ResultBuilder = null
@@ -57,14 +64,29 @@ class EntityConstructionReducer extends MapReduceBase with Reducer[EntityDescrip
     val valuePaths = new ArrayBuffer[ValuePathWritable]()
     // all value paths of an entity are needed to build the result table
     // Since Hadoop reuses objects in the iterator they have to be cloned
+    var counter = 0
     while(values.hasNext) {
+      counter += 1
+      if((counter % 10 == 0) && MemoryUsage.getFreeMemoryInBytes()<16777216) {
+        System.err.println("PROBLEM: In phase 4. Memory problem for entity " + key.node + ". Number of value paths read: " + counter + ". Used memory: " + Runtime.getRuntime.totalMemory())
+        return
+      }
       val value = values.next()
       valuePaths.append(WritableUtils.clone(value, config))
+//      val valueSet = valuePathsMap.getOrElseUpdate(value.pathID.get(), new HashSet[Array[NodeWritable]])
+//      valueSet.add(value.values.get().asInstanceOf[Array[NodeWritable]])
     }
 
     var (passesRestriction, entityNode) = resultBuilder.checkRestriction(entityDescriptionID, valuePaths)
     if(passesRestriction) {
-      val result = resultBuilder.computeResultTables(entityDescriptionID, valuePaths)
+      var result: IndexedSeq[Traversable[IndexedSeq[NodeWritable]]] = null
+      try {
+        result = resultBuilder.computeResultTables(entityDescriptionID, valuePaths)
+      } catch {
+        case e: java.lang.OutOfMemoryError =>
+          System.out.println("PROBLEM: In phase 4. Memory problem for entity " + key.node + ". Number of value paths read: " + counter + ". Used memory: " + Runtime.getRuntime.totalMemory())
+          return
+      }
       if(entityNode==None)
         entityNode = Some(key.node)
       if(hasResults(entityDescriptionID, result)) {
