@@ -49,9 +49,8 @@ class SilkHadoopExecutor extends Executor {
 
   override def execute(task: SilkTask, reader: Seq[Path], writer: Path) {
     val indexPath = new Path("silk_index/")
-    //TODO find better way to create a unique path
-    val sourceIndexPath = new Path(indexPath, task.name + "_source" + UUID.randomUUID.toString)
-    val targetIndexPath = new Path(indexPath, task.name + "_target" + UUID.randomUUID.toString)
+    val sourceIndexPath = new Path(indexPath, task.name + "_source_" + UUID.randomUUID.toString)
+    val targetIndexPath = new Path(indexPath, task.name + "_target_" + UUID.randomUUID.toString)
 
     runIndexingJob(task, reader(0), sourceIndexPath)
     runIndexingJob(task, reader(1), targetIndexPath)
@@ -69,7 +68,7 @@ class SilkHadoopExecutor extends Executor {
     job.setJarByClass(classOf[SilkHadoopExecutor])
 
     // Distribute Configuration
-    Config.write(job.getConfiguration, task.silkConfig.silkConfig, task.linkSpec)
+    Config.writeConfig(job.getConfiguration, task.silkConfig.silkConfig, task.linkSpec)
 
     //Set Input
     FileInputFormat.setInputPaths(job, inputPath)
@@ -77,6 +76,10 @@ class SilkHadoopExecutor extends Executor {
 
     //Set Mapper
     job.setMapperClass(classOf[IndexMap])
+    job.setReducerClass(classOf[IndexReduce])
+
+    job.setMapOutputKeyClass(classOf[IntWritable])
+    job.setMapOutputValueClass(classOf[IndexedEntityWritable])
 
     //Set Output
     val hdfs = FileSystem.get(job.getConfiguration)
@@ -84,9 +87,9 @@ class SilkHadoopExecutor extends Executor {
       hdfs.delete(outputPath, true)
     FileOutputFormat.setOutputPath(job, outputPath)
 
-    job.setOutputFormatClass(classOf[SequenceFileOutputFormat[IndexWritable, EntityWritable]])
-    job.setOutputKeyClass(classOf[IndexWritable])
-    job.setOutputValueClass(classOf[EntityWritable])
+    job.setOutputFormatClass(classOf[SequenceFileOutputFormat[IntWritable, PartitionWritable]])
+    job.setOutputKeyClass(classOf[IntWritable])
+    job.setOutputValueClass(classOf[PartitionWritable])
 
     //Run job
     job.waitForCompletion(true)
@@ -98,12 +101,12 @@ class SilkHadoopExecutor extends Executor {
     job.setJarByClass(classOf[SilkHadoopExecutor])
 
     // Distribute Configuration
-    Config.write(job.getConfiguration, task.silkConfig.silkConfig, task.linkSpec)
+    Config.writeConfig(job.getConfiguration, task.silkConfig.silkConfig, task.linkSpec)
 
     //Set Input
     job.getConfiguration.set("sourcePath", inputPaths.source.toString)
     job.getConfiguration.set("targetPath", inputPaths.target.toString)
-    job.setInputFormatClass(classOf[EntityPairInputFormat])
+    job.setInputFormatClass(classOf[PartitionPairInputFormat])
 
     //Set Mapper and Reducer
     job.setMapperClass(classOf[ConfidenceMap])

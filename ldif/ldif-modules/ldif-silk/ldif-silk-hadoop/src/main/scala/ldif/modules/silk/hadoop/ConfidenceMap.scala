@@ -21,30 +21,49 @@ package ldif.modules.silk.hadoop
 import org.apache.hadoop.mapreduce.Mapper
 import de.fuberlin.wiwiss.silk.hadoop.impl.EntityConfidence
 import de.fuberlin.wiwiss.silk.config.LinkSpecification
-import de.fuberlin.wiwiss.silk.util.DPair
+import org.apache.hadoop.io.{BooleanWritable, Text}
 import de.fuberlin.wiwiss.silk.entity.EntityDescription
-import org.apache.hadoop.io.{IntWritable, BooleanWritable, Text, NullWritable}
-import ldif.entity.EntityWritable
-import ldif.modules.silk.LdifEntity
+import de.fuberlin.wiwiss.silk.util.{Timer, DPair}
 
-class ConfidenceMap extends Mapper[BooleanWritable, EntityPairWritable, Text, EntityConfidence] {
+class ConfidenceMap extends Mapper[BooleanWritable, PartitionPairWritable, Text, EntityConfidence] {
 
   private var linkSpec: LinkSpecification = null
 
   private var entityDescs: DPair[EntityDescription] = null
 
-  protected override def setup(context: Mapper[BooleanWritable, EntityPairWritable, Text, EntityConfidence]#Context) {
+  protected override def setup(context: Mapper[BooleanWritable, PartitionPairWritable, Text, EntityConfidence]#Context) {
     linkSpec = Config.readLinkSpec(context.getConfiguration)
 
     entityDescs = linkSpec.entityDescriptions
   }
 
-  protected override def map(key : BooleanWritable, entities : EntityPairWritable, context : Mapper[BooleanWritable, EntityPairWritable, Text, EntityConfidence]#Context) {
+  protected override def map(key: BooleanWritable,
+                             partitions: PartitionPairWritable,
+                             context: Mapper[BooleanWritable, PartitionPairWritable, Text, EntityConfidence]#Context) {
     if(key.get) {
-      val confidence = linkSpec.rule(DPair(new LdifEntity(entities.source, entityDescs.source), new LdifEntity(entities.target, entityDescs.target)), 0.0)
+      val sourcePartition = partitions.source.get
+      val targetPartition = partitions.target.get
 
-      if(confidence >= 0.0) {
-        context.write(new Text(entities.source.resource.value), new EntityConfidence(confidence, entities.target.resource.value))
+      //Iterate over all entities in the source partition
+      var s = 0
+      while(s < sourcePartition.size) {
+        //Iterate over all entities in the target partition
+        var t = 0
+        while(t < targetPartition.size) {
+          //Check if the indices match
+          if(sourcePartition.indices(s) matches targetPartition.indices(t)) {
+            val sourceEntity = sourcePartition.entities(s)
+            val targetEntity = targetPartition.entities(t)
+            val entities = DPair(sourceEntity, targetEntity)
+            val confidence = linkSpec.rule(entities, 0.0)
+
+            if (confidence >= 0.0) {
+              context.write(new Text(sourceEntity.uri), new EntityConfidence(confidence, targetEntity.uri))
+            }
+          }
+          t += 1
+        }
+        s += 1
       }
     }
   }

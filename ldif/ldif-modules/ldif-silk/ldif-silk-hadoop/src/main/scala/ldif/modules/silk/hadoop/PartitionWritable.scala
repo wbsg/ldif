@@ -15,7 +15,7 @@ class PartitionWritable(var partition: Partition) extends Writable {
   override def readFields(in: DataInput) {
     val entityDescStr = in.readUTF()
     val entityDesc = EntityDescription.fromXML(XML.load(new StringReader(entityDescStr)))
-    Partition.deserialize(in, entityDesc)
+    partition = Partition.deserialize(in, entityDesc)
   }
 
   override def write(out: DataOutput) {

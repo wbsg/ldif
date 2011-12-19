@@ -9,7 +9,7 @@ import org.apache.hadoop.io.Writable
 
 class IndexedEntityWritable(var entity: EntityWritable, var index: BitsetIndex) extends Writable {
 
-  def this() = this(null, null)
+  def this() = this(new EntityWritable(), null)
 
   override def readFields(in: DataInput) {
     entity.readFields(in)

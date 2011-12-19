@@ -19,17 +19,17 @@
 package ldif.modules.silk.hadoop
 
 import org.apache.hadoop.mapreduce._
-import ldif.entity.EntityWritable
 import lib.input.{FileSplit, SequenceFileInputFormat}
 import scala.collection.JavaConversions._
-import org.apache.hadoop.io.{Writable, BooleanWritable}
 import java.io.{DataInput, DataOutput}
+import org.apache.hadoop.io.{IntWritable, Writable, BooleanWritable}
+import de.fuberlin.wiwiss.silk.util.Timer
 
-class EntityPairInputFormat extends InputFormat[BooleanWritable, EntityPairWritable] {
+class PartitionPairInputFormat extends InputFormat[BooleanWritable, PartitionPairWritable] {
   
-  type EntitySequenceFileInput = SequenceFileInputFormat[IndexWritable, EntityWritable]
+  type PartitionInputFormat = SequenceFileInputFormat[IntWritable, PartitionWritable]
 
-  private val inputFormat = new EntitySequenceFileInput()
+  private val inputFormat = new PartitionInputFormat()
   
   override def getSplits(context : JobContext) : java.util.List[InputSplit] = {
     context.getConfiguration.set("mapred.input.dir", context.getConfiguration.get("sourcePath"))
@@ -38,18 +38,18 @@ class EntityPairInputFormat extends InputFormat[BooleanWritable, EntityPairWrita
     context.getConfiguration.set("mapred.input.dir", context.getConfiguration.get("targetPath"))
     val targetSplits = inputFormat.getSplits(context)
 
-    for(s <- sourceSplits; t <- targetSplits) yield new EntityPairSplit(s, t)
+    for(s <- sourceSplits; t <- targetSplits) yield new PartitionPairSplit(s, t)
   }
 
-  override def createRecordReader(inputSplit : InputSplit, context : TaskAttemptContext) : RecordReader[BooleanWritable, EntityPairWritable] = {
-    new EntityPairReader(inputSplit.asInstanceOf[EntityPairSplit], context)
+  override def createRecordReader(inputSplit : InputSplit, context : TaskAttemptContext) : RecordReader[BooleanWritable, PartitionPairWritable] = {
+    new PartitionPairReader(inputSplit.asInstanceOf[PartitionPairSplit], context)
   }
   
-  private class EntityPairReader(split: EntityPairSplit, taskContext: TaskAttemptContext) extends RecordReader[BooleanWritable, EntityPairWritable] {
+  private class PartitionPairReader(split: PartitionPairSplit, taskContext: TaskAttemptContext) extends RecordReader[BooleanWritable, PartitionPairWritable] {
     
-    private var sourceReader: RecordReader[IndexWritable, EntityWritable] = null
+    private var sourceReader: RecordReader[IntWritable, PartitionWritable] = null
     
-    private var targetReader: RecordReader[IndexWritable, EntityWritable] = null
+    private var targetReader: RecordReader[IntWritable, PartitionWritable] = null
     
     override def getProgress = targetReader.getProgress
 
@@ -61,8 +61,6 @@ class EntityPairInputFormat extends InputFormat[BooleanWritable, EntityPairWrita
       targetReader.initialize(split.targetSplit, taskContext)
 
       targetReader.nextKeyValue()
-
-      //context.setStatus("Comparing partition " + ...)
     }
 
     override def close() {
@@ -86,13 +84,13 @@ class EntityPairInputFormat extends InputFormat[BooleanWritable, EntityPairWrita
       }
     }
 
-    override def getCurrentKey = new BooleanWritable(!(sourceReader.getCurrentKey.indices intersect targetReader.getCurrentKey.indices).isEmpty)
+    override def getCurrentKey = new BooleanWritable(sourceReader.getCurrentKey.get == targetReader.getCurrentKey.get)
 
-    override def getCurrentValue = new EntityPairWritable(sourceReader.getCurrentValue, targetReader.getCurrentValue)
+    override def getCurrentValue = new PartitionPairWritable(sourceReader.getCurrentValue, targetReader.getCurrentValue)
   }
 }
 
-class EntityPairSplit(var sourceSplit: InputSplit, var targetSplit: InputSplit) extends InputSplit with Writable {
+class PartitionPairSplit(var sourceSplit: InputSplit, var targetSplit: InputSplit) extends InputSplit with Writable {
 
   def this() = this(new FileSplit(null, 0, 0, null), new FileSplit(null, 0, 0, null))
 
