@@ -215,17 +215,17 @@ class HadoopIntegrationJob(val config : HadoopIntegrationConfig, debug : Boolean
     buildEntities(quadsPath, entitiesDirectory, entityDescriptions, configParameters)
     log.info("Time needed to build entities for linking phase: " + stopWatch.getTimeSpanInSeconds + "s")
 
-    for((silkTask, i) <- tasks.zipWithIndex) yield {
+    val result = for((silkTask, i) <- tasks.zipWithIndex) yield {
       val sourcePath = new Path(entitiesDirectory, EntityMultipleSequenceFileOutput.generateDirectoryName(i * 2))
       val targetPath = new Path(entitiesDirectory, EntityMultipleSequenceFileOutput.generateDirectoryName(i * 2 + 1))
       val outputPath = new Path(outputDirectory, EntityMultipleSequenceFileOutput.generateDirectoryName(i))
 
       silkExecutor.execute(silkTask, DPair(sourcePath, targetPath), outputPath)
 
-      clean(entitiesDirectory)
-
       outputPath
     }
+    clean(entitiesDirectory)
+    result
   }
 
   /**
