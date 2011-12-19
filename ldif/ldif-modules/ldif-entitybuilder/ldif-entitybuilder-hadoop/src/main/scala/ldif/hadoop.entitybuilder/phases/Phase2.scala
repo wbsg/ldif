@@ -42,7 +42,7 @@ class Phase2 extends Configured with Tool {
   def run(args: Array[String]): Int = {
     val conf = getConf
     val job = new JobConf(conf, classOf[Phase2])
-    val getsTextInput = args(2).toBoolean
+    val getsTextInput = args(4).toBoolean
 
     job.setJobName("HEB-Phase2")
 
@@ -62,12 +62,22 @@ class Phase2 extends Configured with Tool {
 
     MultipleOutputs.addNamedOutput(job, "seq", classOf[JoinValuePathMultipleSequenceFileOutput], classOf[IntWritable], classOf[ValuePathWritable])
     MultipleOutputs.addNamedOutput(job, "text", classOf[JoinValuePathMultipleTextFileOutput], classOf[IntWritable], classOf[ValuePathWritable])
-    MultipleOutputs.addNamedOutput(job, "sameas", classOf[QuadSequenceFileOutput], classOf[NullWritable], classOf[QuadWritable])
 
     val in = new Path(args(0))
     val out = new Path(args(1))
     FileInputFormat.addInputPath(job, in)
     FileOutputFormat.setOutputPath(job, out)
+
+    // Check if sameAs links should be collected
+    if (args(2).toBoolean) {
+      MultipleOutputs.addNamedOutput(job, "sameas", classOf[QuadSequenceFileOutput], classOf[NullWritable], classOf[QuadWritable])
+      job.setBoolean("sameas", true)
+    }
+    // Check if irrelevant quads should be collected
+    if (args(3).toBoolean) {
+      MultipleOutputs.addNamedOutput(job, "allquads", classOf[QuadSequenceFileOutput], classOf[NullWritable], classOf[QuadWritable])
+      job.setBoolean("allquads", true)
+    }
 
     JobClient.runJob(job)
 
@@ -78,12 +88,12 @@ class Phase2 extends Configured with Tool {
 object Phase2 {
   private val log = LoggerFactory.getLogger(getClass.getName)
 
-  def runPhase(in : String, out : String, entityDescriptions : Seq[EntityDescription], sameAs : String, getsTextInput: Boolean = false) : Int = {
+  def runPhase(in : String, out : String, entityDescriptions : Seq[EntityDescription], sameAs : String, allQuads : String, getsTextInput: Boolean = false) : Int = {
     val edmd = EntityDescriptionMetaDataExtractor.extract(entityDescriptions)
-    runPhase(in,out,edmd, sameAs, getsTextInput)
+    runPhase(in,out,edmd, sameAs, allQuads, getsTextInput)
   }
 
-  def runPhase(in : String, out : String, edmd : EntityDescriptionMetadata, sameAs : String, getsTextInput: Boolean) : Int = {
+  def runPhase(in : String, out : String, edmd : EntityDescriptionMetadata, sameAs : String, allQuads : String, getsTextInput: Boolean) : Int = {
     log.info("Starting phase 2 of the EntityBuilder: Filtering quads and creating initial value paths")
 
     val start = System.currentTimeMillis
@@ -97,18 +107,31 @@ object Phase2 {
       hdfs.delete(hdPath, true)
 
     log.info("Output directory: " + out)
-    val res = ToolRunner.run(conf, new Phase2(), Array[String](in, out, getsTextInput.toString))
+    val res = ToolRunner.run(conf, new Phase2(), Array[String](in, out, (sameAs!=null).toString, (allQuads!=null).toString, getsTextInput.toString))
 
     log.info("That's it. Took " + (System.currentTimeMillis-start)/1000.0 + "s")
 
-    // move sameAs links in the ad-hoc directory
+    // move sameAs links quads to an ad-hoc directory
     if(sameAs!=null) {
-      val sameAsOutputFiles = hdfs.listStatus(hdPath).filterNot(_.isDir)
+      val outputFiles = hdfs.listStatus(hdPath).filterNot(_.isDir)
       val sameAsPath = new Path(sameAs)
-      if (sameAsOutputFiles.length > 0 && !hdfs.exists(sameAsPath))
+      if (outputFiles.length > 0 && !hdfs.exists(sameAsPath))
         hdfs.mkdirs(sameAsPath)
-      for (status <- sameAsOutputFiles)
-        hdfs.rename(status.getPath, new Path(sameAs+Consts.fileSeparator+status.getPath.getName))
+      for (status <- outputFiles) {
+        if(status.getPath.getName.startsWith("sameas"))
+          hdfs.rename(status.getPath, new Path(sameAs+Consts.fileSeparator+status.getPath.getName))
+      }
+    }
+    // move irrelevant quads to an ad-hoc directory
+    if(allQuads!=null) {
+      val outputFiles = hdfs.listStatus(hdPath).filterNot(_.isDir)
+      val allQuadsPath = new Path(allQuads)
+      if (outputFiles.length > 0 && !hdfs.exists(allQuadsPath))
+        hdfs.mkdirs(allQuadsPath)
+      for (status <- outputFiles) {
+        if(status.getPath.getName.startsWith("allquads"))
+          hdfs.rename(status.getPath, new Path(allQuads+Consts.fileSeparator+status.getPath.getName))
+      }
     }
 
     res

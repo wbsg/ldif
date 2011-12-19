@@ -21,7 +21,7 @@ package de.fuberlin.wiwiss.r2r
 import java.util.ArrayList
 import scala.collection.JavaConversions._
 import ldif.entity._
-import ldif.local.runtime.QuadWriter
+import ldif.local.runtime.QuadWriter    //TODO refactor to not use local classes
 import collection.parallel.ParIterable
 import ldif.util.Consts
 import ldif.runtime.Quad

@@ -21,8 +21,8 @@ package ldif.hadoop.config;
 import java.io.File
 import java.util.Properties
 import org.slf4j.LoggerFactory
-import ldif.util.{Consts, ValidatingXMLReader}
 import xml.{Node, XML}
+import ldif.util.{ConfigProperties, Consts, ValidatingXMLReader}
 
 case class HadoopIntegrationConfig(sources : String, linkSpecDir : File, mappingDir : File, sieveSpecDir : File, outputFile : String,  properties : Properties, runSchedule : String) {}
 
@@ -41,9 +41,9 @@ object HadoopIntegrationConfig
 
     // Read in properties
     var properties = new Properties
-    //   val propertiesFile = getFile(xml, "properties", baseDir)
-    //   if (propertiesFile != null)
-    //     properties = ConfigProperties.loadProperties(propertiesFile)   //TODO property parser
+       val propertiesFile = getFile(xml, "properties", baseDir)
+       if (propertiesFile != null)
+         properties = ConfigProperties.loadProperties(propertiesFile)
 
     var runSchedule : String = (xml \ "runSchedule" text)
     if (runSchedule == "" || runSchedule == null)
@@ -54,7 +54,7 @@ object HadoopIntegrationConfig
       linkSpecDir = getFile(xml, "linkSpecifications", baseDir),
       mappingDir = getFile(xml, "mappings", baseDir),
       sieveSpecDir = getFile(xml, "fusion", baseDir),
-      outputFile =  baseDir + Consts.fileSeparator + (xml \ "output" text),
+      outputFile = (xml \ "output" text),
       properties = properties,
       runSchedule = runSchedule
     )

@@ -135,7 +135,7 @@ object Phase3 {
     log.info("That's it. Took " + (System.currentTimeMillis-start)/1000.0 + "s")
 
     // delete output of the previous phase
-    //hdfs.delete(new Path(in), true)
+    hdfs.delete(new Path(in), true)
     res
   }
 }

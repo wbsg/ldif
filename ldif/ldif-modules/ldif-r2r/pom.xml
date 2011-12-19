@@ -80,7 +80,13 @@
           <artifactId>ldif-core</artifactId>
           <version>0.3.1</version>
         </dependency>
-	</dependencies>
+        <!-- TO BE REMOVED - after r2r-common refactor -->
+        <dependency>
+            <groupId>ldif</groupId>
+            <artifactId>ldif-local</artifactId>
+            <version>0.3.1</version>
+        </dependency>
+    </dependencies>
 
 	<build>
 	  <pluginManagement>

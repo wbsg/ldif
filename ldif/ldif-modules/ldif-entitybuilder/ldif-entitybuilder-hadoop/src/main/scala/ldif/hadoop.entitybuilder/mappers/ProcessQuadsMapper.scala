@@ -1,3 +1,19 @@
+/* 
+ * Copyright 2011 Freie Universität Berlin, MediaEvent Services GmbH & Co. KG 
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package ldif.hadoop.entitybuilder.mappers
 
 import org.apache.hadoop.mapred.lib.MultipleOutputs
@@ -19,14 +35,16 @@ import org.apache.hadoop.io._
 class ProcessQuadsMapper extends MapReduceBase with Mapper[NullWritable, QuadWritable, IntWritable, ValuePathWritable] {
   private var edmd: EntityDescriptionMetadata = null
   private var mos: MultipleOutputs = null
+  private var collectAllQuads : Boolean = false
 
   override def configure(conf: JobConf) {
     edmd = HadoopHelper.getEntityDescriptionMetaData(conf)
     mos = new MultipleOutputs(conf)
+    collectAllQuads = conf.getBoolean("allquads", false)
   }
 
   override def map(nothing: NullWritable, quad: QuadWritable, output: OutputCollector[IntWritable, ValuePathWritable], reporter: Reporter) {
-    ProcessQuads.processQuad(quad.asQuad, reporter, edmd, mos)
+    ProcessQuads.processQuad(quad.asQuad, reporter, edmd, mos, collectAllQuads)
   }
 
   override def close() {
@@ -35,14 +53,19 @@ class ProcessQuadsMapper extends MapReduceBase with Mapper[NullWritable, QuadWri
 }
 
 object ProcessQuads {
-  def processQuad(quad: Quad, reporter: Reporter, edmd: EntityDescriptionMetadata, mos: MultipleOutputs) {
+  def processQuad(quad: Quad, reporter: Reporter, edmd: EntityDescriptionMetadata, mos: MultipleOutputs, collectAllQuads : Boolean) {
     val property = quad.predicate
     val values = new NodeArrayWritable
     val phase = new IntWritable(0)
     val propertyInfosValue = edmd.propertyMap.get(property)
     propertyInfosValue match {
-      case None =>
+      case None => {
+        if (collectAllQuads) {
+          val collector = mos.getCollector("allquads", reporter).asInstanceOf[OutputCollector[NullWritable, QuadWritable]]
+          collector.collect(NullWritable.get, new QuadWritable(quad))
+        }
         reporter.getCounter("LDIF Stats","Nr. irrelevant quads filtered").increment(1)
+      }
       case Some(propertyInfos) =>
         for (propertyInfo <- propertyInfos) {
           val pathLength = edmd.pathLength(propertyInfo.pathId)

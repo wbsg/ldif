@@ -36,23 +36,36 @@ import ldif.modules.silk.hadoop.SilkHadoopExecutor
 import runtime._
 import de.fuberlin.wiwiss.silk.util.DPair
 import ldif.util.{Consts, StopWatch, LogUtil}
+import java.util.Calendar
 
 class HadoopIntegrationJob(val config : HadoopIntegrationConfig, debug : Boolean = false) {
 
   private val log = LoggerFactory.getLogger(getClass.getName)
   val stopWatch = new StopWatch
 
+  var lastUpdate : Calendar = null
+
   val conf = new Configuration
   val hdfs = FileSystem.get(conf)
 
-  val sameAsFromSources = clean("sameAsFromSources")
+  val useExternalSameAsLinks = config.properties.getProperty("useExternalSameAsLinks", "true").toLowerCase=="true"
+  val outputAllQuads = config.properties.getProperty("output", "mapped-only").toLowerCase=="all"
+  val rewriteUris = config.properties.getProperty("rewriteURIs", "true").toLowerCase=="true"
+  val uriMinting = config.properties.getProperty("uriMinting", "false").toLowerCase=="true"
 
-  // Object to store all kinds of configuration data
-  var configParameters = ConfigParameters(config.properties, sameAsFromSources)
+  val externalSameAsLinksDir = clean("sameAsFromSources")
+  val allQuadsDir = clean("allQuads")
 
   def runIntegration() {
 
-    var outputPath : String = null
+    val sourcesPath = new Path(config.sources)
+    val sourceNumber = hdfs.listStatus(sourcesPath).length
+    log.info("Hadoop Integration Job started")
+    log.info("- Input < "+ sourceNumber +" sources found in " + sourcesPath.toString)
+    log.info("- Output > "+ config.outputFile)
+    log.info("- Properties ")
+    for (key <- config.properties.keySet.toArray)
+      log.info("  - "+key +" : " + config.properties.getProperty(key.toString) )
 
     stopWatch.getTimeSpanInSeconds()
 
@@ -64,37 +77,53 @@ class HadoopIntegrationJob(val config : HadoopIntegrationConfig, debug : Boolean
     val silkOutput = generateLinks(r2rOutput)
     log.info("Time needed to link data: " + stopWatch.getTimeSpanInSeconds + "s")
 
-    // Prepare output data
-    val allQuads = r2rOutput   //TODO val allQuads = getAllQuads(r2rOutput, otherQuads)
-    val allSameAsLinks = getAllLinks(silkOutput, new Path(sameAsFromSources))
+    // Prepare data to be translated
+    if(outputAllQuads)
+      move(allQuadsDir, r2rOutput)
+    var sameAsLinks : String = null
+    if(useExternalSameAsLinks)
+     sameAsLinks = getAllLinks(silkOutput, new Path(externalSameAsLinksDir))
+    else sameAsLinks = getAllLinks(silkOutput)
+
+    var outputPath = r2rOutput
 
     // Execute URI Translation (if enabled)
-    if(config.properties.getProperty("rewriteURIs", "true").toLowerCase=="true") {
-      outputPath = translateUris(allQuads, allSameAsLinks)
+    if(rewriteUris) {
+      outputPath = translateUris(outputPath, sameAsLinks)
       log.info("Time needed to translate URIs: " + stopWatch.getTimeSpanInSeconds + "s")
     }
 
     // Execute URI Minting (if enabled)
-    if(config.properties.getProperty("uriMinting", "false").toLowerCase=="true") {
+    if(uriMinting) {
+      // TODO collect minting-properties quads in the previous HEB-phase2 (both r2r and silk)
+      //      and use (only) those quads as input for the URI minting job
       outputPath = mintUris(outputPath)
       log.info("Time needed to mint URIs: " + stopWatch.getTimeSpanInSeconds + "s")
     }
 
+    // add sameAs links to the output path
+    move(sameAsLinks, outputPath)
+
     writeOutput(outputPath)
+
+    lastUpdate = Calendar.getInstance
   }
 
-
-  private def mintUris(in : String) : String = {
-    val mintedUriPath = in+"_minted"
+  /**
+   *  Mints URIs
+   */
+  private def mintUris(inputPath : String) : String = {
+    val mintedUriPath = inputPath+"_minted"
     val (mintNamespace, mintPropertySet) = getMintValues(config)
-    HadoopUriMinting.execute(in, mintedUriPath, mintNamespace, mintPropertySet)
+    HadoopUriMinting.execute(inputPath, mintedUriPath, mintNamespace, mintPropertySet)
+    clean(inputPath)
     mintedUriPath
   }
 
   private def getMintValues(config: HadoopIntegrationConfig): (String, Set[String]) = {
     val mintNamespace = config.properties.getProperty("uriMintNamespace")
     val mintPropertySet = config.properties.getProperty("uriMintLabelPredicate").split("\\s+").toSet
-    return (mintNamespace, mintPropertySet)
+    (mintNamespace, mintPropertySet)
   }
 
 
@@ -102,8 +131,9 @@ class HadoopIntegrationJob(val config : HadoopIntegrationConfig, debug : Boolean
    * Translates URIs
    */
   private def translateUris(inputPath : String, sameAsLinks : String) : String = {
-    val outputPath = "traslated"
+    val outputPath = inputPath+"_translated"
     RunHadoopUriTranslation.execute(inputPath, sameAsLinks, outputPath)
+    clean(inputPath)
     outputPath
   }
 
@@ -111,21 +141,21 @@ class HadoopIntegrationJob(val config : HadoopIntegrationConfig, debug : Boolean
   /**
    * Merges sameAs links from sources and silk output
    */
-  private def getAllLinks(sameAsFromSilk : Seq[Path], sameAsFromSource : Path) : String = {
+  private def getAllLinks(sameAsFromSilk : Seq[Path], sameAsFromSource : Path = null) : String = {
 
     val allSameAsLinks = clean(new Path("allSameAsLinks"))
     hdfs.mkdirs(allSameAsLinks)
 
     for (path <- sameAsFromSilk) {
       val sameAsFromSilkSeq = hdfs.listStatus(path)
-      for (status <- sameAsFromSilkSeq)
+      for (status <- sameAsFromSilkSeq.filterNot(_.getPath.getName.startsWith("_")))
         hdfs.rename(status.getPath, new Path(allSameAsLinks+Consts.fileSeparator+path.getName+status.getPath.getName))
-      clean(path)
     }
-    val sameAsFromSourceSeq = hdfs.listStatus(sameAsFromSource)
-    for (status <- sameAsFromSourceSeq)
-      hdfs.rename(status.getPath, new Path(allSameAsLinks+Consts.fileSeparator+status.getPath.getName))
-    clean(sameAsFromSource)
+    clean(sameAsFromSilk.head.getParent)
+
+    if (sameAsFromSource != null) {
+      move(sameAsFromSource, allSameAsLinks, false)
+    }
 
     allSameAsLinks.toString
   }
@@ -143,13 +173,19 @@ class HadoopIntegrationJob(val config : HadoopIntegrationConfig, debug : Boolean
     val r2rTask = r2rModule.tasks.head
     val entityDescriptions = (for(mapping <- r2rTask.ldifMappings) yield mapping.entityDescription).toSeq
 
-    val entitiesPath =  "ebOutput-r2r"
-    buildEntities(config.sources, entitiesPath, entityDescriptions, configParameters, getsTextInput = true)
+    val entitiesPath =  clean("ebOutput-r2r")
+    var configParameters = ConfigParameters(config.properties, null, null, true)
+    if (useExternalSameAsLinks)
+      configParameters = configParameters.copy(sameAsPath = externalSameAsLinksDir)
+    if (outputAllQuads)
+      configParameters = configParameters.copy(allQuadsPath = allQuadsDir)
+    buildEntities(config.sources, entitiesPath, entityDescriptions, configParameters)
     log.info("Time needed to load dump and build entities for mapping phase: " + stopWatch.getTimeSpanInSeconds + "s")
 
     val r2rOutput = "r2rOutput"
     r2rExecutor.execute(r2rTask, Seq(new Path(entitiesPath)), new Path(r2rOutput))
 
+    clean(entitiesPath)
     r2rOutput
   }
 
@@ -175,10 +211,11 @@ class HadoopIntegrationJob(val config : HadoopIntegrationConfig, debug : Boolean
     val tasks = silkModule.tasks.toIndexedSeq
     val entityDescriptions = tasks.map(silkExecutor.input).flatMap{ case StaticEntityFormat(ed) => ed }
 
+    var configParameters = ConfigParameters(config.properties)
     buildEntities(quadsPath, entitiesDirectory, entityDescriptions, configParameters)
     log.info("Time needed to build entities for linking phase: " + stopWatch.getTimeSpanInSeconds + "s")
 
-    for((silkTask, i) <- tasks.zipWithIndex) yield {
+    val result = for((silkTask, i) <- tasks.zipWithIndex) yield {
       val sourcePath = new Path(entitiesDirectory, EntityMultipleSequenceFileOutput.generateDirectoryName(i * 2))
       val targetPath = new Path(entitiesDirectory, EntityMultipleSequenceFileOutput.generateDirectoryName(i * 2 + 1))
       val outputPath = new Path(outputDirectory, EntityMultipleSequenceFileOutput.generateDirectoryName(i))
@@ -187,17 +224,19 @@ class HadoopIntegrationJob(val config : HadoopIntegrationConfig, debug : Boolean
 
       outputPath
     }
+    clean(entitiesDirectory)
+    result
   }
 
   /**
    * Build Entities
    */
-  private def buildEntities(sourcesPath : String, entitiesPath : String, entityDescriptions : Seq[EntityDescription], configParameters: ConfigParameters, getsTextInput: Boolean = false) {
+  private def buildEntities(sourcesPath : String, entitiesPath : String, entityDescriptions : Seq[EntityDescription], configParameters: ConfigParameters) {
 
     val entityBuilderConfig = new EntityBuilderConfig(entityDescriptions.toIndexedSeq)
     val entityBuilderModule = new EntityBuilderModule(entityBuilderConfig)
     val entityBuilderTask = entityBuilderModule.tasks.head
-    val entityBuilderExecutor = new EntityBuilderHadoopExecutor(configParameters, getsTextInput)
+    val entityBuilderExecutor = new EntityBuilderHadoopExecutor(configParameters)
 
     entityBuilderExecutor.execute(entityBuilderTask, List(new Path(sourcesPath)), List(new Path(entitiesPath)))
   }
@@ -218,9 +257,32 @@ class HadoopIntegrationJob(val config : HadoopIntegrationConfig, debug : Boolean
     val nqOutput = config.properties.getProperty("outputFormat", "nq").toLowerCase.equals("nq")
 
     // convert output files from seq to nq
-    HadoopQuadToTextConverter.execute(outputPath, outputPath+"_NQ")
+    HadoopQuadToTextConverter.execute(outputPath, config.outputFile)
 
     // TODO add output module
+
+    clean(outputPath)
+  }
+
+  // Move files from one path to another
+  private def move (from : String, dest : String, cleanDest : Boolean = false) {
+    move(new Path(from), new Path(dest), cleanDest)
+  }
+
+  private def move (from : Path, dest : Path, cleanDest : Boolean) {
+    log.debug("Moving files from "+from.toString+" to "+ dest.toString)
+    // move files
+    val filesFrom = hdfs.listStatus(from).filterNot(_.isDir)
+
+    if (cleanDest && hdfs.exists(dest))
+      clean(dest)
+    if (!hdfs.exists(dest))
+      hdfs.mkdirs(dest)
+    for (status <- filesFrom.filterNot(_.getPath.getName.startsWith("_")))
+      hdfs.rename(status.getPath, new Path(dest.toString+Consts.fileSeparator+status.getPath.getName))
+
+    // remove the source
+    clean(from)
   }
 
 }

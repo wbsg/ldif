@@ -36,11 +36,13 @@ case class QuadImportJob(dumpLocation : String, id : Identifier, refreshSchedule
     val parser = new QuadParser
     val lines = scala.io.Source.fromInputStream(inputStream).getLines
     for (line <- lines.toTraversable){
-        val quad = parser.parseLine(line)
+      val quad = parser.parseLine(line)
+      if (quad != null) {
         importedGraphs += quad.graph
         writer.write(quad.toNQuadFormat+" . \n")
         if (importedGraphs.size >= Consts.MAX_NUM_GRAPHS_IN_MEMORY)
           writeImportedGraphsToFile
+      }
     }
     writer.flush
     writer.close

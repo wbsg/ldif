@@ -22,7 +22,7 @@ import java.io.File
 import java.util.Properties
 import org.slf4j.LoggerFactory
 import xml.{Node, XML}
-import ldif.util.{Consts, ValidatingXMLReader}
+import ldif.util.{ConfigProperties, Consts, ValidatingXMLReader}
 
 case class IntegrationConfig(sources : File, linkSpecDir : File, mappingDir : File, sieveSpecDir : File, outputFile : File,  properties : Properties, runSchedule : String) {}
 
