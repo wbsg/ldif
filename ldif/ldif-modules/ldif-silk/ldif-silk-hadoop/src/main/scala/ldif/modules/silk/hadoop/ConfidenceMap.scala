@@ -44,7 +44,10 @@ class ConfidenceMap extends Mapper[BooleanWritable, EntityPairWritable, Text, En
       val confidence = linkSpec.rule(DPair(new LdifEntity(entities.source, entityDescs.source), new LdifEntity(entities.target, entityDescs.target)), 0.0)
 
       if(confidence >= 0.0) {
-        context.write(new Text(entities.source.resource.value), new EntityConfidence(confidence, entities.target.resource.value))
+        val sourceEntity = entities.source.resource.value
+        val targetEntity = entities.target.resource.value
+        if(sourceEntity!=targetEntity)
+          context.write(new Text(sourceEntity), new EntityConfidence(confidence, targetEntity))
       }
     }
   }
