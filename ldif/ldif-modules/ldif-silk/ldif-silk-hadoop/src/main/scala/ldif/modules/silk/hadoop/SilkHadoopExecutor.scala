@@ -1,3 +1,21 @@
+/*
+ * LDIF
+ *
+ * Copyright 2011 Freie Universität Berlin, MediaEvent Services GmbH & Co. KG
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package ldif.modules.silk.hadoop
 
 import ldif.module.Executor
@@ -9,9 +27,10 @@ import org.apache.hadoop.mapreduce.Job
 import org.apache.hadoop.mapreduce.lib.input.{FileInputFormat, SequenceFileInputFormat}
 import org.apache.hadoop.fs.{FileSystem, Path}
 import de.fuberlin.wiwiss.silk.util.DPair
-import de.fuberlin.wiwiss.silk.hadoop.impl.{SilkOutputFormat, EntityConfidence}
-import org.apache.hadoop.io.{BooleanWritable, IntWritable, Text}
+import de.fuberlin.wiwiss.silk.hadoop.impl.EntityConfidence
+import org.apache.hadoop.io.{IntWritable, Text}
 import java.util.UUID
+import org.apache.hadoop.conf.Configuration
 
 class SilkHadoopExecutor extends Executor {
   type TaskType = SilkTask
@@ -38,6 +57,10 @@ class SilkHadoopExecutor extends Executor {
     runIndexingJob(task, reader(1), targetIndexPath)
 
     runLinkGenerationJob(task, DPair(sourceIndexPath, targetIndexPath), writer)
+
+    val hdfs = FileSystem.get(new Configuration)
+    hdfs.delete(indexPath, true)
+
   }
 
   private def runIndexingJob(task: SilkTask, inputPath: Path, outputPath: Path) {

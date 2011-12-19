@@ -57,7 +57,12 @@ class IntegrationJob (val config : IntegrationConfig, debugMode : Boolean = fals
       synchronized {
         val sourceNumber = config.sources.listFiles.size
 
-        log.info("Integration Job started (on "+ sourceNumber +" sources)")
+        log.info("Integration Job started")
+        log.info("- Input < "+ sourceNumber +" sources found in " + config.sources.getCanonicalPath)
+        log.info("- Output > "+ config.outputFile)
+        log.info("- Properties ")
+        for (key <- config.properties.keySet.toArray)
+          log.info("  - "+key +" : " + config.properties.getProperty(key.toString) )
 
         stopWatch.getTimeSpanInSeconds
 

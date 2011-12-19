@@ -104,6 +104,20 @@
                             <file>${project.basedir}/lib/ldspider-rev285+.jar</file>
                         </configuration>
                     </execution>
+                    <execution>
+                        <id>install-jena-jar</id>
+                        <phase>generate-resources</phase>
+                        <goals>
+                            <goal>install-file</goal>
+                        </goals>
+                        <configuration>
+                            <groupId>com.hp.hpl.jena</groupId>
+                            <artifactId>jena</artifactId>
+                            <version>2.6.5-SNAPSHOT</version>
+                            <packaging>jar</packaging>
+                            <file>${project.basedir}/lib/jena-core-2.6.5-incubating-SNAPSHOT.jar</file>
+                        </configuration>
+                    </execution>
                 </executions>
             </plugin>
         </plugins>
