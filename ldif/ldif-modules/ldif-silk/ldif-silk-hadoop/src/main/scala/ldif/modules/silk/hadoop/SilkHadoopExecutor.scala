@@ -52,7 +52,7 @@ class SilkHadoopExecutor extends Executor {
     job.setInputFormatClass(classOf[SequenceFileInputFormat[IntWritable, EntityWritable]])
 
     //Set Mapper
-    job.setMapperClass(classOf[IndexingPhase])
+    job.setMapperClass(classOf[IndexMap])
 
     //Set Output
     val hdfs = FileSystem.get(job.getConfiguration)
