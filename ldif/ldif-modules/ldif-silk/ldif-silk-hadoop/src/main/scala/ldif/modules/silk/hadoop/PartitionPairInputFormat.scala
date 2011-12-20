@@ -18,12 +18,10 @@
 
 package ldif.modules.silk.hadoop
 
-import org.apache.hadoop.mapreduce._
-import lib.input.{FileSplit, SequenceFileInputFormat}
-import scala.collection.JavaConversions._
+import org.apache.hadoop.mapred._
 import java.io.{DataInput, DataOutput}
 import org.apache.hadoop.io.{IntWritable, Writable, BooleanWritable}
-import de.fuberlin.wiwiss.silk.util.Timer
+import org.apache.hadoop.fs.Path
 
 class PartitionPairInputFormat extends InputFormat[BooleanWritable, PartitionPairWritable] {
   
@@ -31,68 +29,92 @@ class PartitionPairInputFormat extends InputFormat[BooleanWritable, PartitionPai
 
   private val inputFormat = new PartitionInputFormat()
   
-  override def getSplits(context : JobContext) : java.util.List[InputSplit] = {
-    context.getConfiguration.set("mapred.input.dir", context.getConfiguration.get("sourcePath"))
-    val sourceSplits = inputFormat.getSplits(context)
-
-    context.getConfiguration.set("mapred.input.dir", context.getConfiguration.get("targetPath"))
-    val targetSplits = inputFormat.getSplits(context)
-
-    for(s <- sourceSplits; t <- targetSplits) yield new PartitionPairSplit(s, t)
-  }
-
-  override def createRecordReader(inputSplit : InputSplit, context : TaskAttemptContext) : RecordReader[BooleanWritable, PartitionPairWritable] = {
-    new PartitionPairReader(inputSplit.asInstanceOf[PartitionPairSplit], context)
+  private val blockCount = 1000
+  
+  override def getSplits(job: JobConf, numSplits: Int): Array[InputSplit] = {
+    Array.tabulate(blockCount)(block => getSplits(job, numSplits, block)).flatten
   }
   
-  private class PartitionPairReader(split: PartitionPairSplit, taskContext: TaskAttemptContext) extends RecordReader[BooleanWritable, PartitionPairWritable] {
+  private def getSplits(job: JobConf, numSplits: Int, block: Int): Array[InputSplit] = {
+    val sourcePath = new Path(job.get("sourcePath") + "/" + block)
+    val targetPath = new Path(job.get("targetPath") + "/" + block)
+    val fs = sourcePath.getFileSystem(job)
     
-    private var sourceReader: RecordReader[IntWritable, PartitionWritable] = null
-    
-    private var targetReader: RecordReader[IntWritable, PartitionWritable] = null
-    
-    override def getProgress = targetReader.getProgress
-
-    override def initialize(inputSplit: InputSplit, context: TaskAttemptContext) {
-      sourceReader = inputFormat.createRecordReader(split.sourceSplit, taskContext)
-      targetReader = inputFormat.createRecordReader(split.targetSplit, taskContext)
-
-      sourceReader.initialize(split.sourceSplit, taskContext)
-      targetReader.initialize(split.targetSplit, taskContext)
-
-      targetReader.nextKeyValue()
+    if(fs.exists(sourcePath) && fs.exists(targetPath)) {
+      job.set("mapred.input.dir", sourcePath.toString)
+      val sourceSplits = inputFormat.getSplits(job, numSplits)
+  
+      job.set("mapred.input.dir", targetPath.toString)
+      val targetSplits = inputFormat.getSplits(job, numSplits)
+  
+      for(s <- sourceSplits; t <- targetSplits) yield new PartitionPairSplit(s, t)
     }
-
-    override def close() {
-      sourceReader = null
-      targetReader = null
+    else {
+      Array.empty
     }
+  }
 
-    override def nextKeyValue: Boolean = {
-      if(sourceReader.nextKeyValue()) {
+  override def getRecordReader(split: InputSplit, job: JobConf, reporter: Reporter): RecordReader[BooleanWritable, PartitionPairWritable] = {
+    new PartitionPairReader(split.asInstanceOf[PartitionPairSplit], job, reporter)
+  }
+  
+  private class PartitionPairReader(split: PartitionPairSplit, job: JobConf, reporter: Reporter) extends RecordReader[BooleanWritable, PartitionPairWritable] {
+    
+    private var sourceReader = inputFormat.getRecordReader(split.sourceSplit, job, reporter)
+    
+    private var targetReader = inputFormat.getRecordReader(split.targetSplit, job, reporter)
+    
+    private val currentSourceIndex = new IntWritable()
+
+    private val currentTargetIndex = new IntWritable()
+    
+    private val currentSourceValue = new PartitionWritable()
+
+    private val currentTargetValue = new PartitionWritable()
+    
+    targetReader.next(currentTargetIndex, currentTargetValue)
+    
+    override def next(key: BooleanWritable, value: PartitionPairWritable): Boolean = {
+      if(sourceReader.next(currentSourceIndex, currentSourceValue)) {
+        setValues(key, value)
         true
       }
-      else if(targetReader.nextKeyValue()) {
+      else if(targetReader.next(currentTargetIndex, currentTargetValue)) {
         sourceReader.close()
-        sourceReader = inputFormat.createRecordReader(split.sourceSplit, taskContext)
-        sourceReader.initialize(split.sourceSplit, taskContext)
-        sourceReader.nextKeyValue()
+        sourceReader = inputFormat.getRecordReader(split.sourceSplit, job, reporter)
+        sourceReader.next(currentSourceIndex, currentSourceValue)
+        setValues(key, value)
         true
       }
       else {
         false
       }
     }
-
-    override def getCurrentKey = new BooleanWritable(sourceReader.getCurrentKey.get == targetReader.getCurrentKey.get)
-
-    override def getCurrentValue = new PartitionPairWritable(sourceReader.getCurrentValue, targetReader.getCurrentValue)
+    
+    private def setValues(key: BooleanWritable, value: PartitionPairWritable) {
+      key.set(currentSourceIndex.get == currentTargetIndex.get)
+      value.source = currentSourceValue
+      value.target = currentTargetValue
+    }
+    
+    override def createKey() = new BooleanWritable()
+    
+    override def createValue() = new PartitionPairWritable()
+    
+    override def getProgress = targetReader.getProgress
+    
+    override def getPos = targetReader.getPos
+    
+    override def close() {
+      sourceReader.close()
+      targetReader.close()
+    }
   }
 }
 
 class PartitionPairSplit(var sourceSplit: InputSplit, var targetSplit: InputSplit) extends InputSplit with Writable {
 
-  def this() = this(new FileSplit(null, 0, 0, null), new FileSplit(null, 0, 0, null))
+  def this() = this(new FileSplit(null, 0, 0, null: JobConf), new FileSplit(null, 0, 0, null: JobConf))
 
   override def getLength: Long = sourceSplit.getLength + targetSplit.getLength
 

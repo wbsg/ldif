@@ -22,15 +22,14 @@ import ldif.module.Executor
 import ldif.hadoop.runtime.{QuadFormat, StaticEntityFormat}
 import ldif.modules.silk.{CreateEntityDescriptions, SilkTask}
 import ldif.entity.EntityWritable
-import org.apache.hadoop.mapreduce.lib.output.{SequenceFileOutputFormat, FileOutputFormat}
-import org.apache.hadoop.mapreduce.Job
-import org.apache.hadoop.mapreduce.lib.input.{FileInputFormat, SequenceFileInputFormat}
 import org.apache.hadoop.fs.{FileSystem, Path}
 import de.fuberlin.wiwiss.silk.util.DPair
 import de.fuberlin.wiwiss.silk.hadoop.impl.EntityConfidence
 import org.apache.hadoop.io.{IntWritable, Text}
 import java.util.UUID
 import org.apache.hadoop.conf.Configuration
+import org.apache.hadoop.mapred._
+import lib.MultipleSequenceFileOutputFormat
 
 class SilkHadoopExecutor extends Executor {
   type TaskType = SilkTask
@@ -63,16 +62,15 @@ class SilkHadoopExecutor extends Executor {
   }
 
   private def runIndexingJob(task: SilkTask, inputPath: Path, outputPath: Path) {
-    val job = new Job()
+    val job = new JobConf(new Configuration(), classOf[SilkHadoopExecutor])
     job.setJobName("Silk Indexing")
-    job.setJarByClass(classOf[SilkHadoopExecutor])
 
     // Distribute Configuration
-    Config.writeConfig(job.getConfiguration, task.silkConfig.silkConfig, task.linkSpec)
+    Config.writeConfig(job, task.silkConfig.silkConfig, task.linkSpec)
 
     //Set Input
     FileInputFormat.setInputPaths(job, inputPath)
-    job.setInputFormatClass(classOf[SequenceFileInputFormat[IntWritable, EntityWritable]])
+    job.setInputFormat(classOf[SequenceFileInputFormat[IntWritable, EntityWritable]])
 
     //Set Mapper
     job.setMapperClass(classOf[IndexMap])
@@ -82,47 +80,46 @@ class SilkHadoopExecutor extends Executor {
     job.setMapOutputValueClass(classOf[IndexedEntityWritable])
 
     //Set Output
-    val hdfs = FileSystem.get(job.getConfiguration)
+    val hdfs = FileSystem.get(job)
     if (hdfs.exists(outputPath))
       hdfs.delete(outputPath, true)
     FileOutputFormat.setOutputPath(job, outputPath)
 
-    job.setOutputFormatClass(classOf[SequenceFileOutputFormat[IntWritable, PartitionWritable]])
+    job.setOutputFormat(classOf[PartitionPairOutputFormat])
     job.setOutputKeyClass(classOf[IntWritable])
     job.setOutputValueClass(classOf[PartitionWritable])
 
     //Run job
-    job.waitForCompletion(true)
+    JobClient.runJob(job)
   }
 
   private def runLinkGenerationJob(task: SilkTask, inputPaths: DPair[Path], outputPath: Path) {
-    val job = new Job()
+    val job = new JobConf(new Configuration(), classOf[SilkHadoopExecutor])
     job.setJobName("Silk Link Generation")
-    job.setJarByClass(classOf[SilkHadoopExecutor])
 
     // Distribute Configuration
-    Config.writeConfig(job.getConfiguration, task.silkConfig.silkConfig, task.linkSpec)
+    Config.writeConfig(job, task.silkConfig.silkConfig, task.linkSpec)
 
     //Set Input
-    job.getConfiguration.set("sourcePath", inputPaths.source.toString)
-    job.getConfiguration.set("targetPath", inputPaths.target.toString)
-    job.setInputFormatClass(classOf[PartitionPairInputFormat])
+    job.set("sourcePath", inputPaths.source.toString)
+    job.set("targetPath", inputPaths.target.toString)
+    job.setInputFormat(classOf[PartitionPairInputFormat])
 
     //Set Mapper and Reducer
     job.setMapperClass(classOf[ConfidenceMap])
     job.setReducerClass(classOf[FilterReduce])
 
     //Set Output
-    val hdfs = FileSystem.get(job.getConfiguration)
+    val hdfs = FileSystem.get(job)
     if (hdfs.exists(outputPath))
       hdfs.delete(outputPath, true)
     FileOutputFormat.setOutputPath(job, outputPath)
 
-    job.setOutputFormatClass(classOf[SameAsOutputFormat])
+    job.setOutputFormat(classOf[SameAsOutputFormat])
     job.setOutputKeyClass(classOf[Text])
     job.setOutputValueClass(classOf[EntityConfidence])
 
     //Run job
-    job.waitForCompletion(true)
+    JobClient.runJob(job)
   }
 }

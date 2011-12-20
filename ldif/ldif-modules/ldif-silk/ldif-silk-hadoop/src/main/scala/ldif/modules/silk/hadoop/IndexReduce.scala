@@ -1,15 +1,15 @@
 package ldif.modules.silk.hadoop
 
-import org.apache.hadoop.mapreduce.Reducer
-import ldif.entity.EntityWritable
+import org.apache.hadoop.mapred.Reducer
 import de.fuberlin.wiwiss.silk.config.LinkSpecification
-import org.apache.hadoop.io.IntWritable
 import ldif.modules.silk.LdifEntity
 import de.fuberlin.wiwiss.silk.util.DPair
 import de.fuberlin.wiwiss.silk.entity.{EntityDescription, Entity}
 import de.fuberlin.wiwiss.silk.cache.{Partition, BitsetIndex}
+import org.apache.hadoop.io.{Text, IntWritable}
+import org.apache.hadoop.mapred.{Reporter, OutputCollector, JobConf, MapReduceBase}
 
-class IndexReduce extends Reducer[IntWritable, IndexedEntityWritable, IntWritable, PartitionWritable] {
+class IndexReduce extends MapReduceBase with Reducer[IntWritable, IndexedEntityWritable, IntWritable, PartitionWritable] {
 
   val partitionSize = 10000
 
@@ -17,14 +17,15 @@ class IndexReduce extends Reducer[IntWritable, IndexedEntityWritable, IntWritabl
 
   private var entityDescs: DPair[EntityDescription] = null
 
-  protected override def setup(context: Reducer[IntWritable, IndexedEntityWritable, IntWritable, PartitionWritable]#Context) {
-    linkSpec = Config.readLinkSpec(context.getConfiguration)
+  protected override def configure(conf: JobConf) {
+    linkSpec = Config.readLinkSpec(conf)
     entityDescs = linkSpec.entityDescriptions
   }
 
-  protected override def reduce(index : IntWritable, entities : java.lang.Iterable[IndexedEntityWritable],
-                                context : Reducer[IntWritable, IndexedEntityWritable, IntWritable, PartitionWritable]#Context) {
-    val iterator = entities.iterator()
+  protected override def reduce(index : IntWritable,
+                                iterator : java.util.Iterator[IndexedEntityWritable],
+                                collector: OutputCollector[IntWritable, PartitionWritable],
+                                reporter: Reporter) {
     var currentEntities = new Array[Entity](partitionSize)
     var currentIndices = new Array[BitsetIndex](partitionSize)
     var count = 0
@@ -36,14 +37,14 @@ class IndexReduce extends Reducer[IntWritable, IndexedEntityWritable, IntWritabl
       count += 1
       if(count == partitionSize) {
         count = 0
-        context.write(index, new PartitionWritable(Partition(currentEntities, currentIndices)))
+        collector.collect(index, new PartitionWritable(Partition(currentEntities, currentIndices)))
         currentEntities = new Array[Entity](partitionSize)
         currentIndices = new Array[BitsetIndex](partitionSize)
       }
     }
     
     if(count > 0) {
-      context.write(index, new PartitionWritable(Partition(currentEntities, currentIndices, count)))
+      collector.collect(index, new PartitionWritable(Partition(currentEntities, currentIndices, count)))
     }
   }
 }

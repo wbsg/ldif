@@ -18,28 +18,30 @@
 
 package ldif.modules.silk.hadoop
 
-import org.apache.hadoop.mapreduce.Mapper
 import de.fuberlin.wiwiss.silk.hadoop.impl.EntityConfidence
 import de.fuberlin.wiwiss.silk.config.LinkSpecification
-import org.apache.hadoop.io.{BooleanWritable, Text}
 import de.fuberlin.wiwiss.silk.entity.EntityDescription
 import de.fuberlin.wiwiss.silk.util.{Timer, DPair}
+import org.apache.hadoop.io.{NullWritable, BooleanWritable, Text}
+import ldif.hadoop.types.QuadWritable
+import org.apache.hadoop.mapred._
 
-class ConfidenceMap extends Mapper[BooleanWritable, PartitionPairWritable, Text, EntityConfidence] {
+class ConfidenceMap extends MapReduceBase with Mapper[BooleanWritable, PartitionPairWritable, Text, EntityConfidence] {
 
   private var linkSpec: LinkSpecification = null
 
   private var entityDescs: DPair[EntityDescription] = null
 
-  protected override def setup(context: Mapper[BooleanWritable, PartitionPairWritable, Text, EntityConfidence]#Context) {
-    linkSpec = Config.readLinkSpec(context.getConfiguration)
+  protected override def configure(conf: JobConf) {
+    linkSpec = Config.readLinkSpec(conf)
 
     entityDescs = linkSpec.entityDescriptions
   }
 
   protected override def map(key: BooleanWritable,
                              partitions: PartitionPairWritable,
-                             context: Mapper[BooleanWritable, PartitionPairWritable, Text, EntityConfidence]#Context) {
+                             collector: OutputCollector[Text, EntityConfidence],
+                             reporter: Reporter) {
     if(key.get) {
       val sourcePartition = partitions.source.get
       val targetPartition = partitions.target.get
@@ -58,7 +60,7 @@ class ConfidenceMap extends Mapper[BooleanWritable, PartitionPairWritable, Text,
             val confidence = linkSpec.rule(entities, 0.0)
 
             if (confidence >= 0.0) {
-              context.write(new Text(sourceEntity.uri), new EntityConfidence(confidence, targetEntity.uri))
+              collector.collect(new Text(sourceEntity.uri), new EntityConfidence(confidence, targetEntity.uri))
             }
           }
           t += 1

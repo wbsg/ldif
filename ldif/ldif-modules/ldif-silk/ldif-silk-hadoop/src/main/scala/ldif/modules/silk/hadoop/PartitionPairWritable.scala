@@ -3,7 +3,7 @@ package ldif.modules.silk.hadoop
 import java.io.{DataOutput, DataInput}
 import org.apache.hadoop.io.Writable
 
-class PartitionPairWritable(val source: PartitionWritable, val target: PartitionWritable) extends Writable {
+class PartitionPairWritable(var source: PartitionWritable, var target: PartitionWritable) extends Writable {
 
   def this() = this(new PartitionWritable(), new PartitionWritable())
 
