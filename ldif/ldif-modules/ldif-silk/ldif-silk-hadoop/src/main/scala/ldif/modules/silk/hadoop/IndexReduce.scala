@@ -1,5 +1,6 @@
 package ldif.modules.silk.hadoop
 
+import io.{PartitionWritable, IndexedEntityWritable}
 import org.apache.hadoop.mapred.Reducer
 import de.fuberlin.wiwiss.silk.config.LinkSpecification
 import ldif.modules.silk.LdifEntity

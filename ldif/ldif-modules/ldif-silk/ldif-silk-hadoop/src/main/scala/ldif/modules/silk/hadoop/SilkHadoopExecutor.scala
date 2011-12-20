@@ -18,6 +18,7 @@
 
 package ldif.modules.silk.hadoop
 
+import io._
 import ldif.module.Executor
 import ldif.hadoop.runtime.{QuadFormat, StaticEntityFormat}
 import ldif.modules.silk.{CreateEntityDescriptions, SilkTask}
@@ -29,7 +30,6 @@ import org.apache.hadoop.io.{IntWritable, Text}
 import java.util.UUID
 import org.apache.hadoop.conf.Configuration
 import org.apache.hadoop.mapred._
-import lib.MultipleSequenceFileOutputFormat
 
 class SilkHadoopExecutor extends Executor {
   type TaskType = SilkTask
@@ -106,8 +106,8 @@ class SilkHadoopExecutor extends Executor {
     job.setInputFormat(classOf[PartitionPairInputFormat])
 
     //Set Mapper and Reducer
-    job.setMapperClass(classOf[ConfidenceMap])
-    job.setReducerClass(classOf[FilterReduce])
+    job.setMapperClass(classOf[MatchMap])
+    job.setReducerClass(classOf[MatchReduce])
 
     //Set Output
     val hdfs = FileSystem.get(job)

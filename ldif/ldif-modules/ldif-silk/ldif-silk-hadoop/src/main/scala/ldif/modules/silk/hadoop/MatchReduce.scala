@@ -24,7 +24,7 @@ import org.apache.hadoop.io.Text
 import scala.collection.JavaConversions._
 import org.apache.hadoop.mapred._
 
-class FilterReduce extends MapReduceBase with Reducer[Text, EntityConfidence, Text, EntityConfidence] {
+class MatchReduce extends MapReduceBase with Reducer[Text, EntityConfidence, Text, EntityConfidence] {
 
   private var linkSpec: LinkSpecification = null
 

@@ -1,4 +1,4 @@
-package ldif.modules.silk.hadoop
+package ldif.modules.silk.hadoop.io
 
 import de.fuberlin.wiwiss.silk.cache.Partition
 import de.fuberlin.wiwiss.silk.entity.EntityDescription

@@ -22,11 +22,12 @@ import de.fuberlin.wiwiss.silk.hadoop.impl.EntityConfidence
 import de.fuberlin.wiwiss.silk.config.LinkSpecification
 import de.fuberlin.wiwiss.silk.entity.EntityDescription
 import de.fuberlin.wiwiss.silk.util.{Timer, DPair}
+import io.PartitionPairWritable
 import org.apache.hadoop.io.{NullWritable, BooleanWritable, Text}
 import ldif.hadoop.types.QuadWritable
 import org.apache.hadoop.mapred._
 
-class ConfidenceMap extends MapReduceBase with Mapper[BooleanWritable, PartitionPairWritable, Text, EntityConfidence] {
+class MatchMap extends MapReduceBase with Mapper[BooleanWritable, PartitionPairWritable, Text, EntityConfidence] {
 
   private var linkSpec: LinkSpecification = null
 

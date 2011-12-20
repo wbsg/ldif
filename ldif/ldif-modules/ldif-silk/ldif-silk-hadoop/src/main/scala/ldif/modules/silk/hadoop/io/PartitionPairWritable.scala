@@ -1,4 +1,4 @@
-package ldif.modules.silk.hadoop
+package ldif.modules.silk.hadoop.io
 
 import java.io.{DataOutput, DataInput}
 import org.apache.hadoop.io.Writable

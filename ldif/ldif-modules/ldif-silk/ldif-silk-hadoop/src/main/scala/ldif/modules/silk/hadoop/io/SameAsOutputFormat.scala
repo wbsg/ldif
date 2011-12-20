@@ -1,3 +1,5 @@
+package ldif.modules.silk.hadoop.io
+
 /*
  * LDIF
  *
@@ -15,8 +17,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-package ldif.modules.silk.hadoop
 
 import de.fuberlin.wiwiss.silk.hadoop.impl.EntityConfidence
 import org.apache.hadoop.io.Text

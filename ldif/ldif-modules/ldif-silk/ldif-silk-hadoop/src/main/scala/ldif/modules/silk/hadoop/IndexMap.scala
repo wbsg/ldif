@@ -20,6 +20,7 @@ package ldif.modules.silk.hadoop
 
 import de.fuberlin.wiwiss.silk.config.LinkSpecification
 import de.fuberlin.wiwiss.silk.util.DPair
+import io.IndexedEntityWritable
 import ldif.modules.silk.LdifEntity
 import ldif.entity.{EntityWritable}
 import de.fuberlin.wiwiss.silk.entity.EntityDescription

@@ -1,3 +1,5 @@
+package ldif.modules.silk.hadoop.io
+
 /*
  * LDIF
  *
@@ -16,37 +18,35 @@
  * limitations under the License.
  */
 
-package ldif.modules.silk.hadoop
-
 import org.apache.hadoop.mapred._
 import java.io.{DataInput, DataOutput}
 import org.apache.hadoop.io.{IntWritable, Writable, BooleanWritable}
 import org.apache.hadoop.fs.Path
 
 class PartitionPairInputFormat extends InputFormat[BooleanWritable, PartitionPairWritable] {
-  
+
   type PartitionInputFormat = SequenceFileInputFormat[IntWritable, PartitionWritable]
 
   private val inputFormat = new PartitionInputFormat()
-  
+
   private val blockCount = 1000
-  
+
   override def getSplits(job: JobConf, numSplits: Int): Array[InputSplit] = {
     Array.tabulate(blockCount)(block => getSplits(job, numSplits, block)).flatten
   }
-  
+
   private def getSplits(job: JobConf, numSplits: Int, block: Int): Array[InputSplit] = {
     val sourcePath = new Path(job.get("sourcePath") + "/" + block)
     val targetPath = new Path(job.get("targetPath") + "/" + block)
     val fs = sourcePath.getFileSystem(job)
-    
+
     if(fs.exists(sourcePath) && fs.exists(targetPath)) {
       job.set("mapred.input.dir", sourcePath.toString)
       val sourceSplits = inputFormat.getSplits(job, numSplits)
-  
+
       job.set("mapred.input.dir", targetPath.toString)
       val targetSplits = inputFormat.getSplits(job, numSplits)
-  
+
       for(s <- sourceSplits; t <- targetSplits) yield new PartitionPairSplit(s, t)
     }
     else {
@@ -57,23 +57,23 @@ class PartitionPairInputFormat extends InputFormat[BooleanWritable, PartitionPai
   override def getRecordReader(split: InputSplit, job: JobConf, reporter: Reporter): RecordReader[BooleanWritable, PartitionPairWritable] = {
     new PartitionPairReader(split.asInstanceOf[PartitionPairSplit], job, reporter)
   }
-  
+
   private class PartitionPairReader(split: PartitionPairSplit, job: JobConf, reporter: Reporter) extends RecordReader[BooleanWritable, PartitionPairWritable] {
-    
+
     private var sourceReader = inputFormat.getRecordReader(split.sourceSplit, job, reporter)
-    
+
     private var targetReader = inputFormat.getRecordReader(split.targetSplit, job, reporter)
-    
+
     private val currentSourceIndex = new IntWritable()
 
     private val currentTargetIndex = new IntWritable()
-    
+
     private val currentSourceValue = new PartitionWritable()
 
     private val currentTargetValue = new PartitionWritable()
-    
+
     targetReader.next(currentTargetIndex, currentTargetValue)
-    
+
     override def next(key: BooleanWritable, value: PartitionPairWritable): Boolean = {
       if(sourceReader.next(currentSourceIndex, currentSourceValue)) {
         setValues(key, value)
@@ -90,21 +90,21 @@ class PartitionPairInputFormat extends InputFormat[BooleanWritable, PartitionPai
         false
       }
     }
-    
+
     private def setValues(key: BooleanWritable, value: PartitionPairWritable) {
       key.set(currentSourceIndex.get == currentTargetIndex.get)
       value.source = currentSourceValue
       value.target = currentTargetValue
     }
-    
+
     override def createKey() = new BooleanWritable()
-    
+
     override def createValue() = new PartitionPairWritable()
-    
+
     override def getProgress = targetReader.getProgress
-    
+
     override def getPos = targetReader.getPos
-    
+
     override def close() {
       sourceReader.close()
       targetReader.close()
