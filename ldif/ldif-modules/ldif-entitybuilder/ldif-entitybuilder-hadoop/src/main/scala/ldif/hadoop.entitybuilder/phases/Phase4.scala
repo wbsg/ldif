@@ -47,6 +47,7 @@ class Phase4 extends Configured with Tool {
     val maxPhase = args(0).toInt
 
     jobConf.setJobName("HEB-Phase4")
+    jobConf.setJarByClass(classOf[Phase4])
 
     jobConf.setMapperClass(classOf[EntityConstructionMapper])
     jobConf.setReducerClass(classOf[EntityConstructionReducer])

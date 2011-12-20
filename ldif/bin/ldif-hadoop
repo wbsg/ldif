@@ -1,3 +1,4 @@
 #!/bin/bash
 basedir=${0%/*}
 java -server -Xmx4G -Xms256M -Dlogback.configurationFile=$basedir/../resources/logback.xml -jar $basedir/../ldif-hadoop-executor/target/ldif-hadoop-exe-0.3.1-jar-with-dependencies.jar $*
+
