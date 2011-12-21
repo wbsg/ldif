@@ -34,12 +34,16 @@ class ExtractAndProcessQuadsMapper extends MapReduceBase with Mapper[LongWritabl
   private var mos: MultipleOutputs = null
   private var collectSameAs : Boolean = false
   private var collectAllQuads : Boolean = false
+  private var ignoreProvenance : Boolean = false
+  private var provenanceGraph : String = ""
 
   override def configure(conf: JobConf) {
     edmd = HadoopHelper.getEntityDescriptionMetaData(conf)
     mos = new MultipleOutputs(conf)
     collectSameAs = conf.getBoolean("sameas", false)
     collectAllQuads = conf.getBoolean("allquads", false)
+    ignoreProvenance = conf.getBoolean("ignoreProvenance", false)
+    provenanceGraph = conf.getStrings("provenanceGraph", Consts.DEFAULT_PROVENANCE_GRAPH).head
   }
 
   override def map(key: LongWritable, value: Text, output: OutputCollector[IntWritable, ValuePathWritable], reporter: Reporter) {
@@ -52,15 +56,21 @@ class ExtractAndProcessQuadsMapper extends MapReduceBase with Mapper[LongWritabl
 
     if(quad==null)
       return
-    if(quad.predicate == Consts.SAMEAS_URI)   {
-      if (collectSameAs) {
-        val collector = mos.getCollector("sameas", reporter).asInstanceOf[OutputCollector[NullWritable, QuadWritable]]
+    else {
+      if (collectAllQuads  || ((!ignoreProvenance) && quad.graph.equals(provenanceGraph))) {
+        val collector = mos.getCollector("allquads", reporter).asInstanceOf[OutputCollector[NullWritable, QuadWritable]]
         collector.collect(NullWritable.get, new QuadWritable(quad))
       }
-      reporter.getCounter("LDIF Stats","SameAs links found in data set").increment(1)
+      if(quad.predicate.equals(Consts.SAMEAS_URI))   {
+        if (collectSameAs) {
+          val collector = mos.getCollector("sameas", reporter).asInstanceOf[OutputCollector[NullWritable, QuadWritable]]
+          collector.collect(NullWritable.get, new QuadWritable(quad))
+        }
+        reporter.getCounter("LDIF Stats","SameAs links found in data set").increment(1)
+      }
+      else
+        ProcessQuads.processQuad(quad, reporter, edmd, mos, collectAllQuads)
     }
-    else
-      ProcessQuads.processQuad(quad, reporter, edmd, mos, collectAllQuads)
   }
 
   override def close() {

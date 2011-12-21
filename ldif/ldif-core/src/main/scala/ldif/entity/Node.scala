@@ -18,10 +18,8 @@
 
 package ldif.entity
 
-import Node._
 import org.semanticweb.yars.nx.parser.NxParser
 import ldif.util.NTriplesStringConverter
-import ldif.util.MD5Helper
 import ldif.util.Consts
 
 final case class Node(value : String, datatypeOrLanguage : String, nodeType : Node.NodeType, graph : String) extends NodeTrait
@@ -52,7 +50,7 @@ object Node
     fromNxNode(nxNode,graph)
   }
 
-  def fromString(value : String) : Node = fromString(value,defaultGraph)
+  def fromString(value : String) : Node = fromString(value, defaultGraph)
 
   def fromNxNode(nxNode : org.semanticweb.yars.nx.Node, graph : String) = {
      nxNode match {

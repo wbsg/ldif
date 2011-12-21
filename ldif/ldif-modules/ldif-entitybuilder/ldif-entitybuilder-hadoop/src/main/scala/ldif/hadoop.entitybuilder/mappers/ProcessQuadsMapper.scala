@@ -60,10 +60,6 @@ object ProcessQuads {
     val propertyInfosValue = edmd.propertyMap.get(property)
     propertyInfosValue match {
       case None => {
-        if (collectAllQuads) {
-          val collector = mos.getCollector("allquads", reporter).asInstanceOf[OutputCollector[NullWritable, QuadWritable]]
-          collector.collect(NullWritable.get, new QuadWritable(quad))
-        }
         reporter.getCounter("LDIF Stats","Nr. irrelevant quads filtered").increment(1)
       }
       case Some(propertyInfos) =>

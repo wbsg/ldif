@@ -115,7 +115,7 @@ class SilkHadoopExecutor extends Executor {
       hdfs.delete(outputPath, true)
     FileOutputFormat.setOutputPath(job, outputPath)
 
-    job.setOutputFormat(classOf[SameAsOutputFormat])
+    job.setOutputFormat(classOf[SameAsQuadOutputFormat])
     job.setOutputKeyClass(classOf[Text])
     job.setOutputValueClass(classOf[EntityConfidence])
 

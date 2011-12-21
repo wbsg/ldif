@@ -54,6 +54,7 @@ class HadoopIntegrationJob(val config : HadoopIntegrationConfig, debug : Boolean
   val uriMinting = config.properties.getProperty("uriMinting", "false").toLowerCase=="true"
 
   val externalSameAsLinksDir = clean("sameAsFromSources")
+  // Contains quads that are not processed but must be added to the output (eg. provenance)
   val allQuadsDir = clean("allQuads")
 
   def runIntegration() {
@@ -78,8 +79,7 @@ class HadoopIntegrationJob(val config : HadoopIntegrationConfig, debug : Boolean
     log.info("Time needed to link data: " + stopWatch.getTimeSpanInSeconds + "s")
 
     // Prepare data to be translated
-    if(outputAllQuads)
-      move(allQuadsDir, r2rOutput)
+    move(allQuadsDir, r2rOutput)
     var sameAsLinks : String = null
     if(useExternalSameAsLinks)
      sameAsLinks = getAllLinks(silkOutput, new Path(externalSameAsLinksDir))

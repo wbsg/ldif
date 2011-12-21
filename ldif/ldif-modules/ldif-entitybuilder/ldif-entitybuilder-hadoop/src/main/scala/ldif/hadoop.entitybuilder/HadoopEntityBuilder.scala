@@ -28,9 +28,6 @@ import phases._
 class HadoopEntityBuilder (entityDescriptions : IndexedSeq[EntityDescription], readers : Seq[Path], config : ConfigParameters) {
 
   private val log = LoggerFactory.getLogger(getClass.getName)
-  private val provenanceGraph = config.configProperties.getProperty("provenanceGraph", "http://www4.wiwiss.fu-berlin.de/ldif/provenance")
-  private val useExternalSameAsLinks = config.configProperties.getProperty("useExternalSameAsLinks", "true").toLowerCase=="true"
-  private val ignoreProvenance = config.configProperties.getProperty("outputFormat", "nq").toLowerCase=="nt"
 
   // Build entities
   def buildEntities (writer : Path) {
@@ -39,7 +36,7 @@ class HadoopEntityBuilder (entityDescriptions : IndexedSeq[EntityDescription], r
 
     val edmd = EntityDescriptionMetaDataExtractor.extract(entityDescriptions)
 
-    Phase2.runPhase(sourcesDir, hadoopTmpDir+"_2", edmd, config.sameAsPath, config.allQuadsPath, config.getsTextInput)
+    Phase2.runPhase(sourcesDir, hadoopTmpDir+"_2", edmd, config)
     Phase3.runPhase(hadoopTmpDir+"_2", hadoopTmpDir+"_3", edmd)
     Phase4.runPhase(hadoopTmpDir+"_3", writer.toString, edmd)
   }
