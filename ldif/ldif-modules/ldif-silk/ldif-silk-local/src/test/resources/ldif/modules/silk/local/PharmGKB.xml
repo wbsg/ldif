@@ -33,7 +33,7 @@
 				<RestrictTo>?b rdf:type smwcat:Gene</RestrictTo>
 			</TargetDataset>
 
-			<LinkCondition>
+			<LinkageRule>
 			<Aggregate type="max">
 					<Compare metric="equality">
 						<Input path="?a/smwprop:PharmGKBId" />
@@ -48,7 +48,7 @@
 						<Input path="?b/smwprop:UniprotId" />
 					</Compare>
 			</Aggregate>
-			</LinkCondition>
+			</LinkageRule>
 
 			<Filter threshold="1.0" />
 
@@ -64,7 +64,7 @@
 				<RestrictTo>?a rdf:type smwcat:Drug</RestrictTo>
 			</TargetDataset>
 
-			<LinkCondition>
+			<LinkageRule>
 			<Aggregate type="max">
 					<Compare metric="equality">
 						<Input path="?a/smwprop:PharmGKBId" />
@@ -75,7 +75,7 @@
 						<Input path="?b/smwprop:DrugBankId" />
 					</Compare>
 			</Aggregate>
-			</LinkCondition>
+			</LinkageRule>
 
 			<Filter threshold="1.0" />
 
@@ -91,7 +91,7 @@
 				<RestrictTo>?a rdf:type smwcat:Disease</RestrictTo>
 			</TargetDataset>
 
-			<LinkCondition>
+			<LinkageRule>
 			<Aggregate type="max">
 					<Compare metric="equality">
 						<Input path="?a/smwprop:PharmGKBId" />
@@ -102,7 +102,7 @@
 						<Input path="?b/smwprop:MeSHId" />
 					</Compare>
 			</Aggregate>
-			</LinkCondition>
+			</LinkageRule>
 
 			<Filter threshold="1.0" />
 
@@ -118,14 +118,14 @@
 				<RestrictTo>?a rdf:type smwcat:Pathway</RestrictTo>
 			</TargetDataset>
 
-			<LinkCondition>
+			<LinkageRule>
 			<Aggregate type="max">
 					<Compare metric="equality">
 						<Input path="?a/smwprop:PharmGKBId" />
 						<Input path="?b/smwprop:PharmGKBId" />
 					</Compare>
 			</Aggregate>
-			</LinkCondition>
+			</LinkageRule>
 
 			<Filter threshold="1.0" />
 

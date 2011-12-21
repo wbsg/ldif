@@ -105,11 +105,11 @@ object Phase2 {
 
   def runPhase(in : String, out : String, edmd : EntityDescriptionMetadata, config : ConfigParameters) : Int = {
 
-    val useExternalSameAsLinks = config.configProperties.getProperty("useExternalSameAsLinks", "true").toLowerCase=="true"
-    val outputAllQuads = config.configProperties.getProperty("output", "mapped-only").toLowerCase=="all"
+    // Don't collect sameAs/all quads if the destination paths are not defined (eg. while building entities for Silk)
+    val useExternalSameAsLinks = config.configProperties.getProperty("useExternalSameAsLinks", "true").toLowerCase=="true" &&  config.sameAsPath != null
+    val outputAllQuads = config.configProperties.getProperty("output", "mapped-only").toLowerCase=="all" &&  config.allQuadsPath != null
     val ignoreProvenance = config.configProperties.getProperty("outputFormat", "nq").toLowerCase=="nt"
     val provenanceGraph = config.configProperties.getProperty("provenanceGraph", Consts.DEFAULT_PROVENANCE_GRAPH)
-
 
     log.info("Starting phase 2 of the EntityBuilder: Filtering quads and creating initial value paths")
 
@@ -130,9 +130,6 @@ object Phase2 {
 
     // move sameAs links quads to an ad-hoc directory
     if(useExternalSameAsLinks) {
-      if (config.sameAsPath == null)
-        log.warn("External sameAs links are not collected. Please define a valid Path.")
-      else {
         val outputFiles = hdfs.listStatus(hdPath).filterNot(_.isDir)
         val sameAsPath = new Path(config.sameAsPath)
         if (outputFiles.length > 0 && !hdfs.exists(sameAsPath))
@@ -140,7 +137,6 @@ object Phase2 {
         for (status <- outputFiles) {
           if(status.getPath.getName.startsWith("sameas"))
             hdfs.rename(status.getPath, new Path(config.sameAsPath+Consts.fileSeparator+status.getPath.getName))
-        }
       }
     }
     // move irrelevant quads to an ad-hoc directory

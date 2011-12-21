@@ -272,14 +272,16 @@ class HadoopIntegrationJob(val config : HadoopIntegrationConfig, debug : Boolean
   private def move (from : Path, dest : Path, cleanDest : Boolean) {
     log.debug("Moving files from "+from.toString+" to "+ dest.toString)
     // move files
-    val filesFrom = hdfs.listStatus(from).filterNot(_.isDir)
+    val filesFrom = hdfs.listStatus(from)
 
-    if (cleanDest && hdfs.exists(dest))
-      clean(dest)
-    if (!hdfs.exists(dest))
-      hdfs.mkdirs(dest)
-    for (status <- filesFrom.filterNot(_.getPath.getName.startsWith("_")))
-      hdfs.rename(status.getPath, new Path(dest.toString+Consts.fileSeparator+status.getPath.getName))
+    if (filesFrom != null) {
+      if (cleanDest && hdfs.exists(dest))
+        clean(dest)
+      if (!hdfs.exists(dest))
+        hdfs.mkdirs(dest)
+      for (status <- filesFrom.filterNot(_.getPath.getName.startsWith("_")))
+        hdfs.rename(status.getPath, new Path(dest.toString+Consts.fileSeparator+status.getPath.getName))
+    }
 
     // remove the source
     clean(from)

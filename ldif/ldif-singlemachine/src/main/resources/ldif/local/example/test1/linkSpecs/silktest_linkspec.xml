@@ -30,12 +30,12 @@
 				<RestrictTo>?b rdf:type test:someNewClass</RestrictTo>
 			</TargetDataset>
 
-			<LinkCondition>
+			<LinkageRule>
 					<Compare metric="equality">
 						<Input path="?a/test:newP"/>
 						<Input path="?b/test:newP"/>
 					</Compare>
-			</LinkCondition>
+			</LinkageRule>
 
 			<Filter threshold="1.0"/>
 

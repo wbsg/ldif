@@ -34,7 +34,7 @@
 				<RestrictTo>?a rdf:type smwcat:Gene</RestrictTo>
 			</TargetDataset>
 
-			<LinkCondition>
+			<LinkageRule>
 			<Aggregate type="max">
 					<Compare metric="equality">
 						<Input path="?a/smwprop:EntrezGeneId" />
@@ -45,7 +45,7 @@
 						<Input path="?b/smwprop:MgiMarkerAccessionId" />
 					</Compare>
 			</Aggregate>
-			</LinkCondition>
+			</LinkageRule>
 
 			<Filter threshold="1.0" />
 

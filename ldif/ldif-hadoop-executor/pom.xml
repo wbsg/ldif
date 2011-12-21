@@ -30,8 +30,8 @@
                     <launchers>
                         <launcher>
                             <id>Run</id>
-                            <!--<mainClass>ldif.hadoop.HadoopIntegrationJob</mainClass>-->
-                            <mainClass>ldif.hadoop.Ldif</mainClass>
+                            <mainClass>ldif.hadoop.HadoopIntegrationJob</mainClass>
+                            <!--<mainClass>ldif.hadoop.Ldif</mainClass>-->
                             <jvmArgs>
                                 <jvmArg>-Xmx1024m</jvmArg>
                             </jvmArgs>
@@ -50,8 +50,8 @@
                     </descriptorRefs>
                     <archive>
                         <manifest>
-                            <!--<mainClass>ldif.hadoop.HadoopIntegrationJob</mainClass>-->
-                            <mainClass>ldif.hadoop.Ldif</mainClass>
+                            <mainClass>ldif.hadoop.HadoopIntegrationJob</mainClass>
+                            <!--<mainClass>ldif.hadoop.Ldif</mainClass>-->
                         </manifest>
                     </archive>
                 </configuration>
@@ -67,14 +67,14 @@
             </plugin>
 
             <!-- skip tests for this module -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <version>2.10</version>
-                <configuration>
-                    <skipTests>true</skipTests>
-                </configuration>
-            </plugin>
+            <!--<plugin>-->
+                <!--<groupId>org.apache.maven.plugins</groupId>-->
+                <!--<artifactId>maven-surefire-plugin</artifactId>-->
+                <!--<version>2.10</version>-->
+                <!--<configuration>-->
+                    <!--<skipTests>true</skipTests>-->
+                <!--</configuration>-->
+            <!--</plugin>-->
         </plugins>
     </build>
 

@@ -21,7 +21,7 @@
                 <RestrictTo>?b rdf:type mo:MusicArtist .</RestrictTo>
             </TargetDataset>
 
-            <LinkCondition>
+            <LinkageRule>
                 <Compare metric="equality">
                     <TransformInput function="lowerCase">
                         <Input path="?a/rdfs:label" />
@@ -30,7 +30,7 @@
                         <Input path="?b/rdfs:label" />
                     </TransformInput>
                 </Compare>
-            </LinkCondition>
+            </LinkageRule>
 
             <Filter />
         </Interlink>
@@ -46,7 +46,7 @@
                 <RestrictTo>?b rdf:type mo:Record .</RestrictTo>
             </TargetDataset>
 
-            <LinkCondition>
+            <LinkageRule>
                 <Compare metric="equality">
                     <TransformInput function="lowerCase">
                         <Input path="?a/rdfs:label" />
@@ -55,7 +55,7 @@
                         <Input path="?b/rdfs:label" />
                     </TransformInput>
                 </Compare>
-            </LinkCondition>
+            </LinkageRule>
 
             <Filter />
         </Interlink>
