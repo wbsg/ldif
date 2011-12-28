@@ -31,7 +31,7 @@
     <module>ldif-hadoop</module>
     <module>ldif-modules</module>
     <module>ldif-singlemachine</module>
-    <module>ldif-workbench</module>
+    <!--<module>ldif-workbench</module>-->
     <module>ldif-hadoop-executor</module>
   </modules>
 
@@ -161,26 +161,37 @@
       <version>2.0.1</version>
     </dependency>
 
+    <!-- SLF4J -->
       <dependency>
           <groupId>org.slf4j</groupId>
           <artifactId>slf4j-api</artifactId>
-          <version>1.6.4</version>
+          <version>1.4.3</version>
       </dependency>
-      <dependency>
-          <groupId>org.slf4j</groupId>
-          <artifactId>jul-to-slf4j</artifactId>
-          <version>1.6.4</version>
-      </dependency>
+
+      <!-- supported from 1.5.2-->
+      <!--<dependency>-->
+          <!--<groupId>org.slf4j</groupId>-->
+          <!--<artifactId>jul-to-slf4j</artifactId>-->
+          <!--<version>1.6.4</version>-->
+      <!--</dependency>-->
+
       <dependency>
           <groupId>org.slf4j</groupId>
           <artifactId>log4j-over-slf4j</artifactId>
-          <version>1.6.4</version>
+          <version>1.4.3</version>
       </dependency>
+
        <!--<dependency>-->
           <!--<groupId>org.slf4j</groupId>-->
           <!--<artifactId>jcl-over-slf4j</artifactId>-->
           <!--<version>1.6.4</version>-->
       <!--</dependency>-->
+      <dependency>
+          <groupId>org.slf4j</groupId>
+          <artifactId>jcl104-over-slf4j</artifactId>
+          <version>1.4.3</version>
+      </dependency>
+
       <dependency>
           <groupId>ch.qos.logback</groupId>
           <artifactId>logback-classic</artifactId>
