@@ -35,16 +35,14 @@ import org.apache.hadoop.io._
 class ProcessQuadsMapper extends MapReduceBase with Mapper[NullWritable, QuadWritable, IntWritable, ValuePathWritable] {
   private var edmd: EntityDescriptionMetadata = null
   private var mos: MultipleOutputs = null
-  private var collectAllQuads : Boolean = false
 
   override def configure(conf: JobConf) {
     edmd = HadoopHelper.getEntityDescriptionMetaData(conf)
     mos = new MultipleOutputs(conf)
-    collectAllQuads = conf.getBoolean("allquads", false)
   }
 
   override def map(nothing: NullWritable, quad: QuadWritable, output: OutputCollector[IntWritable, ValuePathWritable], reporter: Reporter) {
-    ProcessQuads.processQuad(quad.asQuad, reporter, edmd, mos, collectAllQuads)
+    ProcessQuads.processQuad(quad.asQuad, reporter, edmd, mos)
   }
 
   override def close() {
@@ -53,7 +51,7 @@ class ProcessQuadsMapper extends MapReduceBase with Mapper[NullWritable, QuadWri
 }
 
 object ProcessQuads {
-  def processQuad(quad: Quad, reporter: Reporter, edmd: EntityDescriptionMetadata, mos: MultipleOutputs, collectAllQuads : Boolean) {
+  def processQuad(quad: Quad, reporter: Reporter, edmd: EntityDescriptionMetadata, mos: MultipleOutputs) {
     val property = quad.predicate
     val values = new NodeArrayWritable
     val phase = new IntWritable(0)

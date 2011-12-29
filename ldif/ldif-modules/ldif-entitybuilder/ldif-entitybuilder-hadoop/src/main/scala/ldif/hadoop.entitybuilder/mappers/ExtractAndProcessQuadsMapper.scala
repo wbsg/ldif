@@ -57,19 +57,25 @@ class ExtractAndProcessQuadsMapper extends MapReduceBase with Mapper[LongWritabl
     if(quad==null)
       return
     else {
-      if (collectAllQuads  || ((!ignoreProvenance) && quad.graph.equals(provenanceGraph))) {
-        val collector = mos.getCollector("allquads", reporter).asInstanceOf[OutputCollector[NullWritable, QuadWritable]]
+      if (quad.graph.equals(provenanceGraph) && (!ignoreProvenance)) {
+        val collector = mos.getCollector("provenance", reporter).asInstanceOf[OutputCollector[NullWritable, QuadWritable]]
         collector.collect(NullWritable.get, new QuadWritable(quad))
       }
-      if(quad.predicate.equals(Consts.SAMEAS_URI))   {
+      else if(quad.predicate.equals(Consts.SAMEAS_URI))   {
         if (collectSameAs) {
           val collector = mos.getCollector("sameas", reporter).asInstanceOf[OutputCollector[NullWritable, QuadWritable]]
           collector.collect(NullWritable.get, new QuadWritable(quad))
         }
         reporter.getCounter("LDIF Stats","SameAs links found in data set").increment(1)
       }
-      else
-        ProcessQuads.processQuad(quad, reporter, edmd, mos, collectAllQuads)
+      else {
+        if (collectAllQuads){
+          val collector = mos.getCollector("allquads", reporter).asInstanceOf[OutputCollector[NullWritable, QuadWritable]]
+          collector.collect(NullWritable.get, new QuadWritable(quad))
+        }
+
+        ProcessQuads.processQuad(quad, reporter, edmd, mos)
+      }
     }
   }
 

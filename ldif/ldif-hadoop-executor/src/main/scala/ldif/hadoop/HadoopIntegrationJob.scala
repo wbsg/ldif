@@ -52,10 +52,13 @@ class HadoopIntegrationJob(val config : HadoopIntegrationConfig, debug : Boolean
   val outputAllQuads = config.properties.getProperty("output", "mapped-only").toLowerCase=="all"
   val rewriteUris = config.properties.getProperty("rewriteURIs", "true").toLowerCase=="true"
   val uriMinting = config.properties.getProperty("uriMinting", "false").toLowerCase=="true"
+  val ignoreProvenance = config.properties.getProperty("outputFormat", "nq").toLowerCase=="nt"
 
   val externalSameAsLinksDir = clean("sameAsFromSources")
-  // Contains quads that are not processed but must be added to the output (eg. provenance)
+  // Contains quads that are not processed but must be added to the output
   val allQuadsDir = clean("allQuads")
+  // Contains provenance quads
+  val provenanceQuadsDir = clean("provenanceQuads")
 
   def runIntegration() {
 
@@ -101,6 +104,8 @@ class HadoopIntegrationJob(val config : HadoopIntegrationConfig, debug : Boolean
       log.info("Time needed to mint URIs: " + stopWatch.getTimeSpanInSeconds + "s")
     }
 
+    // add provenance quads to the output path
+    move(provenanceQuadsDir, outputPath)
     // add sameAs links to the output path
     move(sameAsLinks, outputPath)
 
@@ -174,11 +179,13 @@ class HadoopIntegrationJob(val config : HadoopIntegrationConfig, debug : Boolean
     val entityDescriptions = (for(mapping <- r2rTask.ldifMappings) yield mapping.entityDescription).toSeq
 
     val entitiesPath =  clean("ebOutput-r2r")
-    var configParameters = ConfigParameters(config.properties, null, null, true)
+    var configParameters = ConfigParameters(config.properties, null, null, null, true)
     if (useExternalSameAsLinks)
       configParameters = configParameters.copy(sameAsPath = externalSameAsLinksDir)
     if (outputAllQuads)
       configParameters = configParameters.copy(allQuadsPath = allQuadsDir)
+    if (!ignoreProvenance)
+          configParameters = configParameters.copy(provenanceQuadsPath = provenanceQuadsDir)
     buildEntities(config.sources, entitiesPath, entityDescriptions, configParameters)
     log.info("Time needed to load dump and build entities for mapping phase: " + stopWatch.getTimeSpanInSeconds + "s")
 
