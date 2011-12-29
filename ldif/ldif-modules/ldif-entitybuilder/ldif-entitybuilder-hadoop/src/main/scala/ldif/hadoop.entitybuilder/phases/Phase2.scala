@@ -1,4 +1,4 @@
-/* 
+/*
  * LDIF
  *
  * Copyright 2011 Freie Universität Berlin, MediaEvent Services GmbH & Co. KG
@@ -132,45 +132,18 @@ object Phase2 {
     // move sameAs links quads to an ad-hoc directory
     if(useExternalSameAsLinks) {
       move(hdPath, config.sameAsPath, "sameas")
-//        val outputFiles = hdfs.listStatus(hdPath).filterNot(_.isDir)
-//        val sameAsPath = new Path(config.sameAsPath)
-//        if (outputFiles.length > 0 && !hdfs.exists(sameAsPath))
-//          hdfs.mkdirs(sameAsPath)
-//        for (status <- outputFiles) {
-//          if(status.getPath.getName.startsWith("sameas"))
-//            hdfs.rename(status.getPath, new Path(config.sameAsPath+Consts.fileSeparator+status.getPath.getName))
-//      }
     }
     // move irrelevant quads to an ad-hoc directory
     if(outputAllQuads) {
       move(hdPath, config.allQuadsPath, "allquads")
-//      val outputFiles = hdfs.listStatus(hdPath).filterNot(_.isDir)
-//      val allQuadsPath = new Path(config.allQuadsPath)
-//      if (outputFiles.length > 0 && !hdfs.exists(allQuadsPath))
-//        hdfs.mkdirs(allQuadsPath)
-//      for (status <- outputFiles) {
-//        if(status.getPath.getName.startsWith("allquads"))
-//          hdfs.rename(status.getPath, new Path(config.allQuadsPath+Consts.fileSeparator+status.getPath.getName))
-//      }
     }
-
     // move provenance quads to an ad-hoc directory
     if(!ignoreProvenance) {
       move(hdPath, config.provenanceQuadsPath, "provenance")
-//      val outputFiles = hdfs.listStatus(hdPath).filterNot(_.isDir)
-//      val provenanceQuadsPath = new Path(config.provenanceQuadsPath)
-//      if (outputFiles.length > 0 && !hdfs.exists(provenanceQuadsPath))
-//        hdfs.mkdirs(provenanceQuadsPath)
-//      for (status <- outputFiles) {
-//        if(status.getPath.getName.startsWith("provenance"))
-//          hdfs.rename(status.getPath, new Path(config.provenanceQuadsPath+Consts.fileSeparator+status.getPath.getName))
-//      }
     }
-
 
     res
   }
-
 
   private def move (from : Path, to : String, prefix : String) {
     move(from, new Path(to), prefix)
