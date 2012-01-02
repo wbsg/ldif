@@ -5,12 +5,12 @@
   <parent>
     <groupId>ldif</groupId>
     <artifactId>ldif-silk</artifactId>
-    <version>0.3.1</version>
+    <version>0.4</version>
   </parent>
 
 	<artifactId>ldif-silk-common</artifactId>
 	<packaging>jar</packaging>
-	<version>0.3.1</version>
+	<version>0.4</version>
 	<name>LDIF Silk Module - Common</name>
 
   <dependencies>
