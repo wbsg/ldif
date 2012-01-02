@@ -10,18 +10,11 @@ import de.fuberlin.wiwiss.silk.cache.{Partition, BitsetIndex}
 import org.apache.hadoop.io.{Text, IntWritable}
 import org.apache.hadoop.mapred.{Reporter, OutputCollector, JobConf, MapReduceBase}
 
-class IndexReduce extends MapReduceBase with Reducer[IntWritable, IndexedEntityWritable, IntWritable, PartitionWritable] {
+class IndexReduce extends MapReduceBase 
+                  with Reducer[IntWritable, IndexedEntityWritable, IntWritable, PartitionWritable]
+                  with Configured {
 
   val partitionSize = 10000
-
-  private var linkSpec: LinkSpecification = null
-
-  private var entityDescs: DPair[EntityDescription] = null
-
-  protected override def configure(conf: JobConf) {
-    linkSpec = Config.readLinkSpec(conf)
-    entityDescs = linkSpec.entityDescriptions
-  }
 
   protected override def reduce(index : IntWritable,
                                 iterator : java.util.Iterator[IndexedEntityWritable],

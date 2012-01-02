@@ -27,17 +27,9 @@ import org.apache.hadoop.io.{NullWritable, BooleanWritable, Text}
 import ldif.hadoop.types.QuadWritable
 import org.apache.hadoop.mapred._
 
-class MatchMap extends MapReduceBase with Mapper[BooleanWritable, PartitionPairWritable, Text, EntityConfidence] {
-
-  private var linkSpec: LinkSpecification = null
-
-  private var entityDescs: DPair[EntityDescription] = null
-
-  protected override def configure(conf: JobConf) {
-    linkSpec = Config.readLinkSpec(conf)
-
-    entityDescs = linkSpec.entityDescriptions
-  }
+class MatchMap extends MapReduceBase
+               with Mapper[BooleanWritable, PartitionPairWritable, Text, EntityConfidence]
+               with Configured {
 
   protected override def map(key: BooleanWritable,
                              partitions: PartitionPairWritable,

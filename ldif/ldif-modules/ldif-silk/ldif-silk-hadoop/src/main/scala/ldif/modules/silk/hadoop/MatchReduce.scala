@@ -24,13 +24,9 @@ import org.apache.hadoop.io.Text
 import scala.collection.JavaConversions._
 import org.apache.hadoop.mapred._
 
-class MatchReduce extends MapReduceBase with Reducer[Text, EntityConfidence, Text, EntityConfidence] {
-
-  private var linkSpec: LinkSpecification = null
-
-  protected override def configure(conf: JobConf) {
-    linkSpec = Config.readLinkSpec(conf)
-  }
+class MatchReduce extends MapReduceBase
+                  with Reducer[Text, EntityConfidence, Text, EntityConfidence]
+                  with Configured {
 
   protected override def reduce(sourceUri: Text,
                                 entitiySimilarities: java.util.Iterator[EntityConfidence],

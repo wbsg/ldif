@@ -66,7 +66,7 @@ class SilkHadoopExecutor extends Executor {
     job.setJobName("Silk Indexing")
 
     // Distribute Configuration
-    Config.writeConfig(job, task.silkConfig.silkConfig, task.linkSpec)
+    Configured.write(job, task.linkSpec)
 
     //Set Input
     FileInputFormat.setInputPaths(job, inputPath)
@@ -98,7 +98,7 @@ class SilkHadoopExecutor extends Executor {
     job.setJobName("Silk Link Generation")
 
     // Distribute Configuration
-    Config.writeConfig(job, task.silkConfig.silkConfig, task.linkSpec)
+    Configured.write(job, task.linkSpec)
 
     //Set Input
     job.set("sourcePath", inputPaths.source.toString)

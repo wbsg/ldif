@@ -28,19 +28,11 @@ import org.apache.hadoop.io.IntWritable
 import de.fuberlin.wiwiss.silk.cache.BitsetIndex
 import org.apache.hadoop.mapred._
 
-class IndexMap extends MapReduceBase with Mapper[IntWritable, EntityWritable, IntWritable, IndexedEntityWritable] {
+class IndexMap extends MapReduceBase
+               with Mapper[IntWritable, EntityWritable, IntWritable, IndexedEntityWritable]
+               with Configured {
 
   val blockCount = 1000
-
-  private var linkSpec: LinkSpecification = null
-  
-  private var entityDescs: DPair[EntityDescription] = null
-  
-  protected override def configure(conf: JobConf) {
-    linkSpec = Config.readLinkSpec(conf)
-    
-    entityDescs = linkSpec.entityDescriptions
-  }
   
   protected override def map(key: IntWritable,
                              entity: EntityWritable,
