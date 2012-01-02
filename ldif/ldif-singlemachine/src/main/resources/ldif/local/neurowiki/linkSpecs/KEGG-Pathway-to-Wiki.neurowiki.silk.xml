@@ -22,7 +22,7 @@
 				<RestrictTo>?a rdf:type smwcat:Gene</RestrictTo>
 			</TargetDataset>
 
-			<LinkCondition>
+			<LinkageRule>
 			<Aggregate type="max">
 					<Compare metric="equality">
 						<Input path="?a/smwprop:UniprotId" />
@@ -37,7 +37,7 @@
 						<Input path="?b/smwprop:MgiMarkerAccessionId" />
 					</Compare>
 			</Aggregate>
-			</LinkCondition>
+			</LinkageRule>
 
 			<Filter threshold="1.0" />
 
@@ -53,14 +53,14 @@
 				<RestrictTo>?a rdf:type smwcat:Disease</RestrictTo>
 			</TargetDataset>
 
-			<LinkCondition>
+			<LinkageRule>
 			<Aggregate type="max">
 					<Compare metric="equality">
 						<Input path="?a/smwprop:KeggDiseaseId" />
 						<Input path="?b/smwprop:KeggDiseaseId" />
 					</Compare>
 			</Aggregate>
-			</LinkCondition>
+			</LinkageRule>
 
 			<Filter threshold="1.0" />
 
@@ -76,14 +76,14 @@
 				<RestrictTo>?a rdf:type smwcat:Pathway</RestrictTo>
 			</TargetDataset>
 
-			<LinkCondition>
+			<LinkageRule>
 			<Aggregate type="max">
 					<Compare metric="equality">
 						<Input path="?a/smwprop:KeggPathwayId" />
 						<Input path="?b/smwprop:KeggPathwayId" />
 					</Compare>
 			</Aggregate>
-			</LinkCondition>
+			</LinkageRule>
 
 			<Filter threshold="1.0" />
 

@@ -8,7 +8,7 @@
   <parent>
     <groupId>ldif</groupId>
     <artifactId>ldif</artifactId>
-    <version>0.3.1</version>
+    <version>0.4</version>
   </parent>
 
   <artifactId>ldif-local</artifactId>
@@ -24,7 +24,7 @@
     <dependency>
       <groupId>ldif</groupId>
       <artifactId>ldif-core</artifactId>
-      <version>0.3.1</version>
+      <version>0.4</version>
     </dependency>
 
     <!--dependency>

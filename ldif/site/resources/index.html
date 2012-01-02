@@ -106,9 +106,9 @@ Web into a clean, local target representation while keeping track of
 data
 provenance.</div>
 <div id="boxcontainer">
-<div id="downloadbox" class="box"> <a href="http://www4.wiwiss.fu-berlin.de/bizer/ldif/releases/ldif-0.3.1.zip"><span>Download
+<div id="downloadbox" class="box"> <a href="http://www4.wiwiss.fu-berlin.de/bizer/ldif/releases/ldif-0.4.zip"><span>Download
 LDIF<br>
-<small>v0.3.1, released 2011-11-03</small></span></a> </div>
+<small>v0.4, released 2012-TODO</small></span></a> </div>
 <div id="quickstartbox" class="box"> <a href="#quickstart"><span>Quick
 Start</span></a> </div>
 <div id="supportbox" class="box"> <a href="#feedback"><span>Get Support</span></a>
@@ -609,6 +609,13 @@ no way to prevent name clashes at the moment. </p>
     <pre>uriMintLabelPredicate = http://www.w3.org/2000/01/rdf-schema#label http://www4.wiwiss.fu-berlin.de/ldif/property-example/id</pre>
   </li>
 </ul>
+    <ul>
+      <li>
+        <p><i>uriMintLanguageRestriction</i><br>   <b>TODO</b></p>
+        <pre>uriMintLanguageRestriction = en fr es</pre>
+      </li>
+    </ul>
+
 <h3><a name="importjob"></a>Import Job Configuration<br>
 </h3>
 <p>An Import Job is configured with an XML document, whose structure is
@@ -697,11 +704,12 @@ referenced by the <a href="#importjob">import jobs</a>.<br>
 </p>
 <pre>&lt;dataSource&gt;<br>    &lt;label&gt;DBpedia&lt;/label&gt;<br>    &lt;description&gt;DBpedia ist an RDF version of Wikipedia&lt;/description&gt;<br>   &lt;homepage&gt;http://dbpedia.org&lt;/homepage&gt;<br>&lt;/dataSource&gt;<br></pre>
 <h2 id="quickstart">4. Quick start</h2>
+<h3>Single Machine</h3>
 <p>To see LDIF in action, please follow these steps:</p>
 <ul>
-  <li><a href="http://www4.wiwiss.fu-berlin.de/bizer/ldif/releases/ldif-0.3.1.zip">download
+  <li><a href="http://www4.wiwiss.fu-berlin.de/bizer/ldif/releases/ldif-0.4.zip">download
 the latest release</a></li>
-  <li>unpack the archive and change into the extracted directory <tt>ldif-0.3.1</tt></li>
+  <li>unpack the archive and change into the extracted directory <tt>ldif-0.4</tt></li>
   <li>run LDIF on the <a href="index.html#example1">Music example</a></li>
   <ul>
     <li>under Linux / Mac OS type:</li>
@@ -716,6 +724,23 @@ directory, containing both integrated data and <a href="index.html#provenance">p
 Learrn more about LDIF configuration by looking at the <a href="index.html#scheduler">Schedule Job Configuration</a> (<tt>examples/music/light/schedulerConfig.xml</tt>)
 and the <a href="index.html#integrationjob">Integration Job
 Configuration</a> (<tt>examples/music/light/integrationJob.xml</tt>) </p>
+
+<h3>TDB</h3>
+  TODO
+
+<h3>Hadoop</h3>
+<p>To see LDIF running on a Hadoop cluster, please follow these steps:</p>
+<ul>
+  <li>set up and configure a Hadoop (0.20.2+) <a href="http://hadoop.apache.org/common/docs/current/cluster_setup.html">cluster</a> </li>
+  <li>ssh to a cluster node</li>
+  <ul><li><a href="http://www4.wiwiss.fu-berlin.de/bizer/ldif/releases/ldif-0.4.zip">download</a>
+the latest LDIF release</li>
+  <li>unpack the archive and change into the extracted directory <tt>ldif-0.4</tt></li>
+  <li>run LDIF on the <a href="index.html#example1">Music example</a></li>
+    <pre>hadoop jar ldif-hadoop-0.4 examples/music/light/schedulerConfig.xml</pre>
+  </ul>
+</ul>
+
 <h2 id="examples">5. Examples</h2>
 <br>
 This section provides two LDIF usage examples.<br>

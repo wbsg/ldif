@@ -34,7 +34,7 @@
 				<RestrictTo> 	{ ?a rdf:type smwcat:Gene }	UNION { ?a rdf:type smwcat:Disease }	UNION { ?a rdf:type smwcat:Pathway }	</RestrictTo>
 			</TargetDataset>
 
-			<LinkCondition>
+			<LinkageRule>
 			<Aggregate type="max">
 					<Compare metric="equality">
 						<Input path="?a/smwprop:UniprotId" />
@@ -57,7 +57,7 @@
 						<Input path="?b/smwprop:KeggPathwayId" />
 					</Compare>
 			</Aggregate>
-			</LinkCondition>
+			</LinkageRule>
 
 			<Filter threshold="1.0" />
 

@@ -5,19 +5,19 @@
     <parent>
       <groupId>ldif</groupId>
       <artifactId>ldif-entitybuilder</artifactId>
-      <version>0.3.1</version>
+      <version>0.4</version>
     </parent>
 
 	<artifactId>ldif-entitybuilder-common</artifactId>
 	<packaging>jar</packaging>
-	<version>0.3.1</version>
+	<version>0.4</version>
 	<name>LDIF EntityBuilder Module Common</name>
 
     <dependencies>
         <dependency>
             <groupId>ldif</groupId>
             <artifactId>ldif-core</artifactId>
-            <version>0.3.1</version>
+            <version>0.4</version>
         </dependency>
     </dependencies>
 

@@ -5,7 +5,7 @@
     <parent>
       <groupId>ldif</groupId>
       <artifactId>ldif-modules</artifactId>
-      <version>0.3.1</version>
+      <version>0.4</version>
     </parent>
 
    <modules>
@@ -16,7 +16,7 @@
 
 	<artifactId>ldif-r2r</artifactId>
 	<packaging>pom</packaging>
-	<version>0.3.1</version>
+	<version>0.4</version>
 	<name>LDIF R2R Module</name>
 
 	<properties>
@@ -78,13 +78,13 @@
         <dependency>
           <groupId>ldif</groupId>
           <artifactId>ldif-core</artifactId>
-          <version>0.3.1</version>
+          <version>0.4</version>
         </dependency>
         <!-- TO BE REMOVED - after r2r-common refactor -->
         <dependency>
             <groupId>ldif</groupId>
             <artifactId>ldif-local</artifactId>
-            <version>0.3.1</version>
+            <version>0.4</version>
         </dependency>
     </dependencies>
 

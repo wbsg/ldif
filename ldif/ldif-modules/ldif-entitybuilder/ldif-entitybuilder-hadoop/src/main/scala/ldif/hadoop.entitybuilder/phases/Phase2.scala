@@ -1,7 +1,7 @@
-/* 
+/*
  * LDIF
  *
- * Copyright 2011 Freie Universität Berlin, MediaEvent Services GmbH & Co. KG
+ * Copyright 2011-2012 Freie Universität Berlin, MediaEvent Services GmbH & Co. KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,6 +32,7 @@ import ldif.hadoop.io.{QuadSequenceFileOutput, QuadSequenceFileInput}
 import org.apache.hadoop.io.{NullWritable, IntWritable}
 import org.apache.hadoop.fs.{FileSystem, Path}
 import ldif.util.Consts
+import ldif.hadoop.runtime.ConfigParameters
 
 /**
  *  Hadoop EntityBuilder - Phase 2
@@ -42,14 +43,32 @@ class Phase2 extends Configured with Tool {
   def run(args: Array[String]): Int = {
     val conf = getConf
     val job = new JobConf(conf, classOf[Phase2])
-    val getsTextInput = args(4).toBoolean
+    val getsTextInput = args(6).toBoolean
 
     job.setJobName("HEB-Phase2")
-
-    //    job.setJarByClass(classOf[RunHadoop])
     job.setNumReduceTasks(0)
-    if(getsTextInput)
+
+    if(getsTextInput) {
       job.setMapperClass(classOf[ExtractAndProcessQuadsMapper])
+
+      // Check if sameAs links should be collected and add output collector
+      if (args(2).toBoolean) {
+        MultipleOutputs.addNamedOutput(job, "sameas", classOf[QuadSequenceFileOutput], classOf[NullWritable], classOf[QuadWritable])
+        job.setBoolean("sameas", true)
+      }
+      // Check if irrelevant quads should be collected and add output collector
+      if (args(3).toBoolean ) {
+        job.setBoolean("allquads", true)
+
+        MultipleOutputs.addNamedOutput(job, "allquads", classOf[QuadSequenceFileOutput], classOf[NullWritable], classOf[QuadWritable])
+      }
+      // Check if provencance quads should be ignored and add output collector
+      job.setStrings("provenanceGraph", args(5))
+      if (args(4).toBoolean)
+        job.setBoolean("ignoreProvenance", true)
+      else
+        MultipleOutputs.addNamedOutput(job, "provenance", classOf[QuadSequenceFileOutput], classOf[NullWritable], classOf[QuadWritable])
+    }
     else {
       job.setMapperClass(classOf[ProcessQuadsMapper])
       job.setInputFormat(classOf[QuadSequenceFileInput])
@@ -68,16 +87,7 @@ class Phase2 extends Configured with Tool {
     FileInputFormat.addInputPath(job, in)
     FileOutputFormat.setOutputPath(job, out)
 
-    // Check if sameAs links should be collected
-    if (args(2).toBoolean) {
-      MultipleOutputs.addNamedOutput(job, "sameas", classOf[QuadSequenceFileOutput], classOf[NullWritable], classOf[QuadWritable])
-      job.setBoolean("sameas", true)
-    }
-    // Check if irrelevant quads should be collected
-    if (args(3).toBoolean) {
-      MultipleOutputs.addNamedOutput(job, "allquads", classOf[QuadSequenceFileOutput], classOf[NullWritable], classOf[QuadWritable])
-      job.setBoolean("allquads", true)
-    }
+
 
     JobClient.runJob(job)
 
@@ -88,52 +98,66 @@ class Phase2 extends Configured with Tool {
 object Phase2 {
   private val log = LoggerFactory.getLogger(getClass.getName)
 
-  def runPhase(in : String, out : String, entityDescriptions : Seq[EntityDescription], sameAs : String, allQuads : String, getsTextInput: Boolean = false) : Int = {
+
+  def runPhase(in : String, out : String, entityDescriptions : Seq[EntityDescription],  config : ConfigParameters) : Int = {
     val edmd = EntityDescriptionMetaDataExtractor.extract(entityDescriptions)
-    runPhase(in,out,edmd, sameAs, allQuads, getsTextInput)
+    runPhase(in,out,edmd, config)
   }
 
-  def runPhase(in : String, out : String, edmd : EntityDescriptionMetadata, sameAs : String, allQuads : String, getsTextInput: Boolean) : Int = {
+  def runPhase(in : String, out : String, edmd : EntityDescriptionMetadata, config : ConfigParameters) : Int = {
+    val conf = new Configuration()
+    val hdfs = FileSystem.get(conf)
+
+    // Don't collect sameAs/all quads if the destination paths are not defined (eg. while building entities for Silk)
+    val useExternalSameAsLinks = config.sameAsPath != null
+    val outputAllQuads = config.allQuadsPath != null
+    val ignoreProvenance = config.provenanceQuadsPath == null
+    val provenanceGraph = config.configProperties.getProperty("provenanceGraph", Consts.DEFAULT_PROVENANCE_GRAPH)
+
     log.info("Starting phase 2 of the EntityBuilder: Filtering quads and creating initial value paths")
 
     val start = System.currentTimeMillis
-    val conf = new Configuration
     HadoopHelper.distributeSerializableObject(edmd, conf, "edmd")
 
     // remove existing output
-    val hdfs = FileSystem.get(conf)
     val hdPath = new Path(out)
     if (hdfs.exists(hdPath))
       hdfs.delete(hdPath, true)
 
     log.info("Output directory: " + out)
-    val res = ToolRunner.run(conf, new Phase2(), Array[String](in, out, (sameAs!=null).toString, (allQuads!=null).toString, getsTextInput.toString))
+    val res = ToolRunner.run(conf, new Phase2(), Array[String](in, out, useExternalSameAsLinks.toString, outputAllQuads.toString, ignoreProvenance.toString, provenanceGraph, config.getsTextInput.toString))
 
     log.info("That's it. Took " + (System.currentTimeMillis-start)/1000.0 + "s")
 
     // move sameAs links quads to an ad-hoc directory
-    if(sameAs!=null) {
-      val outputFiles = hdfs.listStatus(hdPath).filterNot(_.isDir)
-      val sameAsPath = new Path(sameAs)
-      if (outputFiles.length > 0 && !hdfs.exists(sameAsPath))
-        hdfs.mkdirs(sameAsPath)
-      for (status <- outputFiles) {
-        if(status.getPath.getName.startsWith("sameas"))
-          hdfs.rename(status.getPath, new Path(sameAs+Consts.fileSeparator+status.getPath.getName))
-      }
+    if(useExternalSameAsLinks) {
+      move(hdPath, config.sameAsPath, "sameas")
     }
     // move irrelevant quads to an ad-hoc directory
-    if(allQuads!=null) {
-      val outputFiles = hdfs.listStatus(hdPath).filterNot(_.isDir)
-      val allQuadsPath = new Path(allQuads)
-      if (outputFiles.length > 0 && !hdfs.exists(allQuadsPath))
-        hdfs.mkdirs(allQuadsPath)
-      for (status <- outputFiles) {
-        if(status.getPath.getName.startsWith("allquads"))
-          hdfs.rename(status.getPath, new Path(allQuads+Consts.fileSeparator+status.getPath.getName))
-      }
+    if(outputAllQuads) {
+      move(hdPath, config.allQuadsPath, "allquads")
+    }
+    // move provenance quads to an ad-hoc directory
+    if(!ignoreProvenance) {
+      move(hdPath, config.provenanceQuadsPath, "provenance")
     }
 
     res
   }
+
+  private def move (from : Path, to : String, prefix : String) {
+    move(from, new Path(to), prefix)
+  }
+
+  private def move (from : Path, to : Path, prefix : String) {
+    val hdfs = FileSystem.get(new Configuration())
+    val files = hdfs.listStatus(from).filterNot(_.isDir)
+    if (files.length > 0 && !hdfs.exists(to))
+      hdfs.mkdirs(to)
+    for (status <- files) {
+      if(status.getPath.getName.startsWith(prefix))
+        hdfs.rename(status.getPath, new Path(to+Consts.fileSeparator+status.getPath.getName))
+    }
+  }
+
 }

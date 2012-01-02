@@ -1,7 +1,7 @@
 /*
  * LDIF
  *
- * Copyright 2011 Freie Universität Berlin, MediaEvent Services GmbH & Co. KG
+ * Copyright 2011-2012 Freie Universität Berlin, MediaEvent Services GmbH & Co. KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -49,7 +49,7 @@ class EBHadoopTest extends FlatSpec with ShouldMatchers
   val edDir = resourceDir+Consts.fileSeparator+"entity_descriptions"+Consts.fileSeparator
 
   // Run entity builder
-  val hebe = new EntityBuilderHadoopExecutor(ConfigParameters(new Properties(), null, null, true))
+  val hebe = new EntityBuilderHadoopExecutor(ConfigParameters(new Properties(), null, null, null, true))
   hebe.execute(task, List(sourcesPath), List(outputPath))
 
   // Check results

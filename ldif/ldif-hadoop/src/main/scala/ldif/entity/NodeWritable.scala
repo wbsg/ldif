@@ -1,7 +1,7 @@
 /* 
  * LDIF
  *
- * Copyright 2011 Freie Universität Berlin, MediaEvent Services GmbH & Co. KG
+ * Copyright 2011-2012 Freie Universität Berlin, MediaEvent Services GmbH & Co. KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,8 +18,8 @@
 
 package ldif.entity
 
-import org.apache.hadoop.io.WritableComparable
 import java.io.{DataInput, DataOutput}
+import org.apache.hadoop.io.WritableComparable
 
 /**
  * Created by IntelliJ IDEA.
@@ -32,6 +32,10 @@ import java.io.{DataInput, DataOutput}
 class NodeWritable(var value: String, var datatypeOrLanguage: String, var nodeType: Node.NodeType, var graph: String) extends NodeTrait with WritableComparable[NodeWritable] {
   def this(node: NodeTrait) {
     this(node.value, node.datatypeOrLanguage, node.nodeType, node.graph)
+  }
+
+  def this(value: String) {
+    this(Node.createUriNode(value))
   }
 
   def this() {

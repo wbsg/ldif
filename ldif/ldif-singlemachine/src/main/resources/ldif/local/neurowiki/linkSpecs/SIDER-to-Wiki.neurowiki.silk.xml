@@ -23,14 +23,14 @@
 				<RestrictTo>?a rdf:type smwcat:Drug .</RestrictTo>
 			</TargetDataset>
 
-			<LinkCondition>
+			<LinkageRule>
 				<Aggregate type="max">
 					<Compare metric="equality">
 						<Input path="?a/rdfs:label" />
 						<Input path="?b/rdfs:label" />
 					</Compare>
 				</Aggregate>
-			</LinkCondition>
+			</LinkageRule>
 
 			<Filter threshold="1.0" />
 

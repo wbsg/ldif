@@ -8,7 +8,7 @@
   <parent>
     <groupId>ldif</groupId>
     <artifactId>ldif</artifactId>
-    <version>0.3.1</version>
+    <version>0.4</version>
   </parent>
 
   <artifactId>ldif-hadoop</artifactId>
@@ -24,13 +24,13 @@
     <dependency>
       <groupId>ldif</groupId>
       <artifactId>ldif-core</artifactId>
-      <version>0.3.1</version>
+      <version>0.4</version>
     </dependency>
 
     <dependency>
        <groupId>org.apache.hadoop</groupId>
        <artifactId>hadoop-core</artifactId>
-       <version>0.20.205.0</version>
+       <version>0.20.203.0</version>
     </dependency>
 
 

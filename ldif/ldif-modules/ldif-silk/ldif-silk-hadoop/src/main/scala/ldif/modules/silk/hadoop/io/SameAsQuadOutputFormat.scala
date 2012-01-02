@@ -19,31 +19,35 @@ package ldif.modules.silk.hadoop.io
  */
 
 import de.fuberlin.wiwiss.silk.hadoop.impl.EntityConfidence
-import org.apache.hadoop.io.Text
 import ldif.util.Consts
 import org.apache.hadoop.mapred._
 import org.apache.hadoop.fs.FileSystem
 import org.apache.hadoop.util.Progressable
-import java.io.DataOutputStream
+import ldif.hadoop.types.QuadWritable
+import org.apache.hadoop.io.{SequenceFile, NullWritable, Text}
+import ldif.entity.NodeWritable
 
-
-class SameAsOutputFormat extends SequenceFileOutputFormat[Text, EntityConfidence] {
+class SameAsQuadOutputFormat extends SequenceFileOutputFormat[Text, EntityConfidence] {
 
   override def getRecordWriter(fs: FileSystem, job: JobConf, name: String, progress: Progressable): RecordWriter[Text, EntityConfidence] = {
     val file = FileOutputFormat.getTaskOutputPath(job, name)
     val fs = file.getFileSystem(job)
-    val fileOut = fs.create(file, progress)
-    new LinkWriter(fileOut)
+    val writer = SequenceFile.createWriter(fs, job, file, classOf[NullWritable], classOf[QuadWritable])
+    new LinkQuadWriter(writer)
   }
 
-  private class LinkWriter(out: DataOutputStream) extends RecordWriter[Text, EntityConfidence] {
+  private class LinkQuadWriter(writer : SequenceFile.Writer) extends RecordWriter[Text, EntityConfidence] {
+    val sameAsPredicate = new Text(Consts.SAMEAS_URI)
+    val graph = new Text(Consts.SILK_OUT_GRAPH)
+
     override def write(sourceUri : Text, entitySimilarity : EntityConfidence) {
-      val line = "<" + sourceUri + "> <http://www.w3.org/2002/07/owl#sameAs> <" + entitySimilarity.targetUri + "> <"+Consts.SILK_OUT_GRAPH+"> .\n"
-      out.write(line.getBytes)
+      val quad =  new QuadWritable(new NodeWritable(sourceUri.toString), sameAsPredicate, new NodeWritable(entitySimilarity.targetUri), graph)
+      writer.append(NullWritable.get, quad)
     }
 
     override def close(reporter: Reporter) {
-      out.close()
+      writer.close()
     }
   }
+
 }

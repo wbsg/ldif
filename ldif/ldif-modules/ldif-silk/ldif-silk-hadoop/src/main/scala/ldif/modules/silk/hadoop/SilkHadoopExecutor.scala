@@ -1,7 +1,7 @@
 /*
  * LDIF
  *
- * Copyright 2011 Freie Universität Berlin, MediaEvent Services GmbH & Co. KG
+ * Copyright 2011-2012 Freie Universität Berlin, MediaEvent Services GmbH & Co. KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -115,7 +115,7 @@ class SilkHadoopExecutor extends Executor {
       hdfs.delete(outputPath, true)
     FileOutputFormat.setOutputPath(job, outputPath)
 
-    job.setOutputFormat(classOf[SameAsOutputFormat])
+    job.setOutputFormat(classOf[SameAsQuadOutputFormat])
     job.setOutputKeyClass(classOf[Text])
     job.setOutputValueClass(classOf[EntityConfidence])
 

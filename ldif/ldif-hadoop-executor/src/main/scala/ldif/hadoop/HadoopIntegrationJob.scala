@@ -1,7 +1,7 @@
 /*
  * LDIF
  *
- * Copyright 2011 Freie Universität Berlin, MediaEvent Services GmbH & Co. KG
+ * Copyright 2011-2012 Freie Universität Berlin, MediaEvent Services GmbH & Co. KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -52,9 +52,13 @@ class HadoopIntegrationJob(val config : HadoopIntegrationConfig, debug : Boolean
   val outputAllQuads = config.properties.getProperty("output", "mapped-only").toLowerCase=="all"
   val rewriteUris = config.properties.getProperty("rewriteURIs", "true").toLowerCase=="true"
   val uriMinting = config.properties.getProperty("uriMinting", "false").toLowerCase=="true"
+  val ignoreProvenance = config.properties.getProperty("outputFormat", "nq").toLowerCase=="nt"
 
   val externalSameAsLinksDir = clean("sameAsFromSources")
+  // Contains quads that are not processed but must be added to the output
   val allQuadsDir = clean("allQuads")
+  // Contains provenance quads
+  val provenanceQuadsDir = clean("provenanceQuads")
 
   def runIntegration() {
 
@@ -78,8 +82,7 @@ class HadoopIntegrationJob(val config : HadoopIntegrationConfig, debug : Boolean
     log.info("Time needed to link data: " + stopWatch.getTimeSpanInSeconds + "s")
 
     // Prepare data to be translated
-    if(outputAllQuads)
-      move(allQuadsDir, r2rOutput)
+    move(allQuadsDir, r2rOutput)
     var sameAsLinks : String = null
     if(useExternalSameAsLinks)
      sameAsLinks = getAllLinks(silkOutput, new Path(externalSameAsLinksDir))
@@ -101,6 +104,8 @@ class HadoopIntegrationJob(val config : HadoopIntegrationConfig, debug : Boolean
       log.info("Time needed to mint URIs: " + stopWatch.getTimeSpanInSeconds + "s")
     }
 
+    // add provenance quads to the output path
+    move(provenanceQuadsDir, outputPath)
     // add sameAs links to the output path
     move(sameAsLinks, outputPath)
 
@@ -174,11 +179,13 @@ class HadoopIntegrationJob(val config : HadoopIntegrationConfig, debug : Boolean
     val entityDescriptions = (for(mapping <- r2rTask.ldifMappings) yield mapping.entityDescription).toSeq
 
     val entitiesPath =  clean("ebOutput-r2r")
-    var configParameters = ConfigParameters(config.properties, null, null, true)
+    var configParameters = ConfigParameters(config.properties, null, null, null, true)
     if (useExternalSameAsLinks)
       configParameters = configParameters.copy(sameAsPath = externalSameAsLinksDir)
     if (outputAllQuads)
       configParameters = configParameters.copy(allQuadsPath = allQuadsDir)
+    if (!ignoreProvenance)
+          configParameters = configParameters.copy(provenanceQuadsPath = provenanceQuadsDir)
     buildEntities(config.sources, entitiesPath, entityDescriptions, configParameters)
     log.info("Time needed to load dump and build entities for mapping phase: " + stopWatch.getTimeSpanInSeconds + "s")
 
@@ -272,14 +279,16 @@ class HadoopIntegrationJob(val config : HadoopIntegrationConfig, debug : Boolean
   private def move (from : Path, dest : Path, cleanDest : Boolean) {
     log.debug("Moving files from "+from.toString+" to "+ dest.toString)
     // move files
-    val filesFrom = hdfs.listStatus(from).filterNot(_.isDir)
+    val filesFrom = hdfs.listStatus(from)
 
-    if (cleanDest && hdfs.exists(dest))
-      clean(dest)
-    if (!hdfs.exists(dest))
-      hdfs.mkdirs(dest)
-    for (status <- filesFrom.filterNot(_.getPath.getName.startsWith("_")))
-      hdfs.rename(status.getPath, new Path(dest.toString+Consts.fileSeparator+status.getPath.getName))
+    if (filesFrom != null) {
+      if (cleanDest && hdfs.exists(dest))
+        clean(dest)
+      if (!hdfs.exists(dest))
+        hdfs.mkdirs(dest)
+      for (status <- filesFrom.filterNot(_.getPath.getName.startsWith("_")))
+        hdfs.rename(status.getPath, new Path(dest.toString+Consts.fileSeparator+status.getPath.getName))
+    }
 
     // remove the source
     clean(from)
