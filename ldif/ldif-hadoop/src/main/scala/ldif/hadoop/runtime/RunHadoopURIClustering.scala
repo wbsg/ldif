@@ -68,7 +68,7 @@ class RunHadoopURIClustering extends Configured with Tool {
       val runningJob = JobClient.runJob(job)
       val counters = runningJob.getCounters
       val newClusterCounter = computeClusterNumberBySizeCountersMap(counters)
-      if(compareClusterCounters(clusterCounter, newClusterCounter))
+      if(equalsClusterCounters(clusterCounter, newClusterCounter, iteration))
         loop = false
       else
         clusterCounter = newClusterCounter
@@ -83,16 +83,17 @@ class RunHadoopURIClustering extends Configured with Tool {
     return 0
   }
 
-  private def compareClusterCounters(cCounters1: Map[Int, Long], cCounters2: Map[Int, Long]): Boolean = {
-    if(!isSubSetOfClusterCounters(cCounters1, cCounters2))
+  private def equalsClusterCounters(cCounters1: Map[Int, Long], cCounters2: Map[Int, Long], iteration: Int): Boolean = {
+    if(!isSubSetOfClusterCounters(cCounters1, cCounters2, iteration))
       return false
-    if(!isSubSetOfClusterCounters(cCounters2, cCounters1))
+    else if(!isSubSetOfClusterCounters(cCounters2, cCounters1, iteration))
       return false
-    return true
+    else
+      true
   }
 
-  private def isSubSetOfClusterCounters(left: Map[Int, Long], right: Map[Int, Long]): Boolean = {
-    for((counter, number) <- left) {
+  private def isSubSetOfClusterCounters(left: Map[Int, Long], right: Map[Int, Long], iteration: Int): Boolean = {
+    for((counter, number) <- left if counter >= iteration) {
       if(!right.contains(counter))
         return false
       else if(right.get(counter).get!=number)
@@ -203,8 +204,13 @@ object RunHadoopURIClustering {
   }
 
   def main(args: Array[String]) {
-    if(args.length>=2)
-      runHadoopURIClustering(args(0), args(1))
+    if(args.length>=2) {
+      val tmpDir = Consts.tmpDir+Consts.fileSeparator+"uriclusteringinput"
+      val tmpDir2 = Consts.tmpDir+Consts.fileSeparator+"uriclusteringoutput"
+      RunHadoopQuadConverter.execute(args(0), tmpDir)
+      runHadoopURIClustering(tmpDir, tmpDir2)
+      HadoopQuadToTextConverter.execute(tmpDir2, args(1))
+    }
   }
 }
 

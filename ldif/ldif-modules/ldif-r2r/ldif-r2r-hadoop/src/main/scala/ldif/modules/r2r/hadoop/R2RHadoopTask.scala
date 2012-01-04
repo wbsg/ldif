@@ -31,5 +31,5 @@ import de.fuberlin.wiwiss.r2r.LDIFMapping
  */
 
 class R2RHadoopTask(val ldifMappings: IndexedSeq[LDIFMapping]) extends ModuleTask{
-  val name: Identifier = ldifMappings.head.mapping.getUri  //TODO use a proper identifier
+  val name: Identifier = ldifMappings.head.mapping.getUri
 }

@@ -71,4 +71,5 @@ object Consts {
 
   // System
   val fileSeparator = System.getProperty("file.separator")
+  val tmpDir = System.getProperty("java.io.tmpdir")
 }

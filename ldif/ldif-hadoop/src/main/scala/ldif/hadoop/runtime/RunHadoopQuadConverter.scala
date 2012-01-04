@@ -72,9 +72,12 @@ class RunHadoopQuadConverter extends Configured with Tool {
   }
 }
 
+/**
+ * Converts N-Triples/N-Quads text files into a quad sequence files
+ */
 object RunHadoopQuadConverter {
 
-  def execute(datasetInputPath: String, outputPath: String): Int = {//TODO: Add using temp directory for intermediary results (also for other jobs)
+  def execute(datasetInputPath: String, outputPath: String): Int = {
     println("Starting quad conversion...")
     val start = System.currentTimeMillis
     FileUtils.deleteDirectory(new File(outputPath))
