@@ -41,11 +41,13 @@ class MatchReduce extends MapReduceBase with Reducer[Text, EntityConfidence, Tex
       case Some(limit) => {
         for(entitySimilarity <- entitiySimilarities.take(limit)) {
           collector.collect(sourceUri, entitySimilarity)
+          reporter.getCounter("LDIF stats", "sameAs links generated").increment(1)
         }
       }
       case None => {
         for(entitySimilarity <- entitiySimilarities) {
           collector.collect(sourceUri, entitySimilarity)
+          reporter.getCounter("LDIF stats", "sameAs links generated").increment(1)
         }
       }
     }
