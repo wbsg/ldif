@@ -92,10 +92,12 @@ class UriRewritingReducer extends MapReduceBase with Reducer[NodeWritable, QuadW
 class QuadCollection {
   var quadSet = new HashSet[QuadWritable]
   var quadFileWriter: FileQuadWritableWriter = null
+  private val spillToDiskThreshold = 10000
 
   def add(quad: QuadWritable) {
-    if(quadFileWriter==null && MemoryUsage.getFreeMemoryInBytes() < 16777216)
+    if(quadFileWriter==null && (MemoryUsage.getFreeMemoryInBytes() < 16777216 || quadSet.size > spillToDiskThreshold))
       spillToDisk
+
     if(quadFileWriter==null)
       quadSet.add(quad)
     else
