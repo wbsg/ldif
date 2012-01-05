@@ -1,6 +1,7 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
-<html><head>
-  <title>LDIF – Linked Data Integration Framework</title>
+<html><head><title>LDIF – Linked Data Integration Framework</title>
+
+  
 
   
   
@@ -75,9 +76,7 @@ table tr.odd {background-color: #f6f6f6}
   <meta http-equiv="content-type" content="text/html; charset=utf-8">
 
   
-  <meta http-equiv="content-type" content="text/html; charset=utf-8">
-
-</head><body>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8"></head><body>
 <?php $wbsg_project = "LDIF"; include_once('C:\!htdocs\navbar.inc.php'); ?>
 <div id="logo" align="right"><a href="http://www.wiwiss.fu-berlin.de/en/institute/pwo/bizer/index.html"><img src="img/fu-logo.gif" alt="Freie Universität Berlin Logo" border="0"></a>&nbsp;<br>
 <a href="http://mediaeventservices.com"><img src="img/logo.gif" alt="Media Event Services"></a></div>
@@ -118,13 +117,13 @@ Start</span></a> </div>
 </div>
 <h2 id="news">News</h2>
 <ul>
-  <li><strong>XX/YY/20ZZ TODO: Version 0.4 released.</strong> This
+  <li><strong>XX/YY/2012 TODO: Version 0.4 released.</strong> This
 release adds features concerning scalability to larger source
 data sets. A triple store backed version scales to larger data sets on
 a single machine with lower memory consumption at the expense of
-processing time. The Hadoop version of the
+processing time. And a Hadoop version of the
 LDIF run time system now allows for processing large data sets on
-Hadoop clusters. The benchmark section is updated with
+a Hadoop cluster. The benchmark section is updated with
 figures comparing all three run time variations.<br>
     <strong></strong></li>
   <li><strong>11/03/2011: Version 0.3.1 released.</strong> Minor
@@ -726,8 +725,23 @@ Learrn more about LDIF configuration by looking at the <a href="index.html#sched
 and the <a href="index.html#integrationjob">Integration Job
 Configuration</a> (<tt>examples/music/light/integrationJob.xml</tt>) </p>
 
-<h3>TDB</h3>
-  TODO
+<h3>TDB<br>
+</h3>
+<p>To see LDIF running with a quad store (TDB) as backend, please follow these steps:</p>
+
+<ul>
+<li><a href="http://www4.wiwiss.fu-berlin.de/bizer/ldif/releases/ldif-0.4.zip">download
+the latest release</a></li><li>unpack the archive and change into the extracted directory <tt>ldif-0.4</tt></li><li>run LDIF on the <a href="index.html#example1">Music example</a></li><ul><li>under Linux / Mac OS type:</li><pre>bin/ldif examples/music/light/schedulerConfigTDB.xml</pre><li>Windows: This should work under Windows with Cygwin, but has not been tested, yet. (TDB relies on the <a href="http://manpages.ubuntu.com/manpages/hardy/en/man1/sort.1.html">sort</a> program for bulk loading)<br>
+</li></ul>
+</ul>
+
+<p>The example will run in about 3 minutes. Integration results will be
+written into <tt>integrated_music_light.nq</tt> in the working
+directory, containing both integrated data and <a href="index.html#provenance">provenance metadata</a>. <br>
+Learrn more about LDIF configuration by looking at the <a href="index.html#scheduler">Schedule Job Configuration</a> (<tt>examples/music/light/schedulerConfig.xml</tt>)
+and the <a href="index.html#integrationjob">Integration Job
+Configuration</a> (<tt>examples/music/light/integrationJob.xml</tt>) </p>
+
 
 <h3>Hadoop</h3>
 <p>To see LDIF running on a Hadoop cluster, please follow these steps:</p>
