@@ -35,7 +35,7 @@ class NodeWritable(var value: String, var datatypeOrLanguage: String, var nodeTy
   }
 
   def this(value: String) {
-    this(Node.createUriNode(value))
+    this(Node.createUriNode(value, ""))
   }
 
   def this() {
