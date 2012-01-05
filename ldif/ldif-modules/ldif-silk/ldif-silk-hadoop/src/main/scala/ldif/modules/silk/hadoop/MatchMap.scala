@@ -49,11 +49,13 @@ class MatchMap extends MapReduceBase
           if(sourcePartition.indices(s) matches targetPartition.indices(t)) {
             val sourceEntity = sourcePartition.entities(s)
             val targetEntity = targetPartition.entities(t)
-            val entities = DPair(sourceEntity, targetEntity)
-            val confidence = linkSpec.rule(entities, 0.0)
+            if(sourceEntity.uri!=targetEntity.uri) {
+              val entities = DPair(sourceEntity, targetEntity)
+              val confidence = linkSpec.rule(entities, 0.0)
 
-            if (confidence >= 0.0) {
-              collector.collect(new Text(sourceEntity.uri), new EntityConfidence(confidence, targetEntity.uri))
+              if (confidence >= 0.0) {
+                collector.collect(new Text(sourceEntity.uri), new EntityConfidence(confidence, targetEntity.uri))
+              }
             }
           }
           t += 1
