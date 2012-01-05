@@ -21,6 +21,7 @@ package ldif.datasources.dump
 import ldif.runtime.Quad
 import org.antlr.runtime.{CommonTokenStream, ANTLRStringStream}
 import parser.{NQuadParser, NQuadLexer}
+import ldif.util.Consts
 
 /**
  * Created by IntelliJ IDEA.
@@ -32,7 +33,7 @@ import parser.{NQuadParser, NQuadLexer}
 
 class QuadParser(graphURI: String) {
   def this() {
-    this("default")
+    this(Consts.DEFAULT_GRAPH)
   }
 
   /**
