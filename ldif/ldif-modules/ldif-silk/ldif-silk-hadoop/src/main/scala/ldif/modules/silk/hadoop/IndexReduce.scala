@@ -26,7 +26,7 @@ class IndexReduce extends MapReduceBase
 
     while(iterator.hasNext) {
       val next = iterator.next()
-      currentEntities(count) = new LdifEntity(next.entity, entityDescs.target)
+      currentEntities(count) = new LdifEntity(next.entity, entityDescs.select(isSource))
       currentIndices(count) = next.index
       count += 1
       if(count == partitionSize) {

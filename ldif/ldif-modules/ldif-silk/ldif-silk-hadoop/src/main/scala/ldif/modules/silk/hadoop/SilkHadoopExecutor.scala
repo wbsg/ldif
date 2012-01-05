@@ -51,8 +51,8 @@ class SilkHadoopExecutor extends Executor {
     val sourceIndexPath = new Path(indexPath, task.name + "_source_" + UUID.randomUUID.toString)
     val targetIndexPath = new Path(indexPath, task.name + "_target_" + UUID.randomUUID.toString)
 
-    runIndexingJob(task, reader(0), sourceIndexPath)
-    runIndexingJob(task, reader(1), targetIndexPath)
+    runIndexingJob(task, reader(0), sourceIndexPath, true)
+    runIndexingJob(task, reader(1), targetIndexPath, false)
 
     runLinkGenerationJob(task, DPair(sourceIndexPath, targetIndexPath), writer)
 
@@ -61,12 +61,12 @@ class SilkHadoopExecutor extends Executor {
 
   }
 
-  private def runIndexingJob(task: SilkTask, inputPath: Path, outputPath: Path) {
+  private def runIndexingJob(task: SilkTask, inputPath: Path, outputPath: Path, isSource: Boolean) {
     val job = new JobConf(new Configuration(), classOf[SilkHadoopExecutor])
     job.setJobName("Silk Indexing")
 
     // Distribute Configuration
-    Configured.write(job, task.linkSpec)
+    Configured.write(job, task.linkSpec, isSource)
 
     //Set Input
     FileInputFormat.setInputPaths(job, inputPath)

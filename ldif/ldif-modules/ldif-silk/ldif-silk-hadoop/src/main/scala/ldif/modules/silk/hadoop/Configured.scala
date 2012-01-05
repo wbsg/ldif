@@ -17,16 +17,19 @@ trait Configured extends JobConfigurable {
   protected var linkSpec: LinkSpecification = null
 
   protected var entityDescs: DPair[EntityDescription] = null
+  
+  protected var isSource: Boolean = false
 
   protected override def configure(conf: JobConf) {
     linkSpec = readLinkSpec(conf)
     entityDescs = linkSpec.entityDescriptions
+    isSource = conf.get(Configured.isSourceParam).toBoolean
   }
 
-  private def readLinkSpec(job: Configuration) = {
+  private def readLinkSpec(conf: Configuration) = {
     Plugins.register()
 
-    val linkSpecStr = job.get(Configured.linkSpecParam)
+    val linkSpecStr = conf.get(Configured.linkSpecParam)
     val linkSpecXML = XML.load(new StringReader(linkSpecStr))
     val linkSpec = LinkSpecification.fromXML(linkSpecXML)(Prefixes.empty)
 
@@ -37,8 +40,11 @@ trait Configured extends JobConfigurable {
 
 object Configured {
   private val linkSpecParam = "silk.linkSpec"
+  
+  private val isSourceParam = "silk.isSource"
 
-  def write(job: Configuration, linkSpec: LinkSpecification) {
+  def write(job: Configuration, linkSpec: LinkSpecification, isSource: Boolean = true) {
     job.set(linkSpecParam, linkSpec.toXML.toString)
+    job.set(isSourceParam, isSource.toString)
   }
 }
