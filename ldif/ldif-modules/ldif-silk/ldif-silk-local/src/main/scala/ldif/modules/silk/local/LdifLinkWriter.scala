@@ -30,6 +30,7 @@ import de.fuberlin.wiwiss.silk.entity.Link
 class LdifLinkWriter(quadWriter : QuadWriter) extends LinkWriter {
 
   def write(link: Link, predicateUri : String) {
-    quadWriter.write(Quad(Node.createUriNode(link.source, null), predicateUri, Node.createUriNode(link.target, null), ""))
+    if(link.source!=link.target)
+      quadWriter.write(Quad(Node.createUriNode(link.source, null), predicateUri, Node.createUriNode(link.target, null), ""))
   }
 }
