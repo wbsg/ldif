@@ -33,7 +33,7 @@ class CallbackOutputStream(val out : OutputStream) extends CallbackNxOutputStrea
   override def processStatement(nodes : Array[Node]) {
     try {
       for(n <- nodes){
-        out.write(n.toN3.getBytes)
+        out.write(n.toN3.getBytes)//TODO: Change toN3 to toNT/toNQ
         out.write(space)
       }
       //graphs += nodes(3).toString
