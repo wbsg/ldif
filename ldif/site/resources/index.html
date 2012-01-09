@@ -210,7 +210,7 @@ normalize URI while keeping track of data provenance.
 <p>The LDIF integration pipeline consists of the following steps:
 </p>
 <ol>
-  <li><b>Collect Data</b>: Access modules locally replicate data sets
+  <li><b>Collect Data</b>: Import modules locally replicate data sets
 via file download, crawling or SPARQL.</li>
   <li><b>Map to Schema</b>: An expressive mapping language allows for
 translating data from
@@ -233,7 +233,7 @@ supported by LDIF.</p>
 <p>The LDIF Framework consists of a Scheduler, Data Import and an Integration component with a set of
 pluggable modules. These modules are organized as data input, data transformation and data output.
 </p>
-<img alt="LDIF components" src="img/LDIFcomponents.png" height="92" width="299">   TODO:new picture, including scheduler
+<img alt="LDIF components" src="img/LDIFcomponents.png">
 <p>Currently, we have implemented the following modules: </p>
 
 
@@ -276,8 +276,11 @@ specified in the configuration file for a SPARQL import job. Data from
 each SPARQL import job gets tracked by its own named graph.</p>
 
 
-<h3>Integration</h3>
-TODO
+<h3>Integration Runtime Environment</h3>
+
+<p>The integration component manages the data
+flow between the various stages/modules, the caching of the intermediate
+results and the execution of the different modules for each stage.</p>
 
 <h4>Data Input</h4>
 
@@ -395,7 +398,7 @@ is that it also takes more time to execute.
 </p>
 <h5>Cluster / Hadoop</h5>
 <p>
-This implementation of the run time environment allows the work to be parallelized on multiple machines using Hadoop. Each phase in the integration flow has been ported to be executable on a Hadoop cluster. It has only been tested on a 3-nodes cluster, yet, and tests on larger clusters will follow. Some perfomance figures comparing the run times of the in-memory, quad store and Hadoop version against different data set sizes are provided in the <a href="http://www.assembla.com/spaces/ldif/wiki/Benchmark">Benchmark Wiki</a>.
+This implementation of the run time environment allows the work to be parallelized on multiple machines using Hadoop. Each phase in the integration flow has been ported to be executable on a Hadoop cluster. It has only been tested on a 3-nodes cluster, yet, and tests on larger clusters will follow soon. Some perfomance figures comparing the run times of the in-memory, quad store and Hadoop version against different data set sizes are provided in the <a href="http://www.assembla.com/spaces/ldif/wiki/Benchmark">Benchmark Wiki</a>.
 
 
 </p>
