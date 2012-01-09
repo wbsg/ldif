@@ -52,14 +52,18 @@ class ExtractAndProcessQuadsMapper extends MapReduceBase with Mapper[LongWritabl
       quad = parser.parseLine(value.toString)
     } catch {
       case e: Exception => quad = null
+      System.err.println("Invalid line found in data set: " + value.toString)
+      reporter.getCounter("LDIF Stats","Invalid quads found in data set").increment(1)
     }
 
     if(quad==null)
       return
     else {
+      reporter.getCounter("LDIF Stats","Valid triples/quads found in data set").increment(1)
       if (quad.graph.equals(provenanceGraph) && (!ignoreProvenance)) {
         val collector = mos.getCollector("provenance", reporter).asInstanceOf[OutputCollector[NullWritable, QuadWritable]]
         collector.collect(NullWritable.get, new QuadWritable(quad))
+        reporter.getCounter("LDIF Stats","Provenance quads found in data set").increment(1)
       }
       else if(quad.predicate.equals(Consts.SAMEAS_URI))   {
         if (collectSameAs) {

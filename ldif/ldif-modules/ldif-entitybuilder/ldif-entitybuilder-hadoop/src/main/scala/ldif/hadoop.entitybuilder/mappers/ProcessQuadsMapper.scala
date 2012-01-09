@@ -42,6 +42,7 @@ class ProcessQuadsMapper extends MapReduceBase with Mapper[NullWritable, QuadWri
   }
 
   override def map(nothing: NullWritable, quad: QuadWritable, output: OutputCollector[IntWritable, ValuePathWritable], reporter: Reporter) {
+    reporter.getCounter("LDIF Stats","Valid triples/quads found in data set").increment(1)
     ProcessQuads.processQuad(quad.asQuad, reporter, edmd, mos)
   }
 
@@ -58,9 +59,10 @@ object ProcessQuads {
     val propertyInfosValue = edmd.propertyMap.get(property)
     propertyInfosValue match {
       case None => {
-        reporter.getCounter("LDIF Stats","Nr. irrelevant quads filtered").increment(1)
+        reporter.getCounter("LDIF Stats","Nr. of irrelevant quads filtered").increment(1)
       }
       case Some(propertyInfos) =>
+        reporter.getCounter("LDIF Stats","Nr. of potentially relevant quads").increment(1)
         for (propertyInfo <- propertyInfos) {
           val pathLength = edmd.pathLength(propertyInfo.pathId)
           val pathType = {
