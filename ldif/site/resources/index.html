@@ -14,8 +14,8 @@ h1, h2, h3, h4 { background: white; color: #800; }
 h1 { font: 170% sans-serif; margin: 0; }
 h2 { clear: both; font: 140% sans-serif; margin: 1.5em 0 -0.5em 0; }
 h3 { font: 120% sans-serif; margin: 1.5em 0 -0.5em 0; }
-h4 { font: italic 100% sans-serif; margin: 0.9em 0 -0.6em 0; }
-h5 { font: small-caps 100% sans-serif; }
+h4 { font: 100% sans-serif; margin: 0.9em 0 -0.6em 0; }
+h5 { font: italic 100% sans-serif; }
 pre { background: #fff6bb; font-family: monospace; line-height: 1.2em; padding: 1em 2em; }
 dt { font-weight: bold; margin-top: 0; margin-bottom: 0; }
 dd { margin-top: 0; margin-bottom: 0; }
@@ -230,26 +230,29 @@ the steps of the data integration process that are currently
 supported by LDIF.</p>
 <p style="text-align: left; margin-left: 120px;"><img alt="Example-architecture of an integration aware Linked Data application" src="img/linkeddataapp.png"></p>
 <h2 id="components">2. LDIF Components</h2>
-<p>The LDIF Framework consists of the Runtime Environment and a set of
-pluggable modules. The pluggable modules are organized as data access
-components, a data transformation components and a data output
-components.
+<p>The LDIF Framework consists of a Scheduler, Data Import and an Integration component with a set of
+pluggable modules. These modules are organized as data input, data transformation and data output.
 </p>
-<img alt="LDIF components" src="img/LDIFcomponents.png" height="92" width="299">
+<img alt="LDIF components" src="img/LDIFcomponents.png" height="92" width="299">   TODO:new picture, including scheduler
 <p>Currently, we have implemented the following modules: </p>
-<h3>Data Access</h3>
+
+
+<h3>Scheduler</h3>
+<p>
+The Scheduler is used for triggering pending data import jobs or integration jobs. It is configured with an XML document (see <a href="index.html#scheduler">Configuration</a>) and offers several ways to express when and how often a certain job should be executed.
+
+<br/>
+This component is useful when you want to load external data or run the integration periodically, otherwise you could just run the integration component.
+
+<h3>Data Import</h3>
 <p>LDIF provides access modules for replicating data sets locally via
 file download, crawling or SPARQL. These different types of <a href="#importjob">import jobs</a> generate <a href="#provenance">provenance
 metadata</a>,
-which is tracked throughout the integration process. The integration
-task expects input data to be represented as Named Graphs and be stored
-in <a href="http://sw.deri.org/2008/07/n-quads/">N-Quads format</a>
-accessible locally - the Web access modules convert any imported data
-into N-Quads format. Import jobs as well as integration jobs are
-managed by a <a href="index.html#scheduler">scheduler</a> that can be
+which is tracked throughout the integration process. Import jobs are
+managed by a scheduler that can be
 configured to refresh (<span style="font-style: italic;">hourly</span>,
 <span style="font-style: italic;">daily</span> etc.) the local cache
-for each source respectively the integrated data set. </p>
+for each source. </p>
 <h4>Triple/Quad Dump Import</h4>
 <p>In order to get a local replication of data sets from the Web of
 Data
@@ -271,10 +274,24 @@ LDIF's
 SPARQL access module. The relevant data to be queried can be further
 specified in the configuration file for a SPARQL import job. Data from
 each SPARQL import job gets tracked by its own named graph.</p>
-<h3>Transformation</h3>
+
+
+<h3>Integration</h3>
+TODO
+
+<h4>Data Input</h4>
+
+<p>The integration component expects input data to be represented as Named Graphs and be stored
+in <a href="http://sw.deri.org/2008/07/n-quads/">N-Quads format</a>
+accessible locally - the Web access modules convert any imported data
+into N-Quads format. </p>
+
+
+
+<h4>Transformation</h4>
 <p>LDIF provides trasformation modules for vocabulary mapping and
 identity resolution.</p>
-<h4>R2R Data Translation</h4>
+<h5>R2R Data Translation</h5>
 <p>LDIF employs the <a href="http://www4.wiwiss.fu-berlin.de/bizer/r2r/">R2R Framework</a>
 to translate Web data that is represented using terms from different
 vocabularies into a single target vocabulary. Vocabulary mappings are
@@ -295,7 +312,7 @@ integration use case can also be expressed in OWL/RDFS (e.g <span style="font-fa
 The <a href="http://www4.wiwiss.fu-berlin.de/bizer/r2r/spec/">specification
 and user manual</a> is provided as a separate document.<br>
 </p>
-<h4>Silk Identity Resolution </h4>
+<h5>Silk Identity Resolution </h5>
 <p>
 LDIF employs the <a href="http://www4.wiwiss.fu-berlin.de/bizer/silk/">Silk
 Link Discovery Framework</a>
@@ -315,9 +332,9 @@ the declarative <a href="http://www4.wiwiss.fu-berlin.de/bizer/silk/spec/">Silk 
 Specification Language</a>.</p>
 <p>An overview and examples can be found on the <a href="http://www4.wiwiss.fu-berlin.de/bizer/silk/">Silk website</a>.<br>
 </p>
-<h3>Data Output</h3>
+<h4>Data Output</h4>
 <p>Two output formats are currently supported by LDIF.</p>
-<h4>N-Quads Writer</h4>
+<h5>N-Quads Writer</h5>
 <p>The N-Quads writer dumps the final output of the integration
 workflow into a single N-Quads file. This file contains the translated
 versions of all graphs from the input graph set as well as the content
@@ -328,41 +345,67 @@ output. In future releases, we will use the provenance information for
 data quality assessment and data fusion (see
 <a href="#nextSteps">Next Steps</a>).
 </p>
-<h4>N-Triples Writer</h4>
+<h5>N-Triples Writer</h5>
 <p>The N-Triples writer dumps the final output of the integration
 workflow into a single N-Triples file. Since there exists no connection
 to the provenance data anymore after outputting it as N-Triple, the
 provenance data is discarded instead of being output.<br>
 </p>
-<h3>Runtime Environment </h3>
-<p style="text-align: left;"> The Runtime Environment manages the data
-flow between the various stages and the caching of the intermediate
-results. In order to parallelize the data processing, the data is
+<h4>Runtime Environments </h4>
+TODO
+<p>The Runtime Environment for the Integration component manages the data
+flow between the various stages/modules and the caching of the intermediate
+results.  In order to parallelize the data processing, the data is
 partitioned into entities prior to supplying it to a transformation
 module. An entity represents a Web resource together with all data that
 is required by a transformation module to process this resource.
 Entities consist of one or more graph paths and include a provenance
 URI for each node. Each transformation module specifies which paths
-should be included into the entities it processes. Splitting the work
-into fine-granular entities, allows LDIF to parallelize the work into
-multiple threats and will, in the next release, allow thework to be
-parallelized on multiple machines using Hadoop. For the LDIF V0.4
-release, we have implemented an
+should be included into the entities it processes.
+<br/>We have implemented an
 in-memory version, an RDF store version and a Hadoop version of the
-runtime environment. The in-memory implementation keeps
+runtime environment.
+Depending of the data set size and yout available resources, you could choose which runtime environment to use.
+
+         Splitting the work
+into fine-granular entities, allows LDIF to parallelize the work.
+
+</p>
+
+<h5>Single machine / In-memory</h5>
+<p>  The in-memory implementation keeps
 all intermediate results in
-memory. It is very fast but scales only depending on the amount of
+memory.
+    It is very fast but scales only depending on the amount of
 memory
 available. For instance, integrating 25 million triples required 5 GB
 memory within one of our <a href="benchmark.html">experiments</a>. The
 RDF store version, is at the moment implemented using <a href="http://openjena.org/TDB/">Jena TDB</a>.
 It allows for integrating data sets than won't fit into memory anymore,
-but also takes more time to execute. The Hadoop version is for scaling
-out to large data sets. In version 0.3 of LDIF we added a <a href="#scheduler">scheduler</a>,
-which starts pending import or integration jobs. It offers several ways
-to express when and how often a certain job should be executed. These
-schedule times are stored with each job configuration.<br>
+but also takes more time to execute.
+
+- into  multiple threats
+- max 100m quads / 20GB ram
+- good for small datasets
+- limited by the amount of memory
 </p>
+
+<h5>Single machine / RDF Store</h5>
+
+<p>
+
+  TODO
+</p>
+<h5>Cluster / Hadoop</h5>
+<p>
+This implementation allows the work to be parallelized on multiple machines using Hadoop. It has been tested on a 3-nodes cluster, some perfomance figures are provided in <a href="http://www.assembla.com/spaces/ldif/wiki/Benchmark">this page</a>.
+    TODO
+
+
+
+</p>
+
+
 <h3 id="nextSteps">Next steps for LDIF</h3>
 <p>Over the next months, we plan to extend LDIF along the
 following lines:<br>
