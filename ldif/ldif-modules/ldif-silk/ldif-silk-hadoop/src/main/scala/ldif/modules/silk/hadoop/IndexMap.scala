@@ -32,7 +32,7 @@ class IndexMap extends MapReduceBase
                with Mapper[IntWritable, EntityWritable, IntWritable, IndexedEntityWritable]
                with Configured {
 
-  val blockCount = 1000
+  val blockCount = 100
   
   protected override def map(key: IntWritable,
                              entity: EntityWritable,

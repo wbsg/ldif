@@ -20,7 +20,7 @@ $(document).ready(function() {
     var $dialog = $('<div id="about_dialog"></div>')
         .html(
             '<p style="font-weight: bold;">LDIF Workbench</p>' +
-            '<p style="margin:5px;">Copyright 2011 Freie Universität Berlin, MediaEvent Services GmbH &amp; Co. KG</p>' +
+            '<p style="margin:5px;">Copyright 2011-2012 Freie Universität Berlin, MediaEvent Services GmbH &amp; Co. KG</p>' +
             '<p style="margin:5px;">Licensed under the <a target="_blank" href="http://www.apache.org/licenses/LICENSE-2.0">Apache License, Version 2.0</a></p>' +
             '<p style="font-weight: bold;">Website</p>' +
             '<p style="margin:5px;"><a target="_blank" href="http://www4.wiwiss.fu-berlin.de/bizer/ldif/">http://www4.wiwiss.fu-berlin.de/bizer/ldif/</a></p>' +

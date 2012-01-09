@@ -707,8 +707,8 @@ referenced by the <a href="#importjob">import jobs</a>.<br>
 <h3>Single Machine</h3>
 <p>To see LDIF in action, please follow these steps:</p>
 <ul>
-  <li><a href="http://www4.wiwiss.fu-berlin.de/bizer/ldif/releases/ldif-0.4.zip">download
-the latest release</a></li>
+  <li><a href="http://www4.wiwiss.fu-berlin.de/bizer/ldif/releases/ldif-0.4.zip">download</a>
+the latest release</li>
   <li>unpack the archive and change into the extracted directory <tt>ldif-0.4</tt></li>
   <li>run LDIF on the <a href="index.html#example1">Music example</a></li>
   <ul>
@@ -730,10 +730,13 @@ Configuration</a> (<tt>examples/music/light/integrationJob.xml</tt>) </p>
 <p>To see LDIF running with a quad store (TDB) as backend, please follow these steps:</p>
 
 <ul>
-<li><a href="http://www4.wiwiss.fu-berlin.de/bizer/ldif/releases/ldif-0.4.zip">download
-the latest release</a></li><li>unpack the archive and change into the extracted directory <tt>ldif-0.4</tt></li><li>run LDIF on the <a href="index.html#example1">Music example</a></li><ul><li>under Linux / Mac OS type:</li><pre>bin/ldif examples/music/light/schedulerConfigTDB.xml</pre><li>Windows: This should work under Windows with Cygwin, but has not been tested, yet. (TDB relies on the <a href="http://manpages.ubuntu.com/manpages/hardy/en/man1/sort.1.html">sort</a> program for bulk loading)<br>
+<li><a href="http://www4.wiwiss.fu-berlin.de/bizer/ldif/releases/ldif-0.4.zip">download</a>
+the latest release</li><li>unpack the archive and change into the extracted directory <tt>ldif-0.4</tt></li><li>run LDIF on the <a href="index.html#example1">Music example</a></li><ul><li>under Linux / Mac OS type:</li><pre>bin/ldif examples/music/light/schedulerConfigTDB.xml</pre>
+    </li>  <li>Windows: This should work under Windows with Cygwin, but has not been tested, yet. (TDB relies on the <a href="http://manpages.ubuntu.com/manpages/hardy/en/man1/sort.1.html">sort</a> program for bulk loading)<br>
 </li></ul>
 </ul>
+
+The configuration properties that need to be used are <code>quadStoreType</code> and <code>databaseLocation</code> (see the <a href="index.html#configurationproperties">Configuration section</a> from more details).
 
 <p>The example will run in about 3 minutes. Integration results will be
 written into <tt>integrated_music_light.nq</tt> in the working
@@ -747,14 +750,64 @@ Configuration</a> (<tt>examples/music/light/integrationJob.xml</tt>) </p>
 <p>To see LDIF running on a Hadoop cluster, please follow these steps:</p>
 <ul>
   <li>set up and configure a Hadoop (0.20.2+) <a href="http://hadoop.apache.org/common/docs/current/cluster_setup.html">cluster</a> </li>
-  <li>ssh to a cluster node</li>
-  <ul><li><a href="http://www4.wiwiss.fu-berlin.de/bizer/ldif/releases/ldif-0.4.zip">download</a>
+   <li>ssh to a cluster node</li>
+  <ul><li><a href="http://www4.wiwiss.fu-berlin.de/bizer/ldif/releases/ldif-hadoop-0.4.zip">download</a>
 the latest LDIF release</li>
   <li>unpack the archive and change into the extracted directory <tt>ldif-0.4</tt></li>
   <li>run LDIF on the <a href="index.html#example1">Music example</a></li>
     <pre>hadoop jar ldif-hadoop-0.4 examples/music/light/schedulerConfig.xml</pre>
   </ul>
 </ul>
+
+Here is a list of Hadoop configuration parameters that could be useful to tune when running LDIF with big data set:
+
+<table>
+    <tbody>
+    <tr>
+        <th> Parameter</th>
+        <th> Description</th>
+        <th> Recommended value</th>
+    </tr>
+    <tr class="odd">
+        <td>mapred.job.reuse.jvm.num.tasks</td>
+        <td>Reuse of a JVM across multiple tasks of the same job</td>
+        <td>-1</td>
+    </tr>
+
+    <tr class="even">
+        <td>mapred.min.split.size</td>
+        <td>The minimum size chunk that map input should be split into</td>
+        <td>268435456</td>
+    </tr>
+
+
+    <tr class="odd">
+        <td>mapred.map.child.java.opts</td>
+        <td>Specify the heap-size for the child jvms</td>
+        <td>-Xmx1G</td>
+    </tr>
+
+     <tr class="even">
+        <td>mapred.output.compress</td>
+        <td>Enable output compression</td>
+        <td>true</td>
+    </tr>
+        <tr class="odd">
+        <td>mapred.output.compression.type</td>
+        <td>How the compression is applied</td>
+        <td>BLOCK</td>
+    </tr>
+
+        <tr class="even">
+        <td>mapred.output.compression.code</td>
+        <td>The compression codec class that is used for compression/decompression</td>
+        <td>org.apache.hadoop.io.compress.GzipCodec</td>
+    </tr>
+
+    </tbody>
+</table>
+
+
 
 <h2 id="examples">5. Examples</h2>
 <br>
