@@ -21,7 +21,7 @@ package ldif.local
 import config.SchedulerConfig
 import java.io.File
 import org.slf4j.LoggerFactory
-import ldif.util.LogUtil
+import ldif.util.{ValidationException, LogUtil}
 ;
 
 
@@ -32,8 +32,8 @@ object Ldif {
   def main(args : Array[String])
   {
     var debug = false
-    if(args.length<1) {
-      log.warn("No configuration file given.")
+    if(args.length==0) {
+      log.warn("No configuration file given. \nUsage: Ldif <scheduler-configuration-file>")
       System.exit(1)
     }
     else if(args.length>=2 && args(0)=="--debug")
@@ -49,7 +49,17 @@ object Ldif {
       log.warn("Configuration file not found at "+ configFile.getCanonicalPath)
     else {
       // Setup Scheduler
-      val config = SchedulerConfig.load(configFile)
+      var config : SchedulerConfig = null
+      try {
+        config = SchedulerConfig.load(configFile)
+      }
+      catch {
+        case e:ValidationException => {
+          log.error("Invalid Scheduler configuration: "+e.toString +
+            "\n- More details: http://www.assembla.com/code/ldif/git/nodes/ldif/ldif-core/src/main/resources/xsd/SchedulerConfig.xsd")
+          System.exit(1)
+        }
+      }
       val scheduler = new Scheduler(config, debug)
 
       // Evaluate jobs at most once. Evaluate import first, then integrate.

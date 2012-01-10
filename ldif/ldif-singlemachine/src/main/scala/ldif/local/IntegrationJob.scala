@@ -257,9 +257,9 @@ class IntegrationJob (val config : IntegrationConfig, debugMode : Boolean = fals
     outputQueue
   }
 
-    /**
-     * Performs data fusion
-     */
+  /**
+   * Performs data fusion
+   */
   private def fuseQuads(sieveSpecDir : File, inputQuadsReader : QuadReader) : QuadReader =
   {
     val sieveModule = SieveModule.load(sieveSpecDir)
@@ -411,8 +411,8 @@ object IntegrationJob {
   def main(args : Array[String])
   {
     if(args.length == 0) {
-      log.warn("Usage: IntegrationJob <integration job config file>")
-      System.exit(-1)
+      log.warn("No configuration file given. \nUsage: IntegrationJob <integration job configuration file>")
+      System.exit(1)
     }
     var debug = false
     val configFile = new File(args(args.length-1))
@@ -420,7 +420,19 @@ object IntegrationJob {
     if(args.length>=2 && args(0)=="--debug")
       debug = true
 
-    val integrator = new IntegrationJob(IntegrationConfig.load(configFile), debug)
+    var config : IntegrationConfig = null
+    try {
+      config = IntegrationConfig.load(configFile)
+    }
+    catch {
+      case e:ValidationException => {
+        log.error("Invalid Integration Job configuration: "+e.toString +
+          "\n- More details: http://www.assembla.com/code/ldif/git/nodes/ldif/ldif-core/src/main/resources/xsd/IntegrationJob.xsd")
+        System.exit(1)
+      }
+    }
+
+    val integrator = new IntegrationJob(config, debug)
     integrator.runIntegration
   }
 }

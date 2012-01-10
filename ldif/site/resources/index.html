@@ -326,7 +326,7 @@ single target URI within the output data. In addition, it adds
 owl:sameAs links pointing at the original URIs, which makes it possible
 for applications to refer back to the data sources on the Web. If the
 LDIF input data already contains owl:sameAs links, the referenced
-URIsare normalized accordingly (optional, see <a href="#configuration">configuration</a>).
+URIs are normalized accordingly (optional, see <a href="#configuration">configuration</a>).
 Silk is a
 flexible identity
 resolution framework that allows the user to specify identity
@@ -368,7 +368,7 @@ should be included into the entities it processes.
 <br/>We have implemented an
 in-memory version, an RDF store version and a Hadoop version of the
 runtime environment.
-Depending of the data set size and yout available resources, you could choose which runtime environment to use.
+Depending of the data set size and your available resources, you can choose the runtime environment to use.
 
          Splitting the work
 into fine-granular entities, allows LDIF to parallelize the work.
@@ -382,7 +382,7 @@ memory.
     It is fast but its scalability is limited by the amount of
 available memory. For instance, integrating 25 million triples required 5 GB
 memory within one of our <a href="benchmark.html">experiments</a>. Parallelization is achieved by
-distributing the work (entities) over several threats.
+distributing the work (entities) to multiple threads.
 
 </p>
 
@@ -398,9 +398,9 @@ is that it also takes more time to execute.
 </p>
 <h5>Cluster / Hadoop</h5>
 <p>
-This implementation of the run time environment allows the work to be parallelized on multiple machines using Hadoop. Each phase in the integration flow has been ported to be executable on a Hadoop cluster. Some initial perfomance figures comparing the run times of the in-memory, quad store and Hadoop version against different data set sizes are provided in the <a href="http://www.assembla.com/spaces/ldif/wiki/Benchmark">Benchmark Wiki</a>.
-
-
+This implementation of the run time environment allows the work to be parallelized on multiple machines using Hadoop.
+Each phase in the integration flow has been ported to be executable on a Hadoop cluster.
+Some initial performance figures comparing the run times of the in-memory, quad store and Hadoop version against different data set sizes are provided in the <a href="http://www.assembla.com/spaces/ldif/wiki/Benchmark">Benchmark Wiki</a>.
 </p>
 
 
@@ -677,8 +677,8 @@ be run. Valid values are: <span style="font-family: monospace;">onStartup</span>
   <li><i>Quad Import Job</i> – import N-Quad dumps</li>
   <li><i>Triple Import Job</i> – import RDF/N-Triple dumps</li>
   <li><i>Crawl Import Job</i> – import by dereferencing URIs as RDF
-data, using the LDspider Web Crawling Framework</li>
-  <li><i>SPARQL Import Job</i> – import by quering a SPARQL endpoint</li>
+data, using the LDSpider Web Crawling Framework</li>
+  <li><i>SPARQL Import Job</i> – import by querying a SPARQL endpoint</li>
 </ul>
 <h4>Quad Import</h4>
 <p>A typical config file for a Quad Import Job looks like this: </p>
@@ -758,7 +758,7 @@ the latest release</li>
 <p>The example will run in about 3 minutes. Integration results will be
 written into <tt>integrated_music_light.nq</tt> in the working
 directory, containing both integrated data and <a href="index.html#provenance">provenance metadata</a>. <br>
-Learrn more about LDIF configuration by looking at the <a href="index.html#scheduler">Schedule Job Configuration</a> (<tt>examples/music/light/schedulerConfig.xml</tt>)
+Learn more about LDIF configuration by looking at the <a href="index.html#scheduler">Schedule Job Configuration</a> (<tt>examples/music/light/schedulerConfig.xml</tt>)
 and the <a href="index.html#integrationjob">Integration Job
 Configuration</a> (<tt>examples/music/light/integrationJob.xml</tt>) </p>
 
@@ -778,7 +778,7 @@ The configuration properties that need to be used are <code>quadStoreType</code>
 <p>The example will run in about 3 minutes. Integration results will be
 written into <tt>integrated_music_light.nq</tt> in the working
 directory, containing both integrated data and <a href="index.html#provenance">provenance metadata</a>. <br>
-Learrn more about LDIF configuration by looking at the <a href="index.html#scheduler">Schedule Job Configuration</a> (<tt>examples/music/light/schedulerConfig.xml</tt>)
+Learn more about LDIF configuration by looking at the <a href="index.html#scheduler">Schedule Job Configuration</a> (<tt>examples/music/light/schedulerConfig.xml</tt>)
 and the <a href="index.html#integrationjob">Integration Job
 Configuration</a> (<tt>examples/music/light/integrationJob.xml</tt>) </p>
 
@@ -796,7 +796,11 @@ the latest LDIF release</li>
   </ul>
 </ul>
 
-Here is a list of Hadoop configuration parameters that could be useful to tune when running LDIF with big data set:
+<p>Integration results will be written into the <tt>/user/hduser/integrated_music_light.nq</tt> directory in the Hadoop distributed file system (HDFS).</li> You can check the content of this directory using the following command: <tt>hadoop dfs -ls /user/hduser/integrated_music_light.nq</tt></p>
+
+<p>In order to have a cleaner console output, consider replacing the Hadoop default logging configuration (<tt>[HADOOP-HOME]/conf/log4j.properties</tt>) with our customized <a href ="http://www.assembla.com/code/ldif/git/nodes/ldif/resources/hadoop_log4j.properties">log4j.properties</a> file.</p>
+
+Here is a list of Hadoop configuration parameters that can be useful to tune when running LDIF with big datasets:
 
 <table>
     <tbody>
@@ -844,11 +848,13 @@ Here is a list of Hadoop configuration parameters that could be useful to tune w
     </tbody>
 </table>
 
+Learn more about Hadoop configuration by looking at our <a href="http://www.assembla.com/spaces/ldif/wiki/Benchmark">Benchmark</a> and <a href="http://www.assembla.com/spaces/ldif/wiki/Hadoop_troubleshooting">Troubleshooting</a> wiki pages.
+
 
 
 <h2 id="examples">5. Examples</h2>
 <br>
-This section provides two LDIF usage examples.<br>
+This section presents two LDIF usage examples.<br>
 <ol>
   <li>The <a href="#example1">Music example</a> shows how different
 music-related data
@@ -1109,7 +1115,7 @@ Perform source syntax validation before loading data (optional) <br>
 Support for external sameAs links <br>
 RDF/N-Triples data output module <br>
 Support for bzip2 source compression <br>
-Improved loading perfomance <br>
+Improved loading performance <br>
 Memory usage improvements: caching factum rows and string interning
 only for relevant data </td>
       <td> 8/25/2011</td>
