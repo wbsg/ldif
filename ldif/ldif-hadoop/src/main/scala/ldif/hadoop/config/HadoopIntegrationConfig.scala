@@ -41,9 +41,9 @@ object HadoopIntegrationConfig
 
     // Read in properties
     var properties = new Properties
-       val propertiesFile = getFile(xml, "properties", baseDir)
-       if (propertiesFile != null)
-         properties = ConfigProperties.loadProperties(propertiesFile)
+    val propertiesFile = getFile(xml, "properties", baseDir)
+    if (propertiesFile != null)
+      properties = ConfigProperties.loadProperties(propertiesFile)
 
     var runSchedule : String = (xml \ "runSchedule" text)
     if (runSchedule == "" || runSchedule == null)

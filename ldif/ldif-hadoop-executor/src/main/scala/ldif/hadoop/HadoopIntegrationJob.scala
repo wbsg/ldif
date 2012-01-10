@@ -35,8 +35,8 @@ import org.apache.hadoop.conf.Configuration
 import ldif.modules.silk.hadoop.SilkHadoopExecutor
 import runtime._
 import de.fuberlin.wiwiss.silk.util.DPair
-import ldif.util.{Consts, StopWatch, LogUtil}
 import java.util.Calendar
+import ldif.util.{ValidationException, Consts, StopWatch, LogUtil}
 
 class HadoopIntegrationJob(val config : HadoopIntegrationConfig, debug : Boolean = false) {
 
@@ -85,7 +85,7 @@ class HadoopIntegrationJob(val config : HadoopIntegrationConfig, debug : Boolean
     move(allQuadsDir, r2rOutput)
     var sameAsLinks : String = null
     if(useExternalSameAsLinks)
-     sameAsLinks = getAllLinks(silkOutput, new Path(externalSameAsLinksDir))
+      sameAsLinks = getAllLinks(silkOutput, new Path(externalSameAsLinksDir))
     else sameAsLinks = getAllLinks(silkOutput)
 
     var outputPath = r2rOutput
@@ -156,7 +156,7 @@ class HadoopIntegrationJob(val config : HadoopIntegrationConfig, debug : Boolean
       for (status <- sameAsFromSilkSeq.filterNot(_.getPath.getName.startsWith("_")))
         hdfs.rename(status.getPath, new Path(allSameAsLinks+Consts.fileSeparator+path.getName+status.getPath.getName))
     }
-    clean(sameAsFromSilk.head.getParent)
+    if(!debug) clean(sameAsFromSilk.head.getParent)
 
     if (sameAsFromSource != null) {
       move(sameAsFromSource, allSameAsLinks, false)
@@ -185,7 +185,7 @@ class HadoopIntegrationJob(val config : HadoopIntegrationConfig, debug : Boolean
     if (outputAllQuads)
       configParameters = configParameters.copy(allQuadsPath = allQuadsDir)
     if (!ignoreProvenance)
-          configParameters = configParameters.copy(provenanceQuadsPath = provenanceQuadsDir)
+      configParameters = configParameters.copy(provenanceQuadsPath = provenanceQuadsDir)
     buildEntities(config.sources, entitiesPath, entityDescriptions, configParameters)
     log.info("Time needed to load dump and build entities for mapping phase: " + stopWatch.getTimeSpanInSeconds + "s")
 
@@ -231,7 +231,7 @@ class HadoopIntegrationJob(val config : HadoopIntegrationConfig, debug : Boolean
 
       outputPath
     }
-    clean(entitiesDirectory)
+    if(!debug) clean(entitiesDirectory)
     result
   }
 
@@ -304,8 +304,8 @@ object HadoopIntegrationJob {
   def main(args : Array[String])
   {
     if(args.length == 0) {
-      log.warn("Usage: HadoopIntegrationJob <integration job config file>")
-      System.exit(-1)
+      log.warn("No configuration file given. \nUsage: HadoopIntegrationJob <integration-configuration-file>")
+      System.exit(1)
     }
     var debug = false
     val configFile = new File(args(args.length-1))
@@ -313,7 +313,19 @@ object HadoopIntegrationJob {
     if(args.length>=2 && args(0)=="--debug")
       debug = true
 
-    val integrator = new HadoopIntegrationJob(HadoopIntegrationConfig.load(configFile))
+    var config : HadoopIntegrationConfig = null
+    try {
+      config = HadoopIntegrationConfig.load(configFile)
+    }
+    catch {
+      case e:ValidationException => {
+        log.error("Invalid Integration Job configuration: "+e.toString +
+          "\n- More details: http://www.assembla.com/code/ldif/git/nodes/ldif/ldif-core/src/main/resources/xsd/IntegrationJob.xsd")
+        System.exit(1)
+      }
+    }
+
+    val integrator = new HadoopIntegrationJob(config, debug)
     integrator.runIntegration()
   }
 }
