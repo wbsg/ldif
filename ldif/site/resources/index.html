@@ -117,15 +117,19 @@ Start</span></a> </div>
 </div>
 <h2 id="news">News</h2>
 <ul>
-  <li><strong>01/10/2012: Version 0.4 released.</strong> This
-release adds features concerning scalability to larger source
-data sets. A triple store backed version scales to larger data sets on
-a single machine with lower memory consumption at the expense of
-processing time. And a Hadoop version of the
-LDIF run time system now allows for processing large data sets on
-a Hadoop cluster. The benchmark section is updated with
-figures comparing all three run time variations.<br>
-    <strong></strong></li>
+  <li>
+
+
+      <strong>01/10/2012: Version 0.4 Scale-out released.</strong>  Up till now, LDIF stored data
+purely in-memory which restricted the amount of data that could be
+processed. Version 0.4 provides two alternative implementations of the LDIF
+runtime environment which allow LDIF to scale to large data sets: 1. The new
+triple store backed implementation scales to larger data sets on a single
+machine with lower memory consumption at the expense of processing time. 2.
+The new Hadoop-based implementation provides for processing very large data
+sets on a Hadoop cluster, for instance within Amazon EC2. A comparison of the
+performance of all three implementations of the runtime environment is found
+on the <a href="http://www.assembla.com/spaces/ldif/wiki/Benchmark">LDIF benchmark page</a></li>
   <li><strong>11/03/2011: Version 0.3.1 released.</strong> Minor
 release: updated the music use case, optimized Entity Builder memory
 usage. </li>
@@ -157,8 +161,12 @@ a single target URI.</li>
   <li><a href="#about">About LDIF</a></li>
   <li><a href="#components">LDIF components</a></li>
   <li><a href="index.html#configuration">Configuration options</a></li>
-  <li><a href="#quickstart">Quick start</a><br>
-  </li>
+  <li><a href="#quickstart">Quick start</a></li>
+  <ul>
+    <li><a href="#inmemoryquickstart">Single machine / In-memory</a></li>
+    <li><a href="#rdfstorequickstart">Single machine / RDF Store</a></li>
+    <li><a href="#hadoopquickstart">Cluster / Hadoop</a></li>
+  </ul>
   <li><a href="#examples">Examples</a><br>
   </li>
   <ul>
@@ -356,7 +364,7 @@ provenance data is discarded instead of being output.<br>
 </p>
 <h4>Runtime Environments </h4>
 
-<p>The Runtime Environment for the Integration component manages the data
+<p>The Runtime Environment for the integration component manages the data
 flow between the various stages/modules and the caching of the intermediate
 results.  In order to parallelize the data processing, the data is
 partitioned into entities prior to supplying it to a transformation
@@ -365,14 +373,13 @@ is required by a transformation module to process this resource.
 Entities consist of one or more graph paths and include a graph
 URI for each node. Each transformation module specifies which paths
 should be included into the entities it processes.
-<br/>We have implemented an
-in-memory version, an RDF store version and a Hadoop version of the
-runtime environment.
-Depending of the data set size and your available resources, you can choose the runtime environment to use.
-
-         Splitting the work
-into fine-granular entities, allows LDIF to parallelize the work.
-
+<br/>Splitting the work into fine-granular entities, allows LDIF to parallelize
+the work.
+LDIF provides three implementations of the Runtime Environment:  1. the
+in-memory version, 2. the RDF store version and 3. the Hadoop version.
+Depending of the size of your data set and the available computing
+resources, you can choose the runtime environment that best fits your use
+case.
 </p>
 
 <h5>Single machine / In-memory</h5>
@@ -389,16 +396,17 @@ distributing the work (entities) to multiple threads.
 <h5>Single machine / RDF Store</h5>
 
 <p>
-This version of the run time environment uses an RDF store as backend.
-At the moment the only supported implementation is <a href="http://openjena.org/TDB/">Jena TDB</a>.
-For it to work, LDIF entity descriptions are converted to SPARQL queries and the query result is then
-transformed to entities.
-This run time environment allows for integrating data sets than won't fit into memory anymore. The downside
-is that it also takes more time to execute.
+This implementation of the runtime environment uses an  <a href="http://openjena.org/TDB/">Jena TDB RDF store</a> to
+store intermediate results. The communication between the RDF store and the
+runtime environment is realized in the form of SPARQL queries. This runtime
+environment allows you to process data sets than don't fit into memory
+anymore. The downside is that the RDF Store implementation is slower as the
+In-memory implementation.
 </p>
 <h5>Cluster / Hadoop</h5>
 <p>
-This implementation of the run time environment allows the work to be parallelized on multiple machines using Hadoop.
+This implementation of the runtime environment allows you to parallelize
+the work onto multiple machines using Hadoop.
 Each phase in the integration flow has been ported to be executable on a Hadoop cluster.
 Some initial performance figures comparing the run times of the in-memory, quad store and Hadoop version against different data set sizes are provided in the <a href="http://www.assembla.com/spaces/ldif/wiki/Benchmark">Benchmark Wiki</a>.
 </p>
@@ -741,7 +749,10 @@ referenced by the <a href="#importjob">import jobs</a>.<br>
 </p>
 <pre>&lt;dataSource&gt;<br>    &lt;label&gt;DBpedia&lt;/label&gt;<br>    &lt;description&gt;DBpedia ist an RDF version of Wikipedia&lt;/description&gt;<br>   &lt;homepage&gt;http://dbpedia.org&lt;/homepage&gt;<br>&lt;/dataSource&gt;<br></pre>
 <h2 id="quickstart">4. Quick start</h2>
-<h3>Single Machine</h3>
+
+<p>This section explains you how to run the different versions of LDIF.</p>
+
+<h3 id="inmemoryquickstart">Single machine / In-memory</h3>
 <p>To see LDIF in action, please follow these steps:</p>
 <ul>
   <li><a href="http://www4.wiwiss.fu-berlin.de/bizer/ldif/releases/ldif-0.4.zip">download</a>
@@ -762,7 +773,7 @@ Learn more about LDIF configuration by looking at the <a href="index.html#schedu
 and the <a href="index.html#integrationjob">Integration Job
 Configuration</a> (<tt>examples/music/light/integrationJob.xml</tt>) </p>
 
-<h3>TDB<br>
+<h3 id="rdfstorequickstart">Single machine / RDF Store<br>
 </h3>
 <p>To see LDIF running with a quad store (TDB) as backend, please follow these steps:</p>
 
@@ -783,7 +794,7 @@ and the <a href="index.html#integrationjob">Integration Job
 Configuration</a> (<tt>examples/music/light/integrationJob.xml</tt>) </p>
 
 
-<h3>Hadoop</h3>
+<h3 id="hadoopquickstart">Cluster / Hadoop</h3>
 <p>To see LDIF running on a Hadoop cluster, please follow these steps:</p>
 <ul>
   <li>set up and configure a Hadoop (0.20.2) <a href="http://hadoop.apache.org/common/docs/current/cluster_setup.html">cluster</a> </li>
@@ -798,9 +809,11 @@ the latest LDIF release</li>
 
 <p>Integration results will be written into the <tt>/user/hduser/integrated_music_light.nq</tt> directory in the Hadoop distributed file system (HDFS).</li> You can check the content of this directory using the following command: <tt>hadoop dfs -ls /user/hduser/integrated_music_light.nq</tt></p>
 
+<p>Learn more about Hadoop configuration by looking at our <a href="http://www.assembla.com/spaces/ldif/wiki/Benchmark">Benchmark</a> and <a href="http://www.assembla.com/spaces/ldif/wiki/Hadoop_troubleshooting">Troubleshooting</a> wiki pages.</p>
+
 <p>In order to have a cleaner console output, consider replacing the Hadoop default logging configuration (<tt>[HADOOP-HOME]/conf/log4j.properties</tt>) with our customized <a href ="http://www.assembla.com/code/ldif/git/nodes/ldif/resources/hadoop_log4j.properties">log4j.properties</a> file.</p>
 
-Here is a list of Hadoop configuration parameters that can be useful to tune when running LDIF with big datasets:
+<p>Here is a list of Hadoop configuration parameters that can be useful to tune when running LDIF with big datasets:</p>
 
 <table>
     <tbody>
@@ -847,10 +860,6 @@ Here is a list of Hadoop configuration parameters that can be useful to tune whe
 
     </tbody>
 </table>
-
-Learn more about Hadoop configuration by looking at our <a href="http://www.assembla.com/spaces/ldif/wiki/Benchmark">Benchmark</a> and <a href="http://www.assembla.com/spaces/ldif/wiki/Hadoop_troubleshooting">Troubleshooting</a> wiki pages.
-
-
 
 <h2 id="examples">5. Examples</h2>
 <br>
@@ -1092,8 +1101,11 @@ License</a>.
     </tr>
     <tr class="odd">
       <td> 0.4</td>
-      <td>Added RDF Store run time system support<br>
-Implemented LDIF Hadoop run time system<br>
+      <td>Added two new implementations of the runtime environment:<br/>
+1. The triple store backed implementation scales to larger data sets on a
+single machine <br/>
+2. The Hadoop-based implementation allows you to run LDIF on clusters with
+multiple machines <br/>
 
       </td>
       <td> 01/10/2012</td>
