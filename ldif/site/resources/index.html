@@ -398,7 +398,7 @@ is that it also takes more time to execute.
 </p>
 <h5>Cluster / Hadoop</h5>
 <p>
-This implementation of the run time environment allows the work to be parallelized on multiple machines using Hadoop. Each phase in the integration flow has been ported to be executable on a Hadoop cluster. It has only been tested on a 3-nodes cluster, yet, and tests on larger clusters will follow soon. Some perfomance figures comparing the run times of the in-memory, quad store and Hadoop version against different data set sizes are provided in the <a href="http://www.assembla.com/spaces/ldif/wiki/Benchmark">Benchmark Wiki</a>.
+This implementation of the run time environment allows the work to be parallelized on multiple machines using Hadoop. Each phase in the integration flow has been ported to be executable on a Hadoop cluster. Some initial perfomance figures comparing the run times of the in-memory, quad store and Hadoop version against different data set sizes are provided in the <a href="http://www.assembla.com/spaces/ldif/wiki/Benchmark">Benchmark Wiki</a>.
 
 
 </p>
@@ -786,7 +786,7 @@ Configuration</a> (<tt>examples/music/light/integrationJob.xml</tt>) </p>
 <h3>Hadoop</h3>
 <p>To see LDIF running on a Hadoop cluster, please follow these steps:</p>
 <ul>
-  <li>set up and configure a Hadoop (0.20.2+) <a href="http://hadoop.apache.org/common/docs/current/cluster_setup.html">cluster</a> </li>
+  <li>set up and configure a Hadoop (0.20.2) <a href="http://hadoop.apache.org/common/docs/current/cluster_setup.html">cluster</a> </li>
    <li>ssh to a cluster node</li>
   <ul><li><a href="http://www4.wiwiss.fu-berlin.de/bizer/ldif/releases/ldif-hadoop-0.4.zip">download</a>
 the latest LDIF release</li>
