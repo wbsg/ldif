@@ -803,11 +803,13 @@ Configuration</a> (<tt>examples/music/light/integrationJob.xml</tt>) </p>
 the latest LDIF release</li>
   <li>unpack the archive and change into the extracted directory <tt>ldif-hadoop-0.4</tt></li>
   <li>run LDIF on the <a href="index.html#example1">Music example</a></li>
-    <pre>hadoop jar ldif-hadoop-0.4.jar examples/music/light/schedulerConfig.xml</pre>
+    <pre>hadoop jar lib/ldif-hadoop-0.4.jar scheduler examples/music/light/schedulerConfig.xml</pre>
   </ul>
 </ul>
 
-<p>Integration results will be written into the <tt>/user/hduser/integrated_music_light.nq</tt> directory in the Hadoop distributed file system (HDFS).</li> You can check the content of this directory using the following command: <tt>hadoop dfs -ls /user/hduser/integrated_music_light.nq</tt></p>
+<p>This will import the data sets as defined by the LDIF import jobs and copies them afterwards to the Hadoop file system. Integration results will be written into the <tt>/user/hduser/integrated_music_light.nq</tt> directory in the Hadoop distributed file system (HDFS).</li> You can check the content of this directory using the following command: <tt>hadoop dfs -ls /user/hduser/integrated_music_light.nq</tt></p>
+
+<p>Please note that most of the run time for this small use case is dominated by the Hadoop overhead.</p>
 
 <p>Learn more about Hadoop configuration by looking at our <a href="http://www.assembla.com/spaces/ldif/wiki/Benchmark">Benchmark</a> and <a href="http://www.assembla.com/spaces/ldif/wiki/Hadoop_troubleshooting">Troubleshooting</a> wiki pages.</p>
 
