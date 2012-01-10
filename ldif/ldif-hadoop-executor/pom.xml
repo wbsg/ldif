@@ -50,8 +50,8 @@
                     </descriptorRefs>
                     <archive>
                         <manifest>
-                            <!--<mainClass>ldif.hadoop.HadoopIntegrationJob</mainClass>-->
-                            <mainClass>ldif.hadoop.Ldif</mainClass>
+                            <mainClass>ldif.hadoop.HadoopIntegrationJob</mainClass>
+                            <!--mainClass>ldif.hadoop.Ldif</mainClass-->
                         </manifest>
                     </archive>
                 </configuration>

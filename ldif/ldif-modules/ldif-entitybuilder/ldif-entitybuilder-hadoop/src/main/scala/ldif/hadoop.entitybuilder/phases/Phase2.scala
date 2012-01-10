@@ -29,10 +29,10 @@ import ldif.hadoop.utils.HadoopHelper
 import ldif.entity.{EntityDescription, EntityDescriptionMetadata, EntityDescriptionMetaDataExtractor}
 import org.slf4j.LoggerFactory
 import ldif.hadoop.io.{QuadSequenceFileOutput, QuadSequenceFileInput}
-import org.apache.hadoop.io.{NullWritable, IntWritable}
 import org.apache.hadoop.fs.{FileSystem, Path}
 import ldif.util.Consts
 import ldif.hadoop.runtime.ConfigParameters
+import org.apache.hadoop.io.{Text, NullWritable, IntWritable}
 
 /**
  *  Hadoop EntityBuilder - Phase 2
@@ -44,11 +44,14 @@ class Phase2 extends Configured with Tool {
     val conf = getConf
     val job = new JobConf(conf, classOf[Phase2])
     val getsTextInput = args(6).toBoolean
+    val useLzoInputFormar = args(7).toBoolean
 
     job.setJobName("HEB-Phase2")
     job.setNumReduceTasks(0)
 
     if(getsTextInput) {
+      if(useLzoInputFormar)
+        job.setInputFormat(Class.forName("com.hadoop.mapred.DeprecatedLzoTextInputFormat").asSubclass(classOf[InputFormat[Long, Text]]))
       job.setMapperClass(classOf[ExtractAndProcessQuadsMapper])
 
       // Check if sameAs links should be collected and add output collector
@@ -113,6 +116,7 @@ object Phase2 {
     val outputAllQuads = config.allQuadsPath != null
     val ignoreProvenance = config.provenanceQuadsPath == null
     val provenanceGraph = config.configProperties.getProperty("provenanceGraph", Consts.DEFAULT_PROVENANCE_GRAPH)
+    val useLzoInputFormat = config.configProperties.getProperty("useLzoInputFormat", "false").toLowerCase=="true"
 
     log.info("Starting phase 2 of the EntityBuilder: Filtering quads and creating initial value paths")
 
@@ -125,7 +129,7 @@ object Phase2 {
       hdfs.delete(hdPath, true)
 
     log.info("Output directory: " + out)
-    val res = ToolRunner.run(conf, new Phase2(), Array[String](in, out, useExternalSameAsLinks.toString, outputAllQuads.toString, ignoreProvenance.toString, provenanceGraph, config.getsTextInput.toString))
+    val res = ToolRunner.run(conf, new Phase2(), Array[String](in, out, useExternalSameAsLinks.toString, outputAllQuads.toString, ignoreProvenance.toString, provenanceGraph, config.getsTextInput.toString, useLzoInputFormat.toString))
 
     log.info("That's it. Took " + (System.currentTimeMillis-start)/1000.0 + "s")
 
