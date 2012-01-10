@@ -15,7 +15,7 @@ h1 { font: 170% sans-serif; margin: 0; }
 h2 { clear: both; font: 140% sans-serif; margin: 1.5em 0 -0.5em 0; }
 h3 { font: 120% sans-serif; margin: 1.5em 0 -0.5em 0; }
 h4 { font: 100% sans-serif; margin: 0.9em 0 -0.6em 0; }
-h5 { font: italic 100% sans-serif; }
+h5 { font: italic 100% sans-serif; margin: 0.7em 0 -0.8em 0;}
 pre { background: #fff6bb; font-family: monospace; line-height: 1.2em; padding: 1em 2em; }
 dt { font-weight: bold; margin-top: 0; margin-bottom: 0; }
 dd { margin-top: 0; margin-bottom: 0; }
@@ -307,8 +307,8 @@ manipulations. The syntax of the
 R2R Mapping Language is very similar to the query language SPARQL,
 which eases the learning curve. The expressivity of the language
 enabled us to deal with all requirements that we have encountered so
-far when translatingLinked Data from the Web into a target
-representation (evaluation in [2]).&nbsp; Simple
+far when translating Linked Data from the Web into a target
+representation (evaluation in [<a href="#references">2</a>]).&nbsp; Simple
 class/property-renaming mappings which often form the majority in an
 integration use case can also be expressed in OWL/RDFS (e.g <span style="font-family: monospace;">ns1:class rdfs:subClassOf ns2:clazz</span>).<span style="text-decoration: underline;"></span> </p>
 <p>An overview and examples for mappings are given on the <a href="http://www4.wiwiss.fu-berlin.de/bizer/r2r/">R2R website</a>.<br>
@@ -457,11 +457,7 @@ moment and the possible values for each property:</p>
   <li>
     <p><i>provenanceGraphURI</i> <br>
 Specify the graph
-containing the provenance information. As of LDIF V0.3.1, Quads from
-this
-graph are only written to the final output data set and are not
-processed
-any further in the integration workflow. Default graph name: <span style="font-family: monospace;">http://www4.wiwiss.fu-berlin.de/ldif/provenance</span></p>
+where the provenance information is stored. Default graph name: <span style="font-family: monospace;">http://www4.wiwiss.fu-berlin.de/ldif/provenance</span></p>
     <pre>provenanceGraphURI = http://www4.wiwiss.fu-berlin.de/ldif/provenance</pre>
   </li>
 </ul>
@@ -548,7 +544,7 @@ single target URI in the output data. Default: <span style="font-family: monospa
   <li>
     <p><i>provenanceGraphURI</i> <br>
 Specify the graph
-containing the provenance information. As of LDIF V0.3.1, Quads from
+containing the provenance information. Quads from
 this
 graph are only written to the final output data set and not processed
 any further in the integration workflow. Default graph name: <span style="font-family: monospace;">http://www4.wiwiss.fu-berlin.de/ldif/provenance</span></p>
@@ -794,9 +790,9 @@ Configuration</a> (<tt>examples/music/light/integrationJob.xml</tt>) </p>
    <li>ssh to a cluster node</li>
   <ul><li><a href="http://www4.wiwiss.fu-berlin.de/bizer/ldif/releases/ldif-hadoop-0.4.zip">download</a>
 the latest LDIF release</li>
-  <li>unpack the archive and change into the extracted directory <tt>ldif-0.4</tt></li>
+  <li>unpack the archive and change into the extracted directory <tt>ldif-hadoop-0.4</tt></li>
   <li>run LDIF on the <a href="index.html#example1">Music example</a></li>
-    <pre>hadoop jar ldif-hadoop-0.4 examples/music/light/schedulerConfig.xml</pre>
+    <pre>hadoop jar ldif-hadoop-0.4.jar examples/music/light/schedulerConfig.xml</pre>
   </ul>
 </ul>
 
