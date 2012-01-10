@@ -19,9 +19,9 @@
 package ldif.datasources.dump
 
 import ldif.runtime.Quad
-import org.antlr.runtime.{CommonTokenStream, ANTLRStringStream}
-import parser.{NQuadParser, NQuadLexer}
 import ldif.util.Consts
+import org.antlr.runtime.{CommonTokenStream, ANTLRStringStream}
+import parser.{ParseException, NQuadParser, NQuadLexer}
 
 /**
  * Created by IntelliJ IDEA.
@@ -47,5 +47,23 @@ class QuadParser(graphURI: String) {
 		val parser = new NQuadParser(tokenStream)
     parser.setGraph(graphURI)
     parser.line()
+  }
+
+  /**
+   * returns a Quad object if string can be parsed as Quad
+   * or null for comment lines or invalid lines
+   */
+  def parseLineSilent(line: String): Quad = {
+    val stream = new ANTLRStringStream(line)
+    val lexer = new NQuadLexer(stream)
+    val tokenStream = new CommonTokenStream(lexer)
+    val parser = new NQuadParser(tokenStream)
+    parser.setGraph(graphURI)
+    try {
+      parser.line()
+    }
+    catch {
+      case e:ParseException => null
+      }
   }
 }

@@ -23,8 +23,14 @@ import xml.Node
 import ldif.datasources.dump.QuadParser
 import java.io.{OutputStreamWriter, OutputStream}
 import ldif.util.{Consts, Identifier}
+import ldif.runtime.Quad
+import ldif.datasources.dump.parser.ParseException
+import org.slf4j.LoggerFactory
 
 case class TripleImportJob(dumpLocation : String, id : Identifier, refreshSchedule : String, dataSource : String) extends ImportJob {
+
+  private val log = LoggerFactory.getLogger(getClass.getName)
+
   val graph = Consts.DEFAULT_IMPORTED_GRAPH_PREFIX+id
 
   override def load(out : OutputStream) : Boolean = {
@@ -39,11 +45,26 @@ case class TripleImportJob(dumpLocation : String, id : Identifier, refreshSchedu
 
     val parser = new QuadParser(graph)
     val lines = scala.io.Source.fromInputStream(inputStream).getLines
+    var invalidQuads = 0
     for (line <- lines.toTraversable){
-        val quad = parser.parseLine(line)
-        if (quad != null)
-          writer.write(quad.toNQuadFormat+". \n")
+      var quad : Quad = null
+      try {
+        quad = parser.parseLine(line)
+      }
+      catch {
+        case e:ParseException => {
+          // skip invalid quads
+          invalidQuads  += 1
+          log.debug("Invalid quad found: "+line)
+        }
+      }
+      if(quad != null)
+        writer.write(quad.toNQuadFormat+". \n")
     }
+
+    if (invalidQuads>0)
+      log.warn("Invalid quads ("+invalidQuads+") found and skipped in "+ dumpLocation)
+
     writer.flush
     writer.close
     true

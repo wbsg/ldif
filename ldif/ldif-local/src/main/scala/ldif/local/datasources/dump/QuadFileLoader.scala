@@ -19,15 +19,16 @@
 package ldif.local.datasources.dump
 
 import org.slf4j.LoggerFactory
-import scala.collection.mutable.{ArrayBuffer, Map}
+import scala.collection.mutable.ArrayBuffer
 import scala.Predef._
-import java.io.{File, BufferedReader}
+import java.io.BufferedReader
 import java.io.FileReader
 import ldif.local.runtime.{LocalNode, QuadWriter}
 import scala.actors.Actor
 import scala._
 import ldif.local.runtime.impl.DummyQuadWriter
 import ldif.runtime.Quad
+import ldif.util.Consts
 
 /**
  * Created by IntelliJ IDEA.
@@ -42,7 +43,7 @@ class QuadFileLoader(graphURI: String, discardFaultyQuads: Boolean = false) {
   val quadParser = new QuadParser(graphURI)
 
   def this() {
-    this("default")
+    this(Consts.DEFAULT_GRAPH)
   }
 
   def parseQuadLine(line: String): Quad = {
