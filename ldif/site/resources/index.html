@@ -120,14 +120,14 @@ Start</span></a> </div>
   <li>
 
 
-      <strong>01/10/2012: Version 0.4 Scale-out released.</strong>  Up till now LDIF stored data
+      <strong>01/10/2012: Version 0.4 Scale-out released.</strong>  Up till now, LDIF stored data
 purely in-memory which restricted the amount of data that could be
 processed. Version 0.4 provides two alternative implementations of the LDIF
 runtime environment which allow LDIF to scale to large data sets: 1. The new
 triple store backed implementation scales to larger data sets on a single
 machine with lower memory consumption at the expense of processing time. 2.
 The new Hadoop-based implementation provides for processing very large data
-sets on a Hadoop cluster for instance on EC2. A comparison of the
+sets on a Hadoop cluster, for instance within Amazon EC2. A comparison of the
 performance of all three implementations of the runtime environment is found
 on the <a href="http://www.assembla.com/spaces/ldif/wiki/Benchmark">LDIF benchmark page</a></li>
   <li><strong>11/03/2011: Version 0.3.1 released.</strong> Minor
@@ -161,8 +161,12 @@ a single target URI.</li>
   <li><a href="#about">About LDIF</a></li>
   <li><a href="#components">LDIF components</a></li>
   <li><a href="index.html#configuration">Configuration options</a></li>
-  <li><a href="#quickstart">Quick start</a><br>
-  </li>
+  <li><a href="#quickstart">Quick start</a></li>
+  <ul>
+    <li><a href="#inmemoryquickstart">Single machine / In-memory</a></li>
+    <li><a href="#rdfstorequickstart">Single machine / RDF Store</a></li>
+    <li><a href="#hadoopquickstart">Cluster / Hadoop</a></li>
+  </ul>
   <li><a href="#examples">Examples</a><br>
   </li>
   <ul>
@@ -748,7 +752,7 @@ referenced by the <a href="#importjob">import jobs</a>.<br>
 
 <p>This section explains you how to run the different versions of LDIF.</p>
 
-<h3>Single machine / In-memory</h3>
+<h3 id="inmemoryquickstart">Single machine / In-memory</h3>
 <p>To see LDIF in action, please follow these steps:</p>
 <ul>
   <li><a href="http://www4.wiwiss.fu-berlin.de/bizer/ldif/releases/ldif-0.4.zip">download</a>
@@ -769,7 +773,7 @@ Learn more about LDIF configuration by looking at the <a href="index.html#schedu
 and the <a href="index.html#integrationjob">Integration Job
 Configuration</a> (<tt>examples/music/light/integrationJob.xml</tt>) </p>
 
-<h3>Single Machine / RDF Store<br>
+<h3 id="rdfstorequickstart">Single machine / RDF Store<br>
 </h3>
 <p>To see LDIF running with a quad store (TDB) as backend, please follow these steps:</p>
 
@@ -790,7 +794,7 @@ and the <a href="index.html#integrationjob">Integration Job
 Configuration</a> (<tt>examples/music/light/integrationJob.xml</tt>) </p>
 
 
-<h3>Cluster / Hadoop</h3>
+<h3 id="hadoopquickstart">Cluster / Hadoop</h3>
 <p>To see LDIF running on a Hadoop cluster, please follow these steps:</p>
 <ul>
   <li>set up and configure a Hadoop (0.20.2) <a href="http://hadoop.apache.org/common/docs/current/cluster_setup.html">cluster</a> </li>
@@ -805,9 +809,11 @@ the latest LDIF release</li>
 
 <p>Integration results will be written into the <tt>/user/hduser/integrated_music_light.nq</tt> directory in the Hadoop distributed file system (HDFS).</li> You can check the content of this directory using the following command: <tt>hadoop dfs -ls /user/hduser/integrated_music_light.nq</tt></p>
 
+<p>Learn more about Hadoop configuration by looking at our <a href="http://www.assembla.com/spaces/ldif/wiki/Benchmark">Benchmark</a> and <a href="http://www.assembla.com/spaces/ldif/wiki/Hadoop_troubleshooting">Troubleshooting</a> wiki pages.</p>
+
 <p>In order to have a cleaner console output, consider replacing the Hadoop default logging configuration (<tt>[HADOOP-HOME]/conf/log4j.properties</tt>) with our customized <a href ="http://www.assembla.com/code/ldif/git/nodes/ldif/resources/hadoop_log4j.properties">log4j.properties</a> file.</p>
 
-Here is a list of Hadoop configuration parameters that can be useful to tune when running LDIF with big datasets:
+<p>Here is a list of Hadoop configuration parameters that can be useful to tune when running LDIF with big datasets:</p>
 
 <table>
     <tbody>
@@ -854,10 +860,6 @@ Here is a list of Hadoop configuration parameters that can be useful to tune whe
 
     </tbody>
 </table>
-
-Learn more about Hadoop configuration by looking at our <a href="http://www.assembla.com/spaces/ldif/wiki/Benchmark">Benchmark</a> and <a href="http://www.assembla.com/spaces/ldif/wiki/Hadoop_troubleshooting">Troubleshooting</a> wiki pages.
-
-
 
 <h2 id="examples">5. Examples</h2>
 <br>
