@@ -382,7 +382,7 @@ memory.
     It is fast but its scalability is limited by the amount of
 available memory. For instance, integrating 25 million triples required 5 GB
 memory within one of our <a href="benchmark.html">experiments</a>. Parallelization is achieved by
-distributing the work (entities) over several threats.
+distributing the work (entities) to multiple threads.
 
 </p>
 
@@ -398,9 +398,9 @@ is that it also takes more time to execute.
 </p>
 <h5>Cluster / Hadoop</h5>
 <p>
-This implementation of the run time environment allows the work to be parallelized on multiple machines using Hadoop. Each phase in the integration flow has been ported to be executable on a Hadoop cluster. Some initial perfomance figures comparing the run times of the in-memory, quad store and Hadoop version against different data set sizes are provided in the <a href="http://www.assembla.com/spaces/ldif/wiki/Benchmark">Benchmark Wiki</a>.
-
-
+This implementation of the run time environment allows the work to be parallelized on multiple machines using Hadoop.
+Each phase in the integration flow has been ported to be executable on a Hadoop cluster.
+Some initial performance figures comparing the run times of the in-memory, quad store and Hadoop version against different data set sizes are provided in the <a href="http://www.assembla.com/spaces/ldif/wiki/Benchmark">Benchmark Wiki</a>.
 </p>
 
 
