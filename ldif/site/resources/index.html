@@ -160,7 +160,7 @@ a single target URI.</li>
 <ol class="toc">
   <li><a href="#about">About LDIF</a></li>
   <li><a href="#components">LDIF components</a></li>
-  <li><a href="index.html#configuration">Configuration options</a></li>
+  <li><a href="#configuration">Configuration options</a></li>
   <li><a href="#quickstart">Quick start</a></li>
   <ul>
     <li><a href="#inmemoryquickstart">Single machine / In-memory</a></li>
@@ -247,7 +247,7 @@ pluggable modules. These modules are organized as data input, data transformatio
 
 <h3>Scheduler</h3>
 <p>
-The Scheduler is used for triggering pending data import jobs or integration jobs. It is configured with an XML document (see <a href="index.html#scheduler">Configuration</a>) and offers several ways to express when and how often a certain job should be executed.
+The Scheduler is used for triggering pending data import jobs or integration jobs. It is configured with an XML document (see <a href="#scheduler">Configuration</a>) and offers several ways to express when and how often a certain job should be executed.
 
 <br/>
 This component is useful when you want to load external data or run the integration periodically, otherwise you could just run the integration component.
@@ -758,7 +758,7 @@ referenced by the <a href="#importjob">import jobs</a>.<br>
   <li><a href="http://www4.wiwiss.fu-berlin.de/bizer/ldif/releases/ldif-0.4.zip">download</a>
 the latest release</li>
   <li>unpack the archive and change into the extracted directory <tt>ldif-0.4</tt></li>
-  <li>run LDIF on the <a href="index.html#example1">Music example</a></li>
+  <li>run LDIF on the <a href="#example1">Music example</a></li>
   <ul>
     <li>under Linux / Mac OS type:</li>
     <pre>bin/ldif examples/music/light/schedulerConfig.xml</pre>
@@ -768,9 +768,9 @@ the latest release</li>
 </ul>
 <p>The example will run in about 3 minutes. Integration results will be
 written into <tt>integrated_music_light.nq</tt> in the working
-directory, containing both integrated data and <a href="index.html#provenance">provenance metadata</a>. <br>
-Learn more about LDIF configuration by looking at the <a href="index.html#scheduler">Schedule Job Configuration</a> (<tt>examples/music/light/schedulerConfig.xml</tt>)
-and the <a href="index.html#integrationjob">Integration Job
+directory, containing both integrated data and <a href="#provenance">provenance metadata</a>. <br>
+Learn more about LDIF configuration by looking at the <a href="#scheduler">Schedule Job Configuration</a> (<tt>examples/music/light/schedulerConfig.xml</tt>)
+and the <a href="#integrationjob">Integration Job
 Configuration</a> (<tt>examples/music/light/integrationJob.xml</tt>) </p>
 
 <h3 id="rdfstorequickstart">Single machine / RDF Store<br>
@@ -779,18 +779,18 @@ Configuration</a> (<tt>examples/music/light/integrationJob.xml</tt>) </p>
 
 <ul>
 <li><a href="http://www4.wiwiss.fu-berlin.de/bizer/ldif/releases/ldif-0.4.zip">download</a>
-the latest release</li><li>unpack the archive and change into the extracted directory <tt>ldif-0.4</tt></li><li>run LDIF on the <a href="index.html#example1">Music example</a></li><ul><li>under Linux / Mac OS type:</li><pre>bin/ldif examples/music/light/schedulerConfigTDB.xml</pre>
+the latest release</li><li>unpack the archive and change into the extracted directory <tt>ldif-0.4</tt></li><li>run LDIF on the <a href="#example1">Music example</a></li><ul><li>under Linux / Mac OS type:</li><pre>bin/ldif examples/music/light/schedulerConfigTDB.xml</pre>
     </li>  <li>Windows: This should work under Windows with Cygwin, but has not been tested, yet. (TDB relies on the <a href="http://manpages.ubuntu.com/manpages/hardy/en/man1/sort.1.html">sort</a> program for bulk loading)<br>
 </li></ul>
 </ul>
 
-The configuration properties that need to be used are <code>quadStoreType</code> and <code>databaseLocation</code> (see the <a href="index.html#configurationproperties">Configuration section</a> from more details).
+The configuration properties that need to be used are <code>quadStoreType</code> and <code>databaseLocation</code> (see the <a href="#configurationproperties">Configuration section</a> from more details).
 
 <p>The example will run in about 3 minutes. Integration results will be
 written into <tt>integrated_music_light.nq</tt> in the working
-directory, containing both integrated data and <a href="index.html#provenance">provenance metadata</a>. <br>
-Learn more about LDIF configuration by looking at the <a href="index.html#scheduler">Schedule Job Configuration</a> (<tt>examples/music/light/schedulerConfig.xml</tt>)
-and the <a href="index.html#integrationjob">Integration Job
+directory, containing both integrated data and <a href="#provenance">provenance metadata</a>. <br>
+Learn more about LDIF configuration by looking at the <a href="#scheduler">Schedule Job Configuration</a> (<tt>examples/music/light/schedulerConfig.xml</tt>)
+and the <a href="#integrationjob">Integration Job
 Configuration</a> (<tt>examples/music/light/integrationJob.xml</tt>) </p>
 
 
@@ -802,7 +802,7 @@ Configuration</a> (<tt>examples/music/light/integrationJob.xml</tt>) </p>
   <ul><li><a href="http://www4.wiwiss.fu-berlin.de/bizer/ldif/releases/ldif-hadoop-0.4.zip">download</a>
 the latest LDIF release</li>
   <li>unpack the archive and change into the extracted directory <tt>ldif-hadoop-0.4</tt></li>
-  <li>run LDIF on the <a href="index.html#example1">Music example</a></li>
+  <li>run LDIF on the <a href="#example1">Music example</a></li>
     <pre>hadoop jar lib/ldif-hadoop-0.4.jar scheduler examples/music/light/schedulerConfig.xml</pre>
   </ul>
 </ul>
