@@ -11,6 +11,16 @@
 
 	google.load("visualization", "1", {packages:["imagechart"]});
 	
+	function tcToSec(tc) {
+		var vals = tc.split(":");
+		var result = 0;
+		while (vals.length > 0) {
+			result *= 60;
+			result += parseInt(vals.shift(), 10);
+		}
+		return result;
+	}
+	
 	function drawChart(textile, settings) {
 		
 		// split lines, ignoring empty lines
@@ -56,11 +66,11 @@
 					rawData[row] = [];
 				}
 				rawData[row][col] = fields[j]
-				.replace(/_\./g, "")					// remove textile markup
+				.replace(/[_>]\./g, "") // remove textile markup
 				.replace(/(\d+)\s*s/g, "$1") // remove "s" suffix
 				.trim();
 				
-				ignoredRows[row] |= rawData[row][col].match(/out of memory/i) ? true : false;
+				ignoredRows[row] |= rawData[row][col].match(/^$|out of memory/i) ? true : false; // ignore empty rows or those with "out of memory" messages
 			}
 		}
 		
@@ -87,19 +97,47 @@
 			var row = rawData[i];
 			var rowSum = 0;
 			for (j=1; j<row.length; j++) {
-				row[j] /= 60.0;
+				// process HH:MM:SS timestamp
+				row[j] = tcToSec(row[j]);
 				rowSum += row[j];
 			}
 
-			data.addRow(rawData[i]);
 			maxRowSum = Math.max(maxRowSum, rowSum);
 		}
+		
+		// determine scale and unit
+		var scale;
+		var unit;
+		
+		if (maxRowSum > 60 * 1000) {
+			scale = 1 / (60.0 * 60.0);
+			unit = "h";
+		} else if (maxRowSum > 1000) {
+			scale = 1 / 60.0;
+			unit = "min";
+		} else {
+			scale = 1;
+			unit = "s";
+		}
+		
+		for (i=0; i<rawData.length; i++) {
+			if (ignoredRows[i]) {
+				continue;
+			}
+
+			var row = rawData[i];
+			for (j=1; j<row.length; j++) {
+				row[j] *= scale;
+			}
+
+			data.addRow(row);
+		}		
 
 		// One decimal place with "min" suffix
-		var valueFormat = 'N*f1* min';
+		var valueFormat = 'N*f1* ' + unit;
 		
 		// show the maximum duration and add 10% space for labels
-		var displayArea = Math.ceil(maxRowSum * 1.1);
+		var displayArea = Math.ceil(maxRowSum * scale * 1.1);
 		
 		// show 5 steps
 		var numSteps = 5;
@@ -167,7 +205,7 @@
 		shadeColor: '444444',
 		debug: false,
 		width: 900,
-		heights: [ 90, 180, 250, 315 ]
+		heights: [ 115, 180, 250, 315 ] // aiming for 60px in height per bar
 	};
 	
 	</script>
