@@ -20,6 +20,7 @@ package ldif.runtime.impl
 
 import java.io.{FileInputStream, BufferedInputStream, ObjectInputStream, File}
 import ldif.runtime.Quad
+import java.util.zip.GZIPInputStream
 
 /**
  * Created by IntelliJ IDEA.
@@ -29,7 +30,7 @@ import ldif.runtime.Quad
  * To change this template use File | Settings | File Templates.
  */
 
-class FileObjectReader[T >: Null](val inputFile: File, val endObject: T) {
+class FileObjectReader[T >: Null](val inputFile: File, val endObject: T, val compression: Boolean = false) {
   var objectInput: ObjectInputStream = null
   var closed = false
   var bufferedObject: T = null
@@ -80,6 +81,9 @@ class FileObjectReader[T >: Null](val inputFile: File, val endObject: T) {
   def close() = if(objectInput!=null) objectInput.close()
 
   private def openStream() {
-    objectInput = new ObjectInputStream(new BufferedInputStream(new FileInputStream(inputFile)))
+    if(compression)
+      objectInput = new ObjectInputStream(new GZIPInputStream(new BufferedInputStream(new FileInputStream(inputFile)), 8*1024))
+    else
+      objectInput = new ObjectInputStream(new BufferedInputStream(new FileInputStream(inputFile)))
   }
 }

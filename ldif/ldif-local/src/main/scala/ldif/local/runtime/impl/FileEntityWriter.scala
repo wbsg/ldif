@@ -31,4 +31,4 @@ import ldif.runtime.impl.FileObjectWriter
  * To change this template use File | Settings | File Templates.
  */
 
-class FileEntityWriter(val entityDescription : EntityDescription, val inputFile: File) extends FileObjectWriter[Entity](inputFile, NoEntitiesLeft) with EntityWriter
+class FileEntityWriter(val entityDescription : EntityDescription, val inputFile: File, enableCompression: Boolean = false) extends FileObjectWriter[Entity](inputFile, NoEntitiesLeft, enableCompression) with EntityWriter

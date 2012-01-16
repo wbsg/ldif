@@ -311,7 +311,7 @@ class IntegrationJob (val config : IntegrationConfig, debugMode : Boolean = fals
     val fileEntityQueues = for(eD <- entityDescriptions) yield {
       val file = File.createTempFile("ldif_entities", ".dat")
       file.deleteOnExit
-      new FileEntityWriter(eD, file)
+      new FileEntityWriter(eD, file, enableCompression = true)
     }
 
     val inmemory = config.properties.getProperty("entityBuilderType", "in-memory")=="in-memory"
@@ -340,7 +340,7 @@ class IntegrationJob (val config : IntegrationConfig, debugMode : Boolean = fals
     if(inmemory)
       return entityQueues
     else
-      return fileEntityQueues.map((entityWriter) => new FileEntityReader(entityWriter.entityDescription, entityWriter.inputFile))
+      return fileEntityQueues.map((entityWriter) => new FileEntityReader(entityWriter.entityDescription, entityWriter.inputFile, enableCompression = true ))
   }
 
   /**

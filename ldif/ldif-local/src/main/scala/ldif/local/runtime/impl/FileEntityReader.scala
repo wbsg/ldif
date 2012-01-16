@@ -31,4 +31,4 @@ import ldif.runtime.impl.FileObjectReader
  * To change this template use File | Settings | File Templates.
  */
 
-class FileEntityReader(val entityDescription : EntityDescription, inputFile: File) extends FileObjectReader[Entity](inputFile, NoEntitiesLeft) with EntityReader
+class FileEntityReader(val entityDescription : EntityDescription, inputFile: File, enableCompression: Boolean = false) extends FileObjectReader[Entity](inputFile, NoEntitiesLeft, enableCompression) with EntityReader
