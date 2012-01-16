@@ -30,8 +30,10 @@ import org.apache.hadoop.io.{IntWritable, Text}
 import java.util.UUID
 import org.apache.hadoop.conf.Configuration
 import org.apache.hadoop.mapred._
+import org.slf4j.LoggerFactory
 
 class SilkHadoopExecutor extends Executor {
+  private val log = LoggerFactory.getLogger(getClass.getName)
   type TaskType = SilkTask
   type InputFormat = StaticEntityFormat
   type OutputFormat = QuadFormat
