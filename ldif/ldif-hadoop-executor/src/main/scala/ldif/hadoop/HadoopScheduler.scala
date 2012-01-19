@@ -198,13 +198,14 @@ class HadoopScheduler (val config : HadoopSchedulerConfig, debug : Boolean = fal
     else {
       val changeFreqHours = Consts.changeFreqToHours.get(schedule)
       // Get last update run
-      var nextUpdate = lastUpdate
+      val nextUpdate = Calendar.getInstance
 
       // Figure out if update is required
       if (changeFreqHours != None) {
         if (lastUpdate == null) {
           true
         } else {
+          nextUpdate.setTimeInMillis(lastUpdate.getTimeInMillis)
           nextUpdate.add(Calendar.HOUR, changeFreqHours.get)
           Calendar.getInstance.after(nextUpdate)
         }

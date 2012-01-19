@@ -111,9 +111,9 @@ case class SparqlImportJob(conf : SparqlConfig, id :  Identifier, refreshSchedul
          limit = results.size
       }
       offset += results.size
-      loop = (results.size == limit) && !(offset == conf.tripleLimit)
+      loop = (results.size == limit) && (limit != 0) && !(offset == conf.tripleLimit)
       write(results, writer)
-      if (loop)
+      if (results.size!=0 || limit == 0)
         log.info(id +" - loaded "+offset+" quads")
     }
     true
@@ -165,11 +165,11 @@ case class SparqlConfig(endpointLocation : URI,  graphName : URI, sparqlPatterns
       query += " GRAPH <" + graphName + "> {\n"
     }
 
-    query += " ?s ?p ?o .\n"
-
     for (pattern <- sparqlPatterns.filterNot(_.trim.equals(""))) {
         query += " " + pattern + " .\n"
     }
+
+    query += " ?s ?p ?o \n"
 
     if (isGraphDefined) {
       query += " }\n"
