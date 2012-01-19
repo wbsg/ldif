@@ -138,7 +138,7 @@
 
 <!-- End WBSG navbar -->
 
-  <div id="logo" align="right"><a href="http://www.wiwiss.fu-berlin.de/en/institute/pwo/bizer/index.html"><img src="img/fu-logo.gif" alt="Freie Universit&ae;t Berlin Logo" border="0"></a>&nbsp;<br></div>
+  <div id="logo" align="right"><a href="http://www.wiwiss.fu-berlin.de/en/institute/pwo/bizer/index.html"><img src="../ldif/img/fu-logo.gif" alt="Freie Universit&ae;t Berlin Logo" border="0"></a>&nbsp;<br></div>
 
 <div id="header">
 <h1 style="font-size: 250%;">Sieve - Linked Data Quality Assessment and Fusion</h1>
@@ -191,6 +191,9 @@ Moreover, data sources may provide conflicting values for the same properties.
 In order for <a href="http://linkeddatabook.com/editions/1.0/index.html#htoc75">Linked Data applications</a> to consume data from this global data space in an integrated fashion, a number of challenges have to be overcome.
 The <a href="http://www4.wiwiss.fu-berlin.de/bizer/ldif/">Linked Data Integration Framework (LDIF)</a> provides a modular architecture that homogenizes Web data into a target representation as configured by the user. LDIF includes Data Access, <a href="http://www4.wiwiss.fu-berlin.de/bizer/r2r/">Schema Mapping</a>, <a href="http://www4.wiwiss.fu-berlin.de/bizer/silk/">Identity Resolution</a> and Data Output modules. This document describes Sieve, which adds quality assessment and data fusion capabilities to the LDIF architecture.
 </p>
+<p>
+Sieve uses metadata about named graphs (e.g. provenance) in order to assess data quality as defined by users. Sieve is agnostic to provenance vocabulary and quality models. Through its configuration files, Sieve is able to access provenance expressed in different ways, and uses customizable scoring functions to output data quality descriptors according to a user-specified data-quality vocabulary.
+</p>
 
 <!--p>The LDIF integration pipeline consists of the following steps:
 </p><ol>
@@ -228,7 +231,7 @@ Sieve is employed as the quality evaluation module in LDIF (see figure 1). The d
 
 <dt>Assessment Metric</dt><dd>Is a procedure for measuring an information quality dimension. Assessment metrics rely on a set of quality indicators and calculate an assessment score from these indicators using a scoring function. Information quality assessment metrics can be classified into three categories according to the type of information that is used as quality indicator: content-based metrics, context-based metrics and rating-based metrics.</dd>
 
-<dt>Aggregation Function</dt><dd>User can specify aggregate assessment metrics built out of individual assessment metrics. These aggregations produce new assessment values through the average, sum, max, min or threshold functions applied to a set of assessment metrics. Aggregate assessment metrics are better visualized as trees, where an aggregation function is applied to the leaves and combined up the tree until a single value is obtained. The functions to be applied at each branch are specified by the users.</dd>
+<dt>Aggregate Metric</dt><dd>User can specify aggregate assessment metrics built out of individual assessment metrics. These aggregations produce new assessment values through the average, sum, max, min or threshold functions applied to a set of assessment metrics. Aggregate assessment metrics are better visualized as trees, where an aggregation function is applied to the leaves and combined up the tree until a single value is obtained. The functions to be applied at each branch are specified by the users.</dd>
 </dl>
 
 <h3 id="qualityassessmentconfig">Quality Assessment Configuration</h3>
@@ -259,12 +262,14 @@ is described by this <a href="http://www.assembla.com/code/ldif/git/nodes/ldif/l
             &lt;/ScoringFunction&gt;
          &lt;/AssessmentMetric&gt;
 
-         &lt;AssessmentMetric scoringFunction="TidalTrustRating"&gt;
-             &lt;EnvironmentVariable name="user" value="http://URIofTheUser" /&gt;
-             &lt;!--Get the author of the graph --&gt;
-             &lt;Input path="?GRAPH/dc:author" /&gt;
-             &lt;!--Get the ratings --&gt;
-             &lt;Input query="Select ?rater, ?ratedObject, ?rating FROM http://graphURI PATTERN {}" /&gt;
+         &lt;AssessmentMetric id="sieve:trust"&gt;
+             &lt;ScoringFunction class="TidalTrustRating"&gt;
+                &lt;EnvironmentVariable name="user" value="http://URIofTheUser" /&gt;
+                &lt;!--Get the author of the graph --&gt;
+                &lt;Input path="?GRAPH/dc:author" /&gt;
+                &lt;!--Get the ratings --&gt;
+                &lt;Input query="Select ?rater, ?ratedObject, ?rating FROM http://graphURI PATTERN {}" /&gt;
+	     &lt;/ScoringFunction&gt;
          &lt;/AssessmentMetric&gt;
 
      &lt;/AggregateMetric&gt;
@@ -279,11 +284,54 @@ is described by this <a href="http://www.assembla.com/code/ldif/git/nodes/ldif/l
 <ul>
 <li><i>Prefixes</i> - specifies nicknames for namespaces in order to allow the use of <a href="http://en.wikipedia.org/wiki/QName">shorter references to URIs</a>. </li>
 <li><i>QualityAssessment</i> - groups a number of assessment metrics into a quality assessment "policy". Users can give it a <code>name</code> which should be unique, and a <code>description</code> to help to explain the intentions of this policy. </li>
-<li><i>AssessmentMetric</i> - describes a simple assessment metric. Each simple <code>AssessmentMetric</code> element specifies a unique identifier for which aspect of quality is being assessed (through the attribute <code>indicator</code>) and a <code>ScoringFunction</code> element that will provide a real valued assessment (between 0 and 1) of this indicator.</li>
-<li><i>AggregateMetric</i> - describes an aggregation function over a number of simple assessment metrics. </li>
-<li><i>ScoringFunction</i> - configures the input of a java/scala class implementing a scoring function. Each scoring function takes in a number of input parameters (<code>Param</code>, <code>Input</code> or <code>EnvironmentVariable</code>) and generates a real value between 0 and 1 based on this input. The <code>Param</code> element is used for static values, <code>Input</code> is used for accessing values in the data being consumed by LDIF, and <code>EnvironmentVariable</code> accesses values stored in the system (e.g. username, date, etc.)</li>
+<li><i>AssessmentMetric</i> - describes a simple assessment metric. Each simple <code>AssessmentMetric</code> element specifies a unique identifier for the aspect of quality that is being assessed (through the attribute <code>indicator</code>) and a <code>ScoringFunction</code> element that will provide a real valued assessment (between 0 and 1) of this indicator.</li>
+<li><i>AggregateMetric </i> - describes an aggregation function over a number of simple assessment metrics. </li>
+<li><i>ScoringFunction</i> - configures the input of a java/scala class implementing a scoring function. Each scoring function takes in a number of input parameters (<code>Param</code>, <code>Input</code> or <code>EnvironmentVariable</code>) and generates a real value between 0 and 1 based on this input. The <code>Param</code> element is used for static values, <code>Input</code> is used for accessing values in the data being consumed by LDIF, and <code>EnvironmentVariable</code> accesses values stored in the system (e.g. username, date, etc.) 
+<li><i>Input</i> - specifies either a path or a SPARQL query to access metadata (e.g. provenance) about named graphs. This metadata will be provided as input to a scoring function, which will then produce additional metadata in the form of indicators. A <code>path</code> attribute contains a path expression (series of variables and RDF properties separated by "/") that indicate how to select applicable metadata from the input. Conventionally, for <code>path</code> attributes within ScoringFunction elements, the paths start with a variable named <code>?GRAPH</code>.
 </li>
 </ul>
+
+<p>The quality-describing metadata computed this step is output and stored as an extension to the <a href="http://www4.wiwiss.fu-berlin.de/bizer/ldif/#provenance">LDIF Provenance Graph</a>.
+
+<h3 id="scoringfunctions">Available Scoring Functions</h3>
+
+<p>There is a vast number of possible scoring functions for quality assessment. We do not attempt to implement all of them. The currently implemented scoring functions are:</p>
+<ul>
+  <li><i>TimeCloseness</i>: measures the distance from the input date (obtained from the input metadata through a path expression) to the current (system) date. Dates outside the range (informed in number of days) receive value 0, and dates that are more recent receive values closer to 1. Example input:
+<pre>
+&lt;ScoringFunction name="TimeCloseness"&gt;
+  &lt;Param name="range" value="7"/&gt;
+  &lt;Input path="?GRAPH/ldif:lastUpdate"/&gt;
+&lt;/ScoringFunction&gt;
+</pre> 
+      Example output: 0.85 (assuming the last update was yesterday).
+      <br/>TimeCloseness can be used for indicators such as freshness (last updated) and recency (creation date).
+  </li>
+  <li><i>Preference</i>: assigns decreasing, uniformly distributed, real values to each graph URI provided as space-separated list. 
+      Example input: 
+<pre>
+&lt;ScoringFunction name="Preference"&gt;
+  &lt;Param name="list" value="en.wikipedia.org pt.wikipedia.org es.wikipedia.org"/&gt;
+&lt;/ScoringFunction&gt;
+</pre>
+      Example output: {en.wikipedia.org=0.9, pt.wikipedia.org=0.6, es.wikipedia.org=0.3}</li>
+</ul>
+<!--table>
+<tr>
+ <th>Name</th>
+</tr>
+<tr><td>
+</tr>
+</table-->
+
+The framework is extensible, and users can define their own set of <code>ScoringFunction</code> classes. The class should implement <code>ldif.modules.sieve.quality.ScoringFunction</code>, which defines the method <code>fromXML</code> (a method to create a new object of the class given the configuration parameters) and the method <code>score</code> (which will be called at runtime to perform quality assessment based on a number of metadata values). Method signatures (in Scala):  </li>
+<pre>
+trait ScoringFunction {
+  def score(metadataValues: Traversable[IndexedSeq[NodeTrait]]): Double
+  def fromXML(node: Node) : ScoringFunction
+</pre>
+
+
 
 
 <h2 id="datafusion">4. Data Fusion</h2>
@@ -318,15 +366,15 @@ A data fusion function takes in all values for each property from all data sourc
 
   &lt;Fusion name="Fusion strategy for DBpedia City Entities" description="The idea is to use values from multiple DBpedia languages to improve the quality of data about cities."&gt;
         &lt;Class name="dbpedia:City"&gt;
+          &lt;Property name="dbpedia:areaTotal"&gt;
+                 &lt;FusionFunction name="averageValue" /&gt;
+          &lt;/Property&gt;
           &lt;Property name="dbpedia:population"&gt;
                  &lt;FusionFunction name="averageValue" /&gt;
           &lt;/Property&gt;
           &lt;Property name="dbpedia:name"&gt;
-                 &lt;FusionFunction name="SelectSingleValuebyQualityScore" /&gt;
-          &lt;/Property&gt;
-          &lt;Property name="dbpedia:memberOfCityCouncil"&gt;
-                 &lt;FusionFunction name="topKbyQualityScore"&gt;
-                       &lt;Parameter name="K" value="12" /&gt;
+                 &lt;FusionFunction name="TrustYourFriends"&gt;
+                       &lt;Parameter name="priority" value="http://pt.dbpedia.org http://en.wikipedia.org http://es.dbpedia.org" /&gt;
                  &lt;/FusionFunction&gt;
           &lt;/Property&gt;
        &lt;/Class&gt;
@@ -341,7 +389,12 @@ A data fusion function takes in all values for each property from all data sourc
 <li><i>Fusion</i> - describes a Data Fusion policy. Users can give it a <code>name</code> which should be unique, and a <code>description</code> to help to explain the intentions of this policy. Each <code>Fusion</code> defines which data to fuse through <code>Class</code> and <code>Property</code> sub-elements, and which fusion functions to apply through <code>FusionFunction</code> elements.</li>
 <li><i>Class</i> - defines a subset of the input by selecting all instances of the class provided in the attribute <code>name</code>.</li>
 <li><i>Property</i> - defines which <code>FusionFunction</code> should be applied to the values of a given RDF property. The property qName should be given in the attribute <code>name</code>, and the <code>FusionFunction</code> element must be specified as a child of <code>Property</code>.</li>
-<li><i>FusionFunction</i> - specifies in the <code>name</code> attribute which java/scala class should be used to fuse values for a given property. It can take in a number of <code>Parameter</code> elements, which specify <code>name</code> of the parameter and <code>value</code>.</li>
+<li><i>FusionFunction</i> - specifies in the <code>name</code> attribute which java/scala class should be used to fuse values for a given property. It can take in a number of <code>Parameter</code> elements, which specify <code>name</code> of the parameter and <code>value</code> for that parameter. The framework is extensible, and users can define their own set of <code>FusionFunction</code> classes. The class should implement <code>ldif.modules.sieve.fusion.FusionFunction</code>, which defines the method <code>fromXML</code> (a method to create a new object of the class given the configuration parameters) and the method <code>fuse</code> (which will be called at runtime to perform fusion based on a number of values and quality assessment metadata). Method signatures (in Scala): 
+<pre>
+trait FusionFunction
+  def fromXML(node: Node) : FusionFunction
+  def fuse(values: Traversable[IndexedSeq[NodeTrait]], quality: QualityAssessment) : Traversable[IndexedSeq[NodeTrait]]</pre> 
+</li>
 </ul>
 
 <!--h2 id="examples">5. Examples</h2>
@@ -351,9 +404,9 @@ A data fusion function takes in all values for each property from all data sourc
 Code and Development</h2>
 <p>The latest source code is available from the <a href="http://www.assembla.com/spaces/ldif/wiki">LDIF development page</a>
 on Assembla.com.</p>
-<p>The framework can be used under the terms of the <a href="http://www.apache.org/licenses/LICENSE-2.0">Apache Software
-License</a>.
+<p>The framework can be used under the terms of the <a href="http://www.apache.org/licenses/LICENSE-2.0">Apache Software License</a>.
 </p>
+
 <h2 id="history">8. Version history </h2>
 <p>
 </p>
