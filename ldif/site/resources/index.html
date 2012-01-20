@@ -318,10 +318,9 @@ enabled us to deal with all requirements that we have encountered so
 far when translating Linked Data from the Web into a target
 representation (evaluation in [<a href="#references">2</a>]).&nbsp; Simple
 class/property-renaming mappings which often form the majority in an
-integration use case can also be expressed in OWL/RDFS (e.g <span style="font-family: monospace;">ns1:class rdfs:subClassOf ns2:clazz</span>).<span style="text-decoration: underline;"></span> </p>
-<p>An overview and examples for mappings are given on the <a href="http://www4.wiwiss.fu-berlin.de/bizer/r2r/">R2R website</a>.<br>
-The <a href="http://www4.wiwiss.fu-berlin.de/bizer/r2r/spec/">specification
-and user manual</a> is provided as a separate document.<br>
+integration use case can also be expressed in OWL/RDFS (e.g <span style="font-family: monospace;">ns1:class rdfs:subClassOf ns2:clazz</span>).<span style="text-decoration: underline;"></span>
+<br/>An overview and examples for mappings are given on the <a href="http://www4.wiwiss.fu-berlin.de/bizer/r2r/">R2R website</a>.
+The <a href="http://www4.wiwiss.fu-berlin.de/bizer/r2r/spec/">specification and user manual</a> is provided as a separate document.<br>
 </p>
 <h5>Silk Identity Resolution </h5>
 <p>
@@ -340,8 +339,8 @@ flexible identity
 resolution framework that allows the user to specify identity
 resolution heuristics which combine different types of matchers using
 the declarative <a href="http://www4.wiwiss.fu-berlin.de/bizer/silk/spec/">Silk - Link
-Specification Language</a>.</p>
-<p>An overview and examples can be found on the <a href="http://www4.wiwiss.fu-berlin.de/bizer/silk/">Silk website</a>.<br>
+Specification Language</a>.
+<br>An overview and examples can be found on the <a href="http://www4.wiwiss.fu-berlin.de/bizer/silk/">Silk website</a>.<br>
 </p>
 <h4>Data Output</h4>
 <p>Two output formats are currently supported by LDIF.</p>
@@ -366,16 +365,19 @@ provenance data is discarded instead of being output.<br>
 
 <p>The Runtime Environment for the integration component manages the data
 flow between the various stages/modules and the caching of the intermediate
-results.  In order to parallelize the data processing, the data is
+results.
+ </p>
+<p> In order to parallelize the data processing, the data is
 partitioned into entities prior to supplying it to a transformation
 module. An entity represents a Web resource together with all data that
 is required by a transformation module to process this resource.
 Entities consist of one or more graph paths and include a graph
 URI for each node. Each transformation module specifies which paths
-should be included into the entities it processes.
-<br/>Splitting the work into fine-granular entities, allows LDIF to parallelize
+should be included into the entities it processes. Splitting the work into fine-granular entities, allows LDIF to parallelize
 the work.
-LDIF provides three implementations of the Runtime Environment:  1. the
+</p>
+
+<p>LDIF provides three implementations of the Runtime Environment:  1. the
 in-memory version, 2. the RDF store version and 3. the Hadoop version.
 Depending of the size of your data set and the available computing
 resources, you can choose the runtime environment that best fits your use
@@ -399,7 +401,7 @@ distributing the work (entities) to multiple threads.
 This implementation of the runtime environment uses an  <a href="http://openjena.org/TDB/">Jena TDB RDF store</a> to
 store intermediate results. The communication between the RDF store and the
 runtime environment is realized in the form of SPARQL queries. This runtime
-environment allows you to process data sets than don't fit into memory
+environment allows you to process data sets that don't fit into memory
 anymore. The downside is that the RDF Store implementation is slower as the
 In-memory implementation.
 </p>
