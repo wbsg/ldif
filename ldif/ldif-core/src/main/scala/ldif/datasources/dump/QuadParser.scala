@@ -24,11 +24,7 @@ import org.antlr.runtime.{CommonTokenStream, ANTLRStringStream}
 import parser.{ParseException, NQuadParser, NQuadLexer}
 
 /**
- * Created by IntelliJ IDEA.
- * User: andrea
- * Date: 8/4/11
- * Time: 6:18 PM
- * To change this template use File | Settings | File Templates.
+ * N-Quad/N-Triple Parser
  */
 
 class QuadParser(graphURI: String) {
@@ -37,23 +33,10 @@ class QuadParser(graphURI: String) {
   }
 
   /**
-   * returns a Quad object if string can be parsed as Quad or null for comment line
+   * Returns a Quad object if line can be parsed as Quad, or null otherwise (eg. comment lines)
    * @throws: ParseException
    */
-  def parseLine(line: String): Quad = {
-    val stream = new ANTLRStringStream(line)
-		val lexer = new NQuadLexer(stream)
-		val tokenStream = new CommonTokenStream(lexer)
-		val parser = new NQuadParser(tokenStream)
-    parser.setGraph(graphURI)
-    parser.line()
-  }
-
-  /**
-   * returns a Quad object if string can be parsed as Quad
-   * or null for comment lines or invalid lines
-   */
-  def parseLineSilent(line: String): Quad = {
+  def parseLine(line: String, silent : Boolean = false): Quad = {
     val stream = new ANTLRStringStream(line)
     val lexer = new NQuadLexer(stream)
     val tokenStream = new CommonTokenStream(lexer)
@@ -63,7 +46,12 @@ class QuadParser(graphURI: String) {
       parser.line()
     }
     catch {
-      case e:ParseException => null
+      case e:ParseException =>
+      {
+        if (silent)
+          null
+        else throw e
       }
+    }
   }
 }

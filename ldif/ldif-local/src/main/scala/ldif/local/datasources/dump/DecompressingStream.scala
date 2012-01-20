@@ -24,8 +24,6 @@ import java.util.zip.{GZIPInputStream, DeflaterInputStream}
 import java.net.URL
 import org.apache.tools.bzip2.CBZip2InputStream
 
-//import org.apache.http.{Header, HttpEntity}
-
 /**
  * Wrapper class to permit transparent decompression of a dump files.
  * Based on <a href="http://mark.ossdl.de/2009/05/bzip2-library-for-java/">http://mark.ossdl.de/2009/05/bzip2-library-for-java/</a>
@@ -82,7 +80,7 @@ class DecompressingStream(inputStream:InputStream, fileName:String) {
       val id2 = inputStream.read
       val id3 = inputStream.read
 
-      inputStream.reset
+      inputStream.reset()
       if ((id1 == 0x1f) && (id2 == 0x8b)) {
         Option(CompressionType.GZIP)
       } else if ((id1 == 0x42) && (id2 == 0x5a) && (id3 == 0x68)) {
@@ -117,33 +115,6 @@ class DecompressingStream(inputStream:InputStream, fileName:String) {
   def this(url:URL) {
     this(url.openStream, url.getFile)
   }
-
-
-  //  @throws(classOf[IOException])
-  //  def this(entity:HttpEntity) {
-  //		val contentEncoding:Header = entity.getContentEncoding
-  //		val contentType:Header = entity.getContentType
-  //		val inputStream:InputStream = entity.getContent
-  //
-  //		var compressionType = detectByEncoding(contentEncoding)
-  //		if (compressionType = None) {
-  //			compressionType = detectByContentType(contentType)
-  //		}
-  //
-  //		if (compressionType = None) {
-  //			compressionType = detectByMagicByte(inputStream)
-  //		}
-  //
-  //		wrappedStream = getWrappedStream(inputStream, compressionType)
-  //	}
-
-  // private def detectByEncoding(contentEncoding:String) = encodingToCompressionType.get(contentEncoding)
-
-  // private def detectByContentType(contentType:String) =	contentTypeToCompressionType.get(contentType)
-
-  // private def detectByEncoding(contentEncoding:Header) = detectByEncoding(contentEncoding.getValue)
-
-  // private def detectByContentType(contentType:Header) = detectByContentType(contentType.getValue)
 
 }
 

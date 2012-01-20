@@ -1,4 +1,4 @@
-/* 
+/*
  * LDIF
  *
  * Copyright 2011-2012 Freie Universität Berlin, MediaEvent Services GmbH & Co. KG
@@ -29,6 +29,7 @@ import scala._
 import ldif.local.runtime.impl.DummyQuadWriter
 import ldif.runtime.Quad
 import ldif.util.Consts
+import ldif.datasources.dump.QuadParser
 
 /**
  * Created by IntelliJ IDEA.

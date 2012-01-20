@@ -46,10 +46,9 @@ class UriTranslatorTest extends FlatSpec with ShouldMatchers {
 
   private def generateInputQueue: QuadReader = {
     val sameasFile = new File(getClass.getClassLoader.getResource("ldif/local/runtime/uri_translator_input.nq").toString.stripPrefix("file:"))
-    println(sameasFile.getAbsolutePath)
     val inputFile = new BufferedReader(new FileReader(sameasFile))
     val quadQueue = new QuadQueue
-    val parser = new QuadFileLoader("")
+    val parser = new QuadFileLoader
     parser.readQuads(inputFile, quadQueue)
     quadQueue
   }

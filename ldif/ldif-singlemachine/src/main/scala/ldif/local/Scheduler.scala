@@ -19,7 +19,6 @@
 package ldif.local
 
 import config.{IntegrationConfig, SchedulerConfig}
-import datasources.dump.QuadParser
 import org.slf4j.LoggerFactory
 import scheduler.ImportJob
 import java.util.{Date, Calendar}
@@ -27,6 +26,7 @@ import java.io._
 import java.util.concurrent.ConcurrentHashMap
 import org.apache.commons.io.FileUtils
 import ldif.util.{Consts, StopWatch, FatalErrorListener}
+import ldif.datasources.dump.QuadParser
 
 class Scheduler (val config : SchedulerConfig, debug : Boolean = false) {
   private val log = LoggerFactory.getLogger(getClass.getName)
