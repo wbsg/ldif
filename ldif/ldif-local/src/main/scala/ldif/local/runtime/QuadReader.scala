@@ -18,7 +18,6 @@
 
 package ldif.local.runtime
 
-import impl.NoEntitiesLeft
 import ldif.runtime.Quad
 
 trait QuadReader

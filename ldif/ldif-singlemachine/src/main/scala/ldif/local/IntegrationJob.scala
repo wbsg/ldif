@@ -19,7 +19,7 @@
 package ldif.local
 
 import config.IntegrationConfig
-import datasources.dump.{QuadFileLoader, DumpLoader}
+import datasources.dump.{ContentTypes, QuadFileLoader, DumpLoader}
 import runtime._
 import impl._
 import ldif.modules.r2r.local.R2RLocalExecutor
@@ -179,16 +179,23 @@ class IntegrationJob (val config : IntegrationConfig, debugMode : Boolean = fals
     if(sources.isDirectory) {
       val quadQueues =
         for (dump <- sources.listFiles) yield {
-          val quadQueue = new BlockingQuadQueue(Consts.DEFAULT_QUAD_QUEUE_CAPACITY)
-          runInBackground
-          {
-            val inputStream = DumpLoader.getFileStream(dump)
-            val bufferedReader = new BufferedReader(new InputStreamReader(inputStream))
-            val quadParser = new QuadFileLoader(dump.getName, discardFaultyQuads)
-            quadParser.readQuads(bufferedReader, quadQueue)
-            quadQueue.finish
+          // Integration component expects input data to be represented as Named Graphs, other formats are skipped
+          if (ContentTypes.getLangFromExtension(dump.getName)!=ContentTypes.langNQuad) {
+            log.warn("Input source skipped, format not supported: " + dump.getCanonicalPath)
+            new QuadQueue
           }
-          quadQueue
+          else  {
+            val quadQueue = new BlockingQuadQueue(Consts.DEFAULT_QUAD_QUEUE_CAPACITY)
+            runInBackground
+            {
+              val inputStream = DumpLoader.getFileStream(dump)
+              val bufferedReader = new BufferedReader(new InputStreamReader(inputStream))
+              val quadParser = new QuadFileLoader(dump.getName, discardFaultyQuads)
+              quadParser.readQuads(bufferedReader, quadQueue)
+              quadQueue.finish
+            }
+            quadQueue
+          }
         }
       quadQueues.toSeq
     }

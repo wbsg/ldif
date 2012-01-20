@@ -81,11 +81,11 @@ object ContentTypes {
 	def isRDFNTriple(contentType:String) = check(contentType, CONTENTTYPES_RDFNTRIPLE)
 
 	 /**
-	 * Translates a given content type to Jena lang
+	 * Translates a given content type to lang
 	 * @param contentType
 	 * @return
 	 */
-	def jenaLangFromContentType(contentType:String):String = {
+	def getLangFromContentType(contentType:String):String = {
 		var result:String = null 
     if (contentType == null || isRDFXML(contentType))
 			result = langXML
@@ -103,7 +103,7 @@ object ContentTypes {
 	 * Supports chained extensions, e.g. somefile.nt.bz2
 	 * @param urlOrPath
 	 */
-	def jenaLangFromExtension(urlOrPath:String):String = {
+	def getLangFromExtension(urlOrPath:String):String = {
 		var result:String = null
     if (Pattern.matches(".*\\.(rdf|rdfxml|xml)(\\..*)?", urlOrPath))
 			result = langXML

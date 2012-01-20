@@ -60,9 +60,9 @@ object DumpLoader {
     }
 
     if (file != null)
-      lang = ContentTypes.jenaLangFromExtension(file.getName)
+      lang = ContentTypes.getLangFromExtension(file.getName)
     else if (url != null)
-      lang = ContentTypes.jenaLangFromExtension(url.getFile)
+      lang = ContentTypes.getLangFromExtension(url.getFile)
 
     if (lang == null) {
       throw new Exception("Unable to determine language for "+ sourceLocation	+ " based on file extension")
@@ -76,7 +76,7 @@ object DumpLoader {
       throw new Exception("Protocol \"" + url.getProtocol	+ "\" is not supported.")
   }
 
-  def getFileStream(file : File, lang : String = "N-QUAD") = {
+  def getFileStream(file : File, lang : String = ContentTypes.langNQuad) = {
 
     log.info("Loading from " + file.getCanonicalPath)
     var inputStream:InputStream = null
@@ -115,7 +115,7 @@ object DumpLoader {
 
   // Convert input format to N-Triple
   private def convertFormat(inputStream : InputStream, lang : String) = {
-    if (lang != "N-QUAD" && lang != "N-TRIPLE")    {
+    if (lang != ContentTypes.langNQuad && lang != ContentTypes.langNTriple)    {
       val runner = new Any23
       val source = new ByteArrayDocumentSource(inputStream, "http://www4.wiwiss.fu-berlin.de/ldif/", "text/plain")
       val out = new ByteArrayOutputStream()
