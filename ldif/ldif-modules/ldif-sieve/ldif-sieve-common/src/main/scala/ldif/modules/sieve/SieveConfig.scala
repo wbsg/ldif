@@ -1,6 +1,6 @@
 package ldif.modules.sieve
 
-import fusion.{TrustYourFriends, PassItOn}
+import fusion.{KeepUpToDate, TrustYourFriends, PassItOn}
 import ldif.util.Prefixes
 import java.io.{FileInputStream, InputStream, File}
 import sun.reflect.generics.reflectiveObjects.NotImplementedException
@@ -11,7 +11,6 @@ import org.slf4j.LoggerFactory
  *
  * @author pablomendes
  */
-
 class SieveConfig(val prefixes: Prefixes, val sieveSpecs: Traversable[FusionSpecification]) {
 
   def merge(c: SieveConfig) : SieveConfig = { //TODO implement
@@ -26,14 +25,17 @@ object SieveConfig {
   private val log = LoggerFactory.getLogger(getClass.getName)
 
   val stdPrefixes = Map("foaf" -> "http://xmlns.com/foaf/0.1/",
-    "dbpedia" -> "http://dbpedia.org/ontology/",
+    "dbpedia-owl" -> "http://dbpedia.org/ontology/",
+    //"dbpedia" -> "http://dbpedia.org/resource/",
     "genes"->"http://wiking.vulcan.com/neurobase/kegg_genes/resource/vocab/",
     "smwprop"->"http://mywiki/resource/property/",
     "smwcat"->"http://mywiki/resource/category/",
     "wiki"->"http://www.example.com/smw#",
+    "ldif"->"http://www4.wiwiss.fu-berlin.de/ldif/",
     "xsd" -> "http://www.w3.org/2001/XMLSchema#",
     "rdf" -> "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
-    "rdfs" -> "http://www.w3.org/2000/01/rdf-schema#")
+    "rdfs" -> "http://www.w3.org/2000/01/rdf-schema#",
+    "owl" -> "http://www.w3.org/2002/07/owl#")
 
   def load(configFile: File) : SieveConfig = {
     load(new FileInputStream(configFile))
@@ -57,12 +59,54 @@ provenance triples:
 
    */
   def load(configFile: InputStream) : SieveConfig = { //TODO implement config parser
-    val spec1 = new FusionSpecification("test",
-                      IndexedSeq(new TrustYourFriends("http://www4.wiwiss.fu-berlin.de/ldif/graph#dbpedia.en"), new PassItOn),
-                      IndexedSeq("http://www.w3.org/2000/01/rdf-schema#label", "http://xmlns.com/foaf/0.1/made")
-    )
-    val fusionSpecs = List(spec1)
+    val fusionSpecs = createLwdm2012ExampleSpecs
     new SieveConfig(new Prefixes(stdPrefixes),fusionSpecs)
+  }
+
+  def createLwdm2012ExampleSpecs = {
+    val spec1 = new FusionSpecification("lwdm2012",
+                      IndexedSeq(new PassItOn,
+                                 new TrustYourFriends("http://en.wikipedia.org.+"),
+                                 new PassItOn,
+                                 new KeepUpToDate("http://www4.wiwiss.fu-berlin.de/ldif/lastUpdate"),
+                                 new PassItOn),
+                      IndexedSeq("http://www.w3.org/2000/01/rdf-schema#label",
+                                 "http://dbpedia.org/ontology/areaTotal",
+                                 "http://dbpedia.org/ontology/foundingDate",
+                                 "http://dbpedia.org/ontology/populationTotal",
+                                 "http://www.w3.org/1999/02/22-rdf-syntax-ns#type")
+    )
+    List(spec1)
+  }
+
+   def createLwdm2012EntityDescription = {
+    <EntityDescription>
+      <Restriction>
+        <Condition path="?a/rdf:type">
+          <Uri>http://dbpedia.org/ontology/Settlement</Uri>
+        </Condition>
+        <Condition path="?a/dbpedia-owl:country">
+          <Uri>http://dbpedia.org/resource/Brazil</Uri>
+        </Condition>
+      </Restriction>
+      <Patterns>
+        <Pattern>
+          <Path>?a/rdfs:label</Path>
+        </Pattern>
+        <Pattern>
+          <Path>?a/dbpedia-owl:areaTotal</Path>
+        </Pattern>
+        <Pattern>
+          <Path>?a/dbpedia-owl:foundingDate</Path>
+        </Pattern>
+        <Pattern>
+          <Path>?a/dbpedia-owl:populationTotal</Path>
+        </Pattern>
+        <Pattern>
+          <Path>?a/rdfs:type</Path>
+        </Pattern>
+      </Patterns>
+    </EntityDescription>
   }
 
   def createDummyEntityDescriptions(prefixes: Prefixes) : List[EntityDescription] = {
@@ -73,16 +117,7 @@ provenance triples:
 
     //if (stream!=null) {
 //      val testXml = XML.load(stream);
-      val testXml = <EntityDescription>
-        <Patterns>
-          <Pattern>
-            <Path>?a/rdfs:label</Path>
-          </Pattern>
-          <Pattern>
-            <Path>?a/foaf:made</Path>
-          </Pattern>
-        </Patterns>
-      </EntityDescription>
+      val testXml = createLwdm2012EntityDescription
 
       val e = EntityDescription.fromXML(testXml)(prefixes)
       log.debug("[FUSION] "+e.toString);
@@ -93,8 +128,34 @@ provenance triples:
 //    }
   }
 
+  def createMusicExampleSpecs = {
+    val spec1 = new FusionSpecification("test",
+                      IndexedSeq(new TrustYourFriends("http://www4.wiwiss.fu-berlin.de/ldif/graph#dbpedia.en"), new PassItOn, new PassItOn, new PassItOn),
+                      IndexedSeq("http://www.w3.org/2000/01/rdf-schema#label", "http://xmlns.com/foaf/0.1/made", "http://www.w3.org/2002/07/owl#sameAs", "http://www4.wiwiss.fu-berlin.de/ldif/hasDatasource")
+    )
+    List(spec1)
+  }
 
-  def empty = {
+  def createMusicExampleDescription = {
+    <EntityDescription>
+        <Patterns>
+          <Pattern>
+            <Path>?a/rdfs:label</Path>
+          </Pattern>
+          <Pattern>
+            <Path>?a/foaf:made</Path>
+          </Pattern>
+          <Pattern>
+            <Path>?a/owl:sameAs</Path>
+          </Pattern>
+          <Pattern>
+            <Path>?a/ldif:hasDatasource</Path>
+          </Pattern>
+        </Patterns>
+      </EntityDescription>
+  }
+
+  def empty : EmptySieveConfig = {
     new EmptySieveConfig
   }
 }

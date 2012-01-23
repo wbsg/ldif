@@ -12,7 +12,7 @@ import ldif.runtime.Quad
 import ldif.util.Prefixes
 import ldif.entity.{Node, Entity, EntityDescription}
 import ldif.modules.sieve.fusion.{PassItOn, FusionFunction, TrustYourFriends, KeepFirst}
-import ldif.modules.sieve.{SieveConfig, SieveTask}
+import ldif.modules.sieve.{QualityAssessment, SieveConfig, SieveTask}
 
 /**
  * Executes Sieve on a local machine.
@@ -45,41 +45,63 @@ class SieveLocalExecutor(useFileInstanceCache: Boolean = false) extends Executor
 
   def output(task : SieveTask) = new GraphFormat()
 
+  private def getOrElse [T<:Object] (list: IndexedSeq[T], index: Int, default: T) : T = {
+    if (index < list.size) {
+      list(index)
+    } else {
+      default match {
+        case f: FusionFunction => log.warn("No FusionFunction found for patternId=%d".format(index))
+        case o: String => log.warn("No OutputProperty found for patternId=%d".format(index))
+      }
+      default
+    }
+  }
+
   /**
    * Executes a Sieve task.
    */
   override def execute(task : SieveTask, reader : Seq[EntityReader], writer : QuadWriter) {
     log.info("Executing Sieve Task %s".format(task.name))
 
+    val quality = task.qualityAssessment
+
     // for each entity reader (one per input file?)
     reader.foreach( in => {
-      val nPatterns = in.entityDescription.patterns.length
+      val lastPatternId = in.entityDescription.patterns.size
 
       var entity : Entity = NoEntitiesLeft;
       while ( { entity = in.read(); entity != NoEntitiesLeft} ) {
         //log.info("Sieve Entity: %s".format(entity.resource.toString))
-        //log.info("Patterns: "+entity.entityDescription.patterns.size)
+        //log.info("Patterns: "+in.entityDescription.patterns.size)
+
+        assume(task.sieveSpec.fusionFunctions.size==in.entityDescription.patterns.size, "Number of fusionFunctions must be the same as number of patterns.")
+        assume(task.sieveSpec.outputPropertyNames.size==in.entityDescription.patterns.size, "Number of outputPropertyNames must be the same as number of patterns.")
 
         if (entity==null) {
           log.error("Is it normal that some entities will be intermittently null? %s".format(in.entityDescription))
         }
 
         if (entity!=null && entity!=NoEntitiesLeft) {
-          for (patternId <- 0 until nPatterns) {
+          for (patternId <- 0 until lastPatternId) {
             val factums = entity.factums(patternId)
             val outputPropertyName = task.sieveSpec.outputPropertyNames(patternId)
             val fusionFunction = task.sieveSpec.fusionFunctions(patternId)
-            //log.debug("Patern %s: FusionFunction used: %s".format(pattern, fusionFunction))
+            //log.debug("Pattern %s: FusionFunction used: %s".format(patternId, fusionFunction))
 
-            if (factums.size==1) { //nothing to fuse //TODO filterign can also be
+            if (factums.size==1) { //nothing to fuse //TODO filtering functions apply to size=1 as well
               val patternNodes = factums.head
               val propertyValue = patternNodes(0)
-              val quad = new Quad(entity.resource, outputPropertyName, propertyValue, propertyValue.graph);
+              var graph = patternNodes(0).graph
+              if (propertyValue.graph.trim().isEmpty) {
+                println(patternNodes(0))
+                graph = "PABLO"
+              }
+              val quad = new Quad(entity.resource, outputPropertyName, propertyValue, graph);
               writer.write(quad)
             } else {               // fuse multiple values into one value and write it out
-              fusionFunction.fuse(factums).foreach( patternNodes => { // for each property
+              fusionFunction.fuse(factums, quality).foreach( patternNodes => { // for each property
                 if (patternNodes.nonEmpty) {
-                  val propertyValue = patternNodes(0) //TODO deal with case where the pattern is a tree (more than one path)
+                  val propertyValue = patternNodes(0) //TODO need to deal with case where the pattern is a tree (more than one path)
                   val quad = new Quad(entity.resource, outputPropertyName, propertyValue, propertyValue.graph);
                   writer.write(quad)
                 }
