@@ -28,11 +28,11 @@ class SieveModule(val config : SieveModuleConfig) extends Module
 
   type ConfigType = SieveModuleConfig
 
-  type TaskType = SieveTask
+  type TaskType = SieveFusionTask
 
-  lazy val tasks : Traversable[SieveTask] =
+  lazy val tasks : Traversable[SieveFusionTask] =
   {
-    for(sieveSpec <- config.sieveConfig.sieveSpecs) yield new SieveTask(config, sieveSpec)
+    for(sieveSpec <- config.sieveConfig.sieveSpecs) yield new SieveFusionTask(config, sieveSpec)
   }
 }
 

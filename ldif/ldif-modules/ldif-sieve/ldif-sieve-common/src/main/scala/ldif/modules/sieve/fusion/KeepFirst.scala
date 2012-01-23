@@ -19,7 +19,7 @@ package ldif.modules.sieve.fusion
 import scala.util.matching.Regex
 import org.slf4j.LoggerFactory
 import ldif.entity.{NodeTrait, Node}
-import ldif.modules.sieve.QualityAssessment
+import ldif.modules.sieve.quality.QualityAssessmentProvider
 
 /**
  * example fusion function that keeps the first value
@@ -30,7 +30,7 @@ class KeepFirst extends FusionFunction {
 
   private val log = LoggerFactory.getLogger(getClass.getName)
 
-  override def fuse(values: Traversable[IndexedSeq[NodeTrait]], quality: QualityAssessment) : Traversable[IndexedSeq[NodeTrait]] = {
+  override def fuse(values: Traversable[IndexedSeq[NodeTrait]], quality: QualityAssessmentProvider) : Traversable[IndexedSeq[NodeTrait]] = {
     if (values.nonEmpty) Seq(values.head) else Seq[IndexedSeq[NodeTrait]]()
   }
 
@@ -51,7 +51,7 @@ class TrustYourFriends(val preferredGraph: String) extends FusionFunction {
   private val log = LoggerFactory.getLogger(getClass.getName)
 
 
-  override def fuse(values: Traversable[IndexedSeq[NodeTrait]], quality: QualityAssessment) : Traversable[IndexedSeq[NodeTrait]] = {
+  override def fuse(values: Traversable[IndexedSeq[NodeTrait]], quality: QualityAssessmentProvider) : Traversable[IndexedSeq[NodeTrait]] = {
     //todo sort according to desired quality indicator
     values.flatMap( n => { // for each property
       // get value for first property path
@@ -89,7 +89,7 @@ class KeepUpToDate(val propertyName: String = "http://www4.wiwiss.fu-berlin.de/l
 
   private val log = LoggerFactory.getLogger(getClass.getName)
 
-  override def fuse(values: Traversable[IndexedSeq[NodeTrait]], quality: QualityAssessment) : Traversable[IndexedSeq[NodeTrait]] = {
+  override def fuse(values: Traversable[IndexedSeq[NodeTrait]], quality: QualityAssessmentProvider) : Traversable[IndexedSeq[NodeTrait]] = {
     values.toList
       .sortBy( node => quality.score(propertyName, node(0).graph) ) //todo convert to dates
       .headOption match {

@@ -19,13 +19,14 @@ package ldif.modules.sieve
 import fusion.{PassItOn, FusionFunction}
 import ldif.module.ModuleTask
 import ldif.util.Identifier
+import quality.{HashBasedQualityAssessment, QualityAssessmentProvider}
 
 /**
  * Sieve Task.
  */
-class SieveTask(val sieveConfig : SieveModuleConfig, val sieveSpec : FusionSpecification) extends ModuleTask
+class SieveFusionTask(val sieveConfig : SieveModuleConfig, val fusionSpec : FusionSpecification) extends ModuleTask
 {
-  val name : Identifier = sieveSpec.id.toString
-  val qualityAssessment : QualityAssessment = new QualityAssessment //TODO SieveTask constructor to pass QualitySpec
+  val name : Identifier = fusionSpec.id.toString
+  val qualityAssessment : QualityAssessmentProvider = new HashBasedQualityAssessment //TODO SieveFusionTask constructor to pass QualitySpec
 
 }

@@ -27,17 +27,17 @@ import org.junit.runner.RunWith
 import ldif.modules.sieve.{SieveConfig, SieveModuleConfig, SieveModule}
 
 /**
- * Unit Test for the SieveLocalExecutor.
+ * Unit Test for the SieveLocalFusionExecutor.
  */
 //TODO check for more cases
 @RunWith(classOf[JUnitRunner])
-class SieveLocalExecutorTest extends FlatSpec with ShouldMatchers
+class SieveLocalFusionExecutorTest extends FlatSpec with ShouldMatchers
 {
   //DefaultImplementations.register()
 
-  val executor = new SieveLocalExecutor()
+  val executor = new SieveLocalFusionExecutor()
 
-  "SieveLocalExecutor" should "return the correct entity descriptions" in
+  "SieveLocalFusionExecutor" should "return the correct entity descriptions" in
   {
     (executor.input(task).entityDescriptions.head) should equal (entityDescription)
   }

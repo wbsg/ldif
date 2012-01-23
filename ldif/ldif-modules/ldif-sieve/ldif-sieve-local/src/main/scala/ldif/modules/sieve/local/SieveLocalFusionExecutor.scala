@@ -28,38 +28,38 @@ import ldif.runtime.Quad
 import ldif.util.Prefixes
 import ldif.entity.{Node, Entity, EntityDescription}
 import ldif.modules.sieve.fusion.{PassItOn, FusionFunction, TrustYourFriends, KeepFirst}
-import ldif.modules.sieve.{QualityAssessment, SieveConfig, SieveTask}
+import ldif.modules.sieve.{SieveConfig, SieveFusionTask}
 
 /**
- * Executes Sieve on a local machine.
+ * Executes Sieve Data Fusion on a local machine.
  * @author pablomendes - based on Silk and R2R executors.
  */
-class SieveLocalExecutor(useFileInstanceCache: Boolean = false) extends Executor
+class SieveLocalFusionExecutor(useFileInstanceCache: Boolean = false) extends Executor
 {
   private val log = LoggerFactory.getLogger(getClass.getName)
 
   //private val numThreads = 8
   //private val numThreads = Runtime.getRuntime.availableProcessors
 
-  type TaskType = SieveTask
+  type TaskType = SieveFusionTask
 
   type InputFormat = StaticEntityFormat
 
   type OutputFormat = GraphFormat
 
-  def input(task : SieveTask) : InputFormat =
+  def input(task : SieveFusionTask) : InputFormat =
   {
     implicit val prefixes = task.sieveConfig.sieveConfig.prefixes
     //log.info("Prefixes:"+prefixes.toString)
 
-    // here we create entity descriptions from the task.sieveSpec
-    //        val entityDescriptions = CreateEntityDescriptions(task.sieveSpec)
+    // here we create entity descriptions from the task.fusionSpec
+    //        val entityDescriptions = CreateEntityDescriptions(task.fusionSpec)
     val entityDescriptions = SieveConfig.createDummyEntityDescriptions(prefixes)
 
     new StaticEntityFormat(entityDescriptions)
   }
 
-  def output(task : SieveTask) = new GraphFormat()
+  def output(task : SieveFusionTask) = new GraphFormat()
 
   private def getOrElse [T<:Object] (list: IndexedSeq[T], index: Int, default: T) : T = {
     if (index < list.size) {
@@ -76,7 +76,7 @@ class SieveLocalExecutor(useFileInstanceCache: Boolean = false) extends Executor
   /**
    * Executes a Sieve task.
    */
-  override def execute(task : SieveTask, reader : Seq[EntityReader], writer : QuadWriter) {
+  override def execute(task : SieveFusionTask, reader : Seq[EntityReader], writer : QuadWriter) {
     log.info("Executing Sieve Task %s".format(task.name))
 
     val quality = task.qualityAssessment
@@ -90,8 +90,8 @@ class SieveLocalExecutor(useFileInstanceCache: Boolean = false) extends Executor
         //log.info("Sieve Entity: %s".format(entity.resource.toString))
         //log.info("Patterns: "+in.entityDescription.patterns.size)
 
-        assume(task.sieveSpec.fusionFunctions.size==in.entityDescription.patterns.size, "Number of fusionFunctions must be the same as number of patterns.")
-        assume(task.sieveSpec.outputPropertyNames.size==in.entityDescription.patterns.size, "Number of outputPropertyNames must be the same as number of patterns.")
+        assume(task.fusionSpec.fusionFunctions.size==in.entityDescription.patterns.size, "Number of fusionFunctions must be the same as number of patterns.")
+        assume(task.fusionSpec.outputPropertyNames.size==in.entityDescription.patterns.size, "Number of outputPropertyNames must be the same as number of patterns.")
 
         if (entity==null) {
           log.error("Is it normal that some entities will be intermittently null? %s".format(in.entityDescription))
@@ -100,8 +100,8 @@ class SieveLocalExecutor(useFileInstanceCache: Boolean = false) extends Executor
         if (entity!=null && entity!=NoEntitiesLeft) {
           for (patternId <- 0 until lastPatternId) {
             val factums = entity.factums(patternId)
-            val outputPropertyName = task.sieveSpec.outputPropertyNames(patternId)
-            val fusionFunction = task.sieveSpec.fusionFunctions(patternId)
+            val outputPropertyName = task.fusionSpec.outputPropertyNames(patternId)
+            val fusionFunction = task.fusionSpec.fusionFunctions(patternId)
             //log.debug("Pattern %s: FusionFunction used: %s".format(patternId, fusionFunction))
 
             if (factums.size==1) { //nothing to fuse //TODO filtering functions apply to size=1 as well
