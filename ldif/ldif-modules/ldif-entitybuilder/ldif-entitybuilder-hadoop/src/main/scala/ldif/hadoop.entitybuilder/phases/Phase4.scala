@@ -1,7 +1,7 @@
 /*
  * LDIF
  *
- * Copyright 2011 Freie Universität Berlin, MediaEvent Services GmbH & Co. KG
+ * Copyright 2011-2012 Freie Universität Berlin, MediaEvent Services GmbH & Co. KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -47,6 +47,7 @@ class Phase4 extends Configured with Tool {
     val maxPhase = args(0).toInt
 
     jobConf.setJobName("HEB-Phase4")
+    jobConf.setJarByClass(classOf[Phase4])
 
     jobConf.setMapperClass(classOf[EntityConstructionMapper])
     jobConf.setReducerClass(classOf[EntityConstructionReducer])
@@ -60,7 +61,8 @@ class Phase4 extends Configured with Tool {
     jobConf.setInputFormat(classOf[ValuePathSequenceFileInput])
     jobConf.setOutputFormat(classOf[EntityMultipleSequenceFileOutput])
     //Debugging
-    MultipleOutputs.addNamedOutput(jobConf, "debug", classOf[EntityMultipleTextFileOutput], classOf[IntWritable], classOf[EntityWritable])
+    MultipleOutputs.addNamedOutput(jobConf, "debugReduce", classOf[EntityMultipleTextFileOutput], classOf[IntWritable], classOf[EntityWritable])
+    MultipleOutputs.addNamedOutput(jobConf, "debugMap", classOf[ValuePathMultipleTextFileOutput], classOf[IntWritable], classOf[ValuePathWritable])
 
     for(i <- 0 to math.max(0, maxPhase-1)) {
       var in = new Path(args(1) + Consts.fileSeparator + i + Consts.fileSeparator, ValuePathMultipleSequenceFileOutput.generateDirectoryNameForFinishedValuePaths(i))
@@ -71,9 +73,7 @@ class Phase4 extends Configured with Tool {
     val out = new Path(args(2))
     FileOutputFormat.setOutputPath(jobConf, out)
 
-    val runningJob = JobClient.runJob(jobConf)
-    //    val counters = runningJob.getCounters
-    //    val countValue=counters.getGroup("LDIF nr. of entities per ED").getCounter("ED ID 6")
+    JobClient.runJob(jobConf)
 
     return 0
   }
@@ -92,25 +92,34 @@ object Phase4 {
 
     log.info("Output directory: " + out)
 
-    val start = System.currentTimeMillis
     val conf = new Configuration
-    HadoopHelper.distributeSerializableObject(edmd, conf, "edmd")
-
-    // remove existing output
     val hdfs = FileSystem.get(conf)
-    val hdPath = new Path(out)
-    if (hdfs.exists(hdPath))
-      hdfs.delete(hdPath, true)
 
-    val maxPhase = edmd.maxPhase
+    if (!hdfs.exists(new Path(in))) {
+      // skip phase if input dir is empty
+      log.info("Phase 4 skipped - No input resources found")
+      0
+    }
 
-    val res = ToolRunner.run(conf, new Phase4(), Array(maxPhase.toString, in, out))
+    else {
+      val start = System.currentTimeMillis
+      HadoopHelper.distributeSerializableObject(edmd, conf, "edmd")
 
-    log.info("That's it. Took " + (System.currentTimeMillis-start)/1000.0 + "s")
+      // remove existing output
+      val hdPath = new Path(out)
+      if (hdfs.exists(hdPath))
+        hdfs.delete(hdPath, true)
 
-    // delete output of the previous phase
-    hdfs.delete(new Path(in), true)
-    res
+      val maxPhase = edmd.maxPhase
+
+      val res = ToolRunner.run(conf, new Phase4(), Array(maxPhase.toString, in, out))
+
+      log.info("That's it. Took " + (System.currentTimeMillis-start)/1000.0 + "s")
+
+      // delete output of the previous phase
+      hdfs.delete(new Path(in), true)
+      res
+    }
   }
 }
 

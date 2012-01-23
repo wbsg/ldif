@@ -1,0 +1,226 @@
+<html>
+<head>
+	<script type="text/javascript" src="https://www.google.com/jsapi"></script>
+	<title>Chart-O-Matic&trade;</title>
+	<style>
+	body {
+		font-family: cursive, Arial, sans-serif;
+	}
+	</style>
+	<script type="text/javascript">
+
+	google.load("visualization", "1", {packages:["imagechart"]});
+	
+	function tcToSec(tc) {
+		var vals = tc.split(":");
+		var result = 0;
+		while (vals.length > 0) {
+			result *= 60;
+			result += parseInt(vals.shift(), 10);
+		}
+		return result;
+	}
+	
+	function drawChart(textile, settings) {
+		
+		// split lines, ignoring empty lines
+		var lines = textile.replace(/^\n+|\n+$|\r/g, "").replace(/\n{2,}/g, "\n").split("\n");
+
+		for (var i=0; i<lines.length; i++) {
+			lines[i] = lines[i].trim();
+		}
+
+		/* read out the title */
+		title = lines[0].replace(/\*/g, "");
+
+		/*
+		 * now extract the data in the following format for the google image bar chart api:
+		 *		rawData = [
+		 *         ['In-Memory', 131, 110, 13, 123, 17],
+		 *         ['TDB', 1334, 85, 139, 213, 15],
+		 *         ['Hadoop', 688, 87, 225, 216, 427]
+		 *       ];
+		 */
+		var rawData = [];
+		var columns = [];
+		var startLine = 1;
+		var ignoredRows = []; // ignore unchartable rows with "out of memory" notices etc.
+		
+		for (var i = startLine; i < lines.length; i++) {
+			// skip total line as we build our own
+			if (lines[i].indexOf("Overall") != -1) {
+				continue;
+			}
+
+			var col = i - startLine;
+			var fields = lines[i].split("|");
+
+			if (i > startLine && fields.length > 2) {
+				columns.push(fields[1].trim());
+			}
+
+			var row = 0;
+			for (var j=2; j < fields.length - 1; j++) {
+				var row = j - 2;
+				if (typeof rawData[row] == 'undefined') {
+					rawData[row] = [];
+				}
+				rawData[row][col] = fields[j]
+				.replace(/[_>]\./g, "") // remove textile markup
+				.replace(/(\d+)\s*s/g, "$1") // remove "s" suffix
+				.trim();
+				
+				ignoredRows[row] |= rawData[row][col].match(/^$|out of memory/i) ? true : false; // ignore empty rows or those with "out of memory" messages
+			}
+		}
+		
+		if (settings.debug && typeof console != "undefined") {
+			console.log(ignoredRows);
+			console.log(lines);
+			console.log(rawData);
+			console.log(columns);
+		}
+
+		var data = new google.visualization.DataTable();
+		data.addColumn('string', 'Configuration');
+
+		for (var i=0; i<columns.length; i++) {
+			data.addColumn("number", columns[i]);
+		}
+
+		var maxRowSum = 0;
+
+		for (i=0; i<rawData.length; i++) {
+			if (ignoredRows[i]) {
+				continue;
+			}
+			var row = rawData[i];
+			var rowSum = 0;
+			for (j=1; j<row.length; j++) {
+				// process HH:MM:SS timestamp
+				row[j] = tcToSec(row[j]);
+				rowSum += row[j];
+			}
+
+			maxRowSum = Math.max(maxRowSum, rowSum);
+		}
+		
+		// determine scale and unit
+		var scale;
+		var unit;
+		
+		if (maxRowSum > 60 * 1000) {
+			scale = 1 / (60.0 * 60.0);
+			unit = "h";
+		} else if (maxRowSum > 1000) {
+			scale = 1 / 60.0;
+			unit = "min";
+		} else {
+			scale = 1;
+			unit = "s";
+		}
+		
+		for (i=0; i<rawData.length; i++) {
+			if (ignoredRows[i]) {
+				continue;
+			}
+
+			var row = rawData[i];
+			for (j=1; j<row.length; j++) {
+				row[j] *= scale;
+			}
+
+			data.addRow(row);
+		}		
+
+		// One decimal place with "min" suffix
+		var valueFormat = 'N*f1* ' + unit;
+		
+		// show the maximum duration and add 10% space for labels
+		var displayArea = Math.ceil(maxRowSum * scale * 1.1);
+		
+		// show 5 steps
+		var numSteps = 5;
+		var step = displayArea / numSteps;
+		
+		// round the step interval to the next base 5 (we have to do this since the axis would otherwise slightly drift from the values...)
+		step = Math.pow(5, 1 + Math.floor(Math.log(step) / Math.log(5)));
+		
+		// finally, round up display area to step size
+		displayArea = Math.ceil(displayArea / (step/2)) * (step / 2);
+		
+		// show twice as many grid lines as steps
+		var numGridLines = 2 * displayArea / step;
+		
+		var options = {
+			chtt: title,
+			cht: 'bhs',  // Horizontal bar chart with stacked bars
+			chs: settings.width + "x" + settings.heights[data.getNumberOfRows() - 1], // width x height
+			chg: (100 / numGridLines) + ",0", // grid lines
+			chds: "0," + displayArea, // scale
+			chxr: "1,0," + displayArea + "," + step,
+			chf: "",
+			chco: "",
+			/*		chxt: "y,x,x",
+			chxl: "2:|Runtime (minutes)",
+			chxp: "2,50"*/
+			chxs: "1,"+ valueFormat // axis style
+		};
+
+		// colors and gradients
+		for (var i=0; i<columns.length; i++) {
+			options.chco += (i > 0 ? "|" : "") + settings.colorScheme[i].substr(1);
+			options.chf += (i > 0 ? "|" : "") + "b" + i + ",lg,0," + settings.colorScheme[i].substr(1) + ",0.4," + settings.shadeColor + ",1";
+		}
+
+		// Draw a label on all bars.
+		var allbars = -1;
+
+		// 12 pixels font size for the labels.
+		var fontSize = 12;
+
+		var zOrder = '';
+		var placement = 'c'; // center
+
+		options.chm = "";
+
+		if (settings.showSegmentLabels) {
+			for (index=0; index<columns.length; index++) {
+				options.chm += (index>0 ? "|" : "") + [valueFormat, settings.textColor, index, allbars, fontSize, zOrder, placement].join(',');
+			}
+		}
+		
+		// totals
+		options.chm += [valueFormat, settings.textColor, "-1", allbars, fontSize, zOrder, 'l:10'].join(',');
+
+		// Create and draw the visualization.
+		new google.visualization.ImageChart(document.getElementById('chart_div')).
+		draw(data, options);  
+	}
+	
+	var settings = {
+		showSegmentLabels: false,
+		colorScheme: ['#cc6666',  '#cccc66', '#66cc66', '#6666cc', '#6696cc', '#cccc96'],
+		textColor: '555555',
+		shadeColor: '444444',
+		debug: false,
+		width: 900,
+		heights: [ 115, 180, 250, 315 ] // aiming for 60px in height per bar
+	};
+	
+	</script>
+</head>
+<body>
+	<h1>Chart-O-Matic&trade;</h1>
+	<textarea rows="10" cols="80" id="textile" style="display: block; clear: both;">*25M run times*
+|_. Phase |_. In-memory[2]  |_. TDB[3]  |_.Hadoop Local |
+| Load and build entities for R2R |131 s | 1334 s| 688 s|
+| R2R data translation |110 s | 85 s | 87 s|
+| Build entities for Silk |13 s | 139 s | 225 s|
+| Silk identity resolution |123 s | 213 s| 216 s|
+| URIs rewriting |17 s | 15 s| 427 s|
+| Overall execution  | 6.5 min| 29.7 min | 27.4 min|</textarea>
+	<input type="button" value="Chart it!" onclick="drawChart(document.getElementById('textile').value, settings);"/>
+	<div id="chart_div"></div>
+</body>
+</html>

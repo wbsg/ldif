@@ -1,7 +1,7 @@
 /* 
  * LDIF
  *
- * Copyright 2011 Freie Universität Berlin, MediaEvent Services GmbH & Co. KG
+ * Copyright 2011-2012 Freie Universität Berlin, MediaEvent Services GmbH & Co. KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,32 +19,39 @@
 package ldif.datasources.dump
 
 import ldif.runtime.Quad
+import ldif.util.Consts
 import org.antlr.runtime.{CommonTokenStream, ANTLRStringStream}
-import parser.{NQuadParser, NQuadLexer}
+import parser.{ParseException, NQuadParser, NQuadLexer}
 
 /**
- * Created by IntelliJ IDEA.
- * User: andrea
- * Date: 8/4/11
- * Time: 6:18 PM
- * To change this template use File | Settings | File Templates.
+ * N-Quad/N-Triple Parser
  */
 
 class QuadParser(graphURI: String) {
   def this() {
-    this("default")
+    this(Consts.DEFAULT_GRAPH)
   }
 
   /**
-   * returns a Quad object if string can be parsed as Quad or null for comment line
+   * Returns a Quad object if line can be parsed as Quad, or null otherwise (eg. comment lines)
    * @throws: ParseException
    */
-  def parseLine(line: String): Quad = {
+  def parseLine(line: String, silent : Boolean = false): Quad = {
     val stream = new ANTLRStringStream(line)
-		val lexer = new NQuadLexer(stream)
-		val tokenStream = new CommonTokenStream(lexer)
-		val parser = new NQuadParser(tokenStream)
+    val lexer = new NQuadLexer(stream)
+    val tokenStream = new CommonTokenStream(lexer)
+    val parser = new NQuadParser(tokenStream)
     parser.setGraph(graphURI)
-    parser.line()
+    try {
+      parser.line()
+    }
+    catch {
+      case e:ParseException =>
+      {
+        if (silent)
+          null
+        else throw e
+      }
+    }
   }
 }

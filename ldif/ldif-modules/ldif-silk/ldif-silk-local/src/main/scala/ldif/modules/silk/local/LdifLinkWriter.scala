@@ -1,7 +1,7 @@
 /* 
  * LDIF
  *
- * Copyright 2011 Freie Universität Berlin, MediaEvent Services GmbH & Co. KG
+ * Copyright 2011-2012 Freie Universität Berlin, MediaEvent Services GmbH & Co. KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,16 +20,17 @@ package ldif.modules.silk.local
 
 import ldif.local.runtime.QuadWriter
 import ldif.entity.Node
-import de.fuberlin.wiwiss.silk.output.{Link, LinkWriter}
+import de.fuberlin.wiwiss.silk.output.LinkWriter
 import ldif.runtime.Quad
+import de.fuberlin.wiwiss.silk.entity.Link
 
 /**
  * A Silk Link Writer which writes all links to a LDIF Quad Writer.
  */
-class LdifLinkWriter(quadWriter : QuadWriter) extends LinkWriter
-{
-  def write(link : Link, predicateUri : String)
-  {
-    quadWriter.write(Quad(Node.createUriNode(link.source, null), predicateUri, Node.createUriNode(link.target, null), ""))
+class LdifLinkWriter(quadWriter : QuadWriter) extends LinkWriter {
+
+  def write(link: Link, predicateUri : String) {
+    if(link.source!=link.target)
+      quadWriter.write(Quad(Node.createUriNode(link.source, null), predicateUri, Node.createUriNode(link.target, null), ""))
   }
 }

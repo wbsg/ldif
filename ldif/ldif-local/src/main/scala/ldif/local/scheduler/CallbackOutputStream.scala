@@ -1,7 +1,7 @@
 /* 
  * LDIF
  *
- * Copyright 2011 Freie Universität Berlin, MediaEvent Services GmbH & Co. KG
+ * Copyright 2011-2012 Freie Universität Berlin, MediaEvent Services GmbH & Co. KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,7 +33,7 @@ class CallbackOutputStream(val out : OutputStream) extends CallbackNxOutputStrea
   override def processStatement(nodes : Array[Node]) {
     try {
       for(n <- nodes){
-        out.write(n.toN3.getBytes)
+        out.write(n.toN3.getBytes)//TODO: Change toN3 to toNT/toNQ
         out.write(space)
       }
       //graphs += nodes(3).toString

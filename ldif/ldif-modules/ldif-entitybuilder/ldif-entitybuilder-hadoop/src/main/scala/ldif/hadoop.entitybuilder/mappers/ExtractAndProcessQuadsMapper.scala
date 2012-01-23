@@ -1,7 +1,7 @@
 /* 
  * LDIF
  *
- * Copyright 2011 Freie Universität Berlin, MediaEvent Services GmbH & Co. KG
+ * Copyright 2011-2012 Freie Universität Berlin, MediaEvent Services GmbH & Co. KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,10 +32,18 @@ class ExtractAndProcessQuadsMapper extends MapReduceBase with Mapper[LongWritabl
   private val parser = new QuadParser
   private var edmd: EntityDescriptionMetadata = null
   private var mos: MultipleOutputs = null
+  private var collectSameAs : Boolean = false
+  private var collectAllQuads : Boolean = false
+  private var ignoreProvenance : Boolean = false
+  private var provenanceGraph : String = ""
 
   override def configure(conf: JobConf) {
     edmd = HadoopHelper.getEntityDescriptionMetaData(conf)
     mos = new MultipleOutputs(conf)
+    collectSameAs = conf.getBoolean("sameas", false)
+    collectAllQuads = conf.getBoolean("allquads", false)
+    ignoreProvenance = conf.getBoolean("ignoreProvenance", false)
+    provenanceGraph = conf.getStrings("provenanceGraph", Consts.DEFAULT_PROVENANCE_GRAPH).head
   }
 
   override def map(key: LongWritable, value: Text, output: OutputCollector[IntWritable, ValuePathWritable], reporter: Reporter) {
@@ -44,17 +52,35 @@ class ExtractAndProcessQuadsMapper extends MapReduceBase with Mapper[LongWritabl
       quad = parser.parseLine(value.toString)
     } catch {
       case e: Exception => quad = null
+      System.err.println("Invalid line found in data set: " + value.toString)
+      reporter.getCounter("LDIF Stats","Invalid quads found in data set").increment(1)
     }
 
     if(quad==null)
       return
-    if(quad.predicate == Consts.SAMEAS_URI)   {
-      val collector = mos.getCollector("sameas", reporter).asInstanceOf[OutputCollector[NullWritable, QuadWritable]]
-      collector.collect(NullWritable.get, new QuadWritable(quad))
-      reporter.getCounter("LDIF Stats","SameAs links from data set").increment(1)
+    else {
+      reporter.getCounter("LDIF Stats","Valid triples/quads found in data set").increment(1)
+      if (quad.graph.equals(provenanceGraph) && (!ignoreProvenance)) {
+        val collector = mos.getCollector("provenance", reporter).asInstanceOf[OutputCollector[NullWritable, QuadWritable]]
+        collector.collect(NullWritable.get, new QuadWritable(quad))
+        reporter.getCounter("LDIF Stats","Provenance quads found in data set").increment(1)
+      }
+      else if(quad.predicate.equals(Consts.SAMEAS_URI))   {
+        if (collectSameAs) {
+          val collector = mos.getCollector("sameas", reporter).asInstanceOf[OutputCollector[NullWritable, QuadWritable]]
+          collector.collect(NullWritable.get, new QuadWritable(quad))
+        }
+        reporter.getCounter("LDIF Stats","SameAs links found in data set").increment(1)
+      }
+      else {
+        if (collectAllQuads){
+          val collector = mos.getCollector("allquads", reporter).asInstanceOf[OutputCollector[NullWritable, QuadWritable]]
+          collector.collect(NullWritable.get, new QuadWritable(quad))
+        }
+
+        ProcessQuads.processQuad(quad, reporter, edmd, mos)
+      }
     }
-    else
-      ProcessQuads.processQuad(quad, reporter, edmd, mos)
   }
 
   override def close() {

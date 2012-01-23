@@ -1,7 +1,7 @@
 /* 
  * LDIF
  *
- * Copyright 2011 Freie Universität Berlin, MediaEvent Services GmbH & Co. KG
+ * Copyright 2011-2012 Freie Universität Berlin, MediaEvent Services GmbH & Co. KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -40,5 +40,11 @@ class PathJoinValueWritable (var pathID : IntWritable, var node : NodeWritable) 
   def write(output: DataOutput) {
     pathID.write(output)
     node.write(output)
+  }
+
+  override def hashCode(): Int = {
+    var hashCode = pathID.get()
+    hashCode = 31*hashCode + node.hashCode
+    return hashCode
   }
 }

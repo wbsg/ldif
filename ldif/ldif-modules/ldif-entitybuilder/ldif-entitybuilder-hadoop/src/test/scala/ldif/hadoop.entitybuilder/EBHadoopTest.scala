@@ -1,7 +1,7 @@
 /*
  * LDIF
  *
- * Copyright 2011 Freie Universität Berlin, MediaEvent Services GmbH & Co. KG
+ * Copyright 2011-2012 Freie Universität Berlin, MediaEvent Services GmbH & Co. KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,6 +33,7 @@ import org.apache.hadoop.io.{IntWritable, SequenceFile}
 import ldif.entity.{Entity, EntityWritable, EntityDescription, EntityDescriptionMetaDataExtractor}
 import ldif.hadoop.entitybuilder.EntityBuilderHadoopExecutor
 import java.util.Properties
+import ldif._
 
 /**
  * Unit Test for the Hadoop Entity Builder Module.
@@ -43,17 +44,13 @@ class EBHadoopTest extends FlatSpec with ShouldMatchers
 {
   // Create input structures
   val resourceDir = getClass.getClassLoader.getResource("hadoop").getPath.toString
-  val sourcesDir = resourceDir+Consts.fileSeparator+"sources"
-  val outputDirPrefix = resourceDir+Consts.fileSeparator+"output_phase"
+  val sourcesPath = new Path(resourceDir+Consts.fileSeparator+"sources")
+  val outputPath = new Path(resourceDir+Consts.fileSeparator+"output")
   val edDir = resourceDir+Consts.fileSeparator+"entity_descriptions"+Consts.fileSeparator
-  val edmd = EntityDescriptionMetaDataExtractor.extract(entityDescriptions)
 
   // Run entity builder
-  val hebe = new EntityBuilderHadoopExecutor(ConfigParameters(new Properties()))
-//  hebe.execute(TestUtils.task, TestUtils.quads, eqs)
-  Phase2.runPhase(sourcesDir, outputDirPrefix+"/eb/phase2", edmd, null, true)
-  Phase3.runPhase(outputDirPrefix+"/eb/phase2", outputDirPrefix+"/eb/phase3", edmd)
-  Phase4.runPhase(outputDirPrefix+"/eb/phase3", outputDirPrefix+"/eb/output", edmd)
+  val hebe = new EntityBuilderHadoopExecutor(ConfigParameters(new Properties(), null, null, null, true))
+  hebe.execute(task, List(sourcesPath), List(outputPath))
 
   // Check results
   val eqs = readOuputFiles
@@ -156,6 +153,13 @@ class EBHadoopTest extends FlatSpec with ShouldMatchers
 
   // Utils
 
+  lazy val task = {
+    val ebc = new EntityBuilderConfig(entityDescriptions)
+    val ebm = new EntityBuilderModule(ebc)
+    // eb has only one task
+    ebm.tasks.head
+  }
+
   lazy val entityDescriptions = IndexedSeq (
     loadED(edDir + "ed0.xml"),
     loadED(edDir + "ed1.xml"),
@@ -176,16 +180,18 @@ class EBHadoopTest extends FlatSpec with ShouldMatchers
     val config = new Configuration
     val fileSystem = FileSystem.get(config)
 
-    val outputFiles = loadOutput(new File(outputDirPrefix+"/eb/output"))
+    val outputFiles = loadOutput(new File(outputPath.toString))
     val eqs = outputFiles.map(_ => Seq.empty[Entity]).toArray
 
     for (file <- outputFiles)  {
       val reader = new SequenceFile.Reader(fileSystem, file, config)
       val kk = reader.getKeyClass.newInstance.asInstanceOf[IntWritable]
       val vv = reader.getValueClass.newInstance.asInstanceOf[EntityWritable]
+      //println(eqs.size)
       while (reader.next(kk, vv)) {
+        //println(kk.get)
         eqs(kk.get) :+= vv
-        // println( kk +" ) " +vv.resource.value +" \n"+ vv + "\n-----------------")
+        //println( kk +" ) " +vv.resource.value +" \n"+ vv + "\n-----------------")
       }
       reader.close
     }

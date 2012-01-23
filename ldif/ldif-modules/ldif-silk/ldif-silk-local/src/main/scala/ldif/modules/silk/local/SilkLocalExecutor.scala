@@ -1,7 +1,7 @@
 /* 
  * LDIF
  *
- * Copyright 2011 Freie Universität Berlin, MediaEvent Services GmbH & Co. KG
+ * Copyright 2011-2012 Freie Universität Berlin, MediaEvent Services GmbH & Co. KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,23 +20,21 @@ package ldif.modules.silk.local
 
 import ldif.module.Executor
 import ldif.modules.silk.{CreateEntityDescriptions, SilkTask}
-import de.fuberlin.wiwiss.silk.util.SourceTargetPair
-import de.fuberlin.wiwiss.silk.instance.{Instance, MemoryInstanceCache, InstanceSpecification, FileInstanceCache}
 import de.fuberlin.wiwiss.silk.datasource.Source
 import de.fuberlin.wiwiss.silk.{OutputTask, FilterTask, MatchTask, LoadTask}
 import de.fuberlin.wiwiss.silk.output.Output
 import ldif.local.runtime._
-import java.io.File
-import org.apache.commons.io.FileUtils
 import ldif.local.util.TemporaryFileCreator
+import de.fuberlin.wiwiss.silk.entity.{Entity => SilkEntity}
+import de.fuberlin.wiwiss.silk.entity.{EntityDescription => SilkEntityDescription}
+import de.fuberlin.wiwiss.silk.util.DPair
+import de.fuberlin.wiwiss.silk.cache.{FileEntityCache, MemoryEntityCache}
+import de.fuberlin.wiwiss.silk.config.RuntimeConfig
 
 /**
  * Executes Silk on a local machine.
  */
-class SilkLocalExecutor(useFileInstanceCache: Boolean = false) extends Executor
-{
-  private val numThreads = 8
-//  private val numThreads = Runtime.getRuntime.availableProcessors
+class SilkLocalExecutor(useFileInstanceCache: Boolean = false) extends Executor {
 
   type TaskType = SilkTask
 
@@ -44,8 +42,7 @@ class SilkLocalExecutor(useFileInstanceCache: Boolean = false) extends Executor
 
   type OutputFormat = GraphFormat
 
-  def input(task : SilkTask) =
-  {
+  def input(task : SilkTask) = {
     implicit val prefixes = task.silkConfig.silkConfig.prefixes
     val entityDescriptions = CreateEntityDescriptions(task.linkSpec)
 
@@ -57,40 +54,33 @@ class SilkLocalExecutor(useFileInstanceCache: Boolean = false) extends Executor
   /**
    * Executes a Silk task.
    */
-
-
-  override def execute(task : SilkTask, reader : Seq[EntityReader], writer : QuadWriter)
-  {
-    val blocking = task.silkConfig.silkConfig.blocking
+  override def execute(task : SilkTask, reader : Seq[EntityReader], writer : QuadWriter) {
+    val config = RuntimeConfig()
     val linkSpec = task.linkSpec
-
-    //Retrieve Instance Specifications from Link Specification
-    val instanceSpecs = InstanceSpecification.retrieve(linkSpec)
+    val entityDescs = linkSpec.entityDescriptions
 
     //Create instance caches
     val caches = if(useFileInstanceCache) {
       val tempSource = TemporaryFileCreator.createTemporaryDirectory("ldif_silk_s", "", true)
       val tempTarget = TemporaryFileCreator.createTemporaryDirectory("ldif_silk_t", "", true)
-      SourceTargetPair(
-        new FileInstanceCache(instanceSpecs.source, tempSource, true, blocking.map(_.blocks).getOrElse(1)),
-        new FileInstanceCache(instanceSpecs.target, tempTarget, true, blocking.map(_.blocks).getOrElse(1))
+      DPair(
+        new FileEntityCache(entityDescs.source, linkSpec.rule.index(_), tempSource, config),
+        new FileEntityCache(entityDescs.target, linkSpec.rule.index(_), tempTarget, config)
       )
     } else
-      SourceTargetPair(
-        new MemoryInstanceCache(instanceSpecs.source, blocking.map(_.blocks).getOrElse(1)),
-        new MemoryInstanceCache(instanceSpecs.target, blocking.map(_.blocks).getOrElse(1))
+      DPair(
+        new MemoryEntityCache(entityDescs.source, linkSpec.rule.index(_)),
+        new MemoryEntityCache(entityDescs.target, linkSpec.rule.index(_))
       )
 
-
     //Load instances into cache
-    val sources = SourceTargetPair.fromSeq(reader).map(reader => Source("id", LdifDataSource(reader)))
-    def indexFunction(instance: Instance) = linkSpec.condition.index(instance, 0.0)
+    val sources = DPair.fromSeq(reader).map(reader => Source("id", LdifDataSource(reader)))
 
-    val loadTask = new LoadTask(sources, caches, instanceSpecs, if (blocking.isDefined) Some(indexFunction _) else None)
+    val loadTask = new LoadTask(sources, caches)
     loadTask()
 
     //Execute matching
-    val matchTask = new MatchTask(linkSpec, caches, numThreads, true)
+    val matchTask = new MatchTask(linkSpec.rule, caches, config)
     val links = matchTask()
 
     //Filter links

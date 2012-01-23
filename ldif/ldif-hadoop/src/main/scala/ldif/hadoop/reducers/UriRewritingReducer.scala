@@ -1,3 +1,19 @@
+/* 
+ * Copyright 2011-2012 Freie Universität Berlin, MediaEvent Services GmbH & Co. KG
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package ldif.hadoop.reducers
 
 import org.apache.hadoop.conf.Configuration
@@ -76,10 +92,12 @@ class UriRewritingReducer extends MapReduceBase with Reducer[NodeWritable, QuadW
 class QuadCollection {
   var quadSet = new HashSet[QuadWritable]
   var quadFileWriter: FileQuadWritableWriter = null
+  private val spillToDiskThreshold = 10000
 
   def add(quad: QuadWritable) {
-    if(quadFileWriter==null && MemoryUsage.getFreeMemoryInBytes() < 16777216)
+    if(quadFileWriter==null && (MemoryUsage.getFreeMemoryInBytes() < 16777216 || quadSet.size > spillToDiskThreshold))
       spillToDisk
+
     if(quadFileWriter==null)
       quadSet.add(quad)
     else

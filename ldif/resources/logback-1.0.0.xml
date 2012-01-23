@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+
+
+    <!--configuration for logback 1.0.0  -->
+
+    <!-- Appends log events on the console -->
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>[%-4level] %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!-- Appends log events into a file -->
+    <appender name="FILE" class="ch.qos.logback.core.FileAppender">
+        <file>ldif.log</file>
+        <append>false</append>
+        <encoder>
+            <pattern>%d{HH:mm:ss.SS} [%thread] %-5level %logger{40} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+
+    <!-- Set ldif level to INFO -->
+    <logger name="ldif" level="INFO"/>
+
+    <!-- Set hadoop level to INFO -->
+    <logger name="org.apache.hadoop.mapred.JobClient" level="INFO"/>
+
+    <!-- Set silk level to INFO, but append only to FILE -->
+    <logger name="de.fuberlin.wiwiss.silk.output" level="INFO" additivity="false">
+        <appender-ref ref="FILE"/>
+    </logger>
+    <logger name="de.fuberlin.wiwiss.silk.instance" level="INFO" additivity="false">
+        <appender-ref ref="FILE"/>
+    </logger>
+
+    <!-- Set root level -->
+    <root level="WARN">
+        <appender-ref ref="STDOUT" />
+        <!--<appender-ref ref="FILE" />-->
+    </root>
+
+</configuration>
+

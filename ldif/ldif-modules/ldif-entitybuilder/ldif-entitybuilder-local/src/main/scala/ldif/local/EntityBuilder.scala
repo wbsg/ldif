@@ -1,7 +1,7 @@
 /* 
  * LDIF
  *
- * Copyright 2011 Freie Universität Berlin, MediaEvent Services GmbH & Co. KG
+ * Copyright 2011-2012 Freie Universität Berlin, MediaEvent Services GmbH & Co. KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -37,7 +37,7 @@ class EntityBuilder (entityDescriptions : IndexedSeq[EntityDescription], readers
   private val outputAllQuads = config.configProperties.getProperty("output", "mapped-only").toLowerCase=="all"
   private val saveQuads = config.otherQuadsWriter!=null
   private val saveSameAsQuads = config.sameAsWriter!=null
-  private val provenanceGraph = config.configProperties.getProperty("provenanceGraph", "http://www4.wiwiss.fu-berlin.de/ldif/provenance")
+  private val provenanceGraph = config.configProperties.getProperty("provenanceGraph", Consts.DEFAULT_PROVENANCE_GRAPH)
   private val useExternalSameAsLinks = config.configProperties.getProperty("useExternalSameAsLinks", "true").toLowerCase=="true"
   private val ignoreProvenance = config.configProperties.getProperty("outputFormat", "nq").toLowerCase=="nt"
 

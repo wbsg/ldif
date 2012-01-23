@@ -26,7 +26,7 @@
                 <RestrictTo>?b rdf:type mo:MusicArtist .</RestrictTo>
             </TargetDataset>
 
-            <LinkCondition>
+            <LinkageRule>
                 <Aggregate type="average">
                     <Aggregate type="max">
                         <Compare metric="jaccard" threshold="0.4">
@@ -47,7 +47,7 @@
                         <Input path="?b/rdfs:label" />
                     </Compare>
                 </Aggregate>
-            </LinkCondition>
+            </LinkageRule>
 
             <Filter />
         </Interlink>
@@ -63,7 +63,7 @@
                 <RestrictTo>?b rdf:type mo:Label .</RestrictTo>
             </TargetDataset>
 
-            <LinkCondition>
+            <LinkageRule>
                 <Compare metric="equality" >
                     <TransformInput function="lowerCase">
                         <Input path="?a/rdfs:label" />
@@ -72,7 +72,7 @@
                         <Input path="?b/rdfs:label" />
                     </TransformInput>
                 </Compare>
-            </LinkCondition>
+            </LinkageRule>
 
             <Filter/>
         </Interlink>
@@ -89,7 +89,7 @@
                 <RestrictTo>?b rdf:type mo:Genre .</RestrictTo>
             </TargetDataset>
 
-            <LinkCondition>
+            <LinkageRule>
                 <Compare metric="equality">
                     <TransformInput function="lowerCase">
                         <TransformInput function="alphaReduce">
@@ -102,7 +102,7 @@
                         </TransformInput>
                     </TransformInput>
                 </Compare>
-            </LinkCondition>
+            </LinkageRule>
 
             <Filter />
         </Interlink>
@@ -119,7 +119,7 @@
                 <RestrictTo>?b rdf:type mo:Record .</RestrictTo>
             </TargetDataset>
 
-            <LinkCondition>
+            <LinkageRule>
                 <Aggregate type="average">
                     <Compare metric="equality">
                         <TransformInput function="lowerCase">
@@ -134,7 +134,7 @@
                         <Input path="?b\foaf:made/rdfs:label" />
                     </Compare>
                 </Aggregate>
-            </LinkCondition>
+            </LinkageRule>
 
             <Filter />
         </Interlink>

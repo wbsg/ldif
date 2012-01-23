@@ -8,7 +8,7 @@
   <parent>
     <groupId>ldif</groupId>
     <artifactId>ldif</artifactId>
-    <version>0.3.1</version>
+    <version>0.4</version>
   </parent>
 
   <artifactId>ldif-core</artifactId>
@@ -21,16 +21,18 @@
 
 
   <dependencies>
-    <dependency>
-      <groupId>nxparser</groupId>
-      <artifactId>nxparser</artifactId>
-      <version>1.1</version>
-    </dependency>
-        <dependency>
+
+      <dependency>
+          <groupId>nxparser</groupId>
+          <artifactId>nxparser</artifactId>
+          <version>1.1</version>
+      </dependency>
+
+      <dependency>
           <groupId>org.antlr</groupId>
           <artifactId>antlr</artifactId>
           <version>3.2</version>
-        </dependency>
+      </dependency>
 
       <dependency>
           <groupId>bzip2</groupId>
@@ -39,12 +41,18 @@
       </dependency>
 
       <dependency>
-        <groupId>ldspider</groupId>
-        <artifactId>ldspider</artifactId>
-        <version>285+</version>
+          <groupId>ldspider</groupId>
+          <artifactId>ldspider</artifactId>
+          <version>285+</version>
       </dependency>
 
-   </dependencies>
+      <dependency>
+          <groupId>com.hp.hpl.jena</groupId>
+          <artifactId>jena</artifactId>
+          <version>2.6.5-SNAPSHOT</version>
+      </dependency>
+
+  </dependencies>
     
 
     <build>
@@ -94,6 +102,20 @@
                             <version>285+</version>
                             <packaging>jar</packaging>
                             <file>${project.basedir}/lib/ldspider-rev285+.jar</file>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>install-jena-jar</id>
+                        <phase>generate-resources</phase>
+                        <goals>
+                            <goal>install-file</goal>
+                        </goals>
+                        <configuration>
+                            <groupId>com.hp.hpl.jena</groupId>
+                            <artifactId>jena</artifactId>
+                            <version>2.6.5-SNAPSHOT</version>
+                            <packaging>jar</packaging>
+                            <file>${project.basedir}/lib/jena-core-2.6.5-incubating-SNAPSHOT.jar</file>
                         </configuration>
                     </execution>
                 </executions>

@@ -1,7 +1,7 @@
 /* 
  * LDIF
  *
- * Copyright 2011 Freie Universität Berlin, MediaEvent Services GmbH & Co. KG
+ * Copyright 2011-2012 Freie Universität Berlin, MediaEvent Services GmbH & Co. KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,7 +21,7 @@ package de.fuberlin.wiwiss.r2r
 import java.util.ArrayList
 import scala.collection.JavaConversions._
 import ldif.entity._
-import ldif.local.runtime.QuadWriter
+import ldif.local.runtime.QuadWriter    //TODO refactor to not use local classes
 import collection.parallel.ParIterable
 import ldif.util.Consts
 import ldif.runtime.Quad

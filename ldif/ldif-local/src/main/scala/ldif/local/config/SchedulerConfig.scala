@@ -1,7 +1,7 @@
 /* 
  * LDIF
  *
- * Copyright 2011 Freie Universität Berlin, MediaEvent Services GmbH & Co. KG
+ * Copyright 2011-2012 Freie Universität Berlin, MediaEvent Services GmbH & Co. KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,9 +20,9 @@ package ldif.local.config
 
 import org.slf4j.LoggerFactory
 import java.io.File
-import ldif.util.ValidatingXMLReader
 import xml.{Node, XML}
 import java.util.Properties
+import ldif.util.{ConfigProperties, ValidatingXMLReader}
 
 case class SchedulerConfig (importJobsDir : File, integrationJob : File, dataSourcesDir : File, dumpLocationDir : File, properties : Properties)  {}
 

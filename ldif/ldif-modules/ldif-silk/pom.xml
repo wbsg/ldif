@@ -5,24 +5,25 @@
   <parent>
     <groupId>ldif</groupId>
     <artifactId>ldif-modules</artifactId>
-    <version>0.3.1</version>
+    <version>0.4</version>
   </parent>
 
 	<artifactId>ldif-silk</artifactId>
 	<packaging>pom</packaging>
-	<version>0.3.1</version>
+	<version>0.4</version>
 	<name>LDIF Silk Module</name>
   
   <modules>
     <module>ldif-silk-common</module>
     <module>ldif-silk-local</module>
+    <module>ldif-silk-hadoop</module>
   </modules>
 
   <dependencies>
     <dependency>
       <groupId>ldif</groupId>
       <artifactId>ldif-core</artifactId>
-      <version>0.3.1</version>
+      <version>0.4</version>
     </dependency>
   </dependencies>
 

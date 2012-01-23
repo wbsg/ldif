@@ -1,7 +1,7 @@
 /* 
  * LDIF
  *
- * Copyright 2011 Freie Universität Berlin, MediaEvent Services GmbH & Co. KG
+ * Copyright 2011-2012 Freie Universität Berlin, MediaEvent Services GmbH & Co. KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,9 +19,9 @@
 package ldif.modules.silk
 
 import ldif.module.ModuleConfig
-import de.fuberlin.wiwiss.silk.config.SilkConfig
+import de.fuberlin.wiwiss.silk.config.LinkingConfig
 
 /**
  * Silk Configuration.
  */
-case class SilkModuleConfig(silkConfig : SilkConfig) extends ModuleConfig
+case class SilkModuleConfig(silkConfig : LinkingConfig) extends ModuleConfig

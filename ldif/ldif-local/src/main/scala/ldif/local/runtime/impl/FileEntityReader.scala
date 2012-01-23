@@ -1,7 +1,7 @@
 /* 
  * LDIF
  *
- * Copyright 2011 Freie Universität Berlin, MediaEvent Services GmbH & Co. KG
+ * Copyright 2011-2012 Freie Universität Berlin, MediaEvent Services GmbH & Co. KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,4 +31,4 @@ import ldif.runtime.impl.FileObjectReader
  * To change this template use File | Settings | File Templates.
  */
 
-class FileEntityReader(val entityDescription : EntityDescription, inputFile: File) extends FileObjectReader[Entity](inputFile, NoEntitiesLeft) with EntityReader
+class FileEntityReader(val entityDescription : EntityDescription, inputFile: File, enableCompression: Boolean = false) extends FileObjectReader[Entity](inputFile, NoEntitiesLeft, enableCompression) with EntityReader

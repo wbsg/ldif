@@ -1,7 +1,7 @@
 /* 
  * LDIF
  *
- * Copyright 2011 Freie Universität Berlin, MediaEvent Services GmbH & Co. KG
+ * Copyright 2011-2012 Freie Universität Berlin, MediaEvent Services GmbH & Co. KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,22 +19,20 @@
 package ldif.modules.silk.local
 
 import de.fuberlin.wiwiss.silk.datasource.DataSource
-import de.fuberlin.wiwiss.silk.instance.{Instance, InstanceSpecification}
 import ldif.local.runtime.EntityReader
-import ldif.modules.silk.LdifInstance
+import ldif.modules.silk.LdifEntity
+import de.fuberlin.wiwiss.silk.entity.{Entity => SilkEntity}
+import de.fuberlin.wiwiss.silk.entity.{EntityDescription => SilkEntityDescription}
 
 /**
  * Silk DataSource which reads the entities from an EntityReader.
  */
-case class LdifDataSource(reader : EntityReader) extends DataSource
-{
-  override def retrieve(instanceSpec : InstanceSpecification, instances : Seq[String] = Seq.empty) = new Traversable[Instance]
-  {
-    def foreach[U](f : Instance => U)
-    {
-      while(reader.hasNext)
-      {
-        f(new LdifInstance(reader.read(), instanceSpec))
+case class LdifDataSource(reader : EntityReader) extends DataSource {
+
+  override def retrieve(entityDesc : SilkEntityDescription, instances : Seq[String] = Seq.empty) = new Traversable[SilkEntity] {
+    def foreach[U](f: SilkEntity => U) {
+      while(reader.hasNext) {
+        f(new LdifEntity(reader.read(), entityDesc))
       }
     }
   }

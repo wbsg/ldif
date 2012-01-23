@@ -5,11 +5,11 @@
     <parent>
       <groupId>ldif</groupId>
       <artifactId>ldif-r2r</artifactId>
-      <version>0.3.1</version>
+      <version>0.4</version>
     </parent>
-    
+
     <dependencies>
-	<dependency>
+        <dependency>
             <groupId>r2rApi</groupId>
             <artifactId>r2rApi</artifactId>
             <version>0.2.3-SNAPSHOT</version>
@@ -18,7 +18,7 @@
 
 	<artifactId>ldif-r2r-common</artifactId>
 	<packaging>jar</packaging>
-	<version>0.3.1</version>
+	<version>0.4</version>
 	<name>LDIF R2R Module - Common</name>
 
 	<properties>

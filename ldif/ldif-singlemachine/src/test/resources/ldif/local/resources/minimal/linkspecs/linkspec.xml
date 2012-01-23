@@ -22,7 +22,7 @@
 				<RestrictTo>?b rdf:type mo:MusicArtist .</RestrictTo>
 			</TargetDataset>
 
-            <LinkCondition />
+            <LinkageRule />
 			<Filter />
 
         </Interlink>

@@ -1,7 +1,7 @@
 /* 
  * LDIF
  *
- * Copyright 2011 Freie Universität Berlin, MediaEvent Services GmbH & Co. KG
+ * Copyright 2011-2012 Freie Universität Berlin, MediaEvent Services GmbH & Co. KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -47,8 +47,9 @@ class EntityConstructionMapper extends MapReduceBase with Mapper[IntWritable, Va
   override def map(key: IntWritable, value: ValuePathWritable, output: OutputCollector[EntityDescriptionNodeWritable, ValuePathWritable], reporter: Reporter) {
     entityDescriptionID.set(edmd.pathMap(value.pathID.get).entityDescriptionIndex)
     entityDescriptionNode.set(entityDescriptionID, value.values.get()(0).asInstanceOf[NodeWritable])
-//    val collector = mos.getCollector("debug", reporter).asInstanceOf[OutputCollector[IntWritable, ValuePathWritable]]
-//    collector.collect(entityDescriptionID, value)
+    // Debugging
+//    val debugCollector = mos.getCollector("debugMap", reporter).asInstanceOf[OutputCollector[IntWritable, ValuePathWritable]]
+//    debugCollector.collect(entityDescriptionID, value)
     output.collect(new EntityDescriptionNodeWritable(entityDescriptionID, value.values.get()(0).asInstanceOf[NodeWritable]), value)
   }
 

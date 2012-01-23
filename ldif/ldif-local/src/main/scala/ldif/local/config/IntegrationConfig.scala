@@ -1,7 +1,7 @@
 /* 
  * LDIF
  *
- * Copyright 2011 Freie Universität Berlin, MediaEvent Services GmbH & Co. KG
+ * Copyright 2011-2012 Freie Universität Berlin, MediaEvent Services GmbH & Co. KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,8 +21,8 @@ package ldif.local.config
 import java.io.File
 import java.util.Properties
 import org.slf4j.LoggerFactory
-import ldif.util.ValidatingXMLReader
 import xml.{Node, XML}
+import ldif.util.{ConfigProperties, Consts, ValidatingXMLReader}
 
 case class IntegrationConfig(sources : File, linkSpecDir : File, mappingDir : File, sieveSpecDir : File, outputFile : File,  properties : Properties, runSchedule : String) {}
 
@@ -64,7 +64,7 @@ object IntegrationConfig
     val value : String = (xml \ key text)
     var file : File = null
     if (value != ""){
-      val relativeFile = new File(baseDir + "/" + value)
+      val relativeFile = new File(baseDir + Consts.fileSeparator + value)
       val absoluteFile = new File(value)
       if (relativeFile.exists || absoluteFile.exists) {
         if (relativeFile.exists)

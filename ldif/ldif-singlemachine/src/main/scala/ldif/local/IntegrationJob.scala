@@ -1,7 +1,7 @@
 /* 
  * LDIF
  *
- * Copyright 2011 Freie Universität Berlin, MediaEvent Services GmbH & Co. KG
+ * Copyright 2011-2012 Freie Universität Berlin, MediaEvent Services GmbH & Co. KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,7 +19,7 @@
 package ldif.local
 
 import config.IntegrationConfig
-import datasources.dump.{QuadFileLoader, DumpLoader}
+import datasources.dump.{ContentTypes, QuadFileLoader, DumpLoader}
 import runtime._
 import impl._
 import ldif.modules.r2r.local.R2RLocalExecutor
@@ -49,14 +49,20 @@ class IntegrationJob (val config : IntegrationConfig, debugMode : Boolean = fals
   var lastUpdate : Calendar = null
 
   def runIntegration {
-    synchronized {
-      val sourceNumber = config.sources.listFiles.size
 
-      if (sourceNumber == 0) {
-        log.info("Integration Job skipped - No data source files found")
-      }
-      else {
-        log.info("Integration Job started (on "+ sourceNumber +" sources)")
+    if (config.sources == null || config.sources.listFiles.size == 0)
+      log.info("Integration Job skipped - No data source files found")
+
+    else
+      synchronized {
+        val sourceNumber = config.sources.listFiles.size
+
+        log.info("Integration Job started")
+        log.info("- Input < "+ sourceNumber +" sources found in " + config.sources.getCanonicalPath)
+        log.info("- Output > "+ config.outputFile)
+        log.info("- Properties ")
+        for (key <- config.properties.keySet.toArray)
+          log.info("  - "+key +" : " + config.properties.getProperty(key.toString) )
 
         stopWatch.getTimeSpanInSeconds
 
@@ -114,7 +120,6 @@ class IntegrationJob (val config : IntegrationConfig, debugMode : Boolean = fals
 
         writeOutput(config, integratedReader)
       }
-    }
   }
 
   private def setupQuadReader(_clonedR2rReader: QuadReader): QuadReader = {
@@ -174,16 +179,23 @@ class IntegrationJob (val config : IntegrationConfig, debugMode : Boolean = fals
     if(sources.isDirectory) {
       val quadQueues =
         for (dump <- sources.listFiles) yield {
-          val quadQueue = new BlockingQuadQueue(Consts.DEFAULT_QUAD_QUEUE_CAPACITY)
-          runInBackground
-          {
-            val inputStream = DumpLoader.getFileStream(dump)
-            val bufferedReader = new BufferedReader(new InputStreamReader(inputStream))
-            val quadParser = new QuadFileLoader(dump.getName, discardFaultyQuads)
-            quadParser.readQuads(bufferedReader, quadQueue)
-            quadQueue.finish
+          // Integration component expects input data to be represented as Named Graphs, other formats are skipped
+          if (ContentTypes.getLangFromExtension(dump.getName)!=ContentTypes.langNQuad) {
+            log.warn("Input source skipped, format not supported: " + dump.getCanonicalPath)
+            new QuadQueue
           }
-          quadQueue
+          else  {
+            val quadQueue = new BlockingQuadQueue(Consts.DEFAULT_QUAD_QUEUE_CAPACITY)
+            runInBackground
+            {
+              val inputStream = DumpLoader.getFileStream(dump)
+              val bufferedReader = new BufferedReader(new InputStreamReader(inputStream))
+              val quadParser = new QuadFileLoader(dump.getName, discardFaultyQuads)
+              quadParser.readQuads(bufferedReader, quadQueue)
+              quadQueue.finish
+            }
+            quadQueue
+          }
         }
       quadQueues.toSeq
     }
@@ -252,9 +264,9 @@ class IntegrationJob (val config : IntegrationConfig, debugMode : Boolean = fals
     outputQueue
   }
 
-    /**
-     * Performs data fusion
-     */
+  /**
+   * Performs data fusion
+   */
   private def fuseQuads(sieveSpecDir : File, inputQuadsReader : QuadReader) : QuadReader =
   {
     val sieveModule = SieveModule.load(sieveSpecDir)
@@ -306,7 +318,7 @@ class IntegrationJob (val config : IntegrationConfig, debugMode : Boolean = fals
     val fileEntityQueues = for(eD <- entityDescriptions) yield {
       val file = File.createTempFile("ldif_entities", ".dat")
       file.deleteOnExit
-      new FileEntityWriter(eD, file)
+      new FileEntityWriter(eD, file, enableCompression = true)
     }
 
     val inmemory = config.properties.getProperty("entityBuilderType", "in-memory")=="in-memory"
@@ -335,7 +347,7 @@ class IntegrationJob (val config : IntegrationConfig, debugMode : Boolean = fals
     if(inmemory)
       return entityQueues
     else
-      return fileEntityQueues.map((entityWriter) => new FileEntityReader(entityWriter.entityDescription, entityWriter.inputFile))
+      return fileEntityQueues.map((entityWriter) => new FileEntityReader(entityWriter.entityDescription, entityWriter.inputFile, enableCompression = true ))
   }
 
   /**
@@ -406,8 +418,8 @@ object IntegrationJob {
   def main(args : Array[String])
   {
     if(args.length == 0) {
-      log.warn("Usage: IntegrationJob <integration job config file>")
-      System.exit(-1)
+      log.warn("No configuration file given. \nUsage: IntegrationJob <integration job configuration file>")
+      System.exit(1)
     }
     var debug = false
     val configFile = new File(args(args.length-1))
@@ -415,7 +427,19 @@ object IntegrationJob {
     if(args.length>=2 && args(0)=="--debug")
       debug = true
 
-    val integrator = new IntegrationJob(IntegrationConfig.load(configFile), debug)
+    var config : IntegrationConfig = null
+    try {
+      config = IntegrationConfig.load(configFile)
+    }
+    catch {
+      case e:ValidationException => {
+        log.error("Invalid Integration Job configuration: "+e.toString +
+          "\n- More details: http://www.assembla.com/code/ldif/git/nodes/ldif/ldif-core/src/main/resources/xsd/IntegrationJob.xsd")
+        System.exit(1)
+      }
+    }
+
+    val integrator = new IntegrationJob(config, debug)
     integrator.runIntegration
   }
 }

@@ -6,7 +6,7 @@
   <modelVersion>4.0.0</modelVersion>
 
   <properties>
-    <ldif.version>0.3.1</ldif.version>
+    <ldif.version>0.4</ldif.version>
     <scala.version>2.9.1</scala.version>
     <scala.plugin.version>2.15.2</scala.plugin.version>
   </properties>
@@ -14,7 +14,7 @@
   <groupId>ldif</groupId>
   <artifactId>ldif</artifactId>
   <packaging>pom</packaging>
-  <version>0.3.1</version>
+  <version>0.4</version>
   <name>LDIF</name>
   <url>http://www4.wiwiss.fu-berlin.de/bizer/ldif/</url>
 
@@ -31,7 +31,7 @@
     <module>ldif-hadoop</module>
     <module>ldif-modules</module>
     <module>ldif-singlemachine</module>
-    <module>ldif-workbench</module>
+    <!--<module>ldif-workbench</module>-->
     <module>ldif-hadoop-executor</module>
   </modules>
 
@@ -161,36 +161,60 @@
       <version>2.0.1</version>
     </dependency>
 
+    <!-- SLF4J -->
+      <!-- changed from 1.6.4 to 1.4.3 for hadoop compatibility (#79) -->
       <dependency>
           <groupId>org.slf4j</groupId>
           <artifactId>slf4j-api</artifactId>
-          <version>1.6.4</version>
+          <version>1.4.3</version>
       </dependency>
-      <dependency>
-          <groupId>org.slf4j</groupId>
-          <artifactId>jul-to-slf4j</artifactId>
-          <version>1.6.4</version>
-      </dependency>
-      <dependency>
-          <groupId>org.slf4j</groupId>
-          <artifactId>log4j-over-slf4j</artifactId>
-          <version>1.6.4</version>
-      </dependency>
-       <dependency>
-          <groupId>org.slf4j</groupId>
-          <artifactId>jcl-over-slf4j</artifactId>
-          <version>1.6.4</version>
-      </dependency>
-      <dependency>
-          <groupId>ch.qos.logback</groupId>
-          <artifactId>logback-classic</artifactId>
-          <version>1.0.0</version>
-      </dependency>
-      <dependency>
-          <groupId>ch.qos.logback</groupId>
-          <artifactId>logback-core</artifactId>
-          <version>1.0.0</version>
-      </dependency>
+
+      <!-- slf4j bridging libs -->
+          <!--jul-->
+          <!-- supported from 1.5.2 -->
+          <!--<dependency>-->
+              <!--<groupId>org.slf4j</groupId>-->
+              <!--<artifactId>jul-to-slf4j</artifactId>-->
+              <!--<version>1.6.4</version>-->
+          <!--</dependency>-->
+
+          <!--log4j-->
+          <!--<dependency>-->
+              <!--<groupId>org.slf4j</groupId>-->
+              <!--<artifactId>log4j-over-slf4j</artifactId>-->
+              <!--<version>1.4.3</version>-->
+          <!--</dependency>-->
+
+          <!--jcl-->
+          <!--<dependency>-->
+              <!--<groupId>org.slf4j</groupId>-->
+              <!--<artifactId>jcl-over-slf4j</artifactId>-->
+              <!--<version>1.6.4</version>-->
+          <!--</dependency>-->
+          <dependency>
+              <groupId>org.slf4j</groupId>
+              <artifactId>jcl104-over-slf4j</artifactId>
+              <version>1.4.3</version>
+          </dependency>
+
+       <!-- slf4j binding (only one) -->
+           <!--log4j-->
+           <dependency>
+              <groupId>org.slf4j</groupId>
+              <artifactId>slf4j-log4j12</artifactId>
+              <version>1.4.3</version>
+          </dependency>
+          <!--logback-->
+          <!--<dependency>-->
+              <!--<groupId>ch.qos.logback</groupId>-->
+              <!--<artifactId>logback-classic</artifactId>-->
+              <!--<version>1.0.0</version>-->
+          <!--</dependency>-->
+          <!--<dependency>-->
+              <!--<groupId>ch.qos.logback</groupId>-->
+              <!--<artifactId>logback-core</artifactId>-->
+              <!--<version>1.0.0</version>-->
+          <!--</dependency>-->
   </dependencies>
 
   <repositories>

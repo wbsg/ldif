@@ -1,3 +1,19 @@
+/* 
+ * Copyright 2011-2012 Freie Universität Berlin, MediaEvent Services GmbH & Co. KG
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package ldif.hadoop.entitybuilder.mappers
 
 import org.apache.hadoop.mapred.lib.MultipleOutputs
@@ -26,6 +42,7 @@ class ProcessQuadsMapper extends MapReduceBase with Mapper[NullWritable, QuadWri
   }
 
   override def map(nothing: NullWritable, quad: QuadWritable, output: OutputCollector[IntWritable, ValuePathWritable], reporter: Reporter) {
+    reporter.getCounter("LDIF Stats","Valid triples/quads found in data set").increment(1)
     ProcessQuads.processQuad(quad.asQuad, reporter, edmd, mos)
   }
 
@@ -41,9 +58,11 @@ object ProcessQuads {
     val phase = new IntWritable(0)
     val propertyInfosValue = edmd.propertyMap.get(property)
     propertyInfosValue match {
-      case None =>
-        reporter.getCounter("LDIF Stats","Nr. irrelevant quads filtered").increment(1)
+      case None => {
+        reporter.getCounter("LDIF Stats","Nr. of irrelevant quads filtered").increment(1)
+      }
       case Some(propertyInfos) =>
+        reporter.getCounter("LDIF Stats","Nr. of potentially relevant quads").increment(1)
         for (propertyInfo <- propertyInfos) {
           val pathLength = edmd.pathLength(propertyInfo.pathId)
           val pathType = {
@@ -71,9 +90,8 @@ object ProcessQuads {
             val collector = mos.getCollector("seq", reporter).asInstanceOf[OutputCollector[IntWritable, ValuePathWritable]]
             collector.collect(phase, path)
             // For debugging
-            //            collector = mos.getCollector("text", reporter).asInstanceOf[OutputCollector[IntWritable, ValuePathWritable]]
-            //            collector.collect(phase, path)
-
+//            val tCollector = mos.getCollector("text", reporter).asInstanceOf[OutputCollector[IntWritable, ValuePathWritable]]
+//            tCollector.collect(phase, path)
           }
         }
     }

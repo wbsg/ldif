@@ -6,20 +6,27 @@
     <parent>
         <artifactId>ldif</artifactId>
         <groupId>ldif</groupId>
-        <version>0.3.1</version>
+        <version>0.4</version>
     </parent>
 
     <artifactId>ldif-workbench</artifactId>
 
     <name>LDIF Workbench</name>
-    <version>0.3.1</version>
+    <version>0.4</version>
     <packaging>war</packaging>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
+
     <dependencies>
+         <dependency>
+            <groupId>ldif</groupId>
+            <artifactId>ldif-singlemachine</artifactId>
+            <version>0.4</version>
+        </dependency>
+
         <dependency>
             <groupId>net.liftweb</groupId>
             <artifactId>lift-webkit_2.9.1</artifactId>
@@ -54,7 +61,6 @@
 
     <build>
         <sourceDirectory>src/main/scala</sourceDirectory>
-        <testSourceDirectory>src/test/scala</testSourceDirectory>
         <plugins>
             <plugin>
                 <groupId>org.mortbay.jetty</groupId>

@@ -1,7 +1,7 @@
-/* 
+/*
  * LDIF
  *
- * Copyright 2011 Freie Universität Berlin, MediaEvent Services GmbH & Co. KG
+ * Copyright 2011-2012 Freie Universität Berlin, MediaEvent Services GmbH & Co. KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,15 +19,17 @@
 package ldif.local.datasources.dump
 
 import org.slf4j.LoggerFactory
-import scala.collection.mutable.{ArrayBuffer, Map}
+import scala.collection.mutable.ArrayBuffer
 import scala.Predef._
-import java.io.{File, BufferedReader}
+import java.io.BufferedReader
 import java.io.FileReader
 import ldif.local.runtime.{LocalNode, QuadWriter}
 import scala.actors.Actor
 import scala._
 import ldif.local.runtime.impl.DummyQuadWriter
 import ldif.runtime.Quad
+import ldif.util.Consts
+import ldif.datasources.dump.QuadParser
 
 /**
  * Created by IntelliJ IDEA.
@@ -42,7 +44,7 @@ class QuadFileLoader(graphURI: String, discardFaultyQuads: Boolean = false) {
   val quadParser = new QuadParser(graphURI)
 
   def this() {
-    this("default")
+    this(Consts.DEFAULT_GRAPH)
   }
 
   def parseQuadLine(line: String): Quad = {

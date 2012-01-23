@@ -4,10 +4,10 @@
             xmlns="http://www4.wiwiss.fu-berlin.de/ldif/">
     <properties>integration.properties</properties>
     <sources>examples/music/light/dumps</sources>
-    <linkSpecifications>examples/music/light/linkspecs</linkSpecifications>
-    <mappings>examples/music/light/mappings</mappings>
+    <linkSpecifications>linkspecs</linkSpecifications>
+    <mappings>mappings</mappings>
     <quality>quality</quality>
     <fusion>fusion</fusion>
-    <output>integrated_music_full.nq</output>
+    <output>integrated_music_light</output>
     <runSchedule>onStartup</runSchedule>
 </integrationJob>

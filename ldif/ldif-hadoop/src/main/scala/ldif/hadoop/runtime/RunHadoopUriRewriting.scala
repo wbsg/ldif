@@ -1,3 +1,19 @@
+/* 
+ * Copyright 2011-2012 Freie Universität Berlin, MediaEvent Services GmbH & Co. KG
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package ldif.hadoop.runtime
 
 import ldif.hadoop.utils.HadoopHelper
@@ -61,13 +77,23 @@ object RunHadoopUriRewriting {
     log.info("Starting Uri Rewriting...")
     val hadoopTmpDir = "hadoop_tmp"+Consts.fileSeparator+"urirewriting"
     val start = System.currentTimeMillis
+
+    val conf = new Configuration
+    val hdfs = FileSystem.get(conf)
+
     execute(datasetInputPath, sameAsLinksInputPath, hadoopTmpDir+"/rewrittenSubjects", false)
     val res = execute(hadoopTmpDir+"/rewrittenSubjects", sameAsLinksInputPath, outputPath, true)
     log.info("That's it. Uri Rewriting took " + (System.currentTimeMillis-start)/1000.0 + "s")
+
+    // move sameAs links to the output path
+    val sameAsLinksFiles = hdfs.listStatus(new Path(sameAsLinksInputPath)).filterNot(_.isDir)
+    for (status <- sameAsLinksFiles.filterNot(_.getPath.getName.startsWith("_")))
+      hdfs.rename(status.getPath, new Path(outputPath+Consts.fileSeparator+"sameas_rewriting_"+System.currentTimeMillis.toString+status.getPath.getName))
+
     res
   }
 
-  def execute(datasetInputPath: String, sameAsLinksInputPath: String, outputPath: String, rewriteObjectUris: Boolean): Int = {
+  private def execute(datasetInputPath: String, sameAsLinksInputPath: String, outputPath: String, rewriteObjectUris: Boolean): Int = {
     val conf = new Configuration
 
     // remove existing output

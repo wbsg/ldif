@@ -1,7 +1,7 @@
 /* 
  * LDIF
  *
- * Copyright 2011 Freie Universität Berlin, MediaEvent Services GmbH & Co. KG
+ * Copyright 2011-2012 Freie Universität Berlin, MediaEvent Services GmbH & Co. KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,11 +20,11 @@ package ldif.local.datasources.dump
 
 import java.net.URL
 import org.slf4j.LoggerFactory
-import java.io.{BufferedInputStream, FileNotFoundException, InputStream, File}
+import org.deri.any23.Any23
+import org.deri.any23.source.ByteArrayDocumentSource
+import java.io._
+import org.deri.any23.writer.NTriplesWriter
 
-//import org.apache.http.{HttpEntity, HttpResponse}
-//import org.apache.http.client.methods.HttpGet
-//import ldif.local.util.HttpClientFactory
 
 /**
  * Streams data from a given file path or URL
@@ -34,8 +34,6 @@ import java.io.{BufferedInputStream, FileNotFoundException, InputStream, File}
 @throws(classOf[Exception])
 object DumpLoader {
   private val log = LoggerFactory.getLogger(getClass.getName)
-
-  //private val httpClient = HttpClientFactory.createHttpClient
 
   def getStream(sourceLocation : String) = {
     if (sourceLocation == null) {
@@ -62,23 +60,24 @@ object DumpLoader {
     }
 
     if (file != null)
-      lang = ContentTypes.jenaLangFromExtension(file.getName)
+      lang = ContentTypes.getLangFromExtension(file.getName)
     else if (url != null)
-      lang = ContentTypes.jenaLangFromExtension(url.getFile)
+      lang = ContentTypes.getLangFromExtension(url.getFile)
 
     if (lang == null) {
       throw new Exception("Unable to determine language for "+ sourceLocation	+ " based on file extension")
     }
 
     if (file != null)
-      getFileStream(file)
+      getFileStream(file, lang)
     else if (url != null)
-      getUrlStream(url)
+      getUrlStream(url, lang)
     else
       throw new Exception("Protocol \"" + url.getProtocol	+ "\" is not supported.")
   }
 
-  def getFileStream(file : File) = {
+  def getFileStream(file : File, lang : String = ContentTypes.langNQuad) = {
+
     log.info("Loading from " + file.getCanonicalPath)
     var inputStream:InputStream = null
     try {
@@ -89,10 +88,14 @@ object DumpLoader {
         throw e
       }
     }
+
+    inputStream = convertFormat(inputStream, lang)
+
     new BufferedInputStream(inputStream)
   }
 
-  def getUrlStream(url : URL) = {
+  private def getUrlStream(url : URL, lang : String) = {
+
     log.info("Loading from " + url.toString)
     var inputStream:InputStream = null
 
@@ -105,53 +108,21 @@ object DumpLoader {
       }
     }
 
-    //		if (url.getProtocol.toLowerCase.equals("http")) {
-    //				val httpget = new HttpGet(sourceLocation)
-    //				httpget.getParams.setParameter("Accept",ContentTypes.HTTP_ACCEPT_CONTENT_TYPES)
-    //				var response:HttpResponse = null
-    //				var entity:HttpEntity = null
-    //
-    //				try {
-    //					response = httpClient.execute(httpget)
-    //
-    //					entity = response.getEntity
-    //					if (entity == null) {
-    //						throw new Exception(sourceLocation + " did not provide any data")
-    //					}
-    //
-    //					var lang:String = null
-    //					val contentType = entity.getContentType
-    //
-    //					if (contentType != null) {
-    //						lang = ContentTypes.jenaLangFromContentType(contentType.getValue)
-    //					}
-    //
-    //					// use N3 as default format if nothing particular is given
-    //					if (contentType.getValue.equals("text/plain")) {
-    //						lang = "N3"
-    //					}
-    //
-    //					if (lang == null) {
-    //						lang = ContentTypes.jenaLangFromExtension(sourceLocation)
-    //						if (lang == null) {
-    //							throw new Exception(
-    //									"Unable to determine language for "	+ sourceLocation	+
-    //                          " (given Content Type: "	+ contentType + ")")
-    //						}
-    //					}
-    //
-    //					log.info("Using language " + lang)
-    //
-    //					inputStream = new DecompressingStream(entity)
-    //        }
-    //        finally {
-    //					if (entity != null) {
-    //						httpget.abort
-    //            // consumeContent() on a dump is not a good idea
-    //					}
-    //				}
-    //    }
+    inputStream = convertFormat(inputStream, lang)
 
     new BufferedInputStream(inputStream)
+  }
+
+  // Convert input format to N-Triple
+  private def convertFormat(inputStream : InputStream, lang : String) = {
+    if (lang != ContentTypes.langNQuad && lang != ContentTypes.langNTriple)    {
+      val runner = new Any23
+      val source = new ByteArrayDocumentSource(inputStream, "http://www4.wiwiss.fu-berlin.de/ldif/", "text/plain")
+      val out = new ByteArrayOutputStream()
+      val handler = new NTriplesWriter(out)
+      runner.extract(source, handler)
+      new ByteArrayInputStream(out.toByteArray)
+    }
+    else inputStream
   }
 }

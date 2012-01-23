@@ -1,7 +1,7 @@
 /* 
  * LDIF
  *
- * Copyright 2011 Freie Universität Berlin, MediaEvent Services GmbH & Co. KG
+ * Copyright 2011-2012 Freie Universität Berlin, MediaEvent Services GmbH & Co. KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,6 +26,7 @@ import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner
 import ldif.entity.Node
 import ldif.runtime.Quad
+import ldif.util.OutputValidator
 
 @RunWith(classOf[JUnitRunner])
 class IntegrationFlowTest extends FlatSpec with ShouldMatchers {
@@ -36,13 +37,13 @@ class IntegrationFlowTest extends FlatSpec with ShouldMatchers {
     val ldifOutput = runLdif(configFile, true)
 
     // Load results to compare with
-    val ldimporterOuputUrl = getClass.getClassLoader.getResource("ldif/local/resources/results.nt")
+    val ldimporterOuputUrl = getClass.getClassLoader.getResource("ldif/local/resources/results.nq")
     val ldimporterOuputFile = new File(ldimporterOuputUrl.toString.stripPrefix("file:"))
 
     // quantity check
     //Source.fromFile(ldifOutput).getLines.size should equal(4835)
     // quality check
-    OutputValidator.compare(ldifOutput,ldimporterOuputFile) should equal (0)
+    OutputValidator.compare(ldifOutput,ldimporterOuputFile, true) should equal (0)
   }
 
   it should "handle rewriting and provenance correctly" in {

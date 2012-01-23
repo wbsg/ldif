@@ -1,7 +1,7 @@
 /* 
  * LDIF
  *
- * Copyright 2011 Freie Universität Berlin, MediaEvent Services GmbH & Co. KG
+ * Copyright 2011-2012 Freie Universität Berlin, MediaEvent Services GmbH & Co. KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,7 +27,6 @@ package ldif.modules.r2r.local
  */
 
 import ldif.module.Executor
-import de.fuberlin.wiwiss.r2r._
 import ldif.modules.r2r._
 import ldif.local.runtime.{GraphFormat, StaticEntityFormat, QuadWriter, EntityReader}
 import collection.mutable.ArrayBuffer
@@ -64,24 +63,3 @@ class R2RLocalExecutor extends Executor {
     }
   }
 }
-
-//class R2RLocalExecutor extends Executor {
-//  type TaskType = R2RTask
-//  type InputFormat = StaticEntityFormat
-//  type OutputFormat = GraphFormat
-//
-//  def input(task: R2RTask) = StaticEntityFormat(Seq(task.mapping.entityDescription))
-//
-//  def output(task: R2RTask) = new GraphFormat()
-//
-//  override def execute(task: R2RTask, reader: Seq[EntityReader], writer: QuadWriter) {
-//    val entityDescription = task.mapping.entityDescription
-//    val mapping = task.mapping
-//    val inputQueue = reader.head
-//
-//    while(inputQueue.hasNext) {
-//      val entity = inputQueue.read
-//      mapping.executeMapping(entity, writer)
-//    }
-//  }
-//}

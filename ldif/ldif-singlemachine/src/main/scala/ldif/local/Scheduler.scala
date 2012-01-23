@@ -1,7 +1,7 @@
 /* 
  * LDIF
  *
- * Copyright 2011 Freie Universität Berlin, MediaEvent Services GmbH & Co. KG
+ * Copyright 2011-2012 Freie Universität Berlin, MediaEvent Services GmbH & Co. KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,7 +19,6 @@
 package ldif.local
 
 import config.{IntegrationConfig, SchedulerConfig}
-import datasources.dump.QuadParser
 import org.slf4j.LoggerFactory
 import scheduler.ImportJob
 import java.util.{Date, Calendar}
@@ -27,6 +26,7 @@ import java.io._
 import java.util.concurrent.ConcurrentHashMap
 import org.apache.commons.io.FileUtils
 import ldif.util.{Consts, StopWatch, FatalErrorListener}
+import ldif.datasources.dump.QuadParser
 
 class Scheduler (val config : SchedulerConfig, debug : Boolean = false) {
   private val log = LoggerFactory.getLogger(getClass.getName)
@@ -188,13 +188,14 @@ class Scheduler (val config : SchedulerConfig, debug : Boolean = false) {
     else {
       val changeFreqHours = Consts.changeFreqToHours.get(schedule)
       // Get last update run
-      var nextUpdate = lastUpdate
+      val nextUpdate = Calendar.getInstance
 
       // Figure out if update is required
       if (changeFreqHours != None) {
         if (lastUpdate == null) {
           true
         } else {
+          nextUpdate.setTimeInMillis(lastUpdate.getTimeInMillis)
           nextUpdate.add(Calendar.HOUR, changeFreqHours.get)
           Calendar.getInstance.after(nextUpdate)
         }

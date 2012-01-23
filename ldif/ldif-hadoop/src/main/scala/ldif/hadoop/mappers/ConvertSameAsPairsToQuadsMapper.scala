@@ -1,14 +1,27 @@
+/* 
+ * Copyright 2011-2012 Freie Universität Berlin, MediaEvent Services GmbH & Co. KG
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package ldif.hadoop.mappers
 
-import ldif.datasources.dump.QuadParser
 import org.apache.hadoop.mapred.lib.MultipleOutputs
 import org.apache.hadoop.mapred._
-import ldif.runtime.Quad
 import ldif.util.Consts
-import ldif.hadoop.utils.URITranslatorHelperMethods
 import ldif.hadoop.types.{QuadWritable, SameAsPairWritable}
 import ldif.entity.{Node, NodeWritable}
-import org.apache.hadoop.io.{Text, NullWritable, LongWritable}
+import org.apache.hadoop.io.{Text, NullWritable}
 
 /**
  * Created by IntelliJ IDEA.
@@ -22,7 +35,7 @@ class ConvertSameAsPairsToQuadsMapper extends MapReduceBase with Mapper[NullWrit
   private var mos: MultipleOutputs = null
   private val subj = new NodeWritable(null, null, Node.UriNode, "")
   private val obj = new NodeWritable(null, null, Node.UriNode, "")
-  private val quad = new QuadWritable(subj, new Text(Consts.SAMEAS_URI), obj, new Text(""))
+  private val quad = new QuadWritable(subj, new Text(Consts.SAMEAS_URI), obj, new Text(Consts.URI_REWRITING_GRAPH))
 
   override def configure(conf: JobConf) {
     mos = new MultipleOutputs(conf)

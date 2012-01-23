@@ -1,7 +1,7 @@
 /* 
  * LDIF
  *
- * Copyright 2011 Freie Universität Berlin, MediaEvent Services GmbH & Co. KG
+ * Copyright 2011-2012 Freie Universität Berlin, MediaEvent Services GmbH & Co. KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,8 +23,13 @@ import xml.Node
 import ldif.datasources.dump.QuadParser
 import java.io.{OutputStreamWriter, OutputStream}
 import ldif.util.{Consts, Identifier}
+import org.slf4j.LoggerFactory
+import ldif.runtime.Quad
+import ldif.datasources.dump.parser.ParseException
 
 case class QuadImportJob(dumpLocation : String, id : Identifier, refreshSchedule : String, dataSource : String) extends ImportJob {
+
+  private val log = LoggerFactory.getLogger(getClass.getName)
 
   override def load(out : OutputStream) : Boolean = {
 
@@ -35,13 +40,30 @@ case class QuadImportJob(dumpLocation : String, id : Identifier, refreshSchedule
 
     val parser = new QuadParser
     val lines = scala.io.Source.fromInputStream(inputStream).getLines
+    var invalidQuads = 0
     for (line <- lines.toTraversable){
-        val quad = parser.parseLine(line)
+      var quad : Quad = null
+      try {
+        quad = parser.parseLine(line)
+      }
+      catch {
+        case e:ParseException => {
+          // skip invalid quads
+          invalidQuads  += 1
+          log.debug("Invalid quad found: "+line)
+        }
+      }
+      if (quad != null) {
         importedGraphs += quad.graph
         writer.write(quad.toNQuadFormat+" . \n")
         if (importedGraphs.size >= Consts.MAX_NUM_GRAPHS_IN_MEMORY)
           writeImportedGraphsToFile
+      }
     }
+
+    if (invalidQuads>0)
+      log.warn("Invalid quads ("+invalidQuads+") found and skipped in "+ dumpLocation)
+
     writer.flush
     writer.close
     true

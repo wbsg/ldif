@@ -1,7 +1,7 @@
 /* 
  * LDIF
  *
- * Copyright 2011 Freie Universität Berlin, MediaEvent Services GmbH & Co. KG
+ * Copyright 2011-2012 Freie Universität Berlin, MediaEvent Services GmbH & Co. KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,10 +22,13 @@ import java.text.SimpleDateFormat
 import collection.immutable.HashMap
 
 object Consts {
-  val DEFAULT_GRAPH = "http://www4.wiwiss.fu-berlin.de/ldif/defaultOutputGraph"
+  val DEFAULT_GRAPH = "http://www4.wiwiss.fu-berlin.de/ldif/defaultGraph"
   val DEFAULT_PROVENANCE_GRAPH = "http://www4.wiwiss.fu-berlin.de/ldif/provenance"
   val DEFAULT_IMPORTED_GRAPH_PREFIX = "http://www4.wiwiss.fu-berlin.de/ldif/graph#"
   val SAMEAS_URI = "http://www.w3.org/2002/07/owl#sameAs"
+  val URI_MINTING_GRAPH = "http://www4.wiwiss.fu-berlin.de/ldif/graph#uriMinting"
+  val URI_REWRITING_GRAPH = "http://www4.wiwiss.fu-berlin.de/ldif/graph#uriRewriting"
+  val SILK_OUT_GRAPH = "http://www4.wiwiss.fu-berlin.de/ldif/graph#generatedBySilk"
 
   val MAX_WAITING_TIME : Long = Long.MaxValue
 
@@ -68,4 +71,5 @@ object Consts {
 
   // System
   val fileSeparator = System.getProperty("file.separator")
+  val tmpDir = System.getProperty("java.io.tmpdir")
 }

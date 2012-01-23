@@ -1,7 +1,7 @@
 /* 
  * LDIF
  *
- * Copyright 2011 Freie Universität Berlin, MediaEvent Services GmbH & Co. KG
+ * Copyright 2011-2012 Freie Universität Berlin, MediaEvent Services GmbH & Co. KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,12 +20,11 @@ package ldif.modules.silk
 
 import ldif.module.ModuleTask
 import ldif.util.Identifier
-import de.fuberlin.wiwiss.silk.linkspec.LinkSpecification
+import de.fuberlin.wiwiss.silk.config.LinkSpecification
 
 /**
  * Silk Task.
  */
-class SilkTask(val silkConfig : SilkModuleConfig, val linkSpec : LinkSpecification) extends ModuleTask
-{
+class SilkTask(val silkConfig : SilkModuleConfig, val linkSpec : LinkSpecification) extends ModuleTask {
   val name : Identifier = linkSpec.id.toString
 }

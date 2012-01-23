@@ -1,7 +1,7 @@
 /*
  * LDIF
  *
- * Copyright 2011 Freie Universität Berlin, MediaEvent Services GmbH & Co. KG
+ * Copyright 2011-2012 Freie Universität Berlin, MediaEvent Services GmbH & Co. KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,35 +20,56 @@ package ldif.hadoop
 
 import config.HadoopIntegrationConfig
 import entitybuilder.EntityBuilderHadoopExecutor
+import io.EntityMultipleSequenceFileOutput
 import org.slf4j.LoggerFactory
 import java.io.File
 import java.math.BigInteger
 import ldif.modules.r2r.R2RConfig
 import de.fuberlin.wiwiss.r2r._
 import ldif.entity.EntityDescription
-import ldif.util.{StopWatch, LogUtil}
 import ldif.{EntityBuilderModule, EntityBuilderConfig}
 import ldif.modules.r2r.hadoop.{R2RHadoopModule, R2RHadoopExecutor}
 import ldif.modules.silk.SilkModule
-import ldif.modules.silk.local.SilkLocalExecutor
-import ldif.local.runtime.StaticEntityFormat
 import org.apache.hadoop.fs.{FileSystem, Path}
 import org.apache.hadoop.conf.Configuration
-import runtime.{RunHadoopUriMinting, RunHadoopUriTranslation, ConfigParameters, RunHadoopQuadToTextConverter}
+import ldif.modules.silk.hadoop.SilkHadoopExecutor
+import runtime._
+import de.fuberlin.wiwiss.silk.util.DPair
+import java.util.Calendar
+import ldif.util.{ValidationException, Consts, StopWatch, LogUtil}
 
 class HadoopIntegrationJob(val config : HadoopIntegrationConfig, debug : Boolean = false) {
 
   private val log = LoggerFactory.getLogger(getClass.getName)
   val stopWatch = new StopWatch
 
-  val sameAsPath = "sameAsFromSources"
+  var lastUpdate : Calendar = null
 
-  // Object to store all kinds of configuration data
-  var configParameters = ConfigParameters(config.properties, sameAsPath)
+  val conf = new Configuration
+  val hdfs = FileSystem.get(conf)
+
+  val useExternalSameAsLinks = config.properties.getProperty("useExternalSameAsLinks", "true").toLowerCase=="true"
+  val outputAllQuads = config.properties.getProperty("output", "mapped-only").toLowerCase=="all"
+  val rewriteUris = config.properties.getProperty("rewriteURIs", "true").toLowerCase=="true"
+  val uriMinting = config.properties.getProperty("uriMinting", "false").toLowerCase=="true"
+  val ignoreProvenance = config.properties.getProperty("outputFormat", "nq").toLowerCase=="nt"
+
+  val externalSameAsLinksDir = clean("sameAsFromSources")
+  // Contains quads that are not processed but must be added to the output
+  val allQuadsDir = clean("allQuads")
+  // Contains provenance quads
+  val provenanceQuadsDir = clean("provenanceQuads")
 
   def runIntegration() {
 
-    cleanup()
+    val sourcesPath = new Path(config.sources)
+    val sourceNumber = hdfs.listStatus(sourcesPath).length
+    log.info("Hadoop Integration Job started")
+    log.info("- Input < "+ sourceNumber +" sources found in " + sourcesPath.toString)
+    log.info("- Output > "+ config.outputFile)
+    log.info("- Properties ")
+    for (key <- config.properties.keySet.toArray)
+      log.info("  - "+key +" : " + config.properties.getProperty(key.toString) )
 
     stopWatch.getTimeSpanInSeconds()
 
@@ -60,45 +81,90 @@ class HadoopIntegrationJob(val config : HadoopIntegrationConfig, debug : Boolean
     val silkOutput = generateLinks(r2rOutput)
     log.info("Time needed to link data: " + stopWatch.getTimeSpanInSeconds + "s")
 
-    var integratedPath = "integrated"
+    // Prepare data to be translated
+    move(allQuadsDir, r2rOutput)
+    var sameAsLinks : String = null
+    if(useExternalSameAsLinks)
+      sameAsLinks = getAllLinks(silkOutput, new Path(externalSameAsLinksDir))
+    else sameAsLinks = getAllLinks(silkOutput)
 
-    // Execute URI Translation
-    if(config.properties.getProperty("rewriteURIs", "true").toLowerCase=="true" && sameAsLinksAvailable()) {
-//      translateUris(silkOutput, integratedPath)
-      translateUris(r2rOutput, integratedPath)
+    var outputPath = r2rOutput
+
+    // Execute URI Translation (if enabled)
+    if(rewriteUris) {
+      outputPath = translateUris(outputPath, sameAsLinks)
       log.info("Time needed to translate URIs: " + stopWatch.getTimeSpanInSeconds + "s")
-    } else
-      integratedPath = r2rOutput
-    val uriMinting = config.properties.getProperty("uriMinting", "false").toLowerCase=="true"
-    if(uriMinting) {
-      val (mintNamespace, mintPropertySet) = getMintValues(config)
-      RunHadoopUriMinting.execute(integratedPath, integratedPath+"_minted", mintNamespace, mintPropertySet)
-      integratedPath = integratedPath+"_minted"
     }
-    RunHadoopQuadToTextConverter.execute(integratedPath, integratedPath+"_NQ")
+
+    // Execute URI Minting (if enabled)
+    if(uriMinting) {
+      // TODO collect minting-properties quads in the previous HEB-phase2 (both r2r and silk)
+      //      and use (only) those quads as input for the URI minting job
+      outputPath = mintUris(outputPath)
+      log.info("Time needed to mint URIs: " + stopWatch.getTimeSpanInSeconds + "s")
+    }
+
+    // add provenance quads to the output path
+    move(provenanceQuadsDir, outputPath)
+    // add sameAs links to the output path
+    move(sameAsLinks, outputPath)
+
+    writeOutput(outputPath)
+
+    lastUpdate = Calendar.getInstance
   }
 
-  private def sameAsLinksAvailable(): Boolean = {
-    val conf = new Configuration
-    val hdfs = FileSystem.get(conf)
-    val hdPath = new Path(sameAsPath)
-    hdfs.exists(hdPath)
+  /**
+   *  Mints URIs
+   */
+  private def mintUris(inputPath : String) : String = {
+    val mintedUriPath = inputPath+"_minted"
+    val (mintNamespace, mintPropertySet) = getMintValues(config)
+    HadoopUriMinting.execute(inputPath, mintedUriPath, mintNamespace, mintPropertySet)
+    clean(inputPath)
+    mintedUriPath
   }
 
   private def getMintValues(config: HadoopIntegrationConfig): (String, Set[String]) = {
     val mintNamespace = config.properties.getProperty("uriMintNamespace")
     val mintPropertySet = config.properties.getProperty("uriMintLabelPredicate").split("\\s+").toSet
-    return (mintNamespace, mintPropertySet)
+    (mintNamespace, mintPropertySet)
   }
 
 
   /**
    * Translates URIs
    */
-  private def translateUris(inputPath : String, outputPath : String) {
-    // TODO merge sameAs from sources and silk output
-    RunHadoopUriTranslation.execute(inputPath, sameAsPath, outputPath)
+  private def translateUris(inputPath : String, sameAsLinks : String) : String = {
+    val outputPath = inputPath+"_translated"
+    RunHadoopUriTranslation.execute(inputPath, sameAsLinks, outputPath)
+    clean(inputPath)
+    outputPath
   }
+
+
+  /**
+   * Merges sameAs links from sources and silk output
+   */
+  private def getAllLinks(sameAsFromSilk : Seq[Path], sameAsFromSource : Path = null) : String = {
+
+    val allSameAsLinks = clean(new Path("allSameAsLinks"))
+    hdfs.mkdirs(allSameAsLinks)
+
+    for (path <- sameAsFromSilk) {
+      val sameAsFromSilkSeq = hdfs.listStatus(path)
+      for (status <- sameAsFromSilkSeq.filterNot(_.getPath.getName.startsWith("_")))
+        hdfs.rename(status.getPath, new Path(allSameAsLinks+Consts.fileSeparator+path.getName+status.getPath.getName))
+    }
+    if(!debug) clean(sameAsFromSilk.head.getParent)
+
+    if (sameAsFromSource != null) {
+      move(sameAsFromSource, allSameAsLinks, false)
+    }
+
+    allSameAsLinks.toString
+  }
+
 
   /**
    * Transforms the Quads
@@ -112,13 +178,21 @@ class HadoopIntegrationJob(val config : HadoopIntegrationConfig, debug : Boolean
     val r2rTask = r2rModule.tasks.head
     val entityDescriptions = (for(mapping <- r2rTask.ldifMappings) yield mapping.entityDescription).toSeq
 
-    val entitiesPath =  "ebOutput-r2r"
-    buildEntities(config.sources, entitiesPath, entityDescriptions, configParameters, getsTextInput = true)
+    val entitiesPath =  clean("ebOutput-r2r")
+    var configParameters = ConfigParameters(config.properties, null, null, null, true)
+    if (useExternalSameAsLinks)
+      configParameters = configParameters.copy(sameAsPath = externalSameAsLinksDir)
+    if (outputAllQuads)
+      configParameters = configParameters.copy(allQuadsPath = allQuadsDir)
+    if (!ignoreProvenance)
+      configParameters = configParameters.copy(provenanceQuadsPath = provenanceQuadsDir)
+    buildEntities(config.sources, entitiesPath, entityDescriptions, configParameters)
     log.info("Time needed to load dump and build entities for mapping phase: " + stopWatch.getTimeSpanInSeconds + "s")
 
     val r2rOutput = "r2rOutput"
     r2rExecutor.execute(r2rTask, Seq(new Path(entitiesPath)), new Path(r2rOutput))
 
+    clean(entitiesPath)
     r2rOutput
   }
 
@@ -126,7 +200,7 @@ class HadoopIntegrationJob(val config : HadoopIntegrationConfig, debug : Boolean
    * Build a mapping repository from a set of R2R mappings
    */
   private def getMappingsRepository : Repository = {
-    val mappingSource = new FileOrURISource(new File(config.mappingDir))
+    val mappingSource = new FileOrURISource(config.mappingDir)
     val uriGenerator = new EnumeratingURIGenerator("http://www4.wiwiss.fu-berlin.de/ldif/imported", BigInteger.ONE);
     val importedMappingModel = Repository.importMappingDataFromSource(mappingSource, uriGenerator)
     new Repository(new JenaModelSource(importedMappingModel))
@@ -135,46 +209,89 @@ class HadoopIntegrationJob(val config : HadoopIntegrationConfig, debug : Boolean
   /**
    * Generates links.
    */
-  private def generateLinks(quadsPath : String) : String =  {
-    val silkModule = SilkModule.load(new File(config.linkSpecDir))
-    val silkExecutor = new SilkLocalExecutor
+  private def generateLinks(quadsPath : String) : Seq[Path] =  {
+    val entitiesDirectory =  clean("ebOutput-silk")
+    val outputDirectory = clean("silkOutput")
 
-    val entityDescriptions = silkModule.tasks.toIndexedSeq.map(silkExecutor.input).flatMap{ case StaticEntityFormat(ed) => ed }
-    val entitiesPath =  "ebOutput-silk"
-    buildEntities(quadsPath, entitiesPath, entityDescriptions, configParameters)
+    val silkModule = SilkModule.load(config.linkSpecDir)
+    val silkExecutor = new SilkHadoopExecutor
+    val tasks = silkModule.tasks.toIndexedSeq
+    val entityDescriptions = tasks.map(silkExecutor.input).flatMap{ case StaticEntityFormat(ed) => ed }
+
+    var configParameters = ConfigParameters(config.properties)
+    buildEntities(quadsPath, entitiesDirectory, entityDescriptions, configParameters)
     log.info("Time needed to build entities for linking phase: " + stopWatch.getTimeSpanInSeconds + "s")
 
-    val silkOutput = "silkOutput"
+    val result = for((silkTask, i) <- tasks.zipWithIndex) yield {
+      val sourcePath = new Path(entitiesDirectory, EntityMultipleSequenceFileOutput.generateDirectoryName(i * 2))
+      val targetPath = new Path(entitiesDirectory, EntityMultipleSequenceFileOutput.generateDirectoryName(i * 2 + 1))
+      val outputPath = new Path(outputDirectory, EntityMultipleSequenceFileOutput.generateDirectoryName(i))
 
-    // TODO - silk hadoop
-    //      for((silkTask, readers) <- silkModule.tasks.toList zip entityReaders.grouped(2).toList)
-    //      {
-    //        silkExecutor.execute(silkTask, readers, outputQueue)
-    //      }
+      silkExecutor.execute(silkTask, DPair(sourcePath, targetPath), outputPath)
 
-    silkOutput
+      outputPath
+    }
+    if(!debug) clean(entitiesDirectory)
+    result
   }
-
 
   /**
    * Build Entities
    */
-  private def buildEntities(sourcesPath : String, entitiesPath : String, entityDescriptions : Seq[EntityDescription], configParameters: ConfigParameters, getsTextInput: Boolean = false) {
+  private def buildEntities(sourcesPath : String, entitiesPath : String, entityDescriptions : Seq[EntityDescription], configParameters: ConfigParameters) {
 
     val entityBuilderConfig = new EntityBuilderConfig(entityDescriptions.toIndexedSeq)
     val entityBuilderModule = new EntityBuilderModule(entityBuilderConfig)
     val entityBuilderTask = entityBuilderModule.tasks.head
-    val entityBuilderExecutor = new EntityBuilderHadoopExecutor(configParameters, getsTextInput)
+    val entityBuilderExecutor = new EntityBuilderHadoopExecutor(configParameters)
 
     entityBuilderExecutor.execute(entityBuilderTask, List(new Path(sourcesPath)), List(new Path(entitiesPath)))
   }
 
 
-  private def cleanup() {
-    val hdfs = FileSystem.get(new Configuration())
-    val hdPath = new Path(sameAsPath)
+  private def clean(path : String) : String =  {
+    clean(new Path(path))
+    path
+  }
+
+  private def clean(hdPath : Path) : Path =  {
     if (hdfs.exists(hdPath))
       hdfs.delete(hdPath, true)
+    hdPath
+  }
+
+  private def writeOutput(outputPath : String)    {
+    val nqOutput = config.properties.getProperty("outputFormat", "nq").toLowerCase.equals("nq")
+
+    // convert output files from seq to nq
+    HadoopQuadToTextConverter.execute(outputPath, config.outputFile)
+
+    // TODO add output module
+
+    clean(outputPath)
+  }
+
+  // Move files from one path to another
+  private def move (from : String, dest : String, cleanDest : Boolean = false) {
+    move(new Path(from), new Path(dest), cleanDest)
+  }
+
+  private def move (from : Path, dest : Path, cleanDest : Boolean) {
+    log.debug("Moving files from "+from.toString+" to "+ dest.toString)
+    // move files
+    val filesFrom = hdfs.listStatus(from)
+
+    if (filesFrom != null) {
+      if (cleanDest && hdfs.exists(dest))
+        clean(dest)
+      if (!hdfs.exists(dest))
+        hdfs.mkdirs(dest)
+      for (status <- filesFrom.filterNot(_.getPath.getName.startsWith("_")))
+        hdfs.rename(status.getPath, new Path(dest.toString+Consts.fileSeparator+status.getPath.getName))
+    }
+
+    // remove the source
+    clean(from)
   }
 
 }
@@ -187,8 +304,8 @@ object HadoopIntegrationJob {
   def main(args : Array[String])
   {
     if(args.length == 0) {
-      log.warn("Usage: HadoopIntegrationJob <integration job config file>")
-      System.exit(-1)
+      log.warn("No configuration file given. \nUsage: HadoopIntegrationJob <integration-configuration-file>")
+      System.exit(1)
     }
     var debug = false
     val configFile = new File(args(args.length-1))
@@ -196,7 +313,19 @@ object HadoopIntegrationJob {
     if(args.length>=2 && args(0)=="--debug")
       debug = true
 
-    val integrator = new HadoopIntegrationJob(HadoopIntegrationConfig.load(configFile))
+    var config : HadoopIntegrationConfig = null
+    try {
+      config = HadoopIntegrationConfig.load(configFile)
+    }
+    catch {
+      case e:ValidationException => {
+        log.error("Invalid Integration Job configuration: "+e.toString +
+          "\n- More details: http://www.assembla.com/code/ldif/git/nodes/ldif/ldif-core/src/main/resources/xsd/IntegrationJob.xsd")
+        System.exit(1)
+      }
+    }
+
+    val integrator = new HadoopIntegrationJob(config, debug)
     integrator.runIntegration()
   }
 }

@@ -1,7 +1,7 @@
 /* 
  * LDIF
  *
- * Copyright 2011 Freie Universität Berlin, MediaEvent Services GmbH & Co. KG
+ * Copyright 2011-2012 Freie Universität Berlin, MediaEvent Services GmbH & Co. KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,8 +22,9 @@ import ldif.entity.EntityDescription
 import org.slf4j.LoggerFactory
 import ldif.util.Uri
 import ldif.local.runtime.{ConfigParameters, QuadReader, EntityWriter}
-import java.io.{BufferedWriter, FileWriter, IOException, File}
 import ldif.runtime.Quad
+import java.io._
+import java.util.zip.{GZIPOutputStream, Deflater, DeflaterOutputStream}
 
 /**
  * Created by IntelliJ IDEA.
@@ -64,9 +65,10 @@ class QuadStoreEntityBuilder(store: QuadStoreTrait, entityDescriptions : Seq[Ent
 
   // Filter out the relevant quads that will be loaded in to the quad store (also write other quads like provenance somewhere else)
   private def filterAndDumpDataset(readers: Seq[QuadReader]): File = {
-    val tempFile = File.createTempFile("quadDump", ".nq", tmpDir)
+    val tempFile = File.createTempFile("quadDump", ".nq.gz", tmpDir)
     tempFile.deleteOnExit
-    val writer = new BufferedWriter(new FileWriter(tempFile))
+    val writer = new GZIPOutputStream(new BufferedOutputStream(new FileOutputStream(tempFile)))
+//    val writer = new BufferedWriter(new FileWriter(tempFile))
     val startTime = now
 
     // Round robin over reader
@@ -81,7 +83,8 @@ class QuadStoreEntityBuilder(store: QuadStoreTrait, entityDescriptions : Seq[Ent
           saveIfSameAsQuad(quad)
 
         if(isRelevantQuad(quad))
-          writer.write(quad.toLine)
+          writer.write(quad.toLine.getBytes)
+//          writer.write(quad.toLine)
       }
     }
     writer.flush

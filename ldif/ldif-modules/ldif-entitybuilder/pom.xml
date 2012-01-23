@@ -8,12 +8,12 @@
     <parent>
         <groupId>ldif</groupId>
         <artifactId>ldif-modules</artifactId>
-        <version>0.3.1</version>
+        <version>0.4</version>
     </parent>
 
     <artifactId>ldif-entitybuilder</artifactId>
     <packaging>pom</packaging>
-	<version>0.3.1</version>
+	<version>0.4</version>
     <name>LDIF EntityBuilder Module</name>
 
     <modules>

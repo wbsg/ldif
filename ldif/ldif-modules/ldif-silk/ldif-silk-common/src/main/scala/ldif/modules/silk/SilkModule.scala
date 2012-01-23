@@ -1,7 +1,7 @@
 /* 
  * LDIF
  *
- * Copyright 2011 Freie Universität Berlin, MediaEvent Services GmbH & Co. KG
+ * Copyright 2011-2012 Freie Universität Berlin, MediaEvent Services GmbH & Co. KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,46 +20,37 @@ package ldif.modules.silk
 
 import ldif.module.Module
 import java.io.File
-import de.fuberlin.wiwiss.silk.impl.DefaultImplementations
-import de.fuberlin.wiwiss.silk.config.SilkConfig
+import de.fuberlin.wiwiss.silk.plugins.Plugins
+import de.fuberlin.wiwiss.silk.config.LinkingConfig
 
 /**
  * Silk Module.
  */
-class SilkModule(val config : SilkModuleConfig) extends Module
-{
+class SilkModule(val config : SilkModuleConfig) extends Module {
+
   type ConfigType = SilkModuleConfig
 
   type TaskType = SilkTask
 
-  lazy val tasks : Traversable[SilkTask] =
-  {
+  lazy val tasks : Traversable[SilkTask] = {
     for(linkSpec <- config.silkConfig.linkSpecs) yield new SilkTask(config, linkSpec)
   }
 }
 
-object SilkModule
-{
-  def load(file : File) : SilkModule =
-  {
-    DefaultImplementations.register()
+object SilkModule {
+
+  def load(file : File) : SilkModule = {
+    Plugins.register()
 
     new SilkModule(new SilkModuleConfig(loadConfig(file)))
   }
 
-  private def loadConfig(file : File) : SilkConfig =
-  {
-    if(file.isFile)
-    {
-      SilkConfig.load(file)
-    }
-    else if(file.isDirectory && file.listFiles.size > 0)
-    {
+  private def loadConfig(file : File) : LinkingConfig = {
+    if(file!=null && file.isFile)
+      LinkingConfig.load(file)
+    else if(file !=null && file.isDirectory && file.listFiles.size > 0)
       file.listFiles.map(loadConfig).reduceLeft(_ merge _)
-    }
     else
-    {
-      SilkConfig.empty
-    }
+      LinkingConfig.empty
   }
 }

@@ -3,7 +3,7 @@ package ldif.runtime.impl
 /*
  * LDIF
  *
- * Copyright 2011 Freie Universität Berlin, MediaEvent Services GmbH & Co. KG
+ * Copyright 2011-2012 Freie Universität Berlin, MediaEvent Services GmbH & Co. KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,6 +20,7 @@ package ldif.runtime.impl
 
 import ldif.runtime.Quad
 import java.io.{File, FileOutputStream, BufferedOutputStream, ObjectOutputStream}
+import java.util.zip.GZIPOutputStream
 
 /**
  * Created by IntelliJ IDEA.
@@ -29,7 +30,7 @@ import java.io.{File, FileOutputStream, BufferedOutputStream, ObjectOutputStream
  * To change this template use File | Settings | File Templates.
  */
 
-class FileObjectWriter[T <: AnyRef](val outputFile: File, val endObject: T) {
+class FileObjectWriter[T <: AnyRef](val outputFile: File, val endObject: T, val enableCompression: Boolean = false) {
   var counter = 0
   var objectOutput: ObjectOutputStream = null
 
@@ -46,6 +47,9 @@ class FileObjectWriter[T <: AnyRef](val outputFile: File, val endObject: T) {
   }
 
   private def openStream() {
-    objectOutput = new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream(outputFile)))
+    if(enableCompression)
+      objectOutput = new ObjectOutputStream(new GZIPOutputStream(new BufferedOutputStream(new FileOutputStream(outputFile)), 8*1024))
+    else
+      objectOutput = new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream(outputFile)))
   }
 }

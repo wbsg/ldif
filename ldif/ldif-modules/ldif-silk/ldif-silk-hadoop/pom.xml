@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>ldif-r2r</artifactId>
+        <groupId>ldif</groupId>
+        <version>0.4</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+
+    <artifactId>ldif-silk-hadoop</artifactId>
+    <packaging>jar</packaging>
+	<version>0.4</version>
+	<name>LDIF Silk Module - Hadoop</name>
+
+    <dependencies>
+      <dependency>
+        <groupId>de.fuberlin.wiwiss.silk</groupId>
+        <artifactId>silk-mapreduce</artifactId>
+        <version>2.5.3</version>
+          <exclusions>
+              <exclusion>
+                  <artifactId>hadoop-core</artifactId>
+                  <groupId>org.apache.hadoop</groupId>
+              </exclusion>
+          </exclusions>
+      </dependency>
+        <dependency>
+          <groupId>ldif</groupId>
+          <artifactId>ldif-hadoop</artifactId>
+          <version>0.4</version>
+        </dependency>
+        <dependency>
+            <groupId>ldif</groupId>
+            <artifactId>ldif-silk-common</artifactId>
+            <version>0.4</version>
+        </dependency>
+    </dependencies>
+</project>

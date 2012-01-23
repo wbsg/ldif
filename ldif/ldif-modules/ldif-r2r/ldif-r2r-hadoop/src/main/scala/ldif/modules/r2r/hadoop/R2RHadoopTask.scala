@@ -1,7 +1,7 @@
 /* 
  * LDIF
  *
- * Copyright 2011 Freie Universität Berlin, MediaEvent Services GmbH & Co. KG
+ * Copyright 2011-2012 Freie Universität Berlin, MediaEvent Services GmbH & Co. KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,5 +31,5 @@ import de.fuberlin.wiwiss.r2r.LDIFMapping
  */
 
 class R2RHadoopTask(val ldifMappings: IndexedSeq[LDIFMapping]) extends ModuleTask{
-  val name: Identifier = ldifMappings.head.mapping.getUri  //TODO use a proper identifier
+  val name: Identifier = ldifMappings.head.mapping.getUri
 }
