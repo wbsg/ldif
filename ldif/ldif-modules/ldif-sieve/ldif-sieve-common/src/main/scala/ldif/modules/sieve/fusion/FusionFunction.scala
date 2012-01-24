@@ -51,4 +51,3 @@ trait FusionFunction {
 
 }
 
-class PassItOn extends FusionFunction

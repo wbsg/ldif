@@ -27,8 +27,8 @@ import java.io.{FileInputStream, File}
 import ldif.runtime.Quad
 import ldif.util.Prefixes
 import ldif.entity.{Node, Entity, EntityDescription}
-import ldif.modules.sieve.fusion.{PassItOn, FusionFunction, TrustYourFriends, KeepFirst}
-import ldif.modules.sieve.{SieveConfig, SieveFusionTask}
+import ldif.modules.sieve.fusion.functions.{PassItOn, TrustYourFriends, KeepFirst}
+import ldif.modules.sieve.fusion.{FusionConfig, FusionTask, FusionFunction}
 
 /**
  * Executes Sieve Data Fusion on a local machine.
@@ -41,25 +41,25 @@ class SieveLocalFusionExecutor(useFileInstanceCache: Boolean = false) extends Ex
   //private val numThreads = 8
   //private val numThreads = Runtime.getRuntime.availableProcessors
 
-  type TaskType = SieveFusionTask
+  type TaskType = FusionTask
 
   type InputFormat = StaticEntityFormat
 
   type OutputFormat = GraphFormat
 
-  def input(task : SieveFusionTask) : InputFormat =
+  def input(task : FusionTask) : InputFormat =
   {
     implicit val prefixes = task.sieveConfig.sieveConfig.prefixes
     //log.info("Prefixes:"+prefixes.toString)
 
     // here we create entity descriptions from the task.fusionSpec
     //        val entityDescriptions = CreateEntityDescriptions(task.fusionSpec)
-    val entityDescriptions = SieveConfig.createDummyEntityDescriptions(prefixes)
+    val entityDescriptions = FusionConfig.createDummyEntityDescriptions(prefixes)
 
     new StaticEntityFormat(entityDescriptions)
   }
 
-  def output(task : SieveFusionTask) = new GraphFormat()
+  def output(task : FusionTask) = new GraphFormat()
 
   private def getOrElse [T<:Object] (list: IndexedSeq[T], index: Int, default: T) : T = {
     if (index < list.size) {
@@ -76,7 +76,7 @@ class SieveLocalFusionExecutor(useFileInstanceCache: Boolean = false) extends Ex
   /**
    * Executes a Sieve task.
    */
-  override def execute(task : SieveFusionTask, reader : Seq[EntityReader], writer : QuadWriter) {
+  override def execute(task : FusionTask, reader : Seq[EntityReader], writer : QuadWriter) {
     log.info("Executing Sieve Task %s".format(task.name))
 
     val quality = task.qualityAssessment

@@ -16,10 +16,11 @@
 
 package ldif.modules.sieve
 
+import fusion.FusionConfig
 import ldif.module.ModuleConfig
 import ldif.util.Prefixes
 
 /**
  * Sieve Configuration.
  */
-case class SieveModuleConfig(sieveConfig : SieveConfig) extends ModuleConfig
+case class SieveModuleConfig(sieveConfig : FusionConfig) extends ModuleConfig

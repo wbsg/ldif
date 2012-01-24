@@ -16,6 +16,7 @@
 
 package ldif.modules.sieve
 
+import fusion.{FusionTask, FusionConfig}
 import ldif.module.Module
 import java.io.File
 import org.slf4j.LoggerFactory
@@ -28,11 +29,11 @@ class SieveModule(val config : SieveModuleConfig) extends Module
 
   type ConfigType = SieveModuleConfig
 
-  type TaskType = SieveFusionTask
+  type TaskType = FusionTask
 
-  lazy val tasks : Traversable[SieveFusionTask] =
+  lazy val tasks : Traversable[FusionTask] = //automatically generates one task per spec
   {
-    for(sieveSpec <- config.sieveConfig.sieveSpecs) yield new SieveFusionTask(config, sieveSpec)
+    for(sieveSpec <- config.sieveConfig.sieveSpecs) yield new FusionTask(config, sieveSpec)
   }
 }
 
@@ -44,17 +45,17 @@ object SieveModule
   {
     //DefaultImplementations.register()
 
-    val config = if(file==null || !file.exists()) SieveConfig.empty else loadConfig(file)
+    val config = if(file==null || !file.exists()) FusionConfig.empty else loadConfig(file)
     new SieveModule(new SieveModuleConfig(config))
   }
 
-  private def loadConfig(file : File) : SieveConfig =
+  private def loadConfig(file : File) : FusionConfig =
   {
     if (file==null) log.debug("Trying to load null config file into Sieve. Returning empty config.");
 
     if(file!=null && file.isFile)
     {
-      SieveConfig.load(file)
+      FusionConfig.load(file)
     }
     else if(file!=null && file.isDirectory && file.listFiles.size > 0)
     {
@@ -62,7 +63,7 @@ object SieveModule
     }
     else
     {
-      SieveConfig.empty
+      FusionConfig.empty
     }
   }
 }

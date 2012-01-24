@@ -1,4 +1,6 @@
-/* 
+package ldif.modules.sieve.fusion.functions
+
+/*
  * Copyright 2011-2012 Freie Universität Berlin, MediaEvent Services GmbH & Co. KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,12 +16,11 @@
  * limitations under the License.
  */
 
-package ldif.modules.sieve.fusion
-
 import scala.util.matching.Regex
 import org.slf4j.LoggerFactory
 import ldif.entity.{NodeTrait, Node}
 import ldif.modules.sieve.quality.QualityAssessmentProvider
+import ldif.modules.sieve.fusion.FusionFunction
 
 /**
  * example fusion function that keeps the first value

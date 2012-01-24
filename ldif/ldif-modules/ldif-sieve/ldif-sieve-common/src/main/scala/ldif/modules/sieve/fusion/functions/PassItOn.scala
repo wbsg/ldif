@@ -1,4 +1,6 @@
-/* 
+package ldif.modules.sieve.fusion.functions
+
+/*
  * Copyright 2011-2012 Freie Universität Berlin, MediaEvent Services GmbH & Co. KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,19 +16,13 @@
  * limitations under the License.
  */
 
-package ldif.modules.sieve
-
-import fusion.{PassItOn, FusionFunction}
-import ldif.module.ModuleTask
-import ldif.util.Identifier
-import quality.{HashBasedQualityAssessment, QualityAssessmentProvider}
+import ldif.entity.{NodeTrait, Node}
+import ldif.modules.sieve.fusion.FusionFunction
 
 /**
- * Sieve Task.
+ * Fusion function that does nothing. Passes values on to the next component in the pipeline (or user app)
+ * @author pablomendes
  */
-class SieveFusionTask(val sieveConfig : SieveModuleConfig, val fusionSpec : FusionSpecification) extends ModuleTask
-{
-  val name : Identifier = fusionSpec.id.toString
-  val qualityAssessment : QualityAssessmentProvider = new HashBasedQualityAssessment //TODO SieveFusionTask constructor to pass QualitySpec
 
-}
+class PassItOn extends FusionFunction
+
