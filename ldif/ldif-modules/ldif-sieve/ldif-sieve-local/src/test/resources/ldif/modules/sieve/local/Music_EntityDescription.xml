@@ -11,6 +11,17 @@
         <Pattern>
             <Path>?a/foaf:made</Path>
         </Pattern>
+        <Pattern>
+            <Path>?a/owl:sameAs</Path>
+        </Pattern>
+        <Pattern>
+            <Path>?a/ldif:hasDatasource</Path>
+        </Pattern>
     </Patterns>
+    <!--
+    dbpedia-owl:musicalArtist
+    rdf:type
+    foaf:member
+    -->
 
 </EntityDescription>
