@@ -63,11 +63,11 @@ object QualityConfig {
   /**
    * Gameplan for loading from XML is:
    *  -- grab Prefixes tag, build prefixes
-   *  -- start from Fusion tag.
-   *  ---- for each Class tag, create:
-   *         an entity description with all properties inside
-   *         a fusion spec pairing each property with a fusion function.
-   *           --- use FusionFunction.fromXML to create it.
+   *  -- start from Quality tag.
+   *  ---- for each AssessmentMetric tag, create:
+   *         an entity description with all paths in Input
+   *         a quality spec pairing each property with a scoring function.
+   *           --- use ScoringFunction.fromXML to create it.
    *
    */
   def load(configFile: InputStream) : QualityConfig = {
