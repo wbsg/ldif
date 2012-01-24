@@ -17,11 +17,11 @@ package ldif.modules.sieve.fusion
  */
 
 import functions.PassItOn
-import ldif.util.Prefixes
 import java.io.{FileInputStream, InputStream, File}
 import sun.reflect.generics.reflectiveObjects.NotImplementedException
 import ldif.entity.EntityDescription
 import org.slf4j.LoggerFactory
+import ldif.util.{ValidatingXMLReader, Prefixes}
 
 /**
  *
@@ -31,7 +31,9 @@ import org.slf4j.LoggerFactory
  *
  * @author pablomendes
  */
-class FusionConfig(val prefixes: Prefixes, val sieveSpecs: Traversable[FusionSpecification]) {
+class FusionConfig(val prefixes: Prefixes,
+                   val sieveSpecs: Traversable[FusionSpecification],
+                   val entityDescriptions: Traversable[EntityDescription]) {
 
   def merge(c: FusionConfig) : FusionConfig = { //TODO implement
     throw new NotImplementedException
@@ -43,6 +45,7 @@ class FusionConfig(val prefixes: Prefixes, val sieveSpecs: Traversable[FusionSpe
 object FusionConfig {
 
   private val log = LoggerFactory.getLogger(getClass.getName)
+  private val schemaLocation = "de/fuberlin/wiwiss/silk/Fusion.xsd"
 
   val stdPrefixes = Map("foaf" -> "http://xmlns.com/foaf/0.1/",
     "dbpedia-owl" -> "http://dbpedia.org/ontology/",
@@ -71,15 +74,21 @@ object FusionConfig {
    *           --- use FusionFunction.fromXML to create it.
    *
    */
-  def load(configFile: InputStream) : FusionConfig = { //TODO implement config parser
-    val fusionSpecs = FusionSpecification.createLwdm2012ExampleSpecs
-    new FusionConfig(new Prefixes(stdPrefixes),fusionSpecs)
+  def load(configFile: InputStream) : FusionConfig = {
+    //TODO use reader below
+    //new ValidatingXMLReader(fromXML, schemaLocation)
+
+    //temporarily
+    val fusionSpecs = List(FusionSpecification.createLwdm2012ExampleSpecs)
+    val entityDescriptions = List(EntityDescription.fromXML(FusionEntityDescription.createLwdm2012EntityDescription)(stdPrefixes))
+    new FusionConfig(new Prefixes(stdPrefixes), fusionSpecs, entityDescriptions)
   }
 
   def fromXML(node: scala.xml.Node) = {
     implicit val prefixes = Prefixes.fromXML(node \ "Prefixes" head)
     val specs = (node \ "Fusion" \ "Class").map(FusionSpecification.fromXML)
-    val entityDescriptions = (node \ "Fusion" \ "Class").map(createEntityDescription)
+    val entityDescriptions = (node \ "Fusion" \ "Class").map(FusionEntityDescription.fromXML(_)(prefixes))
+    new FusionConfig(prefixes, specs, entityDescriptions)
   }
 // Example from Silk:
 //object LinkingConfig {
@@ -107,9 +116,6 @@ object FusionConfig {
 //  }
 //}
 
-  def createEntityDescription(node: scala.xml.Node) = {
-    FusionEntityDescription.createLwdm2012EntityDescription
-  }
 
 
   def createDummyEntityDescriptions(prefixes: Prefixes) : List[EntityDescription] = {
@@ -140,7 +146,14 @@ object FusionConfig {
 /*
  This class should never be actually used for fusion. It simply signals that no config exists, and the framework should repeat the input.
  */
-class EmptySieveConfig extends FusionConfig(Prefixes.stdPrefixes, List(new FusionSpecification("Default", IndexedSeq(new PassItOn), IndexedSeq("DEFAULT")))) {
+class EmptySieveConfig extends FusionConfig(Prefixes.stdPrefixes,
+                                List(new FusionSpecification("Default",
+                                                             IndexedSeq(new PassItOn),
+                                                             IndexedSeq("DEFAULT")
+                                                             )),
+                                List(EntityDescription.empty)
+
+) {
 
 }
 

@@ -53,7 +53,7 @@ class SieveLocalFusionExecutor(useFileInstanceCache: Boolean = false) extends Ex
     //log.info("Prefixes:"+prefixes.toString)
 
     // here we create entity descriptions from the task.fusionSpec
-    //        val entityDescriptions = CreateEntityDescriptions(task.fusionSpec)
+    //val entityDescriptions = task.sieveConfig.sieveConfig.entityDescriptions
     val entityDescriptions = FusionConfig.createDummyEntityDescriptions(prefixes)
 
     new StaticEntityFormat(entityDescriptions)

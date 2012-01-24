@@ -68,6 +68,8 @@ object EntityDescription
       }
     )
   }
+
+  def empty = EntityDescription(Restriction(None),IndexedSeq(IndexedSeq.empty[Path]))
 }
 
 

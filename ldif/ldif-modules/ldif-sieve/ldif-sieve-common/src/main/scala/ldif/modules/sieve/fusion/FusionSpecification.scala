@@ -37,14 +37,18 @@ object FusionSpecification {
    * A <Class> node/elem will be passed in.
    */
   def fromXML(node: scala.xml.Node) = {
+    //TODO implement as below
      //val specName = ...
      //val fusionFunctions = (node \ "Property").map(FusionFunction.fromXML)
      //val propertyNames = (node \ "Property").map(grabName)
      //new FusionSpecification(specName,fusionFunctions,propertyNames)
+
+    //temporarily, hardcoded:
+    createLwdm2012ExampleSpecs
   }
 
   def createLwdm2012ExampleSpecs = {
-    val spec1 = new FusionSpecification("lwdm2012",
+    new FusionSpecification("lwdm2012",
       IndexedSeq(new PassItOn,
         new TrustYourFriends("http://en.wikipedia.org.+"),
         new PassItOn,
@@ -56,14 +60,13 @@ object FusionSpecification {
         "http://dbpedia.org/ontology/populationTotal",
         "http://www.w3.org/1999/02/22-rdf-syntax-ns#type")
     )
-    List(spec1)
   }
 
-    def createMusicExampleSpecs = {
-    val spec1 = new FusionSpecification("test",
-                      IndexedSeq(new TrustYourFriends("http://www4.wiwiss.fu-berlin.de/ldif/graph#dbpedia.en"), new PassItOn, new PassItOn, new PassItOn),
-                      IndexedSeq("http://www.w3.org/2000/01/rdf-schema#label", "http://xmlns.com/foaf/0.1/made", "http://www.w3.org/2002/07/owl#sameAs", "http://www4.wiwiss.fu-berlin.de/ldif/hasDatasource")
+  def createMusicExampleSpecs = {
+    new FusionSpecification("test",
+      IndexedSeq(new TrustYourFriends("http://www4.wiwiss.fu-berlin.de/ldif/graph#dbpedia.en"), new PassItOn, new PassItOn, new PassItOn),
+      IndexedSeq("http://www.w3.org/2000/01/rdf-schema#label", "http://xmlns.com/foaf/0.1/made", "http://www.w3.org/2002/07/owl#sameAs", "http://www4.wiwiss.fu-berlin.de/ldif/hasDatasource")
     )
-    List(spec1)
+
   }
 }

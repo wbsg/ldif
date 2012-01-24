@@ -14,7 +14,7 @@
 
         <Class name="dbpedia:City">
             <Property name="rdfs:label">
-                <FusionFunction class="KeepSingleValueByQualityScore" indicator="ldif:lastUpdate"/>
+                <FusionFunction class="KeepSingleValueByQualityScore" metric="ldif:lastUpdate"/>
             </Property>
         </Class>
 

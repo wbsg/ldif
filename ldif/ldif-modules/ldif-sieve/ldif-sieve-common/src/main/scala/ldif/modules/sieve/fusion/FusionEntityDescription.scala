@@ -2,6 +2,7 @@ package ldif.modules.sieve.fusion
 
 import xml.Elem
 import ldif.util.Prefixes
+import ldif.entity.EntityDescription
 
 /**
  * Helper object to parse entity descriptions out of the Fusion Specification XML
@@ -15,11 +16,17 @@ object FusionEntityDescription {
    * Create a restriction for the Class (rdf:type)
    * For each sub-element Property, create a pattern.
    */
-  def fromXML(classElement : Elem)(implicit prefixes : Prefixes = Prefixes.empty) = {
+  def fromXML(classElement : scala.xml.Node)(implicit prefixes : Prefixes = Prefixes.empty) = {
     // first grab the restriction
     // val classRestriction = ...
     // second grab the patterns from each Property element
     //val properties = (classElement \ "Property" ).map(grabPropertyName)
+    //val entityDescriptionXml = EntityDescription(
+    //  restriction= ,
+    //  patterns=
+    // ) //see EntityDescription.fromXML to understand how to create.
+    //val e = EntityDescription.fromXML(entityDescriptionXml)(prefixes)
+    EntityDescription.fromXML(createLwdm2012EntityDescription)(prefixes)
   }
 
   def createLwdm2012EntityDescription = {

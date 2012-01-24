@@ -229,7 +229,7 @@ graphs that are used in LDIF for provanance tracking and that group subsets of t
 
 <dt>Data Quality Indicator</dt><dd>An aspect of a data item or data set that may give an indication to the user of the suitability of the data for some intended use. The types of information which may be used as quality indicators are very diverse. Besides the information to be assessed, scoring functions may rely on meta-information about the circumstances in which information was created or will be used, on background information about the information provider, or on ratings provided by the information consumers themselves, other information consumers, or domain experts.</dd>
 
-<dt>Scoring Function</dt><dd>An assessment of a data quality indicator that generates a score to be evaluated by the user in the process of deciding on the suitability of the data for some intended use. There may be a choice of several alternative or combined scoring functions for producing a score for a given indicator. Depending on the quality dimension to be assessed and the chosen quality indicators, scoring functions range from simple comparisons, like "assign true if the quality indicator has a value greater than X", over set functions, like "assign true if the indicator is in the set Y", aggregation functions, like "count or sum up all indicator values", to more complex statistical functions, text-analysis, or network-analysis methods.</dd>
+<dt>Scoring Function</dt><dd>An implementation that, based on indicators, generates a score to be evaluated by the user in the process of deciding on the suitability of the data for some intended use. There may be a choice of several alternative or combined scoring functions for producing a score for a given indicator. Depending on the quality dimension to be assessed and the chosen quality indicators, scoring functions range from simple comparisons, like "assign true if the quality indicator has a value greater than X", over set functions, like "assign true if the indicator is in the set Y", aggregation functions, like "count or sum up all indicator values", to more complex statistical functions, text-analysis, or network-analysis methods.</dd>
 
 <dt>Assessment Metric</dt><dd>Is a procedure for measuring an information quality dimension. Assessment metrics rely on a set of quality indicators and calculate an assessment score from these indicators using a scoring function. Information quality assessment metrics can be classified into three categories according to the type of information that is used as quality indicator: content-based metrics, context-based metrics and rating-based metrics.</dd>
 
@@ -367,7 +367,7 @@ In order to output a clean value for each property, it applies fusion fuctions i
 <h3><a name="fusionconfig"></a>Fusion Configuration<br>
 </h3>
 
-<p>A Data Fusion Job is configured with an XML document, whose structure is described by this <a href="http://www.assembla.com/code/ldif/git/nodes/ldif/ldif-core/src/main/resources/xsd/IntegrationJob.xsd">XML Schema</a>.</p>
+<p>A Data Fusion Job is configured with an XML document, whose structure is described by this <a href="http://www.assembla.com/code/ldif/git/nodes/ldif/ldif-core/src/main/resources/xsd/Fusion.xsd">XML Schema</a>.</p>
 
 <p>A typical configuration document looks like this:</p>
 
@@ -377,13 +377,13 @@ In order to output a clean value for each property, it applies fusion fuctions i
   &lt;Fusion name="Fusion strategy for DBpedia City Entities" description="The idea is to use values from multiple DBpedia languages to improve the quality of data about cities."&gt;
         &lt;Class name="dbpedia:City"&gt;
           &lt;Property name="dbpedia:areaTotal"&gt;
-                 &lt;FusionFunction name="KeepValueWithHighestScore" indicator="sieve:lastUpdated" /&gt;
+                 &lt;FusionFunction name="KeepValueWithHighestScore" metric="sieve:lastUpdated" /&gt;
           &lt;/Property&gt;
           &lt;Property name="dbpedia:population"&gt;
                  &lt;FusionFunction name="AverageValue" /&gt;
           &lt;/Property&gt;
           &lt;Property name="dbpedia:name"&gt;
-                 &lt;FusionFunction name="KeepValueWithHighestScore" indicator="sieve:reputation" /&gt;
+                 &lt;FusionFunction name="KeepValueWithHighestScore" metric="sieve:reputation" /&gt;
           &lt;/Property&gt;
        &lt;/Class&gt;
   &lt;/Fusion&gt;
