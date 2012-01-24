@@ -36,6 +36,7 @@ import de.fuberlin.wiwiss.r2r.{JenaModelSource, EnumeratingURIGenerator, FileOrU
 import org.slf4j.LoggerFactory
 import ldif.util._
 import ldif.modules.sieve._
+import fusion.{FusionConfig, EmptySieveConfig}
 import ldif.modules.silk.local.SilkLocalExecutor
 
 class IntegrationJob (val config : IntegrationConfig, debugMode : Boolean = false) {
@@ -281,7 +282,7 @@ class IntegrationJob (val config : IntegrationConfig, debugMode : Boolean = fals
         inputQuadsReader.foreach(q => echo.write(q));
         return echo;
       }
-      case c: SieveConfig => {
+      case c: FusionConfig => {
         log.debug("Sieve will perform fusion, config=%s.".format(sieveSpecDir.getAbsolutePath))
         val inMemory = config.properties.getProperty("entityBuilderType", "in-memory")=="in-memory"
         val sieveExecutor = new SieveLocalFusionExecutor()
@@ -313,38 +314,39 @@ class IntegrationJob (val config : IntegrationConfig, debugMode : Boolean = fals
    */
   private def assessQuality(sieveSpecDir : File, inputQuadsReader : QuadReader) : QuadReader =
   {
-    val sieveModule = SieveModule.load(sieveSpecDir)
-
-    sieveModule.config.sieveConfig match {
-      case e: EmptySieveConfig => {
-          log.info("[QUALITY] No Sieve configuration found. No quality assessment will be performed.")
-        return new QuadQueue;
-      }
-      case c: SieveConfig => {
-        log.debug("Sieve will perform quality assessment, config=%s.".format(sieveSpecDir.getAbsolutePath))
-        val inMemory = config.properties.getProperty("entityBuilderType", "in-memory")=="in-memory"
-        val sieveExecutor = new SieveLocalFusionExecutor
-
-        val entityDescriptions = sieveModule.tasks.toIndexedSeq.map(sieveExecutor.input).flatMap{ case StaticEntityFormat(ed) => ed }
-
-        val entityReaders = buildEntities(Seq(inputQuadsReader), entityDescriptions, ConfigParameters(config.properties))
-
-        StringPool.reset
-        log.info("[QUALITY] Time needed to build entities for fusion phase: " + stopWatch.getTimeSpanInSeconds + "s")
-
-        val output = new QuadQueue
-
-          //runInBackground
-        {
-          for((sieveTask, readers) <- sieveModule.tasks.toList zip entityReaders.grouped(2).toList)
-          {
-            sieveExecutor.execute(sieveTask, readers, output)
-          }
-        }
-
-        output
-      }
-    }
+//    val sieveModule = SieveModule.load(sieveSpecDir)
+//
+//    sieveModule.config.sieveConfig match {
+//      case e: EmptySieveConfig => {
+//          log.info("[QUALITY] No Sieve configuration found. No quality assessment will be performed.")
+//        return new QuadQueue;
+//      }
+//      case c: SieveConfig => {
+//        log.debug("Sieve will perform quality assessment, config=%s.".format(sieveSpecDir.getAbsolutePath))
+//        val inMemory = config.properties.getProperty("entityBuilderType", "in-memory")=="in-memory"
+//        val sieveExecutor = new SieveLocalFusionExecutor
+//
+//        val entityDescriptions = sieveModule.tasks.toIndexedSeq.map(sieveExecutor.input).flatMap{ case StaticEntityFormat(ed) => ed }
+//
+//        val entityReaders = buildEntities(Seq(inputQuadsReader), entityDescriptions, ConfigParameters(config.properties))
+//
+//        StringPool.reset
+//        log.info("[QUALITY] Time needed to build entities for fusion phase: " + stopWatch.getTimeSpanInSeconds + "s")
+//
+//        val output = new QuadQueue
+//
+//          //runInBackground
+//        {
+//          for((sieveTask, readers) <- sieveModule.tasks.toList zip entityReaders.grouped(2).toList)
+//          {
+//            sieveExecutor.execute(sieveTask, readers, output)
+//          }
+//        }
+//
+//        output
+//      }
+//    }
+    new QuadQueue
   }
 
   /**
