@@ -27,7 +27,6 @@ import ldif.modules.r2r.{R2RModule, R2RConfig}
 import util.StringPool
 import ldif.modules.silk.SilkModule
 import ldif.modules.silk.local.SilkLocalExecutor
-import ldif.modules.sieve.local.SieveLocalExecutor
 import ldif.entity.EntityDescription
 import ldif.{EntityBuilderModule, EntityBuilderConfig}
 import java.util.{Calendar, Properties}
@@ -37,6 +36,7 @@ import de.fuberlin.wiwiss.r2r.{JenaModelSource, EnumeratingURIGenerator, FileOrU
 import org.slf4j.LoggerFactory
 import ldif.util._
 import ldif.modules.sieve.{SieveConfig, EmptySieveConfig, SieveModule}
+import ldif.modules.sieve.local.{SieveLocalFusionExecutor}
 
 class IntegrationJob (val config : IntegrationConfig, debugMode : Boolean = false) {
 
@@ -281,7 +281,7 @@ class IntegrationJob (val config : IntegrationConfig, debugMode : Boolean = fals
       case c: SieveConfig => {
         log.debug("Sieve will perform fusion, config=%s.".format(sieveSpecDir.getAbsolutePath))
         val inMemory = config.properties.getProperty("entityBuilderType", "in-memory")=="in-memory"
-        val sieveExecutor = new SieveLocalExecutor
+        val sieveExecutor = new SieveLocalFusionExecutor()
 
         val entityDescriptions = sieveModule.tasks.toIndexedSeq.map(sieveExecutor.input).flatMap{ case StaticEntityFormat(ed) => ed }
 
