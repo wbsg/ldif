@@ -118,4 +118,17 @@ object ContentTypes {
 		result
   }
 
+  /**
+	 * Translates a given lang to content type
+	 */
+  def getContentTypeFromLang(lang : String) : String = {
+     if (lang == langXML)
+       CONTENTTYPES_RDFXML.head
+     else if (lang == langN3)
+       CONTENTTYPES_RDFN3.head
+     else if (lang == langTurtle)
+       CONTENTTYPES_RDFTTL.head
+     else "text/plain"
+  }
+
 }

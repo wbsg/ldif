@@ -30,13 +30,15 @@ import ldif.entity.EntityDescription
 import ldif.{EntityBuilderModule, EntityBuilderConfig}
 import ldif.modules.r2r.hadoop.{R2RHadoopModule, R2RHadoopExecutor}
 import ldif.modules.silk.SilkModule
-import org.apache.hadoop.fs.{FileSystem, Path}
 import org.apache.hadoop.conf.Configuration
 import ldif.modules.silk.hadoop.SilkHadoopExecutor
 import runtime._
 import de.fuberlin.wiwiss.silk.util.DPair
 import java.util.Calendar
-import ldif.util.{ValidationException, Consts, StopWatch, LogUtil}
+import ldif.util.{ValidationException, Consts, StopWatch, LogUtil, RemoteSparqlEndpoint}
+import org.apache.hadoop.fs.{FileSystem, Path, FSDataInputStream}
+import ldif.datasources.dump.QuadParser
+import java.net.URI
 
 class HadoopIntegrationJob(val config : HadoopIntegrationConfig, debug : Boolean = false) {
 
@@ -265,6 +267,22 @@ class HadoopIntegrationJob(val config : HadoopIntegrationConfig, debug : Boolean
 
     // convert output files from seq to nq
     HadoopQuadToTextConverter.execute(outputPath, config.outputFile)
+
+    // SPARQL Output
+
+    // basic setup
+    var endpoint = new RemoteSparqlEndpoint(new URI("http://ec2-176-34-208-158.eu-west-1.compute.amazonaws.com:10035/repositories/ldif-test"), Some("ldif", "1d1f"));
+    var instream = hdfs.open(new Path(config.outputFile))
+
+    val lines = scala.io.Source.fromInputStream(instream).getLines
+    val parser = new QuadParser
+
+    // loop and stop as the first lastUpdate quad is found
+    for (quad <- lines.toTraversable.map(parser.parseLine(_))){
+      log.debug(quad.toString());
+      // every 500 lines:
+      // endpoint.executeQuery("INSERT INTO <" + graph + "> {\n" + quads + "\n}");
+    }
 
     // TODO add output module
 
