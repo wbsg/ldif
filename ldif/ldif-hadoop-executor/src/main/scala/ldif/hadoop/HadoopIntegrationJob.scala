@@ -35,10 +35,10 @@ import ldif.modules.silk.hadoop.SilkHadoopExecutor
 import runtime._
 import de.fuberlin.wiwiss.silk.util.DPair
 import java.util.Calendar
-import ldif.util.{ValidationException, Consts, StopWatch, LogUtil, RemoteSparqlEndpoint}
-import org.apache.hadoop.fs.{FileSystem, Path, FSDataInputStream}
+import ldif.util.{ValidationException, Consts, StopWatch, LogUtil}
 import ldif.datasources.dump.QuadParser
-import java.net.URI
+import ldif.output.OutputWriterFactory
+import org.apache.hadoop.fs.{FileSystem, Path, FSDataInputStream}
 
 class HadoopIntegrationJob(val config : HadoopIntegrationConfig, debug : Boolean = false) {
 
@@ -263,28 +263,34 @@ class HadoopIntegrationJob(val config : HadoopIntegrationConfig, debug : Boolean
   }
 
   private def writeOutput(outputPath : String)    {
-    val nqOutput = config.properties.getProperty("outputFormat", "nq").toLowerCase.equals("nq")
+    var outputFormat = config.properties.getProperty("outputFormat", "nq").toLowerCase
+
+    var count = 0
 
     // convert output files from seq to nq
     HadoopQuadToTextConverter.execute(outputPath, config.outputFile)
 
-    // SPARQL Output
-
-    // basic setup
-    var endpoint = new RemoteSparqlEndpoint(new URI("http://ec2-176-34-208-158.eu-west-1.compute.amazonaws.com:10035/repositories/ldif-test"), Some("ldif", "1d1f"));
-    var instream = hdfs.open(new Path(config.outputFile))
+    var instream : FSDataInputStream = null
+    val outputDir = hdfs.listStatus(new Path(config.outputFile))
+    // TODO support multiple output file
+    // for (outputFile <- outputDir.filterNot(_.getPath.getName.startsWith("_"))){
+    val outputFile = outputDir.filterNot(_.getPath.getName.startsWith("_")).head.getPath
+    instream = hdfs.open(outputFile)
+    //  }
 
     val lines = scala.io.Source.fromInputStream(instream).getLines
     val parser = new QuadParser
 
-    // loop and stop as the first lastUpdate quad is found
-    for (quad <- lines.toTraversable.map(parser.parseLine(_))){
-      log.debug(quad.toString());
-      // every 500 lines:
-      // endpoint.executeQuery("INSERT INTO <" + graph + "> {\n" + quads + "\n}");
+    val writer = OutputWriterFactory.getWriter(outputFormat, config.properties)
+    if (writer != null) {
+      for (quad <- lines.toTraversable.map(parser.parseLine(_))){
+        writer.write(quad)
+        count += 1
+      }
+      writer.close
     }
 
-    // TODO add output module
+    log.info(count + " Quads written")
 
     clean(outputPath)
   }

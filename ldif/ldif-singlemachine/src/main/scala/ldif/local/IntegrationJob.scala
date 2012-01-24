@@ -37,6 +37,7 @@ import org.slf4j.LoggerFactory
 import ldif.util._
 import ldif.modules.sieve.{SieveConfig, EmptySieveConfig, SieveModule}
 import ldif.modules.sieve.local.{SieveLocalFusionExecutor}
+import ldif.output.OutputWriterFactory
 
 class IntegrationJob (val config : IntegrationConfig, debugMode : Boolean = false) {
 
@@ -368,21 +369,19 @@ class IntegrationJob (val config : IntegrationConfig, debugMode : Boolean = fals
     thread.start
   }
 
-  //TODO we don't have an output module, yet...
   private def writeOutput(config: IntegrationConfig, reader : QuadReader)    {
-    val writer = new FileWriter(config.outputFile)
     var count = 0
-    val nqOutput = config.properties.getProperty("outputFormat", "nq").toLowerCase.equals("nq")
+    var outputFormat = config.properties.getProperty("outputFormat", "nq").toLowerCase
 
-    while(reader.hasNext) {
-      if(nqOutput)
-        writer.write(reader.read().toNQuadFormat + " .\n")
-      else
-        writer.write(reader.read().toNTripleFormat + " .\n")
-      count += 1
+    val writer = OutputWriterFactory.getWriter(outputFormat, config.properties)
+    if (writer != null) {
+      while(reader.hasNext) {
+        writer.write(reader.read())
+        count += 1
+      }
+      writer.close
     }
 
-    writer.close
     log.info(count + " Quads written")
   }
 
