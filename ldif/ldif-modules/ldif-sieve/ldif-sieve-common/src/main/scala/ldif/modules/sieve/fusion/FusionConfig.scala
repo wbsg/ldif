@@ -33,7 +33,7 @@ import ldif.util.{ValidatingXMLReader, Prefixes}
  */
 class FusionConfig(val prefixes: Prefixes,
                    val sieveSpecs: Traversable[FusionSpecification],
-                   val entityDescriptions: Traversable[EntityDescription]) {
+                   val entityDescriptions: Seq[EntityDescription]) {
 
   def merge(c: FusionConfig) : FusionConfig = { //TODO implement
     throw new NotImplementedException
@@ -45,7 +45,7 @@ class FusionConfig(val prefixes: Prefixes,
 object FusionConfig {
 
   private val log = LoggerFactory.getLogger(getClass.getName)
-  private val schemaLocation = "de/fuberlin/wiwiss/silk/Fusion.xsd"
+  private val schemaLocation = "de/fuberlin/wiwiss/sieve/Sieve.xsd"
 
   val stdPrefixes = Map("foaf" -> "http://xmlns.com/foaf/0.1/",
     "dbpedia-owl" -> "http://dbpedia.org/ontology/",
@@ -84,6 +84,7 @@ object FusionConfig {
     new FusionConfig(new Prefixes(stdPrefixes), fusionSpecs, entityDescriptions)
   }
 
+  //TODO untested
   def fromXML(node: scala.xml.Node) = {
     implicit val prefixes = Prefixes.fromXML(node \ "Prefixes" head)
     val specs = (node \ "Fusion" \ "Class").map(FusionSpecification.fromXML)

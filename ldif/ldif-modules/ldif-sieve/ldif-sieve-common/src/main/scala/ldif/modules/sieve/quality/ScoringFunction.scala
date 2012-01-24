@@ -22,3 +22,11 @@ trait ScoringFunction {
   def fromXML(node: Node) : ScoringFunction
 
 }
+
+object RandomScoringFunction extends ScoringFunction {
+
+  def fromXML(node: Node) = this
+
+  def score(metadataValues: Traversable[IndexedSeq[NodeTrait]]) = Math.random
+
+}

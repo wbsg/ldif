@@ -53,8 +53,8 @@ class SieveLocalFusionExecutor(useFileInstanceCache: Boolean = false) extends Ex
     //log.info("Prefixes:"+prefixes.toString)
 
     // here we create entity descriptions from the task.fusionSpec
-    //val entityDescriptions = task.sieveConfig.sieveConfig.entityDescriptions
-    val entityDescriptions = FusionConfig.createDummyEntityDescriptions(prefixes)
+    val entityDescriptions = task.sieveConfig.sieveConfig.entityDescriptions
+    //val entityDescriptions = FusionConfig.createDummyEntityDescriptions(prefixes)
 
     new StaticEntityFormat(entityDescriptions)
   }
@@ -90,7 +90,7 @@ class SieveLocalFusionExecutor(useFileInstanceCache: Boolean = false) extends Ex
         //log.info("Sieve Entity: %s".format(entity.resource.toString))
         //log.info("Patterns: "+in.entityDescription.patterns.size)
 
-        assume(task.fusionSpec.fusionFunctions.size==in.entityDescription.patterns.size, "Number of fusionFunctions must be the same as number of patterns.")
+        assume(task.fusionSpec.fusionFunctions.size==in.entityDescription.patterns.size, "Number of scoringFunctions must be the same as number of patterns.")
         assume(task.fusionSpec.outputPropertyNames.size==in.entityDescription.patterns.size, "Number of outputPropertyNames must be the same as number of patterns.")
 
         if (entity==null) {

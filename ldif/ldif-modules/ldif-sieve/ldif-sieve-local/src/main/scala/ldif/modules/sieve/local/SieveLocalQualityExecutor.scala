@@ -46,7 +46,8 @@ class SieveLocalQualityExecutor(useFileInstanceCache: Boolean = false) extends E
     implicit val prefixes = task.sieveConfig.sieveConfig.prefixes
 
     // here we create entity descriptions from the quality metadata
-    val entityDescriptions = FusionConfig.createDummyEntityDescriptions(prefixes)
+    //val entityDescriptions = QualityConfig.createDummyEntityDescriptions(prefixes)
+    val entityDescriptions = task.sieveConfig.sieveConfig.entityDescriptions
 
     new StaticEntityFormat(entityDescriptions)
   }
