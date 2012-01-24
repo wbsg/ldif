@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"  ?>
+<Sieve xmlns="http://www4.wiwiss.fu-berlin.de/ldif/">
+    <Prefixes>
+        <Prefix id="rdfs" namespace="http://www.w3.org/2000/01/rdf-schema#"/>
+        <Prefix id="dbpedia" namespace="http://dbpedia.org/ontology/"/>
+        <Prefix id="gn" namespace="http://www.geonames.org/ontology#"/>
+    </Prefixes>
+
+    <QualityAssessment name="Prefer new information from authors with good rating" description="The idea is to BlaBla">
+
+        <AggregateMetric id="sieve:believability" class="Average">
+
+            <AssessmentMetric id="sieve:recency">
+                <ScoringFunction class="TimeCloseness">
+                    <Param name="timeSpan" value="7"/>
+                    <Input path="?GRAPH/provenance:lastUpdated"/>
+                </ScoringFunction>
+            </AssessmentMetric>
+
+            <AssessmentMetric id="sieve:reputation">
+                <ScoringFunction class="TidalTrustRating">
+                    <EnvironmentVariable name="user" value="http://URIofTheUser"/>
+                    <!--Get the author of the graph -->
+                    <Input path="?GRAPH/dc:author"/>
+                    <!--Get the ratings -->
+                    <Input query="Select ?rater, ?ratedObject, ?rating FROM http://graphURI PATTERN {}"/>
+                </ScoringFunction>
+            </AssessmentMetric>
+
+        </AggregateMetric>
+    </QualityAssessment>
+
+    <Fusion name="Fusion strategy for DBpedia City Entities"
+            description="The idea is to use values from multiple DBpedia languages to improve the quality of data about cities.">
+        <Class name="dbpedia:City">
+            <Property name="dbpedia:areaTotal">
+                <FusionFunction name="KeepValueWithHighestScore" metric="sieve:lastUpdated"/>
+            </Property>
+            <Property name="dbpedia:population">
+                <FusionFunction name="AverageValue"/>
+            </Property>
+            <Property name="dbpedia:name">
+                <FusionFunction name="KeepValueWithHighestScore" metric="sieve:reputation"/>
+            </Property>
+        </Class>
+    </Fusion>
+
+</Sieve>
