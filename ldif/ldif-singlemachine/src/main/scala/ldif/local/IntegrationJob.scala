@@ -26,7 +26,7 @@ import ldif.modules.r2r.local.R2RLocalExecutor
 import ldif.modules.r2r.{R2RModule, R2RConfig}
 import util.StringPool
 import ldif.modules.silk.SilkModule
-import ldif.modules.sieve.local.SieveLocalFusionExecutor
+import ldif.modules.silk.local.SilkLocalExecutor
 import ldif.entity.EntityDescription
 import ldif.{EntityBuilderModule, EntityBuilderConfig}
 import java.util.{Calendar, Properties}
@@ -35,9 +35,10 @@ import java.math.BigInteger
 import de.fuberlin.wiwiss.r2r.{JenaModelSource, EnumeratingURIGenerator, FileOrURISource, Repository}
 import org.slf4j.LoggerFactory
 import ldif.util._
-import ldif.modules.sieve._
-import fusion.{FusionConfig, EmptySieveConfig}
-import ldif.modules.silk.local.SilkLocalExecutor
+import ldif.modules.sieve.fusion.{EmptySieveConfig, FusionConfig}
+import ldif.modules.sieve.{SieveModule}
+import ldif.modules.sieve.local.{SieveLocalFusionExecutor}
+import ldif.output.OutputWriterFactory
 
 class IntegrationJob (val config : IntegrationConfig, debugMode : Boolean = false) {
 
@@ -88,41 +89,41 @@ class IntegrationJob (val config : IntegrationConfig, debugMode : Boolean = fals
         // Execute mapping phase
         val quadReaders = loadDumps(config.sources)
 
-//        var r2rReader: QuadReader = executeMappingPhase(config, quadReaders)
-//        if(debugMode==true)
-//          r2rReader = writeDebugOutput("r2r", config.outputFile, r2rReader)
-//
-//        // Execute linking phase
-//        var linkReader: QuadReader = executeLinkingPhase(config, r2rReader)
-//        if(debugMode==true)
-//          linkReader = writeDebugOutput("silk", config.outputFile, linkReader)
-//
-//        configParameters.otherQuadsWriter.finish
-//        val otherQuadsReader = new FileQuadReader(otherQuadsFile)
-//        configParameters.sameAsWriter.finish
-//        val sameAsReader = new FileQuadReader(sameAsQuadsFile)
-//
-//        val clonedR2rReader = setupQuadReader(r2rReader)
-//
-//        val allQuads = new MultiQuadReader(clonedR2rReader, otherQuadsReader)
-//        val allSameAsLinks = new MultiQuadReader(linkReader, sameAsReader)
+        var r2rReader: QuadReader = executeMappingPhase(config, quadReaders)
+        if(debugMode==true)
+          r2rReader = writeDebugOutput("r2r", config.outputFile, r2rReader)
 
-//        var integratedReader: QuadReader = allQuads
-//
-//        if(config.properties.getProperty("rewriteURIs", "true").toLowerCase=="true")
-//          integratedReader = executeURITranslation(allQuads, allSameAsLinks, config.properties)
+        // Execute linking phase
+        var linkReader: QuadReader = executeLinkingPhase(config, r2rReader)
+        if(debugMode==true)
+          linkReader = writeDebugOutput("silk", config.outputFile, linkReader)
 
-        var integratedReader: QuadReader = new MultiQuadReader(quadReaders.map{e => e}:_*)
+        configParameters.otherQuadsWriter.finish
+        val otherQuadsReader = new FileQuadReader(otherQuadsFile)
+        configParameters.sameAsWriter.finish
+        val sameAsReader = new FileQuadReader(sameAsQuadsFile)
+
+        val clonedR2rReader = setupQuadReader(r2rReader)
+
+        val allQuads = new MultiQuadReader(clonedR2rReader, otherQuadsReader)
+        val allSameAsLinks = new MultiQuadReader(linkReader, sameAsReader)
+
+        var integratedReader: QuadReader = allQuads
+
+        if(config.properties.getProperty("rewriteURIs", "true").toLowerCase=="true")
+          integratedReader = executeURITranslation(allQuads, allSameAsLinks, config.properties)
+
+//        var integratedReader: QuadReader = new MultiQuadReader(quadReaders.map{e => e}:_*)
 
         // Execute sieve (quality and fusion)
-        var fusionReader: QuadReader = executeFusionPhase(config, setupQuadReader(integratedReader))
-        if(debugMode==true)
-          fusionReader = writeDebugOutput("sieve-fusion", config.outputFile, fusionReader)
+//        var fusionReader: QuadReader = executeFusionPhase(config, setupQuadReader(integratedReader))
+//        if(debugMode==true)
+//          fusionReader = writeDebugOutput("sieve-fusion", config.outputFile, fusionReader)
 
         lastUpdate = Calendar.getInstance
 
-//        writeOutput(config, integratedReader)
-         writeOutput(config, fusionReader)
+        writeOutput(config, integratedReader)
+//         writeOutput(config, fusionReader)
       }
   }
 
@@ -289,6 +290,7 @@ class IntegrationJob (val config : IntegrationConfig, debugMode : Boolean = fals
 
         val entityDescriptions = sieveModule.tasks.toIndexedSeq.map(sieveExecutor.input).flatMap{ case StaticEntityFormat(ed) => ed }
 
+
         val entityReaders = buildEntities(Seq(inputQuadsReader), entityDescriptions, ConfigParameters(config.properties))
 
         StringPool.reset
@@ -409,21 +411,19 @@ class IntegrationJob (val config : IntegrationConfig, debugMode : Boolean = fals
     thread.start
   }
 
-  //TODO we don't have an output module, yet...
   private def writeOutput(config: IntegrationConfig, reader : QuadReader)    {
-    val writer = new FileWriter(config.outputFile)
     var count = 0
-    val nqOutput = config.properties.getProperty("outputFormat", "nq").toLowerCase.equals("nq")
+    var outputFormat = config.properties.getProperty("outputFormat", "nq").toLowerCase
 
-    while(reader.hasNext) {
-      if(nqOutput)
-        writer.write(reader.read().toNQuadFormat + " .\n")
-      else
-        writer.write(reader.read().toNTripleFormat + " .\n")
-      count += 1
+    val writer = OutputWriterFactory.getWriter(outputFormat, config.properties)
+    if (writer != null) {
+      while(reader.hasNext) {
+        writer.write(reader.read())
+        count += 1
+      }
+      writer.close
     }
 
-    writer.close
     log.info(count + " Quads written")
   }
 
