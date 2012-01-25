@@ -1,4 +1,6 @@
-/* 
+package ldif.modules.sieve.fusion
+
+/*
  * Copyright 2011-2012 Freie Universität Berlin, MediaEvent Services GmbH & Co. KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,13 +16,10 @@
  * limitations under the License.
  */
 
-package ldif.modules.sieve
 
-import fusion.FusionConfig
 import ldif.module.ModuleConfig
-import ldif.util.Prefixes
 
 /**
- * Sieve Configuration.
+ * Sieve Data Fusion Module Configuration.
  */
-case class SieveModuleConfig(sieveConfig : FusionConfig) extends ModuleConfig
+case class FusionModuleConfig(fusionConfig : FusionConfig) extends ModuleConfig

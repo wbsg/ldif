@@ -138,16 +138,15 @@ object FusionConfig {
 //    }
   }
 
-
-  def empty : EmptySieveConfig = {
-    new EmptySieveConfig
+  def empty : EmptyFusionConfig = {
+    new EmptyFusionConfig
   }
 }
 
 /*
  This class should never be actually used for fusion. It simply signals that no config exists, and the framework should repeat the input.
  */
-class EmptySieveConfig extends FusionConfig(Prefixes.stdPrefixes,
+class EmptyFusionConfig extends FusionConfig(Prefixes.stdPrefixes,
                                 List(new FusionSpecification("Default",
                                                              IndexedSeq(new PassItOn),
                                                              IndexedSeq("DEFAULT")

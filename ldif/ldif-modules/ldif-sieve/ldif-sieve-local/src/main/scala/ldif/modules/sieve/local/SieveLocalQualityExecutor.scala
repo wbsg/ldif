@@ -43,11 +43,11 @@ class SieveLocalQualityExecutor(useFileInstanceCache: Boolean = false) extends E
 
   def input(task : FusionTask) : InputFormat =
   {
-    implicit val prefixes = task.sieveConfig.sieveConfig.prefixes
+    implicit val prefixes = task.sieveConfig.fusionConfig.prefixes
 
     // here we create entity descriptions from the quality metadata
     //val entityDescriptions = QualityConfig.createDummyEntityDescriptions(prefixes)
-    val entityDescriptions = task.sieveConfig.sieveConfig.entityDescriptions
+    val entityDescriptions = task.sieveConfig.fusionConfig.entityDescriptions
 
     new StaticEntityFormat(entityDescriptions)
   }

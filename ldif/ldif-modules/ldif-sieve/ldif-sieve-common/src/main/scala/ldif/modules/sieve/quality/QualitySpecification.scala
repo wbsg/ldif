@@ -1,5 +1,7 @@
 package ldif.modules.sieve.quality
 
+import functions.RandomScoringFunction
+
 
 /*
  * Copyright 2011-2012 Freie Universität Berlin, MediaEvent Services GmbH & Co. KG

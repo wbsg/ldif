@@ -16,11 +16,15 @@ package ldif.modules.sieve.quality
  * limitations under the License.
  */
 
+import functions.RandomScoringFunction
 import java.io.{FileInputStream, InputStream, File}
 import sun.reflect.generics.reflectiveObjects.NotImplementedException
 import ldif.entity.EntityDescription
 import org.slf4j.LoggerFactory
 import ldif.util.{ValidatingXMLReader, Prefixes}
+import ldif.modules.sieve.fusion.FusionSpecification
+import ldif.modules.sieve.fusion.functions.PassItOn
+import util.Random
 
 /**
  *
@@ -88,6 +92,20 @@ object QualityConfig {
     new QualityConfig(prefixes, specs, entityDescriptions)
   }
 
+  def empty = new EmptyQualityConfig
+}
+
+/*
+ This class should never be actually used for fusion. It simply signals that no config exists, and the framework should repeat the input.
+ */
+class EmptyQualityConfig extends QualityConfig(Prefixes.stdPrefixes,
+                                List(new QualitySpecification("Empty",
+                                                             IndexedSeq(RandomScoringFunction),
+                                                             IndexedSeq("DEFAULT")
+                                                             )),
+                                List(EntityDescription.empty)
+
+) {
 
 }
 

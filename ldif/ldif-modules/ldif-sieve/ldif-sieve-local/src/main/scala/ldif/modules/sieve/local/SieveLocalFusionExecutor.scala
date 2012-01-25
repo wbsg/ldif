@@ -49,11 +49,11 @@ class SieveLocalFusionExecutor(useFileInstanceCache: Boolean = false) extends Ex
 
   def input(task : FusionTask) : InputFormat =
   {
-    implicit val prefixes = task.sieveConfig.sieveConfig.prefixes
+    implicit val prefixes = task.sieveConfig.fusionConfig.prefixes
     //log.info("Prefixes:"+prefixes.toString)
 
-    // here we create entity descriptions from the task.fusionSpec
-    val entityDescriptions = task.sieveConfig.sieveConfig.entityDescriptions
+    // here we create entity descriptions from the task.qualitySpec
+    val entityDescriptions = task.sieveConfig.fusionConfig.entityDescriptions
     //val entityDescriptions = FusionConfig.createDummyEntityDescriptions(prefixes)
 
     new StaticEntityFormat(entityDescriptions)

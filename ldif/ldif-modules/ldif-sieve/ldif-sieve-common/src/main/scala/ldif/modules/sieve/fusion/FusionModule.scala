@@ -1,4 +1,6 @@
-/* 
+package ldif.modules.sieve.fusion
+
+/*
  * Copyright 2011-2012 Freie Universität Berlin, MediaEvent Services GmbH & Co. KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,9 +16,6 @@
  * limitations under the License.
  */
 
-package ldif.modules.sieve
-
-import fusion.{FusionTask, FusionConfig}
 import ldif.module.Module
 import java.io.File
 import org.slf4j.LoggerFactory
@@ -24,29 +23,29 @@ import org.slf4j.LoggerFactory
 /**
  * Sieve Module.
  */
-class SieveModule(val config : SieveModuleConfig) extends Module
+class FusionModule(val config : FusionModuleConfig) extends Module
 {
 
-  type ConfigType = SieveModuleConfig
+  type ConfigType = FusionModuleConfig
 
   type TaskType = FusionTask
 
   lazy val tasks : Traversable[FusionTask] = //automatically generates one task per spec
   {
-    for(sieveSpec <- config.sieveConfig.sieveSpecs) yield new FusionTask(config, sieveSpec)
+    for(sieveSpec <- config.fusionConfig.sieveSpecs) yield new FusionTask(config, sieveSpec)
   }
 }
 
-object SieveModule
+object FusionModule
 {
   private val log = LoggerFactory.getLogger(getClass.getName)
 
-  def load(file : File) : SieveModule =
+  def load(file : File) : FusionModule =
   {
     //DefaultImplementations.register()
 
     val config = if(file==null || !file.exists()) FusionConfig.empty else loadConfig(file)
-    new SieveModule(new SieveModuleConfig(config))
+    new FusionModule(new FusionModuleConfig(config))
   }
 
   private def loadConfig(file : File) : FusionConfig =
