@@ -78,9 +78,9 @@ object QualityConfig {
     //new ValidatingXMLReader(fromXML, schemaLocation)
 
     //temporarily
-    val fusionSpecs = List(QualitySpecification.createLwdm2012ExampleSpecs)
+    val qualitySpecs = List(QualitySpecification.createLwdm2012ExampleSpecs)
     val entityDescriptions = List(EntityDescription.fromXML(QualityEntityDescription.createLwdm2012EntityDescription)(stdPrefixes))
-    new QualityConfig(new Prefixes(stdPrefixes), fusionSpecs, entityDescriptions)
+    new QualityConfig(new Prefixes(stdPrefixes), qualitySpecs, entityDescriptions)
   }
 
   //TODO untested. this is just a stub to guide implementation, needs to be realized

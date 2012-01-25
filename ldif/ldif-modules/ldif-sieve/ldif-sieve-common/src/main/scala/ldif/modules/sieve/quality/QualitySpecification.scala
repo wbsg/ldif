@@ -1,7 +1,6 @@
 package ldif.modules.sieve.quality
 
-import functions.RandomScoringFunction
-
+import functions.{ScoredRegexList, RandomScoringFunction}
 
 /*
  * Copyright 2011-2012 Freie Universität Berlin, MediaEvent Services GmbH & Co. KG
@@ -55,9 +54,9 @@ object QualitySpecification {
   }
 
   def createLwdm2012ExampleSpecs = {
-    new QualitySpecification("lwdm2012",
-      IndexedSeq(RandomScoringFunction),
-      IndexedSeq("http://...recency")
+    new QualitySpecification("lwdm2012-qa",
+      IndexedSeq(new ScoredRegexList(List("http://dbpedia.org.+"))), //List("http://en.+","http://pt.+"))),
+      IndexedSeq("http://ldif/reputation")
     )
   }
 

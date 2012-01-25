@@ -118,7 +118,7 @@ class IntegrationJob (val config : IntegrationConfig, debugMode : Boolean = fals
 //        // Execute sieve (quality and fusion)
 //        var sieveReader: QuadReader = executeSieve(config, setupQuadReader(integratedReader))
 //        if(debugMode==true)
-//          sieveReader = writeDebugOutput("sieve-fusion", config.outputFile, sieveReader)
+//          sieveReader = writeDebugOutput("sieve", config.outputFile, sieveReader)
 
         lastUpdate = Calendar.getInstance
 
@@ -311,17 +311,17 @@ class IntegrationJob (val config : IntegrationConfig, debugMode : Boolean = fals
    */
   private def fuseQuads(sieveSpecDir : File, inputQuadsReader : QuadReader, qualityModule: QualityModule, fusionModule: FusionModule) : QuadReader =
   {
+        log.info("[FUSION]")
         log.debug("Sieve will perform fusion, config=%s.".format(sieveSpecDir.getAbsolutePath))
         val inMemory = config.properties.getProperty("entityBuilderType", "in-memory")=="in-memory"
         val fusionExecutor = new SieveLocalFusionExecutor()
 
         val entityDescriptions = fusionModule.tasks.toIndexedSeq.map(fusionExecutor.input).flatMap{ case StaticEntityFormat(ed) => ed }
 
-
         val entityReaders = buildEntities(Seq(inputQuadsReader), entityDescriptions, ConfigParameters(config.properties))
 
         StringPool.reset
-        log.info("[FUSION] Time needed to build entities for fusion phase: " + stopWatch.getTimeSpanInSeconds + "s")
+        log.info("Time needed to build entities for fusion phase: " + stopWatch.getTimeSpanInSeconds + "s")
 
         val outputQueue = new QuadQueue
 
@@ -345,6 +345,7 @@ class IntegrationJob (val config : IntegrationConfig, debugMode : Boolean = fals
   private def assessQuality(sieveSpecDir : File, inputQuadsReader : QuadReader, qualityModule: QualityModule) : QuadReader =
   {
 
+        log.info("[QUALITY]")
         log.debug("Sieve will perform quality assessment, config=%s.".format(sieveSpecDir.getAbsolutePath))
         val inMemory = config.properties.getProperty("entityBuilderType", "in-memory")=="in-memory"
         val qualityExecutor = new SieveLocalQualityExecutor
@@ -354,7 +355,7 @@ class IntegrationJob (val config : IntegrationConfig, debugMode : Boolean = fals
         val entityReaders = buildEntities(Seq(inputQuadsReader), entityDescriptions, ConfigParameters(config.properties))
 
         StringPool.reset
-        log.info("[QUALITY] Time needed to build entities for quality assessment phase: " + stopWatch.getTimeSpanInSeconds + "s")
+        log.info("Time needed to build entities for quality assessment phase: " + stopWatch.getTimeSpanInSeconds + "s")
 
         val output = new QuadQueue
 

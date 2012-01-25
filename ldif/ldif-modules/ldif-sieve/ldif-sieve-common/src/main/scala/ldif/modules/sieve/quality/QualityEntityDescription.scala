@@ -30,13 +30,14 @@ object QualityEntityDescription {
     EntityDescription.fromXML(createLwdm2012EntityDescription)(prefixes)
   }
 
+//  ldif:lastUpdate
   def createLwdm2012EntityDescription = {
    <EntityDescription>
      <Restriction>
      </Restriction>
      <Patterns>
        <Pattern>
-         <Path>?a/ldif:lastUpdate</Path>
+         <Path>?a/rdf:type</Path>
        </Pattern>
      </Patterns>
    </EntityDescription>

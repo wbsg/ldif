@@ -31,8 +31,8 @@ class ScoredRegexList(priorityList: List[String]) extends ScoredList(priorityLis
 
   private val log = LoggerFactory.getLogger(getClass.getName)
 
-  override def getPosition(graphRegex: String) : Int = {
-    priorityList.filter(g => graphRegex matches g).headOption match {
+  override def getPosition(graphId: String) : Int = {
+    priorityList.filter(graphRegex => graphId matches graphRegex).headOption match {
       case Some(g) => priorityList.indexOf(g)
       case None => -1
     }

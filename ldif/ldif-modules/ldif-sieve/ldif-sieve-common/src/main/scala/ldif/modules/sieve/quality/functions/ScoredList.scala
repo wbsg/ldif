@@ -23,6 +23,7 @@ import ldif.modules.sieve.quality.ScoringFunction
 /**
  * Scoring function that assigns real-valued, uniformly distributed scores to a list of graphs.
  * Used to model priority and can be applied to express, for example, reputation.
+ * Values are not comparable across different configuration files.
  *
  * Current implementation uses List.indexOf for lookups. Could be optimized.
  *
@@ -45,10 +46,13 @@ class ScoredList(val priorityList: List[String]) extends ScoringFunction {
       case Some(g) => {
         val graphId = g(0).value // get value for first property path
         val position = getPosition(graphId)
-        if (position>=0)
-          (1 - ((position+1).toDouble / priorityList.size)) + 0.001 // last bit to distinguish between last item and out of list
-        else
-          0.0
+        if (position == 0) {
+            1
+        } else if (position>0) {
+            (1 - ((position+1).toDouble / priorityList.size)) + 0.001 // last bit to distinguish between last item and out of list
+        } else {
+            0.0
+        }
       }
       case None => 0.0
     }
