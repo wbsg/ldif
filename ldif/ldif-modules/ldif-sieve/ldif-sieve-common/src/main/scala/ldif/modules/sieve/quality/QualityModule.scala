@@ -32,7 +32,7 @@ class QualityModule(val config : QualityModuleConfig) extends Module
 
   lazy val tasks : Traversable[QualityTask] = //automatically generates one task per spec
   {
-    for(sieveSpec <- config.qualityConfig.qualitySpecs) yield new QualityTask(config, sieveSpec)
+    for(qualitySpec <- config.qualityConfig.qualitySpecs) yield new QualityTask(config, qualitySpec)
   }
 }
 

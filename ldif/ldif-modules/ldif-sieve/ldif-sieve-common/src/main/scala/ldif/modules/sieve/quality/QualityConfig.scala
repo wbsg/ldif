@@ -21,13 +21,12 @@ import java.io.{FileInputStream, InputStream, File}
 import sun.reflect.generics.reflectiveObjects.NotImplementedException
 import ldif.entity.EntityDescription
 import org.slf4j.LoggerFactory
-import ldif.util.{ValidatingXMLReader, Prefixes}
-import ldif.modules.sieve.fusion.FusionSpecification
-import ldif.modules.sieve.fusion.functions.PassItOn
-import util.Random
-
+import ldif.util.Prefixes
 /**
- *
+ * Quality Assessment configuration.
+ * For each "Quality" element in the XML config, contains
+ *   -- one entity description for all Inputs as a pattern
+ *   -- one quality spec mapping a scoring function to an assessment metric id to be output.
  *
  * @author pablomendes
  */
@@ -84,7 +83,7 @@ object QualityConfig {
     new QualityConfig(new Prefixes(stdPrefixes), fusionSpecs, entityDescriptions)
   }
 
-  //TODO untested
+  //TODO untested. this is just a stub to guide implementation, needs to be realized
   def fromXML(node: scala.xml.Node) = {
     implicit val prefixes = Prefixes.fromXML(node \ "Prefixes" head)
     val specs = (node \ "Quality" ).map(QualitySpecification.fromXML)

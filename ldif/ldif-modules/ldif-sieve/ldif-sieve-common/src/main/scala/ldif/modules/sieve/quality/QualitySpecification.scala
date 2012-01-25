@@ -35,7 +35,7 @@ class QualitySpecification(val id: String,
   assert(scoringFunctions.size==outputPropertyNames.size, "There should be one OutputPropertyName for each ScoringFunction")
     //val scoringFunctions = new PassItOn
     //val scoringFunctions = new KeepFirst
-    //val scoringFunctions = new TrustYourFriends("http://www4.wiwiss.fu-berlin.de/ldif/graph#dbpedia.en");
+    //val scoringFunctions = new ScoredList("http://www4.wiwiss.fu-berlin.de/ldif/graph#dbpedia.en");
 }
 
 object QualitySpecification {

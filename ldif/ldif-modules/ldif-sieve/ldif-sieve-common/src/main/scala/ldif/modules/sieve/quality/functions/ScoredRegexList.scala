@@ -1,4 +1,4 @@
-package ldif.modules.sieve.fusion.functions
+package ldif.modules.sieve.quality.functions
 
 /*
  * Copyright 2011-2012 Freie Universität Berlin, MediaEvent Services GmbH & Co. KG
@@ -17,30 +17,29 @@ package ldif.modules.sieve.fusion.functions
  */
 
 import org.slf4j.LoggerFactory
-import ldif.entity.NodeTrait
-import ldif.modules.sieve.quality.QualityAssessmentProvider
-import ldif.modules.sieve.fusion.FusionFunction
 
 /**
- * example fusion function that keeps the first value
+ * Scoring function that assigns real-valued, uniformly distributed scores to a list of graphs.
+ * Used to model priority and can be applied to express, for example, reputation.
+ *
+ * Accepts a list of regexes. For each incoming graph, will test against each regex in the list, Could be optimized.
+ *
  * @author pablomendes
  */
 
-class KeepFirst extends FusionFunction {
+class ScoredRegexList(priorityList: List[String]) extends ScoredList(priorityList) {
 
   private val log = LoggerFactory.getLogger(getClass.getName)
 
-  override def fuse(values: Traversable[IndexedSeq[NodeTrait]], quality: QualityAssessmentProvider) : Traversable[IndexedSeq[NodeTrait]] = {
-    if (values.nonEmpty) Seq(values.head) else Seq[IndexedSeq[NodeTrait]]()
+  override def getPosition(graphRegex: String) : Int = {
+    priorityList.filter(g => graphRegex matches g).headOption match {
+      case Some(g) => priorityList.indexOf(g)
+      case None => -1
+    }
   }
 
 }
 
-/**
- * Example fusion function that prefers values from certain Graphs given as input.
- * TODO expand to a list of graphs
- * @author pablomendes
- */
 
 
 

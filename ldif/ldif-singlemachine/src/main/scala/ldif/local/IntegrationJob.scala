@@ -35,10 +35,10 @@ import java.math.BigInteger
 import de.fuberlin.wiwiss.r2r.{JenaModelSource, EnumeratingURIGenerator, FileOrURISource, Repository}
 import org.slf4j.LoggerFactory
 import ldif.util._
-import ldif.modules.sieve.local.{SieveLocalFusionExecutor}
 import ldif.output.OutputWriterFactory
 import ldif.modules.sieve.fusion.{FusionModule, EmptyFusionConfig, FusionConfig}
 import ldif.modules.sieve.quality.{QualityConfig, QualityModule, EmptyQualityConfig}
+import ldif.modules.sieve.local.{SieveLocalQualityExecutor, SieveLocalFusionExecutor}
 
 class IntegrationJob (val config : IntegrationConfig, debugMode : Boolean = false) {
 
@@ -89,41 +89,41 @@ class IntegrationJob (val config : IntegrationConfig, debugMode : Boolean = fals
         // Execute mapping phase
         val quadReaders = loadDumps(config.sources)
 
-        var r2rReader: QuadReader = executeMappingPhase(config, quadReaders)
-        if(debugMode==true)
-          r2rReader = writeDebugOutput("r2r", config.outputFile, r2rReader)
-
-        // Execute linking phase
-        var linkReader: QuadReader = executeLinkingPhase(config, r2rReader)
-        if(debugMode==true)
-          linkReader = writeDebugOutput("silk", config.outputFile, linkReader)
-
-        configParameters.otherQuadsWriter.finish
-        val otherQuadsReader = new FileQuadReader(otherQuadsFile)
-        configParameters.sameAsWriter.finish
-        val sameAsReader = new FileQuadReader(sameAsQuadsFile)
-
-        val clonedR2rReader = setupQuadReader(r2rReader)
-
-        val allQuads = new MultiQuadReader(clonedR2rReader, otherQuadsReader)
-        val allSameAsLinks = new MultiQuadReader(linkReader, sameAsReader)
-
-        var integratedReader: QuadReader = allQuads
-
-        if(config.properties.getProperty("rewriteURIs", "true").toLowerCase=="true")
-          integratedReader = executeURITranslation(allQuads, allSameAsLinks, config.properties)
-
-//        var integratedReader: QuadReader = new MultiQuadReader(quadReaders.map{e => e}:_*)
-//
-//        // Execute sieve (quality and fusion)
-//        var sieveReader: QuadReader = executeSieve(config, setupQuadReader(integratedReader))
+//        var r2rReader: QuadReader = executeMappingPhase(config, quadReaders)
 //        if(debugMode==true)
-//          sieveReader = writeDebugOutput("sieve-fusion", config.outputFile, sieveReader)
+//          r2rReader = writeDebugOutput("r2r", config.outputFile, r2rReader)
+//
+//        // Execute linking phase
+//        var linkReader: QuadReader = executeLinkingPhase(config, r2rReader)
+//        if(debugMode==true)
+//          linkReader = writeDebugOutput("silk", config.outputFile, linkReader)
+//
+//        configParameters.otherQuadsWriter.finish
+//        val otherQuadsReader = new FileQuadReader(otherQuadsFile)
+//        configParameters.sameAsWriter.finish
+//        val sameAsReader = new FileQuadReader(sameAsQuadsFile)
+//
+//        val clonedR2rReader = setupQuadReader(r2rReader)
+//
+//        val allQuads = new MultiQuadReader(clonedR2rReader, otherQuadsReader)
+//        val allSameAsLinks = new MultiQuadReader(linkReader, sameAsReader)
+//
+//        var integratedReader: QuadReader = allQuads
+//
+//        if(config.properties.getProperty("rewriteURIs", "true").toLowerCase=="true")
+//          integratedReader = executeURITranslation(allQuads, allSameAsLinks, config.properties)
+
+        var integratedReader: QuadReader = new MultiQuadReader(quadReaders.map{e => e}:_*)
+
+        // Execute sieve (quality and fusion)
+        var sieveReader: QuadReader = executeSieve(config, setupQuadReader(integratedReader))
+        if(debugMode==true)
+          sieveReader = writeDebugOutput("sieve-fusion", config.outputFile, sieveReader)
 
         lastUpdate = Calendar.getInstance
 
-        writeOutput(config, integratedReader)
-//         writeOutput(config, sieveReader)
+//        writeOutput(config, integratedReader)
+         writeOutput(config, sieveReader)
       }
   }
 
@@ -167,9 +167,7 @@ class IntegrationJob (val config : IntegrationConfig, debugMode : Boolean = fals
     val sieveQualityReader = qualityModule.config.qualityConfig match {
       case e: EmptyQualityConfig => {
         log.info("[QUALITY] No Sieve configuration found. No quality assessment will be performed.")
-        val echo = new QuadQueue()
-        inputQuadsReader.foreach(q => echo.write(q));
-        return echo;
+        new QuadQueue() // return empty queue
       }
       case c: QualityConfig => {
         executeQualityPhase(config, inputQuadsReader, qualityModule)
@@ -181,7 +179,7 @@ class IntegrationJob (val config : IntegrationConfig, debugMode : Boolean = fals
       case e: EmptyFusionConfig => {
         log.info("[FUSION] No Sieve configuration found. No fusion will be performed.")
         val echo = new QuadQueue()
-        inputQuadsReader.foreach(q => echo.write(q));
+        inputQuadsReader.foreach(q => echo.write(q)); // copy input to output
         return echo;
       }
       case c: FusionConfig => {
@@ -195,7 +193,7 @@ class IntegrationJob (val config : IntegrationConfig, debugMode : Boolean = fals
 
   private def executeQualityPhase(config: IntegrationConfig, inputQuadsReader: QuadReader, qualityModule: QualityModule): QuadReader = {
     val sieveQualityReader = assessQuality(config.sieveSpecDir, inputQuadsReader, qualityModule)
-    log.info("Time needed to fuse data: " + stopWatch.getTimeSpanInSeconds + "s")
+    log.info("Time needed to assess data quality: " + stopWatch.getTimeSpanInSeconds + "s")
     log.info("Number of graphs quality-assessed by sieve: " + sieveQualityReader.size)
     sieveQualityReader
   }
@@ -346,39 +344,30 @@ class IntegrationJob (val config : IntegrationConfig, debugMode : Boolean = fals
    */
   private def assessQuality(sieveSpecDir : File, inputQuadsReader : QuadReader, qualityModule: QualityModule) : QuadReader =
   {
-//    val sieveModule = FusionModule.load(sieveSpecDir)
-//
-//    sieveModule.config.qualityConfig match {
-//      case e: EmptyFusionConfig => {
-//          log.info("[QUALITY] No Sieve configuration found. No quality assessment will be performed.")
-//        return new QuadQueue;
-//      }
-//      case c: SieveConfig => {
-//        log.debug("Sieve will perform quality assessment, config=%s.".format(sieveSpecDir.getAbsolutePath))
-//        val inMemory = config.properties.getProperty("entityBuilderType", "in-memory")=="in-memory"
-//        val sieveExecutor = new SieveLocalFusionExecutor
-//
-//        val entityDescriptions = sieveModule.tasks.toIndexedSeq.map(sieveExecutor.input).flatMap{ case StaticEntityFormat(ed) => ed }
-//
-//        val entityReaders = buildEntities(Seq(inputQuadsReader), entityDescriptions, ConfigParameters(config.properties))
-//
-//        StringPool.reset
-//        log.info("[QUALITY] Time needed to build entities for fusion phase: " + stopWatch.getTimeSpanInSeconds + "s")
-//
-//        val output = new QuadQueue
-//
-//          //runInBackground
-//        {
-//          for((sieveTask, readers) <- sieveModule.tasks.toList zip entityReaders.grouped(2).toList)
-//          {
-//            sieveExecutor.execute(sieveTask, readers, output)
-//          }
-//        }
-//
-//        output
-//      }
-//    }
-    new QuadQueue
+
+        log.debug("Sieve will perform quality assessment, config=%s.".format(sieveSpecDir.getAbsolutePath))
+        val inMemory = config.properties.getProperty("entityBuilderType", "in-memory")=="in-memory"
+        val qualityExecutor = new SieveLocalQualityExecutor
+
+        val entityDescriptions = qualityModule.tasks.toIndexedSeq.map(qualityExecutor.input).flatMap{ case StaticEntityFormat(ed) => ed }
+
+        val entityReaders = buildEntities(Seq(inputQuadsReader), entityDescriptions, ConfigParameters(config.properties))
+
+        StringPool.reset
+        log.info("[QUALITY] Time needed to build entities for quality assessment phase: " + stopWatch.getTimeSpanInSeconds + "s")
+
+        val output = new QuadQueue
+
+          //runInBackground
+        {
+          for((sieveTask, reader) <- qualityModule.tasks.toList zip entityReaders.toList)
+          {
+            qualityExecutor.execute(sieveTask, Seq(reader), output)
+          }
+        }
+
+        output
+
   }
 
   /**

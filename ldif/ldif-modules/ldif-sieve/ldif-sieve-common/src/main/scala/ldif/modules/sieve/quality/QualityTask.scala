@@ -18,8 +18,6 @@ package ldif.modules.sieve.quality
 
 import ldif.module.ModuleTask
 import ldif.util.Identifier
-import ldif.modules.sieve.fusion.FusionModuleConfig
-
 /**
  * Fusion Task
  * Each task takes care of one <Class> tag in the configuration file.

@@ -21,7 +21,7 @@ import java.io.{FileInputStream, InputStream, File}
 import sun.reflect.generics.reflectiveObjects.NotImplementedException
 import ldif.entity.EntityDescription
 import org.slf4j.LoggerFactory
-import ldif.util.{ValidatingXMLReader, Prefixes}
+import ldif.util.Prefixes
 
 /**
  *

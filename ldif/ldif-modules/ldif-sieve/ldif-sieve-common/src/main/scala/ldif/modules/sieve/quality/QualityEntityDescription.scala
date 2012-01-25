@@ -33,9 +33,6 @@ object QualityEntityDescription {
   def createLwdm2012EntityDescription = {
    <EntityDescription>
      <Restriction>
-       <Condition path="?a/rdf:type">
-         <Uri>http://www4.wiwiss.fu-berlin.de/ldif/ImportJob</Uri>
-       </Condition>
      </Restriction>
      <Patterns>
        <Pattern>

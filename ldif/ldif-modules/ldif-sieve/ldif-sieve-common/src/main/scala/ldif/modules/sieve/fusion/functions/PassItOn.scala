@@ -16,7 +16,6 @@ package ldif.modules.sieve.fusion.functions
  * limitations under the License.
  */
 
-import ldif.entity.{NodeTrait, Node}
 import ldif.modules.sieve.fusion.FusionFunction
 
 /**

@@ -16,7 +16,7 @@
 
 package ldif.modules.sieve.fusion
 
-import ldif.entity.{NodeTrait, Node}
+import ldif.entity.NodeTrait
 import ldif.modules.sieve.quality.QualityAssessmentProvider
 
 /**

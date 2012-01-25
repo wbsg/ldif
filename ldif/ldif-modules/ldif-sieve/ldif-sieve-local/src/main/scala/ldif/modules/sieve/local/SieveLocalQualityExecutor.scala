@@ -23,6 +23,7 @@ import org.slf4j.LoggerFactory
 import ldif.runtime.Quad
 import ldif.entity.Entity
 import ldif.modules.sieve.fusion.{FusionTask, FusionConfig, FusionFunction}
+import ldif.modules.sieve.quality.QualityTask
 
 /**
  * Executes Sieve Data Fusion on a local machine.
@@ -35,30 +36,31 @@ class SieveLocalQualityExecutor(useFileInstanceCache: Boolean = false) extends E
   //private val numThreads = 8
   //private val numThreads = Runtime.getRuntime.availableProcessors
 
-  type TaskType = FusionTask
+  type TaskType = QualityTask
 
   type InputFormat = StaticEntityFormat
 
   type OutputFormat = GraphFormat
 
-  def input(task : FusionTask) : InputFormat =
+  def input(task : QualityTask) : InputFormat =
   {
-    implicit val prefixes = task.sieveConfig.fusionConfig.prefixes
+    implicit val prefixes = task.qualityConfig.qualityConfig.prefixes
 
     // here we create entity descriptions from the quality metadata
     //val entityDescriptions = QualityConfig.createDummyEntityDescriptions(prefixes)
-    val entityDescriptions = task.sieveConfig.fusionConfig.entityDescriptions
+    val entityDescriptions = task.qualityConfig.qualityConfig.entityDescriptions
 
     new StaticEntityFormat(entityDescriptions)
   }
 
-  def output(task : FusionTask) = new GraphFormat()
+  def output(task : QualityTask) = new GraphFormat()
 
   /**
    * Executes a Sieve Quality task.
    */
-  override def execute(task : FusionTask, reader : Seq[EntityReader], writer : QuadWriter) {
-    log.info("Executing Sieve Task %s".format(task.name))
+  override def execute(task : QualityTask, reader : Seq[EntityReader], writer : QuadWriter) {
+    log.info("Executing Sieve Quality Assessment Task %s".format(task.name))
+
 
   }
 

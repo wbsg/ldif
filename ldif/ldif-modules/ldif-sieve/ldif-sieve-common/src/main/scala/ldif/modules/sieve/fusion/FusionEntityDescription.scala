@@ -1,6 +1,5 @@
 package ldif.modules.sieve.fusion
 
-import xml.Elem
 import ldif.util.Prefixes
 import ldif.entity.EntityDescription
 

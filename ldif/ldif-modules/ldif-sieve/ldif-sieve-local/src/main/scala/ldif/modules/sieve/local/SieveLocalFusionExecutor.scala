@@ -19,16 +19,10 @@ package ldif.modules.sieve.local
 import ldif.module.Executor
 import ldif.local.runtime._
 import impl.NoEntitiesLeft
-import org.apache.commons.io.FileUtils
-import ldif.local.util.TemporaryFileCreator
-import xml.{XML, Source}
 import org.slf4j.LoggerFactory
-import java.io.{FileInputStream, File}
 import ldif.runtime.Quad
-import ldif.util.Prefixes
-import ldif.entity.{Node, Entity, EntityDescription}
-import ldif.modules.sieve.fusion.functions.{PassItOn, TrustYourFriends, KeepFirst}
-import ldif.modules.sieve.fusion.{FusionConfig, FusionTask, FusionFunction}
+import ldif.entity.Entity
+import ldif.modules.sieve.fusion.{FusionTask, FusionFunction}
 
 /**
  * Executes Sieve Data Fusion on a local machine.
