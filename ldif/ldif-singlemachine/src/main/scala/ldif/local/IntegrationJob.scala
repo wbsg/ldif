@@ -89,41 +89,41 @@ class IntegrationJob (val config : IntegrationConfig, debugMode : Boolean = fals
         // Execute mapping phase
         val quadReaders = loadDumps(config.sources)
 
-//        var r2rReader: QuadReader = executeMappingPhase(config, quadReaders)
-//        if(debugMode==true)
-//          r2rReader = writeDebugOutput("r2r", config.outputFile, r2rReader)
-//
-//        // Execute linking phase
-//        var linkReader: QuadReader = executeLinkingPhase(config, r2rReader)
-//        if(debugMode==true)
-//          linkReader = writeDebugOutput("silk", config.outputFile, linkReader)
-//
-//        configParameters.otherQuadsWriter.finish
-//        val otherQuadsReader = new FileQuadReader(otherQuadsFile)
-//        configParameters.sameAsWriter.finish
-//        val sameAsReader = new FileQuadReader(sameAsQuadsFile)
-//
-//        val clonedR2rReader = setupQuadReader(r2rReader)
-//
-//        val allQuads = new MultiQuadReader(clonedR2rReader, otherQuadsReader)
-//        val allSameAsLinks = new MultiQuadReader(linkReader, sameAsReader)
-//
-//        var integratedReader: QuadReader = allQuads
-//
-//        if(config.properties.getProperty("rewriteURIs", "true").toLowerCase=="true")
-//          integratedReader = executeURITranslation(allQuads, allSameAsLinks, config.properties)
-
-        var integratedReader: QuadReader = new MultiQuadReader(quadReaders.map{e => e}:_*)
-
-        // Execute sieve (quality and fusion)
-        var sieveReader: QuadReader = executeSieve(config, setupQuadReader(integratedReader))
+        var r2rReader: QuadReader = executeMappingPhase(config, quadReaders)
         if(debugMode==true)
-          sieveReader = writeDebugOutput("sieve-fusion", config.outputFile, sieveReader)
+          r2rReader = writeDebugOutput("r2r", config.outputFile, r2rReader)
+
+        // Execute linking phase
+        var linkReader: QuadReader = executeLinkingPhase(config, r2rReader)
+        if(debugMode==true)
+          linkReader = writeDebugOutput("silk", config.outputFile, linkReader)
+
+        configParameters.otherQuadsWriter.finish
+        val otherQuadsReader = new FileQuadReader(otherQuadsFile)
+        configParameters.sameAsWriter.finish
+        val sameAsReader = new FileQuadReader(sameAsQuadsFile)
+
+        val clonedR2rReader = setupQuadReader(r2rReader)
+
+        val allQuads = new MultiQuadReader(clonedR2rReader, otherQuadsReader)
+        val allSameAsLinks = new MultiQuadReader(linkReader, sameAsReader)
+
+        var integratedReader: QuadReader = allQuads
+
+        if(config.properties.getProperty("rewriteURIs", "true").toLowerCase=="true")
+          integratedReader = executeURITranslation(allQuads, allSameAsLinks, config.properties)
+
+//        var integratedReader: QuadReader = new MultiQuadReader(quadReaders.map{e => e}:_*)
+//
+//        // Execute sieve (quality and fusion)
+//        var sieveReader: QuadReader = executeSieve(config, setupQuadReader(integratedReader))
+//        if(debugMode==true)
+//          sieveReader = writeDebugOutput("sieve-fusion", config.outputFile, sieveReader)
 
         lastUpdate = Calendar.getInstance
 
-//        writeOutput(config, integratedReader)
-         writeOutput(config, sieveReader)
+        writeOutput(config, integratedReader)
+//         writeOutput(config, sieveReader)
       }
   }
 
