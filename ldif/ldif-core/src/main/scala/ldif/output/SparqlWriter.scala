@@ -71,7 +71,7 @@ case class SparqlWriter(uri: String,
    * Creates a new named graph if required.
    *
    * @param content The statements to be inserted
-   * @parma graph The named graph
+   * @param graph The named graph
    */
 
   private def buildAndExecuteQuery(content: String, graph: String = null) {
