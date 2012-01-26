@@ -74,7 +74,7 @@ class SieveLocalQualityExecutor(useFileInstanceCache: Boolean = false) extends E
         //log.info("Sieve Entity: %s".format(entity.resource.toString))
         //log.info("Patterns: "+in.entityDescription.patterns.size)
 
-        // for scoringFunctions that need the graphId, use entity.resource
+        // for scoringFunctions that need the graphId, use entity.resource, therefore the assumption below will not hold //TODO solve!
         assume(task.qualitySpec.scoringFunctions.size==in.entityDescription.patterns.size, "Number of scoringFunctions must be the same as number of patterns.")
         assume(task.qualitySpec.outputPropertyNames.size==in.entityDescription.patterns.size, "Number of outputPropertyNames must be the same as number of patterns.")
 

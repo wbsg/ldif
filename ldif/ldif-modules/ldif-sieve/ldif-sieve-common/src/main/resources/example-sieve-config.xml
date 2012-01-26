@@ -17,7 +17,14 @@
                 </ScoringFunction>
             </AssessmentMetric>
 
+
             <AssessmentMetric id="sieve:reputation">
+                <ScoringFunction class="ScoredList">
+                    <Param name="list" value="http://en.wikipedia.org http://pt.wikipedia.org"/>
+                </ScoringFunction>
+            </AssessmentMetric>
+
+            <AssessmentMetric id="sieve:trust">
                 <ScoringFunction class="TidalTrustRating">
                     <EnvironmentVariable name="user" value="http://URIofTheUser"/>
                     <!--Get the author of the graph -->
