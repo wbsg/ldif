@@ -78,10 +78,16 @@ class HadoopIntegrationJob(val config : HadoopIntegrationConfig, debug : Boolean
     // Execute mapping phase
     val r2rOutput = mapQuads()
     log.info("Time needed to map data: " + stopWatch.getTimeSpanInSeconds + "s")
+    if(config.outputPhase=="r2r") {
+      writeOutput(r2rOutput)
+      lastUpdate = Calendar.getInstance
+      return
+    }
 
     // Execute linking phase
     val silkOutput = generateLinks(r2rOutput)
     log.info("Time needed to link data: " + stopWatch.getTimeSpanInSeconds + "s")
+    // TODO: Add logic for outputPhase=="silk"
 
     // Prepare data to be translated
     move(allQuadsDir, r2rOutput)
