@@ -9,4 +9,5 @@
   <quality>quality</quality>
   <fusion>fusion</fusion>
   <output>integrated_life_science.nq</output>
+  <outputPhase>silk</outputPhase>
 </integrationJob>

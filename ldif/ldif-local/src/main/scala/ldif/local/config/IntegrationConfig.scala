@@ -24,7 +24,7 @@ import org.slf4j.LoggerFactory
 import xml.{Node, XML}
 import ldif.util.{ConfigProperties, Consts, ValidatingXMLReader}
 
-case class IntegrationConfig(sources : File, linkSpecDir : File, mappingDir : File, sieveSpecDir : File, outputFile : File,  properties : Properties, runSchedule : String) {}
+case class IntegrationConfig(sources : File, linkSpecDir : File, mappingDir : File, sieveSpecDir : File, outputFile : File, outputPhase: String = "complete", properties : Properties, runSchedule : String) {}
 
 object IntegrationConfig
 {
@@ -49,12 +49,17 @@ object IntegrationConfig
     if (runSchedule == "" || runSchedule == null)
       runSchedule = "onStartup"
 
+    var outputPhase: String = (xml \ "outputPhase" text)
+    if (outputPhase == "" || outputPhase == null)
+      outputPhase = "complete"
+
     IntegrationConfig(
       sources = getFile(xml, "sources", baseDir),
       linkSpecDir = getFile(xml, "linkSpecifications", baseDir),
       mappingDir = getFile(xml, "mappings", baseDir),
       sieveSpecDir = getFile(xml, "fusion", baseDir),
       outputFile = new File(xml \ "output" text),
+      outputPhase = outputPhase,
       properties = properties,
       runSchedule = runSchedule
     )

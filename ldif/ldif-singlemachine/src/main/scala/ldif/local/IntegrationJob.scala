@@ -91,11 +91,21 @@ class IntegrationJob (val config : IntegrationConfig, debugMode : Boolean = fals
         val quadReaders = loadDumps(config.sources)
 
         var r2rReader: QuadReader = executeMappingPhase(config, quadReaders)
+        if(config.outputPhase=="r2r") {
+          writeOutput(config, r2rReader)
+          lastUpdate = Calendar.getInstance
+          return
+        }
         if(debugMode==true)
           r2rReader = writeDebugOutput("r2r", config.outputFile, r2rReader)
 
         // Execute linking phase
         var linkReader: QuadReader = executeLinkingPhase(config, r2rReader)
+        if(config.outputPhase=="silk") {
+          writeOutput(config, linkReader)
+          lastUpdate = Calendar.getInstance
+          return
+        }
         if(debugMode==true)
           linkReader = writeDebugOutput("silk", config.outputFile, linkReader)
 
