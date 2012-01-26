@@ -39,6 +39,7 @@ import ldif.output.OutputWriterFactory
 import ldif.modules.sieve.fusion.{FusionModule, EmptyFusionConfig, FusionConfig}
 import ldif.modules.sieve.quality.{QualityConfig, QualityModule, EmptyQualityConfig}
 import ldif.modules.sieve.local.{SieveLocalQualityExecutor, SieveLocalFusionExecutor}
+import ldif.runtime.QuadWriter
 
 class IntegrationJob (val config : IntegrationConfig, debugMode : Boolean = false) {
 
@@ -433,15 +434,15 @@ class IntegrationJob (val config : IntegrationConfig, debugMode : Boolean = fals
 
   private def writeOutput(config: IntegrationConfig, reader : QuadReader)    {
     var count = 0
-    var outputFormat = config.properties.getProperty("outputFormat", "nq").toLowerCase
 
-    val writer = OutputWriterFactory.getWriter(outputFormat, config.properties)
+    log.info("Writing output to "+config.outputFile.getCanonicalPath)
+    val writer = OutputWriterFactory.getWriter(config.properties, config.outputFile.getCanonicalPath)
     if (writer != null) {
       while(reader.hasNext) {
         writer.write(reader.read())
         count += 1
       }
-      writer.close
+      writer.finish
     }
 
     log.info(count + " Quads written")

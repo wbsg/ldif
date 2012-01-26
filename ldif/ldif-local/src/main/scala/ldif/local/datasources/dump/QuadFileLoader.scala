@@ -23,7 +23,8 @@ import scala.collection.mutable.ArrayBuffer
 import scala.Predef._
 import java.io.BufferedReader
 import java.io.FileReader
-import ldif.local.runtime.{LocalNode, QuadWriter}
+import ldif.runtime.QuadWriter
+import ldif.local.runtime.LocalNode
 import scala.actors.Actor
 import scala._
 import ldif.local.runtime.impl.DummyQuadWriter

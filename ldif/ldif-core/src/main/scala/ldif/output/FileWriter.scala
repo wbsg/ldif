@@ -19,9 +19,9 @@
 package ldif.output
 
 import org.slf4j.LoggerFactory
-import ldif.runtime.Quad
+import ldif.runtime.{QuadWriter, Quad}
 
-class FileWriter(filePath : String, f : String = "nq") extends OutputWriter {
+class FileWriter(filePath : String, outputFormat : String = "nq") extends QuadWriter {
 
   private val log = LoggerFactory.getLogger(getClass.getName)
 
@@ -29,14 +29,13 @@ class FileWriter(filePath : String, f : String = "nq") extends OutputWriter {
 
   override def write(quad : Quad) {
 
-    if(f == "nq")
+    if(outputFormat == "nq")
         writer.write(quad.toNQuadFormat + " .\n")
      else
         writer.write(quad.toNTripleFormat + " .\n")
-
   }
 
-  override def close() {
+  override def finish() {
     writer.close()
   }
 

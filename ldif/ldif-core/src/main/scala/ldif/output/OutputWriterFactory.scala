@@ -1,7 +1,7 @@
 /*
  * LDIF
  *
- * Copyright 2011 Freie Universität Berlin, MediaEvent Services GmbH & Co. KG
+ * Copyright 2011-2012 Freie Universität Berlin, MediaEvent Services GmbH & Co. KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,29 +20,39 @@ package ldif.output
 
 import java.util.Properties
 import org.slf4j.LoggerFactory
+import ldif.util.Consts
+import ldif.runtime.QuadWriter
 
 object OutputWriterFactory {
 
   private val log = LoggerFactory.getLogger(getClass.getName)
 
-  def getWriter(key : String, properties : Properties) : OutputWriter = {
+  // TODO add outputFormat to integration config
+  def getWriter(properties : Properties, outputUriOrPath : String = null) : QuadWriter = {
 
-    if (key == "sparql") {
+    val outputFormat =  properties.getProperty("outputFormat", "nq").toLowerCase
+
+    if (outputFormat == "sparql") {
       val sparqlEndpointURI = properties.getProperty("sparqlEndpointURI", "")
-      val sparqlEndpointUsr = properties.getProperty("sparqlEndpointUsr", "")
-      val sparqlEndpointPwd = properties.getProperty("sparqlEndpointPwd", "")
-      // TODO check parameters
-      SparqlWriter(sparqlEndpointURI, Some(sparqlEndpointUsr, sparqlEndpointPwd))
+      if (sparqlEndpointURI == "") {
+        log.warn("SPARQL Endpoint URI not defined. Please use the property 'sparqlEndpointURI'")
+        null
+      }
+      else {
+        val sparqlEndpointUsr = properties.getProperty("sparqlEndpointUsr", "")
+        val sparqlEndpointPwd = properties.getProperty("sparqlEndpointPwd", "")
+        val sparqlUpdateVersion = properties.getProperty("sparqlUpdateVersion", Consts.SparqlUpdateDefaultVersion)
+        val sparqlEndpointParam = properties.getProperty("sparqlEndpointParam", Consts.SparqlDefaultParameter)
+        SparqlWriter(sparqlEndpointURI, Some(sparqlEndpointUsr, sparqlEndpointPwd), sparqlUpdateVersion, sparqlEndpointParam )
+      }
     }
 
-    else if (key == "nq" || key == "nt") {
-      val filePath = "output"  // TODO
-      new FileWriter(filePath, key)
+    else if (outputFormat == "nq" || outputFormat == "nt") {
+      new FileWriter(outputUriOrPath, outputFormat)
     }
 
     else {
-      log.warn("Output writer not supported")
-      // TODO
+      log.warn("Output format not supported: "+ outputFormat )
       null
     }
 

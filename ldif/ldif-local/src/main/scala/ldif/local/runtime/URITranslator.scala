@@ -30,12 +30,12 @@ import impl._
 import scala.collection.mutable.{Map, HashMap, HashSet, Set}
 import ldif.entity._
 import org.slf4j.LoggerFactory
-import java.net.URLEncoder
 import ldif.runtime.Quad
 import java.util.Properties
 import java.io.{BufferedWriter, File}
 import ldif.entity.entityComparator.entityComparator
 import ldif.util.UriMintHelper
+import ldif.runtime.QuadWriter
 
 object URITranslator {
 

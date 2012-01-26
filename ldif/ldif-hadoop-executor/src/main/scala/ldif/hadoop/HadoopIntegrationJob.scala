@@ -263,7 +263,6 @@ class HadoopIntegrationJob(val config : HadoopIntegrationConfig, debug : Boolean
   }
 
   private def writeOutput(outputPath : String)    {
-    var outputFormat = config.properties.getProperty("outputFormat", "nq").toLowerCase
 
     var count = 0
 
@@ -281,13 +280,13 @@ class HadoopIntegrationJob(val config : HadoopIntegrationConfig, debug : Boolean
     val lines = scala.io.Source.fromInputStream(instream).getLines
     val parser = new QuadParser
 
-    val writer = OutputWriterFactory.getWriter(outputFormat, config.properties)
+    val writer = OutputWriterFactory.getWriter(config.properties, config.outputFile)
     if (writer != null) {
       for (quad <- lines.toTraversable.map(parser.parseLine(_))){
         writer.write(quad)
         count += 1
       }
-      writer.close
+      writer.finish
     }
 
     log.info(count + " Quads written")

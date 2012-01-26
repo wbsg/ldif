@@ -18,7 +18,7 @@
 
 package ldif.modules.silk.local
 
-import ldif.local.runtime.QuadWriter
+import ldif.runtime.QuadWriter
 import ldif.entity.Node
 import de.fuberlin.wiwiss.silk.output.LinkWriter
 import ldif.runtime.Quad

@@ -72,4 +72,10 @@ object Consts {
   // System
   val fileSeparator = System.getProperty("file.separator")
   val tmpDir = System.getProperty("java.io.tmpdir")
+
+
+  // Sparql
+  val SparqlDefaultParameter = "udapte"
+  val SparqlUpdateDefaultVersion = "1.1"
+  val SparqlMaxStatmentsPerRequest = 200
 }

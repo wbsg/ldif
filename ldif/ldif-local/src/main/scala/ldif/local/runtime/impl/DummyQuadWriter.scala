@@ -18,7 +18,7 @@
 
 package ldif.local.runtime.impl
 
-import ldif.local.runtime.QuadWriter
+import ldif.runtime.QuadWriter
 import ldif.runtime.Quad
 
 /**
@@ -30,7 +30,7 @@ import ldif.runtime.Quad
  */
 
 class DummyQuadWriter extends QuadWriter {
-  def write(quad: Quad) = null
+  def write(quad: Quad)  {}
 
-  def finish = {}
+  def finish() {}
 }

@@ -20,7 +20,8 @@ package ldif.local.runtime.impl
 
 import collection.mutable.Queue
 import ldif.runtime.Quad
-import ldif.local.runtime.{ClonableQuadReader, QuadWriter}
+import ldif.runtime.QuadWriter
+import ldif.local.runtime.ClonableQuadReader
 
 class QuadQueue extends ClonableQuadReader with QuadWriter {
   private var qq = new Queue[Quad]

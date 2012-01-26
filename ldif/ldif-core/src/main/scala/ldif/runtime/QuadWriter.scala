@@ -16,17 +16,10 @@
  * limitations under the License.
  */
 
-package ldif.output
+package ldif.runtime
 
-import ldif.runtime.Quad
-
-/**
- *  Abstraction for output writers
- **/
-
-trait OutputWriter {
-
-  def write (quad : Quad) {}
-
-  def close ()  {}
+trait QuadWriter
+{
+  def write(quad : Quad)
+  def finish()
 }

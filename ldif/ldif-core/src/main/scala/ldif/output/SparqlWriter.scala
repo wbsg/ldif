@@ -18,20 +18,23 @@
 
 package ldif.output
 
-import ldif.util.RemoteSparqlEndpoint
 import org.slf4j.LoggerFactory
-import ldif.runtime.Quad
-import java.net.{URLEncoder, URI}
+import ldif.util.Consts
+import java.io.OutputStreamWriter
+import io.Source
+import java.net._
+import ldif.runtime.{QuadWriter, Quad}
 
+/**
+ * Output writer which writes to a SPARQL/Update endpoint
+ */
 
-case class SparqlWriter(uri: String, login: Option[(String, String)] = None, parameter: String = "query") extends OutputWriter {
+case class SparqlWriter(uri: String,
+                        login: Option[(String, String)] = None,
+                        version : String = Consts.SparqlUpdateDefaultVersion,
+                        parameter: String = Consts.SparqlDefaultParameter) extends QuadWriter {
 
   private val log = LoggerFactory.getLogger(getClass.getName)
-
-  private val endpoint = new RemoteSparqlEndpoint(new URI(uri), login)
-
-  // maximum number of statements per request
-  private val statementsPerRequest = 500
 
   // init
   var statements = 0
@@ -44,9 +47,10 @@ case class SparqlWriter(uri: String, login: Option[(String, String)] = None, par
     quadGraph = quad.graph.toString
 
     // execute query
-    if (statements == statementsPerRequest || (quadGraph != queryGraph && statements > 0))
+    if (statements == Consts.SparqlMaxStatmentsPerRequest || (quadGraph != queryGraph && statements > 0))
     {
-      query(queryContent.toString(), queryGraph)
+      // TODO optimization: collect quads from same graph
+      buildAndExecuteQuery(queryContent.toString(), queryGraph)
       // reset query parameters
       statements = 0
       queryContent = new StringBuilder()
@@ -57,22 +61,89 @@ case class SparqlWriter(uri: String, login: Option[(String, String)] = None, par
     queryGraph = quadGraph
   }
 
-  override def close() {
+  override def finish() {
     if (statements > 0)
-      query(queryContent.toString(), queryGraph)
+      buildAndExecuteQuery(queryContent.toString(), queryGraph)
   }
 
-  private def query(content : String, graph : String = null) {
+  /**
+   * Builds and executes SPARQL/Update queries.
+   * Creates a new named graph if required.
+   *
+   * @param content The statements to be inserted
+   * @parma graph The named graph
+   */
 
-    if (graph != null) {
-      //endpoint.executeQuery("CREATE SILENT GRAPH <" + graph + ">")
-      val q = parameter+"="+URLEncoder.encode("INSERT DATA { GRAPH <" + graph + "> { " + content + " } }", "UTF-8")
-      //log.info(q)
-      endpoint.executeQuery(q)
-
+  private def buildAndExecuteQuery(content: String, graph: String = null) {
+     if (graph != null) {
+      if (version == "1.0") {
+        executeQuery("CREATE SILENT GRAPH <" + graph + ">")
+        executeQuery("INSERT DATA INTO <" + graph + "> { " + content + " }")
+      }
+      else {
+        executeQuery("INSERT DATA { GRAPH <" + graph + "> { " + content + " } }")
+      }
     }
     else
-      endpoint.executeQuery(parameter+"="+URLEncoder.encode("INSERT DATA { " + content + " }", "UTF-8"))
-
+      executeQuery("INSERT DATA { " + content + " }")
   }
+
+  /**
+   * Executes a single SPARQL/Update query
+   *
+   * @param query The SPARQL query to be executed
+   */
+  private def executeQuery(query: String) {
+
+    log.debug("Executing query on " + uri + "\n" + query)
+
+    val encodedQuery = encodeQuery(query)
+
+    val connection = openConnection
+    val writer = new OutputStreamWriter(connection.getOutputStream, "UTF-8")
+    writer.write(encodedQuery)
+    writer.close()
+
+    //Check if the HTTP response code is in the range 2xx
+    if (connection.getResponseCode / 100 != 2) {
+      val errorStream = connection.getErrorStream
+      log.error("Error exectuing query: "+query)
+      if (errorStream != null) {
+        val errorMessage = Source.fromInputStream(errorStream).getLines.mkString("\n")
+        log.warn("SPARQL/Update query on " + uri + " failed. Error Message: '" + errorMessage + "'.")
+      }
+      else {
+        log.warn("SPARQL/Update query on " + uri + " failed. Server response: " + connection.getResponseCode + " " + connection.getResponseMessage + ".")
+      }
+    }
+  }
+
+  private def encodeQuery(content : String) : String = {
+    parameter+"="+URLEncoder.encode(content, "UTF-8")
+  }
+
+  /**
+   * Opens a new HTTP connection to the endpoint.
+   * This method is synchronized to avoid race conditions as the Authentication is set globally in Java.
+   */
+  private def openConnection() : HttpURLConnection = synchronized {
+    //Set authentication
+    for ((user, password) <- login) {
+      Authenticator.setDefault(new Authenticator() {
+        override def getPasswordAuthentication = new PasswordAuthentication(user, password.toCharArray)
+      })
+    }
+
+    //Open a new HTTP connection
+    val url = new URL(uri)
+    val connection = url.openConnection.asInstanceOf[HttpURLConnection]
+    connection.setRequestMethod("POST")
+    connection.setDoOutput(true)
+    connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded")
+    // TODO update via POST directly instead
+    // - connection.setRequestProperty("Content-Type", "application/sparql-update")
+
+    connection
+  }
+
 }

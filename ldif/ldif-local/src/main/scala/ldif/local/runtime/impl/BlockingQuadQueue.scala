@@ -20,7 +20,8 @@ package ldif.local.runtime.impl
 
 import java.util.concurrent.{TimeUnit, LinkedBlockingQueue}
 import ldif.runtime.Quad
-import ldif.local.runtime.{QuadWriter, QuadReader}
+import ldif.local.runtime.QuadReader
+import ldif.runtime.QuadWriter
 
 /**
  * BlockingQuadQueue is made for exactly one producer and one consumer. Not thread safe!

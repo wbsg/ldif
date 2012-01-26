@@ -24,6 +24,7 @@ import ldif.runtime.Quad
 import ldif.modules.sieve.fusion.{FusionTask, FusionConfig, FusionFunction}
 import ldif.modules.sieve.quality.QualityTask
 import ldif.entity.{Node, Entity}
+import ldif.runtime.QuadWriter
 
 /**
  * Executes Sieve Data Fusion on a local machine.
