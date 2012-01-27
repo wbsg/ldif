@@ -10,7 +10,7 @@
 _:bn <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://WhatEver> <MinimalTestDatasetX> .
 <http://oooo> <http://someProp> _:bla <someGraph>.
 <http://o1> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://WhatEver> <XY> .
-<http://o1> <http://v> "John" <WhatAboutThisOne> .
+<http://o1> <http://v> "John"^^<http://www.w3.org/2001/XMLSchema#string> <WhatAboutThisOne> .
 <http://o1> <http://n> "Locke" <WhatAboutThatOne> .
 <http://testNamespace/resource1> <http://www.w3.org/2002/07/owl#sameAs> <http://oooo> .
 #<http://oooo> <http://www.w3.org/2002/07/owl#sameAs> <http://testNamespace/resource1> .
