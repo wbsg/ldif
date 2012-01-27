@@ -186,8 +186,8 @@ class EntityBuilder (entityDescriptions : IndexedSeq[EntityDescription], readers
           case Some(x:Condition) => getSubjSet(x)
           case Some(x:And) => getSubjSet(x)
           case Some(x:Or) => getSubjSet(x)
-          case Some(x:Not) => new JHashSet[Node]  //TODO support Not operator - after M1
-          case Some(x:Exists) => new JHashSet[Node]  //TODO support Exists operator - after M1
+          case Some(x:Not) => throw new UnsupportedOperationException("Restriction operator 'Not' is not implemented, yet")  //TODO support Not operator - after M1
+          case Some(x:Exists) => throw new UnsupportedOperationException("Restriction operator 'Exists' is not implemented, yet")  //TODO support Exists operator - after M1
           case None => allUriNodes
         }
   }
@@ -442,16 +442,19 @@ class PropertyHashTable(entityDescriptions: Seq[EntityDescription]) {
   }
 
   // Find all properties from a given operator and add those to the property hash table
+  private def updatePHT(op: PathOperator) {
+    op match {
+      case op: ForwardOperator => updatePHT(op.property.toString, PropertyType.BACK)
+      case op: BackwardOperator => updatePHT(op.property.toString, PropertyType.FORW)
+      case _ =>
+    }
+  }
+
   private def addRestrictionProperties(operator : Option[Operator]) {
     operator match {
       case Some(cond:Condition) =>
-        for (op <- cond.path.operators){
-          op match {
-            case op:ForwardOperator => updatePHT(op.property.toString, PropertyType.BACK)
-            case op:BackwardOperator => updatePHT(op.property.toString, PropertyType.FORW)
-            case _ =>
-          }
-        }
+        for (op <- cond.path.operators)
+          updatePHT(op)
       case Some(and:And) =>  {
         for (child <- and.children)
           addRestrictionProperties(Some(child))
@@ -461,7 +464,10 @@ class PropertyHashTable(entityDescriptions: Seq[EntityDescription]) {
           addRestrictionProperties(Some(child))
       }
       case Some(not:Not) =>
+        addRestrictionProperties(Some(not.op))
       case Some(exists:Exists) =>
+        for (op <- exists.path.operators)
+          updatePHT(op)
       case None => {
         allUriNodesNeeded = true
       }

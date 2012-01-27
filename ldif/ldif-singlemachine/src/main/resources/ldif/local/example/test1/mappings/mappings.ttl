@@ -40,3 +40,8 @@ mappings:nextLevelRestrictionMapping
   a r2r:Mapping ;
   r2r:sourcePattern "?SUBJ <http://toRestrictedInstance> ?ri . ?ri a <http://RestrictionClass> . ?ri <http://check> ?check" ;
   r2r:targetPattern "?SUBJ <http://check> ?check" .
+
+mappings:existsMapping
+  a r2r:Mapping ;
+  r2r:sourcePattern "?SUBJ a <http://WhatEver> . ?SUBJ <http://v> ?o" ;
+  r2r:targetPattern "?SUBJ a <http://Exists>" .

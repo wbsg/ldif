@@ -5,6 +5,9 @@
   <sources>sources</sources>
   <linkSpecifications>linkSpecs</linkSpecifications>
   <mappings>mappings</mappings>
+  <quality></quality>
+  <fusion></fusion>
   <output>output_minimal</output>
+  <outputPhase>r2r</outputPhase>
   <runSchedule>onStartup</runSchedule>
 </integrationJob>

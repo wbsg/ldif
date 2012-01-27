@@ -22,3 +22,4 @@ pom.xml.bak
 *.log
 stdout
 stderr
+*.zip
