@@ -152,10 +152,11 @@ class LDIFTargetPattern(targetPattern: TargetPattern) extends TargetPattern(targ
       case Type.VARIABLE => {
         val varName = tripleElement.getValue(0)
         val nodes = results.getResults(varName)
-        for(node <- nodes.get) {
+        for(node <- nodes.get)
           if(node.isResource)
             subjects = node :: subjects
-        }
+          else
+            subjects = Node.createUriNode(node.value, node.graph) :: subjects
       }
       case Type.IRIVARIABLE => {
         val varName = tripleElement.getValue(0)
