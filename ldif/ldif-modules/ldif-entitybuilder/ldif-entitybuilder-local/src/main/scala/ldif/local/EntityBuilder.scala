@@ -39,7 +39,8 @@ class EntityBuilder (entityDescriptions : IndexedSeq[EntityDescription], readers
   private val saveSameAsQuads = config.sameAsWriter!=null
   private val provenanceGraph = config.configProperties.getProperty("provenanceGraph", Consts.DEFAULT_PROVENANCE_GRAPH)
   private val useExternalSameAsLinks = config.configProperties.getProperty("useExternalSameAsLinks", "true").toLowerCase=="true"
-  private val ignoreProvenance = config.configProperties.getProperty("outputFormat", "nq").toLowerCase=="nt"
+  private val outputFormat = config.configProperties.getProperty("outputFormat", "nq").toLowerCase
+  private val ignoreProvenance = !(outputFormat=="nq" || outputFormat=="sparql")
 
   // Property HT - Describes all the properties used in the Entity Description
   var PHT: PropertyHashTable = null

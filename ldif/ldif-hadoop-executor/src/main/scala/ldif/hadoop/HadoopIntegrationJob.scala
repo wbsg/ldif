@@ -43,24 +43,25 @@ import org.apache.hadoop.fs.{FileSystem, Path, FSDataInputStream}
 class HadoopIntegrationJob(val config : HadoopIntegrationConfig, debug : Boolean = false) {
 
   private val log = LoggerFactory.getLogger(getClass.getName)
-  val stopWatch = new StopWatch
+  private val stopWatch = new StopWatch
 
-  var lastUpdate : Calendar = null
+  private var lastUpdate : Calendar = null
 
-  val conf = new Configuration
-  val hdfs = FileSystem.get(conf)
+  private val conf = new Configuration
+  private val hdfs = FileSystem.get(conf)
 
-  val useExternalSameAsLinks = config.properties.getProperty("useExternalSameAsLinks", "true").toLowerCase=="true"
-  val outputAllQuads = config.properties.getProperty("output", "mapped-only").toLowerCase=="all"
-  val rewriteUris = config.properties.getProperty("rewriteURIs", "true").toLowerCase=="true"
-  val uriMinting = config.properties.getProperty("uriMinting", "false").toLowerCase=="true"
-  val ignoreProvenance = config.properties.getProperty("outputFormat", "nq").toLowerCase=="nt"
+  private val useExternalSameAsLinks = config.properties.getProperty("useExternalSameAsLinks", "true").toLowerCase=="true"
+  private val outputAllQuads = config.properties.getProperty("output", "mapped-only").toLowerCase=="all"
+  private val rewriteUris = config.properties.getProperty("rewriteURIs", "true").toLowerCase=="true"
+  private val uriMinting = config.properties.getProperty("uriMinting", "false").toLowerCase=="true"
+  private val outputFormat = config.properties.getProperty("outputFormat", "nq").toLowerCase
+  private val ignoreProvenance = !(outputFormat=="nq" || outputFormat=="sparql")
 
-  val externalSameAsLinksDir = clean("sameAsFromSources")
+  private val externalSameAsLinksDir = clean("sameAsFromSources")
   // Contains quads that are not processed but must be added to the output
-  val allQuadsDir = clean("allQuads")
+  private val allQuadsDir = clean("allQuads")
   // Contains provenance quads
-  val provenanceQuadsDir = clean("provenanceQuads")
+  private val provenanceQuadsDir = clean("provenanceQuads")
 
   def runIntegration() {
 
@@ -322,6 +323,8 @@ class HadoopIntegrationJob(val config : HadoopIntegrationConfig, debug : Boolean
     // remove the source
     clean(from)
   }
+
+  def getLastUpdate = lastUpdate
 
 }
 

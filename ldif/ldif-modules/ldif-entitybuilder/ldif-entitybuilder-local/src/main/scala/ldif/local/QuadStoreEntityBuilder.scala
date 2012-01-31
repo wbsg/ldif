@@ -45,7 +45,8 @@ class QuadStoreEntityBuilder(store: QuadStoreTrait, entityDescriptions : Seq[Ent
 
   private val saveSameAsQuads = config.sameAsWriter!=null
   private val useExternalSameAsLinks = config.configProperties.getProperty("useExternalSameAsLinks", "true").toLowerCase=="true"
-  private val ignoreProvenance = config.configProperties.getProperty("outputFormat", "nq").toLowerCase=="nt"
+  private val outputFormat = config.configProperties.getProperty("outputFormat", "nq").toLowerCase
+  private val ignoreProvenance = !(outputFormat=="nq" || outputFormat=="sparql")
 
   private val PHT = new PropertyHashTable(entityDescriptions)
 

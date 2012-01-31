@@ -176,7 +176,7 @@ class HadoopScheduler (val config : HadoopSchedulerConfig, debug : Boolean = fal
 
   /* Check if an update is required for the integration job */
   def checkUpdate(job : HadoopIntegrationJob = integrationJob) : Boolean = {
-    checkUpdate(job.config.runSchedule, job.lastUpdate)
+    checkUpdate(job.config.runSchedule, job.getLastUpdate)
   }
 
   /* Check if an update is required for the import job */
