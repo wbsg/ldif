@@ -78,4 +78,5 @@ object Consts {
   val SparqlDefaultParameter = "udapte"
   val SparqlUpdateDefaultVersion = "1.1"
   val SparqlMaxStatmentsPerRequest = 200
+  val SparqlDirectPostEnabled = "true"
 }

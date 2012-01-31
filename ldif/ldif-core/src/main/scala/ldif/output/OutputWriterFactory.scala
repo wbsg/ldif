@@ -43,7 +43,8 @@ object OutputWriterFactory {
         val sparqlEndpointPwd = properties.getProperty("sparqlEndpointPwd", "")
         val sparqlUpdateVersion = properties.getProperty("sparqlUpdateVersion", Consts.SparqlUpdateDefaultVersion)
         val sparqlEndpointParam = properties.getProperty("sparqlEndpointParam", Consts.SparqlDefaultParameter)
-        SparqlWriter(sparqlEndpointURI, Some(sparqlEndpointUsr, sparqlEndpointPwd), sparqlUpdateVersion, sparqlEndpointParam )
+        val sparqlDirectPostEnabled= properties.getProperty("sparqlDirectPostEnabled", Consts.SparqlDirectPostEnabled).toLowerCase.equals("true")
+        SparqlWriter(sparqlEndpointURI, Some(sparqlEndpointUsr, sparqlEndpointPwd), sparqlUpdateVersion, sparqlDirectPostEnabled, sparqlEndpointParam)
       }
     }
 

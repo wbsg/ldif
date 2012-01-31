@@ -32,6 +32,7 @@ import ldif.runtime.{QuadWriter, Quad}
 case class SparqlWriter(uri: String,
                         login: Option[(String, String)] = None,
                         version : String = Consts.SparqlUpdateDefaultVersion,
+                        directPostEnabled : Boolean = Consts.SparqlDirectPostEnabled.toBoolean,
                         parameter: String = Consts.SparqlDefaultParameter) extends QuadWriter {
 
   private val log = LoggerFactory.getLogger(getClass.getName)
@@ -119,7 +120,10 @@ case class SparqlWriter(uri: String,
   }
 
   private def encodeQuery(content : String) : String = {
-    parameter+"="+URLEncoder.encode(content, "UTF-8")
+    if (directPostEnabled)
+      content
+    else
+      parameter+"="+URLEncoder.encode(content, "UTF-8")
   }
 
   /**
@@ -139,9 +143,10 @@ case class SparqlWriter(uri: String,
     val connection = url.openConnection.asInstanceOf[HttpURLConnection]
     connection.setRequestMethod("POST")
     connection.setDoOutput(true)
-    connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded")
-    // TODO update via POST directly instead
-    // - connection.setRequestProperty("Content-Type", "application/sparql-update")
+    if (directPostEnabled)
+      connection.setRequestProperty("Content-Type", "application/sparql-update")
+    else
+      connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded")
 
     connection
   }
