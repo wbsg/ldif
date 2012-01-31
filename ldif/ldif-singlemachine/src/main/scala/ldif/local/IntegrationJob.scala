@@ -90,17 +90,16 @@ class IntegrationJob (val config : IntegrationConfig, debugMode : Boolean = fals
         // Execute mapping phase
         val quadReaders = loadDumps(config.sources)
 
-        var r2rReader: QuadReader = executeMappingPhase(config, quadReaders)
+        var r2rReader: Option[QuadReader] = executeMappingPhase(config, quadReaders)
         if(config.outputPhase=="r2r") {
-          writeOutput(config, r2rReader)
           lastUpdate = Calendar.getInstance
           return
         }
         if(debugMode==true)
-          r2rReader = writeDebugOutput("r2r", config.outputFile, r2rReader)
+          r2rReader = Some(writeDebugOutput("r2r", config.outputFile, r2rReader.get))
 
         // Execute linking phase
-        var linkReader: QuadReader = executeLinkingPhase(config, r2rReader)
+        var linkReader: QuadReader = executeLinkingPhase(config, r2rReader.get)
         if(config.outputPhase=="silk") {
           writeOutput(config, linkReader)
           lastUpdate = Calendar.getInstance
@@ -114,7 +113,7 @@ class IntegrationJob (val config : IntegrationConfig, debugMode : Boolean = fals
         configParameters.sameAsWriter.finish
         val sameAsReader = new FileQuadReader(sameAsQuadsFile)
 
-        val clonedR2rReader = setupQuadReader(r2rReader)
+        val clonedR2rReader = setupQuadReader(r2rReader.get)
 
         val allQuads = new MultiQuadReader(clonedR2rReader, otherQuadsReader)
         val allSameAsLinks = new MultiQuadReader(linkReader, sameAsReader)
@@ -158,8 +157,11 @@ class IntegrationJob (val config : IntegrationConfig, debugMode : Boolean = fals
     LocalNode.reconfigure(config.properties)
   }
 
-  private def executeMappingPhase(config: IntegrationConfig, quadReaders: Seq[QuadReader]): QuadReader = {
-    val r2rReader: QuadReader = mapQuads(config.mappingDir, quadReaders)
+  private def executeMappingPhase(config: IntegrationConfig, quadReaders: Seq[QuadReader]): Option[QuadReader] = {
+    val r2rReader = if(config.outputPhase=="r2r")
+      mapQuads(config, quadReaders, textOutput=true)
+    else
+      mapQuads(config, quadReaders)
     log.info("Time needed to map data: " + stopWatch.getTimeSpanInSeconds + "s")
 
     r2rReader
@@ -258,8 +260,8 @@ class IntegrationJob (val config : IntegrationConfig, debugMode : Boolean = fals
   /**
    * Transforms the Quads
    */
-  private def mapQuads(mappingDir: File, readers: Seq[QuadReader]) : QuadReader = {
-    val mappingSource = new FileOrURISource(mappingDir)
+  private def mapQuads(integrationConfig: IntegrationConfig, readers: Seq[QuadReader], textOutput: Boolean = false) : Option[QuadReader] = {
+    val mappingSource = new FileOrURISource(integrationConfig.mappingDir)
     val uriGenerator = new EnumeratingURIGenerator("http://www4.wiwiss.fu-berlin.de/ldif/imported", BigInteger.ONE);
     val importedMappingModel = Repository.importMappingDataFromSource(mappingSource, uriGenerator)
     val repository = new Repository(new JenaModelSource(importedMappingModel))
@@ -274,9 +276,18 @@ class IntegrationJob (val config : IntegrationConfig, debugMode : Boolean = fals
 //     log.info("Memory used (after resetting StringPool): " + MemoryUsage.getMemoryUsage() +" MB")   //TODO: remove
     log.info("Time needed to load dump and build entities for mapping phase: " + stopWatch.getTimeSpanInSeconds + "s")
 
-    val outputFile = File.createTempFile("ldif-mapped-quads", ".bin")
-    outputFile.deleteOnExit
-    val writer = new FileQuadWriter(outputFile)
+    // Directly output into target data set file or into intermediary R2R output for next phase
+    val writer = if(textOutput) {
+      val syntax = if(integrationConfig.properties.getProperty("outputFormat", "nq").toLowerCase=="nq")
+        NQUADS
+      else
+        NTRIPLES
+      new SerializingQuadWriter(integrationConfig.outputFile, syntax)
+    } else {
+      val outputFile = File.createTempFile("ldif-mapped-quads", ".bin")
+      outputFile.deleteOnExit
+      new FileQuadWriter(outputFile)
+    }
 
     //runInBackground
     {
@@ -284,7 +295,11 @@ class IntegrationJob (val config : IntegrationConfig, debugMode : Boolean = fals
         executor.execute(r2rTask, Seq(reader), writer)
     }
     writer.finish
-    new FileQuadReader(outputFile)
+
+    if(textOutput)
+      None
+    else
+      Some(new FileQuadReader(writer.asInstanceOf[FileQuadWriter].outputFile))
   }
 
   /**
