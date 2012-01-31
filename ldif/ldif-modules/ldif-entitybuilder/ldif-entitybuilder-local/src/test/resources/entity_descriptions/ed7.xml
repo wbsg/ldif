@@ -1,0 +1,5 @@
+<EntityDescription>
+    <Restriction>
+        <Exists path="?SUBJ/&lt;http://n&gt;" />
+    </Restriction>
+</EntityDescription>

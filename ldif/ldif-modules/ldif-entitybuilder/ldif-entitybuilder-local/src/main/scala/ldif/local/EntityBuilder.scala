@@ -187,7 +187,7 @@ class EntityBuilder (entityDescriptions : IndexedSeq[EntityDescription], readers
           case Some(x:And) => getSubjSet(x)
           case Some(x:Or) => getSubjSet(x)
           case Some(x:Not) => throw new UnsupportedOperationException("Restriction operator 'Not' is not implemented, yet")  //TODO support Not operator - after M1
-          case Some(x:Exists) => throw new UnsupportedOperationException("Restriction operator 'Exists' is not implemented, yet")  //TODO support Exists operator - after M1
+          case Some(x:Exists) =>  getSubjSet(x)
           case None => allUriNodes
         }
   }
@@ -212,6 +212,19 @@ class EntityBuilder (entityDescriptions : IndexedSeq[EntityDescription], readers
     subjSet
   }
 
+  private def getSubjSet(exists : Exists) : Set[Node] = {
+    val tmpSet = new Array[Set[Node]](exists.path.operators.size)
+    for ((op,i) <- exists.path.operators.toSeq.reverse.zipWithIndex){
+      if (i==0) {
+        tmpSet(i) = evaluateOperator(op)
+      }
+      else {
+        tmpSet(i) = evaluateOperator(op,tmpSet(i-1),false)
+      }
+    }
+    tmpSet(exists.path.operators.size-1)
+  }
+
   private def getSubjSet(cond : Condition) : Set[Node]  = {
     val tmpSet = new Array[Set[Node]](cond.path.operators.size)
     for ((op,i) <- cond.path.operators.toSeq.reverse.zipWithIndex){
@@ -222,7 +235,6 @@ class EntityBuilder (entityDescriptions : IndexedSeq[EntityDescription], readers
         tmpSet(i) = evaluateOperator(op,tmpSet(i-1),false)
       }
     }
-
     tmpSet(cond.path.operators.size-1)
   }
 
@@ -233,13 +245,11 @@ class EntityBuilder (entityDescriptions : IndexedSeq[EntityDescription], readers
    * @param direction : if false, reverse evaluation (from obj to subj)
    */
   private def evaluateOperator(op : PathOperator, srcNodes : Set[Node], direction : Boolean) = {
-    var nodes = new JHashSet[Node]
+    val nodes = new JHashSet[Node]
 
     op match {
       case bo:BackwardOperator => {
-
         val prop = StringPool.getCanonicalVersion(bo.property.toString)
-
         for (srcNode <- srcNodes) {
           if (direction)
             BHT.get((srcNode, prop)) match {
@@ -269,8 +279,8 @@ class EntityBuilder (entityDescriptions : IndexedSeq[EntityDescription], readers
             }
         }
       }
-      case pf:PropertyFilter =>  //TODO support PropertyFilter - after M1
-      case lf:LanguageFilter =>  //TODO support LanguageFilter - after M1
+      case pf:PropertyFilter =>  //TODO support PropertyFilter
+      case lf:LanguageFilter =>  //TODO support LanguageFilter
     }
     nodes
   }
@@ -279,6 +289,36 @@ class EntityBuilder (entityDescriptions : IndexedSeq[EntityDescription], readers
   private def evaluateOperator(op : PathOperator, values : collection.immutable.Set[NodeTrait]) : Set[Node] =   {
     val srcNodes = HashSet(values.toArray:_*) map (n => LocalNode.intern(n))  //from immutable to mutable
     evaluateOperator(op, srcNodes, false)
+  }
+
+  // Evaluate the last path operator for an Exists condition
+  private def evaluateOperator(op : PathOperator) : Set[Node] =   {
+    val nodes = new JHashSet[Node]
+
+    op match {
+      case bo:BackwardOperator => {
+        val prop = StringPool.getCanonicalVersion(bo.property.toString)
+        for (srcNode <- allUriNodes) {
+            FHT.get((srcNode, prop)) match {
+              case Some(node) => nodes += srcNode
+              case None =>
+            }
+        }
+      }
+
+      case fo:ForwardOperator =>  {
+        val prop = StringPool.getCanonicalVersion(fo.property.toString)
+        for (srcNode <- allUriNodes)  {
+            BHT.get((srcNode, prop)) match {
+              case Some(node) => nodes += srcNode
+              case None =>
+            }
+        }
+      }
+      case pf:PropertyFilter =>  //TODO support PropertyFilter
+      case lf:LanguageFilter =>  //TODO support LanguageFilter
+    }
+    nodes
   }
 
   // Build the result table, given the seed/entity Uri and a sequence of paths
@@ -465,9 +505,11 @@ class PropertyHashTable(entityDescriptions: Seq[EntityDescription]) {
       }
       case Some(not:Not) =>
         addRestrictionProperties(Some(not.op))
-      case Some(exists:Exists) =>
+      case Some(exists:Exists) => {
         for (op <- exists.path.operators)
           updatePHT(op)
+        allUriNodesNeeded = true
+      }
       case None => {
         allUriNodesNeeded = true
       }

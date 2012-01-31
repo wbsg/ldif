@@ -36,7 +36,8 @@ object TestUtils {
     loadED(edPath + "ed3.xml"),
     loadED(edPath + "ed4.xml"),
     loadED(edPath + "ed5.xml"),
-    loadED(edPath + "ed6.xml"))
+    loadED(edPath + "ed6.xml"),
+    loadED(edPath + "ed7.xml"))
 
   def loadEDs(sourceDir : String) : IndexedSeq[EntityDescription] = {
     val dir = new File (sourceDir)
