@@ -18,26 +18,26 @@
 
 package ldif.output
 
-import org.slf4j.LoggerFactory
-import ldif.runtime.{QuadWriter, Quad}
+import ldif.runtime.{Quad, QuadWriter}
+import java.io.{FileWriter, BufferedWriter}
 
-class FileWriter(filePath : String, outputFormat : String = "nq") extends QuadWriter {
+class SerializingQuadWriter(filepath: String, val syntax: RDFSyntax) extends QuadWriter {
+  var writer:BufferedWriter = new BufferedWriter(new FileWriter(filepath))
 
-  private val log = LoggerFactory.getLogger(getClass.getName)
-
-  private val writer = new java.io.FileWriter(filePath)
-
-  override def write(quad : Quad) {
-
-    if(outputFormat == "nq")
-        writer.write(quad.toNQuadFormat + " .\n")
-     else
-        writer.write(quad.toNTripleFormat + " .\n")
+  def write(quad: Quad) = {
+    syntax match {
+      case NTRIPLES => writer.write(quad.toNTripleFormat)
+      case NQUADS => writer.write(quad.toNQuadFormat)
+    }
+    writer.write(" .\n")
   }
 
-  override def finish() {
-    writer.close()
-  }
-
-
+  def finish() = {writer.flush(); writer.close()}
 }
+
+sealed trait RDFSyntax {val name: String}
+
+case object NTRIPLES extends RDFSyntax {val name = "N-Triples" }
+
+case object NQUADS extends RDFSyntax { val name = "N-Quads"}
+

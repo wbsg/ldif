@@ -35,11 +35,11 @@ import java.math.BigInteger
 import de.fuberlin.wiwiss.r2r.{JenaModelSource, EnumeratingURIGenerator, FileOrURISource, Repository}
 import org.slf4j.LoggerFactory
 import ldif.util._
-import ldif.output.OutputWriterFactory
 import ldif.modules.sieve.fusion.{FusionModule, EmptyFusionConfig, FusionConfig}
 import ldif.modules.sieve.quality.{QualityConfig, QualityModule, EmptyQualityConfig}
 import ldif.modules.sieve.local.{SieveLocalQualityExecutor, SieveLocalFusionExecutor}
 import ldif.runtime.QuadWriter
+import ldif.output._
 
 class IntegrationJob (val config : IntegrationConfig, debugMode : Boolean = false) {
 
@@ -47,9 +47,9 @@ class IntegrationJob (val config : IntegrationConfig, debugMode : Boolean = fals
 
   // Object to store all kinds of configuration data
   private var configParameters: ConfigParameters = null
-  val stopWatch = new StopWatch
+  private val stopWatch = new StopWatch
 
-  var lastUpdate : Calendar = null
+  private var lastUpdate : Calendar = null
 
   def runIntegration {
 
@@ -118,10 +118,10 @@ class IntegrationJob (val config : IntegrationConfig, debugMode : Boolean = fals
         val allQuads = new MultiQuadReader(clonedR2rReader, otherQuadsReader)
         val allSameAsLinks = new MultiQuadReader(linkReader, sameAsReader)
 
-        var integratedReader: QuadReader = allQuads
-
+        var integratedReader: QuadReader = null
         if(config.properties.getProperty("rewriteURIs", "true").toLowerCase=="true")
           integratedReader = executeURITranslation(allQuads, allSameAsLinks, config.properties)
+        else integratedReader = new MultiQuadReader(allQuads, allSameAsLinks)
 
 //        var integratedReader: QuadReader = new MultiQuadReader(quadReaders.map{e => e}:_*)
 //
@@ -282,7 +282,7 @@ class IntegrationJob (val config : IntegrationConfig, debugMode : Boolean = fals
         NQUADS
       else
         NTRIPLES
-      new SerializingQuadWriter(integrationConfig.outputFile, syntax)
+      new SerializingQuadWriter(integrationConfig.outputFile.getCanonicalPath, syntax)
     } else {
       val outputFile = File.createTempFile("ldif-mapped-quads", ".bin")
       outputFile.deleteOnExit
@@ -495,6 +495,8 @@ class IntegrationJob (val config : IntegrationConfig, debugMode : Boolean = fals
     writer.finish
     return new FileQuadReader(writer.outputFile)
   }
+
+  def getLastUpdate = lastUpdate
 }
 
 

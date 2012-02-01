@@ -23,6 +23,7 @@ import ldif.entity.Node
 import de.fuberlin.wiwiss.silk.output.LinkWriter
 import ldif.runtime.Quad
 import de.fuberlin.wiwiss.silk.entity.Link
+import ldif.util.Consts
 
 /**
  * A Silk Link Writer which writes all links to a LDIF Quad Writer.
@@ -31,6 +32,6 @@ class LdifLinkWriter(quadWriter : QuadWriter) extends LinkWriter {
 
   def write(link: Link, predicateUri : String) {
     if(link.source!=link.target)
-      quadWriter.write(Quad(Node.createUriNode(link.source, null), predicateUri, Node.createUriNode(link.target, null), ""))
+      quadWriter.write(Quad(Node.createUriNode(link.source, null), predicateUri, Node.createUriNode(link.target, null), Consts.SILK_OUT_GRAPH))
   }
 }

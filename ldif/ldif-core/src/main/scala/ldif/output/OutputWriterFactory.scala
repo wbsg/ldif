@@ -48,10 +48,10 @@ object OutputWriterFactory {
       }
     }
 
-    else if (outputFormat == "nq" || outputFormat == "nt") {
-      new FileWriter(outputUriOrPath, outputFormat)
-    }
-
+    else if (outputFormat == "nq")
+      new SerializingQuadWriter(outputUriOrPath, NQUADS)
+    else if (outputFormat =="nt")
+      new SerializingQuadWriter(outputUriOrPath, NTRIPLES)
     else {
       log.warn("Output format not supported: "+ outputFormat )
       null
