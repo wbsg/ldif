@@ -274,10 +274,11 @@ class HadoopIntegrationJob(val config : HadoopIntegrationConfig, debug : Boolean
     var count = 0
 
     // convert output files from seq to nq
-    HadoopQuadToTextConverter.execute(outputPath, config.outputFile)
+    val tmpOutputDir = config.outputFile+"_tmp"
+    HadoopQuadToTextConverter.execute(outputPath, tmpOutputDir)
 
     var instream : FSDataInputStream = null
-    val outputDir = hdfs.listStatus(new Path(config.outputFile))
+    val outputDir = hdfs.listStatus(new Path(tmpOutputDir))
     // TODO support multiple output file
     // for (outputFile <- outputDir.filterNot(_.getPath.getName.startsWith("_"))){
     val outputFile = outputDir.filterNot(_.getPath.getName.startsWith("_")).head.getPath
