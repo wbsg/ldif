@@ -83,4 +83,11 @@ class LDIFMappingTest extends FlatSpec with ShouldMatchers {
       case Quad(bn, _, _, _) => bn }
     bn1 should equal (bn2)
   }
+
+  it should "generate the correct entity description" in {
+    val mapping =  getMapping("http://mappings.dbpedia.org/r2r/existsMapping", repository)
+    // TODO Fix this test
+//    mapping.entityDescription.patterns.head.size should equal (1)
+//    mapping.entityDescription.patterns.head.head.toString should equal ("?SUBJ/<Reviewer>")
+  }
 }

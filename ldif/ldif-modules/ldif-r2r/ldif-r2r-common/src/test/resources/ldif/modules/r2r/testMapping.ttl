@@ -19,3 +19,8 @@
       a r2r:Mapping ;
       r2r:sourcePattern "?SUBJ <p1> ?label" ;
       r2r:targetPattern "?SUBJ <metaDataOfResource> _:bn rdfs:label ?label" .
+
+   mappings:existsMapping
+      a r2r:Mapping ;
+      r2r:sourcePattern "?SUBJ a <Person> . ?o <author> ?SUBJ" ;
+      r2r:targetPattern "?SUBJ a <Reviewer>" .
