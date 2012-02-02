@@ -300,7 +300,7 @@ class EntityBuilder (entityDescriptions : IndexedSeq[EntityDescription], readers
       case bo:BackwardOperator => {
         val prop = StringPool.getCanonicalVersion(bo.property.toString)
         for (srcNode <- allUriNodes) {
-            FHT.get((srcNode, prop)) match {
+            BHT.get((srcNode, prop)) match {
               case Some(node) => nodes += srcNode
               case None =>
             }
@@ -310,7 +310,7 @@ class EntityBuilder (entityDescriptions : IndexedSeq[EntityDescription], readers
       case fo:ForwardOperator =>  {
         val prop = StringPool.getCanonicalVersion(fo.property.toString)
         for (srcNode <- allUriNodes)  {
-            BHT.get((srcNode, prop)) match {
+            FHT.get((srcNode, prop)) match {
               case Some(node) => nodes += srcNode
               case None =>
             }
@@ -483,10 +483,12 @@ class PropertyHashTable(entityDescriptions: Seq[EntityDescription]) {
   }
 
   // Find all properties from a given operator and add those to the property hash table
-  private def updatePHT(op: PathOperator) {
+  private def updatePHT(op: PathOperator, reverse: Boolean = true) {
     op match {
-      case op: ForwardOperator => updatePHT(op.property.toString, PropertyType.BACK)
-      case op: BackwardOperator => updatePHT(op.property.toString, PropertyType.FORW)
+      case op: ForwardOperator => if(reverse) updatePHT(op.property.toString, PropertyType.BACK)
+        else updatePHT(op.property.toString, PropertyType.FORW)
+      case op: BackwardOperator => if(reverse) updatePHT(op.property.toString, PropertyType.FORW)
+        else updatePHT(op.property.toString, PropertyType.BACK)
       case _ =>
     }
   }
@@ -508,7 +510,7 @@ class PropertyHashTable(entityDescriptions: Seq[EntityDescription]) {
         addRestrictionProperties(Some(not.op))
       case Some(exists:Exists) => {
         for (op <- exists.path.operators)
-          updatePHT(op)
+          updatePHT(op, false)
         allUriNodesNeeded = true
       }
       case None => {
