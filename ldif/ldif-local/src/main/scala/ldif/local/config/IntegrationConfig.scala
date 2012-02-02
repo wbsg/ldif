@@ -54,10 +54,10 @@ object IntegrationConfig
       outputPhase = "complete"
 
     IntegrationConfig(
-      sources = getFile(xml, "sources", baseDir),
-      linkSpecDir = getFile(xml, "linkSpecifications", baseDir),
-      mappingDir = getFile(xml, "mappings", baseDir),
-      sieveSpecDir = getFile(xml, "fusion", baseDir),
+      sources = getFile(xml, "sources", baseDir, properties),
+      linkSpecDir = getFile(xml, "linkSpecifications", baseDir, properties),
+      mappingDir = getFile(xml, "mappings", baseDir, properties),
+      sieveSpecDir = getFile(xml, "fusion", baseDir, properties),
       outputFile = new File(xml \ "output" text),
       outputPhase = outputPhase,
       properties = properties,
@@ -65,7 +65,7 @@ object IntegrationConfig
     )
   }
 
-  private def getFile (xml : Node, key : String, baseDir : String) : File = {
+  private def getFile (xml : Node, key : String, baseDir : String, properties: Properties = null ) : File = {
     val value : String = (xml \ key text)
     var file : File = null
     if (value != ""){
@@ -81,6 +81,8 @@ object IntegrationConfig
       }
     }
     else{
+      if(properties != null)
+        properties.setProperty(key + ".skip", "true")
       log.warn("\'"+key+"\' is not defined in the IntegrationJob config")
     }
     file

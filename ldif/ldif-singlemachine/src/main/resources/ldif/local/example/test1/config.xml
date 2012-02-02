@@ -8,6 +8,6 @@
   <quality></quality>
   <fusion></fusion>
   <output>output_minimal</output>
-  <outputPhase>r2r</outputPhase>
+  <!--<outputPhase>r2r</outputPhase>-->
   <runSchedule>onStartup</runSchedule>
 </integrationJob>

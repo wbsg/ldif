@@ -38,9 +38,9 @@
 
                 <xs:element ref="ldif:complexSource" maxOccurs="unbounded"/>
 
-                <xs:element name="linkSpecifications" type="xs:string" />
+                <xs:element name="linkSpecifications" type="xs:string" minOccurs="0"/>
 
-                <xs:element name="mappings" type="xs:string" />
+                <xs:element name="mappings" type="xs:string" minOccurs="0"/>
 
                 <xs:element name="quality" type="xs:string" />
 
