@@ -1,14 +1,22 @@
 <?xml version="1.0" encoding="utf-8"  ?>
 <Sieve xmlns="http://www4.wiwiss.fu-berlin.de/ldif/">
     <Prefixes>
-        <Prefix id="rdfs" namespace="http://www.w3.org/2000/01/rdf-schema#"/>
-        <Prefix id="dbpedia" namespace="http://dbpedia.org/ontology/"/>
         <Prefix id="gn" namespace="http://www.geonames.org/ontology#"/>
+        <Prefix id="foaf" namespace="http://xmlns.com/foaf/0.1/"/>
+        <Prefix id="dbpedia-owl" namespace="http://dbpedia.org/ontology/"/>
+        <Prefix id="dbpedia" namespace="http://dbpedia.org/resource/"/>
+        <Prefix id="genes" namespace="http://wiking.vulcan.com/neurobase/kegg_genes/resource/vocab/"/>
+        <Prefix id="smwprop" namespace="http://mywiki/resource/property/"/>
+        <Prefix id="smwcat" namespace="http://mywiki/resource/category/"/>
+        <Prefix id="wiki" namespace="http://www.example.com/smw#"/>
+        <Prefix id="ldif" namespace="http://www4.wiwiss.fu-berlin.de/ldif/"/>
+        <Prefix id="xsd" namespace="http://www.w3.org/2001/XMLSchema#"/>
+        <Prefix id="rdf" namespace="http://www.w3.org/1999/02/22-rdf-syntax-ns#"/>
+        <Prefix id="rdfs" namespace="http://www.w3.org/2000/01/rdf-schema#"/>
+        <Prefix id="owl" namespace="http://www.w3.org/2002/07/owl#"/>
     </Prefixes>
 
     <QualityAssessment name="Prefer new information from authors with good rating" description="The idea is to BlaBla">
-
-        <AggregateMetric id="sieve:believability" class="Average">
 
             <AssessmentMetric id="sieve:recency">
                 <ScoringFunction class="TimeCloseness">
@@ -17,17 +25,12 @@
                 </ScoringFunction>
             </AssessmentMetric>
 
-            <AssessmentMetric id="sieve:reputation">
-                <ScoringFunction class="TidalTrustRating">
-                    <EnvironmentVariable name="user" value="http://URIofTheUser"/>
-                    <!--Get the author of the graph -->
-                    <Input path="?GRAPH/dc:author"/>
-                    <!--Get the ratings -->
-                    <Input query="Select ?rater, ?ratedObject, ?rating FROM http://graphURI PATTERN {}"/>
-                </ScoringFunction>
-            </AssessmentMetric>
+        <AssessmentMetric id="sieve:recency">
+        <ScoringFunction class="ScoredList">
+            <Param name="list" value="en.wikipedia.org pt.wikipedia.org es.wikipedia.org"/>
+        </ScoringFunction>
+        </AssessmentMetric>
 
-        </AggregateMetric>
     </QualityAssessment>
 
     <Fusion name="Fusion strategy for DBpedia City Entities"
