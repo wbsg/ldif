@@ -99,6 +99,10 @@ object SourcePatternToEntityDescriptionTransformer {
           var node: entity.Node = null
           if(parsedNode.nodeType==URINODE)
             node = entity.Node.createUriNode(parsedNode.value, "")
+          else if(parsedNode.nodeType==TYPEDLITERAL)
+            node = entity.Node.createTypedLiteral(parsedNode.value, parsedNode.datatype(), "")
+          else if(parsedNode.nodeType==LANGUAGELITERAL)
+            node = entity.Node.createLanguageLiteral(parsedNode.value, parsedNode.language, "")
           else
             node = entity.Node.createLiteral(parsedNode.value, "")
           restrictions = Condition(Path("SUBJ",path), Set(node)) :: restrictions

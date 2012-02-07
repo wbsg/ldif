@@ -57,6 +57,8 @@ class HadoopQuadToTextConverter extends Configured with Tool {
 
     val out = new Path(args(1))
     FileOutputFormat.setOutputPath(job, out)
+    // disable output compression
+    FileOutputFormat.setCompressOutput(job, false)
 
     JobClient.runJob(job)
 

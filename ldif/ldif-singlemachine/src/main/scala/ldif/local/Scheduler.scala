@@ -166,7 +166,7 @@ class Scheduler (val config : SchedulerConfig, debug : Boolean = false) {
 
   /* Check if an update is required for the integration job */
   def checkUpdate(job : IntegrationJob = integrationJob) : Boolean = {
-    checkUpdate(job.config.runSchedule, job.lastUpdate)
+    checkUpdate(job.config.runSchedule, job.getLastUpdate)
   }
 
   /* Check if an update is required for the import job */

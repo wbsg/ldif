@@ -8,7 +8,7 @@ integrated*
 *.iml
 ldif-0.*
 .idea
-output*
+#output*
 ldif-modules/ldif-r2r/ldif-r2r-common/*.sh
 ldif-modules/ldif-r2r/ldif-r2r-local/src/test/resources/ldif.modules.r2r/.testMapping.ttl.swp
 new
@@ -22,3 +22,4 @@ pom.xml.bak
 *.log
 stdout
 stderr
+*.zip

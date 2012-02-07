@@ -43,24 +43,25 @@ import org.apache.hadoop.fs.{FileSystem, Path, FSDataInputStream}
 class HadoopIntegrationJob(val config : HadoopIntegrationConfig, debug : Boolean = false) {
 
   private val log = LoggerFactory.getLogger(getClass.getName)
-  val stopWatch = new StopWatch
+  private val stopWatch = new StopWatch
 
-  var lastUpdate : Calendar = null
+  private var lastUpdate : Calendar = null
 
-  val conf = new Configuration
-  val hdfs = FileSystem.get(conf)
+  private val conf = new Configuration
+  private val hdfs = FileSystem.get(conf)
 
-  val useExternalSameAsLinks = config.properties.getProperty("useExternalSameAsLinks", "true").toLowerCase=="true"
-  val outputAllQuads = config.properties.getProperty("output", "mapped-only").toLowerCase=="all"
-  val rewriteUris = config.properties.getProperty("rewriteURIs", "true").toLowerCase=="true"
-  val uriMinting = config.properties.getProperty("uriMinting", "false").toLowerCase=="true"
-  val ignoreProvenance = config.properties.getProperty("outputFormat", "nq").toLowerCase=="nt"
+  private val useExternalSameAsLinks = config.properties.getProperty("useExternalSameAsLinks", "true").toLowerCase=="true"
+  private val outputAllQuads = config.properties.getProperty("output", "mapped-only").toLowerCase=="all"
+  private val rewriteUris = config.properties.getProperty("rewriteURIs", "true").toLowerCase=="true"
+  private val uriMinting = config.properties.getProperty("uriMinting", "false").toLowerCase=="true"
+  private val outputFormat = config.properties.getProperty("outputFormat", "nq").toLowerCase
+  private val ignoreProvenance = !(outputFormat=="nq" || outputFormat=="sparql")
 
-  val externalSameAsLinksDir = clean("sameAsFromSources")
+  private val externalSameAsLinksDir = clean("sameAsFromSources")
   // Contains quads that are not processed but must be added to the output
-  val allQuadsDir = clean("allQuads")
+  private val allQuadsDir = clean("allQuads")
   // Contains provenance quads
-  val provenanceQuadsDir = clean("provenanceQuads")
+  private val provenanceQuadsDir = clean("provenanceQuads")
 
   def runIntegration() {
 
@@ -78,10 +79,16 @@ class HadoopIntegrationJob(val config : HadoopIntegrationConfig, debug : Boolean
     // Execute mapping phase
     val r2rOutput = mapQuads()
     log.info("Time needed to map data: " + stopWatch.getTimeSpanInSeconds + "s")
+    if(config.outputPhase=="r2r") {
+      writeOutput(r2rOutput)
+      lastUpdate = Calendar.getInstance
+      return
+    }
 
     // Execute linking phase
     val silkOutput = generateLinks(r2rOutput)
     log.info("Time needed to link data: " + stopWatch.getTimeSpanInSeconds + "s")
+    // TODO: Add logic for outputPhase=="silk"
 
     // Prepare data to be translated
     move(allQuadsDir, r2rOutput)
@@ -263,15 +270,15 @@ class HadoopIntegrationJob(val config : HadoopIntegrationConfig, debug : Boolean
   }
 
   private def writeOutput(outputPath : String)    {
-    var outputFormat = config.properties.getProperty("outputFormat", "nq").toLowerCase
 
     var count = 0
 
     // convert output files from seq to nq
-    HadoopQuadToTextConverter.execute(outputPath, config.outputFile)
+    val tmpOutputDir = config.outputFile+"_tmp"
+    HadoopQuadToTextConverter.execute(outputPath, tmpOutputDir)
 
     var instream : FSDataInputStream = null
-    val outputDir = hdfs.listStatus(new Path(config.outputFile))
+    val outputDir = hdfs.listStatus(new Path(tmpOutputDir))
     // TODO support multiple output file
     // for (outputFile <- outputDir.filterNot(_.getPath.getName.startsWith("_"))){
     val outputFile = outputDir.filterNot(_.getPath.getName.startsWith("_")).head.getPath
@@ -281,13 +288,13 @@ class HadoopIntegrationJob(val config : HadoopIntegrationConfig, debug : Boolean
     val lines = scala.io.Source.fromInputStream(instream).getLines
     val parser = new QuadParser
 
-    val writer = OutputWriterFactory.getWriter(outputFormat, config.properties)
+    val writer = OutputWriterFactory.getWriter(config.properties, config.outputFile)
     if (writer != null) {
       for (quad <- lines.toTraversable.map(parser.parseLine(_))){
         writer.write(quad)
         count += 1
       }
-      writer.close
+      writer.finish
     }
 
     log.info(count + " Quads written")
@@ -317,6 +324,8 @@ class HadoopIntegrationJob(val config : HadoopIntegrationConfig, debug : Boolean
     // remove the source
     clean(from)
   }
+
+  def getLastUpdate = lastUpdate
 
 }
 

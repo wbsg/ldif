@@ -23,7 +23,7 @@ import com.ontologycentral.ldspider.Crawler.Mode
 import com.ontologycentral.ldspider.frontier.BasicFrontier
 import java.net.{URISyntaxException, URI}
 import org.slf4j.LoggerFactory
-import ldif.local.runtime.QuadWriter
+import ldif.runtime.QuadWriter
 import com.ontologycentral.ldspider.hooks.links.LinkFilterSelect
 import org.semanticweb.yars.nx.{Resource, Node}
 import com.ontologycentral.ldspider.hooks.sink.SinkCallback

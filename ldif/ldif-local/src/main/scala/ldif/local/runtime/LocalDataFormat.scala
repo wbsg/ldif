@@ -20,6 +20,7 @@ package ldif.local.runtime
 
 import ldif.module.DataFormat
 import ldif.entity.EntityDescription
+import ldif.runtime.QuadWriter
 
 trait LocalDataFormat extends DataFormat
 

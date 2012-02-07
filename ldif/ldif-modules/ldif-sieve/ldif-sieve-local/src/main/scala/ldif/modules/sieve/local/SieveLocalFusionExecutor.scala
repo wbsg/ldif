@@ -23,6 +23,7 @@ import org.slf4j.LoggerFactory
 import ldif.runtime.Quad
 import ldif.entity.Entity
 import ldif.modules.sieve.fusion.{FusionTask, FusionFunction}
+import ldif.runtime.QuadWriter
 
 /**
  * Executes Sieve Data Fusion on a local machine.

@@ -27,7 +27,7 @@ package de.fuberlin.wiwiss.r2r
  */
 
 import ldif.entity.{NodeTrait, Node}
-import ldif.local.runtime.QuadWriter      //TODO refactor to not use local classes
+import ldif.runtime.QuadWriter
 import de.fuberlin.wiwiss.r2r.TripleElement.Type
 import scala.collection.JavaConversions._
 import de.fuberlin.wiwiss.r2r.functions.HelperFunctions
@@ -152,10 +152,11 @@ class LDIFTargetPattern(targetPattern: TargetPattern) extends TargetPattern(targ
       case Type.VARIABLE => {
         val varName = tripleElement.getValue(0)
         val nodes = results.getResults(varName)
-        for(node <- nodes.get) {
+        for(node <- nodes.get)
           if(node.isResource)
             subjects = node :: subjects
-        }
+          else
+            subjects = Node.createUriNode(node.value, node.graph) :: subjects
       }
       case Type.IRIVARIABLE => {
         val varName = tripleElement.getValue(0)

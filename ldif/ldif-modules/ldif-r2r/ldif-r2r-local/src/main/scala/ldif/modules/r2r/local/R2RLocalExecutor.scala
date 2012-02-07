@@ -28,7 +28,8 @@ package ldif.modules.r2r.local
 
 import ldif.module.Executor
 import ldif.modules.r2r._
-import ldif.local.runtime.{GraphFormat, StaticEntityFormat, QuadWriter, EntityReader}
+import ldif.local.runtime.{GraphFormat, StaticEntityFormat, EntityReader}
+import ldif.runtime.QuadWriter
 import collection.mutable.ArrayBuffer
 import ldif.entity.Entity
 import org.slf4j.LoggerFactory

@@ -35,13 +35,15 @@ object ConfigValidator {
 
   def validateConfiguration(config: IntegrationConfig): Boolean = {
     var fail = false
+    val skipSilk = config.properties.getProperty("linkSpecifications.skip", "false")=="true"
+    val skipR2R = config.properties.getProperty("mappings.skip", "false")=="true"
 
     try {
-      val r2rMappingsErrors = validateMappingFile(config.mappingDir)
+      val r2rMappingsErrors = validateMappingFile(config.mappingDir, skipR2R)
       var sourceFileErrors : Map[String, Seq[Pair[Int, String]]] = null
       if(r2rMappingsErrors._1!="Ok")
         fail = true
-      validateSilkLinkSpecs(config.linkSpecDir)
+      validateSilkLinkSpecs(config.linkSpecDir, skipSilk)
 
       val sourceValidation = config.properties.getProperty("validateSources")
       val discardFaultyQuads = config.properties.getProperty("discardFaultyQuads", "false").toLowerCase=="true"
@@ -110,7 +112,9 @@ object ConfigValidator {
     return errorMap
   }
 
-  def validateMappingFile(mappingFile: File): Pair[String, Map[String, String]] = {
+  def validateMappingFile(mappingFile: File, skip: Boolean): Pair[String, Map[String, String]] = {
+    if(skip)
+      return ("Ok", null)
     var mappingFileErrors: Pair[String, Map[String, String]] = null
 
     try {
@@ -126,7 +130,7 @@ object ConfigValidator {
     return mappingFileErrors
   }
 
-  def validateSilkLinkSpecs(linkSpecsDir: File) {
+  def validateSilkLinkSpecs(linkSpecsDir: File, skip: Boolean) {
     // TODO: Implement
   }
 }

@@ -17,6 +17,14 @@
         </xs:restriction>
     </xs:simpleType>
 
+    <xs:simpleType name="outputPhaseType">
+        <xs:restriction base="xs:normalizedString">
+            <xs:enumeration value="r2r"/>
+            <xs:enumeration value="silk"/>
+            <xs:enumeration value="complete"/>
+        </xs:restriction>
+    </xs:simpleType>
+
     <xs:element name="complexSource" abstract="true" />
 
     <xs:element name="source" type="xs:string" substitutionGroup="ldif:complexSource"/>
@@ -30,15 +38,17 @@
 
                 <xs:element ref="ldif:complexSource" maxOccurs="unbounded"/>
 
-                <xs:element name="linkSpecifications" type="xs:string" />
+                <xs:element name="linkSpecifications" type="xs:string" minOccurs="0"/>
 
-                <xs:element name="mappings" type="xs:string" />
+                <xs:element name="mappings" type="xs:string" minOccurs="0"/>
 
                 <xs:element name="quality" type="xs:string" />
 
                 <xs:element name="fusion" type="xs:string" />
 
                 <xs:element name="output" type="xs:string" />
+
+                <xs:element name="outputPhase" type="ldif:outputPhaseType" minOccurs="0" default="complete" />
 
                 <xs:element name="runSchedule" type="ldif:runScheduleType" minOccurs="0" />
 

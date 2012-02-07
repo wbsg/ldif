@@ -1,5 +1,3 @@
-package ldif.runtime.impl
-
 /*
  * LDIF
  *
@@ -18,7 +16,8 @@ package ldif.runtime.impl
  * limitations under the License.
  */
 
-import ldif.runtime.Quad
+package ldif.runtime.impl
+
 import java.io.{File, FileOutputStream, BufferedOutputStream, ObjectOutputStream}
 import java.util.zip.GZIPOutputStream
 
@@ -34,9 +33,9 @@ class FileObjectWriter[T <: AnyRef](val outputFile: File, val endObject: T, val 
   var counter = 0
   var objectOutput: ObjectOutputStream = null
 
-  def finish = { write(endObject); objectOutput.reset(); objectOutput.flush(); objectOutput.close()}
+  def finish() { write(endObject); objectOutput.reset(); objectOutput.flush(); objectOutput.close()}
 
-  def write(obj: T) = {
+  def write(obj: T) {
     // to reduce number of open files
     if(objectOutput==null) openStream()
 

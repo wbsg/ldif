@@ -25,6 +25,7 @@
                 </ScoringFunction>
             </AssessmentMetric>
 
+
         <AssessmentMetric id="sieve:recency">
         <ScoringFunction class="ScoredList">
             <Param name="list" value="en.wikipedia.org pt.wikipedia.org es.wikipedia.org"/>

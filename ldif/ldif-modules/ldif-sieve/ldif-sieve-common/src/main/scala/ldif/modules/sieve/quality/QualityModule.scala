@@ -19,6 +19,7 @@ package ldif.modules.sieve.quality
 import ldif.module.Module
 import java.io.File
 import org.slf4j.LoggerFactory
+import ldif.modules.sieve.SieveConfig
 
 /**
  * Sieve Quality Assessment Module.
@@ -54,7 +55,7 @@ object QualityModule
 
     if(file!=null && file.isFile)
     {
-      QualityConfig.load(file)
+      SieveConfig.load(file).qualityConfig
     }
     else if(file!=null && file.isDirectory && file.listFiles.size > 0)
     {

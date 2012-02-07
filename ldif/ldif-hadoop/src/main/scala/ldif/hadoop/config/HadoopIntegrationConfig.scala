@@ -24,7 +24,7 @@ import org.slf4j.LoggerFactory
 import xml.{Node, XML}
 import ldif.util.{ConfigProperties, Consts, ValidatingXMLReader}
 
-case class HadoopIntegrationConfig(sources : String, linkSpecDir : File, mappingDir : File, sieveSpecDir : File, outputFile : String,  properties : Properties, runSchedule : String) {}
+case class HadoopIntegrationConfig(sources : String, linkSpecDir : File, mappingDir : File, sieveSpecDir : File, outputFile : String, outputPhase: String = "complete",  properties : Properties, runSchedule : String) {}
 
 object HadoopIntegrationConfig
 {
@@ -49,12 +49,17 @@ object HadoopIntegrationConfig
     if (runSchedule == "" || runSchedule == null)
       runSchedule = "onStartup"
 
+    var outputPhase: String = (xml \ "outputPhase" text)
+    if (outputPhase == "" || outputPhase == null)
+      outputPhase = "complete"
+
     HadoopIntegrationConfig(      //TODO validation
       sources = (xml \ "sources" text),
       linkSpecDir = getFile(xml, "linkSpecifications", baseDir),
       mappingDir = getFile(xml, "mappings", baseDir),
       sieveSpecDir = getFile(xml, "fusion", baseDir),
       outputFile = (xml \ "output" text),
+      outputPhase = outputPhase,
       properties = properties,
       runSchedule = runSchedule
     )

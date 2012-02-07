@@ -22,6 +22,7 @@ import ldif.datasources.dump.DumpTask
 import ldif.module.Executor
 import ldif.local.runtime._
 import java.io.{BufferedReader, InputStreamReader}
+import ldif.runtime.QuadWriter
 
 /**
  * Executor for the dump data source.

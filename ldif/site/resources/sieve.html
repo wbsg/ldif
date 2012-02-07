@@ -377,13 +377,13 @@ In order to output a clean value for each property, it applies fusion fuctions i
   &lt;Fusion name="Fusion strategy for DBpedia City Entities" description="The idea is to use values from multiple DBpedia languages to improve the quality of data about cities."&gt;
         &lt;Class name="dbpedia:City"&gt;
           &lt;Property name="dbpedia:areaTotal"&gt;
-                 &lt;FusionFunction name="KeepValueWithHighestScore" metric="sieve:lastUpdated" /&gt;
+                 &lt;FusionFunction class="KeepValueWithHighestScore" metric="sieve:lastUpdated" /&gt;
           &lt;/Property&gt;
           &lt;Property name="dbpedia:population"&gt;
-                 &lt;FusionFunction name="AverageValue" /&gt;
+                 &lt;FusionFunction class="AverageValue" /&gt;
           &lt;/Property&gt;
           &lt;Property name="dbpedia:name"&gt;
-                 &lt;FusionFunction name="KeepValueWithHighestScore" metric="sieve:reputation" /&gt;
+                 &lt;FusionFunction class="KeepValueWithHighestScore" metric="sieve:reputation" /&gt;
           &lt;/Property&gt;
        &lt;/Class&gt;
   &lt;/Fusion&gt;
@@ -405,6 +405,24 @@ trait FusionFunction
 </li>
 </ul>
 
+<h3 id="fusionfunctions">Available Fusion Functions</h3>
+
+<p>The currently implemented fusion functions are:</p>
+<ul>
+  <li><i>Filter</i>: removes all values for which the input quality assessment metric is below a given threshold.
+<pre>
+ &lt;FusionFunction class="Filter" metric="sieve:reputation"&gt;
+   &lt;Param name="threshold" value="0.85"&gt;
+ &lt;/FusionFunction&gt;
+</pre> 
+  </li>
+  <li><i>KeepSingleValueByQualityScore</i>:
+<pre>
+ &ltFusionFunction class="KeepSingleValueByQualityScore" metric="sieve:reputation"/&gt;
+</pre> 
+ </li>
+ <li><i>Average</i>: takes the average of all input data for a given property.</li>
+</ul>
 <!--h2 id="examples">5. Examples</h2>
 <p>This section provides a Sieve usage example.</p-->
 

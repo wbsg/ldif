@@ -226,7 +226,7 @@ class EntityDescriptionToSparqlConverter {
         return andBuilder.toString()
       }
       case Condition(path, values) => {
-         return processCondition(path, values, resourceFunction)
+        return processCondition(path, values, resourceFunction)
       }
       case Or(children) => {
         val orBuilder = new StringBuilder
@@ -236,12 +236,39 @@ class EntityDescriptionToSparqlConverter {
         orBuilder.append(unionString).append(" } ")
         return orBuilder.toString
       }
+      case Exists(path) => {
+        return processExists(path, resourceFunction)
+      }
       case _ => throw new UnsupportedOperationException("Restriction operator " + operator + "is not implemented, yet")
     }
   }
 
+  private def processExists(path: Path, resourceFunction:() => String): String = {
+    return processExistsPath(EntityDescriptionToSparqlConverter.entityVar, path.operators, resourceFunction)
+  }
+
   private def processCondition(path: Path, values: Set[NodeTrait], resourceFunction:() => String): String = {
     return processConditionPath(EntityDescriptionToSparqlConverter.entityVar, path.operators, values, resourceFunction)
+  }
+
+  // return the SPARQL string representation of an Exists path
+  private def processExistsPath(resource: String, path: List[PathOperator], resourceFunction: () => String): String = {
+    val pathSB = new StringBuilder
+    path match {
+      case operator::Nil => {
+        val nextResource = resourceFunction()
+        return createNamedGraphedTripleOutOfOperator(resource, operator, nextResource, resourceFunction, 0 to (entityGraphVars.size-1))
+      }
+      case operator::rest => {
+        val pathSB = new StringBuilder
+        val nextResource = resourceFunction()
+        pathSB.append(createNamedGraphedTripleOutOfOperator(resource, operator, nextResource, resourceFunction, 0 to (entityGraphVars.size-1)))
+        pathSB.append(processExistsPath(nextResource, rest, resourceFunction))
+
+        return pathSB.toString
+      }
+      case Nil => return ""
+    }
   }
 
   // return the SPARQL string representation of a Condition path

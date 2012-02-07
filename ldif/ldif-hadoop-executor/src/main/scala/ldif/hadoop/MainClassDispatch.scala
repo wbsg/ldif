@@ -16,17 +16,20 @@ object MainClassDispatcher {
       exitDispatcher
     }
     val app = args(0)
+    val parameters = args.slice(1, args.length)
     app match {
-      case "scheduler" => Ldif.main(args.slice(1, args.length))
-      case "integrate" => HadoopIntegrationJob.main(args.slice(1, args.length))
+      case "scheduler" => Ldif.main(parameters)
+      case "integrate" => HadoopIntegrationJob.main(parameters)
+      case "urisets" => UriSets.execute(parameters)
       case _ => System.err.println("Error: command " + app + " invalid.")
         exitDispatcher
     }
   }
 
   private def exitDispatcher {
-    System.err.println("Usage: hadoop jar ldif-hadoop-executor* scheduler <schedulerConfig>")
-    System.err.println("OR     hadoop jar ldif-hadoop-executor* integrate <integrationJobConfig>")
+    System.err.println("Usages: hadoop jar ldif-hadoop-executor* scheduler <schedulerConfig>")
+    System.err.println("        hadoop jar ldif-hadoop-executor* integrate <integrationJobConfig>")
+    System.err.println("        hadoop jar ldif-hadoop-executor* urisets <input path> <output path>")
     System.exit(1)
   }
 }

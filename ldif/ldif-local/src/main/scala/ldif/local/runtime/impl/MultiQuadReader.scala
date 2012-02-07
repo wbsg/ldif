@@ -73,6 +73,7 @@ class MultiQuadReader(quadReaders: QuadReader*) extends ClonableQuadReader {
     for(quadReader <- quadReaders) {
       quadReader match {
         case qr: ClonableQuadReader => readers.append(qr.cloneReader)
+        case qr if (!qr.hasNext) => // If reader is empty don't clone it
         case qr => throw new RuntimeException("No ClonableQuadReader implementation: " + qr.getClass)
       }
     }

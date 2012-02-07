@@ -30,6 +30,7 @@ import de.fuberlin.wiwiss.silk.entity.{EntityDescription => SilkEntityDescriptio
 import de.fuberlin.wiwiss.silk.util.DPair
 import de.fuberlin.wiwiss.silk.cache.{FileEntityCache, MemoryEntityCache}
 import de.fuberlin.wiwiss.silk.config.RuntimeConfig
+import ldif.runtime.QuadWriter
 
 /**
  * Executes Silk on a local machine.

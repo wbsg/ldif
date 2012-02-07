@@ -19,6 +19,7 @@ package ldif.modules.sieve.fusion
 import ldif.module.Module
 import java.io.File
 import org.slf4j.LoggerFactory
+import ldif.modules.sieve.SieveConfig
 
 /**
  * Sieve Module.
@@ -54,7 +55,7 @@ object FusionModule
 
     if(file!=null && file.isFile)
     {
-      FusionConfig.load(file)
+      SieveConfig.load(file).fusionConfig
     }
     else if(file!=null && file.isDirectory && file.listFiles.size > 0)
     {

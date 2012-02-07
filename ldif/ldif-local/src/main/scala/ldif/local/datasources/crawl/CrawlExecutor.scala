@@ -21,6 +21,7 @@ package ldif.local.datasources.crawl
 import ldif.module.Executor
 import ldif.local.runtime._
 import ldif.datasources.crawl.CrawlTask
+import ldif.runtime.QuadWriter
 
 /**
  * Executor for the crawling data source.

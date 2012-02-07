@@ -128,6 +128,7 @@ class EBLocalTest extends FlatSpec with ShouldMatchers
         eqs(4).size should equal (9)
         eqs(5).size should equal (9)
         eqs(6).size should equal (3)
+        eqs(7).size should equal (1)
       } else {
         eqs(0).size should equal (4)
         eqs(1).size should equal (1)
@@ -136,6 +137,7 @@ class EBLocalTest extends FlatSpec with ShouldMatchers
         eqs(4).size should equal (1)
         eqs(5).size should equal (1)
         eqs(6).size should equal (3)
+        eqs(7).size should equal (1)
       }
     }
   }
@@ -227,6 +229,15 @@ class EBLocalTest extends FlatSpec with ShouldMatchers
       // Vector(Vector()))
       while(eqs(6).hasNext){
         val entity = eqs(6).read
+        entity.factums(0).size should equal (1)
+        entity.factums(0).head.size should equal (0)
+      }
+
+      // EntityDescription(Restriction(Some(Exists(?SUBJ/http://n))),
+      // Vector(Vector()))
+      while(eqs(7).hasNext){
+        val entity = eqs(7).read
+        entity.resource.value should equal ("http://o1")
         entity.factums(0).size should equal (1)
         entity.factums(0).head.size should equal (0)
       }

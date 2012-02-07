@@ -1,5 +1,3 @@
-package ldif.local.runtime.impl
-
 /*
  * LDIF
  *
@@ -18,9 +16,10 @@ package ldif.local.runtime.impl
  * limitations under the License.
  */
 
-import ldif.local.runtime.QuadWriter
+package ldif.local.runtime.impl
+
+import ldif.runtime.QuadWriter
 import java.io.File
-import java.io.{ObjectOutputStream, FileOutputStream, BufferedOutputStream}
 import ldif.runtime.Quad
 import ldif.runtime.impl.FileObjectWriter
 

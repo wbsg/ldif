@@ -18,15 +18,26 @@
 
 package ldif.output
 
-import ldif.runtime.Quad
+import ldif.runtime.{Quad, QuadWriter}
+import java.io.{FileWriter, BufferedWriter}
 
-/**
- *  Abstraction for output writers
- **/
+class SerializingQuadWriter(filepath: String, val syntax: RDFSyntax) extends QuadWriter {
+  var writer:BufferedWriter = new BufferedWriter(new FileWriter(filepath))
 
-trait OutputWriter {
+  def write(quad: Quad) = {
+    syntax match {
+      case NTRIPLES => writer.write(quad.toNTripleFormat)
+      case NQUADS => writer.write(quad.toNQuadFormat)
+    }
+    writer.write(" .\n")
+  }
 
-  def write (quad : Quad) {}
-
-  def close ()  {}
+  def finish() = {writer.flush(); writer.close()}
 }
+
+sealed trait RDFSyntax {val name: String}
+
+case object NTRIPLES extends RDFSyntax {val name = "N-Triples" }
+
+case object NQUADS extends RDFSyntax { val name = "N-Quads"}
+

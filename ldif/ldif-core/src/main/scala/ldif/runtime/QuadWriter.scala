@@ -16,12 +16,10 @@
  * limitations under the License.
  */
 
-package ldif.local.runtime
-
-import ldif.runtime.Quad
+package ldif.runtime
 
 trait QuadWriter
 {
   def write(quad : Quad)
-  def finish
+  def finish()
 }
