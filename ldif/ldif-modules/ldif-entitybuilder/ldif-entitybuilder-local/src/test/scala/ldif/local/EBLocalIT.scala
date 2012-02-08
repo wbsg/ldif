@@ -32,7 +32,7 @@ import runtime.{EntityReader, EntityWriter, ConfigParameters}
  */
 
 @RunWith(classOf[JUnitRunner])
-class EBLocalTest extends FlatSpec with ShouldMatchers
+class EBLocalIT extends FlatSpec with ShouldMatchers
 {
   testInMemory
   testInMemoryPlusFiles
