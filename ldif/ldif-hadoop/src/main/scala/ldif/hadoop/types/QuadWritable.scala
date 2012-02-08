@@ -22,6 +22,7 @@ import ldif.runtime.Quad
 import org.apache.hadoop.io.{Writable, Text}
 import java.io.{File, DataOutput, DataInput}
 import ldif.entity.{Node, NodeWritable}
+import ldif.util.NTriplesStringConverter
 
 /**
  * Created by IntelliJ IDEA.
@@ -35,6 +36,30 @@ class QuadWritable(var subject: NodeWritable, var property: Text, var obj: NodeW
   def this() {this(new NodeWritable(), new Text(), new NodeWritable(), new Text())}
 
   def this(quad: Quad) {this(new NodeWritable(quad.subject), new Text(quad.predicate), new NodeWritable(quad.value), new Text(quad.graph))}
+
+    def toNQuadFormat = {
+    val sb = new StringBuilder
+    sb ++= subject.toNQuadsFormat
+    sb ++= " <"
+    sb ++= NTriplesStringConverter.convertToEscapedString(property.toString)
+    sb ++= "> "
+    sb ++= obj.toNQuadsFormat
+    sb ++= " <"
+    sb ++= NTriplesStringConverter.convertToEscapedString(graph.toString)
+    sb ++= "> ."
+    sb.toString
+  }
+
+  def toNTripleFormat = {
+    val sb = new StringBuilder
+    sb ++= subject.toNTriplesFormat
+    sb ++= " <"
+    sb ++= NTriplesStringConverter.convertToEscapedString(property.toString)
+    sb ++= "> "
+    sb ++= obj.toNTriplesFormat
+    sb ++= " ."
+    sb.toString
+  }
 
   def write(out: DataOutput) {
     subject.write(out)
@@ -50,10 +75,7 @@ class QuadWritable(var subject: NodeWritable, var property: Text, var obj: NodeW
     graph.readFields(in)
   }
 
-  override def toString: String = {
-    val sb = new StringBuilder
-    sb.append(subject.toNQuadsFormat).append(" <").append(property.toString).append("> ").append(obj.toNQuadsFormat).append(" <").append(graph.toString).append("> .").toString()
-  }
+  override def toString: String = toNQuadFormat
 
   override def hashCode: Int = {
     var code = subject.value.hashCode()

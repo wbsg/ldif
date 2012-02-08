@@ -18,7 +18,6 @@
 
 package ldif.modules.r2r.hadoop
 
-import org.apache.hadoop.mapred.{JobClient, FileOutputFormat, FileInputFormat, JobConf}
 import de.fuberlin.wiwiss.r2r.LDIFMapping
 import org.apache.hadoop.conf.{Configuration, Configured}
 import ldif.hadoop.utils.HadoopHelper
@@ -28,6 +27,7 @@ import ldif.hadoop.types.QuadWritable
 import org.apache.hadoop.fs.{FileSystem, Path}
 import org.slf4j.LoggerFactory
 import ldif.hadoop.io.{QuadSequenceFileOutput, QuadTextFileOutput, EntityMultipleSequenceFileOutput, EntitySequenceFileInput}
+import org.apache.hadoop.mapred._
 
 /**
  * Created by IntelliJ IDEA.
@@ -47,6 +47,7 @@ class RunHadoopR2RJob extends Configured with Tool {
     val job = new JobConf(conf, classOf[RunHadoopR2RJob])
     val fileSystem = FileSystem.get(conf)
     val nrOfMappings = args(2).toInt
+    val standaloneMode = args(3).toBoolean
 
     job.setJobName("R2R")
 
@@ -58,7 +59,10 @@ class RunHadoopR2RJob extends Configured with Tool {
     job.setOutputValueClass(classOf[QuadWritable])
 
     job.setInputFormat(classOf[EntitySequenceFileInput])
-    job.setOutputFormat(classOf[QuadSequenceFileOutput])
+    if(standaloneMode)
+      job.setOutputFormat(classOf[TextOutputFormat[NullWritable, QuadWritable]])
+    else
+      job.setOutputFormat(classOf[QuadSequenceFileOutput])
 
     //    MultipleOutputs.addNamedOutput(job, "debug", classOf[QuadTextFileOutput], classOf[NullWritable], classOf[QuadWritable])
 
@@ -79,12 +83,7 @@ class RunHadoopR2RJob extends Configured with Tool {
 object RunHadoopR2RJob {
   private val log = LoggerFactory.getLogger(getClass.getName)
 
-  def runHadoopR2RJob(inputPath: String, outputPath: String, mappings: IndexedSeq[LDIFMapping]): Int = {
-    val res = execute(outputPath+"_4", outputPath+"_r2r", mappings)
-    res
-  }
-
-  def execute(inputPath: String, outputPath: String, mappings: IndexedSeq[LDIFMapping]): Int = {
+  def execute(inputPath: String, outputPath: String, mappings: IndexedSeq[LDIFMapping], standalone: Boolean = false): Int = {
     log.info("Starting R2R Job")
 
     val start = System.currentTimeMillis
@@ -97,7 +96,7 @@ object RunHadoopR2RJob {
     if (hdfs.exists(hdPath))
       hdfs.delete(hdPath, true)
 
-    val res = ToolRunner.run(conf, new RunHadoopR2RJob(), Array[String](inputPath, outputPath, mappings.length.toString))
+    val res = ToolRunner.run(conf, new RunHadoopR2RJob(), Array[String](inputPath, outputPath, mappings.length.toString, standalone.toString))
     log.info("That's it. Took " + (System.currentTimeMillis-start)/1000.0 + "s")
     res
   }
