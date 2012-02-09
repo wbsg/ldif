@@ -29,7 +29,7 @@ import ldif.runtime.Quad
 import ldif.util.OutputValidator
 
 @RunWith(classOf[JUnitRunner])
-class IntegrationFlowTest extends FlatSpec with ShouldMatchers {
+class IntegrationFlowIT extends FlatSpec with ShouldMatchers {
 
   it should "run the whole integration flow correctly" in {
     // Run LDIF

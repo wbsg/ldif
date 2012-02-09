@@ -15,13 +15,14 @@ object MainClassDispatcher {
       System.err.println("Error: No arguments given.")
       exitDispatcher
     }
-    val app = args(0)
-    val parameters = args.slice(1, args.length)
-    app match {
+    val command = args(0)
+    val parameters = args.slice(1, args.length) // remove command from array
+    command match {
       case "scheduler" => Ldif.main(parameters)
       case "integrate" => HadoopIntegrationJob.main(parameters)
       case "urisets" => UriSets.execute(parameters)
-      case _ => System.err.println("Error: command " + app + " invalid.")
+      case "r2r" => R2R.execute(parameters)
+      case _ => System.err.println("Error: command " + command + " invalid.")
         exitDispatcher
     }
   }
@@ -30,6 +31,7 @@ object MainClassDispatcher {
     System.err.println("Usages: hadoop jar ldif-hadoop-executor* scheduler <schedulerConfig>")
     System.err.println("        hadoop jar ldif-hadoop-executor* integrate <integrationJobConfig>")
     System.err.println("        hadoop jar ldif-hadoop-executor* urisets <input path> <output path>")
+    System.err.println("        hadoop jar ldif-hadoop-executor* r2r <local path to mappings> <input path> <output path>")
     System.exit(1)
   }
 }

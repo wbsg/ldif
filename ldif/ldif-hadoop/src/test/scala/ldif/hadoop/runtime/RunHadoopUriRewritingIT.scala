@@ -14,7 +14,7 @@ import org.scalatest.junit.JUnitRunner
  */
 
 @RunWith(classOf[JUnitRunner])
-class RunHadoopUriRewritingTest extends FlatSpec with ShouldMatchers{
+class RunHadoopUriRewritingIT extends FlatSpec with ShouldMatchers{
   it should "rewrite all URIs correctly" in {
     val inputFile = getClass.getClassLoader.getResource("test/input.nt").getPath
     val sameAsFile = getClass.getClassLoader.getResource("test/sameAs.nt").getPath

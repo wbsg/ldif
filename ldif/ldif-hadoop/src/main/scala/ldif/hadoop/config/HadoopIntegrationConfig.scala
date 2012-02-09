@@ -19,12 +19,14 @@
 package ldif.hadoop.config;
 
 import java.io.File
-import java.util.Properties
 import org.slf4j.LoggerFactory
 import xml.{Node, XML}
 import ldif.util.{ConfigProperties, Consts, ValidatingXMLReader}
+import java.util.Properties
 
-case class HadoopIntegrationConfig(sources : String, linkSpecDir : File, mappingDir : File, sieveSpecDir : File, outputFile : String, outputPhase: String = "complete",  properties : Properties, runSchedule : String) {}
+case class HadoopIntegrationConfig(sources : String, linkSpecDir : File, mappingDir : File, sieveSpecDir : File, outputFile : String, outputPhase: String = "complete",  properties : Properties, runSchedule : String) {
+
+}
 
 object HadoopIntegrationConfig
 {
