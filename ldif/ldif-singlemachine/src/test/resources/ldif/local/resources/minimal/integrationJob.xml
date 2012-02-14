@@ -2,11 +2,11 @@
 <integrationJob xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
             xmlns="http://www4.wiwiss.fu-berlin.de/ldif/">
     <properties>integration.properties</properties>
-    <sources>sources</sources>
+    <sources><source>sources</source></sources>
     <linkSpecifications>linkspecs</linkSpecifications>
     <mappings>mappings</mappings>
     <quality>quality</quality>
     <fusion>fusion</fusion>
-    <output>result.nq</output>
+    <outputs><output><file><path>result.nq</path></file></output></outputs>
     <runSchedule>onStartup</runSchedule>
 </integrationJob>

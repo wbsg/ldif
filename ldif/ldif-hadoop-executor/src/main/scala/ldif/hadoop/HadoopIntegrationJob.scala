@@ -18,7 +18,6 @@
 
 package ldif.hadoop
 
-import config.HadoopIntegrationConfig
 import entitybuilder.EntityBuilderHadoopExecutor
 import io.EntityMultipleSequenceFileOutput
 import org.slf4j.LoggerFactory
@@ -37,10 +36,11 @@ import de.fuberlin.wiwiss.silk.util.DPair
 import java.util.Calendar
 import ldif.util.{ValidationException, Consts, StopWatch, LogUtil}
 import ldif.datasources.dump.QuadParser
-import ldif.output.OutputWriterFactory
 import org.apache.hadoop.fs.{FileSystem, Path, FSDataInputStream}
+import ldif.runtime.QuadWriter
+import ldif.config._
 
-class HadoopIntegrationJob(val config : HadoopIntegrationConfig, debug : Boolean = false) {
+class HadoopIntegrationJob(val config : IntegrationConfig, debug : Boolean = false) {
 
   private val log = LoggerFactory.getLogger(getClass.getName)
   private val stopWatch = new StopWatch
@@ -65,11 +65,12 @@ class HadoopIntegrationJob(val config : HadoopIntegrationConfig, debug : Boolean
 
   def runIntegration() {
 
-    val sourcesPath = new Path(config.sources)
-    val sourceNumber = hdfs.listStatus(sourcesPath).length
+    val sourcesPaths = config.sources.map(new Path(_))
+
     log.info("Hadoop Integration Job started")
-    log.info("- Input < "+ sourceNumber +" sources found in " + sourcesPath.toString)
-    log.info("- Output > "+ config.outputFile)
+    for (sourcesPath <- sourcesPaths)
+      log.info("- Input < "+ hdfs.listStatus(sourcesPath).length +" source(s) found in " + sourcesPath)
+    log.info("- Output > "+ config.outputs.toString)
     log.info("- Properties ")
     for (key <- config.properties.keySet.toArray)
       log.info("  - "+key +" : " + config.properties.getProperty(key.toString) )
@@ -79,16 +80,12 @@ class HadoopIntegrationJob(val config : HadoopIntegrationConfig, debug : Boolean
     // Execute mapping phase
     val r2rOutput = mapQuads()
     log.info("Time needed to map data: " + stopWatch.getTimeSpanInSeconds + "s")
-    if(config.outputPhase=="r2r") {
-      writeOutput(r2rOutput)
-      lastUpdate = Calendar.getInstance
-      return
-    }
+    writeOutput(config, r2rOutput, DT)
 
     // Execute linking phase
     val silkOutput = generateLinks(r2rOutput)
     log.info("Time needed to link data: " + stopWatch.getTimeSpanInSeconds + "s")
-    // TODO: Add logic for outputPhase=="silk"
+    //writeOutput(config, silkOutput, IR)  // TODO add logic to output from multiple paths
 
     // Prepare data to be translated
     move(allQuadsDir, r2rOutput)
@@ -118,7 +115,8 @@ class HadoopIntegrationJob(val config : HadoopIntegrationConfig, debug : Boolean
     // add sameAs links to the output path
     move(sameAsLinks, outputPath)
 
-    writeOutput(outputPath)
+    // write final output
+    writeOutput(config, outputPath)
 
     lastUpdate = Calendar.getInstance
   }
@@ -134,7 +132,7 @@ class HadoopIntegrationJob(val config : HadoopIntegrationConfig, debug : Boolean
     mintedUriPath
   }
 
-  private def getMintValues(config: HadoopIntegrationConfig): (String, Set[String]) = {
+  private def getMintValues(config: IntegrationConfig): (String, Set[String]) = {
     val mintNamespace = config.properties.getProperty("uriMintNamespace")
     val mintPropertySet = config.properties.getProperty("uriMintLabelPredicate").split("\\s+").toSet
     (mintNamespace, mintPropertySet)
@@ -195,7 +193,7 @@ class HadoopIntegrationJob(val config : HadoopIntegrationConfig, debug : Boolean
       configParameters = configParameters.copy(allQuadsPath = allQuadsDir)
     if (!ignoreProvenance)
       configParameters = configParameters.copy(provenanceQuadsPath = provenanceQuadsDir)
-    buildEntities(config.sources, entitiesPath, entityDescriptions, configParameters)
+    buildEntities(config.sources.toSeq, entitiesPath, entityDescriptions, configParameters)
     log.info("Time needed to load dump and build entities for mapping phase: " + stopWatch.getTimeSpanInSeconds + "s")
 
     val r2rOutput = "r2rOutput"
@@ -228,7 +226,7 @@ class HadoopIntegrationJob(val config : HadoopIntegrationConfig, debug : Boolean
     val entityDescriptions = tasks.map(silkExecutor.input).flatMap{ case StaticEntityFormat(ed) => ed }
 
     var configParameters = ConfigParameters(config.properties)
-    buildEntities(quadsPath, entitiesDirectory, entityDescriptions, configParameters)
+    buildEntities(Seq(quadsPath), entitiesDirectory, entityDescriptions, configParameters)
     log.info("Time needed to build entities for linking phase: " + stopWatch.getTimeSpanInSeconds + "s")
 
     val result = for((silkTask, i) <- tasks.zipWithIndex) yield {
@@ -247,14 +245,14 @@ class HadoopIntegrationJob(val config : HadoopIntegrationConfig, debug : Boolean
   /**
    * Build Entities
    */
-  private def buildEntities(sourcesPath : String, entitiesPath : String, entityDescriptions : Seq[EntityDescription], configParameters: ConfigParameters) {
+  private def buildEntities(sourcesPaths : Seq[String], entitiesPath : String, entityDescriptions : Seq[EntityDescription], configParameters: ConfigParameters) {
 
     val entityBuilderConfig = new EntityBuilderConfig(entityDescriptions.toIndexedSeq)
     val entityBuilderModule = new EntityBuilderModule(entityBuilderConfig)
     val entityBuilderTask = entityBuilderModule.tasks.head
     val entityBuilderExecutor = new EntityBuilderHadoopExecutor(configParameters)
 
-    entityBuilderExecutor.execute(entityBuilderTask, List(new Path(sourcesPath)), List(new Path(entitiesPath)))
+    entityBuilderExecutor.execute(entityBuilderTask, sourcesPaths.map(new Path(_)), List(new Path(entitiesPath)))
   }
 
 
@@ -269,37 +267,39 @@ class HadoopIntegrationJob(val config : HadoopIntegrationConfig, debug : Boolean
     hdPath
   }
 
-  private def writeOutput(outputPath : String)    {
-
-    var count = 0
-
+  private def writeOutput(config  : IntegrationConfig, outputPath : String, phase : IntegrationPhase = COMPLETE)    {
     // convert output files from seq to nq
-    val tmpOutputDir = config.outputFile+"_tmp"
+    val tmpOutputDir = outputPath+"_tmp"
     HadoopQuadToTextConverter.execute(outputPath, tmpOutputDir)
 
-    var instream : FSDataInputStream = null
-    val outputDir = hdfs.listStatus(new Path(tmpOutputDir))
-    // TODO support multiple output file
-    // for (outputFile <- outputDir.filterNot(_.getPath.getName.startsWith("_"))){
-    val outputFile = outputDir.filterNot(_.getPath.getName.startsWith("_")).head.getPath
-    instream = hdfs.open(outputFile)
-    //  }
+    for (writer <- config.outputs.getByPhase(phase))
+      writeOutput(writer, tmpOutputDir)
 
-    val lines = scala.io.Source.fromInputStream(instream).getLines
+    // clean(outputPath)
+    clean(tmpOutputDir)
+  }
+
+  private def writeOutput(writer : QuadWriter, outputPath : String)    {
+    var count = 0
+
+    var instream : FSDataInputStream = null
+    val outputDir = hdfs.listStatus(new Path(outputPath))
     val parser = new QuadParser
 
-    val writer = OutputWriterFactory.getWriter(config.properties, config.outputFile)
-    if (writer != null) {
-      for (quad <- lines.toTraversable.map(parser.parseLine(_))){
-        writer.write(quad)
-        count += 1
+    for (outputFile <- outputDir.filterNot(_.getPath.getName.startsWith("_"))){
+      instream = hdfs.open(outputFile.getPath)
+      val lines = scala.io.Source.fromInputStream(instream).getLines
+
+      if (writer != null) {
+        for (quad <- lines.toTraversable.map(parser.parseLine(_))){
+          writer.write(quad)
+          count += 1
+        }
       }
-      writer.finish
     }
+    writer.finish()
 
     log.info(count + " Quads written")
-
-    clean(outputPath)
   }
 
   // Move files from one path to another
@@ -346,9 +346,9 @@ object HadoopIntegrationJob {
     if(args.length>=2 && args(0)=="--debug")
       debug = true
 
-    var config : HadoopIntegrationConfig = null
+    var config : IntegrationConfig = null
     try {
-      config = HadoopIntegrationConfig.load(configFile)
+      config = IntegrationConfig.load(configFile)
     }
     catch {
       case e:ValidationException => {

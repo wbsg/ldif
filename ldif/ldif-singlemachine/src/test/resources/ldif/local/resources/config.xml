@@ -3,10 +3,10 @@
            xsi:schemaLocation="http://www4.wiwiss.fu-berlin.de/ldif/ ../xsd/IntegrationJob.xsd"
            xmlns="http://www4.wiwiss.fu-berlin.de/ldif/">
   <properties>test.properties</properties>
-  <sources>sources</sources>
+  <sources><source>sources</source></sources>
   <linkSpecifications>linkSpecs</linkSpecifications>
   <mappings>mappings</mappings>
   <quality>quality</quality>
   <fusion>fusion</fusion>
-  <output>output.nq</output>
+  <outputs><output><file><path>output.nq</path></file></output></outputs>
 </integrationJob>

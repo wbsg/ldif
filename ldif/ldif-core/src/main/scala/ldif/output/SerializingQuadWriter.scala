@@ -21,7 +21,7 @@ package ldif.output
 import ldif.runtime.{Quad, QuadWriter}
 import java.io.{FileWriter, BufferedWriter}
 
-class SerializingQuadWriter(filepath: String, val syntax: RDFSyntax) extends QuadWriter {
+class SerializingQuadWriter(val filepath: String, val syntax: RDFSyntax) extends QuadWriter {
   var writer:BufferedWriter = new BufferedWriter(new FileWriter(filepath))
 
   def write(quad: Quad) = {

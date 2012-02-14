@@ -17,6 +17,62 @@
         </xs:restriction>
     </xs:simpleType>
 
+
+    <!-- Source element -->
+
+    <xs:element name="sources">
+      <xs:complexType>
+            <xs:sequence>
+                 <!-- support files and directories, both from local and hdfs -->
+                <xs:element name="source" type="xs:string" maxOccurs="unbounded"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+
+    <!-- Output elements -->
+
+    <xs:element name="outputs">
+      <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="ldif:output" maxOccurs="unbounded"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="output">
+      <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="ldif:abstractOutput" />
+                <xs:element name="phase" type="ldif:outputPhaseType" minOccurs="0" />
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="abstractOutput" abstract="true" />
+
+    <xs:element name="file" substitutionGroup="ldif:abstractOutput">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="path" type="xs:string" />
+                <xs:element name="format" type="ldif:outputFormat" minOccurs="0" />
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="sparql" substitutionGroup="ldif:abstractOutput">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="endpointURI" type="xs:anyURI" />
+                <xs:element name="user" type="xs:string" minOccurs="0" />
+                <xs:element name="password" type="xs:string" minOccurs="0" />
+                <xs:element name="sparqlVersion" type="ldif:sparqlVersion" minOccurs="0" />
+                <xs:element name="useDirectPost" type="xs:boolean" minOccurs="0" />
+                <xs:element name="queryParameter" type="ldif:queryParameter" minOccurs="0" />
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
     <xs:simpleType name="outputPhaseType">
         <xs:restriction base="xs:normalizedString">
             <xs:enumeration value="r2r"/>
@@ -25,10 +81,31 @@
         </xs:restriction>
     </xs:simpleType>
 
-    <xs:element name="complexSource" abstract="true" />
+    <xs:simpleType name="outputFormat">
+        <xs:restriction base="xs:normalizedString">
+            <xs:enumeration value="nq"/>
+            <xs:enumeration value="nt"/>
+        </xs:restriction>
+    </xs:simpleType>
 
-    <xs:element name="source" type="xs:string" substitutionGroup="ldif:complexSource"/>
-    <xs:element name="sources" type="xs:string" substitutionGroup="ldif:complexSource"/>
+    <xs:simpleType name="queryParameter">
+        <xs:restriction base="xs:normalizedString">
+            <xs:enumeration value="update"/>
+            <xs:enumeration value="query"/>
+            <xs:enumeration value="command"/>
+            <xs:enumeration value="request"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="sparqlVersion">
+        <xs:restriction base="xs:normalizedString">
+            <xs:enumeration value="1.0"/>
+            <xs:enumeration value="1.1"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+
+    <!-- integration job element -->
 
     <xs:element name="integrationJob">
         <xs:complexType>
@@ -36,19 +113,17 @@
 
                 <xs:element name="properties" type="xs:string" minOccurs="0"/>
 
-                <xs:element ref="ldif:complexSource" maxOccurs="unbounded"/>
+                <xs:element name="sources" />
 
                 <xs:element name="linkSpecifications" type="xs:string" minOccurs="0"/>
 
                 <xs:element name="mappings" type="xs:string" minOccurs="0"/>
 
-                <xs:element name="quality" type="xs:string" />
+                <xs:element name="quality" type="xs:string" minOccurs="0"/>
 
-                <xs:element name="fusion" type="xs:string" />
+                <xs:element name="fusion" type="xs:string" minOccurs="0"/>
 
-                <xs:element name="output" type="xs:string" />
-
-                <xs:element name="outputPhase" type="ldif:outputPhaseType" minOccurs="0" default="complete" />
+                <xs:element name="outputs" />
 
                 <xs:element name="runSchedule" type="ldif:runScheduleType" minOccurs="0" />
 
