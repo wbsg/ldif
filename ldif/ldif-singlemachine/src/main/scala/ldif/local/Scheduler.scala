@@ -18,7 +18,7 @@
 
 package ldif.local
 
-import config.SchedulerConfig
+import ldif.config.SchedulerConfig
 import org.slf4j.LoggerFactory
 import scheduler.ImportJob
 import java.util.{Date, Calendar}
@@ -261,7 +261,7 @@ class Scheduler (val config : SchedulerConfig, debug : Boolean = false) {
     if(configFile != null)  {
       var integrationConfig = IntegrationConfig.load(configFile)
       // use dumpLocation as source directory for the integration job
-      integrationConfig = integrationConfig.copy(sources = Traversable(config.dumpLocationDir.getCanonicalPath))
+      integrationConfig = integrationConfig.copy(sources = Traversable(config.dumpLocationDir))
       // if properties are not defined for the integration job, then use scheduler properties
       if (integrationConfig.properties.size == 0)
         integrationConfig = integrationConfig.copy(properties = config.properties)

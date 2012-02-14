@@ -18,7 +18,7 @@
 
 package ldif.hadoop
 
-import config.HadoopSchedulerConfig
+import ldif.config.SchedulerConfig
 import org.slf4j.LoggerFactory
 import java.util.{Date, Calendar}
 import java.io._
@@ -35,7 +35,7 @@ import ldif.config.IntegrationConfig
  * A singlemachine scheduler/importer that uploads dumps to HDFS and runs Hadoop integration jobs
  */
 
-class HadoopScheduler (val config : HadoopSchedulerConfig, debug : Boolean = false) {
+class HadoopScheduler (val config : SchedulerConfig, debug : Boolean = false) {
   private val log = LoggerFactory.getLogger(getClass.getName)
 
   val conf = new Configuration
