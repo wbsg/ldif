@@ -1178,6 +1178,7 @@ Smith, Christian Becker and Andreas Schultz: Neurowiki: How we
 integrated large datasets into SMW with R2R and Silk / LDIF ( Slides <a href="http://semantic-mediawiki.org/w/images/a/ac/SMWCon_2011_Neurowiki_Presentation.pdf">part
 1</a>, <a href="http://semantic-mediawiki.org/w/images/b/b7/SMWCon_2011_Neurowiki_Becker_Schultz.pdf">part
 2</a> ). SMWCon Fall 2011, Berlin, September 2011.</li>
+  <li>Christian Becker, Andrea Matteini: LDIF - Linked Data Integration Framework ( <a href="http://www.wiwiss.fu-berlin.de/en/institute/pwo/bizer/research/publications/BeckerMatteini-LDIF-SemTechBerlin2012-Talk.pdf">Slides</a> ). SemTechBiz 2012, Berlin, February 2012.</li>
 </ol>
 <h2 id="acknowledgments">11. Acknowledgments </h2>
 <p>This work was supported in part by Vulcan Inc. as part of its <a href="http://www.projecthalo.com">Project Halo</a> and by the EU FP7
