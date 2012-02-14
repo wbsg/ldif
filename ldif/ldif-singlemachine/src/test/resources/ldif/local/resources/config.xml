@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <integrationJob xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-           xsi:schemaLocation="http://www4.wiwiss.fu-berlin.de/ldif/ ../xsd/IntegrationJob.xsd"
-           xmlns="http://www4.wiwiss.fu-berlin.de/ldif/">
-  <properties>test.properties</properties>
-  <sources><source>sources</source></sources>
-  <linkSpecifications>linkSpecs</linkSpecifications>
-  <mappings>mappings</mappings>
-  <quality>quality</quality>
-  <fusion>fusion</fusion>
-  <outputs><output><file><path>output.nq</path></file></output></outputs>
+                xsi:schemaLocation="http://www4.wiwiss.fu-berlin.de/ldif/ ../xsd/IntegrationJob.xsd"
+                xmlns="http://www4.wiwiss.fu-berlin.de/ldif/">
+    <properties>test.properties</properties>
+    <sources><source>sources</source></sources>
+    <linkSpecifications>linkSpecs</linkSpecifications>
+    <mappings>mappings</mappings>
+    <quality>quality</quality>
+    <fusion>fusion</fusion>
+    <outputs><output><file><path>output.nq</path><format>nq</format></file></output><output><file><path>output.nq.silk</path></file><phase>silk</phase></output></outputs>
 </integrationJob>

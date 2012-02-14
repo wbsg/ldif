@@ -25,9 +25,9 @@ import org.slf4j.LoggerFactory
 import ldif.util.{Consts, CommonUtils}
 
 sealed trait IntegrationPhase   {val name: String}
-case object DT extends IntegrationPhase  {val name = "Data translation" }
-case object IR extends IntegrationPhase   {val name = "Identity resolution" }
-case object COMPLETE extends IntegrationPhase      {val name = "Complete" }
+case object DT extends IntegrationPhase {val name = "Data translation" }
+case object IR extends IntegrationPhase {val name = "Identity resolution" }
+case object COMPLETE extends IntegrationPhase {val name = "Complete" }
 
 class OutputConfig (val outputs : Traversable[(QuadWriter, IntegrationPhase)])
 {
@@ -40,6 +40,7 @@ class OutputConfig (val outputs : Traversable[(QuadWriter, IntegrationPhase)])
       output._1 match {
         case s:SparqlWriter => text += s.uri
         case f:SerializingQuadWriter => text += f.filepath
+        case _ =>
       }
       text += " ("+ output._2.name+") "
     }
@@ -64,7 +65,7 @@ object OutputConfig {
 
   private def parseOutputPhase (xml : Option[Node]) : IntegrationPhase = {
     val phase = xml match {
-      case Some(node) =>  CommonUtils.getValueAsString(node, "outputPhase", Consts.OutputPhaseDefault)
+      case Some(node) =>  node.text
       case None =>  Consts.OutputPhaseDefault
     }
    phase match {
