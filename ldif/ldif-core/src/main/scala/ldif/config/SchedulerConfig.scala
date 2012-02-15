@@ -49,11 +49,10 @@ object SchedulerConfig
       properties = ConfigProperties.loadProperties(propertiesFile)
 
 
-    // This could be a HDFS Path, a relative Local Path (from baseDir) or an absolute Local Path
-    // Local: check relative and absolute. if both don't exist, use relative path (and mkdir)
-    // Hadoop: use absolute Path
-    val dumpLocationDir = parseSource((xml \ "dumpLocation").head, baseDir)          //TODO check
-  //  val dumpLocationDir = getFile(xml, "dumpLocation", baseDir, true)
+    // dumpLocation can be (1) a relative local path (from baseDir),
+    // (2) an absolute local path or (3) an HDFS path,
+    // We use that as relative path if exists, as absolute path otherwise
+    val dumpLocationDir = getFilePath((xml \ "dumpLocation" text), baseDir)
 
     val importJobsDir = getFile(xml, "importJobs", baseDir)
     val integrationJobDir = getFile(xml, "integrationJob", baseDir)
@@ -67,13 +66,14 @@ object SchedulerConfig
       properties
     )
   }
-    private def parseSource(node : Node, baseDir : String) : String = {
-    val value = node.text
-    val relativeFile = new File(baseDir + Consts.fileSeparator + value)
+
+  private def getFilePath (path : String, baseDir : String) : String = {
+    val relativeFile = new File(baseDir + Consts.fileSeparator + path)
     if (relativeFile.exists)
       relativeFile.getCanonicalPath
-    else value
+    else path
   }
+
   private def getFile (xml : Node, key : String, baseDir : String, forceMkdir : Boolean = false) : File = {
     val value : String = (xml \ key text)
     var file : File = null
