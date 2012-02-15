@@ -21,6 +21,6 @@ package ldif.local.runtime
 import java.util.Properties
 import ldif.runtime.QuadWriter
 
-case class ConfigParameters(configProperties: Properties, otherQuadsWriter: QuadWriter = null, sameAsWriter: QuadWriter = null)
+case class ConfigParameters(configProperties: Properties, otherQuadsWriter: QuadWriter = null, sameAsWriter: QuadWriter = null, useMarkers : Boolean = false)
 
 

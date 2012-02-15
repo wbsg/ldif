@@ -21,14 +21,15 @@ package ldif.local
 import ldif.entity._
 import org.slf4j.LoggerFactory
 import ldif.entity.Restriction._
-import collection.mutable.{ArraySeq, ArrayBuffer, HashMap, Set, HashSet}
+import collection.mutable.{ArraySeq, ArrayBuffer, Set, HashSet}
 import actors.{Future, Futures}
+import runtime.impl.{QuadQueue, MultiQuadReader}
 import scala.collection.JavaConversions._
 import ldif.local.util.StringPool
 import ldif.local.runtime.{LocalNode, EntityWriter, QuadReader, ConfigParameters}
 import ldif.runtime.Quad
-import ldif.util.{MemoryUsage, Consts, Uri}
-import java.util.{ArrayList, List, HashSet => JHashSet}
+import ldif.util.{Consts, Uri}
+import java.util.{HashSet => JHashSet}
 
 class EntityBuilder (entityDescriptions : IndexedSeq[EntityDescription], readers : Seq[QuadReader], config: ConfigParameters) extends FactumBuilder with EntityBuilderTrait {
 
@@ -41,11 +42,16 @@ class EntityBuilder (entityDescriptions : IndexedSeq[EntityDescription], readers
   private val useExternalSameAsLinks = config.configProperties.getProperty("useExternalSameAsLinks", "true").toLowerCase=="true"
   private val outputFormat = config.configProperties.getProperty("outputFormat", "nq").toLowerCase
   private val ignoreProvenance = !(outputFormat=="nq" || outputFormat=="sparql")
+  private val useMarkers = config.useMarkers
 
   // Property HT - Describes all the properties used in the Entity Description
-  var PHT: PropertyHashTable = null
+  var PHT:PropertyHashTable = new PropertyHashTable(entityDescriptions)
   // Forward HT - Contains connections which are going to be explored straight/forward
-  var FHT:HashTable = new MemHashTable
+  var FHT:HashTable =
+    if (useMarkers)
+      new MarkedMemHashTable
+    else
+      new MemHashTable
   // Backward HT - Contains connections from quads which are going to be explored reverse/backward
   var BHT:HashTable = new MemHashTable
 
@@ -98,7 +104,6 @@ class EntityBuilder (entityDescriptions : IndexedSeq[EntityDescription], readers
   // Init memory structures
   private def init {
     EntityLocalMetadata.factumBuilder = this
-    PHT = new PropertyHashTable(entityDescriptions)
     if(PHT.areAllUriNodesNeeded)
       allUriNodes = new JHashSet[Node]
       buildHashTables
@@ -428,99 +433,25 @@ class EntityBuilder (entityDescriptions : IndexedSeq[EntityDescription], readers
   private def min(a:Int , b:Int) =  if (a<b) a else b
 
   private def now = System.currentTimeMillis
-}
 
-class PropertyHashTable(entityDescriptions: Seq[EntityDescription]) {
-  private val hashtable = new HashMap[String, PropertyType.Value]
-  private val log = LoggerFactory.getLogger(getClass.getName)
-  private var allUriNodesNeeded = false
-
-  buildPHT
-
-  def areAllUriNodesNeeded = allUriNodesNeeded
-
-  def contains(property: String) = hashtable.contains(property)
-
-  def get(property: String) = hashtable.get(property)
-
-  private def buildPHT {
-     hashtable.clear
-     val startTime = System.currentTimeMillis
-
-     for (ed <- entityDescriptions){
-
-       // analyse restriction
-       addRestrictionProperties(ed.restriction.operator)
-
-       // analyse patterns
-       for (patterns <- ed.patterns)
-         for (pattern <- patterns)
-           for (op <- pattern.operators)
-            op match {
-               case op:ForwardOperator => updatePHT(op.property.toString, PropertyType.FORW)
-               case op:BackwardOperator => updatePHT(op.property.toString, PropertyType.BACK)
-               case _ =>
-            }
-     }
-
-     log.info("Analyse Entity Descriptions took " + ((System.currentTimeMillis - startTime)) + " ms")
-     //log.info(" [ PHT ] \n > keySet = ("+PHT.size.toString +") \n   - "+ PHT.mkString("\n   - "))
+  private def appendToOtherQuads(reader : QuadReader) {
+      while (reader.hasNext)
+        config.otherQuadsWriter.write(reader.read())
   }
 
-    private def updatePHT(property :String, propertyType : PropertyType.Value ){
-      hashtable.get(property) match {
-        case Some(PropertyType.BOTH) =>
-        case Some(PropertyType.FORW) =>
-          if (propertyType==PropertyType.BACK)
-            hashtable.put(property, PropertyType.BOTH)
-          else hashtable.put(property, propertyType)
-        case Some(PropertyType.BACK) =>
-          if (propertyType==PropertyType.FORW)
-            hashtable.put(property, PropertyType.BOTH)
-          else hashtable.put(property, propertyType)
-        case None => hashtable.put(property, propertyType)
-      }
-  }
-
-  // Find all properties from a given operator and add those to the property hash table
-  private def updatePHT(op: PathOperator, reverse: Boolean = true) {
-    op match {
-      case op: ForwardOperator => if(reverse) updatePHT(op.property.toString, PropertyType.BACK)
-        else updatePHT(op.property.toString, PropertyType.FORW)
-      case op: BackwardOperator => if(reverse) updatePHT(op.property.toString, PropertyType.FORW)
-        else updatePHT(op.property.toString, PropertyType.BACK)
-      case _ =>
+  // Retrieves quads stored in the internal HTs but not used for building entities
+  // Based on the assumption that EDs use only
+  //  - rdf:type restrictions
+  //  - forward and length=1 paths as pattern
+  override def getNotUsedQuads : QuadReader = {
+    if (useMarkers) {
+      // retrieves not-used property quads
+      val f = FHT.asInstanceOf[MarkedMemHashTable].getNotUsedQuads
+      // retrieves rdf:type quads
+      val b = BHT.getAllQuads
+      new MultiQuadReader(f,b)
     }
-  }
-
-  private def addRestrictionProperties(operator : Option[Operator]) {
-    operator match {
-      case Some(cond:Condition) =>
-        for (op <- cond.path.operators)
-          updatePHT(op)
-      case Some(and:And) =>  {
-        for (child <- and.children)
-          addRestrictionProperties(Some(child))
-      }
-      case Some(or:Or) =>  {
-        for (child <- or.children)
-          addRestrictionProperties(Some(child))
-      }
-      case Some(not:Not) =>
-        addRestrictionProperties(Some(not.op))
-      case Some(exists:Exists) => {
-        for (op <- exists.path.operators)
-          updatePHT(op, false)
-        allUriNodesNeeded = true
-      }
-      case None => {
-        allUriNodesNeeded = true
-      }
-    }
+    else
+      new QuadQueue
   }
 }
-
-object PropertyType extends Enumeration {
-  val FORW, BACK, BOTH = Value
-}
-

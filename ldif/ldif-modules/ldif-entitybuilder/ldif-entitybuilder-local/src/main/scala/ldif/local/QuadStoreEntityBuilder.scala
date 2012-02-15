@@ -24,7 +24,8 @@ import ldif.util.Uri
 import ldif.local.runtime.{ConfigParameters, QuadReader, EntityWriter}
 import ldif.runtime.Quad
 import java.io._
-import java.util.zip.{GZIPOutputStream, Deflater, DeflaterOutputStream}
+import java.util.zip.GZIPOutputStream
+import runtime.impl.QuadQueue
 
 /**
  * Created by IntelliJ IDEA.
@@ -126,4 +127,8 @@ class QuadStoreEntityBuilder(store: QuadStoreTrait, entityDescriptions : Seq[Ent
     store.queryStore(ed, writer)//TODO: Maybe handle return value
     log.info("Finished building entities in " + (now - start)/1000.0 + "s")
   }
+
+  // TODO to be implemented
+  override def getNotUsedQuads : QuadReader = new QuadQueue
+
 }

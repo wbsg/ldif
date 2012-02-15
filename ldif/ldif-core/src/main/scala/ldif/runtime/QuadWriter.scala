@@ -20,6 +20,8 @@ package ldif.runtime
 
 trait QuadWriter
 {
+  // TODO consider adding this method
+  // def write(quads : QuadReader)
   def write(quad : Quad)
   def finish()
 }

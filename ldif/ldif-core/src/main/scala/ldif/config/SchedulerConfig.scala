@@ -23,7 +23,6 @@ import org.slf4j.LoggerFactory
 import java.io.File
 import xml.{Node, XML}
 import java.util.Properties
-import ldif.config.SourceConfig
 import ldif.util.{Consts, ConfigProperties, ValidatingXMLReader}
 
 case class SchedulerConfig (importJobsDir : File, integrationJob : File, dataSourcesDir : File, dumpLocationDir : String, properties : Properties)  {}

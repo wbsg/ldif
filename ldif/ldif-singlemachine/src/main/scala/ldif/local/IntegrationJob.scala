@@ -366,7 +366,10 @@ class IntegrationJob (val config : IntegrationConfig, debugMode : Boolean = fals
 
         val entityDescriptions = fusionModule.tasks.toIndexedSeq.map(fusionExecutor.input).flatMap{ case StaticEntityFormat(ed) => ed }
 
-        val entityReaders = buildEntities(inputQuadsReader, entityDescriptions, ConfigParameters(config.properties))
+
+        // val entityReaders = buildEntities(inputQuadsReader, entityDescriptions, ConfigParameters(config.properties))
+        val entityBuilderExecutor = getEntityBuilderExecutor(configParameters.copy(useMarkers = true))
+        val entityReaders = buildEntities(inputQuadsReader, entityDescriptions.toSeq, entityBuilderExecutor)
 
         StringPool.reset
         log.info("Time needed to build entities for fusion phase: " + stopWatch.getTimeSpanInSeconds + "s")
@@ -383,8 +386,7 @@ class IntegrationJob (val config : IntegrationConfig, debugMode : Boolean = fals
           }
         }
 
-        outputQueue
-
+        new MultiQuadReader(outputQueue, entityBuilderExecutor.getNotUsedQuads)
   }
 
   /**
@@ -419,10 +421,14 @@ class IntegrationJob (val config : IntegrationConfig, debugMode : Boolean = fals
 
   }
 
+  private def getEntityBuilderExecutor(configParameters: ConfigParameters) = {
+      new EntityBuilderExecutor(configParameters)
+  }
+
   /**
    * Build Entities.
    */
-  private def buildEntities(readers : Seq[QuadReader], entityDescriptions : Seq[EntityDescription], configParameters: ConfigParameters) : Seq[EntityReader] =
+  private def buildEntities(readers : Seq[QuadReader], entityDescriptions : Seq[EntityDescription], entityBuilderExecutor : EntityBuilderExecutor) : Seq[EntityReader] =
   {
     var entityWriters: Seq[EntityWriter] = null
     val entityQueues = entityDescriptions.map(new EntityQueue(_, Consts.DEFAULT_ENTITY_QUEUE_CAPACITY))
@@ -445,8 +451,6 @@ class IntegrationJob (val config : IntegrationConfig, debugMode : Boolean = fals
       val entityBuilderConfig = new EntityBuilderConfig(entityDescriptions.toIndexedSeq)
       val entityBuilderModule = new EntityBuilderModule(entityBuilderConfig)
       val entityBuilderTask = entityBuilderModule.tasks.head
-      val entityBuilderExecutor = new EntityBuilderExecutor(configParameters)
-
       entityBuilderExecutor.execute(entityBuilderTask, readers, entityWriters)
     } catch {
       case e: Throwable => {
@@ -459,6 +463,11 @@ class IntegrationJob (val config : IntegrationConfig, debugMode : Boolean = fals
       return entityQueues
     else
       return fileEntityQueues.map((entityWriter) => new FileEntityReader(entityWriter.entityDescription, entityWriter.inputFile, enableCompression = true ))
+  }
+
+  private def buildEntities(readers : Seq[QuadReader], entityDescriptions : Seq[EntityDescription], configParameters: ConfigParameters) : Seq[EntityReader] =
+  {
+    buildEntities(readers, entityDescriptions, new EntityBuilderExecutor(configParameters))
   }
 
   /**

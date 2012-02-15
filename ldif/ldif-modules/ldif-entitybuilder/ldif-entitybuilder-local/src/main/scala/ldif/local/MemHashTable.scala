@@ -18,14 +18,17 @@
 
 package ldif.local
 
-import ldif.entity.Node
 import collection.mutable.{HashMap, MultiMap, Set}
+import runtime.impl.QuadQueue
+import ldif.runtime.{Quad, QuadWriter}
+import ldif.entity.Node
+import runtime.{LocalNode, QuadReader}
 
 // Scala MultiMap adapter
 
 class MemHashTable extends HashTable {
 
-  val hashTable:MultiMap[Pair[Node,String], Node] = new HashMap[Pair[Node,String], Set[Node]] with MultiMap[Pair[Node,String], Node]
+  private val hashTable:MultiMap[Pair[Node,String], Node] = new HashMap[Pair[Node,String], Set[Node]] with MultiMap[Pair[Node,String], Node]
 
   override def put(key : Pair[Node,String], value: Node) {
     hashTable.addBinding(key,value)
@@ -37,6 +40,21 @@ class MemHashTable extends HashTable {
 
   override def clear {
     hashTable.clear
+  }
+
+  override def getAllQuads : QuadReader = {
+    val qq = new QuadQueue
+    hashTable.foreach(getAllQuads(_, qq))
+    qq
+  }
+
+  private def getAllQuads(elem : ((Node,String),Set[Node]), writer : QuadWriter)  {
+    val subj = LocalNode.decompress(elem._1._1)
+    val prop = elem._1._2
+    for (cObj <- elem._2)  {
+      val obj = LocalNode.decompress(cObj)
+      writer.write(Quad(subj, prop, obj, obj.graph))
+    }
   }
 
 }
