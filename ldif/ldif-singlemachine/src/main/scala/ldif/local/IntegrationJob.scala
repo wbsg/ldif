@@ -368,7 +368,7 @@ class IntegrationJob (val config : IntegrationConfig, debugMode : Boolean = fals
 
 
         // val entityReaders = buildEntities(inputQuadsReader, entityDescriptions, ConfigParameters(config.properties))
-        val entityBuilderExecutor = getEntityBuilderExecutor(configParameters.copy(useMarkers = true))
+        val entityBuilderExecutor = getEntityBuilderExecutor(configParameters.copy(collectNotUsedQuads = true))
         val entityReaders = buildEntities(inputQuadsReader, entityDescriptions.toSeq, entityBuilderExecutor)
 
         StringPool.reset
