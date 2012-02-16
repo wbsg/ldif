@@ -91,18 +91,19 @@ class IntegrationFlowIT extends FlatSpec with ShouldMatchers {
     OutputValidator.contains(ldifOutput, invalidQuad) should equal (false)
   }
 
-//  it should "be correct with TDB backend" in {
-//// Run LDIF
+  it should "be correct with TDB backend" in {
+// Run LDIF
 //    val configFile = loadConfig("ldif/local/resources/config-tdb.xml")
-//    val ldifOutput = runLdif(configFile)
+//    val ldifOutput = runLdif(configFile, true)
 //
 //    // Load results to compare with
-//    val ldimporterOuputUrl = getClass.getClassLoader.getResource("ldif/local/resources/results.nt")
+//    val ldimporterOuputUrl = getClass.getClassLoader.getResource("ldif/local/resources/results.nq")
 //    val ldimporterOuputFile = new File(ldimporterOuputUrl.toString.stripPrefix("file:"))
 //
 //    // quality check
-//    OutputValidator.compare(ldifOutput,ldimporterOuputFile) should equal (0)
-//  }
+//    OutputValidator.compare(ldifOutput,ldimporterOuputFile, true) should equal (0)
+
+  }
 
 
   protected def loadConfig(config : String) =  {

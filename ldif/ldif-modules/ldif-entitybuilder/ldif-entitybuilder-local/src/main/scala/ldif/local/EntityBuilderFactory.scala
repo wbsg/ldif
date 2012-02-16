@@ -21,6 +21,7 @@ package ldif.local
 import ldif.local.runtime.{ConfigParameters, QuadReader}
 import ldif.entity.EntityDescription
 import tdb.TDBQuadStore
+import java.io.File
 
 /**
  * Created by IntelliJ IDEA.
@@ -42,19 +43,18 @@ object EntityBuilderFactory {
     }
   }
 
-  private def createQuadStore(quadStoreType: String, databaseLocation: String): QuadStoreTrait = {
+  private def createQuadStore(quadStoreType: String, databaseLocation: String, reuseDatabase: Boolean): QuadStoreTrait = {
     quadStoreType match {
-      case "tdb" => {
-        new TDBQuadStore(databaseLocation)
-      }
+      case "tdb" => new TDBQuadStore(new File(databaseLocation), reuseDatabase)
       case _ => throw new RuntimeException("Unknown quad store type: " + quadStoreType)
     }
   }
 
   private def createQuadStoreEntityBuilder(configParameters: ConfigParameters, entityDescriptions: scala.Seq[EntityDescription], reader: scala.Seq[QuadReader]): EntityBuilderTrait = {
+    val reuseDatabase = configParameters.configProperties.getProperty("reuseDatabase", "false").toLowerCase=="true"
     val quadStoreType = configParameters.configProperties.getProperty("quadStoreType", "tdb").toLowerCase
     val databaseLocation = configParameters.configProperties.getProperty("databaseLocation", System.getProperty("java.io.tmpdir"))
-    val quadStore = createQuadStore(quadStoreType, databaseLocation)
+    val quadStore = createQuadStore(quadStoreType, databaseLocation, reuseDatabase)
     new QuadStoreEntityBuilder(quadStore, entityDescriptions, reader, configParameters)
   }
 }
