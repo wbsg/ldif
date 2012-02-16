@@ -18,7 +18,7 @@ package ldif.hadoop
  * limitations under the License.
  */
 
-import config.HadoopSchedulerConfig
+import ldif.config.SchedulerConfig
 import java.io.File
 import org.slf4j.LoggerFactory
 import ldif.util.{ValidationException, LogUtil}
@@ -49,9 +49,9 @@ object Ldif {
       log.warn("Configuration file not found at "+ configFile.getCanonicalPath)
     else {
       // Setup Scheduler
-      var config : HadoopSchedulerConfig = null
+      var config : SchedulerConfig = null
       try {
-        config = HadoopSchedulerConfig.load(configFile)
+        config = SchedulerConfig.load(configFile)
       }
       catch {
         case e:ValidationException => {

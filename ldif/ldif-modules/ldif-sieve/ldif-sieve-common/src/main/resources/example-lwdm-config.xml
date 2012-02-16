@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"  ?>
+<Sieve xmlns="http://www4.wiwiss.fu-berlin.de/ldif/">
+
+    <Prefixes>
+        <Prefix id="dbpedia-owl" namespace="http://dbpedia.org/ontology/"/>
+        <Prefix id="rdf" namespace="http://www.w3.org/1999/02/22-rdf-syntax-ns#"/>
+        <Prefix id="rdfs" namespace="http://www.w3.org/2000/01/rdf-schema#"/>
+        <Prefix id="owl" namespace="http://www.w3.org/2002/07/owl#"/>
+        <Prefix id="provenance" namespace="http://www4.wiwiss.fu-berlin.de/ldif/provenance"/>
+    </Prefixes>
+
+    <QualityAssessment name="">
+        <AssessmentMetric id="sieve:recency">
+            <ScoringFunction class="DaysSince">
+                <Input path="?GRAPH/provenance:lastUpdated" />
+            </ScoringFunction>
+        </AssessmentMetric>
+
+        <AssessmentMetric id="sieve:reputation">
+            <ScoringFunction class="ScoredList">
+                <Param name="priority"
+                       value="http://pt.wikipedia.org http://en.wikipedia.org" />
+            </ScoringFunction>
+        </AssessmentMetric>
+    </QualityAssessment>
+
+    <Fusion>
+        <Class name="dbpedia:Settlement">
+            <Property name="rdfs:label">
+                <FusionFunction class="PassItOn"/>
+            </Property>
+            <Property name="dbpedia-owl:areaTotal">
+                <FusionFunction class="KeepSingleValueByQualityScore"
+                                metric="sieve:reputation"/>
+            </Property>
+            <Property name="dbpedia-owl:populationTotal">
+                <FusionFunction class="KeepSingleValueByQualityScore"
+                                metric="sieve:recency"/>
+            </Property>
+        </Class>
+    </Fusion>
+    </Sieve>

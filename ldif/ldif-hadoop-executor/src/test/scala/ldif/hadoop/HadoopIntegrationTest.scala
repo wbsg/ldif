@@ -18,15 +18,14 @@
 
 package ldif.hadoop
 
-import config.HadoopIntegrationConfig
 import java.io.File
 import org.scalatest.FlatSpec
 import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner
-import ldif.entity.Node
-import ldif.runtime.Quad
 import org.scalatest.matchers.ShouldMatchers
 import ldif.util.OutputValidator
+import ldif.config.IntegrationConfig
+import ldif.output.SerializingQuadWriter
 
 
 @RunWith(classOf[JUnitRunner])
@@ -46,16 +45,15 @@ class HadoopIntegrationTest extends FlatSpec with ShouldMatchers {
 
   }
 
+  protected def loadConfig(config : String) =  {
+    val configUrl = getClass.getClassLoader.getResource(config)
+    new File(configUrl.toString.stripPrefix("file:"))
+  }
 
-    protected def loadConfig(config : String) =  {
-      val configUrl = getClass.getClassLoader.getResource(config)
-      new File(configUrl.toString.stripPrefix("file:"))
-    }
-
-    protected def runLdif(configFile : File, debugMode: Boolean = false) = {
-      val integrator = new HadoopIntegrationJob(HadoopIntegrationConfig.load(configFile), debugMode)
-      integrator.runIntegration
-      (new File(integrator.config.outputFile)).listFiles().last
-    }
+  protected def runLdif(configFile : File, debugMode: Boolean = false) = {
+    val integrator = new HadoopIntegrationJob(IntegrationConfig.load(configFile), debugMode)
+    integrator.runIntegration
+    new File(integrator.config.outputs.outputs.head._1.asInstanceOf[SerializingQuadWriter].filepath)
+  }
 
 }

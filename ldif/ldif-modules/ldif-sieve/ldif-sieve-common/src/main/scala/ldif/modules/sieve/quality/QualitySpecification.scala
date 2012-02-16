@@ -1,6 +1,9 @@
 package ldif.modules.sieve.quality
 
-import functions.{ScoredRegexList, RandomScoringFunction}
+import functions.{ScoredRegexList, RandomScoringFunction,ScoredList,TimeCloseness}
+import ldif.util.Prefixes
+import collection.IndexedSeq
+import scala.Predef._
 
 /*
  * Copyright 2011-2012 Freie Universität Berlin, MediaEvent Services GmbH & Co. KG
@@ -20,50 +23,28 @@ import functions.{ScoredRegexList, RandomScoringFunction}
 
 
 /**
- * Contains a data fusion specification.
- * For each property in the input, the specification determines one fusion function and one output property name.
- * This specification is read from an XML file.
- *
- * @author pablomendes
+ * @author Pablo Mendes
+ * @author Hannes Mühleisen
  */
 class QualitySpecification(val id: String,
-                          val scoringFunctions : IndexedSeq[ScoringFunction],
-                          val outputPropertyNames: IndexedSeq[String]
-                          ) {
-
-  assert(scoringFunctions.size==outputPropertyNames.size, "There should be one OutputPropertyName for each ScoringFunction")
-    //val scoringFunctions = new PassItOn
-    //val scoringFunctions = new KeepFirst
-    //val scoringFunctions = new ScoredList("http://www4.wiwiss.fu-berlin.de/ldif/graph#dbpedia.en");
+                           val scoringFunctions: IndexedSeq[ScoringFunction],
+                           val outputPropertyNames: IndexedSeq[String]
+                            ) {
 }
 
 object QualitySpecification {
 
-  /**
-   * A <Class> node/elem will be passed in.
-   */
-  def fromXML(node: scala.xml.Node) = {
-    //TODO implement as below
-     //val specName = ...
-     //val scoringFunctions = (node \ "Property").map(FusionFunction.fromXML)
-     //val propertyNames = (node \ "Property").map(grabName)
-     //new QualitySpecification(specName,scoringFunctions,propertyNames)
+  def fromXML(node: scala.xml.Node)(implicit prefixes: Prefixes = Prefixes.empty) = {
+    val id = (node \ "@id").text
+    val scoringClassName = (node \ "ScoringFunction" \ "@class").text.toLowerCase
+    val scoringInstance = ScoringFunction.create(scoringClassName,(node \ "ScoringFunction" head))
+    val scoringFunctions = IndexedSeq[ScoringFunction](scoringInstance);
+    var propertyPaths = IndexedSeq[String]();
+    val propertyPath = (node \ "ScoringFunction" \ "Input" \ "@path").text.trim()
 
-    //temporarily, hardcoded:
-    createLwdm2012ExampleSpecs
-  }
-
-  def createLwdm2012ExampleSpecs = {
-    new QualitySpecification("lwdm2012-qa",
-      IndexedSeq(new ScoredRegexList(List("http://dbpedia.org.+"))), //List("http://en.+","http://pt.+"))),
-      IndexedSeq("http://ldif/reputation")
-    )
-  }
-
-  def createMusicExampleSpecs = {
-    new QualitySpecification("test",
-      IndexedSeq(),
-      IndexedSeq()
-    )
+    if (!"".eq(propertyPath)) {
+      propertyPaths ++= IndexedSeq(propertyPath);
+    }
+    new QualitySpecification(id, scoringFunctions, propertyPaths)
   }
 }

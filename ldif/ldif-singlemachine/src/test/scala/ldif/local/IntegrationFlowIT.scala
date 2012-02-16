@@ -18,7 +18,6 @@
 
 package ldif.local
 
-import config.IntegrationConfig
 import java.io.File
 import org.scalatest.FlatSpec
 import org.scalatest.matchers.ShouldMatchers
@@ -27,9 +26,11 @@ import org.scalatest.junit.JUnitRunner
 import ldif.entity.Node
 import ldif.runtime.Quad
 import ldif.util.OutputValidator
+import ldif.output.SerializingQuadWriter
+import ldif.config.{COMPLETE, IntegrationConfig}
 
 @RunWith(classOf[JUnitRunner])
-class IntegrationFlowTest extends FlatSpec with ShouldMatchers {
+class IntegrationFlowIT extends FlatSpec with ShouldMatchers {
 
   it should "run the whole integration flow correctly" in {
     // Run LDIF
@@ -111,9 +112,9 @@ class IntegrationFlowTest extends FlatSpec with ShouldMatchers {
   }
 
   protected def runLdif(configFile : File, debugMode: Boolean = false) = {
-
     val integrator = new IntegrationJob(IntegrationConfig.load(configFile), debugMode)
     integrator.runIntegration
-    integrator.config.outputFile
+    new File(integrator.config.outputs.getByPhase(COMPLETE).head.asInstanceOf[SerializingQuadWriter].filepath)
   }
+
 }

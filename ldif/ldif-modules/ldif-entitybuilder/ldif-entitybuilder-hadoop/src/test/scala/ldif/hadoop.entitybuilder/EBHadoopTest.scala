@@ -40,7 +40,7 @@ import ldif._
  */
 
 @RunWith(classOf[JUnitRunner])
-class EBHadoopTest extends FlatSpec with ShouldMatchers
+class EBHadoopIT extends FlatSpec with ShouldMatchers
 {
   // Create input structures
   val resourceDir = getClass.getClassLoader.getResource("hadoop").getPath.toString

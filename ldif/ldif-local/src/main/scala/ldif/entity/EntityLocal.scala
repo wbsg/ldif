@@ -24,9 +24,7 @@ class EntityLocal(val resource : Node, val entityDescription : EntityDescription
     if (patternId < entityDescription.patterns.size) {
       EntityLocalMetadata.factumBuilder.buildFactumTable(resource,entityDescription.patterns(patternId))
     } else {
-      throw new NoSuchElementException("EntityDescription has no pattern with id=%d.".format(patternId))
-      //TODO could we just return an empty list of factums instead of throwing exception?
-      //Seq[IndexedSeq[Node]]()
+      Seq[IndexedSeq[Node]]()
     }
   }
 }

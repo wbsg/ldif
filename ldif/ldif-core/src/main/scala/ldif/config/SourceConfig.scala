@@ -15,13 +15,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package ldif.config
 
-package ldif.runtime
+import xml.Node
+import ldif.util.Consts
+import java.io.File
 
-trait QuadWriter
-{
-  // TODO consider adding this method
-  // def write(quads : QuadReader)
-  def write(quad : Quad)
-  def finish()
+object SourceConfig {
+
+  def fromXML(xml : Node, baseDir : String = null) : Traversable[String] =
+    (xml \ "source").filter(_.text != "").map(parseSource(_, baseDir))
+
+  private def parseSource(node : Node, baseDir : String) : String = {
+    val value = node.text
+    val relativeFile = new File(baseDir + Consts.fileSeparator + value)
+    if (relativeFile.exists)
+      relativeFile.getCanonicalPath
+    else value
+  }
 }

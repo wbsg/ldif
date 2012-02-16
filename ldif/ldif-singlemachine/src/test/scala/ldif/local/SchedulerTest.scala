@@ -18,7 +18,7 @@
 
 package ldif.local
 
-import config.SchedulerConfig
+import ldif.config.SchedulerConfig
 import java.io.File
 import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner

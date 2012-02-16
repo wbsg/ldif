@@ -46,13 +46,17 @@ class TimeCloseness(val dateRange: Int = 30) extends ScoringFunction {
       case None => 0
     }
   }
-
-  def fromXML(node: scala.xml.Node) = {
-    null //TODO implement
+  override def toString() : String = {
+      "TimeCloseness, timespan=" + dateRange
   }
 }
 
-
-
-
-
+object TimeCloseness {
+  def fromXML(node: scala.xml.Node) : ScoringFunction = {
+    val range : Int =  (node \ "Param" \ "@value").text.toInt
+    if (range < 0) {
+      throw new IllegalArgumentException("No positive value given for range")
+    }
+    new TimeCloseness(range)
+  }
+}

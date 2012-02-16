@@ -1,25 +1,29 @@
 package ldif.modules.sieve.quality
 
+import functions.{TimeCloseness, ScoredList}
 import ldif.entity.NodeTrait
 import xml.Node
 
 /**
  * Constructor of implementing classes should accept applicable Param and EnvironmentVariable values.
  * The values described in Input are passed at scoring time to the method "score".
- * @author pablomendes
+ * @author Pablo Mendes
+ * @author Hannes Mühleisen
  */
 
 trait ScoringFunction {
-
-  /**
-   * Providing as input a list of nodes in an entity description, compute
-   */
   def score(metadataValues: Traversable[IndexedSeq[NodeTrait]]): Double
-
-  /**
-   * Builds an object of type ScoringFunction based on an XML description
-   */
-  def fromXML(node: Node) : ScoringFunction
-
 }
+
+object ScoringFunction {
+  def create(className : String,  config: Node) : ScoringFunction = className.toLowerCase match {
+     case "scoredlist" => return ScoredList.fromXML(config)
+     case "timecloseness" => return TimeCloseness.fromXML(config)
+
+     // NOTICE: add case statements for new scoring functions here
+    case whatever => throw new IllegalArgumentException("Unable to construct scoring function for class name " + className)
+  }
+}
+
+
 

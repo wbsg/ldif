@@ -42,7 +42,7 @@ class HadoopQuadToTextConverter extends Configured with Tool {
     job.setJobName("ConvertSeqToNq")
 
     job.setMapperClass(classOf[IdentityMapper[NullWritable, QuadWritable]])
-    //job.setNumReduceTasks(0)
+    job.setNumReduceTasks(0)
 
     job.setMapOutputKeyClass(classOf[NullWritable])
     job.setMapOutputValueClass(classOf[QuadWritable])
@@ -66,6 +66,9 @@ class HadoopQuadToTextConverter extends Configured with Tool {
   }
 }
 
+/*
+ * Converts Quad objects to text
+ */
 object HadoopQuadToTextConverter {
   private val log = LoggerFactory.getLogger(getClass.getName)
 

@@ -60,7 +60,7 @@ case class Quad(subject : NodeTrait, predicate : String, value : NodeTrait, grap
     }
   }
 
-  def toLine = toNQuadFormat + " . \n"
+  def toLine = toNQuadFormat + " .\n"
 }
 
 class ForwardComparator extends Comparator[Quad] {

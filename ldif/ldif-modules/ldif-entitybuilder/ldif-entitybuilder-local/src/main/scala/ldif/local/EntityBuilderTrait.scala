@@ -19,8 +19,10 @@
 package ldif.local
 
 import ldif.entity.EntityDescription
-import ldif.local.runtime.EntityWriter
+import runtime.{QuadReader, EntityWriter}
 
 trait EntityBuilderTrait {
   def buildEntities (ed : EntityDescription, writer : EntityWriter)
+  //
+  def getNotUsedQuads : QuadReader
 }

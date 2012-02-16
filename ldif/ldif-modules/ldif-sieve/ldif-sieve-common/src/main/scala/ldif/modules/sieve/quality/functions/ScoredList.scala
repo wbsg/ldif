@@ -38,6 +38,11 @@ class ScoredList(val priorityList: List[String]) extends ScoringFunction {
     priorityList.indexOf(graphId)
   }
 
+
+  override def toString() : String = {
+    "ScoredList, priority=" + priorityList
+  }
+
   /**
    * Providing as input a list of nodes in an entity description, compute
    */
@@ -57,14 +62,17 @@ class ScoredList(val priorityList: List[String]) extends ScoringFunction {
       case None => 0.0
     }
   }
+}
 
-  /**
-   * Builds an object of type ScoringFunction based on an XML description
-   */
+object ScoredList {
   def fromXML(node: scala.xml.Node) : ScoringFunction = {
-    null //todo implement
+    val paramStr : String = (node \ "Param" \ "@value").text
+    val params : List[String] = paramStr.split(" ").toList
+    if (params.length < 1) {
+      throw new IllegalArgumentException("No list of values given as preference")
+    }
+    new ScoredList(params)
   }
-
 }
 
 

@@ -18,7 +18,6 @@
 
 package ldif.local
 
-import config.IntegrationConfig
 import datasources.dump.DumpLoader
 import de.fuberlin.wiwiss.r2r.{FileOrURISource, Repository}
 import scala.collection.mutable.{Map, HashMap}
@@ -26,6 +25,7 @@ import ldif.local.datasources.dump.QuadFileLoader
 import collection.JavaConversions
 import org.slf4j.LoggerFactory
 import java.io._
+import ldif.config.IntegrationConfig
 
 object ConfigValidator {
   val okMessage = "Ok"
@@ -33,7 +33,7 @@ object ConfigValidator {
   val fileError = "Error in reading mapping file"
   val mappingsError = "Erroneous mappings found"
 
-  def validateConfiguration(config: IntegrationConfig): Boolean = {
+  def validateConfiguration(config: IntegrationConfig) : Boolean = {
     var fail = false
     val skipSilk = config.properties.getProperty("linkSpecifications.skip", "false")=="true"
     val skipR2R = config.properties.getProperty("mappings.skip", "false")=="true"
@@ -52,7 +52,7 @@ object ConfigValidator {
       }
       else {
         // Sources validation
-        sourceFileErrors = validateSourceFiles(config.sources)
+         sourceFileErrors = validateSourceFiles(config.sources)
 
         for (err <- sourceFileErrors) {
           if(err._2.size > 0 && !discardFaultyQuads)
@@ -96,21 +96,33 @@ object ConfigValidator {
     }
   }
 
-  def validateSourceFiles(sources: File): Map[String, Seq[Pair[Int, String]]] = {
+  // Validates a list of files/directories
+  def validateSourceFiles(sources: Traversable[String]): Map[String, Seq[Pair[Int, String]]] = {
     val errorMap = new HashMap[String, Seq[Pair[Int, String]]]
-    for(source <- sources.listFiles) {
-      try {
-        val reader = new BufferedReader(new InputStreamReader(DumpLoader.getFileStream(source)))
-        val loader = new QuadFileLoader
-        val errors = loader.validateQuadsMT(reader)
-        if(errors.size > 0)
-          errorMap.put(source.getCanonicalPath, errors)
-      } catch {
-        case e: IOException => errorMap.put(source.getCanonicalPath, List(Pair(0, "Error reading file: " + e.getMessage)))
-      }
+    for(source <- sources) {
+      val sourceFile = new File(source)
+      if(sourceFile.isDirectory)
+        sourceFile.listFiles().map(validateSourceFile(_,errorMap))
+      else
+        validateSourceFile(sourceFile,errorMap)
     }
-    return errorMap
+    errorMap
   }
+
+  // Validates a file
+  def validateSourceFile(file : File, errorMap : Map[String, Seq[Pair[Int, String]]]) {
+    try {
+      val reader = new BufferedReader(new InputStreamReader(DumpLoader.getFileStream(file)))
+      val loader = new QuadFileLoader
+      val errors = loader.validateQuadsMT(reader)
+      if(errors.size > 0)
+        errorMap.put(file.getCanonicalPath, errors)
+    } catch {
+      case e: IOException => errorMap.put(file.getCanonicalPath, List(Pair(0, "Error reading file: " + e.getMessage)))
+    }
+
+  }
+
 
   def validateMappingFile(mappingFile: File, skip: Boolean): Pair[String, Map[String, String]] = {
     if(skip)

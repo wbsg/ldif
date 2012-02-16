@@ -47,48 +47,9 @@ object FusionConfig {
   private val log = LoggerFactory.getLogger(getClass.getName)
   private val schemaLocation = "de/fuberlin/wiwiss/sieve/Sieve.xsd"
 
-  val stdPrefixes = Map("foaf" -> "http://xmlns.com/foaf/0.1/",
-    "dbpedia-owl" -> "http://dbpedia.org/ontology/",
-    //"dbpedia" -> "http://dbpedia.org/resource/",
-    "genes"->"http://wiking.vulcan.com/neurobase/kegg_genes/resource/vocab/",
-    "smwprop"->"http://mywiki/resource/property/",
-    "smwcat"->"http://mywiki/resource/category/",
-    "wiki"->"http://www.example.com/smw#",
-    "ldif"->"http://www4.wiwiss.fu-berlin.de/ldif/",
-    "xsd" -> "http://www.w3.org/2001/XMLSchema#",
-    "rdf" -> "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
-    "rdfs" -> "http://www.w3.org/2000/01/rdf-schema#",
-    "owl" -> "http://www.w3.org/2002/07/owl#")
-
-  def load(configFile: File) : FusionConfig = {
-    load(new FileInputStream(configFile))
-  }
-
-  /**
-   * Gameplan for loading from XML is:
-   *  -- grab Prefixes tag, build prefixes
-   *  -- start from Fusion tag.
-   *  ---- for each Class tag, create:
-   *         an entity description with all properties inside
-   *         a fusion spec pairing each property with a fusion function.
-   *           --- use FusionFunction.fromXML to create it.
-   *
-   */
-  def load(configFile: InputStream) : FusionConfig = {
-    //TODO use reader below
-    //new ValidatingXMLReader(fromXML, schemaLocation)
-
-    //temporarily
-    val fusionSpecs = List(FusionSpecification.createLwdm2012ExampleSpecs)
-    val entityDescriptions = List(EntityDescription.fromXML(FusionEntityDescription.createLwdm2012EntityDescription)(stdPrefixes))
-    new FusionConfig(new Prefixes(stdPrefixes), fusionSpecs, entityDescriptions)
-  }
-
-  //TODO untested
-  def fromXML(node: scala.xml.Node) = {
-    implicit val prefixes = Prefixes.fromXML(node \ "Prefixes" head)
-    val specs = (node \ "Fusion" \ "Class").map(FusionSpecification.fromXML)
-    val entityDescriptions = (node \ "Fusion" \ "Class").map(FusionEntityDescription.fromXML(_)(prefixes))
+  def fromXML(node: scala.xml.Node)(implicit prefixes: Prefixes = Prefixes.empty) = {
+    val specs = (node \ "Class").map(FusionSpecification.fromXML)
+    val entityDescriptions = (node \ "Class").map(FusionEntityDescription.fromXML(_)(prefixes))
     new FusionConfig(prefixes, specs, entityDescriptions)
   }
 // Example from Silk:
