@@ -211,7 +211,7 @@ single target URI based on user-provided matching heuristics.</li>
 <p>The figure below shows the schematic <a href="http://linkeddatabook.com/editions/1.0/index.html#htoc84">architecture of Linked Data applications</a>
 that implement the crawling/data warehousing pattern. The figure highlights the steps of the data integration process that are currently supported by LDIF.</p>
 
-<p style="text-align: left; margin-left: 120px;"><img alt="Example-architecture of an integration aware Linked Data application" src="img/linkeddataapp.png"></p>
+<p style="text-align: left; margin-left: 120px;"><img alt="Example-architecture of an integration aware Linked Data application" src="img/linkeddataapp-sieve.png"></p>
 
 <!--p>The LDIF Framework consists of the Runtime Environment and a set of pluggable modules.
 The pluggable modules include Data Access (dumps, crawler and SPARQL), Transformation (R2R data translation, Silk identity resolution, Sieve data quality and fusion) and Data Output (n-quads or n-triples).
@@ -324,7 +324,11 @@ ptwiki:Juiz_de_Fora sieve:reputation "0.45" ldif:provenance .
 &lt;/ScoringFunction&gt;
 </pre>
       Example output: {en.wikipedia.org=0.9, pt.wikipedia.org=0.6, es.wikipedia.org=0.3}</li>
+</li>
+  <li><i>SetMembership</i>: assigns 1 if the value of the indicator provided as input belongs to the set informed as parameter</li>
+  <li><i>Threshold</i>: assigns 1 if the value of the indicator provided as input is higher than a threshold informed as parameter</li> 
 </ul>
+
 <!--table>
 <tr>
  <th>Name</th>
@@ -454,9 +458,23 @@ on Assembla.com.</p>
 <p>For questions and feedback please use the <a href="http://groups.google.com/group/ldif?hl=en">LDIF Google Group</a>.
 </p>
 
-<!--h2 id="references">10. References</h2>
+<h2 id="references">10. References</h2>
 <ul>
-</ul-->
+<li>Pablo N. Mendes, Hannes Mühleisen, Christian Bizer. <b>Sieve: Linked Data Quality Assessment and Fusion</b>. 1st International Workshop on Linked Web Data Management (LWDM 2011) at the 15th International Conference on Extending Database Technology, EDBT 2012. (to appear)</li>
+
+<pre>
+@inproceedings{lwdm12mendes,
+       booktitle = {1st International Workshop on Linked Web Data Management (LWDM 2011) at the 15th International Conference on Extending Database Technology, EDBT 2012},
+           month = {March},
+           title = {{Sieve: Linked Data Quality Assessment and Fusion}},
+          author = {Mendes, Pablo N. and M\"{u}hleisen, Hannes and Bizer, Christian} 
+            year = {2012},
+           pages = {to appear},
+    howpublished = {invited paper}
+}
+</pre>
+
+</ul>
 
 <h2 id="acknowledgments">11. Acknowledgments </h2>
 <p>This work was supported in part by the EU FP7
