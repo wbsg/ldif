@@ -1,4 +1,4 @@
-/* 
+/*
  * LDIF
  *
  * Copyright 2011-2012 Freie Universität Berlin, MediaEvent Services GmbH & Co. KG
@@ -15,12 +15,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package ldif.local
 
-package ldif.local.runtime
+import collection.mutable.{HashMap, MultiMap, Set}
+import ldif.entity.Node
 
-import java.util.Properties
-import ldif.runtime.QuadWriter
+// Scala MultiMap adapter
+// - Elements/keys can be read only once
+// - Used for collecting not used quads (eg for Fusion)
 
-case class ConfigParameters(configProperties: Properties, otherQuadsWriter: QuadWriter = null, sameAsWriter: QuadWriter = null, collectNotUsedQuads : Boolean = false)
+class MemHashTableReadOnce extends MemHashTable {
 
+  private val hashTable:MultiMap[Pair[Node,String], Node] = new HashMap[Pair[Node,String], Set[Node]] with MultiMap[Pair[Node,String], Node]
 
+  override def get(key : Pair[Node,String]) = {
+    val values = hashTable.get(key)
+    hashTable.remove(key)
+    values
+  }
+
+  def getNotUsedQuads (direction : PropertyType.Value = PropertyType.FORW) = getAllQuads(direction)
+}

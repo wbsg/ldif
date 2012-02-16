@@ -26,5 +26,5 @@ trait HashTable {
   def put(key : Pair[Node,String], value: Node)
   def get(key : Pair[Node,String]) : Option[Set[Node]]
   def clear
-  def getAllQuads : QuadReader
+  def getAllQuads(direction : PropertyType.Value = PropertyType.FORW) : QuadReader
 }

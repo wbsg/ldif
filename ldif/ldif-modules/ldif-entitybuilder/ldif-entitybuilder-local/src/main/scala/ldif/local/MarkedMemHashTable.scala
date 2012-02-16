@@ -31,35 +31,41 @@ class MarkedMemHashTable extends HashTable {
 
   private val hashTable:MultiMap[Pair[Node,String], (Node,Boolean)] = new HashMap[Pair[Node,String], Set[(Node,Boolean)]] with MultiMap[Pair[Node,String], (Node,Boolean)]
 
-  override def getAllQuads : QuadReader = {
+  override def getAllQuads(direction : PropertyType.Value = PropertyType.FORW) : QuadReader = {
     val qq = new QuadQueue
-    hashTable.foreach(getAllQuads(_, qq))
+    hashTable.foreach(getAllQuads(_, qq, direction))
     qq
   }
 
-  private def getAllQuads(elem : ((Node,String),Set[(Node,Boolean)]), writer : QuadWriter)  {
+  private def getAllQuads(elem : ((Node,String),Set[(Node,Boolean)]), writer : QuadWriter, direction : PropertyType.Value)  {
     val subj = LocalNode.decompress(elem._1._1)
     val prop = elem._1._2
     for ((cObj,marker) <- elem._2)  {
       val obj = LocalNode.decompress(cObj)
-      writer.write(Quad(subj, prop, obj, obj.graph))
+      if (direction == PropertyType.FORW)
+        writer.write(Quad(subj, prop, obj, obj.graph))
+      else
+        writer.write(Quad(obj, prop, subj, obj.graph))
     }
   }
 
   // Retrieve not-used quads using markers
-  def getNotUsedQuads : QuadReader =  {
+  def getNotUsedQuads(direction : PropertyType.Value = PropertyType.FORW) : QuadReader =  {
     val qq = new QuadQueue
-    hashTable.foreach(getNotUsedQuads(_, qq))
+    hashTable.foreach(getNotUsedQuads(_, qq, direction))
     qq
   }
 
-  private def getNotUsedQuads(elem : ((Node,String),Set[(Node,Boolean)]), writer : QuadWriter)  {
+  private def getNotUsedQuads(elem : ((Node,String),Set[(Node,Boolean)]), writer : QuadWriter, direction : PropertyType.Value)  {
     val subj = LocalNode.decompress(elem._1._1)
     val prop = elem._1._2
     for ((cObj,marker) <- elem._2)
       if (marker == false)  {
         val obj = LocalNode.decompress(cObj)
-        writer.write(Quad(subj, prop, obj, obj.graph))
+        if (direction == PropertyType.FORW)
+          writer.write(Quad(subj, prop, obj, obj.graph))
+        else
+          writer.write(Quad(obj, prop, subj, obj.graph))
       }
   }
 

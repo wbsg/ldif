@@ -42,14 +42,16 @@ class EntityBuilder (entityDescriptions : IndexedSeq[EntityDescription], readers
   private val useExternalSameAsLinks = config.configProperties.getProperty("useExternalSameAsLinks", "true").toLowerCase=="true"
   private val outputFormat = config.configProperties.getProperty("outputFormat", "nq").toLowerCase
   private val ignoreProvenance = !(outputFormat=="nq" || outputFormat=="sparql")
-  private val useMarkers = config.useMarkers
+  private val collectNotUsedQuads = config.collectNotUsedQuads
 
   // Property HT - Describes all the properties used in the Entity Description
   var PHT:PropertyHashTable = new PropertyHashTable(entityDescriptions)
   // Forward HT - Contains connections which are going to be explored straight/forward
   var FHT:HashTable =
-    if (useMarkers)
-      new MarkedMemHashTable
+    if (collectNotUsedQuads) {
+     // new MarkedMemHashTable
+     new MemHashTableReadOnce
+    }
     else
       new MemHashTable
   // Backward HT - Contains connections from quads which are going to be explored reverse/backward
@@ -444,11 +446,12 @@ class EntityBuilder (entityDescriptions : IndexedSeq[EntityDescription], readers
   //  - rdf:type restrictions
   //  - forward and length=1 paths as pattern
   override def getNotUsedQuads : QuadReader = {
-    if (useMarkers) {
+    if (collectNotUsedQuads) {
       // retrieves not-used property quads
-      val f = FHT.asInstanceOf[MarkedMemHashTable].getNotUsedQuads
+      //val f = FHT.asInstanceOf[MarkedMemHashTable].getNotUsedQuads(PropertyType.FORW)
+      val f = FHT.asInstanceOf[MemHashTableReadOnce].getNotUsedQuads(PropertyType.FORW)
       // retrieves rdf:type quads
-      val b = BHT.getAllQuads
+      val b = BHT.getAllQuads(PropertyType.BACK)
       new MultiQuadReader(f,b)
     }
     else
