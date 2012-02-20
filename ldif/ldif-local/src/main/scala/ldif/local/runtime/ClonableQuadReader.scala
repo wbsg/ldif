@@ -26,6 +26,6 @@ package ldif.local.runtime
  * To change this template use File | Settings | File Templates.
  */
 
-trait ClonableQuadReader extends QuadReader {
+trait ClonableQuadReader extends QuadReader { //TODO typo? Cloneable
   def cloneReader: QuadReader
 }

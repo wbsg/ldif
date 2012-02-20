@@ -37,7 +37,7 @@ class QualityConfig(val name: String, val description: String, val prefixes: Pre
                     val entityDescriptions: Seq[EntityDescription]) {
 
   def merge(c: QualityConfig): QualityConfig = {
-    //TODO implement (for what?)
+    //TODO implement (for what?)(if user gives many files?)
     throw new NotImplementedException
     //this
   }

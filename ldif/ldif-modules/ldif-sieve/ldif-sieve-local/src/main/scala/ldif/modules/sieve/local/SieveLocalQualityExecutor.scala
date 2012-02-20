@@ -15,7 +15,6 @@ package ldif.modules.sieve.local
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 import ldif.module.Executor
 import ldif.local.runtime._
 import impl.NoEntitiesLeft

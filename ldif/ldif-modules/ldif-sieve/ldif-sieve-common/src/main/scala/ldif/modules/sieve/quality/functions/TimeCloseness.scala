@@ -19,6 +19,9 @@ package ldif.modules.sieve.quality.functions
 import org.slf4j.LoggerFactory
 import ldif.entity.NodeTrait
 import ldif.modules.sieve.quality.ScoringFunction
+import org.joda.time.format.ISODateTimeFormat
+import org.joda.time.{Days, DateTimeComparator, DateTime}
+
 /**
  * Takes as input a date and outputs a real valued assessment of how close that date is to now, given a dateRange as normalizer.
  * The formula is:
@@ -26,28 +29,59 @@ import ldif.modules.sieve.quality.ScoringFunction
  *
  * The parameter dateRange can be configured at instantiation time.
  *
- * Can be used to compute freshness of content (if applied to lastUpdate), or recency of content (if applied to creationDate).
+ * Can be used to compute freshness of content (if applied to lastUpdate), or newness of content (if applied to creationDate).
+ *
+ * TODO can be generalized to accept days, hours, seconds, etc.
  *
  * @author pablomendes
  */
 
 class TimeCloseness(val dateRange: Int = 30) extends ScoringFunction {
 
+  assume(dateRange>1)
+
   private val log = LoggerFactory.getLogger(getClass.getName)
 
+  val parser = ISODateTimeFormat.dateTimeNoMillis();
+  val ordering = Ordering.fromLessThan[DateTime](DateTimeComparator.getInstance.compare(_,_) < 0)
+
   def score(metadataValues: Traversable[IndexedSeq[NodeTrait]]): Double = {
-    metadataValues.toList
-      .sortBy( node => { //in case of many "last" updates, sort and get the latest one.
-        //check if node(0).datatype is dateTime  //TODO
-        val date = node(0).value //TODO convert to date according to provided datatype format
-      })
-      .headOption match {
-      case Some(node) => 1 //TODO compute 1 - ((today - lastUpdate) / dateRange)
-      case None => 0
-    }
+    //assume the input has only one pattern
+    val indicator = metadataValues.head
+    // indicator may contain several dates
+    indicator.map( node => {
+          try {
+            val originalDate = parser.parseDateTime(node.value) //TODO check which type of date is passed in.
+            val currentDate = new DateTime
+            val daysSince = Days.daysBetween(originalDate, currentDate).getDays;
+            if (daysSince > dateRange)
+              0.0
+            else
+              1 - (daysSince.toDouble / dateRange)
+          } catch {
+            case _ => 0.0
+          }
+        })
+      .sorted.reverse.head // pick the most recent date
+
+          //.sorted(ordering) //in case of many "last" updates, sort and get the latest one.
+//          .headOption match {
+//            case Some(originalDate) =>  {
+//
+//            }
+//            case None => 0
+//          }
   }
+
   override def toString() : String = {
       "TimeCloseness, timespan=" + dateRange
+  }
+
+  override def equals(obj:Any) = {
+    obj match {
+      case tc: TimeCloseness => dateRange == tc.dateRange
+      case _ => false
+    }
   }
 }
 

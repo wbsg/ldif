@@ -37,7 +37,7 @@ object QualityEntityDescription {
      </Restriction>
      <Patterns>
        <Pattern>
-         <Path>?a/rdf:type</Path>
+         <Path>?a/ldif:lastUpdate</Path>
        </Pattern>
      </Patterns>
    </EntityDescription>

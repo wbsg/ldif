@@ -3,11 +3,11 @@
            xsi:schemaLocation="http://www4.wiwiss.fu-berlin.de/ldif/ ../xsd/IntegrationJob.xsd"
             xmlns="http://www4.wiwiss.fu-berlin.de/ldif/">
     <properties>integration.properties</properties>
-    <sources>dumps</sources>
+    <sources><source>dumps</source></sources>
     <linkSpecifications>linkspecs</linkSpecifications>
     <mappings>mappings</mappings>
     <quality>quality</quality>
     <fusion>fusion</fusion>
-    <output>/data/ldif/integrated_cities.nq</output>
+    <outputs><output><file><path>/data/ldif/integrated_cities.nq</path></file></output></outputs>
     <runSchedule>onStartup</runSchedule>
 </integrationJob>
