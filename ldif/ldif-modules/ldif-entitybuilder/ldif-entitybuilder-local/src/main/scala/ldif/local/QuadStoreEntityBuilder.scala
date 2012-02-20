@@ -35,7 +35,7 @@ import runtime.impl.QuadQueue
  * To change this template use File | Settings | File Templates.
  */
 
-class QuadStoreEntityBuilder(store: QuadStoreTrait, entityDescriptions : Seq[EntityDescription], readers : Seq[QuadReader], config: ConfigParameters) extends EntityBuilderTrait {
+class QuadStoreEntityBuilder(store: QuadStoreTrait, entityDescriptions : Seq[EntityDescription], readers : Seq[QuadReader], config: ConfigParameters, reuseDatabase: Boolean = false) extends EntityBuilderTrait {
   private val log = LoggerFactory.getLogger(getClass.getName)
 
   // If this is true, quads like provenance quads (or even all quads) are saved for later use (merge)
@@ -55,12 +55,16 @@ class QuadStoreEntityBuilder(store: QuadStoreTrait, entityDescriptions : Seq[Ent
   loadDataset
 
   private def initStore {
-    store.clearDatabase
+    if(!reuseDatabase)
+      store.clearDatabase
   }
 
   private def loadDataset {
-    val quadOutput = filterAndDumpDataset(readers)
-    store.loadDataset(quadOutput)
+    if(!reuseDatabase) {
+      val quadOutput = filterAndDumpDataset(readers)
+      store.loadDataset(quadOutput)
+    } else
+      store.loadDataset(null)
   }
 
   private def now = System.currentTimeMillis

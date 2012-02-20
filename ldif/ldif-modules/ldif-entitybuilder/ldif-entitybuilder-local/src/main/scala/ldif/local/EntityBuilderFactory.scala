@@ -52,9 +52,15 @@ object EntityBuilderFactory {
 
   private def createQuadStoreEntityBuilder(configParameters: ConfigParameters, entityDescriptions: scala.Seq[EntityDescription], reader: scala.Seq[QuadReader]): EntityBuilderTrait = {
     val reuseDatabase = configParameters.configProperties.getProperty("reuseDatabase", "false").toLowerCase=="true"
+    configParameters.configProperties.remove("reuseDatabase") // Only use for first phase
+    val reuseDatabaseLocation = configParameters.configProperties.getProperty("reuseDatabaseLocation", System.getProperty("java.io.tmpdir"))
     val quadStoreType = configParameters.configProperties.getProperty("quadStoreType", "tdb").toLowerCase
-    val databaseLocation = configParameters.configProperties.getProperty("databaseLocation", System.getProperty("java.io.tmpdir"))
+    val databaseLocation = if(reuseDatabase)
+        reuseDatabaseLocation
+      else
+        configParameters.configProperties.getProperty("databaseLocation", System.getProperty("java.io.tmpdir"))
+
     val quadStore = createQuadStore(quadStoreType, databaseLocation, reuseDatabase)
-    new QuadStoreEntityBuilder(quadStore, entityDescriptions, reader, configParameters)
+    new QuadStoreEntityBuilder(quadStore, entityDescriptions, reader, configParameters, reuseDatabase)
   }
 }

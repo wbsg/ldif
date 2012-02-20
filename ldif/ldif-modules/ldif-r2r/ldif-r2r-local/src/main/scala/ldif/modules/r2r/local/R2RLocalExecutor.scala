@@ -46,9 +46,10 @@ class R2RLocalExecutor extends Executor {
   def output(task: R2RTask) = new GraphFormat()
 
   override def execute(task: R2RTask, reader: Seq[EntityReader], writer: QuadWriter) {
+    var quadCounter = 0
     val mapping = task.mapping
     val inputQueue = reader.head
-    log.info("Executing mapping <" + task.mapping.mapping.getUri + ">")
+    log.info("Executing mapping <" + task.mapping.mapping.getUri + ">...")
 
     while(inputQueue.hasNext) {
       var counter = 0
@@ -59,8 +60,10 @@ class R2RLocalExecutor extends Executor {
         counter += 1
       }
       for(quad <- mapping.executeMappingMT(entities).toList) {
+        quadCounter += 1
         writer.write(quad)
       }
     }
+    log.info("...output " + quadCounter + " quad(s).")
   }
 }
