@@ -14,6 +14,8 @@
         <Prefix id="rdf" namespace="http://www.w3.org/1999/02/22-rdf-syntax-ns#"/>
         <Prefix id="rdfs" namespace="http://www.w3.org/2000/01/rdf-schema#"/>
         <Prefix id="owl" namespace="http://www.w3.org/2002/07/owl#"/>
+        <Prefix id="provenance" namespace="http://www4.wiwiss.fu-berlin.de/ldif/provenance"/>
+
     </Prefixes>
 
     <QualityAssessment name="Prefer new information from authors with good rating" description="The idea is to BlaBla">
@@ -22,6 +24,8 @@
                 <ScoringFunction class="TimeCloseness">
                     <Param name="timeSpan" value="7"/>
                     <Input path="?GRAPH/provenance:lastUpdated"/>
+                    <Input path="?GRAPH/provenance:whatever"/>
+
                 </ScoringFunction>
             </AssessmentMetric>
 
@@ -29,6 +33,8 @@
         <AssessmentMetric id="sieve:recency">
         <ScoringFunction class="ScoredList">
             <Param name="list" value="en.wikipedia.org pt.wikipedia.org es.wikipedia.org"/>
+            <Input path="?GRAPH/provenance:whenever"/>
+
         </ScoringFunction>
         </AssessmentMetric>
 
@@ -38,13 +44,13 @@
             description="The idea is to use values from multiple DBpedia languages to improve the quality of data about cities.">
         <Class name="dbpedia:City">
             <Property name="dbpedia:areaTotal">
-                <FusionFunction name="KeepValueWithHighestScore" metric="sieve:lastUpdated"/>
+                <FusionFunction class="KeepValueWithHighestScore" metric="sieve:lastUpdated"/>
             </Property>
             <Property name="dbpedia:population">
-                <FusionFunction name="AverageValue"/>
+                <FusionFunction class="AverageValue"/>
             </Property>
             <Property name="dbpedia:name">
-                <FusionFunction name="KeepValueWithHighestScore" metric="sieve:reputation"/>
+                <FusionFunction class="KeepValueWithHighestScore" metric="sieve:reputation"/>
             </Property>
         </Class>
     </Fusion>

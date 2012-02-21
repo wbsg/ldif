@@ -42,9 +42,7 @@
 
                 <xs:element name="mappings" type="xs:string" minOccurs="0"/>
 
-                <xs:element name="quality" type="xs:string" />
-
-                <xs:element name="fusion" type="xs:string" />
+                <xs:element name="sieve" type="xs:string" />
 
                 <xs:element name="output" type="xs:string" />
 

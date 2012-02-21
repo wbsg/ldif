@@ -33,8 +33,7 @@ import ldif.util.Prefixes
  * @author Hannes Mühleisen
  */
 class QualityConfig(val name: String, val description: String, val prefixes: Prefixes,
-                    val qualitySpecs: Traversable[QualitySpecification],
-                    val entityDescriptions: Seq[EntityDescription]) {
+                    val qualitySpecs: Traversable[QualitySpecification]) {
 
   def merge(c: QualityConfig): QualityConfig = {
     //TODO implement (for what?)
@@ -44,20 +43,15 @@ class QualityConfig(val name: String, val description: String, val prefixes: Pre
 }
 
 object QualityConfig {
-
   private val log = LoggerFactory.getLogger(getClass.getName)
-
-
 
   def fromXML(node: scala.xml.Node)(implicit prefixes: Prefixes = Prefixes.empty) = {
     val configName = (node \ "@name").text
     val configDesc = (node \ "@description").text
     val specs = (node \\ "AssessmentMetric").map(QualitySpecification.fromXML(_)(prefixes))
-    val entityDescriptions = (node \\ "AssessmentMetric").map(QualityEntityDescription.fromXML(_)(prefixes))
-    new QualityConfig(configName, configDesc, prefixes, specs, entityDescriptions)
+    new QualityConfig(configName, configDesc, prefixes, specs)
     // TODO: handle aggregate Metrics (next version)
   }
-
   def empty = new EmptyQualityConfig
 }
 
@@ -65,11 +59,5 @@ object QualityConfig {
  This class should never be actually used for fusion. It simply signals that no config exists, and the framework should repeat the input.
  */
 class EmptyQualityConfig extends QualityConfig("", "", Prefixes.stdPrefixes,
-  List(new QualitySpecification("Empty",
-    IndexedSeq(RandomScoringFunction),
-    IndexedSeq("DEFAULT")
-  )),
-  List(EntityDescription.empty)
-
-) {
+  List(new QualitySpecification("Empty", IndexedSeq(RandomScoringFunction), IndexedSeq("DEFAULT"),EntityDescription.empty))) {
 }

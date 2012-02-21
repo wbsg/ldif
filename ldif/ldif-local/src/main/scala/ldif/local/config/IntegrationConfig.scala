@@ -24,7 +24,7 @@ import org.slf4j.LoggerFactory
 import xml.{Node, XML}
 import ldif.util.{ConfigProperties, Consts, ValidatingXMLReader}
 
-case class IntegrationConfig(sources : File, linkSpecDir : File, mappingDir : File, sieveSpecDir : File, outputFile : File, outputPhase: String = "complete", properties : Properties, runSchedule : String) {}
+case class IntegrationConfig(sources : File, linkSpecDir : File, mappingDir : File, sieveSpec : File, outputFile : File, outputPhase: String = "complete", properties : Properties, runSchedule : String) {}
 
 object IntegrationConfig
 {
@@ -57,7 +57,7 @@ object IntegrationConfig
       sources = getFile(xml, "sources", baseDir, properties),
       linkSpecDir = getFile(xml, "linkSpecifications", baseDir, properties),
       mappingDir = getFile(xml, "mappings", baseDir, properties),
-      sieveSpecDir = getFile(xml, "fusion", baseDir, properties),
+      sieveSpec = getFile(xml, "sieve", baseDir, properties),
       outputFile = new File(xml \ "output" text),
       outputPhase = outputPhase,
       properties = properties,

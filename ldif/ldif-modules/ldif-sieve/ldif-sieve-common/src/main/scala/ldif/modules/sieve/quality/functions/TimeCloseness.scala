@@ -19,6 +19,7 @@ package ldif.modules.sieve.quality.functions
 import org.slf4j.LoggerFactory
 import ldif.entity.NodeTrait
 import ldif.modules.sieve.quality.ScoringFunction
+
 /**
  * Takes as input a date and outputs a real valued assessment of how close that date is to now, given a dateRange as normalizer.
  * The formula is:
@@ -37,26 +38,33 @@ class TimeCloseness(val dateRange: Int = 30) extends ScoringFunction {
 
   def score(metadataValues: Traversable[IndexedSeq[NodeTrait]]): Double = {
     metadataValues.toList
-      .sortBy( node => { //in case of many "last" updates, sort and get the latest one.
-        //check if node(0).datatype is dateTime  //TODO
-        val date = node(0).value //TODO convert to date according to provided datatype format
-      })
+      .sortBy(node => {
+      //in case of many "last" updates, sort and get the latest one.
+      //check if node(0).datatype is dateTime  //TODO
+      val date = node(0).value //TODO convert to date according to provided datatype format
+    })
       .headOption match {
       case Some(node) => 1 //TODO compute 1 - ((today - lastUpdate) / dateRange)
       case None => 0
     }
   }
-  override def toString() : String = {
-      "TimeCloseness, timespan=" + dateRange
+
+  override def toString(): String = {
+    "TimeCloseness, timespan=" + dateRange
   }
 }
 
 object TimeCloseness {
-  def fromXML(node: scala.xml.Node) : ScoringFunction = {
-    val range : Int =  (node \ "Param" \ "@value").text.toInt
-    if (range < 0) {
-      throw new IllegalArgumentException("No positive value given for range")
+  def fromXML(node: scala.xml.Node): ScoringFunction = {
+    try {
+      val range: Int = (node \ "Param" \ "@value").text.toInt
+      if (range < 0) {
+        throw new IllegalArgumentException("No positive value given for range")
+      }
+      return new TimeCloseness(range)
+    } catch {
+      case ioe: NumberFormatException => throw new IllegalArgumentException("No positive value given for range")
     }
-    new TimeCloseness(range)
+    return null;
   }
 }
