@@ -28,8 +28,8 @@ import scala.collection.JavaConversions._
 import ldif.local.util.StringPool
 import ldif.local.runtime.{LocalNode, EntityWriter, QuadReader, ConfigParameters}
 import ldif.runtime.Quad
-import ldif.util.{Consts, Uri}
 import java.util.{HashSet => JHashSet}
+import ldif.util.{ReportPublisher, Consts, Uri}
 
 class EntityBuilder (entityDescriptions : IndexedSeq[EntityDescription], readers : Seq[QuadReader], config: ConfigParameters) extends FactumBuilder with EntityBuilderTrait {
 
@@ -164,7 +164,7 @@ class EntityBuilder (entityDescriptions : IndexedSeq[EntityDescription], readers
 
   private def isRelevantQuad(quad: Quad): Boolean = {
     val prop = new Uri(quad.predicate).toString
-    if(PHT.contains(prop) && !isProvenanceQuad(quad))
+    if(PHT.contains(prop) && (!isProvenanceQuad(quad) || !saveQuads))
       true
     else
       false

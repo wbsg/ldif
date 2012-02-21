@@ -8,10 +8,23 @@ package ldif.util
  * To change this template use File | Settings | File Templates.
  */
 
+/**
+ * A report publisher publishes reports about a specific component/publisher
+ */
 trait ReportPublisher {
+  /**
+   * Initialize the ReportPublisher
+   */
+  def initialize
 
+  /**
+   * The name of the publisher (should be globally unique)
+   */
   def getPublisherName: String
 
+  /**
+   * Assemble a report to be published
+   */
   def getReport: Report
 }
 
