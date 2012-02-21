@@ -19,11 +19,11 @@
 package ldif.local
 
 import datasources.dump.{QuadFileLoader, DumpLoader}
+import rest.MonitorServer
 import runtime._
 import impl._
 import ldif.modules.r2r.local.R2RLocalExecutor
 import ldif.modules.r2r.{R2RModule, R2RConfig}
-import util.StringPool
 import ldif.modules.silk.SilkModule
 import ldif.modules.silk.local.SilkLocalExecutor
 import ldif.entity.EntityDescription
@@ -41,10 +41,13 @@ import ldif.output._
 import ldif.modules.sieve.quality.{QualityTask, QualityConfig, QualityModule, EmptyQualityConfig}
 import collection.mutable.HashMap
 import ldif.config._
+import util.{StringPool}
 
-class IntegrationJob (val config : IntegrationConfig, debugMode : Boolean = false) {
+class IntegrationJob (val config : IntegrationConfig, debugMode : Boolean = false, enableReportingServer: Boolean = false) {
 
   private val log = LoggerFactory.getLogger(getClass.getName)
+  if(enableReportingServer)
+    MonitorServer.start("http://localhost:5343/")
 
   // Object to store all kinds of configuration data
   private var configParameters: ConfigParameters = null
@@ -53,7 +56,6 @@ class IntegrationJob (val config : IntegrationConfig, debugMode : Boolean = fals
   private var lastUpdate : Calendar = null
 
   def runIntegration {
-
     if (config.sources == null || config.sources.size == 0)
       log.info("Integration Job skipped - No data source files found")
 
@@ -130,6 +132,7 @@ class IntegrationJob (val config : IntegrationConfig, debugMode : Boolean = fals
         writeOutput(config, integratedReader)
         //writeOutput(config, sieveReader)
       }
+//    MonitorServer.stop()
   }
 
   private def setupQuadReader(_clonedR2rReader: Seq[QuadReader]): Seq[QuadReader] = {
@@ -299,7 +302,6 @@ class IntegrationJob (val config : IntegrationConfig, debugMode : Boolean = fals
     val uriGenerator = new EnumeratingURIGenerator("http://www4.wiwiss.fu-berlin.de/ldif/imported", BigInteger.ONE);
     val importedMappingModel = Repository.importMappingDataFromSource(mappingSource, uriGenerator)
     val repository = new Repository(new JenaModelSource(importedMappingModel))
-    val executor = new R2RLocalExecutor
     val config = new R2RConfig(repository)
     val module = new R2RModule(config)
 
@@ -310,6 +312,8 @@ class IntegrationJob (val config : IntegrationConfig, debugMode : Boolean = fals
 
     val outputFile = File.createTempFile("ldif-mapped-quads", ".bin")
     outputFile.deleteOnExit
+    val executor = new R2RLocalExecutor
+    GlobalStatusMonitor.value.addPublisher(executor.reporter)
     val writer = new FileQuadWriter(outputFile)
 
      //runInBackground
@@ -318,6 +322,7 @@ class IntegrationJob (val config : IntegrationConfig, debugMode : Boolean = fals
         executor.execute(r2rTask, Seq(reader), writer)
     }
     writer.finish
+    executor.reporter.setFinishTime
 
     Some(Seq(new FileQuadReader(writer.asInstanceOf[FileQuadWriter].outputFile)))
   }
@@ -582,7 +587,7 @@ object IntegrationJob {
       }
     }
 
-    val integrator = new IntegrationJob(config, debug)
+    val integrator = new IntegrationJob(config, debug, true)
     integrator.runIntegration
   }
 }

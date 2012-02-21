@@ -20,8 +20,13 @@ package ldif.local
 
 import ldif.entity.EntityDescription
 import runtime.{QuadReader, EntityWriter}
+import util.EntityBuilderReportPublisher
+import ldif.util.GlobalStatusMonitor
 
 trait EntityBuilderTrait {
+  val entityBuilderReportPublisher = new EntityBuilderReportPublisher("Entity Builder")
+  GlobalStatusMonitor.value.addPublisher(entityBuilderReportPublisher)
+
   def buildEntities (ed : EntityDescription, writer : EntityWriter)
   //
   def getNotUsedQuads : QuadReader

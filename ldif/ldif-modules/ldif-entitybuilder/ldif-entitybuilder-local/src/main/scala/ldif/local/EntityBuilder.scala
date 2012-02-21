@@ -25,14 +25,13 @@ import collection.mutable.{ArraySeq, ArrayBuffer, Set, HashSet}
 import actors.{Future, Futures}
 import runtime.impl.{QuadQueue, MultiQuadReader}
 import scala.collection.JavaConversions._
-import ldif.local.util.StringPool
 import ldif.local.runtime.{LocalNode, EntityWriter, QuadReader, ConfigParameters}
 import ldif.runtime.Quad
 import java.util.{HashSet => JHashSet}
-import ldif.util.{ReportPublisher, Consts, Uri}
+import util.{EntityBuilderReportPublisher, StringPool}
+import ldif.util.{GlobalStatusMonitor, ReportPublisher, Consts, Uri}
 
 class EntityBuilder (entityDescriptions : IndexedSeq[EntityDescription], readers : Seq[QuadReader], config: ConfigParameters) extends FactumBuilder with EntityBuilderTrait {
-
   private val log = LoggerFactory.getLogger(getClass.getName)
   // If this is true, quads like provenance quads (or even all quads) are saved for later use (merge)
   private val outputAllQuads = config.configProperties.getProperty("output", "mapped-only").toLowerCase=="all"
@@ -87,6 +86,7 @@ class EntityBuilder (entityDescriptions : IndexedSeq[EntityDescription], readers
         writer.write(new EntityLocal(LocalNode.decompress(node), ed))
 //    log.info("Memory used (after writing all entities): " + MemoryUsage.getMemoryUsage()+" KB")   //TODO: remove
     writer.finish
+    entityBuilderReportPublisher.entityQueuesFilled.incrementAndGet()
 
     log.debug("Build Entities took " + ((now - startTime)) + " ms")
   }
@@ -105,6 +105,7 @@ class EntityBuilder (entityDescriptions : IndexedSeq[EntityDescription], readers
 
   // Init memory structures
   private def init {
+    entityBuilderReportPublisher.setStartTime
     EntityLocalMetadata.factumBuilder = this
     if(PHT.areAllUriNodesNeeded)
       allUriNodes = new JHashSet[Node]
@@ -128,6 +129,8 @@ class EntityBuilder (entityDescriptions : IndexedSeq[EntityDescription], readers
         if(useExternalSameAsLinks)
           saveIfSameAsQuad(quad)
 
+        entityBuilderReportPublisher.quadsReadCounter += 1
+
         if(isRelevantQuad(quad))  {
           counter += 1
 //          if(counter % 100000 == 0)
@@ -150,6 +153,7 @@ class EntityBuilder (entityDescriptions : IndexedSeq[EntityDescription], readers
         }
       }
     }
+    entityBuilderReportPublisher.finishedReading = true
     log.info("EntityBuilder: " + counter + " quads loaded into the entity builder")
 
     //log.info("Read in Quads took " + ((now - startTime)) + " ms")

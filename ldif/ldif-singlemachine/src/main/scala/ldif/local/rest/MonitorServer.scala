@@ -11,8 +11,8 @@ package ldif.local.rest
 import javax.ws.rs._
 import com.sun.jersey.api.container.httpserver.HttpServerFactory
 import core.Response
-import ldif.util.StatusMonitor
 import com.sun.net.httpserver.HttpServer
+import ldif.util.{GlobalStatusMonitor, StatusMonitor}
 
 @Path("/")
 class MonitorServer {
@@ -28,7 +28,7 @@ class MonitorServer {
 }
 
 object MonitorServer {
-  val generalStatusMonitor: StatusMonitor = dummyStatusMonitor
+  val generalStatusMonitor: StatusMonitor = GlobalStatusMonitor.value
   private var server: HttpServer = null
 
   def stop() {

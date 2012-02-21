@@ -33,9 +33,11 @@ import ldif.runtime.QuadWriter
 import collection.mutable.ArrayBuffer
 import ldif.entity.Entity
 import org.slf4j.LoggerFactory
+import ldif.util.GlobalStatusMonitor
 
 class R2RLocalExecutor extends Executor {
   val maxEntitesPerIterable = 1000
+  val reporter = new R2RReportPublisher
   private val log = LoggerFactory.getLogger(getClass.getName)
   type TaskType = R2RTask
   type InputFormat = StaticEntityFormat
@@ -62,8 +64,10 @@ class R2RLocalExecutor extends Executor {
       for(quad <- mapping.executeMappingMT(entities).toList) {
         quadCounter += 1
         writer.write(quad)
+        reporter.quadsOutput.incrementAndGet()
       }
     }
+    reporter.mappingsExecuted.incrementAndGet()
     log.info("...output " + quadCounter + " quad(s).")
   }
 }

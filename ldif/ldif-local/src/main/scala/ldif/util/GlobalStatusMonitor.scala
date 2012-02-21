@@ -1,6 +1,5 @@
 package ldif.util
 
-
 /**
  * Created by IntelliJ IDEA.
  * User: andreas
@@ -11,4 +10,6 @@ package ldif.util
 
 object GlobalStatusMonitor {
   val value: StatusMonitor with ReportSubscriber = new SimpleStatusMonitor
+
+  def clean() = value.clean()
 }

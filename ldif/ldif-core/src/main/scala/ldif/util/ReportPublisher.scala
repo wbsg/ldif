@@ -1,5 +1,8 @@
 package ldif.util
 
+import java.util.GregorianCalendar
+import java.text.SimpleDateFormat
+
 /**
  * Created by IntelliJ IDEA.
  * User: andreas
@@ -12,11 +15,9 @@ package ldif.util
  * A report publisher publishes reports about a specific component/publisher
  */
 trait ReportPublisher {
-  /**
-   * Initialize the ReportPublisher
-   */
-  def initialize
-
+  var startTime = getTimeStampReport("Start time")
+  var finishTime: ReportItem = ReportItem("", "", "")
+  var finished = false
   /**
    * The name of the publisher (should be globally unique)
    */
@@ -26,6 +27,19 @@ trait ReportPublisher {
    * Assemble a report to be published
    */
   def getReport: Report
+
+  def getTimeStampReport(name: String): ReportItem = {
+    val dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss")
+    val time = dateFormat.format(new GregorianCalendar().getTime)
+    return ReportItem(name, "-",time)
+  }
+
+  def setStartTime = startTime = getTimeStampReport("Start time")
+
+  def setFinishTime = {
+    finishTime = getTimeStampReport("Finish time")
+    finished = true
+  }
 }
 
 case class Report(items: Seq[ReportItem])
