@@ -85,8 +85,8 @@ class SieveLocalFusionExecutor(useFileInstanceCache: Boolean = false) extends Ex
         //log.info("Sieve Entity: %s".format(entity.resource.toString))
         //log.info("Patterns: "+in.entityDescription.patterns.size)
 
-        assume(task.fusionSpec.fusionFunctions.size==in.entityDescription.patterns.size, "Number of scoringFunctions must be the same as number of patterns.")
-        assume(task.fusionSpec.outputPropertyNames.size==in.entityDescription.patterns.size, "Number of outputPropertyNames must be the same as number of patterns.")
+        //assume(task.fusionSpec.fusionFunctions.size==in.entityDescription.patterns.size, "Number of scoringFunctions must be the same as number of patterns.")
+        //assume(task.fusionSpec.outputPropertyNames.size==in.entityDescription.patterns.size, "Number of outputPropertyNames must be the same as number of patterns.")
 
         if (entity==null) {
           log.error("Is it normal that some entities will be intermittently null? %s".format(in.entityDescription))

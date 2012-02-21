@@ -86,11 +86,16 @@ class TimeCloseness(val dateRange: Int = 30) extends ScoringFunction {
 }
 
 object TimeCloseness {
-  def fromXML(node: scala.xml.Node) : ScoringFunction = {
-    val range : Int =  (node \ "Param" \ "@value").text.toInt
-    if (range < 0) {
-      throw new IllegalArgumentException("No positive value given for range")
+  def fromXML(node: scala.xml.Node): ScoringFunction = {
+    try {
+      val range: Int = (node \ "Param" \ "@value").text.toInt
+      if (range < 0) {
+        throw new IllegalArgumentException("No positive value given for range")
+      }
+      return new TimeCloseness(range)
+    } catch {
+      case ioe: NumberFormatException => throw new IllegalArgumentException("No positive value given for range")
     }
-    new TimeCloseness(range)
+    return null;
   }
 }

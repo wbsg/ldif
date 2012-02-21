@@ -4,6 +4,7 @@ import functions.{ScoredRegexList, RandomScoringFunction,ScoredList,TimeClosenes
 import ldif.util.Prefixes
 import collection.IndexedSeq
 import scala.Predef._
+import ldif.entity.EntityDescription
 
 /*
  * Copyright 2011-2012 Freie Universität Berlin, MediaEvent Services GmbH & Co. KG
@@ -28,8 +29,7 @@ import scala.Predef._
  */
 class QualitySpecification(val id: String,
                            val scoringFunctions: IndexedSeq[ScoringFunction],
-                           val outputPropertyNames: IndexedSeq[String]
-                            ) {
+                           val outputPropertyNames: IndexedSeq[String], val entityDescription : EntityDescription) {
 }
 
 object QualitySpecification {
@@ -45,6 +45,9 @@ object QualitySpecification {
     if (!"".eq(propertyPath)) {
       propertyPaths ++= IndexedSeq(propertyPath);
     }
-    new QualitySpecification(id, scoringFunctions, propertyPaths)
+
+    val entityDescription = QualityEntityDescription.fromXML(node)(prefixes)
+
+    new QualitySpecification(id, scoringFunctions, propertyPaths, entityDescription)
   }
 }

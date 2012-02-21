@@ -41,7 +41,6 @@ object SieveConfig {
     "rdfs" -> "http://www.w3.org/2000/01/rdf-schema#",
     "owl" -> "http://www.w3.org/2002/07/owl#")
 
-  // TODO: allow the schema to be somewhere else? proposal: no
   def reader = new ValidatingXMLReader(fromSieveXmlConfig, "Sieve.xsd")
 
   def fromSieveXmlConfig(configFile: File) = {

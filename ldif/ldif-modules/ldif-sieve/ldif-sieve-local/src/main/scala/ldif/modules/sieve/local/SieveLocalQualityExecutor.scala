@@ -42,15 +42,18 @@ class SieveLocalQualityExecutor(useFileInstanceCache: Boolean = false) extends E
 
   type OutputFormat = GraphFormat
 
+
   def input(task : QualityTask) : InputFormat =
   {
     implicit val prefixes = task.qualityConfig.qualityConfig.prefixes
 
     // here we create entity descriptions from the quality metadata
     //val entityDescriptions = QualityConfig.createDummyEntityDescriptions(prefixes)
-    val entityDescriptions = task.qualityConfig.qualityConfig.entityDescriptions
+   // val entityDescriptions = task.qualityConfig.qualityConfig.entityDescriptions
 
-    new StaticEntityFormat(entityDescriptions)
+    //new StaticEntityFormat(entityDescriptions)
+    null
+    // TODO: fix this? do we need this method at all?
   }
 
   def output(task : QualityTask) = new GraphFormat()
@@ -74,9 +77,9 @@ class SieveLocalQualityExecutor(useFileInstanceCache: Boolean = false) extends E
         //log.info("Sieve Entity: %s".format(entity.resource.toString))
         //log.info("Patterns: "+in.entityDescription.patterns.size)
 
-        // for scoringFunctions that need the graphId, use entity.resource, therefore the assumption below will not hold //TODO solve!
-        assume(task.qualitySpec.scoringFunctions.size==in.entityDescription.patterns.size, "Number of scoringFunctions must be the same as number of patterns.")
-        assume(task.qualitySpec.outputPropertyNames.size==in.entityDescription.patterns.size, "Number of outputPropertyNames must be the same as number of patterns.")
+        // for scoringFunctions that need the graphId, use entity.resource, therefore the assumption below will not hold
+      //  assume(task.qualitySpec.scoringFunctions.size==in.entityDescription.patterns.size, "Number of scoringFunctions must be the same as number of patterns.")
+       // assume(task.qualitySpec.outputPropertyNames.size==in.entityDescription.patterns.size, "Number of outputPropertyNames must be the same as number of patterns.")
 
         if (entity==null) {
           numberOfNullEntities = numberOfNullEntities + 1
@@ -100,7 +103,7 @@ class SieveLocalQualityExecutor(useFileInstanceCache: Boolean = false) extends E
       }
 
       if (numberOfNullEntities>0)
-        log.error("Found %d null entities. Is it normal?".format(numberOfNullEntities))
+        log.error("Found %d null entities. Is this normal?".format(numberOfNullEntities))
 
     })
   }

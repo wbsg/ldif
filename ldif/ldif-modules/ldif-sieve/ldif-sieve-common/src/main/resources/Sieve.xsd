@@ -116,7 +116,7 @@
     <!-- Specific fusion function to be used -->
     <xs:element name="FusionFunction">
         <xs:complexType>
-            <xs:attribute name="name" type="xs:string"/>
+            <xs:attribute name="class" type="xs:string"/>
             <xs:attribute name="metric" type="xs:string"/>
         </xs:complexType>
     </xs:element>
