@@ -23,13 +23,8 @@ import ldif.local.runtime.{QuadReader, ClonableQuadReader}
 import collection.mutable.ArrayBuffer
 
 /**
- * Created by IntelliJ IDEA.
- * User: andreas
- * Date: 21.06.11
- * Time: 19:29
- * To change this template use File | Settings | File Templates.
+ * Creates a new reader out of many quad readers.
  */
-
 class MultiQuadReader(quadReaders: QuadReader*) extends ClonableQuadReader {
   var index = 0
   var closed = (quadReaders.size == 0) // initialize closed=true if no quadReaders are passed
