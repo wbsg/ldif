@@ -118,8 +118,12 @@ Start</span></a> </div>
 <h2 id="news">News</h2>
 <ul>
   <li>
-
-
+	<strong>02/06/2012: Presentation:</strong> LDIF is presented at <a href="http://semtechbizberlin2012.semanticweb.com/">SEMTECHBIZ Berlin 2012</a> (<a href="http://www.wiwiss.fu-berlin.de/en/institute/pwo/bizer/research/publications/BeckerMatteini-LDIF-SemTechBerlin2012-Talk.pdf">Slides</a>).
+  </li>
+  <li>
+	<strong>01/13/2012: Interview:</strong> <a href="http://semanticweb.com/easing-the-job-of-working-with-linked-data_b25940">semanticweb.com speaks with Christian Becker on how LDIF eases the job of working with Linked Data.</a>
+   </li>
+  <li>
       <strong>01/10/2012: Version 0.4 Scale-out released.</strong>  Up till now, LDIF stored data
 purely in-memory which restricted the amount of data that could be
 processed. Version 0.4 provides two alternative implementations of the LDIF
@@ -1152,10 +1156,16 @@ only for relevant data </td>
 <ul>
 </ul>
 <ol>
+	  <li>Christian Becker, Andrea Matteini: LDIF - Linked Data Integration Framework ( <a href="http://www.wiwiss.fu-berlin.de/en/institute/pwo/bizer/research/publications/BeckerMatteini-LDIF-SemTechBerlin2012-Talk.pdf">Slides</a> ). SemTechBiz 2012, Berlin, February 2012.</li>
   <li>Andreas Schultz, Andrea Matteini, Robert Isele, Christian Bizer,
 Christian Becker: <a href="http://www.wiwiss.fu-berlin.de/en/institute/pwo/bizer/research/publications/Schultz-etal-Cold2011-LDIF-Paper.pdf">LDIF
 - Linked Data Integration Framework</a>. 2nd International Workshop on
 Consuming Linked Data, Bonn, Germany, October 2011.</li>
+<li>William
+	Smith, Christian Becker and Andreas Schultz: Neurowiki: How we
+	integrated large datasets into SMW with R2R and Silk / LDIF ( Slides <a href="http://semantic-mediawiki.org/w/images/a/ac/SMWCon_2011_Neurowiki_Presentation.pdf">part
+	1</a>, <a href="http://semantic-mediawiki.org/w/images/b/b7/SMWCon_2011_Neurowiki_Becker_Schultz.pdf">part
+	2</a> ). SMWCon Fall 2011, Berlin, September 2011.</li>
   <li>Tom Heath, Christian Bizer: <a href="http://www.morganclaypool.com/doi/abs/10.2200/S00334ED1V01Y201102WBE001">Linked
 Data: Evolving the Web into a Global Data Space</a>. Synthesis
 Lectures on the Semantic Web: Theory and Technology, Morgan &amp;
@@ -1165,20 +1175,14 @@ Claypool Publishers, ISBN <a href="http://www.amazon.com/Linked-Data-Synthesis-L
 R2R Framework: Publishing and Discovering Mappings on the Web</a> ( <a href="http://www.wiwiss.fu-berlin.de/en/institute/pwo/bizer/research/publications/BizerSchultz-COLD-R2R-Talk.pdf">Slides</a>
 ). 1st International Workshop on Consuming Linked Data (COLD
 2010), Shanghai, November 2010. </li>
-  <li>Julius Volz, Christian Bizer, Martin Gaedke, Georgi Kobilarov: <a href="http://www.wiwiss.fu-berlin.de/en/institute/pwo/bizer/research/publications/VolzBizerGaedkeKobilarov-ISWC2009-Silk.pdf">Discovering
-and Maintaining Links on the Web of Data</a> ( <a href="http://www.wiwiss.fu-berlin.de/en/institute/pwo/bizer/research/publications/VolzBizerGaedkeKobilarov-ISWC2009-Silk-Talk.pdf">Slides</a>
-). International Semantic Web Conference (ISWC2009),
-Westfields, USA, October 2009. </li>
   <li>Robert Isele, Anja Jentzsch, Christian Bizer: <a href="http://www.wiwiss.fu-berlin.de/en/institute/pwo/bizer/research/publications/IseleJentzschBizer-Silk-Cold2010.pdf">Silk
 Server - Adding missing Links while consuming Linked Data</a> ( <a href="http://www.wiwiss.fu-berlin.de/en/institute/pwo/bizer/research/publications/IseleJentzschBizer-Silk-Cold2010-Talk.pdf">Slides</a>
 ). 1st International Workshop on Consuming Linked Data (COLD
 2010), Shanghai, November 2010.</li>
-  <li>William
-Smith, Christian Becker and Andreas Schultz: Neurowiki: How we
-integrated large datasets into SMW with R2R and Silk / LDIF ( Slides <a href="http://semantic-mediawiki.org/w/images/a/ac/SMWCon_2011_Neurowiki_Presentation.pdf">part
-1</a>, <a href="http://semantic-mediawiki.org/w/images/b/b7/SMWCon_2011_Neurowiki_Becker_Schultz.pdf">part
-2</a> ). SMWCon Fall 2011, Berlin, September 2011.</li>
-  <li>Christian Becker, Andrea Matteini: LDIF - Linked Data Integration Framework ( <a href="http://www.wiwiss.fu-berlin.de/en/institute/pwo/bizer/research/publications/BeckerMatteini-LDIF-SemTechBerlin2012-Talk.pdf">Slides</a> ). SemTechBiz 2012, Berlin, February 2012.</li>
+  <li>Julius Volz, Christian Bizer, Martin Gaedke, Georgi Kobilarov: <a href="http://www.wiwiss.fu-berlin.de/en/institute/pwo/bizer/research/publications/VolzBizerGaedkeKobilarov-ISWC2009-Silk.pdf">Discovering
+and Maintaining Links on the Web of Data</a> ( <a href="http://www.wiwiss.fu-berlin.de/en/institute/pwo/bizer/research/publications/VolzBizerGaedkeKobilarov-ISWC2009-Silk-Talk.pdf">Slides</a>
+). International Semantic Web Conference (ISWC2009),
+Westfields, USA, October 2009. </li>
 </ol>
 <h2 id="acknowledgments">11. Acknowledgments </h2>
 <p>This work was supported in part by Vulcan Inc. as part of its <a href="http://www.projecthalo.com">Project Halo</a> and by the EU FP7
