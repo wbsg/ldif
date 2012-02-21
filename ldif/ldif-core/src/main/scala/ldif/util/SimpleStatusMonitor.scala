@@ -9,7 +9,7 @@ package ldif.util
  */
 
 class SimpleStatusMonitor extends StatusMonitor with ReportSubscriber {
-  def getHtml = null
+  def getHtml = "" //TODO
 
   def getText = {
     val sb = new StringBuilder
