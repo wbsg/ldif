@@ -3,7 +3,7 @@
             xmlns="http://www4.wiwiss.fu-berlin.de/ldif/">
   <properties>test1.properties</properties>
   <sources><source>sources</source></sources>
-  <linkSpecifications>linkSpecs</linkSpecifications>
+  <!--<linkSpecifications>linkSpecs</linkSpecifications>-->
   <mappings>mappings</mappings>
   <quality></quality>
   <fusion></fusion>

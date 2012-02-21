@@ -1,0 +1,13 @@
+package ldif.local.util
+
+/**
+ * Created by IntelliJ IDEA.
+ * User: andreas
+ * Date: 2/21/12
+ * Time: 5:09 PM
+ * To change this template use File | Settings | File Templates.
+ */
+
+object EntityBuilderReportPublisher {
+
+}

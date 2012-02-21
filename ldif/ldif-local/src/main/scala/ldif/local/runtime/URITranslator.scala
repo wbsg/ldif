@@ -84,10 +84,16 @@ object URITranslator {
 
     val uriMinting = configProperties.getProperty("uriMinting", "false").toLowerCase=="true"
     if(uriMinting) {
-      if (!quadsReader.isInstanceOf[ClonableQuadReader])
-        throw new RuntimeException("QuadReader for URI translator has to be a ClonableQuadReader")
-      quadsReaderPassTwo = quadsReader.asInstanceOf[ClonableQuadReader].cloneReader
-      uriMap = generateMintedUriMap(linkReader, quadsReader, configProperties)
+      if (!quadsReader.isInstanceOf[ClonableQuadReader]) {
+        quadsReaderPassTwo = quadsReader.asInstanceOf[ClonableQuadReader].cloneReader
+        uriMap = generateMintedUriMap(linkReader, quadsReader, configProperties)
+      } else {
+        val copiedQuadsWriter = new FileQuadWriter(File.createTempFile("ldif_copyquads","queue"))
+        val copyQuadsReader = new CopyQuadReader(quadsReader, copiedQuadsWriter)
+        uriMap = generateMintedUriMap(linkReader, copyQuadsReader, configProperties)
+        copiedQuadsWriter.finish()
+        quadsReaderPassTwo = new FileQuadReader(copiedQuadsWriter.outputFile)
+      }
     }
     else
       uriMap = generateUriMap(linkReader)
