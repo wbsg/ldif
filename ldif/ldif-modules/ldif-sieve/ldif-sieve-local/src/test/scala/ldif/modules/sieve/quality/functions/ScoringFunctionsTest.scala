@@ -29,8 +29,11 @@ class ScoringFunctionsTest extends FlatSpec with ShouldMatchers {
   val todayMinus4 = new Node(today.minusDays(4).toString(ISODateTimeFormat.dateTimeNoMillis()), "http://www.w3.org/2001/XMLSchema#dateTime", Node.TypedLiteral, "graphId")
 
   val nodes3 = Traversable(IndexedSeq(todayMinus3))
-  val nodes4 = Traversable(IndexedSeq(todayMinus4,todayMinus3))
-  val nodes2 = Traversable(IndexedSeq(todayMinus2,todayMinus3,todayMinus4))
+  val nodes23 = Traversable(IndexedSeq(todayMinus2,todayMinus3))
+  val nodes32 = Traversable(IndexedSeq(todayMinus3,todayMinus2))
+
+  val nodes43 = Traversable(IndexedSeq(todayMinus4,todayMinus3))
+  val nodes234 = Traversable(IndexedSeq(todayMinus2,todayMinus3,todayMinus4))
 
   val nodesBad = Traversable(IndexedSeq(new Node("2012-sssssasas02-19T16:55:17Z", "http://www.w3.org/2001/XMLSchema#dateTime", Node.TypedLiteral, "graphId")))
 
@@ -39,12 +42,17 @@ class ScoringFunctionsTest extends FlatSpec with ShouldMatchers {
   }
 
   "ScoringFunctions" should "correctly score input values" in {
-    (tcFunc.score(nodes3)) should equal (0.5)
+    (tcFunc.score(nodes3)) should equal (1.0 - (3.0/6))
   }
 
   "ScoringFunctions" should "correctly sort before scoring input values" in {
-    (tcFunc.score(nodes4)) should equal (1.0 - (2.0/3))
-    (tcFunc.score(nodes2)) should equal (1.0 - (2.0/3))
+    (tcFunc.score(nodes23)) should equal (tcFunc.score(nodes32))
+  }
+
+  "ScoringFunctions" should "sort and score values as expected" in {
+    (tcFunc.score(nodes23)) should equal (1.0 - (2.0/6))
+    (tcFunc.score(nodes43)) should equal (1.0 - (3.0/6))
+    //(tcFunc.score(nodes234)) should equal (1.0 - (2.0/6))
   }
 
   "ScoringFunctions" should "parse date" in {
@@ -59,5 +67,9 @@ class ScoringFunctionsTest extends FlatSpec with ShouldMatchers {
   "ScoringFunctions" should "survive an invalid date" in {
     (tcFunc.score(nodesBad)) should equal (0.0)
   }
+
+//  "ScoringFunctions" should "false/true" in {
+//    (false) should equal  (true)
+//  }
 
 }

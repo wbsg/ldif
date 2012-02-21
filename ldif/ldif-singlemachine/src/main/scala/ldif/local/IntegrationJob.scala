@@ -37,13 +37,10 @@ import ldif.util._
 import ldif.modules.sieve.fusion.{FusionModule, EmptyFusionConfig, FusionConfig}
 import ldif.modules.sieve.local.{SieveLocalQualityExecutor, SieveLocalFusionExecutor}
 import ldif.runtime.QuadWriter
-<<<<<<< HEAD
 import ldif.output._
 import ldif.modules.sieve.quality.{QualityTask, QualityConfig, QualityModule, EmptyQualityConfig}
 import collection.mutable.HashMap
-=======
 import ldif.config._
->>>>>>> ad727d3b86e8693bf7734aefc2a653f5ec763623
 
 class IntegrationJob (val config : IntegrationConfig, debugMode : Boolean = false) {
 
@@ -124,15 +121,14 @@ class IntegrationJob (val config : IntegrationConfig, debugMode : Boolean = fals
           integratedReader = executeURITranslation(allQuads, allSameAsLinks, config.properties)
         else integratedReader = new MultiQuadReader(allQuads, allSameAsLinks) // TODO: Really add allSameAsLinks here (already)?
 
-
-        val sieveInput: QuadReader = new MultiQuadReader(quadReaders.map{e => e}:_*)
-//        // Execute sieve (quality and fusion)
-        var sieveReader: QuadReader = executeSieve(config, Seq(sieveInput))
+//      Execute sieve (quality and fusion)
+        //val sieveInput: QuadReader = new MultiQuadReader(quadReaders.map{e => e}:_*
+        //var sieveReader: QuadReader = executeSieve(config, Seq(sieveInput))
 
         lastUpdate = Calendar.getInstance
 
         writeOutput(config, integratedReader)
-        writeOutput(config, sieveReader)
+        //writeOutput(config, sieveReader)
       }
   }
 
@@ -143,6 +139,18 @@ class IntegrationJob (val config : IntegrationConfig, debugMode : Boolean = fals
       clonedR2rReader = Seq(new FileQuadReader(clonedR2rReader.head.asInstanceOf[FileQuadReader].inputFile))
     }
     clonedR2rReader
+  }
+
+  private def cloneQuadReaders(originalReaders: Seq[QuadReader]): Seq[QuadReader] = {
+    originalReaders.map(qReader => qReader match {
+      case cloneable: ClonableQuadReader => {
+        cloneable.cloneReader
+      }
+      case _ => {
+        log.error("Could not clone QuadReader. Results will not include triples from this reader.")
+        new QuadQueue
+      }
+    })
   }
 
   // Setup config parameters
@@ -192,8 +200,7 @@ class IntegrationJob (val config : IntegrationConfig, debugMode : Boolean = fals
 
   private def executeSieve(config: IntegrationConfig, inputQuadsReaders : Seq[QuadReader]) : QuadReader = {
 
-<<<<<<< HEAD
-    val qualityModule = QualityModule.load(config.sieveSpec)
+    val qualityModule = QualityModule.load(config.sieveSpecDir)
     val sieveQualityReader = qualityModule.config.qualityConfig match {
       case e: EmptyQualityConfig => {
         log.info("[QUALITY] No Sieve configuration found. No quality assessment will be performed.")
@@ -205,8 +212,8 @@ class IntegrationJob (val config : IntegrationConfig, debugMode : Boolean = fals
     }
 
     // now the scores from the quality assessment live in sieveQualityReader, and we need to get it into the fusion stuff
-   val fusionInput =  Seq(inputQuadsReaders,sieveFusionReader)
-    val fusionModule = FusionModule.load(config.sieveSpec)
+    val fusionInput : Seq[QuadReader] = cloneQuadReaders(inputQuadsReaders)
+    val fusionModule = FusionModule.load(config.sieveSpecDir)
     val sieveFusionReader = fusionModule.config.fusionConfig match {
       case e: EmptyFusionConfig => {
         log.info("[FUSION] No Sieve configuration found. No fusion will be performed.")
@@ -216,43 +223,6 @@ class IntegrationJob (val config : IntegrationConfig, debugMode : Boolean = fals
       }
       case c: FusionConfig => {
         executeFusionPhase(config, fusionInput, qualityModule, fusionModule)
-=======
-    val skipQuality = config.properties.getProperty("quality.skip", "false")=="true"
-    val skipFusion = config.properties.getProperty("fusion.skip", "false")=="true"
-
-    var sieveQualityReader : QuadReader = new QuadQueue
-    val qualityModule = QualityModule.load(config.sieveSpecDir)
-    if (skipQuality)  {
-      log.info("Skipping Quality phase.")
-    }
-    else {
-      qualityModule.config.qualityConfig match {
-        case e: EmptyQualityConfig => {
-          log.info("[QUALITY] No Sieve configuration found. No quality assessment will be performed.")
-        }
-        case c: QualityConfig => {
-          sieveQualityReader = executeQualityPhase(config, inputQuadsReaders, qualityModule)
-        }
-      }
-    }
-
-    var sieveFusionReader : QuadReader = new QuadQueue
-    if (skipFusion)  {
-      log.info("Skipping Fusion phase.")
-    }
-    else {
-      val fusionModule = FusionModule.load(config.sieveSpecDir)
-      sieveFusionReader = fusionModule.config.fusionConfig match {
-        case e: EmptyFusionConfig => {
-          log.info("[FUSION] No Sieve configuration found. No fusion will be performed.")
-          val echo = new QuadQueue()
-          inputQuadsReaders.foreach(iqr => iqr.foreach(q => echo.write(q))); // copy input to output
-          echo
-        }
-        case c: FusionConfig => {
-          executeFusionPhase(config, setupQuadReader(inputQuadsReaders), qualityModule, fusionModule)
-        }
->>>>>>> ad727d3b86e8693bf7734aefc2a653f5ec763623
       }
     }
     // return both quality and fused quads
@@ -260,14 +230,14 @@ class IntegrationJob (val config : IntegrationConfig, debugMode : Boolean = fals
   }
 
   private def executeQualityPhase(config: IntegrationConfig, inputQuadsReader: Seq[QuadReader], qualityModule: QualityModule): QuadReader = {
-    val sieveQualityReader = assessQuality(config.sieveSpec, inputQuadsReader, qualityModule)
+    val sieveQualityReader = assessQuality(config.sieveSpecDir, inputQuadsReader, qualityModule)
     log.info("Time needed to assess data quality: " + stopWatch.getTimeSpanInSeconds + "s")
     log.info("Number of graphs quality-assessed by sieve: " + sieveQualityReader.size)
     sieveQualityReader
   }
 
   private def executeFusionPhase(config: IntegrationConfig, inputQuadsReader: Seq[QuadReader], qualityModule: QualityModule, fusionModule: FusionModule): QuadReader = {
-    val sieveFusionReader = fuseQuads(config.sieveSpec, inputQuadsReader, qualityModule, fusionModule)
+    val sieveFusionReader = fuseQuads(config.sieveSpecDir, inputQuadsReader, qualityModule, fusionModule)
     log.info("Time needed to fuse data: " + stopWatch.getTimeSpanInSeconds + "s")
     log.info("Number of entities fused by sieve: " + sieveFusionReader.size)
     sieveFusionReader
@@ -389,43 +359,34 @@ class IntegrationJob (val config : IntegrationConfig, debugMode : Boolean = fals
    */
   private def assessQuality(sieveSpecDir : File, inputQuadsReader : Seq[QuadReader], qualityModule: QualityModule) : QuadReader =
   {
-        log.info("[QUALITY]")
-        log.debug("Sieve will perform quality assessment, config=%s.".format(sieveSpecDir.getAbsolutePath))
-        val qualityExecutor = new SieveLocalQualityExecutor
+    log.info("[QUALITY]")
+    log.debug("Sieve will perform quality assessment, config=%s.".format(sieveSpecDir.getAbsolutePath))
+    val qualityExecutor = new SieveLocalQualityExecutor
 
-<<<<<<< HEAD
     // create a mapping between quality task and entity reader for corresponding entities
-      var taskToReader = new HashMap[QualityTask, EntityReader] with scala.collection.mutable.Map[QualityTask, EntityReader]
-     for ((task) <- qualityModule.tasks) {
-        val readers : Seq[EntityReader] =  buildEntities(inputQuadsReader, Seq(task.qualitySpec.entityDescription), ConfigParameters(config.properties))
-         if (readers.size > 0) {
-          taskToReader += task -> readers.iterator.next
-         }
-       // TODO: cry if no reader could be created?
+    var taskToReader = new HashMap[QualityTask, EntityReader] with scala.collection.mutable.Map[QualityTask, EntityReader]
+    for ((task) <- qualityModule.tasks) {
+      //       val entityBuilderExecutor = getEntityBuilderExecutor(configParameters.copy(collectNotUsedQuads = true))    //andrea
+      //       val readers = buildEntities(inputQuadsReader, entityDescriptions.toSeq, entityBuilderExecutor)             //andrea
+      val readers : Seq[EntityReader] =  buildEntities(inputQuadsReader, Seq(task.qualitySpec.entityDescription), ConfigParameters(config.properties))
+      if (readers.size > 0) {
+        taskToReader += task -> readers.iterator.next
       }
-=======
+      // TODO: cry if no reader could be created?
+    }
 
-        // val entityReaders = buildEntities(inputQuadsReader, entityDescriptions, ConfigParameters(config.properties))
-        val entityBuilderExecutor = getEntityBuilderExecutor(configParameters.copy(collectNotUsedQuads = true))
-        val entityReaders = buildEntities(inputQuadsReader, entityDescriptions.toSeq, entityBuilderExecutor)
->>>>>>> ad727d3b86e8693bf7734aefc2a653f5ec763623
+    StringPool.reset
+    log.info("Time needed to build entities for quality assessment phase: " + stopWatch.getTimeSpanInSeconds + "s")
 
-       StringPool.reset
-        log.info("Time needed to build entities for quality assessment phase: " + stopWatch.getTimeSpanInSeconds + "s")
+    val output = new QuadQueue
+    // for all tasks for all quads run scoring functions
 
-        val output = new QuadQueue
-        // for all tasks for all quads run scoring functions
+    for ((task, reader) <- taskToReader) {
+      qualityExecutor.execute(task, Seq(reader), output)
+    }
 
-        for ((task, reader) <- taskToReader) {
-          qualityExecutor.execute(task, Seq(reader), output)
-        }
-<<<<<<< HEAD
-         // the results from the scoring function will be exported as quads into "output"
-      output
-=======
-
-        new MultiQuadReader(outputQueue, entityBuilderExecutor.getNotUsedQuads)
->>>>>>> ad727d3b86e8693bf7734aefc2a653f5ec763623
+    //new MultiQuadReader(output, entityBuilderExecutor.getNotUsedQuads) //andrea
+    output
   }
 
   /**
@@ -436,8 +397,7 @@ class IntegrationJob (val config : IntegrationConfig, debugMode : Boolean = fals
     log.info("[FUSION]")
     log.debug("Sieve will perform fusion, config=%s.".format(sieveSpecDir.getAbsolutePath))
 
-    // TODO: change so similar concept as shown above
-
+    // TODO: change so similar concept as shown above (why?)
     val fusionExecutor = new SieveLocalFusionExecutor()
 
     val entityDescriptions = fusionModule.tasks.toIndexedSeq.map(fusionExecutor.input).flatMap{ case StaticEntityFormat(ed) => ed }

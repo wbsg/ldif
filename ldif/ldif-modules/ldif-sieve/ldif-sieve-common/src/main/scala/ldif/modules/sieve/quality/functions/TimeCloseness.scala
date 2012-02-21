@@ -57,7 +57,7 @@ class TimeCloseness(val dateRange: Int = 30) extends ScoringFunction {
             if (daysSince > dateRange)
               0.0
             else
-              1 - (daysSince.toDouble / dateRange)
+              1.0 - (daysSince.toDouble / dateRange)
           } catch {
             case _ => 0.0
           }
