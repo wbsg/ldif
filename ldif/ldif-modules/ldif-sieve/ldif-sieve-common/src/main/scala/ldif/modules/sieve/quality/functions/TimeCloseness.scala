@@ -46,6 +46,7 @@ class TimeCloseness(val dateRange: Int = 30) extends ScoringFunction {
   val ordering = Ordering.fromLessThan[DateTime](DateTimeComparator.getInstance.compare(_,_) < 0)
 
   def score(metadataValues: Traversable[IndexedSeq[NodeTrait]]): Double = {
+    try {
     //assume the input has only one pattern
     val indicator = metadataValues.head
     // indicator may contain several dates
@@ -54,6 +55,7 @@ class TimeCloseness(val dateRange: Int = 30) extends ScoringFunction {
             val originalDate = parser.parseDateTime(node.value) //TODO check which type of date is passed in.
             val currentDate = new DateTime
             val daysSince = Days.daysBetween(originalDate, currentDate).getDays;
+            //log.trace("1.0 - DaysSince(%d) / DateRange(%d)".format(daysSince, dateRange))
             if (daysSince > dateRange)
               0.0
             else
@@ -63,14 +65,12 @@ class TimeCloseness(val dateRange: Int = 30) extends ScoringFunction {
           }
         })
       .sorted.reverse.head // pick the most recent date
-
-          //.sorted(ordering) //in case of many "last" updates, sort and get the latest one.
-//          .headOption match {
-//            case Some(originalDate) =>  {
-//
-//            }
-//            case None => 0
-//          }
+    } catch {
+      case e: Exception => {
+        log.debug("Error %s".format(e))
+        0.0
+      }
+    }
   }
 
   override def toString() : String = {

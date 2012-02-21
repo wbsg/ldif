@@ -5,8 +5,6 @@ import org.scalatest.junit.JUnitRunner
 import org.scalatest.FlatSpec
 import org.scalatest.matchers.ShouldMatchers
 import ldif.entity.Node
-import org.joda.time.format.ISODateTimeFormat
-import org.joda.time.{DateTime, Days}
 
 /**
  * 
@@ -22,7 +20,7 @@ class AggregateFunctionsTest extends FlatSpec with ShouldMatchers {
   val nodes = Traversable(IndexedSeq(node))
 
   it should "survive an invalid date" in {
-    (tcFunc.score(nodesBad)) should equal (0.0)
+    (tcFunc.score(nodes)) should equal (0.0)
   }
 
 
