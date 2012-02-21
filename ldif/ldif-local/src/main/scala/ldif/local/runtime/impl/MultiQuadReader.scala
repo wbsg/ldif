@@ -32,7 +32,7 @@ import collection.mutable.ArrayBuffer
 
 class MultiQuadReader(quadReaders: QuadReader*) extends ClonableQuadReader {
   var index = 0
-  var closed = false
+  var closed = (quadReaders.size == 0) // initialize closed=true if no quadReaders are passed
 
   def size = 0
 
