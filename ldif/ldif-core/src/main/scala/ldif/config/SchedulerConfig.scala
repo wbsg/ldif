@@ -16,23 +16,24 @@
  * limitations under the License.
  */
 
-package ldif.hadoop.config
+package ldif.config
+
 
 import org.slf4j.LoggerFactory
 import java.io.File
 import xml.{Node, XML}
 import java.util.Properties
-import ldif.util.{ConfigProperties, ValidatingXMLReader}
+import ldif.util.{Consts, ConfigProperties, ValidatingXMLReader}
 
-case class HadoopSchedulerConfig (importJobsDir : File, integrationJob : File, dataSourcesDir : File, dumpLocationDir : String, properties : Properties)  {}
+case class SchedulerConfig (importJobsDir : File, integrationJob : File, dataSourcesDir : File, dumpLocationDir : String, properties : Properties)  {}
 
-object HadoopSchedulerConfig
+object SchedulerConfig
 {
   private val log = LoggerFactory.getLogger(getClass.getName)
 
   private val schemaLocation = "xsd/SchedulerConfig.xsd"
 
-  def empty = HadoopSchedulerConfig(null, null, null, null, new Properties)
+  def empty = SchedulerConfig(null, null, null, null, new Properties)
 
   def load = new ValidatingXMLReader(fromFile, schemaLocation)
 
@@ -46,14 +47,17 @@ object HadoopSchedulerConfig
     if (propertiesFile != null)
       properties = ConfigProperties.loadProperties(propertiesFile)
 
-    val dumpLocationDir = (xml \ "dumpLocation" text)
-    // TODO validate, mkdir
+
+    // dumpLocation can be (1) a relative local path (from baseDir),
+    // (2) an absolute local path or (3) an HDFS path,
+    // We use that as relative path if exists, as absolute path otherwise
+    val dumpLocationDir = getFilePath((xml \ "dumpLocation" text), baseDir)
 
     val importJobsDir = getFile(xml, "importJobs", baseDir)
     val integrationJobDir = getFile(xml, "integrationJob", baseDir)
     val datasourceJobDir = getFile(xml, "dataSources", baseDir)
 
-    HadoopSchedulerConfig(
+    SchedulerConfig(
       importJobsDir,
       integrationJobDir,
       datasourceJobDir,
@@ -62,11 +66,18 @@ object HadoopSchedulerConfig
     )
   }
 
+  private def getFilePath (path : String, baseDir : String) : String = {
+    val relativeFile = new File(baseDir + Consts.fileSeparator + path)
+    if (relativeFile.exists)
+      relativeFile.getCanonicalPath
+    else path
+  }
+
   private def getFile (xml : Node, key : String, baseDir : String, forceMkdir : Boolean = false) : File = {
     val value : String = (xml \ key text)
     var file : File = null
     if (value != ""){
-      val relativeFile = new File(baseDir + "/" + value)
+      val relativeFile = new File(baseDir + Consts.fileSeparator  + value)
       val absoluteFile = new File(value)
       if (relativeFile.exists || absoluteFile.exists) {
         if (relativeFile.exists)
@@ -91,3 +102,4 @@ object HadoopSchedulerConfig
   }
 
 }
+

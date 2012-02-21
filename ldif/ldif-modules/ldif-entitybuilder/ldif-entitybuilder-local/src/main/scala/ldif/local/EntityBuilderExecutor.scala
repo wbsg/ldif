@@ -24,11 +24,13 @@ import java.util.Properties
 import ldif.util.{MemoryUsage, FatalErrorListener}
 import ldif.EntityBuilderTask
 
-class EntityBuilderExecutor(configParameters: ConfigParameters = ConfigParameters(new Properties, null)) extends Executor {
+class EntityBuilderExecutor(configParameters: ConfigParameters = ConfigParameters(new Properties)) extends Executor {
 
   type TaskType = EntityBuilderTask
   type InputFormat = GraphFormat
   type OutputFormat = DynamicEntityFormat
+
+  var eb : EntityBuilderTrait = null
 
   /**
    * Determines the accepted input format of a specific task.
@@ -49,7 +51,7 @@ class EntityBuilderExecutor(configParameters: ConfigParameters = ConfigParameter
    */
   override def execute(task : EntityBuilderTask, reader : Seq[QuadReader], writer : Seq[EntityWriter])
   {
-    val eb = EntityBuilderFactory.getEntityBuilder(configParameters, task.entityDescriptions, reader)
+    eb = EntityBuilderFactory.getEntityBuilder(configParameters, task.entityDescriptions, reader)
     val inmemory = configParameters.configProperties.getProperty("entityBuilderType", "in-memory")=="in-memory"
 
 //    println("Memory used (before build entities): " + MemoryUsage.getMemoryUsage())   //TODO: remove
@@ -62,6 +64,11 @@ class EntityBuilderExecutor(configParameters: ConfigParameters = ConfigParameter
         eb.buildEntities(ed, writer(i))
     }
   }
+
+  /**
+   *
+   */
+  def getNotUsedQuads = eb.getNotUsedQuads
 
   /**
    * Evaluates an expression in the background.

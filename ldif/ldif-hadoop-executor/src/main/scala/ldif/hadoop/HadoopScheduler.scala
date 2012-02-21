@@ -18,7 +18,7 @@
 
 package ldif.hadoop
 
-import config.{HadoopIntegrationConfig, HadoopSchedulerConfig}
+import ldif.config.SchedulerConfig
 import org.slf4j.LoggerFactory
 import java.util.{Date, Calendar}
 import java.io._
@@ -29,12 +29,13 @@ import ldif.local.scheduler.ImportJob
 import ldif.datasources.dump.QuadParser
 import org.apache.hadoop.conf.Configuration
 import org.apache.hadoop.fs.{Path, FileSystem}
+import ldif.config.IntegrationConfig
 
 /*
  * A singlemachine scheduler/importer that uploads dumps to HDFS and runs Hadoop integration jobs
  */
 
-class HadoopScheduler (val config : HadoopSchedulerConfig, debug : Boolean = false) {
+class HadoopScheduler (val config : SchedulerConfig, debug : Boolean = false) {
   private val log = LoggerFactory.getLogger(getClass.getName)
 
   val conf = new Configuration
@@ -271,9 +272,9 @@ class HadoopScheduler (val config : HadoopSchedulerConfig, debug : Boolean = fal
 
   private def loadIntegrationJob(configFile : File) : HadoopIntegrationJob = {
     if(configFile != null)  {
-      var integrationConfig = HadoopIntegrationConfig.load(configFile)
+      var integrationConfig = IntegrationConfig.load(configFile)
       // use dumpLocation as source directory for the integration job
-      integrationConfig = integrationConfig.copy(sources = config.dumpLocationDir)
+      integrationConfig = integrationConfig.copy(sources = Traversable(config.dumpLocationDir))
       // if properties are not defined for the integration job, then use scheduler properties
       if (integrationConfig.properties.size == 0)
         integrationConfig = integrationConfig.copy(properties = config.properties)

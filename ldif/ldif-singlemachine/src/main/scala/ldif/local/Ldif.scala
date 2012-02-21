@@ -18,7 +18,7 @@
 
 package ldif.local
 
-import config.SchedulerConfig
+import ldif.config.SchedulerConfig
 import java.io.File
 import org.slf4j.LoggerFactory
 import ldif.util.{ValidationException, LogUtil}
@@ -61,6 +61,13 @@ object Ldif {
         }
       }
       val scheduler = new Scheduler(config, debug)
+
+      // check if dumpDir exists or can be created
+      val dumpDir = new File(config.dumpLocationDir)
+      if (!dumpDir.exists && !dumpDir.mkdir)  {
+        log.error("Dump location doesn't exists and can't be created")
+        sys.exit(1)
+      }
 
       // Evaluate jobs at most once. Evaluate import first, then integrate.
       if (scheduler.runOnce) {

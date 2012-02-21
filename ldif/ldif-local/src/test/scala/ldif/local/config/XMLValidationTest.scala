@@ -26,6 +26,7 @@ import ldif.util.ValidationException
 import org.scalatest.matchers.ShouldMatchers
 import org.xml.sax.SAXParseException
 import ldif.local.scheduler.ImportJob
+import ldif.config.SchedulerConfig
 
 @RunWith(classOf[JUnitRunner])
 class XMLValidationTest extends FlatSpec with ShouldMatchers {

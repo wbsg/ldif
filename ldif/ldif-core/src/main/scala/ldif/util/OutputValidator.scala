@@ -135,15 +135,17 @@ object OutputValidator {
   }
 
 
-  def contains(ldifOutputFile:File, quads : Traversable[Quad]) = {
+  def contains(ldifOutputFile:File, quads : Traversable[Quad]) : Boolean = {
     val parser = new QuadParser
-
-    val isContained = new Array[Boolean](quads.size)
-
     val lines = scala.io.Source.fromFile(ldifOutputFile).getLines
+    contains(lines.toTraversable.map(parser.parseLine(_)),quads)
+  }
 
-    for (oq <- lines.toTraversable.map(parser.parseLine(_))){
-      for ((q,i) <- quads.toSeq.zipWithIndex)
+  def contains(quads : Traversable[Quad], testQuads : Traversable[Quad]) : Boolean = {
+    val isContained = new Array[Boolean](testQuads.size)
+
+    for (oq <- quads){
+      for ((q,i) <- testQuads.toSeq.zipWithIndex)
         if (oq.equals(q))
           isContained(i) = true
     }

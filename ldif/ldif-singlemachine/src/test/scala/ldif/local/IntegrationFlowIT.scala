@@ -18,7 +18,6 @@
 
 package ldif.local
 
-import config.IntegrationConfig
 import java.io.File
 import org.scalatest.FlatSpec
 import org.scalatest.matchers.ShouldMatchers
@@ -27,6 +26,8 @@ import org.scalatest.junit.JUnitRunner
 import ldif.entity.Node
 import ldif.runtime.Quad
 import ldif.util.OutputValidator
+import ldif.output.SerializingQuadWriter
+import ldif.config.{COMPLETE, IntegrationConfig}
 
 @RunWith(classOf[JUnitRunner])
 class IntegrationFlowIT extends FlatSpec with ShouldMatchers {
@@ -90,18 +91,19 @@ class IntegrationFlowIT extends FlatSpec with ShouldMatchers {
     OutputValidator.contains(ldifOutput, invalidQuad) should equal (false)
   }
 
-//  it should "be correct with TDB backend" in {
-//// Run LDIF
+  it should "be correct with TDB backend" in {
+// Run LDIF
 //    val configFile = loadConfig("ldif/local/resources/config-tdb.xml")
-//    val ldifOutput = runLdif(configFile)
+//    val ldifOutput = runLdif(configFile, true)
 //
 //    // Load results to compare with
-//    val ldimporterOuputUrl = getClass.getClassLoader.getResource("ldif/local/resources/results.nt")
+//    val ldimporterOuputUrl = getClass.getClassLoader.getResource("ldif/local/resources/results.nq")
 //    val ldimporterOuputFile = new File(ldimporterOuputUrl.toString.stripPrefix("file:"))
 //
 //    // quality check
-//    OutputValidator.compare(ldifOutput,ldimporterOuputFile) should equal (0)
-//  }
+//    OutputValidator.compare(ldifOutput,ldimporterOuputFile, true) should equal (0)
+
+  }
 
 
   protected def loadConfig(config : String) =  {
@@ -111,9 +113,9 @@ class IntegrationFlowIT extends FlatSpec with ShouldMatchers {
   }
 
   protected def runLdif(configFile : File, debugMode: Boolean = false) = {
-
     val integrator = new IntegrationJob(IntegrationConfig.load(configFile), debugMode)
     integrator.runIntegration
-    integrator.config.outputFile
+    new File(integrator.config.outputs.getByPhase(COMPLETE).head.asInstanceOf[SerializingQuadWriter].filepath)
   }
+
 }

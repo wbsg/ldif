@@ -15,13 +15,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package ldif.local
 
-package ldif.runtime
+import collection.mutable.{HashMap, MultiMap, Set}
+import ldif.entity.Node
 
-trait QuadWriter
-{
-  // TODO consider adding this method
-  // def write(quads : QuadReader)
-  def write(quad : Quad)
-  def finish()
+// Scala MultiMap adapter
+// - Elements/keys can be read only once
+// - Used for collecting not used quads (eg for Fusion)
+
+class MemHashTableReadOnce extends MemHashTable {
+
+  private val hashTable:MultiMap[Pair[Node,String], Node] = new HashMap[Pair[Node,String], Set[Node]] with MultiMap[Pair[Node,String], Node]
+
+  override def get(key : Pair[Node,String]) = {
+    val values = hashTable.get(key)
+    hashTable.remove(key)
+    values
+  }
+
+  def getNotUsedQuads (direction : PropertyType.Value = PropertyType.FORW) = getAllQuads(direction)
 }

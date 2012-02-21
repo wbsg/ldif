@@ -75,8 +75,11 @@ object Consts {
 
 
   // Sparql
-  val SparqlDefaultParameter = "udapte"
-  val SparqlUpdateDefaultVersion = "1.1"
+  val SparqlQueryParameterDefault = "udapte"
+  val SparqlUpdateVersionDefault = "1.1"
   val SparqlMaxStatmentsPerRequest = 200
-  val SparqlDirectPostEnabled = "true"
+  val SparqlUseDirectPostDefault = "true"
+
+  val FileOutputFormatDefault = "nq"
+  val OutputPhaseDefault = "complete"
 }

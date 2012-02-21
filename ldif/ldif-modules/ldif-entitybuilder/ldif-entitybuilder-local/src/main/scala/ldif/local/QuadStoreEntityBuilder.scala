@@ -24,7 +24,8 @@ import ldif.util.Uri
 import ldif.local.runtime.{ConfigParameters, QuadReader, EntityWriter}
 import ldif.runtime.Quad
 import java.io._
-import java.util.zip.{GZIPOutputStream, Deflater, DeflaterOutputStream}
+import java.util.zip.GZIPOutputStream
+import runtime.impl.QuadQueue
 
 /**
  * Created by IntelliJ IDEA.
@@ -34,7 +35,7 @@ import java.util.zip.{GZIPOutputStream, Deflater, DeflaterOutputStream}
  * To change this template use File | Settings | File Templates.
  */
 
-class QuadStoreEntityBuilder(store: QuadStoreTrait, entityDescriptions : Seq[EntityDescription], readers : Seq[QuadReader], config: ConfigParameters) extends EntityBuilderTrait {
+class QuadStoreEntityBuilder(store: QuadStoreTrait, entityDescriptions : Seq[EntityDescription], readers : Seq[QuadReader], config: ConfigParameters, reuseDatabase: Boolean = false) extends EntityBuilderTrait {
   private val log = LoggerFactory.getLogger(getClass.getName)
 
   // If this is true, quads like provenance quads (or even all quads) are saved for later use (merge)
@@ -54,12 +55,16 @@ class QuadStoreEntityBuilder(store: QuadStoreTrait, entityDescriptions : Seq[Ent
   loadDataset
 
   private def initStore {
-    store.clearDatabase
+    if(!reuseDatabase)
+      store.clearDatabase
   }
 
   private def loadDataset {
-    val quadOutput = filterAndDumpDataset(readers)
-    store.loadDataset(quadOutput)
+    if(!reuseDatabase) {
+      val quadOutput = filterAndDumpDataset(readers)
+      store.loadDataset(quadOutput)
+    } else
+      store.loadDataset(null)
   }
 
   private def now = System.currentTimeMillis
@@ -126,4 +131,8 @@ class QuadStoreEntityBuilder(store: QuadStoreTrait, entityDescriptions : Seq[Ent
     store.queryStore(ed, writer)//TODO: Maybe handle return value
     log.info("Finished building entities in " + (now - start)/1000.0 + "s")
   }
+
+  // TODO to be implemented
+  override def getNotUsedQuads : QuadReader = new QuadQueue
+
 }

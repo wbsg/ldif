@@ -27,6 +27,7 @@ import ldif.local.QuadStoreTrait
 import com.hp.hpl.jena.query.{QueryExecution, ResultSet, QueryExecutionFactory, Dataset}
 import ldif.local.util.JenaResultSetEntityBuilderHelper
 import com.hp.hpl.jena.query.ARQ
+import org.slf4j.LoggerFactory
 
 /**
  * Created by IntelliJ IDEA.
@@ -36,16 +37,23 @@ import com.hp.hpl.jena.query.ARQ
  * To change this template use File | Settings | File Templates.
  */
 
-class TDBQuadStore(databaseRoot: File) extends QuadStoreTrait {
+class TDBQuadStore(databaseRoot: File, reuseExistingDatabaseDir: Boolean = false) extends QuadStoreTrait {
+  private val log = LoggerFactory.getLogger(getClass.getName)
   private var storeStarted = false
   private var dataset: Dataset = null
   ARQ.setTrue(ARQ.spillOnDiskSortingThreshold)
-  private val tempDatabaseDir = createTemporaryDatabaseDirectory(databaseRoot.getCanonicalPath)
+  private val tempDatabaseDir: File = if(reuseExistingDatabaseDir)
+      null
+    else
+      createTemporaryDatabaseDirectory(databaseRoot.getCanonicalPath)
 
   def loadDataset(datasetFile: File) {
     val loader = new TDBLoader
+    if(reuseExistingDatabaseDir)
+      log.info("Reusing existing TDB dataset at location: " + databaseRoot.getAbsolutePath)
+    else
+      loader.createNewTDBDatabase(tempDatabaseDir.getCanonicalPath, datasetFile.getCanonicalPath)
 
-    loader.createNewTDBDatabase(tempDatabaseDir.getCanonicalPath, datasetFile.getCanonicalPath)
     startStore
   }
 
@@ -54,15 +62,21 @@ class TDBQuadStore(databaseRoot: File) extends QuadStoreTrait {
   }
 
   private def startStore = {
-    dataset = TDBFactory.createDataset(tempDatabaseDir.getCanonicalPath)
+    if(reuseExistingDatabaseDir)
+      dataset = TDBFactory.createDataset(databaseRoot.getCanonicalPath)
+    else
+      dataset = TDBFactory.createDataset(tempDatabaseDir.getCanonicalPath)
+
     storeStarted = true
   }
 
   def clearDatabase {
-    storeStarted = false
-    dataset = null
-    val loader = new TDBLoader
-    loader.cleanTarget(tempDatabaseDir.getCanonicalPath)
+    if(!reuseExistingDatabaseDir) {
+      storeStarted = false
+      dataset = null
+      val loader = new TDBLoader
+      loader.cleanTarget(tempDatabaseDir.getCanonicalPath)
+    }
   }
 
   /**
@@ -91,7 +105,7 @@ class TDBQuadStore(databaseRoot: File) extends QuadStoreTrait {
 
   private def executeAllQueries(queryExecutions: Seq[QueryExecution]): Seq[ResultSet] = {
     for(queryExecution <- queryExecutions)
-      queryExecution.getContext.set(ARQ.spillOnDiskSortingThreshold, 10000l)
+      queryExecution.getContext.set(ARQ.spillOnDiskSortingThreshold, 50000l)
     for(queryExecution <- queryExecutions) yield queryExecution.execSelect
   }
 }

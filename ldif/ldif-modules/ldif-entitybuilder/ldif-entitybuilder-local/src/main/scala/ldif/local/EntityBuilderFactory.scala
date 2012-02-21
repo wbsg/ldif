@@ -21,6 +21,7 @@ package ldif.local
 import ldif.local.runtime.{ConfigParameters, QuadReader}
 import ldif.entity.EntityDescription
 import tdb.TDBQuadStore
+import java.io.File
 
 /**
  * Created by IntelliJ IDEA.
@@ -42,19 +43,24 @@ object EntityBuilderFactory {
     }
   }
 
-  private def createQuadStore(quadStoreType: String, databaseLocation: String): QuadStoreTrait = {
+  private def createQuadStore(quadStoreType: String, databaseLocation: String, reuseDatabase: Boolean): QuadStoreTrait = {
     quadStoreType match {
-      case "tdb" => {
-        new TDBQuadStore(databaseLocation)
-      }
+      case "tdb" => new TDBQuadStore(new File(databaseLocation), reuseDatabase)
       case _ => throw new RuntimeException("Unknown quad store type: " + quadStoreType)
     }
   }
 
   private def createQuadStoreEntityBuilder(configParameters: ConfigParameters, entityDescriptions: scala.Seq[EntityDescription], reader: scala.Seq[QuadReader]): EntityBuilderTrait = {
+    val reuseDatabase = configParameters.configProperties.getProperty("reuseDatabase", "false").toLowerCase=="true"
+    configParameters.configProperties.remove("reuseDatabase") // Only use for first phase
+    val reuseDatabaseLocation = configParameters.configProperties.getProperty("reuseDatabaseLocation", System.getProperty("java.io.tmpdir"))
     val quadStoreType = configParameters.configProperties.getProperty("quadStoreType", "tdb").toLowerCase
-    val databaseLocation = configParameters.configProperties.getProperty("databaseLocation", System.getProperty("java.io.tmpdir"))
-    val quadStore = createQuadStore(quadStoreType, databaseLocation)
-    new QuadStoreEntityBuilder(quadStore, entityDescriptions, reader, configParameters)
+    val databaseLocation = if(reuseDatabase)
+        reuseDatabaseLocation
+      else
+        configParameters.configProperties.getProperty("databaseLocation", System.getProperty("java.io.tmpdir"))
+
+    val quadStore = createQuadStore(quadStoreType, databaseLocation, reuseDatabase)
+    new QuadStoreEntityBuilder(quadStore, entityDescriptions, reader, configParameters, reuseDatabase)
   }
 }
