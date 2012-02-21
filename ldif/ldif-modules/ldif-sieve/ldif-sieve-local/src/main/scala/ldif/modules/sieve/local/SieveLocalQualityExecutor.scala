@@ -62,20 +62,21 @@ class SieveLocalQualityExecutor(useFileInstanceCache: Boolean = false) extends E
    * Executes a Sieve Quality task.
    */
   override def execute(task : QualityTask, reader : Seq[EntityReader], writer : QuadWriter) {
-    log.info("Executing Sieve Quality Assessment Task %s".format(task.name))
+    log.info("Executing Sieve Quality Assessment Task [%s]".format(task.name))
 
     var numberOfNullEntities = 0
 
-    task.qualitySpec.scoringFunctions
+    if (reader.size==0)
+      log.info("Empty EntityReader provided to QualityExecutor. Will do nothing.")
 
     // for each entity reader (one per input file?)
     reader.foreach( in => {
       val lastPatternId = in.entityDescription.patterns.size
 
+      log.debug("another reader")
+
       var entity : Entity = NoEntitiesLeft;
       while ( { entity = in.read(); entity != NoEntitiesLeft} ) {
-        //log.info("Sieve Entity: %s".format(entity.resource.toString))
-        //log.info("Patterns: "+in.entityDescription.patterns.size)
 
         // for scoringFunctions that need the graphId, use entity.resource, therefore the assumption below will not hold
       //  assume(task.qualitySpec.scoringFunctions.size==in.entityDescription.patterns.size, "Number of scoringFunctions must be the same as number of patterns.")
@@ -86,11 +87,16 @@ class SieveLocalQualityExecutor(useFileInstanceCache: Boolean = false) extends E
         }
 
         if (entity!=null && entity!=NoEntitiesLeft) {
+          log.trace("Sieve Entity: %s".format(entity.resource))
+          log.trace("nPatterns: "+in.entityDescription.patterns.size)
+
           for (patternId <- 0 until lastPatternId) {
             val factums = entity.factums(patternId)
             val outputPropertyName = task.qualitySpec.outputPropertyNames(patternId)
             val scoringFunction = task.qualitySpec.scoringFunctions(patternId)
-            log.debug("Pattern %s: ScoringFunction used: %s".format(patternId, scoringFunction))
+
+            //log.trace("Pattern %s: ScoringFunction used: %s".format(patternId, scoringFunction))
+            //log.trace("nFactums: %d".format(factums.size))
 
             // score a graph according to each scoringFunction and write quads out
             val score = scoringFunction.score(factums)

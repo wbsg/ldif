@@ -37,25 +37,25 @@ class ScoringFunctionsTest extends FlatSpec with ShouldMatchers {
 
   val nodesBad = Traversable(IndexedSeq(new Node("2012-sssssasas02-19T16:55:17Z", "http://www.w3.org/2001/XMLSchema#dateTime", Node.TypedLiteral, "graphId")))
 
-  "ScoringFunctions" should "return the correct implementation given XML" in {
+  it should "return the correct implementation given XML" in {
     (TimeCloseness.fromXML(tcXml)) should equal (tcFunc)
   }
 
-  "ScoringFunctions" should "correctly score input values" in {
+  it should "correctly score input values" in {
     (tcFunc.score(nodes3)) should equal (1.0 - (3.0/6))
   }
 
-  "ScoringFunctions" should "correctly sort before scoring input values" in {
+  it should "correctly sort before scoring input values" in {
     (tcFunc.score(nodes23)) should equal (tcFunc.score(nodes32))
   }
 
-  "ScoringFunctions" should "sort and score values as expected" in {
+  it should "sort and score values as expected" in {
     (tcFunc.score(nodes23)) should equal (1.0 - (2.0/6))
     (tcFunc.score(nodes43)) should equal (1.0 - (3.0/6))
     //(tcFunc.score(nodes234)) should equal (1.0 - (2.0/6))
   }
 
-  "ScoringFunctions" should "parse date" in {
+  it should "parse date" in {
     //val parser = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss Z")
     val parser =  ISODateTimeFormat.dateTimeNoMillis();
     val startDate = parser.parseDateTime("2012-02-19T16:55:17Z")
@@ -64,7 +64,7 @@ class ScoringFunctionsTest extends FlatSpec with ShouldMatchers {
     (d) should equal (1.0)
   }
 
-  "ScoringFunctions" should "survive an invalid date" in {
+  it should "survive an invalid date" in {
     (tcFunc.score(nodesBad)) should equal (0.0)
   }
 

@@ -3,7 +3,7 @@
            xsi:schemaLocation="http://www4.wiwiss.fu-berlin.de/ldif/ ../xsd/IntegrationJob.xsd"
             xmlns="http://www4.wiwiss.fu-berlin.de/ldif/">
     <properties>integration.properties</properties>
-    <sources><source>sources</source></sources>
+    <sources><source>dumps</source></sources>
     <linkSpecifications>linkspecs</linkSpecifications>
     <mappings>mappings</mappings>
     <quality>quality</quality>
