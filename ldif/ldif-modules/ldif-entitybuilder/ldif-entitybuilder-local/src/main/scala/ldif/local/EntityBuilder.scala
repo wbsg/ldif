@@ -164,7 +164,7 @@ class EntityBuilder (entityDescriptions : IndexedSeq[EntityDescription], readers
 
   private def isRelevantQuad(quad: Quad): Boolean = {
     val prop = new Uri(quad.predicate).toString
-    if(PHT.contains(prop) && !isProvenanceQuad(quad))
+    if(PHT.contains(prop) && (!isProvenanceQuad(quad) || !saveQuads))
       true
     else
       false
