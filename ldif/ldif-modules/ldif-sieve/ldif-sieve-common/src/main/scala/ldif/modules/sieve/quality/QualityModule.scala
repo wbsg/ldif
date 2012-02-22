@@ -20,12 +20,15 @@ import ldif.module.Module
 import java.io.File
 import org.slf4j.LoggerFactory
 import ldif.modules.sieve.SieveConfig
+import collection.mutable.HashMap
 
 /**
  * Sieve Quality Assessment Module.
  */
-class QualityModule(val config : QualityModuleConfig) extends Module
+class QualityModule(val config : QualityModuleConfig) extends Module with QualityAssessmentProvider
 {
+
+  private val log = LoggerFactory.getLogger(getClass.getName)
 
   type ConfigType = QualityModuleConfig
 
@@ -33,7 +36,34 @@ class QualityModule(val config : QualityModuleConfig) extends Module
 
   lazy val tasks : Traversable[QualityTask] = //automatically generates one task per spec
   {
-    for(qualitySpec <- config.qualityConfig.qualitySpecs) yield new QualityTask(config, qualitySpec)
+    for(qualitySpec <- config.qualityConfig.qualitySpecs) yield {
+      val task = new QualityTask(config, qualitySpec)
+      qaMap.put(qualitySpec.outputPropertyNames.head,task.qualityAssessment)
+      task
+    }
+  }
+
+  // stores the assessment for underlying tasks
+  val qaMap : HashMap[String,QualityAssessmentProvider] = new HashMap[String,QualityAssessmentProvider]()
+  def putScore(propertyName: String, graph: String, score: Double) = {
+    qaMap.get(propertyName) match {
+      case Some(qa) => qa.putScore(propertyName, graph, score)
+      case _ => log.error("Requested quality metric %s has not been assessed by any of the available quality tasks.".format(propertyName))
+    }
+  }
+
+  def size = {
+    qaMap.values.foldLeft(0)((acc, qa) => acc + qa.size)
+  }
+
+  def getScore(propertyName: String, graph: String) = {
+    qaMap.get(propertyName) match {
+      case Some(qa) => qa.getScore(propertyName, graph)
+      case _ => {
+        log.error("Requested quality metric %s has not been assessed by any of the available quality tasks.".format(propertyName))
+        0.0
+      }
+    }
   }
 }
 

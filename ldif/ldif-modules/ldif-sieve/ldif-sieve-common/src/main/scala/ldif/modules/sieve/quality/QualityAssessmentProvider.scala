@@ -12,24 +12,29 @@ import java.lang.Math
  * @author pablomendes
  */
 trait QualityAssessmentProvider {
-  def score(propertyName:String, graph: String) : Double
+  def getScore(propertyName:String, graph: String) : Double
   def size : Int
   //def asQuads : QuadReader
+  def putScore(propertyName:String, graph: String, score:Double)
 }
+
 
 class RandomQualityAssessment extends QualityAssessmentProvider {
 
   var count = 0
 
-  def score(propertyName:String, graph: String) : Double = {
-    count = count + 1
+  def getScore(propertyName:String, graph: String) : Double = {
     Math.random
   }
 
   def size = count
 
+  def putScore(propertyName: String, graph: String, score: Double) = {
+    count = count + 1
+  }
+
 }
 
-class HashBasedQualityAssessment extends RandomQualityAssessment {
+class HashBasedQualityAssessment extends RandomQualityAssessment { //todo implement instead of inherit from random
 
 }
