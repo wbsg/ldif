@@ -218,7 +218,7 @@ The pluggable modules include Data Access (dumps, crawler and SPARQL), Transform
 </p-->
 <p>
 Sieve is employed as the quality evaluation module in LDIF (see figure 1). The data cleaning procedure in Sieve works in two steps. The first step, Quality Assessment, associates quality-scores to the named
-graphs that are used in LDIF for provanance tracking and that group subsets of triples together. The second step uses this metadata to decide on how to fuse conflicting property values according to user configuration. 
+graphs that are used in LDIF for provenance tracking and that group subsets of triples together. The second step uses this metadata to decide on how to fuse conflicting property values according to user configuration.
 
 </p>
 
@@ -293,14 +293,19 @@ is described by this <a href="http://www.assembla.com/code/ldif/git/nodes/ldif/l
 </li>
 </ul>
 
-<p>The quality-describing metadata computed this step is output and stored as an extension to the <a href="http://www4.wiwiss.fu-berlin.de/bizer/ldif/#provenance">LDIF Provenance Graph</a>.
+<h3 id=qualityinput>Input</h3>
+  <p>
+  In its most basic form, the input for the quality assessment task is the <a href="http://www4.wiwiss.fu-berlin.de/bizer/ldif/#provenance">LDIF provenance metadata</a>.
+  When LDIF imports a new data source, it generates <code>ldif:ImportedGraph</code> descriptions for all graphs in the input (see <a href="http://www4.wiwiss.fu-berlin.de/bizer/ldif/#importjob">Data Import</a> for module-specific details).
+  Sieve will mash that with any other graph metadata provided as input, and feed through the scoring functions defined in the configuration.
+  This allows the configuration to use automatically computed metadata by LDIF, as well as metadata from the original source, or from other third-parties.
+  Examples of such metadata include ratings, prominence statistics, etc.
+  </p>
+  <!--p>Example metadata:</p>
+  <pre>
 
-<pre>
-enwiki:Juiz_de_Fora sieve:recency "0.4" ldif:provenance .
-ptwiki:Juiz_de_Fora sieve:recency "0.8" ldif:provenance .
-enwiki:Juiz_de_Fora sieve:reputation "0.9" ldif:provenance .
-ptwiki:Juiz_de_Fora sieve:reputation "0.45" ldif:provenance .
-</pre>
+  </pre-->
+
 
 <h3 id="scoringfunctions">Available Scoring Functions</h3>
 
@@ -320,14 +325,21 @@ ptwiki:Juiz_de_Fora sieve:reputation "0.45" ldif:provenance .
       Example input: 
 <pre>
 &lt;ScoringFunction name="Preference"&gt;
-  &lt;Param name="list" value="en.wikipedia.org pt.wikipedia.org es.wikipedia.org"/&gt;
+  &lt;Param name="list" value="http://en.wikipedia.org http://pt.wikipedia.org http://es.wikipedia.org"/&gt;
 &lt;/ScoringFunction&gt;
 </pre>
       Example output: {en.wikipedia.org=0.9, pt.wikipedia.org=0.6, es.wikipedia.org=0.3}</li>
 </li>
-  <li><i>SetMembership</i>: assigns 1 if the value of the indicator provided as input belongs to the set informed as parameter</li>
-  <li><i>Threshold</i>: assigns 1 if the value of the indicator provided as input is higher than a threshold informed as parameter</li> 
+  <li><i>SetMembership</i>: assigns 1 if the value of the indicator provided as input belongs to the set informed as parameter, 0 otherwise.</li>
+  <li><i>Threshold</i>: assigns 1 if the value of the indicator provided as input is higher than a threshold informed as parameter, 0 otherwise.</li>
+  <li><i>Interval</i>: assigns 1 if the value of the indicator provided as input is within the interval informed as parameter, 0 otherwise.</li>
 </ul>
+
+  <!--aggregation functions-->
+  <!--ul>
+      <li><i>Max,Min,Count,Sum,Average</i>: computes mathematical functions over the value of the indicator informed as parameter. These functions can be applied, for example, over ratings, number of edits, number of views, etc. according to the application needs.</li>
+      <li><i>TieBreaker</i>: takes as input a set of real valued indicators. If there is a tie for the first indicator, it uses the second, and if there is still a tie, it keeps going through the list.</li>
+  </ul-->
 
 <!--table>
 <tr>
@@ -340,11 +352,20 @@ ptwiki:Juiz_de_Fora sieve:reputation "0.45" ldif:provenance .
 The framework is extensible, and users can define their own set of <code>ScoringFunction</code> classes. The class should implement <code>ldif.modules.sieve.quality.ScoringFunction</code>, which defines the method <code>fromXML</code> (a method to create a new object of the class given the configuration parameters) and the method <code>score</code> (which will be called at runtime to perform quality assessment based on a number of metadata values). Method signatures (in Scala):  </li>
 <pre>
 trait ScoringFunction {
-  def score(metadataValues: Traversable[IndexedSeq[NodeTrait]]): Double
+  def score(graphId: NodeTrait, metadataValues: Traversable[IndexedSeq[NodeTrait]]): Double
   def fromXML(node: Node) : ScoringFunction
 </pre>
 
 
+<h3 id=qualityoutput>Output</h3>
+<p>The quality-describing metadata computed by this step is output and stored as an extension to the <a href="http://www4.wiwiss.fu-berlin.de/bizer/ldif/#provenance">LDIF Provenance Graph</a>.
+
+<pre>
+enwiki:Juiz_de_Fora sieve:recency "0.4" ldif:provenance .
+ptwiki:Juiz_de_Fora sieve:recency "0.8" ldif:provenance .
+enwiki:Juiz_de_Fora sieve:reputation "0.9" ldif:provenance .
+ptwiki:Juiz_de_Fora sieve:reputation "0.45" ldif:provenance .
+</pre>
 
 
 <h2 id="datafusion">4. Data Fusion</h2>
