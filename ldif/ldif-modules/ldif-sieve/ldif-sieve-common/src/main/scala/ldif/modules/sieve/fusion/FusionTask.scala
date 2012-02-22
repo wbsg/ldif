@@ -18,15 +18,14 @@ package ldif.modules.sieve.fusion
 
 import ldif.module.ModuleTask
 import ldif.util.Identifier
-import ldif.modules.sieve.quality.{HashBasedQualityAssessment, QualityAssessmentProvider}
+import ldif.modules.sieve.quality.{QualityAssessmentProvider}
 /**
  * Fusion Task
  * Each task takes care of one <Class> tag in the configuration file.
  * FusionSpec stores what to do for each property of that class.
  */
-class FusionTask(val sieveConfig : FusionModuleConfig, val fusionSpec : FusionSpecification) extends ModuleTask
+class FusionTask(val sieveConfig : FusionModuleConfig, val fusionSpec : FusionSpecification, val qualityAssessment: QualityAssessmentProvider) extends ModuleTask
 {
   val name : Identifier = fusionSpec.id.toString
-  val qualityAssessment : QualityAssessmentProvider = new HashBasedQualityAssessment //TODO FusionTask constructor to pass QualitySpec
 
 }

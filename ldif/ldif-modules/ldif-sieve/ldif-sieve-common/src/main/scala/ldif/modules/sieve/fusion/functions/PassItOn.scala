@@ -25,3 +25,10 @@ import ldif.modules.sieve.fusion.FusionFunction
 
 class PassItOn extends FusionFunction
 
+object PassItOn {
+
+  def fromXML(node: scala.xml.Node) : FusionFunction = {
+    new PassItOn
+  }
+}
+

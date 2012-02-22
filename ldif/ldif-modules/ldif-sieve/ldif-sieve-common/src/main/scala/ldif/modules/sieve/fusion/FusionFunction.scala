@@ -16,8 +16,11 @@
 
 package ldif.modules.sieve.fusion
 
+import functions.{PassItOn, KeepFirst}
 import ldif.entity.NodeTrait
 import ldif.modules.sieve.quality.QualityAssessmentProvider
+import xml.Node
+import ldif.modules.sieve.quality.functions.{TimeCloseness, ScoredList}
 
 /**
  * Interface for functions that perform data fusion
@@ -49,5 +52,15 @@ trait FusionFunction {
     values
   }
 
+}
+
+object FusionFunction {
+  def create(className : String,  config: Node) : FusionFunction = className.toLowerCase match {
+    case "keepfirst" => return KeepFirst.fromXML(config)
+    case "passiton" => return PassItOn.fromXML(config)
+
+    // NOTICE: add case statements for new scoring functions here
+    case whatever => throw new IllegalArgumentException("Unable to construct scoring function for class name " + className)
+  }
 }
 

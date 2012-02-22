@@ -25,14 +25,14 @@ import ldif.util.Prefixes
 
 /**
  *
- * sieveSpecs: contains one spec per <Class> tag in the configuration.
+ * fusionSpecs: contains one spec per <Class> tag in the configuration.
  *             Each spec describes how to process one entity description (restricted to Class, with a pattern for each Property)
  *             Each spec holds a list of corresponding FusionFuctions for each property
  *
  * @author pablomendes
  */
 class FusionConfig(val prefixes: Prefixes,
-                   val sieveSpecs: Traversable[FusionSpecification],
+                   val fusionSpecs: Traversable[FusionSpecification],
                    val entityDescriptions: Seq[EntityDescription]) {
 
   def merge(c: FusionConfig) : FusionConfig = { //TODO implement

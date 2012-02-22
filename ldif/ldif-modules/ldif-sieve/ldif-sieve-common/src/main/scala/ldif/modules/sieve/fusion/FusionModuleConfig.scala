@@ -18,6 +18,7 @@ package ldif.modules.sieve.fusion
 
 
 import ldif.module.ModuleConfig
+import ldif.modules.sieve.quality.QualityAssessmentProvider
 
 /**
  * Sieve Data Fusion Module Configuration.

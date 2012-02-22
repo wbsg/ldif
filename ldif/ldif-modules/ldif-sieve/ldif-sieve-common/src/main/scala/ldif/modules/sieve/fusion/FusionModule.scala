@@ -20,11 +20,12 @@ import ldif.module.Module
 import java.io.File
 import org.slf4j.LoggerFactory
 import ldif.modules.sieve.SieveConfig
+import ldif.modules.sieve.quality.QualityAssessmentProvider
 
 /**
  * Sieve Module.
  */
-class FusionModule(val config : FusionModuleConfig) extends Module
+class FusionModule(val config : FusionModuleConfig, qualityProvider: QualityAssessmentProvider) extends Module
 {
 
   type ConfigType = FusionModuleConfig
@@ -33,7 +34,7 @@ class FusionModule(val config : FusionModuleConfig) extends Module
 
   lazy val tasks : Traversable[FusionTask] = //automatically generates one task per spec
   {
-    for(sieveSpec <- config.fusionConfig.sieveSpecs) yield new FusionTask(config, sieveSpec)
+    for(fusionSpec <- config.fusionConfig.fusionSpecs) yield new FusionTask(config, fusionSpec, qualityProvider)
   }
 }
 
@@ -41,12 +42,12 @@ object FusionModule
 {
   private val log = LoggerFactory.getLogger(getClass.getName)
 
-  def load(file : File) : FusionModule =
+  def load(file : File, quality: QualityAssessmentProvider) : FusionModule =
   {
     //DefaultImplementations.register()
 
     val config = if(file==null || !file.exists()) FusionConfig.empty else loadConfig(file)
-    new FusionModule(new FusionModuleConfig(config))
+    new FusionModule(new FusionModuleConfig(config), quality)
   }
 
   private def loadConfig(file : File) : FusionConfig =

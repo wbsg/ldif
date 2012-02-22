@@ -18,8 +18,8 @@ package ldif.modules.sieve.fusion.functions
 
 import org.slf4j.LoggerFactory
 import ldif.entity.NodeTrait
-import ldif.modules.sieve.quality.QualityAssessmentProvider
 import ldif.modules.sieve.fusion.FusionFunction
+import ldif.modules.sieve.quality.{ScoringFunction, QualityAssessmentProvider}
 
 /**
  * example fusion function that keeps the first value
@@ -30,19 +30,16 @@ class KeepFirst extends FusionFunction {
 
   private val log = LoggerFactory.getLogger(getClass.getName)
 
+  //TODO sort!
   override def fuse(values: Traversable[IndexedSeq[NodeTrait]], quality: QualityAssessmentProvider) : Traversable[IndexedSeq[NodeTrait]] = {
     if (values.nonEmpty) Seq(values.head) else Seq[IndexedSeq[NodeTrait]]()
   }
 
 }
 
-/**
- * Example fusion function that prefers values from certain Graphs given as input.
- * TODO expand to a list of graphs
- * @author pablomendes
- */
+object KeepFirst {
 
-
-
-
-
+  def fromXML(node: scala.xml.Node) : FusionFunction = {
+    new KeepFirst
+  }
+}

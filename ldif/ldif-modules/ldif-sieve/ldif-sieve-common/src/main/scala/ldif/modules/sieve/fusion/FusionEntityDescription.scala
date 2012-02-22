@@ -1,7 +1,7 @@
 package ldif.modules.sieve.fusion
 
 import ldif.util.Prefixes
-import ldif.entity.EntityDescription
+import ldif.entity.{Path, Restriction, EntityDescription}
 
 /**
  * Helper object to parse entity descriptions out of the Fusion Specification XML
@@ -16,17 +16,77 @@ object FusionEntityDescription {
    * For each sub-element Property, create a pattern.
    */
   def fromXML(classElement : scala.xml.Node)(implicit prefixes : Prefixes = Prefixes.empty) = {
-    // first grab the restriction
-    // val classRestriction = ...
+    // first grab the restriction on classNames
+    val classNames = (classElement \ "@name").text.split(" ")
     // second grab the patterns from each Property element
-    //val properties = (classElement \ "Property" ).map(grabPropertyName)
+//    val properties = (classElement \ "Property").map(getFusionFunction)
+//    println(classNames,properties)
+
     //val entityDescriptionXml = EntityDescription(
     //  restriction= ,
     //  patterns=
     // ) //see EntityDescription.fromXML to understand how to create.
     //val e = EntityDescription.fromXML(entityDescriptionXml)(prefixes)
-    EntityDescription.fromXML(createLwdm2012EntityDescription)(prefixes)
+
+    //TODO temporary
+    EntityDescription.fromXML(createSimpleEntityDescription)(prefixes)
   }
+
+  def getFusionFunction(propertyNode: scala.xml.Node) = {
+//    val propertyName = (propertyNode \ "@name").text
+//    val className = (propertyNode \ "ScoringFunction" \ "@name").text
+//    (propertyNode \ "ScoringFunction").map()
+//    FusionFunction.create(className, _)
+  }
+
+  def main(args: Array[String]) {
+        val fusionXml =
+        <Class name="dbpedia:City">
+            <Property name="dbpedia:areaTotal">
+                <FusionFunction class="KeepValueWithHighestScore" metric="sieve:lastUpdated"/>
+            </Property>
+            <Property name="dbpedia:population">
+                <FusionFunction class="AverageValue"/>
+            </Property>
+            <Property name="dbpedia:name">
+                <FusionFunction class="KeepValueWithHighestScore" metric="sieve:reputation"/>
+            </Property>
+        </Class>
+
+    fromXML(fusionXml)
+  }
+  /*
+  def fromXML(scoringFunction : scala.xml.Node)(implicit prefixes : Prefixes = Prefixes.empty) = {
+    val paths = ((scoringFunction \ "ScoringFunction" \ "Input" ).map(parsePath(_)(prefixes)))
+    val restriction = Restriction.fromXML(<Restriction><Condition path="?a/rdf:type"><Uri>http://www4.wiwiss.fu-berlin.de/ldif/ImportedGraph</Uri></Condition></Restriction>)
+    new EntityDescription(restriction,IndexedSeq(paths.toIndexedSeq))
+  }
+
+  def parsePath(pathNode : scala.xml.Node)(implicit prefixes : Prefixes = Prefixes.empty)  = {
+    Path.parse((pathNode \ "@path" ).text)(prefixes)
+  } */
+
+  def createSimpleEntityDescription = {
+   <EntityDescription>
+     <Patterns>
+       <Pattern>
+         <Path>?a/rdfs:label</Path>
+       </Pattern>
+       <Pattern>
+         <Path>?a/dbpedia-owl:areaTotal</Path>
+       </Pattern>
+       <Pattern>
+         <Path>?a/dbpedia-owl:foundingDate</Path>
+       </Pattern>
+       <Pattern>
+         <Path>?a/dbpedia-owl:populationTotal</Path>
+       </Pattern>
+       <Pattern>
+         <Path>?a/rdfs:type</Path>
+       </Pattern>
+     </Patterns>
+   </EntityDescription>
+ }
 
   def createLwdm2012EntityDescription = {
    <EntityDescription>
