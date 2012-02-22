@@ -29,7 +29,8 @@ import ldif.entity.EntityDescription
  */
 class QualitySpecification(val id: String,
                            val scoringFunctions: IndexedSeq[ScoringFunction],
-                           val outputPropertyNames: IndexedSeq[String], val entityDescription : EntityDescription) {
+                           val outputPropertyNames: IndexedSeq[String],
+                           val entityDescription : EntityDescription) {
 }
 
 object QualitySpecification {
@@ -39,15 +40,10 @@ object QualitySpecification {
     val scoringClassName = (node \ "ScoringFunction" \ "@class").text.toLowerCase
     val scoringInstance = ScoringFunction.create(scoringClassName,(node \ "ScoringFunction" head))
     val scoringFunctions = IndexedSeq[ScoringFunction](scoringInstance);
-    var propertyPaths = IndexedSeq[String]();
-    val propertyPath = (node \ "ScoringFunction" \ "Input" \ "@path").text.trim()
-
-    if (!"".eq(propertyPath)) {
-      propertyPaths ++= IndexedSeq(propertyPath);
-    }
+    val outputPropertyNames = IndexedSeq((prefixes++Prefixes.stdPrefixes).resolve(id))
 
     val entityDescription = QualityEntityDescription.fromXML(node)(prefixes)
 
-    new QualitySpecification(id, scoringFunctions, propertyPaths, entityDescription)
+    new QualitySpecification(id, scoringFunctions, outputPropertyNames, entityDescription)
   }
 }
