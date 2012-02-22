@@ -24,6 +24,7 @@ import ldif.runtime.Quad
 import ldif.entity.Entity
 import ldif.modules.sieve.fusion.{FusionTask, FusionFunction}
 import ldif.runtime.QuadWriter
+import ldif.modules.sieve.quality.QualityAssessmentProvider
 
 /**
  * Executes Sieve Data Fusion on a local machine.
@@ -105,7 +106,7 @@ class SieveLocalFusionExecutor(useFileInstanceCache: Boolean = false) extends Ex
               var graph = patternNodes(0).graph
               if (propertyValue.graph.trim().isEmpty) {
                 println(patternNodes(0))
-                graph = "PABLO"
+                graph = "null" //TODO FIXME not sure why this is happening.
               }
               val quad = new Quad(entity.resource, outputPropertyName, propertyValue, graph);
               writer.write(quad)

@@ -89,8 +89,11 @@ class SieveLocalQualityExecutor(useFileInstanceCache: Boolean = false) extends E
           log.trace("Sieve Entity: %s".format(entity.resource))
           log.trace("nPatterns: "+in.entityDescription.patterns.size)
 
+          // this is the graph we are scoring
+          val graphId = entity.resource
+          // get all indicators for this graph as provided by configuration file
           for (patternId <- 0 until lastPatternId) {
-            val facta = entity.factums(patternId)
+            val indicators = entity.factums(patternId)
             val outputPropertyName = task.qualitySpec.outputPropertyNames(patternId)
             val scoringFunction = task.qualitySpec.scoringFunctions(patternId)
 
@@ -98,10 +101,13 @@ class SieveLocalQualityExecutor(useFileInstanceCache: Boolean = false) extends E
             //log.trace("nFactums: %d".format(factums.size))
 
             // score a graph according to each scoringFunction and write quads out
-            val score = scoringFunction.score(entity.resource, facta)
+            val score = scoringFunction.score(graphId, indicators)
             val scoreNode = Node.createTypedLiteral(score.toString,"http://www.w3.org/2001/XMLSchema#double")
-            val quad = new Quad(entity.resource, outputPropertyName, scoreNode, task.qualityConfig.qualityMetadataGraph);
+            val quad = new Quad(graphId, outputPropertyName, scoreNode, task.qualityConfig.qualityMetadataGraph);
             writer.write(quad)
+
+            // also add to the QualityAssessment so that Fusion can grab directly from it.
+            task.qualityAssessment.putScore(outputPropertyName, graphId.value, score)
           }
 
         }
