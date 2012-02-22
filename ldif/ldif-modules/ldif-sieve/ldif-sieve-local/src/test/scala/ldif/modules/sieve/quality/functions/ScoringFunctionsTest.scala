@@ -22,7 +22,7 @@ class ScoringFunctionsTest extends FlatSpec with ShouldMatchers {
 
 
   val tcFunc = new TimeCloseness(6)
-  val subject = Node.fromString("subject")
+  val subject = Node.fromString("<subject>")
 
   val today = new DateTime()
   val todayMinus2 = new Node(today.minusDays(2).toString(ISODateTimeFormat.dateTimeNoMillis()), "http://www.w3.org/2001/XMLSchema#dateTime", Node.TypedLiteral, "graphId")
