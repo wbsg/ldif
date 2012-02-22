@@ -15,7 +15,7 @@ class AggregateFunctionsTest extends FlatSpec with ShouldMatchers {
 
 
   val tcFunc = new TimeCloseness(6)
-  val subject = Node.fromString("subject")
+  val subject = Node.fromString("<subject>")
 
   val node = new Node("", "http://www.w3.org/2001/XMLSchema#dateTime", Node.TypedLiteral, "graphId")
   val nodes = Traversable(IndexedSeq(node))
