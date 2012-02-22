@@ -13,7 +13,7 @@ import org.joda.time.{DateTime, DateTimeComparator, Days}
  * @author pablomendes
  */
 @RunWith(classOf[JUnitRunner])
-class ScoringFunctionsTest extends FlatSpec with ShouldMatchers {
+class TimeClosenessTest extends FlatSpec with ShouldMatchers {
 
   val tcXml =   <ScoringFunction class="TimeCloseness">
                     <Param name="timeSpan" value="6"/>
