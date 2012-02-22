@@ -71,9 +71,8 @@ class SieveLocalQualityExecutor(useFileInstanceCache: Boolean = false) extends E
 
     // for each entity reader (one per input file?)
     reader.foreach( in => {
-      val lastPatternId = in.entityDescription.patterns.size
 
-      log.debug("another reader")
+      val lastPatternId = in.entityDescription.patterns.size
 
       var entity : Entity = NoEntitiesLeft;
       while ( { entity = in.read(); entity != NoEntitiesLeft} ) {
@@ -91,7 +90,7 @@ class SieveLocalQualityExecutor(useFileInstanceCache: Boolean = false) extends E
           log.trace("nPatterns: "+in.entityDescription.patterns.size)
 
           for (patternId <- 0 until lastPatternId) {
-            val factums = entity.factums(patternId)
+            val facta = entity.factums(patternId)
             val outputPropertyName = task.qualitySpec.outputPropertyNames(patternId)
             val scoringFunction = task.qualitySpec.scoringFunctions(patternId)
 
@@ -99,7 +98,7 @@ class SieveLocalQualityExecutor(useFileInstanceCache: Boolean = false) extends E
             //log.trace("nFactums: %d".format(factums.size))
 
             // score a graph according to each scoringFunction and write quads out
-            val score = scoringFunction.score(factums)
+            val score = scoringFunction.score(entity.resource, facta)
             val scoreNode = Node.createTypedLiteral(score.toString,"http://www.w3.org/2001/XMLSchema#double")
             val quad = new Quad(entity.resource, outputPropertyName, scoreNode, task.qualityConfig.qualityMetadataGraph);
             writer.write(quad)

@@ -17,8 +17,8 @@ package ldif.modules.sieve.quality.functions
  */
 
 import org.slf4j.LoggerFactory
-import ldif.entity.NodeTrait
 import ldif.modules.sieve.quality.ScoringFunction
+import ldif.entity.{Entity, NodeTrait}
 
 /**
  * Scoring function that assigns real-valued, uniformly distributed scores to a list of graphs.
@@ -34,23 +34,27 @@ class ScoredList(val priorityList: List[String]) extends ScoringFunction {
 
   private val log = LoggerFactory.getLogger(getClass.getName)
 
-  def getPosition(graphId: String) : Int = {
-    priorityList.indexOf(graphId)
-  }
+//  def getPosition(graphId: String) : Int = {
+//    priorityList.indexOf(graphId)
+//  }
 
+  def getPosition(graphId: String) : Int = {
+    priorityList.filter(graphPrefix => graphId startsWith graphPrefix).headOption match {
+      case Some(g) => priorityList.indexOf(g)
+      case None => -1
+    }
+  }
 
   override def toString() : String = {
     "ScoredList, priority=" + priorityList
   }
 
   /**
-   * Providing as input a list of nodes in an entity description, compute
+   * Compute a score for the provided graph given its position in the priority list.
+   * metadataValues are not used here.
    */
-  def score(graphIds: Traversable[IndexedSeq[NodeTrait]]): Double = {
-    graphIds.headOption match {
-      case Some(g) => {
-        val graphId = g(0).value // get value for first property path
-        val position = getPosition(graphId)
+  def score(graphId: NodeTrait, metadataValues: Traversable[IndexedSeq[NodeTrait]]): Double = {
+        val position = getPosition(graphId.value)
         if (position == 0) {
             1
         } else if (position>0) {
@@ -58,10 +62,8 @@ class ScoredList(val priorityList: List[String]) extends ScoringFunction {
         } else {
             0.0
         }
-      }
-      case None => 0.0
-    }
   }
+
 }
 
 object ScoredList {
@@ -80,3 +82,23 @@ object ScoredList {
 
 
 
+
+//  /**
+//   * Providing as input a list of nodes in an entity description, compute
+//   */
+//  def score(graphId: NodeTrait, metadataValues: Traversable[IndexedSeq[NodeTrait]]): Double = {
+//    graphIds.headOption match {
+//      case Some(g) => {
+//        val graphId = g(0).value // get value for first property path
+//        val position = getPosition(graphId)
+//        if (position == 0) {
+//            1
+//        } else if (position>0) {
+//            (1 - ((position+1).toDouble / priorityList.size)) + 0.001 // last bit to distinguish between last item and out of list
+//        } else {
+//            0.0
+//        }
+//      }
+//      case None => 0.0
+//    }
+//  }

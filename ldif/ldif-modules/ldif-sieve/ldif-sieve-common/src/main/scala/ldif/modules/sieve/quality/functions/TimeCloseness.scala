@@ -45,7 +45,10 @@ class TimeCloseness(val dateRange: Int = 30) extends ScoringFunction {
   val parser = ISODateTimeFormat.dateTimeNoMillis();
   val ordering = Ordering.fromLessThan[DateTime](DateTimeComparator.getInstance.compare(_,_) < 0)
 
-  def score(metadataValues: Traversable[IndexedSeq[NodeTrait]]): Double = {
+  /**
+   * Takes first pattern. Scores and sorts all dates in the values for that pattern, returns top score.
+   */
+  def score(graphId:NodeTrait,metadataValues: Traversable[IndexedSeq[NodeTrait]]): Double = {
     try {
     //assume the input has only one pattern
     val indicator = metadataValues.head

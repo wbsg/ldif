@@ -1,8 +1,8 @@
 package ldif.modules.sieve.quality.functions
 
-import ldif.entity.NodeTrait
 import xml.Node
 import ldif.modules.sieve.quality.ScoringFunction
+import ldif.entity.{Entity, NodeTrait}
 
 /**
  * Constructor of implementing classes should accept applicable Param and EnvironmentVariable values.
@@ -14,7 +14,7 @@ object RandomScoringFunction extends ScoringFunction {
 
   def fromXML(node: Node) = this
 
-  def score(metadataValues: Traversable[IndexedSeq[NodeTrait]]) = Math.random
+  def score(graphId: NodeTrait, metadataValues: Traversable[IndexedSeq[NodeTrait]]) = Math.random
 
 }
 

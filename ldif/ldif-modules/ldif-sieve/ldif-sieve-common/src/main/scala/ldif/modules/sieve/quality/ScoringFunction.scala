@@ -1,8 +1,8 @@
 package ldif.modules.sieve.quality
 
 import functions.{TimeCloseness, ScoredList}
-import ldif.entity.NodeTrait
 import xml.Node
+import ldif.entity.{Entity, NodeTrait}
 
 /**
  * Constructor of implementing classes should accept applicable Param and EnvironmentVariable values.
@@ -12,7 +12,7 @@ import xml.Node
  */
 
 trait ScoringFunction {
-  def score(metadataValues: Traversable[IndexedSeq[NodeTrait]]): Double
+  def score(graphId: NodeTrait, metadataValues: Traversable[IndexedSeq[NodeTrait]]): Double
 }
 
 object ScoringFunction {

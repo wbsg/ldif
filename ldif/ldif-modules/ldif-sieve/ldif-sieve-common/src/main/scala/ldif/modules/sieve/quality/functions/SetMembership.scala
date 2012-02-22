@@ -29,7 +29,10 @@ class SetMembership(val set: Set[String]) extends ScoringFunction {
 
   private val log = LoggerFactory.getLogger(getClass.getName)
 
-  def score(metadataValues: Traversable[IndexedSeq[NodeTrait]]): Double = {
+  /**
+   * Uses the first pattern and requires that all values for that pattern are within the set.
+   */
+  def score(graphId: NodeTrait, metadataValues: Traversable[IndexedSeq[NodeTrait]]): Double = {
     // assume there is only one pattern
     val indicator = metadataValues.head
     // require that all nodes belong

@@ -22,6 +22,7 @@ class ScoringFunctionsTest extends FlatSpec with ShouldMatchers {
 
 
   val tcFunc = new TimeCloseness(6)
+  val subject = Node.fromString("subject")
 
   val today = new DateTime()
   val todayMinus2 = new Node(today.minusDays(2).toString(ISODateTimeFormat.dateTimeNoMillis()), "http://www.w3.org/2001/XMLSchema#dateTime", Node.TypedLiteral, "graphId")
@@ -42,16 +43,16 @@ class ScoringFunctionsTest extends FlatSpec with ShouldMatchers {
   }
 
   it should "correctly score input values" in {
-    (tcFunc.score(nodes3)) should equal (1.0 - (3.0/6))
+    (tcFunc.score(subject,nodes3)) should equal (1.0 - (3.0/6))
   }
 
   it should "correctly sort before scoring input values" in {
-    (tcFunc.score(nodes23)) should equal (tcFunc.score(nodes32))
+    (tcFunc.score(subject,nodes23)) should equal (tcFunc.score(subject,nodes32))
   }
 
   it should "sort and score values as expected" in {
-    (tcFunc.score(nodes23)) should equal (1.0 - (2.0/6))
-    (tcFunc.score(nodes43)) should equal (1.0 - (3.0/6))
+    (tcFunc.score(subject,nodes23)) should equal (1.0 - (2.0/6))
+    (tcFunc.score(subject,nodes43)) should equal (1.0 - (3.0/6))
     //(tcFunc.score(nodes234)) should equal (1.0 - (2.0/6))
   }
 
@@ -65,7 +66,7 @@ class ScoringFunctionsTest extends FlatSpec with ShouldMatchers {
   }
 
   it should "survive an invalid date" in {
-    (tcFunc.score(nodesBad)) should equal (0.0)
+    (tcFunc.score(subject,nodesBad)) should equal (0.0)
   }
 
 //  "ScoringFunctions" should "false/true" in {
