@@ -45,7 +45,8 @@ class SieveLocalFusionExecutor(useFileInstanceCache: Boolean = false) extends Ex
 
   def input(task : FusionTask) : InputFormat =
   {
-    implicit val prefixes = task.sieveConfig.fusionConfig.prefixes
+   // TODO: prefixes should not be needed here, they are resolved in the process of parsing the configuration file
+   // implicit val prefixes = task.sieveConfig.prefixes
     //log.info("Prefixes:"+prefixes.toString)
 
     // here we create entity descriptions from the task.qualitySpec

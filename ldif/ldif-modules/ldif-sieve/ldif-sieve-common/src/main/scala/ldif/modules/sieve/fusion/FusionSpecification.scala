@@ -1,6 +1,8 @@
 package ldif.modules.sieve.fusion
 
-import functions.{KeepFirst, PassItOn}
+import functions.PassItOn
+import ldif.util.Prefixes
+
 /*
 * Copyright 2011-2012 Freie Universität Berlin, MediaEvent Services GmbH & Co. KG
 *
@@ -23,17 +25,26 @@ import functions.{KeepFirst, PassItOn}
  * For each property in the input, the specification determines one fusion function and one output property name.
  * This specification is read from an XML file.
  *
- * @author pablomendes
+ * @author Pablo Mendes
+ * @author Hannes Muehleisen
  */
-class FusionSpecification(val id: String,
-                          val fusionFunctions : IndexedSeq[FusionFunction],
-                          val outputPropertyNames: IndexedSeq[String],
-                          val defaultFusionFunction : FusionFunction = new PassItOn) {
 
-  assert(fusionFunctions.size==outputPropertyNames.size, "There should be one OutputPropertyName for each FusionFunction")
-    //val scoringFunctions = new PassItOn
-    //val scoringFunctions = new KeepFirst
-    //val scoringFunctions = new ScoredList("http://www4.wiwiss.fu-berlin.de/ldif/graph#dbpedia.en");
+class FusionSpecification(val fusionFunctions: IndexedSeq[FusionFunction],
+                          val outputPropertyNames: IndexedSeq[String],
+                          val defaultFusionFunction: FusionFunction = new PassItOn) {
+
+  assert(fusionFunctions.size == outputPropertyNames.size, "There should be one OutputPropertyName for each FusionFunction")
+
+  override def toString(): String = {
+    "FusionSpecification, functions= " + fusionFunctions + ", outputProp=" + outputPropertyNames + ", defaultFunc=" + defaultFusionFunction
+  }
+
+  override def equals(obj: Any) = {
+    obj match {
+      case ots: FusionSpecification => fusionFunctions.equals(ots.fusionFunctions) && outputPropertyNames.equals(ots.outputPropertyNames) && defaultFusionFunction.equals(ots.defaultFusionFunction)
+      case _ => false
+    }
+  }
 }
 
 object FusionSpecification {
@@ -41,37 +52,20 @@ object FusionSpecification {
   /**
    * A <Class> node/elem will be passed in.
    */
-  def fromXML(node: scala.xml.Node) = {
-    //TODO implement as below
-     //val specName = ...
-     //val scoringFunctions = (node \ "Property").map(FusionFunction.fromXML)
-     //val propertyNames = (node \ "Property").map(grabName)
-     //new FusionSpecification(specName,scoringFunctions,propertyNames)
+  def fromXML(node: scala.xml.Node)(implicit prefixes: Prefixes = Prefixes.empty): FusionSpecification = {
+    def createFusionFunctions(node: scala.xml.Node): FusionFunction = {
+      val fusionClassName: String = (node \ "FusionFunction" \ "@class").text
+      FusionFunction.create(fusionClassName, (node \ "FusionFunction").head)
+    }
 
-    //temporarily, hardcoded:
-    createLwdm2012ExampleSpecs
-  }
+    def getOutputProperties(node: scala.xml.Node): String = {
+      prefixes.resolve((node \ "@name").text)
+    }
 
-  def createLwdm2012ExampleSpecs = {
-    new FusionSpecification("lwdm2012",
-      IndexedSeq(new PassItOn,
-        new KeepFirst,
-        new PassItOn,
-        new KeepFirst,
-        new PassItOn),
-      IndexedSeq("http://www.w3.org/2000/01/rdf-schema#label",
-        "http://dbpedia.org/ontology/areaTotal",
-        "http://dbpedia.org/ontology/foundingDate",
-        "http://dbpedia.org/ontology/populationTotal",
-        "http://www.w3.org/1999/02/22-rdf-syntax-ns#type")
-    )
-  }
+    val fusionFunctions = (node \ "Property").map(createFusionFunctions)
+    val outputProperties = (node \ "Property").map(getOutputProperties)
 
-  def createMusicExampleSpecs = {
-    new FusionSpecification("test",
-      IndexedSeq(new KeepFirst, new PassItOn, new PassItOn, new PassItOn),
-      IndexedSeq("http://www.w3.org/2000/01/rdf-schema#label", "http://xmlns.com/foaf/0.1/made", "http://www.w3.org/2002/07/owl#sameAs", "http://www4.wiwiss.fu-berlin.de/ldif/hasDatasource")
-    )
+    new FusionSpecification(fusionFunctions.toIndexedSeq, outputProperties.toIndexedSeq)
 
   }
 }

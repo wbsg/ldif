@@ -17,10 +17,8 @@ package ldif.modules.sieve.fusion
  */
 
 import functions.PassItOn
-import java.io.{FileInputStream, InputStream, File}
 import sun.reflect.generics.reflectiveObjects.NotImplementedException
 import ldif.entity.EntityDescription
-import org.slf4j.LoggerFactory
 import ldif.util.Prefixes
 
 /**
@@ -29,77 +27,38 @@ import ldif.util.Prefixes
  *             Each spec describes how to process one entity description (restricted to Class, with a pattern for each Property)
  *             Each spec holds a list of corresponding FusionFuctions for each property
  *
- * @author pablomendes
+ * @author Pablo Mendes
+ * @author Hannes Muehleisen
  */
-class FusionConfig(val prefixes: Prefixes,
-                   val fusionSpecs: Traversable[FusionSpecification],
-                   val entityDescriptions: Seq[EntityDescription]) {
+class FusionConfig(val fusionSpecs: IndexedSeq[FusionSpecification],
+                   val entityDescriptions: IndexedSeq[EntityDescription]) {
 
-  def merge(c: FusionConfig) : FusionConfig = { //TODO implement
+  def merge(c: FusionConfig): FusionConfig = {
+    //TODO implement
     throw new NotImplementedException
-    //this
+  }
+
+  override def equals(obj: Any) = {
+    obj match {
+      case ots: FusionConfig => fusionSpecs.equals(ots.fusionSpecs) && entityDescriptions.equals(ots.entityDescriptions)
+      case _ => false
+    }
+  }
+
+  override def toString(): String = {
+    "FusionConfig, specs= " + fusionSpecs + " , ed=" + entityDescriptions
   }
 
 }
 
 object FusionConfig {
-
-  private val log = LoggerFactory.getLogger(getClass.getName)
-  private val schemaLocation = "de/fuberlin/wiwiss/sieve/Sieve.xsd"
-
   def fromXML(node: scala.xml.Node)(implicit prefixes: Prefixes = Prefixes.empty) = {
-    val specs = (node \ "Class").map(FusionSpecification.fromXML)
-    val entityDescriptions = (node \ "Class").map(FusionEntityDescription.fromXML(_)(prefixes))
-    new FusionConfig(prefixes, specs, entityDescriptions)
-  }
-// Example from Silk:
-//object LinkingConfig {
-//  private val schemaLocation = "de/fuberlin/wiwiss/silk/LinkSpecificationLanguage.xsd"
-//
-//  def empty = LinkingConfig(Prefixes.empty, RuntimeConfig(), Nil, Nil, Nil)
-//
-//  def load = {
-//    new ValidatingXMLReader(fromXML, schemaLocation)
-//  }
-//
-//  def fromXML(node: Node) = {
-//    implicit val prefixes = Prefixes.fromXML(node \ "Prefixes" head)
-//    val sources = (node \ "DataSources" \ "DataSource").map(Source.fromXML)
-//    val blocking = (node \ "Blocking").headOption match {
-//      case Some(blockingNode) => Blocking.fromXML(blockingNode)
-//      case None => Blocking()
-//    }
-//    val linkSpecifications = (node \ "Interlinks" \ "Interlink").map(p => LinkSpecification.fromXML(p))
-//
-//    implicit val globalThreshold = None
-//    val outputs = (node \ "Outputs" \ "Output").map(Output.fromXML)
-//
-//    LinkingConfig(prefixes, RuntimeConfig(blocking), sources, linkSpecifications, outputs)
-//  }
-//}
-
-
-
-  def createDummyEntityDescriptions(prefixes: Prefixes) : List[EntityDescription] = {
-    // read from jar
-    //val stream = getClass.getClassLoader.getResourceAsStream("ldif/modules/sieve/local/Music_EntityDescription.xml")
-    // read from file
-    //val stream = new FileInputStream("/home/pablo/workspace/ldif/ldif/ldif-modules/ldif-sieve/ldif-sieve-local/src/test/resources/ldif/modules/sieve/local/Music_EntityDescription.xml");
-
-    //if (stream!=null) {
-//      val testXml = XML.load(stream);
-      val testXml = FusionEntityDescription.createLwdm2012EntityDescription
-
-      val e = EntityDescription.fromXML(testXml)(prefixes)
-      log.debug("[FUSION] "+e.toString);
-      List(e)
-//    } else {
-//      log.error("EntityDescription returned null!");
-//      List() //empty?
-//    }
+    val specs = (node \ "Class").map(FusionSpecification.fromXML(_)(prefixes))
+    val ed = (node \ "Class").map(FusionEntityDescription.fromXML(_)(prefixes))
+    new FusionConfig(specs.toIndexedSeq, ed.toIndexedSeq)
   }
 
-  def empty : EmptyFusionConfig = {
+  def empty: EmptyFusionConfig = {
     new EmptyFusionConfig
   }
 }
@@ -107,32 +66,8 @@ object FusionConfig {
 /*
  This class should never be actually used for fusion. It simply signals that no config exists, and the framework should repeat the input.
  */
-class EmptyFusionConfig extends FusionConfig(Prefixes.stdPrefixes,
-                                List(new FusionSpecification("Default",
-                                                             IndexedSeq(new PassItOn),
-                                                             IndexedSeq("DEFAULT")
-                                                             )),
-                                List(EntityDescription.empty)
-
+class EmptyFusionConfig extends FusionConfig(
+  IndexedSeq(new FusionSpecification(IndexedSeq(new PassItOn), IndexedSeq("DEFAULT"))), IndexedSeq(EntityDescription.empty)
 ) {
 
 }
-
-
-  /*
-<http://dbpedia.org/ontology/musicalArtist>
-<http://www.w3.org/1999/02/22-rdf-syntax-ns#type>
-<http://www.w3.org/2000/01/rdf-schema#label>
-<http://www.w3.org/2002/07/owl#sameAs>
-<http://xmlns.com/foaf/0.1/made>
-<http://xmlns.com/foaf/0.1/member>
-
-provenance triples:
-<http://www4.wiwiss.fu-berlin.de/ldif/hasDatasource>
-<http://www4.wiwiss.fu-berlin.de/ldif/hasImportJob>
-<http://www4.wiwiss.fu-berlin.de/ldif/hasImportType>
-<http://www4.wiwiss.fu-berlin.de/ldif/hasOriginalLocation>
-<http://www4.wiwiss.fu-berlin.de/ldif/importId>
-<http://www4.wiwiss.fu-berlin.de/ldif/lastUpdate>
-
-   */

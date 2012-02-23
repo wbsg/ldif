@@ -4,7 +4,7 @@ import fusion.FusionConfig
 import quality.QualityConfig
 import xml.XML
 import ldif.util.{Prefixes, ValidatingXMLReader}
-import java.io.{FileInputStream, File}
+import java.io.File
 
 /*
 * Copyright 2011-2012 Freie Universität Berlin, MediaEvent Services GmbH & Co. KG
@@ -22,7 +22,7 @@ import java.io.{FileInputStream, File}
 * limitations under the License.
 */
 
-class SieveConfig(val qualityConfig: QualityConfig, val fusionConfig : FusionConfig) {
+class SieveConfig(val qualityConfig: QualityConfig, val fusionConfig: FusionConfig) {
 
 }
 
@@ -31,11 +31,11 @@ object SieveConfig {
   val stdPrefixes = Map("foaf" -> "http://xmlns.com/foaf/0.1/",
     "dbpedia-owl" -> "http://dbpedia.org/ontology/",
     "dbpedia" -> "http://dbpedia.org/resource/",
-    "genes"->"http://wiking.vulcan.com/neurobase/kegg_genes/resource/vocab/",
-    "smwprop"->"http://mywiki/resource/property/",
-    "smwcat"->"http://mywiki/resource/category/",
-    "wiki"->"http://www.example.com/smw#",
-    "ldif"->"http://www4.wiwiss.fu-berlin.de/ldif/",
+    "genes" -> "http://wiking.vulcan.com/neurobase/kegg_genes/resource/vocab/",
+    "smwprop" -> "http://mywiki/resource/property/",
+    "smwcat" -> "http://mywiki/resource/category/",
+    "wiki" -> "http://www.example.com/smw#",
+    "ldif" -> "http://www4.wiwiss.fu-berlin.de/ldif/",
     "xsd" -> "http://www.w3.org/2001/XMLSchema#",
     "rdf" -> "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
     "rdfs" -> "http://www.w3.org/2000/01/rdf-schema#",
@@ -46,13 +46,15 @@ object SieveConfig {
   def fromSieveXmlConfig(configFile: File) = {
     val sieveConfig = XML.loadFile(configFile)
     val prefixes = Prefixes.fromXML(sieveConfig \ "Prefixes" head)
-    val qualityConfig = (sieveConfig \ "QualityAssessment" ).map(QualityConfig.fromXML(_)(prefixes))
-    val fusionConfig = (sieveConfig \ "Fusion" ).map(FusionConfig.fromXML(_)(prefixes))
-    new SieveConfig(qualityConfig(0),fusionConfig(0))
+    val qualityConfig = (sieveConfig \ "QualityAssessment").map(QualityConfig.fromXML(_)(prefixes))
+    val fusionConfig = (sieveConfig \ "Fusion").map(FusionConfig.fromXML(_)(prefixes))
+    new SieveConfig(qualityConfig.head, fusionConfig.head)
   }
 
   def load(configFile: File): SieveConfig = {
-   reader.apply({configFile})
+    reader.apply({
+      configFile
+    })
   }
 
 }

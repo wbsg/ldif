@@ -44,6 +44,13 @@ case class EntityDescription(restriction : Restriction, patterns : IndexedSeq[In
       </Patterns>
     </EntityDescription>
   }
+
+  override def equals(obj: Any) = {
+    obj match {
+      case oed: EntityDescription => restriction.equals(oed.restriction) && patterns.equals(oed.patterns)
+      case _ => false
+    }
+  }
 }
 
 object EntityDescription

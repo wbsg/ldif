@@ -29,7 +29,7 @@ import ldif.modules.sieve.quality.functions.{TimeCloseness, ScoredList}
 
 trait FusionFunction {
 
-  var name = classOf[FusionFunction].getClass.getSimpleName
+  var name : String = getClass.getSimpleName.toString
 
   def sort (values: Traversable[IndexedSeq[NodeTrait]], quality: QualityAssessmentProvider) : Traversable[IndexedSeq[NodeTrait]] = {
     values
@@ -52,12 +52,25 @@ trait FusionFunction {
     values
   }
 
+  override def toString(): String = {
+   name
+  }
+
+  override def equals(obj: Any) = {
+    obj match {
+      case off: FusionFunction => toString().equals(off.toString())
+      case _ => false
+    }
+  }
+
 }
 
 object FusionFunction {
-  def create(className : String,  config: Node) : FusionFunction = className.toLowerCase match {
+  def create(className : String, config: Node) : FusionFunction = className.toLowerCase match {
     case "keepfirst" => return KeepFirst.fromXML(config)
     case "passiton" => return PassItOn.fromXML(config)
+
+      // TODO: get metric the function works on ?
 
     // NOTICE: add case statements for new scoring functions here
     case whatever => throw new IllegalArgumentException("Unable to construct scoring function for class name " + className)

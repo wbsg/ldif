@@ -29,6 +29,13 @@ case class Restriction(operator : Option[Restriction.Operator])
       { for(op <- operator) yield op.toXml }
     </Restriction>
   }
+
+  override def equals(obj: Any) = {
+    obj match {
+      case or: Restriction => toXml.equals(or.toXml)
+      case _ => false
+    }
+  }
 }
 
 object Restriction
