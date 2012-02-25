@@ -69,7 +69,7 @@ object IntegrationConfig {
   protected def getSources = SourceConfig.fromXML((xml \ "sources").head, baseDir)
   protected def getLinkSpecDir = getFile("linkSpecifications", baseDir, true)
   protected def getMappingDir = getFile("mappings", baseDir, true)
-  protected def getSieveSpecDir = getFile("fusion", baseDir, true)   // TODO what about the <quality> element?
+  protected def getSieveSpecDir = getFile("sieve", baseDir, true)
   protected def getOutput = OutputConfig.fromXML((xml \ "outputs").head)
   protected def getRunSchedule = getString("runSchedule", "onStartup")
 

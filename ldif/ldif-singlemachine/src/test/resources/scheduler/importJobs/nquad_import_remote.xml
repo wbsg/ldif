@@ -1,0 +1,12 @@
+<importJob  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://www4.wiwiss.fu-berlin.de/ldif/ ../xsd/ImportJob.xsd"
+           xmlns="http://www4.wiwiss.fu-berlin.de/ldif/">
+    <internalId>ABA.0</internalId>
+    <dataSource>ABA</dataSource>
+    <refreshSchedule>daily</refreshSchedule>
+    <quadImportJob>
+        <dumpLocation>
+            http://www.assembla.com/code/ldif/git/node/blob/ldif/ldif-singlemachine/src/test/resources/ldif/local/resources/sources/aba.nq.bz2
+        </dumpLocation>
+    </quadImportJob>
+</importJob>

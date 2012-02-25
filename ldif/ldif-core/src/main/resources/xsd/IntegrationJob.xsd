@@ -119,9 +119,7 @@
 
                 <xs:element name="mappings" type="xs:string" minOccurs="0"/>
 
-                <xs:element name="quality" type="xs:string" minOccurs="0"/>
-
-                <xs:element name="fusion" type="xs:string" minOccurs="0"/>
+                <xs:element name="sieve" type="xs:string" minOccurs="0"/>
 
                 <xs:element name="outputs" />
 
