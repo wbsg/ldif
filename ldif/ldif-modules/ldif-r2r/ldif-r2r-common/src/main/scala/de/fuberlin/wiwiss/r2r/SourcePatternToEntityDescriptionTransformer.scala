@@ -39,10 +39,6 @@ import ldif.entity
 
 
 object SourcePatternToEntityDescriptionTransformer {
-  def main(args: Array[String]) : Unit = {
-    val (entityDescription, variableToIndexMap) = transform(args(0), args.slice(1,args.length).toList, new PrefixMapper)
-    printEntityDescription(entityDescription)
-  }
 
   def printEntityDescription(entityDescription: EntityDescription) {
     println("Paths:")
@@ -53,7 +49,7 @@ object SourcePatternToEntityDescriptionTransformer {
     println("  " + entityDescription.restriction)
   }
 
-  def transform(sourcePattern: String, variableDependencies: List[String], prefixMapper: PrefixMapper): (EntityDescription, Map[String, Int]) = {
+  def transform(sourcePattern: String, variableDependencies: Set[String], prefixMapper: PrefixMapper): (EntityDescription, Map[String, Int]) = {
     val triples: List[NodeTriple] =  Sparql2NodeTripleParser.parse(sourcePattern, prefixMapper).toList
     val (paths, operators) = constructPathsAndRestrictions(triples, variableDependencies)
     var index = 0
@@ -71,7 +67,7 @@ object SourcePatternToEntityDescriptionTransformer {
     (EntityDescription(restriction, IndexedSeq(pattern.toIndexedSeq.reverse)), variableToIndexMap)
   }
 
-  def constructPathsAndRestrictions(triples: List[NodeTriple], variableDependencies: List[String]): (Map[String, Path],
+  def constructPathsAndRestrictions(triples: List[NodeTriple], variableDependencies: Set[String]): (Map[String, Path],
       List[Operator]) = {
     var paths: Map[String, Path] = Map()
     var restrictions: List[Operator] = List()
@@ -79,11 +75,11 @@ object SourcePatternToEntityDescriptionTransformer {
     val subjRoot = constructTree(triples)
     if(subjRoot==null) throw new R2RException("No SUBJ variable in Source Pattern")
 
+    // Construct the entity description tree starting at ?SUBJ node
     def recursiveConstruct(node: TreeNode, path: List[PathOperator], visited: Set[TreeNode]) {
       val parsedNode = node.getNode
       val nodeType = parsedNode.nodeType
       var added = false
-
       if(nodeType==VARIABLENODE && variableDependencies.contains(parsedNode.value) && parsedNode.value!="SUBJ") {
         paths += (parsedNode.value -> Path("SUBJ", path))
         added = true
@@ -109,14 +105,15 @@ object SourcePatternToEntityDescriptionTransformer {
         }
       } else {
         links.foreach{case (propertyNode, nextNode, backward) =>
-          if(visited.contains(nextNode))
-            return
-          val visitedNew = visited + nextNode
+          if(!visited.contains(nextNode)) {
 
-          if(backward)
-            recursiveConstruct(nextNode, path ++ List(BackwardOperator(propertyNode.value)), visitedNew)
-          else
-            recursiveConstruct(nextNode, path ++ List(ForwardOperator(propertyNode.value)), visitedNew)
+            val visitedNew = visited + nextNode
+
+            if(backward)
+              recursiveConstruct(nextNode, path ++ List(BackwardOperator(propertyNode.value)), visitedNew)
+            else
+              recursiveConstruct(nextNode, path ++ List(ForwardOperator(propertyNode.value)), visitedNew)
+          }
         }
       }
     }

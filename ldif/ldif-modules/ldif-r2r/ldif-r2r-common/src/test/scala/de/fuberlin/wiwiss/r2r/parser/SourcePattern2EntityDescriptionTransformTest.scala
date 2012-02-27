@@ -41,13 +41,18 @@ class SourcePattern2EntityDescriptionTransformTest extends FlatSpec with ShouldM
 
   val prefixMapper = new PrefixMapper
 
+  it should "convert complex mappings" in {
+    val sourcePattern = "?nameResource <http://last> ?n . ?SUBJ <http://nameResource> ?nameResource .  ?nameResource <http://first> ?v ."
+    transform(sourcePattern, Set("v", "n"), prefixMapper).toString should equal ("(EntityDescription(Restriction(None),Vector(Vector(?SUBJ/<http://nameResource>/<http://first>, ?SUBJ/<http://nameResource>/<http://last>))),Map(v -> 0, n -> 1))")
+  }
+
   it should "parse values-paths" in {
     val sourcePattern = "?SUBJ <hasFriend> ?friend"
-    transform(sourcePattern, List("friend"), prefixMapper).toString should equal ("(EntityDescription(Restriction(None),Vector(Vector(?SUBJ/<hasFriend>))),Map(friend -> 0))")
+    transform(sourcePattern, Set("friend"), prefixMapper).toString should equal ("(EntityDescription(Restriction(None),Vector(Vector(?SUBJ/<hasFriend>))),Map(friend -> 0))")
   }
 
   it should "create Restrictions from constant value paths" in {
     val sourcePattern = "?SUBJ a <someClass>"
-    (transform(sourcePattern, List("friend"), prefixMapper).toString) should equal ("(EntityDescription(Restriction(Some(And(List(Condition(?SUBJ/<http://www.w3.org/1999/02/22-rdf-syntax-ns#type>,Set(<someClass>)))))),Vector(Vector())),Map())")
+    transform(sourcePattern, Set("friend"), prefixMapper).toString should equal ("(EntityDescription(Restriction(Some(And(List(Condition(?SUBJ/<http://www.w3.org/1999/02/22-rdf-syntax-ns#type>,Set(<someClass>)))))),Vector(Vector())),Map())")
   }
 }

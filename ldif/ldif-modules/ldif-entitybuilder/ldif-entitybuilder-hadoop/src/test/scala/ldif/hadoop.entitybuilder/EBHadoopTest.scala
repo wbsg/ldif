@@ -103,9 +103,9 @@ class EBHadoopIT extends FlatSpec with ShouldMatchers
       if (entity.resource.value == "http://o1"){
         val factum = entity.factums(0).head
         // ?SUBJ/<http://n>
-        factum(0).value should equal ("John")
+        factum(0).value should equal ("Locke")
         // ?SUBJ/<http://v>
-        factum(1).value should equal ("Locke")
+        factum(1).value should equal ("John")
       }
       else
         entity.factums(0).size should equal (0)

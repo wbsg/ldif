@@ -133,7 +133,8 @@ class IntegrationJob (val config : IntegrationConfig, debugMode : Boolean = fals
         writeOutput(config, integratedReader)
         //writeOutput(config, sieveReader)
       }
-//    MonitorServer.stop()
+    if(enableReportingServer)
+      MonitorServer.stop()
   }
 
   private def setupQuadReader(_clonedR2rReader: Seq[QuadReader]): Seq[QuadReader] = {

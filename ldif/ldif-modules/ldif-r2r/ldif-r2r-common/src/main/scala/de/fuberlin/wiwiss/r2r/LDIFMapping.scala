@@ -139,7 +139,7 @@ object LDIFMapping {
 
     variableDependencies.addAll(mapping.computeQueryVariableDependencies)
 
-    val (entityDesc, varToIndMap) = SourcePatternToEntityDescriptionTransformer.transform(sourcePattern, variableDependencies.toList, mapping.getPrefixMapper)
+    val (entityDesc, varToIndMap) = SourcePatternToEntityDescriptionTransformer.transform(sourcePattern, variableDependencies.toSet, mapping.getPrefixMapper)
     new LDIFMapping(mapping, entityDesc, varToIndMap)
   }
 }

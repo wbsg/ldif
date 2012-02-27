@@ -219,12 +219,12 @@ class ResultBuilder(edmd: EntityDescriptionMetadata) {
     result
   }
 
-  // Partition the paths by which property they follow (and forward, backward type)
+  // Partition the paths by which property they follow (and forward, backward type), sort by index (partitions always include index ranges)
   private def partitionPathIndexesByPathOperator(level: Int, pathIndexes: Seq[Int], pathInfos: IndexedSeq[PathInfo]): Seq[Seq[Int]] = {
     val partitions = new HashMap[(String, Boolean), ArrayBuffer[Int]]()
     for(index <- pathIndexes)
       partitions.getOrElseUpdate(pathInfos(index).properties(level), new ArrayBuffer[Int]()).append(index)
-    partitions.values.toSeq
+    partitions.values.toSeq.sortBy(n => n.head)
   }
 
   private def partitionValuePathsByNode(level: Int, valuePaths: Seq[ValuePathWritable]): Map[NodeWritable, ArrayBuffer[ValuePathWritable]] = {
