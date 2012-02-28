@@ -54,6 +54,17 @@ class IntegrationJob (val config : IntegrationConfig, debugMode : Boolean = fals
 
   private var lastUpdate : Calendar = null
 
+  private def updateReaderAfterR2RPhase(r2rReader: Option[scala.Seq[QuadReader]]): Option[scala.Seq[QuadReader]] = {
+    if (isIntialQuadReader(r2rReader.get)) {
+      val inputQuadsFile = File.createTempFile("ldif-filtered-input", ".bin")
+      inputQuadsFile.deleteOnExit()
+      val fileQuadWriter = new FileQuadWriter(inputQuadsFile)
+      copyQuads(r2rReader.get.head, fileQuadWriter)
+      fileQuadWriter.finish()
+      Some(Seq(new FileQuadReader(inputQuadsFile)))
+    } else r2rReader
+  }
+
   def runIntegration {
     if (config.sources == null || config.sources.size == 0)
       log.info("Integration Job skipped - No data source files found")
@@ -84,24 +95,31 @@ class IntegrationJob (val config : IntegrationConfig, debugMode : Boolean = fals
         val otherQuadsFile = File.createTempFile("ldif-other-quads", ".bin")
         // Quads that contain external sameAs links
         val sameAsQuadsFile = File.createTempFile("ldif-sameas-quads", ".bin")
+        // Quads that lie in the provenance graph
+        val provenanceQuadsFile = File.createTempFile("ldif-provenance-quads", "bin")
 
-        setupConfigParameters(otherQuadsFile, sameAsQuadsFile)
+        setupConfigParameters(otherQuadsFile, sameAsQuadsFile, provenanceQuadsFile)
 
-        // Load source data sets
-        val quadReaders = loadDumps(config.sources)
+        // Load source data sets and wrap the quad readers in a filter quad reader
+        val quadReaders = Seq(new DumpQuadReader(new MultiQuadReader(loadDumps(config.sources):_*), configParameters))
 
         // Execute mapping phase
         val skipR2R = config.properties.getProperty("mappings.skip", "false")=="true"
         var r2rReader: Option[Seq[QuadReader]] = executeMappingPhase(config, quadReaders, skipR2R)
 
+        r2rReader = updateReaderAfterR2RPhase(r2rReader)
+
         // Execute linking phase
         val skipSilk = config.properties.getProperty("linkSpecifications.skip", "false")=="true"
         var linkReader: Seq[QuadReader] = executeLinkingPhase(config, r2rReader.get, skipSilk)
 
+
         // Setup sameAs reader and otherQuads reader
-        configParameters.otherQuadsWriter.finish
+        configParameters.otherQuadsWriter.finish()
         val otherQuadsReader = new FileQuadReader(otherQuadsFile)
-        configParameters.sameAsWriter.finish
+        configParameters.provenanceQuadsWriter.finish()
+        val provenanceQuadReader = new FileQuadReader(provenanceQuadsFile)
+        configParameters.sameAsWriter.finish()
         val sameAsReader = new FileQuadReader(sameAsQuadsFile)
 
         val clonedR2rReader = setupQuadReader(r2rReader.get)
@@ -123,7 +141,7 @@ class IntegrationJob (val config : IntegrationConfig, debugMode : Boolean = fals
         else integratedReader = new MultiQuadReader(allQuads, allSameAsLinks) // TODO: Really add allSameAsLinks here (already)?
 
         //Execute sieve (quality and fusion)
-        val sieveInput = Seq(integratedReader)//val sieveInput = Seq(integratedReader)
+        val sieveInput = Seq(integratedReader, provenanceQuadReader)//val sieveInput = Seq(integratedReader)
 
 //        val sieveInput = cloneQuadReaders(Seq(otherQuadsReader))
         val sieveReader: QuadReader = executeSieve(config, sieveInput)
@@ -135,6 +153,15 @@ class IntegrationJob (val config : IntegrationConfig, debugMode : Boolean = fals
       }
 //    if(enableReportingServer)
 //      MonitorServer.stop()
+  }
+
+  private def copyQuads(reader: QuadReader, writer: QuadWriter) {
+    for(quad <- reader)
+      writer.write(quad)
+  }
+
+  private def isIntialQuadReader(quadReaders: Seq[QuadReader]): Boolean = {
+    quadReaders.length==1 && quadReaders.head.isInstanceOf[DumpQuadReader]
   }
 
   private def setupQuadReader(_clonedR2rReader: Seq[QuadReader]): Seq[QuadReader] = {
@@ -159,14 +186,17 @@ class IntegrationJob (val config : IntegrationConfig, debugMode : Boolean = fals
   }
 
   // Setup config parameters
-  def setupConfigParameters(outputFile: File, sameasFile: File) {
+  def setupConfigParameters(outputFile: File, sameasFile: File, provenanceFile: File) {
     outputFile.deleteOnExit()
     sameasFile.deleteOnExit()
+    provenanceFile.deleteOnExit()
 
     var otherQuads: QuadWriter = new FileQuadWriter(outputFile)
     var sameAsQuads: QuadWriter = new FileQuadWriter(sameasFile)
+    var provenanceQuads: QuadWriter = new FileQuadWriter(provenanceFile)
 
-    configParameters = ConfigParameters(config.properties, otherQuads, sameAsQuads)
+
+    configParameters = ConfigParameters(config.properties, otherQuads, sameAsQuads, provenanceQuads)
 
     // Setup LocalNode (to pool strings etc.)
     LocalNode.reconfigure(config.properties)
@@ -222,16 +252,14 @@ class IntegrationJob (val config : IntegrationConfig, debugMode : Boolean = fals
     val sieveFusionReader = fusionModule.config.fusionConfig match {
       case e: EmptyFusionConfig => {
         log.info("[FUSION] No Sieve configuration found. No fusion will be performed.")
-        val echo = new QuadQueue()
-        inputQuadsReaders.foreach(iqr => iqr.foreach(q => echo.write(q))); // copy input to output
-        return echo;
+        new MultiQuadReader(fusionInput:_*)
       }
       case c: FusionConfig => {
         executeFusionPhase(config, fusionInput, qualityModule, fusionModule)
       }
     }
     // return both quality and fused quads
-    new MultiQuadReader(sieveFusionReader, sieveQualityReader)
+      new MultiQuadReader(sieveFusionReader, sieveQualityReader)
 //    sieveQualityReader
   }
 

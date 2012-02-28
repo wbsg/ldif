@@ -34,13 +34,6 @@ import ldif.util.{GlobalStatusMonitor, ReportPublisher, Consts, Uri}
 class EntityBuilder (entityDescriptions : IndexedSeq[EntityDescription], readers : Seq[QuadReader], config: ConfigParameters) extends FactumBuilder with EntityBuilderTrait {
   private val log = LoggerFactory.getLogger(getClass.getName)
   // If this is true, quads like provenance quads (or even all quads) are saved for later use (merge)
-  private val outputAllQuads = config.configProperties.getProperty("output", "mapped-only").toLowerCase=="all"
-  private val saveQuads = config.otherQuadsWriter!=null
-  private val saveSameAsQuads = config.sameAsWriter!=null
-  private val provenanceGraph = config.configProperties.getProperty("provenanceGraph", Consts.DEFAULT_PROVENANCE_GRAPH)
-  private val useExternalSameAsLinks = config.configProperties.getProperty("useExternalSameAsLinks", "true").toLowerCase=="true"
-  private val outputFormat = config.configProperties.getProperty("outputFormat", "nq").toLowerCase
-  private val ignoreProvenance = !(outputFormat=="nq" || outputFormat=="sparql")
   private val collectNotUsedQuads = config.collectNotUsedQuads
 
   // Property HT - Describes all the properties used in the Entity Description
@@ -124,12 +117,6 @@ class EntityBuilder (entityDescriptions : IndexedSeq[EntityDescription], readers
       for (reader <- readers.filter(_.hasNext)) {
         val quad = reader.read
 
-        if(saveQuads)
-          saveQuadsForLater(quad)
-
-        if(useExternalSameAsLinks)
-          saveIfSameAsQuad(quad)
-
         entityBuilderReportPublisher.quadsReadCounter.incrementAndGet()
 
         if(isRelevantQuad(quad))  {
@@ -162,26 +149,9 @@ class EntityBuilder (entityDescriptions : IndexedSeq[EntityDescription], readers
     //log.info(" [ BHT ] \n > keySet = ("+BHT.keySet.size.toString+")\n   - " + BHT.keySet.map(a => Pair.unapply(a).get._2 + " "+Pair.unapply(a).get._1.value).mkString("\n   - "))
   }
 
-  private def saveQuadsForLater(quad: Quad) {
-    if(outputAllQuads || (isProvenanceQuad(quad) && (!ignoreProvenance)))
-      config.otherQuadsWriter.write(quad)
-  }
-
   private def isRelevantQuad(quad: Quad): Boolean = {
     val prop = new Uri(quad.predicate).toString
-    if(PHT.contains(prop) && (!isProvenanceQuad(quad) || !saveQuads))
-      true
-    else
-      false
-  }
-
-  private def saveIfSameAsQuad(quad: Quad) {
-    if(saveSameAsQuads && quad.predicate=="http://www.w3.org/2002/07/owl#sameAs")
-      config.sameAsWriter.write(quad)
-  }
-
-  private def isProvenanceQuad(quad: Quad): Boolean = {
-    if(quad.graph==provenanceGraph)
+    if(PHT.contains(prop))
       true
     else
       false
