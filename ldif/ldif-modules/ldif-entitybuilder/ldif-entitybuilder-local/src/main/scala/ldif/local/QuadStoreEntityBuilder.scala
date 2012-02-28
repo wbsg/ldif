@@ -26,6 +26,7 @@ import ldif.runtime.Quad
 import java.io._
 import java.util.zip.GZIPOutputStream
 import runtime.impl.QuadQueue
+import java.util.concurrent.atomic.AtomicInteger
 
 /**
  * Created by IntelliJ IDEA.
@@ -37,6 +38,7 @@ import runtime.impl.QuadQueue
 
 class QuadStoreEntityBuilder(store: QuadStoreTrait, entityDescriptions : Seq[EntityDescription], readers : Seq[QuadReader], config: ConfigParameters, reuseDatabase: Boolean = false) extends EntityBuilderTrait {
   private val log = LoggerFactory.getLogger(getClass.getName)
+  private val quadCounter = new AtomicInteger(0)
 
   // If this is true, quads like provenance quads (or even all quads) are saved for later use (merge)
   private val saveQuads = config.otherQuadsWriter!=null
@@ -55,14 +57,18 @@ class QuadStoreEntityBuilder(store: QuadStoreTrait, entityDescriptions : Seq[Ent
   loadDataset
 
   private def initStore {
-    if(!reuseDatabase)
+    if(!reuseDatabase) {
       store.clearDatabase
+      quadCounter.set(0)
+    }
   }
 
   private def loadDataset {
     if(!reuseDatabase) {
-      val quadOutput = filterAndDumpDataset(readers)
+      val quadOutput = filterAndDumpDataset(readers, quadCounter)
       store.loadDataset(quadOutput)
+      entityBuilderReportPublisher.quadsReadCounter.set(quadCounter.get)
+      entityBuilderReportPublisher.finishedReading=true
     } else
       store.loadDataset(null)
   }
@@ -70,7 +76,7 @@ class QuadStoreEntityBuilder(store: QuadStoreTrait, entityDescriptions : Seq[Ent
   private def now = System.currentTimeMillis
 
   // Filter out the relevant quads that will be loaded in to the quad store (also write other quads like provenance somewhere else)
-  private def filterAndDumpDataset(readers: Seq[QuadReader]): File = {
+  private def filterAndDumpDataset(readers: Seq[QuadReader], counter: AtomicInteger = null): File = {
     val tempFile = File.createTempFile("quadDump", ".nq.gz", tmpDir)
     tempFile.deleteOnExit
     val writer = new GZIPOutputStream(new BufferedOutputStream(new FileOutputStream(tempFile)))
@@ -88,8 +94,11 @@ class QuadStoreEntityBuilder(store: QuadStoreTrait, entityDescriptions : Seq[Ent
         if(useExternalSameAsLinks)
           saveIfSameAsQuad(quad)
 
-        if(isRelevantQuad(quad))
+        if(isRelevantQuad(quad)) {
           writer.write(quad.toLine.getBytes)
+          if(counter!=null)
+            counter.incrementAndGet()
+        }
 //          writer.write(quad.toLine)
       }
     }
@@ -114,8 +123,10 @@ class QuadStoreEntityBuilder(store: QuadStoreTrait, entityDescriptions : Seq[Ent
   }
 
   private def saveIfSameAsQuad(quad: Quad) {
-    if(saveSameAsQuads && quad.predicate=="http://www.w3.org/2002/07/owl#sameAs")
+    if(saveSameAsQuads && quad.predicate=="http://www.w3.org/2002/07/owl#sameAs") {
       config.sameAsWriter.write(quad)
+      entityBuilderReportPublisher.sameAsQuadCounter.incrementAndGet()
+    }
   }
 
   private def isProvenanceQuad(quad: Quad): Boolean = {
@@ -127,9 +138,12 @@ class QuadStoreEntityBuilder(store: QuadStoreTrait, entityDescriptions : Seq[Ent
 
   def buildEntities(ed: EntityDescription, writer: EntityWriter) = {
     val start = now
+    val entityCounter = new AtomicInteger(0)
     log.info("Starting to build entities...")
-    store.queryStore(ed, writer)//TODO: Maybe handle return value
-    log.info("Finished building entities in " + (now - start)/1000.0 + "s")
+    store.queryStore(ed, writer, entityCounter)//TODO: Maybe handle return value
+    entityBuilderReportPublisher.entitiesBuilt.addAndGet(entityCounter.get)
+    entityBuilderReportPublisher.entityQueuesFilled.incrementAndGet()
+    log.info("Finished building " + entityCounter + " entities in " + (now - start)/1000.0 + "s")
   }
 
   // TODO to be implemented

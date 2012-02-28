@@ -9,6 +9,9 @@ package ldif.util
  */
 
 trait StatusMonitor {
-  def getHtml: String
+  def getHtml: String = getHtml(Map())
+
+  def getHtml(params: Map[String, String]): String
+
   def getText: String
 }

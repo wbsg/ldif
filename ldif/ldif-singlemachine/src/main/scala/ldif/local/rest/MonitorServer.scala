@@ -22,8 +22,9 @@ class MonitorServer {
   }
 
   @GET @Produces(Array[String]("text/html"))
-  def getHtml(): String = {
-    MonitorServer.generalStatusMonitor.getHtml
+  def getHtml(
+    @DefaultValue("0") @QueryParam("refresh") refreshTimeInSeconds: Int): String = {
+    MonitorServer.generalStatusMonitor.getHtml(Map("refresh" -> refreshTimeInSeconds.toString ))
   }
 }
 
@@ -51,7 +52,7 @@ object MonitorServer {
 }
 
 object dummyStatusMonitor extends StatusMonitor {
-  def getHtml = "<html><head><title>No status monitor found</title></head><body><b>If you see this message then there is no status monitor implemented, yet, for this URI!</b></body></html>"
+  def getHtml(params: Map[String, String]) = "<html><head><title>No status monitor found</title></head><body><b>If you see this message then there is no status monitor implemented, yet, for this URI!</b></body></html>"
 
   def getText = "If you see this message then there is no status monitor implemented, yet, for this URI."
 }

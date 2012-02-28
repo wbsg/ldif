@@ -9,9 +9,11 @@ package ldif.util
  */
 
 class SimpleStatusMonitor extends StatusMonitor with ReportSubscriber {
-  def getHtml = {
+  def getHtml(params: Map[String, String]) = {
     val sb = new StringBuilder
-    sb.append("<html><head><title>Integration Job Report</title></head><body>\n")
+    sb.append("<html><head><title>Integration Job Report</title>")
+    sb.append(addParams(params))
+    sb.append("</head><body>\n")
     sb.append("<h1>Status Report for Integration Job</h1>\n")
     for(publisher <- publishers) {
       sb.append("<h3>"+publisher.getPublisherName+"</h2>\n")
@@ -26,6 +28,16 @@ class SimpleStatusMonitor extends StatusMonitor with ReportSubscriber {
     }
     sb.append("</body></html>")
     sb.toString()
+  }
+
+  def addParams(params: Map[String, String]): String = {
+    val sb = new StringBuilder
+    if(params.get("refresh").get!="0") {
+      sb.append("<meta http-equiv=\"refresh\" content=\"")
+      sb.append(params.get("refresh").get)
+      sb.append("\">")
+    }
+    sb.toString
   }
 
   def getText = {

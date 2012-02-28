@@ -83,7 +83,9 @@ class SieveLocalFusionExecutor(useFileInstanceCache: Boolean = false) extends Ex
       val lastPatternId = in.entityDescription.patterns.size
 
       var entity : Entity = NoEntitiesLeft;
-      while ( { entity = in.read(); entity != NoEntitiesLeft} ) {
+//      while ( { entity = in.read(); entity != NoEntitiesLeft} ) {
+      while(in.hasNext) {
+        entity = in.read()
         //log.info("Sieve Entity: %s".format(entity.resource.toString))
         //log.info("Patterns: "+in.entityDescription.patterns.size)
 

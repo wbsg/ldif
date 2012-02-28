@@ -26,6 +26,8 @@ import java.util.HashSet
    import com.hp.hpl.jena.rdf.model.{Resource, Literal, RDFNode}
    import ldif.util.{NTriplesStringConverter, EntityDescriptionToSparqlConverter}
    import ldif.local.runtime.{LocalNode, EntityWriter}
+   import java.util.concurrent.atomic.AtomicInteger
+
 
    /*  There are two scenarios:
    *   1) ResultSets contain graph vars
@@ -37,7 +39,7 @@ import java.util.HashSet
 object JenaResultSetEntityBuilderHelper {
 
   // (1)
-  def buildEntitiesFromResultSet(resultSets: Seq[ResultSet], entityDescription: EntityDescription, entityWriter: EntityWriter, graphVars: Seq[Seq[String]]): Boolean = {
+  def buildEntitiesFromResultSet(resultSets: Seq[ResultSet], entityDescription: EntityDescription, entityWriter: EntityWriter, graphVars: Seq[Seq[String]], counter: AtomicInteger = null): Boolean = {
     val nrOfQueries = resultSets.size
     val resultManagers = for((resultSet, graphVar) <- resultSets zip graphVars) yield new ResultSetManager(resultSet, graphVar)
     var entityResults = for(rManager <- resultManagers) yield rManager.getNextEntityData
@@ -50,6 +52,8 @@ object JenaResultSetEntityBuilderHelper {
       entityResults = updateEntityResults(entity, entityResults, resultManagers)
 
       entityWriter.write(EntityLocalComplete(entity, entityDescription, factumTable))
+      if(counter!=null)
+        counter.incrementAndGet()
     }
 
     entityWriter.finish

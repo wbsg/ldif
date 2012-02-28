@@ -79,6 +79,7 @@ class EntityBuilder (entityDescriptions : IndexedSeq[EntityDescription], readers
       for (e <- entityNodes) {
           val entity = new EntityLocal(e, ed)
           writer.write(entity)
+          entityBuilderReportPublisher.entitiesBuilt.incrementAndGet()
       }
     }
     else
@@ -129,7 +130,7 @@ class EntityBuilder (entityDescriptions : IndexedSeq[EntityDescription], readers
         if(useExternalSameAsLinks)
           saveIfSameAsQuad(quad)
 
-        entityBuilderReportPublisher.quadsReadCounter += 1
+        entityBuilderReportPublisher.quadsReadCounter.incrementAndGet()
 
         if(isRelevantQuad(quad))  {
           counter += 1

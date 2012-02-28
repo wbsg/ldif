@@ -75,8 +75,9 @@ class SieveLocalQualityExecutor(useFileInstanceCache: Boolean = false) extends E
       val lastPatternId = in.entityDescription.patterns.size
 
       var entity : Entity = NoEntitiesLeft;
-      while ( { entity = in.read(); entity != NoEntitiesLeft} ) {
-
+//      while ( { entity = in.read(); entity != NoEntitiesLeft} ) {
+      while ( in.hasNext ) {
+        entity = in.read()
         // for scoringFunctions that need the graphId, use entity.resource, therefore the assumption below will not hold
       //  assume(task.qualitySpec.scoringFunctions.size==in.entityDescription.patterns.size, "Number of scoringFunctions must be the same as number of patterns.")
        // assume(task.qualitySpec.outputPropertyNames.size==in.entityDescription.patterns.size, "Number of outputPropertyNames must be the same as number of patterns.")

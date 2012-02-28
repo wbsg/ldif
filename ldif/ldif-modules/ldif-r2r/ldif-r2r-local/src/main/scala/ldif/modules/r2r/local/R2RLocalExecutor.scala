@@ -70,4 +70,6 @@ class R2RLocalExecutor extends Executor {
     reporter.mappingsExecuted.incrementAndGet()
     log.info("...output " + quadCounter + " quad(s).")
   }
+
+  def finish = reporter.setFinishTime
 }

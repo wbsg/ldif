@@ -45,8 +45,8 @@ import util.{StringPool}
 class IntegrationJob (val config : IntegrationConfig, debugMode : Boolean = false, enableReportingServer: Boolean = false) {
 
   private val log = LoggerFactory.getLogger(getClass.getName)
-  if(enableReportingServer)
-    MonitorServer.start("http://localhost:5343/")
+//  if(enableReportingServer)
+//    MonitorServer.start("http://localhost:5343/")
 
   // Object to store all kinds of configuration data
   private var configParameters: ConfigParameters = null
@@ -123,18 +123,18 @@ class IntegrationJob (val config : IntegrationConfig, debugMode : Boolean = fals
         else integratedReader = new MultiQuadReader(allQuads, allSameAsLinks) // TODO: Really add allSameAsLinks here (already)?
 
         //Execute sieve (quality and fusion)
-        //val sieveInput = quadReaders ++ Seq(otherQuadsReader)//val sieveInput = Seq(integratedReader)
+        val sieveInput = Seq(integratedReader)//val sieveInput = Seq(integratedReader)
 
 //        val sieveInput = cloneQuadReaders(Seq(otherQuadsReader))
-//        val sieveReader: QuadReader = executeSieve(config, sieveInput)
+        val sieveReader: QuadReader = executeSieve(config, sieveInput)
 
         lastUpdate = Calendar.getInstance
 
-        writeOutput(config, integratedReader)
-        //writeOutput(config, sieveReader)
+//        writeOutput(config, integratedReader)
+        writeOutput(config, sieveReader)
       }
-    if(enableReportingServer)
-      MonitorServer.stop()
+//    if(enableReportingServer)
+//      MonitorServer.stop()
   }
 
   private def setupQuadReader(_clonedR2rReader: Seq[QuadReader]): Seq[QuadReader] = {
@@ -217,22 +217,22 @@ class IntegrationJob (val config : IntegrationConfig, debugMode : Boolean = fals
     }
 
     // now the scores from the quality assessment live in sieveQualityReader, and we need to get it into the fusion stuff
-//    val fusionInput : Seq[QuadReader] = cloneQuadReaders(inputQuadsReaders)
-//    val fusionModule = FusionModule.load(config.sieveSpecDir)
-//    val sieveFusionReader = fusionModule.config.fusionConfig match {
-//      case e: EmptyFusionConfig => {
-//        log.info("[FUSION] No Sieve configuration found. No fusion will be performed.")
-//        val echo = new QuadQueue()
-//        inputQuadsReaders.foreach(iqr => iqr.foreach(q => echo.write(q))); // copy input to output
-//        return echo;
-//      }
-//      case c: FusionConfig => {
-//        executeFusionPhase(config, fusionInput, qualityModule, fusionModule)
-//      }
-//    }
-//    // return both quality and fused quads
-//    new MultiQuadReader(sieveFusionReader, sieveQualityReader)
-    sieveQualityReader
+    val fusionInput : Seq[QuadReader] = cloneQuadReaders(inputQuadsReaders)
+    val fusionModule = FusionModule.load(config.sieveSpecDir, qualityModule)
+    val sieveFusionReader = fusionModule.config.fusionConfig match {
+      case e: EmptyFusionConfig => {
+        log.info("[FUSION] No Sieve configuration found. No fusion will be performed.")
+        val echo = new QuadQueue()
+        inputQuadsReaders.foreach(iqr => iqr.foreach(q => echo.write(q))); // copy input to output
+        return echo;
+      }
+      case c: FusionConfig => {
+        executeFusionPhase(config, fusionInput, qualityModule, fusionModule)
+      }
+    }
+    // return both quality and fused quads
+    new MultiQuadReader(sieveFusionReader, sieveQualityReader)
+//    sieveQualityReader
   }
 
   private def executeQualityPhase(config: IntegrationConfig, inputQuadsReader: Seq[QuadReader], qualityModule: QualityModule): QuadReader = {

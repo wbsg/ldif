@@ -22,6 +22,7 @@ import java.io.{IOException, File}
 import ldif.entity.EntityDescription
 import ldif.local.runtime.EntityWriter
 import org.apache.commons.io.FileUtils
+import java.util.concurrent.atomic.AtomicInteger
 
 /**
  * Created by IntelliJ IDEA.
@@ -46,7 +47,7 @@ trait QuadStoreTrait {
   /**
    * Write all the entities conforming to the entity description to the entity writer
    */
-  def queryStore(entityDescription: EntityDescription, entityWriter: EntityWriter): Boolean
+  def queryStore(entityDescription: EntityDescription, entityWriter: EntityWriter, counter: AtomicInteger = null): Boolean
 
   def createTemporaryDatabaseDirectory(rootDirectory: String): File = {
     val rootDir = new File(rootDirectory)

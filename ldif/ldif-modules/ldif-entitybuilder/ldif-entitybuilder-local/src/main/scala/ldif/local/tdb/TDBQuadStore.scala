@@ -28,6 +28,7 @@ import com.hp.hpl.jena.query.{QueryExecution, ResultSet, QueryExecutionFactory, 
 import ldif.local.util.JenaResultSetEntityBuilderHelper
 import com.hp.hpl.jena.query.ARQ
 import org.slf4j.LoggerFactory
+import java.util.concurrent.atomic.AtomicInteger
 
 /**
  * Created by IntelliJ IDEA.
@@ -82,7 +83,7 @@ class TDBQuadStore(databaseRoot: File, reuseExistingDatabaseDir: Boolean = false
   /**
    * Query the store to write entities conforming to the entity
    */
-  def queryStore(entityDescription: EntityDescription, entityWriter: EntityWriter): Boolean = {
+  def queryStore(entityDescription: EntityDescription, entityWriter: EntityWriter, counter: AtomicInteger = null): Boolean = {
     if(!storeStarted)
       return false
 
@@ -92,7 +93,7 @@ class TDBQuadStore(databaseRoot: File, reuseExistingDatabaseDir: Boolean = false
     val queryExecutions = getQueryExecutions(queries)
     try {
       val resultSets = executeAllQueries(queryExecutions)
-      success = JenaResultSetEntityBuilderHelper.buildEntitiesFromResultSet(resultSets, entityDescription, entityWriter, graphVars)
+      success = JenaResultSetEntityBuilderHelper.buildEntitiesFromResultSet(resultSets, entityDescription, entityWriter, graphVars, counter)
     } finally {
       queryExecutions.map(_.close)
     }

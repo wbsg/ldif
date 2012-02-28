@@ -63,8 +63,10 @@ class EntityBuilderExecutor(configParameters: ConfigParameters = ConfigParameter
       else
         eb.buildEntities(ed, writer(i))
     }
-    if(!inmemory)
+    if(!inmemory) {
       eb.entityBuilderReportPublisher.setFinishTime
+      eb.entityBuilderReportPublisher.finishedBuilding=true
+    }
   }
 
   /**

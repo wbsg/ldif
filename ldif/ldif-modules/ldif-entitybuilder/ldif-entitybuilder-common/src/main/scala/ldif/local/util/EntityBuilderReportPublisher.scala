@@ -13,11 +13,12 @@ import java.util.concurrent.atomic.AtomicInteger
  */
 
 class EntityBuilderReportPublisher(var name: String) extends ReportPublisher {
-  var quadsReadCounter = 0
+  var quadsReadCounter = new AtomicInteger(0)
   var finishedReading = false
-  var sameAsQuadCounter = 0
+  var sameAsQuadCounter = new AtomicInteger(0)
   var entityQueuesFilled = new AtomicInteger(0)
   var finishedBuilding = false
+  var entitiesBuilt = new AtomicInteger(0)
 
   def getPublisherName = name
 
@@ -35,10 +36,12 @@ class EntityBuilderReportPublisher(var name: String) extends ReportPublisher {
       else
         reportItems.append(ReportItem("Loading quads", "Running...", quadsReadCounter + " quads loaded"))
     }
-    if(sameAsQuadCounter>0)
+    if(sameAsQuadCounter.get>0)
       reportItems.append(ReportItem("External sameAs quads", "-", sameAsQuadCounter + " sameAs quads read"))
     if(finished)
       reportItems.append(finishTime)
+    if(entitiesBuilt.get > 0 || finishedBuilding)
+      reportItems.append(ReportItem("Entities built", "-", entitiesBuilt.toString))
 
     return Report(reportItems)
   }
