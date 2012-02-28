@@ -124,8 +124,6 @@ class IntegrationJob (val config : IntegrationConfig, debugMode : Boolean = fals
 
         //Execute sieve (quality and fusion)
         val sieveInput = Seq(integratedReader)//val sieveInput = Seq(integratedReader)
-
-//        val sieveInput = cloneQuadReaders(Seq(otherQuadsReader))
         val sieveReader: QuadReader = executeSieve(config, sieveInput)
 
         lastUpdate = Calendar.getInstance
@@ -212,11 +210,15 @@ class IntegrationJob (val config : IntegrationConfig, debugMode : Boolean = fals
         new QuadQueue() // return empty queue
       }
       case c: QualityConfig => {
-        executeQualityPhase(config, inputQuadsReaders, qualityModule)
+        //undo comment
+//        executeQualityPhase(config, inputQuadsReaders, qualityModule)
+        new QuadQueue()
       }
     }
 
     // now the scores from the quality assessment live in sieveQualityReader, and we need to get it into the fusion stuff
+    // if these modules are run separately, QualityModule.qualityAssessmentProvider can read up the values.
+    // if they are run together, then qualitymodule stores things in there already
     val fusionInput : Seq[QuadReader] = cloneQuadReaders(inputQuadsReaders)
     val fusionModule = FusionModule.load(config.sieveSpecDir, qualityModule)
     val sieveFusionReader = fusionModule.config.fusionConfig match {
@@ -227,12 +229,12 @@ class IntegrationJob (val config : IntegrationConfig, debugMode : Boolean = fals
         return echo;
       }
       case c: FusionConfig => {
+        //TODO might not need a qualityModule here, if it always goes through fusionModule. test and fix.
         executeFusionPhase(config, fusionInput, qualityModule, fusionModule)
       }
     }
     // return both quality and fused quads
     new MultiQuadReader(sieveFusionReader, sieveQualityReader)
-//    sieveQualityReader
   }
 
   private def executeQualityPhase(config: IntegrationConfig, inputQuadsReader: Seq[QuadReader], qualityModule: QualityModule): QuadReader = {
@@ -372,6 +374,7 @@ class IntegrationJob (val config : IntegrationConfig, debugMode : Boolean = fals
     val qualityExecutor = new SieveLocalQualityExecutor
 
     // create a mapping between quality task and entity reader for corresponding entities
+    // todo: this could also work if we created only one entitydescription for all task? bad for distributed computing, maybe?
     var taskToReader = new HashMap[QualityTask, EntityReader] with scala.collection.mutable.Map[QualityTask, EntityReader]
     for ((task) <- qualityModule.tasks) {
       log.debug(task.qualitySpec.entityDescription.toString)
@@ -381,7 +384,6 @@ class IntegrationJob (val config : IntegrationConfig, debugMode : Boolean = fals
       } else {
         throw new Exception("No reader was created from buildEntities.")
       }
-      // TODO: cry if no reader could be created?
     }
 
     StringPool.reset
@@ -407,8 +409,8 @@ class IntegrationJob (val config : IntegrationConfig, debugMode : Boolean = fals
     log.info("[FUSION]")
     log.debug("Sieve will perform fusion, config=%s.".format(sieveSpecDir.getAbsolutePath))
 
-    // TODO: change so similar concept as shown above (why?)
-    val fusionExecutor = new SieveLocalFusionExecutor()
+    val qualityProvider = qualityModule
+    val fusionExecutor = new SieveLocalFusionExecutor
 
     val entityDescriptions = fusionModule.tasks.toIndexedSeq.map(fusionExecutor.input).flatMap{ case StaticEntityFormat(ed) => ed }
 
@@ -424,10 +426,11 @@ class IntegrationJob (val config : IntegrationConfig, debugMode : Boolean = fals
       //runInBackground
     {
       //for((sieveTask, readers) <- sieveModule.tasks.toList zip entityReaders.grouped(2).toList)
-      for((sieveTask, reader) <- fusionModule.tasks.toList zip entityReaders.toList)
+      for((fusionTask, reader) <- fusionModule.tasks.toList zip entityReaders.toList)
       {
-        log.debug("sieveTask: %s; reader: %s.".format(sieveTask.name, reader.entityDescription))
-        fusionExecutor.execute(sieveTask, Seq(reader), outputQueue)
+        log.debug("fusionTask: %s; reader: %s.".format(fusionTask.name, reader.entityDescription))
+        //fusionTask.qualityAssessment
+        fusionExecutor.execute(fusionTask, Seq(reader), outputQueue)
       }
     }
 
