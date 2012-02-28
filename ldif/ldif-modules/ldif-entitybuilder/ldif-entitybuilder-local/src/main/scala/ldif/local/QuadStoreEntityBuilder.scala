@@ -40,16 +40,7 @@ class QuadStoreEntityBuilder(store: QuadStoreTrait, entityDescriptions : Seq[Ent
   private val log = LoggerFactory.getLogger(getClass.getName)
   private val quadCounter = new AtomicInteger(0)
 
-  // If this is true, quads like provenance quads (or even all quads) are saved for later use (merge)
-  private val saveQuads = config.otherQuadsWriter!=null
-  private val outputAllQuads = config.configProperties.getProperty("output", "mapped-only").toLowerCase=="all"
-  private val provenanceGraph = config.configProperties.getProperty("provenanceGraph", "http://www4.wiwiss.fu-berlin.de/ldif/provenance")
   private val tmpDir = new File(config.configProperties.getProperty("databaseLocation", System.getProperty("java.io.tmpdir")))
-
-  private val saveSameAsQuads = config.sameAsWriter!=null
-  private val useExternalSameAsLinks = config.configProperties.getProperty("useExternalSameAsLinks", "true").toLowerCase=="true"
-  private val outputFormat = config.configProperties.getProperty("outputFormat", "nq").toLowerCase
-  private val ignoreProvenance = !(outputFormat=="nq" || outputFormat=="sparql")
 
   private val PHT = new PropertyHashTable(entityDescriptions)
 
@@ -77,22 +68,22 @@ class QuadStoreEntityBuilder(store: QuadStoreTrait, entityDescriptions : Seq[Ent
 
   // Filter out the relevant quads that will be loaded in to the quad store (also write other quads like provenance somewhere else)
   private def filterAndDumpDataset(readers: Seq[QuadReader], counter: AtomicInteger = null): File = {
-    val tempFile = File.createTempFile("quadDump", ".nq.gz", tmpDir)
+    val compress = config.configProperties.getProperty("compressFilteredDataset", "false").toLowerCase=="true"
+    val suffix = if(compress) ".gz" else ""
+    val tempFile = File.createTempFile("quadDump", ".nq"+suffix, tmpDir)
     tempFile.deleteOnExit
-    val writer = new GZIPOutputStream(new BufferedOutputStream(new FileOutputStream(tempFile)))
-//    val writer = new BufferedWriter(new FileWriter(tempFile))
+
+    val writer = if(compress)
+        new GZIPOutputStream(new BufferedOutputStream(new FileOutputStream(tempFile)))
+      else
+        new BufferedOutputStream(new FileOutputStream(tempFile))
+
     val startTime = now
 
     // Round robin over reader
     while (readers.foldLeft(false)((a, b) => a || b.hasNext)){
       for (reader <- readers.filter(_.hasNext)) {
         val quad = reader.read
-
-        if(saveQuads)
-          saveQuadsForLater(quad)
-
-        if(useExternalSameAsLinks)
-          saveIfSameAsQuad(quad)
 
         if(isRelevantQuad(quad)) {
           writer.write(quad.toLine.getBytes)
@@ -109,28 +100,9 @@ class QuadStoreEntityBuilder(store: QuadStoreTrait, entityDescriptions : Seq[Ent
     return tempFile
   }
 
-  private def saveQuadsForLater(quad: Quad) {
-    if(outputAllQuads || (isProvenanceQuad(quad) && (!ignoreProvenance)))
-      config.otherQuadsWriter.write(quad)
-  }
-
   private def isRelevantQuad(quad: Quad): Boolean = {
     val prop = new Uri(quad.predicate).toString
-    if(PHT.contains(prop) && !isProvenanceQuad(quad))
-      true
-    else
-      false
-  }
-
-  private def saveIfSameAsQuad(quad: Quad) {
-    if(saveSameAsQuads && quad.predicate=="http://www.w3.org/2002/07/owl#sameAs") {
-      config.sameAsWriter.write(quad)
-      entityBuilderReportPublisher.sameAsQuadCounter.incrementAndGet()
-    }
-  }
-
-  private def isProvenanceQuad(quad: Quad): Boolean = {
-    if(quad.graph==provenanceGraph)
+    if(PHT.contains(prop))
       true
     else
       false

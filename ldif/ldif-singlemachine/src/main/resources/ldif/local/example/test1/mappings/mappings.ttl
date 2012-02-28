@@ -6,11 +6,11 @@
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 
 
-# mappings:renamePropertyMapping
-#    a r2r:Mapping ;
-#    r2r:sourcePattern "?SUBJ <http://testNamespace/oldP> ?o. ?SUBJ a <http://testNamespace/someOldClass>" ;
-#    r2r:targetPattern "?SUBJ <http://testNamespace/newP> ?o" ;
-#    r2r:targetPattern "?SUBJ a <http://testNamespace/someNewClass>" .
+mappings:renamePropertyMapping
+   a r2r:Mapping ;
+   r2r:sourcePattern "?SUBJ <http://testNamespace/oldP> ?o. ?SUBJ a <http://testNamespace/someOldClass>" ;
+   r2r:targetPattern "?SUBJ <http://testNamespace/newP> ?o" ;
+   r2r:targetPattern "?SUBJ a <http://testNamespace/someNewClass>" .
 #
 mappings:transformationMapping
   a r2r:Mapping ;
@@ -19,21 +19,21 @@ mappings:transformationMapping
   r2r:targetPattern "?SUBJ <http://name> ?name" .
 #
 
-# mappings:transformationMapping2
-#   a r2r:Mapping ;
-#   r2r:sourcePattern "?SUBJ <http://v> ?v . ?SUBJ <http://n> ?n . " ;
-#   r2r:transformation "?name = concat(?v, ' ', ?n)" ;
-#   r2r:targetPattern "?SUBJ <http://name2> ?name" .
+mappings:transformationMapping2
+  a r2r:Mapping ;
+  r2r:sourcePattern "?SUBJ <http://v> ?v . ?SUBJ <http://n> ?n . " ;
+  r2r:transformation "?name = concat(?v, ' ', ?n)" ;
+  r2r:targetPattern "?SUBJ <http://name2> ?name" .
 
-# mappings:whateverClassMapping
-#   a r2r:Mapping ;
-#   r2r:sourcePattern "?SUBJ a <http://WhatEver>" ;
-#   r2r:targetPattern "?SUBJ a <http://testNamespace/WhatEverClass>" .
+mappings:whateverClassMapping
+  a r2r:Mapping ;
+  r2r:sourcePattern "?SUBJ a <http://WhatEver>" ;
+  r2r:targetPattern "?SUBJ a <http://testNamespace/WhatEverClass>" .
 #
-# mappings:somePropMapping
-#   a r2r:Mapping ;
-#   r2r:sourcePattern "?SUBJ <http://someProp> ?o" ;
-#   r2r:targetPattern "?SUBJ <http://someMappedProp> ?o" .
+mappings:somePropMapping
+  a r2r:Mapping ;
+  r2r:sourcePattern "?SUBJ <http://someProp> ?o" ;
+  r2r:targetPattern "?SUBJ <http://someMappedProp> ?o" .
 
 # <http://testNamespace/someOldClass> rdfs:subClassOf <http://testNamespace/someFunkyNewClass> .
 
@@ -43,17 +43,17 @@ mappings:complexStructureMapping
   r2r:targetPattern "?SUBJ <http://cSM_Name> ?name" ;
   r2r:transformation "?name = concat(?v, ' ', ?n)" .
 #
-# mappings:nextLevelRestrictionMapping
-#   a r2r:Mapping ;
-#   r2r:sourcePattern "?SUBJ <http://toRestrictedInstance> ?ri . ?ri a <http://RestrictionClass> . ?ri <http://check> ?check" ;
-#   r2r:targetPattern "?SUBJ <http://check> ?check" .
+mappings:nextLevelRestrictionMapping
+  a r2r:Mapping ;
+  r2r:sourcePattern "?SUBJ <http://toRestrictedInstance> ?ri . ?ri a <http://RestrictionClass> . ?ri <http://check> ?check" ;
+  r2r:targetPattern "?SUBJ <http://check> ?check" .
 #
-# mappings:existsMapping
-#   a r2r:Mapping ;
-#   r2r:sourcePattern "?SUBJ a <http://WhatEver> . ?SUBJ <http://v> ?o " ;
-#   r2r:targetPattern "?SUBJ a <http://Exists>" .
+mappings:existsMapping
+  a r2r:Mapping ;
+  r2r:sourcePattern "?SUBJ a <http://WhatEver> . ?SUBJ <http://v> ?o " ;
+  r2r:targetPattern "?SUBJ a <http://Exists>" .
 #
-# mappings:classByValueMapping
-#   a r2r:Mapping ;
-#   r2r:sourcePattern "?SUBJ a <http://WhatEver> . ?SUBJ <http://v> 'John'^^<http://www.w3.org/2001/XMLSchema#string>" ;
-#   r2r:targetPattern "?SUBJ a <http://ClassByValue>" .
+mappings:classByValueMapping
+  a r2r:Mapping ;
+  r2r:sourcePattern "?SUBJ a <http://WhatEver> . ?SUBJ <http://v> 'John'^^<http://www.w3.org/2001/XMLSchema#string>" ;
+  r2r:targetPattern "?SUBJ a <http://ClassByValue>" .
