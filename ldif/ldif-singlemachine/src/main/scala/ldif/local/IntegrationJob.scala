@@ -241,8 +241,8 @@ class IntegrationJob (val config : IntegrationConfig, debugMode : Boolean = fals
       }
       case c: QualityConfig => {
         //undo comment
-//        executeQualityPhase(config, inputQuadsReaders, qualityModule)
-        new QuadQueue()
+        executeQualityPhase(config, inputQuadsReaders, qualityModule)
+//        new QuadQueue()
       }
     }
 

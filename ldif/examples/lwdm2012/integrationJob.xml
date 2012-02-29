@@ -4,10 +4,9 @@
             xmlns="http://www4.wiwiss.fu-berlin.de/ldif/">
     <properties>integration.properties</properties>
     <sources><source>dumps</source></sources>
-    <linkSpecifications>linkspecs</linkSpecifications>
-    <mappings>mappings</mappings>
-    <quality>quality</quality>
-    <fusion>fusion</fusion>
+    <!--linkSpecifications>linkspecs</linkSpecifications>
+    <mappings>mappings</mappings-->
+    <sieve>fusion</sieve>
     <outputs><output><file><path>/data/ldif/integrated_cities.nq</path></file></output></outputs>
     <runSchedule>onStartup</runSchedule>
 </integrationJob>
