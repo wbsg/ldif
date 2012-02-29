@@ -17,8 +17,8 @@ class SimpleStatusMonitor extends StatusMonitor with ReportSubscriber {
     sb.append("<h1>Status Report for Integration Job</h1>\n")
     for(publisher <- publishers) {
       sb.append("<h3>"+publisher.getPublisherName+"</h2>\n")
-      sb.append("<table border=\"1\" cellpadding=\"2\" cellspacing=\"0\">")
-      sb.append("<tr><th>report item</th><th>status</th><th>progress</th></tr>")
+      sb.append("<table border=\"1\" cellpadding=\"3\" cellspacing=\"0\">")
+      sb.append("<tr><th>report item</th><th>status</th><th>value</th></tr>")
       for(reportItem <- publisher.getReport.items) {
         sb.append("<tr><td>").append(reportItem.name).append("</td><td>")
           .append(reportItem.status).append("</td><td>")
