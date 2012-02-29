@@ -37,9 +37,18 @@ class TimeClosenessTest extends FlatSpec with ShouldMatchers {
   val nodes234 = Traversable(IndexedSeq(todayMinus2,todayMinus3,todayMinus4))
 
   val nodesBad = Traversable(IndexedSeq(new Node("2012-sssssasas02-19T16:55:17Z", "http://www.w3.org/2001/XMLSchema#dateTime", Node.TypedLiteral, "graphId")))
+  val nodesEmptyValues = Traversable(IndexedSeq(new Node("", "", Node.TypedLiteral, "")))
+  val nodesEmpty = Traversable(IndexedSeq())
 
   it should "return the correct implementation given XML" in {
     (TimeCloseness.fromXML(tcXml)) should equal (tcFunc)
+  }
+
+  it should "not fail with empty values" in {
+    (tcFunc.score(subject,nodesEmptyValues)) should equal (0.0)
+  }
+  it should "not fail with empty set" in {
+    (tcFunc.score(subject,nodesEmpty)) should equal (0.0)
   }
 
   it should "correctly score input values" in {

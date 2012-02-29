@@ -50,10 +50,12 @@ class TimeCloseness(val dateRange: Int = 30) extends ScoringFunction {
    */
   def score(graphId:NodeTrait,metadataValues: Traversable[IndexedSeq[NodeTrait]]): Double = {
     try {
-    //assume the input has only one pattern
-    val indicator = metadataValues.head
-    // indicator may contain several dates
-    indicator.map( node => {
+      //assume the input has only one pattern
+      val indicator = metadataValues.head
+
+      if (indicator.size>0) { // indicator may contain several dates
+
+        indicator.map( node => {
           try {
             val originalDate = parser.parseDateTime(node.value) //TODO check which type of date is passed in.
             val currentDate = new DateTime
@@ -66,11 +68,15 @@ class TimeCloseness(val dateRange: Int = 30) extends ScoringFunction {
           } catch {
             case _ => 0.0
           }
-        })
-      .sorted.reverse.head // pick the most recent date
+        }).sorted.reverse.head // pick the most recent date (i.e. the lowest score)
+
+      } else {  // if there are no indicators, return 0.0
+        log.trace("No indicators found for graph %s.".format(graphId.value)) //tmp
+        0.0
+      }
     } catch {
-      case e: Exception => {
-        log.debug("Error %s".format(e))
+      case e: Exception => { // if it fails for any unantecipated reason, yell, but do not fail with a wimp.
+        log.error("Error %s".format(e))
         0.0
       }
     }
