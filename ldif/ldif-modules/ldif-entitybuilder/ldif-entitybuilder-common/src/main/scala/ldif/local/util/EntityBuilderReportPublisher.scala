@@ -24,7 +24,7 @@ class EntityBuilderReportPublisher(var name: String) extends ReportPublisher {
 
   def getReport: Report = {
     val reportItems = new ArrayBuffer[ReportItem]
-    reportItems.append(startTime)
+    reportItems.append(getStartTimeReportItem)
     if(finishedReading) {
       reportItems.append(ReportItem("Loading quads", "Done", quadsReadCounter + " quads loaded"))
       val buildStatus = if(finishedBuilding) "Done" else "-"
@@ -38,10 +38,12 @@ class EntityBuilderReportPublisher(var name: String) extends ReportPublisher {
     }
     if(sameAsQuadCounter.get>0)
       reportItems.append(ReportItem("External sameAs quads", "-", sameAsQuadCounter + " sameAs quads read"))
-    if(finished)
-      reportItems.append(finishTime)
     if(entitiesBuilt.get > 0 || finishedBuilding)
       reportItems.append(ReportItem("Entities built", "-", entitiesBuilt.toString))
+    if(finished) {
+      reportItems.append(getFinishTimeReportItem)
+      reportItems.append(getDurationTimeReportItem)
+    }
 
     return Report(reportItems)
   }
