@@ -29,7 +29,8 @@ import ldif.util.Prefixes
  * @author Hannes Muehleisen
  */
 
-class FusionSpecification(val fusionFunctions: IndexedSeq[FusionFunction],
+class FusionSpecification(val id: String,
+                          val fusionFunctions: IndexedSeq[FusionFunction],
                           val outputPropertyNames: IndexedSeq[String],
                           val defaultFusionFunction: FusionFunction = new PassItOn) {
 
@@ -53,6 +54,7 @@ object FusionSpecification {
    * A <Class> node/elem will be passed in.
    */
   def fromXML(node: scala.xml.Node)(implicit prefixes: Prefixes = Prefixes.empty): FusionSpecification = {
+
     def createFusionFunctions(node: scala.xml.Node): FusionFunction = {
       val fusionClassName: String = (node \ "FusionFunction" \ "@class").text
       FusionFunction.create(fusionClassName, (node \ "FusionFunction").head)
@@ -62,10 +64,11 @@ object FusionSpecification {
       prefixes.resolve((node \ "@name").text)
     }
 
+    val fusionSpecId = (node \ "@name").text
     val fusionFunctions = (node \ "Property").map(createFusionFunctions)
     val outputProperties = (node \ "Property").map(getOutputProperties)
 
-    new FusionSpecification(fusionFunctions.toIndexedSeq, outputProperties.toIndexedSeq)
+    new FusionSpecification(fusionSpecId, fusionFunctions.toIndexedSeq, outputProperties.toIndexedSeq)
 
   }
 }

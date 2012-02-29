@@ -26,6 +26,5 @@ import ldif.modules.sieve.quality.{QualityAssessmentProvider}
  */
 class FusionTask(val sieveConfig : FusionModuleConfig, val fusionSpec : FusionSpecification, val qualityAssessment: QualityAssessmentProvider) extends ModuleTask
 {
- // TODO: val name : Identifier = fusionSpec.id.toString
- val name : Identifier = "FIXME"
+ val name : Identifier = fusionSpec.id.toString
 }

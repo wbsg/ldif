@@ -35,7 +35,7 @@ class FusionConfigTest extends FlatSpec with ShouldMatchers {
 
   val entityDescription = new EntityDescription(new ldif.entity.Restriction(Option(condition)), IndexedSeq(IndexedSeq(Path.parse("?a/rdfs:label")(prefixes)), IndexedSeq(Path.parse("?a/dbpedia-owl:areaTotal")(prefixes))))
 
-  val mcFusion = new FusionConfig(IndexedSeq(new FusionSpecification(IndexedSeq(new PassItOn, new KeepFirst), IndexedSeq(prefixes.resolve("rdfs:label"), prefixes.resolve("dbpedia-owl:areaTotal")))), IndexedSeq(entityDescription))
+  val mcFusion = new FusionConfig(IndexedSeq(new FusionSpecification("test",IndexedSeq(new PassItOn, new KeepFirst), IndexedSeq(prefixes.resolve("rdfs:label"), prefixes.resolve("dbpedia-owl:areaTotal")))), IndexedSeq(entityDescription))
   val gFusion = FusionConfig.fromXML(fusionXml)(prefixes)
 
   it should "create the correct fusion configuratioon from XML" in {

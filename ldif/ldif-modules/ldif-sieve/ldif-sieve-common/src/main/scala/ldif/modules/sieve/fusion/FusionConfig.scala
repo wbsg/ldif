@@ -67,7 +67,7 @@ object FusionConfig {
  This class should never be actually used for fusion. It simply signals that no config exists, and the framework should repeat the input.
  */
 class EmptyFusionConfig extends FusionConfig(
-  IndexedSeq(new FusionSpecification(IndexedSeq(new PassItOn), IndexedSeq("DEFAULT"))), IndexedSeq(EntityDescription.empty)
+  IndexedSeq(new FusionSpecification("EMPTY",IndexedSeq(new PassItOn), IndexedSeq("DEFAULT"))), IndexedSeq(EntityDescription.empty)
 ) {
 
 }
