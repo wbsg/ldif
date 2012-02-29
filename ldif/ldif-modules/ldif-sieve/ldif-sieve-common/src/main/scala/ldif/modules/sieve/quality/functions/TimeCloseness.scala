@@ -50,32 +50,34 @@ class TimeCloseness(val dateRange: Int = 30) extends ScoringFunction {
    */
   def score(graphId:NodeTrait,metadataValues: Traversable[IndexedSeq[NodeTrait]]): Double = {
     try {
-      //assume the input has only one pattern
-      val indicator = metadataValues.head
 
-      if (indicator.size>0) { // indicator may contain several dates
+      if (metadataValues.size==0)
+        return 0.0
 
-        indicator.map( node => {
-          try {
-            val originalDate = parser.parseDateTime(node.value) //TODO check which type of date is passed in.
-            val currentDate = new DateTime
-            val daysSince = Days.daysBetween(originalDate, currentDate).getDays;
-            //log.trace("1.0 - DaysSince(%d) / DateRange(%d)".format(daysSince, dateRange))
-            if (daysSince > dateRange)
-              0.0
-            else
-              1.0 - (daysSince.toDouble / dateRange)
-          } catch {
-            case _ => 0.0
-          }
-        }).sorted.reverse.head // pick the most recent date (i.e. the lowest score)
-
-      } else {  // if there are no indicators, return 0.0
+      val indicator = metadataValues.head //assume the input has only one pattern TODO enable for many patterns as well, requiring that they are all dates
+      if (indicator.size==0) {
         log.trace("No indicators found for graph %s.".format(graphId.value)) //tmp
-        0.0
+        return 0.0
       }
+
+      indicator.map( node => { // indicator may contain several dates
+
+        try {
+          val originalDate = parser.parseDateTime(node.value) //TODO check which type of date is passed in.
+          val currentDate = new DateTime
+          val daysSince = Days.daysBetween(originalDate, currentDate).getDays;
+          //log.trace("1.0 - DaysSince(%d) / DateRange(%d)".format(daysSince, dateRange))
+          if (daysSince > dateRange)
+            0.0
+          else
+            1.0 - (daysSince.toDouble / dateRange)
+        } catch {
+          case _ => 0.0
+        }
+      }).sorted.reverse.head // pick the most recent date (i.e. the lowest score)
+
     } catch {
-      case e: Exception => { // if it fails for any unantecipated reason, yell, but do not fail with a wimp.
+      case e: Exception => { // if it fails for any unantecipated reason, yell, but do not fail with a whimp.
         log.error("Error %s".format(e))
         0.0
       }
