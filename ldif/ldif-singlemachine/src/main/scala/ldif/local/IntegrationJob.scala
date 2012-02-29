@@ -232,7 +232,7 @@ class IntegrationJob (val config : IntegrationConfig, debugMode : Boolean = fals
   }
 
   private def executeSieve(config: IntegrationConfig, inputQuadsReaders : Seq[QuadReader]) : QuadReader = {
-
+    val outputQualityScores : Boolean = config.properties.getProperty("outputQualityScores", "false").equals("true")
     val qualityModule = QualityModule.load(config.sieveSpecDir)
     val sieveQualityReader = qualityModule.config.qualityConfig match {
       case e: EmptyQualityConfig => {
@@ -240,15 +240,15 @@ class IntegrationJob (val config : IntegrationConfig, debugMode : Boolean = fals
         new QuadQueue() // return empty queue
       }
       case c: QualityConfig => {
-        //undo comment
         executeQualityPhase(config, inputQuadsReaders, qualityModule)
-//        new QuadQueue()
       }
     }
 
-    // now the scores from the quality assessment live in sieveQualityReader, and we need to get it into the fusion stuff
-    // if these modules are run separately, QualityModule.qualityAssessmentProvider can read up the values.
-    // if they are run together, then qualitymodule stores things in there already
+    // Now the scores from the quality assessment live in sieveQualityReader, and we need to get it into the fusion stuff.
+    // If these modules are run separately, QualityModule.qualityAssessmentProvider can read up the values, and build a searchable structure.
+    // This is the loosely coupled solution.
+    // However, we also provide a simple (tightly coupled) solution for the time being.
+    // If the two modules are run together, then qualitymodule stores scores while computing them in there already.
     val fusionInput : Seq[QuadReader] = cloneQuadReaders(inputQuadsReaders)
     val fusionModule = FusionModule.load(config.sieveSpecDir, qualityModule)
     val sieveFusionReader = fusionModule.config.fusionConfig match {
@@ -261,8 +261,12 @@ class IntegrationJob (val config : IntegrationConfig, debugMode : Boolean = fals
         executeFusionPhase(config, fusionInput, qualityModule, fusionModule)
       }
     }
-    // return both quality and fused quads
-    new MultiQuadReader(sieveFusionReader, sieveQualityReader)
+
+    if (outputQualityScores) {
+      new MultiQuadReader(sieveFusionReader, sieveQualityReader) // return both quality and fused quads
+    } else {
+      sieveFusionReader // return only fused quads
+    }
   }
 
   private def executeQualityPhase(config: IntegrationConfig, inputQuadsReader: Seq[QuadReader], qualityModule: QualityModule): QuadReader = {

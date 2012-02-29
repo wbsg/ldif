@@ -360,7 +360,9 @@ trait ScoringFunction {
 
 
 <h3 id=qualityoutput>Output</h3>
-<p>The quality-describing metadata computed by this step is output and stored as an extension to the <a href="http://www4.wiwiss.fu-berlin.de/bizer/ldif/#provenance">LDIF Provenance Graph</a>.
+<p>The quality-describing metadata computed by this step can be output and stored as an extension to the <a href="http://www4.wiwiss.fu-berlin.de/bizer/ldif/#provenance">LDIF Provenance Graph</a>.
+   If you wish to omit the quality scores from the final output (e.g. to reduce output size), you can set the configuration property <code>outputQualityScores=false</code> in <a href="http://www4.wiwiss.fu-berlin.de/bizer/ldif/#configprops" target="ldif">integration.properties</a>.
+   Regardless, the quality scores will always be passed on to the fusion module.
 
 <pre>
 enwiki:Juiz_de_Fora sieve:recency "0.4" ldif:provenance .
