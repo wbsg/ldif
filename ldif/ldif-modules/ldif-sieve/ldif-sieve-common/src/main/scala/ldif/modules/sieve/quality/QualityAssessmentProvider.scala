@@ -1,6 +1,7 @@
 package ldif.modules.sieve.quality
 
 import java.lang.Math
+import collection.mutable.HashMap
 
 /**
  * Contains scored graphs for each indicator.
@@ -35,6 +36,26 @@ class RandomQualityAssessment extends QualityAssessmentProvider {
 
 }
 
-class HashBasedQualityAssessment extends RandomQualityAssessment { //todo implement instead of inherit from random
+/**
+ * Britlle implementation of QAprovider, keeping everything in RAM
+ */
+class HashBasedQualityAssessment extends QualityAssessmentProvider { //todo implement instead of inherit from random
+
+  var count = 0
+  val property2metric = new HashMap[String,Map[String,Double]]()
+
+  def putScore(propertyName: String, graph: String, score: Double) = {
+    count = count + 1
+    property2metric.put(propertyName, Map(graph -> score) )
+  }
+
+  def size = count
+
+  def getScore(propertyName: String, graph: String) = {
+    property2metric.get(propertyName) match {
+      case Some(metric) => metric.getOrElse(graph,0.0)
+      case None => 0.0
+    }
+  }
 
 }
