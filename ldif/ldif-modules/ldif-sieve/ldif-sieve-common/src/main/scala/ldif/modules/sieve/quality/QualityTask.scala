@@ -26,6 +26,6 @@ import ldif.util.Identifier
 class QualityTask(val qualityConfig : QualityModuleConfig, val qualitySpec : QualitySpecification) extends ModuleTask
 {
   val name : Identifier = qualitySpec.id.toString
-  val qualityAssessment : QualityAssessmentProvider = new HashBasedQualityAssessment //TODO FusionTask constructor to pass QualitySpec
+  val qualityAssessment : QualityAssessmentProvider = new HashBasedQualityAssessment //TODO FusionTask constructor to pass via QualityConfig?
 
 }

@@ -17,17 +17,18 @@ package ldif.modules.sieve.fusion.functions
  */
 
 import ldif.modules.sieve.fusion.FusionFunction
+import ldif.util.Prefixes
 
 /**
  * Fusion function that does nothing. Passes values on to the next component in the pipeline (or user app)
  * @author pablomendes
  */
 
-class PassItOn extends FusionFunction
+class PassItOn extends FusionFunction(metricId="")
 
 object PassItOn {
 
-  def fromXML(node: scala.xml.Node) : FusionFunction = {
+  def fromXML(node: scala.xml.Node)(implicit prefixes: Prefixes) : FusionFunction = {
     new PassItOn
   }
 }

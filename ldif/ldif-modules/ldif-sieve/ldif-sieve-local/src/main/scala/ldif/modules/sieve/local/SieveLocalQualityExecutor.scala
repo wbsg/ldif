@@ -75,7 +75,6 @@ class SieveLocalQualityExecutor(useFileInstanceCache: Boolean = false) extends E
       val lastPatternId = in.entityDescription.patterns.size
 
       var entity : Entity = NoEntitiesLeft;
-//      while ( { entity = in.read(); entity != NoEntitiesLeft} ) {
       while ( in.hasNext ) {
         entity = in.read()
         // for scoringFunctions that need the graphId, use entity.resource, therefore the assumption below will not hold
@@ -103,7 +102,7 @@ class SieveLocalQualityExecutor(useFileInstanceCache: Boolean = false) extends E
 
             // score a graph according to each scoringFunction and write quads out
             val score = scoringFunction.score(graphId, indicators)
-            val scoreNode = Node.createTypedLiteral(score.toString,"http://www.w3.org/2001/XMLSchema#double")
+            val scoreNode = Node.createTypedLiteral(score.formatted("%.4f"),"http://www.w3.org/2001/XMLSchema#double")
             val quad = new Quad(graphId, outputPropertyName, scoreNode, task.qualityConfig.qualityMetadataGraph);
             writer.write(quad)
 

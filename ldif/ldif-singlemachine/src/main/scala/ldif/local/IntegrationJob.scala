@@ -257,8 +257,7 @@ class IntegrationJob (val config : IntegrationConfig, debugMode : Boolean = fals
         new MultiQuadReader(fusionInput:_*)
       }
       case c: FusionConfig => {
-        //TODO might not need a qualityModule here, if it always goes through fusionModule. test and fix.
-        executeFusionPhase(config, fusionInput, qualityModule, fusionModule)
+        executeFusionPhase(config, fusionInput, fusionModule)
       }
     }
 
@@ -276,8 +275,8 @@ class IntegrationJob (val config : IntegrationConfig, debugMode : Boolean = fals
     sieveQualityReader
   }
 
-  private def executeFusionPhase(config: IntegrationConfig, inputQuadsReader: Seq[QuadReader], qualityModule: QualityModule, fusionModule: FusionModule): QuadReader = {
-    val sieveFusionReader = fuseQuads(config.sieveSpecDir, inputQuadsReader, qualityModule, fusionModule)
+  private def executeFusionPhase(config: IntegrationConfig, inputQuadsReader: Seq[QuadReader], fusionModule: FusionModule): QuadReader = {
+    val sieveFusionReader = fuseQuads(config.sieveSpecDir, inputQuadsReader, fusionModule)
     log.info("Time needed to fuse data: " + stopWatch.getTimeSpanInSeconds + "s")
     log.info("Number of entities fused by sieve: " + sieveFusionReader.size)
     sieveFusionReader
@@ -407,12 +406,12 @@ class IntegrationJob (val config : IntegrationConfig, debugMode : Boolean = fals
 
     // create a mapping between quality task and entity reader for corresponding entities
     // todo: this could also work if we created only one entitydescription for all task? bad for distributed computing, maybe?
-    var taskToReader = new HashMap[QualityTask, EntityReader] with scala.collection.mutable.Map[QualityTask, EntityReader]
+    var taskToReaders = new HashMap[QualityTask, Seq[EntityReader]]
     for ((task) <- qualityModule.tasks) {
-      log.debug(task.qualitySpec.entityDescription.toString)
+      log.debug("%s %s".format(task.qualitySpec.outputPropertyNames, task.qualitySpec.entityDescription.toString))
       val readers : Seq[EntityReader] =  buildEntities(cloneQuadReaders(inputQuadsReader), Seq(task.qualitySpec.entityDescription), ConfigParameters(config.properties))
       if (readers.size > 0) {
-        taskToReader += task -> readers.iterator.next
+        taskToReaders += task -> readers
       } else {
         throw new Exception("No reader was created from buildEntities.")
       }
@@ -422,11 +421,10 @@ class IntegrationJob (val config : IntegrationConfig, debugMode : Boolean = fals
     log.info("Time needed to build entities for quality assessment phase: " + stopWatch.getTimeSpanInSeconds + "s")
 
     val output = new QuadQueue
-    // for all tasks for all quads run scoring functions
 
     //for((sieveTask, readers) <- sieveModule.tasks.toList zip entityReaders.toList)
-    for ((task, reader) <- taskToReader) {
-      qualityExecutor.execute(task, Seq(reader), output)
+    for ((task, readers) <- taskToReaders) {
+      qualityExecutor.execute(task, readers, output)
     }
 
     //new MultiQuadReader(output, entityBuilderExecutor.getNotUsedQuads) //andrea
@@ -436,12 +434,11 @@ class IntegrationJob (val config : IntegrationConfig, debugMode : Boolean = fals
   /**
    * Performs data fusion
    */
-  private def fuseQuads(sieveSpecDir : File, inputQuadsReader : Seq[QuadReader], qualityModule: QualityModule, fusionModule: FusionModule) : QuadReader =
+  private def fuseQuads(sieveSpecDir : File, inputQuadsReader : Seq[QuadReader], fusionModule: FusionModule) : QuadReader =
   {
     log.info("[FUSION]")
     log.debug("Sieve will perform fusion, config=%s.".format(sieveSpecDir.getAbsolutePath))
 
-    val qualityProvider = qualityModule
     val fusionExecutor = new SieveLocalFusionExecutor
 
     val entityDescriptions = fusionModule.tasks.toIndexedSeq.map(fusionExecutor.input).flatMap{ case StaticEntityFormat(ed) => ed }
@@ -455,9 +452,8 @@ class IntegrationJob (val config : IntegrationConfig, debugMode : Boolean = fals
 
     val outputQueue = new QuadQueue
 
-      //runInBackground
+    //runInBackground
     {
-      //for((sieveTask, readers) <- sieveModule.tasks.toList zip entityReaders.grouped(2).toList)
       for((fusionTask, reader) <- fusionModule.tasks.toList zip entityReaders.toList)
       {
         log.debug("fusionTask: %s; reader: %s.".format(fusionTask.name, reader.entityDescription))

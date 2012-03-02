@@ -48,7 +48,7 @@ class QualityModule(val config : QualityModuleConfig) extends Module with Qualit
   def putScore(propertyName: String, graph: String, score: Double) = {
     qaMap.get(propertyName) match {
       case Some(qa) => qa.putScore(propertyName, graph, score)
-      case _ => log.error("Requested quality metric %s has not been assessed by any of the available quality tasks.".format(propertyName))
+      case _ => log.error("Cannot put score. Requested quality metric %s has not been assessed by any of the available quality tasks.".format(propertyName))
     }
   }
 
@@ -60,7 +60,7 @@ class QualityModule(val config : QualityModuleConfig) extends Module with Qualit
     qaMap.get(propertyName) match {
       case Some(qa) => qa.getScore(propertyName, graph)
       case _ => {
-        log.error("Requested quality metric %s has not been assessed by any of the available quality tasks.".format(propertyName))
+        log.error("Cannot get score. Requested quality metric %s has not been assessed by any of the available quality tasks. (%s)".format(propertyName,graph))
         0.0
       }
     }
