@@ -24,7 +24,8 @@ import java.util.Comparator
 import ldif.util.Prefixes
 
 /**
- * example fusion function that keeps the first value
+ * Fusion function that keeps the best rated value according to a given quality assessment metric.
+ *
  * @author pablomendes
  */
 
