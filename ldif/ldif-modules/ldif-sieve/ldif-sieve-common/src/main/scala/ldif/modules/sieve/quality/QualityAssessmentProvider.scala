@@ -48,7 +48,8 @@ class HashBasedQualityAssessment extends QualityAssessmentProvider { //todo impl
     assume (score <= 1.0)
     if (score>0.0) { // store as sparse matrix. if no hit is found, score is 0.0
       count = count + 1
-      property2metric.put(propertyName, Map(graph -> score) )
+      val scoredGraphs : Map[String,Double] = property2metric.getOrElse(propertyName, Map[String,Double]()) ++ Map(graph -> score)
+      property2metric.put(propertyName, scoredGraphs)
     }
   }
 

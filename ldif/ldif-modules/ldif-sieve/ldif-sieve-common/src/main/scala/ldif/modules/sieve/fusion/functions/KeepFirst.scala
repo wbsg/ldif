@@ -40,7 +40,14 @@ class KeepFirst(metricId: String) extends FusionFunction(metricId) {
     if (patterns.nonEmpty) {
       bestValue = patterns.head
       var bestScore = 0.0
-      patterns.foreach( nodes => nodes.foreach( n => if (quality.getScore(metricId, n.graph) > bestScore) bestValue = IndexedSeq(n)) )
+      patterns.foreach( nodes =>
+        nodes.foreach( n =>{
+          val score = quality.getScore(metricId, n.graph)
+          if (score > bestScore) {
+            bestScore = score
+            bestValue = IndexedSeq(n)
+          }
+      }))
     }
     Traversable(bestValue)
   }
