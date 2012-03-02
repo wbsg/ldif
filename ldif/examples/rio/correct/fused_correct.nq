@@ -1,0 +1,3 @@
+<http://dbpedia.org/resource/Rio_de_Janeiro> <http://dbpedia.org/ontology/areaTotal> "1.260029215678464E9"^^<http://www.w3.org/2001/XMLSchema#double> <http://en.wikipedia.org/wiki/Rio_de_Janeiro> .
+<http://dbpedia.org/resource/Rio_de_Janeiro> <http://dbpedia.org/ontology/foundingDate> "1565-03-01"^^<http://www.w3.org/2001/XMLSchema#date> <http://en.wikipedia.org/wiki/Rio_de_Janeiro> .
+<http://dbpedia.org/resource/Rio_de_Janeiro> <http://dbpedia.org/ontology/populationTotal> "6323037"^^<http://www.w3.org/2001/XMLSchema#nonNegativeInteger> <http://pt.wikipedia.org/wiki/Rio_de_Janeiro> .

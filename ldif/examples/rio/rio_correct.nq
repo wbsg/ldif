@@ -1,0 +1,13 @@
+<http://dbpedia.org/resource/Rio_de_Janeiro> <http://dbpedia.org/ontology/areaTotal> "1.260029215678464E9"^^<http://www.w3.org/2001/XMLSchema#double> <http://en.wikipedia.org/wiki/Rio_de_Janeiro> .
+<http://dbpedia.org/resource/Rio_de_Janeiro> <http://dbpedia.org/ontology/populationTotal> "6323037"^^<http://www.w3.org/2001/XMLSchema#nonNegativeInteger> <http://pt.wikipedia.org/wiki/Rio_de_Janeiro_%28cidade%29> .
+<http://en.wikipedia.org/wiki/Rio_de_Janeiro> <http://www4.wiwiss.fu-berlin.de/ldif/lastUpdate> "2011-07-23T20:39:23Z"^^<http://www.w3.org/2001/XMLSchema#dateTime> <http://www4.wiwiss.fu-berlin.de/ldif/provenance> .
+<http://pt.wikipedia.org/wiki/Rio_de_Janeiro> <http://www4.wiwiss.fu-berlin.de/ldif/lastUpdate> "2011-07-15T01:50:13Z"^^<http://www.w3.org/2001/XMLSchema#dateTime> <http://www4.wiwiss.fu-berlin.de/ldif/provenance> .
+<http://dbpedia.org/resource/Rio_de_Janeiro> <http://dbpedia.org/ontology/foundingDate> "1565-03-01"^^<http://www.w3.org/2001/XMLSchema#date> <http://en.wikipedia.org/wiki/Rio_de_Janeiro> .
+<http://de.wikipedia.org/wiki/Rio_de_Janeiro> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www4.wiwiss.fu-berlin.de/ldif/ImportedGraph> <http://www4.wiwiss.fu-berlin.de/ldif/provenance> .
+<http://en.wikipedia.org/wiki/Rio_de_Janeiro> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www4.wiwiss.fu-berlin.de/ldif/ImportedGraph> <http://www4.wiwiss.fu-berlin.de/ldif/provenance> .
+<http://es.wikipedia.org/wiki/Rio_de_Janeiro> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www4.wiwiss.fu-berlin.de/ldif/ImportedGraph> <http://www4.wiwiss.fu-berlin.de/ldif/provenance> .
+<http://fr.wikipedia.org/wiki/Rio_de_Janeiro> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www4.wiwiss.fu-berlin.de/ldif/ImportedGraph> <http://www4.wiwiss.fu-berlin.de/ldif/provenance> .
+<http://pt.wikipedia.org/wiki/Rio_de_Janeiro> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www4.wiwiss.fu-berlin.de/ldif/ImportedGraph> <http://www4.wiwiss.fu-berlin.de/ldif/provenance> .
+<http://de.wikipedia.org/wiki/Rio_de_Janeiro> <http://www4.wiwiss.fu-berlin.de/ldif/lastUpdate> "2011-07-29T20:33:39Z"^^<http://www.w3.org/2001/XMLSchema#dateTime> <http://www4.wiwiss.fu-berlin.de/ldif/provenance> .
+<http://es.wikipedia.org/wiki/Rio_de_Janeiro> <http://www4.wiwiss.fu-berlin.de/ldif/lastUpdate> "2007-05-12T18:12:35Z"^^<http://www.w3.org/2001/XMLSchema#dateTime> <http://www4.wiwiss.fu-berlin.de/ldif/provenance> .
+<http://fr.wikipedia.org/wiki/Rio_de_Janeiro> <http://www4.wiwiss.fu-berlin.de/ldif/lastUpdate> "2011-07-31T04:23:56Z"^^<http://www.w3.org/2001/XMLSchema#dateTime> <http://www4.wiwiss.fu-berlin.de/ldif/provenance> .
