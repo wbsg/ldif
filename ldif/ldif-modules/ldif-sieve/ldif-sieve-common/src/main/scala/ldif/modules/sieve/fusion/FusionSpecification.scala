@@ -31,18 +31,17 @@ import ldif.util.Prefixes
 
 class FusionSpecification(val id: String,
                           val fusionFunctions: IndexedSeq[FusionFunction],
-                          val outputPropertyNames: IndexedSeq[String],
-                          val defaultFusionFunction: FusionFunction = new PassItOn) {
+                          val outputPropertyNames: IndexedSeq[String]) {
 
   assert(fusionFunctions.size == outputPropertyNames.size, "There should be one OutputPropertyName for each FusionFunction")
 
   override def toString(): String = {
-    "FusionSpecification, functions= " + fusionFunctions + ", outputProp=" + outputPropertyNames + ", defaultFunc=" + defaultFusionFunction
+    "FusionSpecification, functions= " + fusionFunctions + ", outputProp=" + outputPropertyNames
   }
 
   override def equals(obj: Any) = {
     obj match {
-      case ots: FusionSpecification => fusionFunctions.equals(ots.fusionFunctions) && outputPropertyNames.equals(ots.outputPropertyNames) && defaultFusionFunction.equals(ots.defaultFusionFunction)
+      case ots: FusionSpecification => fusionFunctions.equals(ots.fusionFunctions) && outputPropertyNames.equals(ots.outputPropertyNames)
       case _ => false
     }
   }
@@ -57,7 +56,8 @@ object FusionSpecification {
 
     def createFusionFunctions(node: scala.xml.Node): FusionFunction = {
       val fusionClassName: String = (node \ "FusionFunction" \ "@class").text
-      FusionFunction.create(fusionClassName, (node \ "FusionFunction").head)
+      //val metricId = (node \ "@metric").text
+      FusionFunction.create(fusionClassName, (node \ "FusionFunction").head)(prefixes)
     }
 
     def getOutputProperties(node: scala.xml.Node): String = {

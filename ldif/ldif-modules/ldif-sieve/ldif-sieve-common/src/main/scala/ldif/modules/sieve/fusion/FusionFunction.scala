@@ -21,13 +21,14 @@ import ldif.entity.NodeTrait
 import ldif.modules.sieve.quality.QualityAssessmentProvider
 import xml.Node
 import ldif.modules.sieve.quality.functions.{TimeCloseness, ScoredList}
+import ldif.util.Prefixes
 
 /**
  * Interface for functions that perform data fusion
  * @author pablomendes
  */
 
-trait FusionFunction {
+class FusionFunction(val metricId: String) {
 
   var name : String = getClass.getSimpleName.toString
 
@@ -58,7 +59,7 @@ trait FusionFunction {
 
   override def equals(obj: Any) = {
     obj match {
-      case off: FusionFunction => toString().equals(off.toString())
+      case off: FusionFunction => toString().equals(off.toString()) && metricId.equals(off.metricId)
       case _ => false
     }
   }
@@ -66,14 +67,15 @@ trait FusionFunction {
 }
 
 object FusionFunction {
-  def create(className : String, config: Node) : FusionFunction = className.toLowerCase match {
-    case "keepfirst" => return KeepFirst.fromXML(config)
-    case "passiton" => return PassItOn.fromXML(config)
+  def create(className : String, config: Node)(implicit prefixes: Prefixes) : FusionFunction = {
 
-      // TODO: get metric the function works on ?
+    className.toLowerCase match {
+      case "keepfirst" => return KeepFirst.fromXML(config)(prefixes)
+      case "passiton" => return PassItOn.fromXML(config)(prefixes)
 
-    // NOTICE: add case statements for new scoring functions here
-    case whatever => throw new IllegalArgumentException("Unable to construct scoring function for class name " + className)
+      // NOTICE: add case statements for new scoring functions here
+      case whatever => throw new IllegalArgumentException("Unable to construct scoring function for class name " + className)
+    }
   }
 }
 
