@@ -23,7 +23,7 @@
 
         <AssessmentMetric id="sieve:recency">
             <ScoringFunction class="TimeCloseness">
-                <Param name="timeSpan" value="5000"/>
+                <Param name="timeSpan" value="50000"/>
                 <Input path="?GRAPH/ldif:lastUpdate"/>
             </ScoringFunction>
         </AssessmentMetric>

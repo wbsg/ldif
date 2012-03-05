@@ -20,7 +20,6 @@ import org.slf4j.LoggerFactory
 import ldif.entity.NodeTrait
 import ldif.modules.sieve.fusion.FusionFunction
 import ldif.modules.sieve.quality.{ScoringFunction, QualityAssessmentProvider}
-import java.util.Comparator
 import ldif.util.Prefixes
 
 /**

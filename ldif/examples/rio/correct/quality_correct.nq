@@ -3,9 +3,9 @@
 <http://fr.wikipedia.org/wiki/Rio_de_Janeiro> <http://sieve.wbsg.de/vocab/reputation> "0.2010"^^<http://www.w3.org/2001/XMLSchema#double> <http://www4.wiwiss.fu-berlin.de/ldif/provenance> .
 <http://de.wikipedia.org/wiki/Rio_de_Janeiro> <http://sieve.wbsg.de/vocab/reputation> "0.0010"^^<http://www.w3.org/2001/XMLSchema#double> <http://www4.wiwiss.fu-berlin.de/ldif/provenance> .
 <http://en.wikipedia.org/wiki/Rio_de_Janeiro> <http://sieve.wbsg.de/vocab/reputation> "0.6010"^^<http://www.w3.org/2001/XMLSchema#double> <http://www4.wiwiss.fu-berlin.de/ldif/provenance> .
-<http://es.wikipedia.org/wiki/Rio_de_Janeiro> <http://sieve.wbsg.de/vocab/recency> "0.6490"^^<http://www.w3.org/2001/XMLSchema#double> <http://www4.wiwiss.fu-berlin.de/ldif/provenance> .
-<http://pt.wikipedia.org/wiki/Rio_de_Janeiro> <http://sieve.wbsg.de/vocab/recency> "0.9538"^^<http://www.w3.org/2001/XMLSchema#double> <http://www4.wiwiss.fu-berlin.de/ldif/provenance> .
-<http://fr.wikipedia.org/wiki/Rio_de_Janeiro> <http://sieve.wbsg.de/vocab/recency> "0.9570"^^<http://www.w3.org/2001/XMLSchema#double> <http://www4.wiwiss.fu-berlin.de/ldif/provenance> .
-<http://de.wikipedia.org/wiki/Rio_de_Janeiro> <http://sieve.wbsg.de/vocab/recency> "0.9568"^^<http://www.w3.org/2001/XMLSchema#double> <http://www4.wiwiss.fu-berlin.de/ldif/provenance> .
-<http://en.wikipedia.org/wiki/Rio_de_Janeiro> <http://sieve.wbsg.de/vocab/recency> "0.9556"^^<http://www.w3.org/2001/XMLSchema#double> <http://www4.wiwiss.fu-berlin.de/ldif/provenance> .
+<http://de.wikipedia.org/wiki/Rio_de_Janeiro> <http://sieve.wbsg.de/vocab/recency> "0.9956"^^<http://www.w3.org/2001/XMLSchema#double> <http://www4.wiwiss.fu-berlin.de/ldif/provenance> .
+<http://en.wikipedia.org/wiki/Rio_de_Janeiro> <http://sieve.wbsg.de/vocab/recency> "0.9955"^^<http://www.w3.org/2001/XMLSchema#double> <http://www4.wiwiss.fu-berlin.de/ldif/provenance> .
+<http://es.wikipedia.org/wiki/Rio_de_Janeiro> <http://sieve.wbsg.de/vocab/recency> "0.9648"^^<http://www.w3.org/2001/XMLSchema#double> <http://www4.wiwiss.fu-berlin.de/ldif/provenance> .
+<http://fr.wikipedia.org/wiki/Rio_de_Janeiro> <http://sieve.wbsg.de/vocab/recency> "0.9956"^^<http://www.w3.org/2001/XMLSchema#double> <http://www4.wiwiss.fu-berlin.de/ldif/provenance> .
+<http://pt.wikipedia.org/wiki/Rio_de_Janeiro> <http://sieve.wbsg.de/vocab/recency> "0.9953"^^<http://www.w3.org/2001/XMLSchema#double> <http://www4.wiwiss.fu-berlin.de/ldif/provenance> .
 
