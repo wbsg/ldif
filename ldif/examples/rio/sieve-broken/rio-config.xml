@@ -21,16 +21,16 @@
                        while if there is a conflict between two Wikipedias, trust the one which is more likely to have the right answer (reputation).">
 
 
-        <AssessmentMetric id="sieve:reputation">
-            <ScoringFunction class="ScoredList">
-                <Param name="list" value="http://pt.wikipedia.org http://en.wikipedia.org http://es.wikipedia.org http://fr.wikipedia.org http://de.wikipedia.org"/>
-            </ScoringFunction>
-        </AssessmentMetric>
-
         <AssessmentMetric id="sieve:recency">
             <ScoringFunction class="TimeCloseness">
                 <Param name="timeSpan" value="5000"/>
                 <Input path="?GRAPH/ldif:lastUpdate"/>
+            </ScoringFunction>
+        </AssessmentMetric>
+
+        <AssessmentMetric id="sieve:reputation">
+            <ScoringFunction class="ScoredList">
+                <Param name="list" value="http://pt.wikipedia.org http://en.wikipedia.org http://es.wikipedia.org http://fr.wikipedia.org http://de.wikipedia.org"/>
             </ScoringFunction>
         </AssessmentMetric>
 

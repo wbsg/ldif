@@ -408,7 +408,6 @@ class IntegrationJob (val config : IntegrationConfig, debugMode : Boolean = fals
     // todo: this could also work if we created only one entitydescription for all task? bad for distributed computing, maybe?
     var taskToReaders = new HashMap[QualityTask, Seq[EntityReader]]
     for ((task) <- qualityModule.tasks) {
-      log.debug("%s %s".format(task.qualitySpec.outputPropertyNames, task.qualitySpec.entityDescription.toString))
       val readers : Seq[EntityReader] =  buildEntities(cloneQuadReaders(inputQuadsReader), Seq(task.qualitySpec.entityDescription), ConfigParameters(config.properties))
       if (readers.size > 0) {
         taskToReaders += task -> readers
@@ -424,6 +423,7 @@ class IntegrationJob (val config : IntegrationConfig, debugMode : Boolean = fals
 
     //for((sieveTask, readers) <- sieveModule.tasks.toList zip entityReaders.toList)
     for ((task, readers) <- taskToReaders) {
+      log.debug("\n\tMetric: %s\n\tFunction: %s\n\tEntityDescription: %s".format(task.qualitySpec.outputPropertyNames,task.qualitySpec.scoringFunctions,readers.map(r => r.entityDescription)))
       qualityExecutor.execute(task, readers, output)
     }
 
