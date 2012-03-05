@@ -54,7 +54,7 @@ class FusionFunction(val metricId: String) {
   }
 
   override def toString(): String = {
-   name
+   "Function:%s,Metric:%s".format(name,metricId)
   }
 
   override def equals(obj: Any) = {
@@ -67,8 +67,16 @@ class FusionFunction(val metricId: String) {
 }
 
 object FusionFunction {
-  def create(className : String, config: Node)(implicit prefixes: Prefixes) : FusionFunction = {
 
+  /**
+   * From:
+   * http://stackoverflow.com/questions/3039822/how-do-i-call-a-scala-object-method-using-reflection
+   */
+  def companion[T](name : String)(implicit man: Manifest[T]) : T =
+    Class.forName(name + "$").getField("MODULE$").get(man.erasure).asInstanceOf[T]
+
+  def create(className : String, config: Node)(implicit prefixes: Prefixes) : FusionFunction = {
+    // val factory = companion[FusionFunction](className).fromXML
     className.toLowerCase match {
       case "keepfirst" => return KeepFirst.fromXML(config)(prefixes)
       case "passiton" => return PassItOn.fromXML(config)(prefixes)

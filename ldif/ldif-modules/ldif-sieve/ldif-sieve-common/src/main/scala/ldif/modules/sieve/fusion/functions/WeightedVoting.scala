@@ -21,14 +21,16 @@ import ldif.entity.NodeTrait
 import ldif.modules.sieve.fusion.FusionFunction
 import ldif.modules.sieve.quality.{ScoringFunction, QualityAssessmentProvider}
 import ldif.util.Prefixes
+import collection.mutable.HashMap
 
 /**
- * Fusion function that keeps the best rated value according to a given quality assessment metric.
+ * Fusion function that keeps the most common value amongst sources.
+ * Each source has one votes an amount proportional to its score according to a given quality metric.
  *
  * @author pablomendes
  */
 
-class KeepFirst(metricId: String) extends FusionFunction(metricId) {
+class WeightedVoting(metricId: String) extends FusionFunction(metricId) {
 
   private val log = LoggerFactory.getLogger(getClass.getName)
 
@@ -37,30 +39,31 @@ class KeepFirst(metricId: String) extends FusionFunction(metricId) {
    */
   override def fuse(patterns: Traversable[IndexedSeq[NodeTrait]], quality: QualityAssessmentProvider) : Traversable[IndexedSeq[NodeTrait]] = {
     var bestValue = IndexedSeq[NodeTrait]()
+    var votes = new HashMap[String,Double]()
     if (patterns.nonEmpty) {
       bestValue = patterns.head
-      var bestScore = 0.0
+      var maxVotes = 0.0
       patterns.foreach( nodes =>
         nodes.foreach( n =>{
           val score = quality.getScore(metricId, n.graph)
-          if (score > bestScore) {
-            bestScore = score
+          val nVotes = votes.getOrElse(n.value,0.0)+score
+          votes.put(n.value, nVotes)
+          if (nVotes > maxVotes) {
+            maxVotes = nVotes
             bestValue = IndexedSeq(n)
           }
       }))
     }
+
     Traversable(bestValue)
   }
 
 }
 
-object KeepFirst {
+object WeightedVoting {
 
   def fromXML(node: scala.xml.Node)(implicit prefixes: Prefixes) : FusionFunction = {
-    val metricQName = (node \ "@metric").text
-    if (metricQName.isEmpty)
-      throw new IllegalArgumentException("Function %s needs the attribute 'metric' to be included in the tag FusionFunction.".format(KeepFirst.getClass))
-    val metricId = prefixes.resolve(metricQName)
-    new KeepFirst(metricId)
+    val metricId = prefixes.resolve((node \ "@metric").text)
+    new WeightedVoting(metricId)
   }
 }

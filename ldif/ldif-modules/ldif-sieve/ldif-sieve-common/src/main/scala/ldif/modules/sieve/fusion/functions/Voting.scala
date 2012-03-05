@@ -21,14 +21,17 @@ import ldif.entity.NodeTrait
 import ldif.modules.sieve.fusion.FusionFunction
 import ldif.modules.sieve.quality.{ScoringFunction, QualityAssessmentProvider}
 import ldif.util.Prefixes
+import collection.mutable.HashMap
 
 /**
- * Fusion function that keeps the best rated value according to a given quality assessment metric.
+ * Fusion function that keeps the most common value amongst sources.
+ * Each source has one vote for the value.
+ * See @link{WeightedVoting} for an alternative that weights the votes by a quality score.
  *
  * @author pablomendes
  */
 
-class KeepFirst(metricId: String) extends FusionFunction(metricId) {
+class Voting extends FusionFunction("") {
 
   private val log = LoggerFactory.getLogger(getClass.getName)
 
@@ -37,14 +40,16 @@ class KeepFirst(metricId: String) extends FusionFunction(metricId) {
    */
   override def fuse(patterns: Traversable[IndexedSeq[NodeTrait]], quality: QualityAssessmentProvider) : Traversable[IndexedSeq[NodeTrait]] = {
     var bestValue = IndexedSeq[NodeTrait]()
+    var votes = new HashMap[String,Int]()
     if (patterns.nonEmpty) {
       bestValue = patterns.head
-      var bestScore = 0.0
+      var maxVotes = 0
       patterns.foreach( nodes =>
         nodes.foreach( n =>{
-          val score = quality.getScore(metricId, n.graph)
-          if (score > bestScore) {
-            bestScore = score
+          val nVotes = votes.getOrElse(n.value,0)+1
+          votes.put(n.value, nVotes)
+          if (nVotes > maxVotes) {
+            maxVotes = nVotes
             bestValue = IndexedSeq(n)
           }
       }))
@@ -54,13 +59,9 @@ class KeepFirst(metricId: String) extends FusionFunction(metricId) {
 
 }
 
-object KeepFirst {
+object Voting {
 
   def fromXML(node: scala.xml.Node)(implicit prefixes: Prefixes) : FusionFunction = {
-    val metricQName = (node \ "@metric").text
-    if (metricQName.isEmpty)
-      throw new IllegalArgumentException("Function %s needs the attribute 'metric' to be included in the tag FusionFunction.".format(KeepFirst.getClass))
-    val metricId = prefixes.resolve(metricQName)
-    new KeepFirst(metricId)
+    new Voting()
   }
 }
