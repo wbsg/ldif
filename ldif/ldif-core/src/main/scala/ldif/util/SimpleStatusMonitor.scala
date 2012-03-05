@@ -8,14 +8,14 @@ package ldif.util
  * To change this template use File | Settings | File Templates.
  */
 
-class SimpleStatusMonitor extends StatusMonitor with ReportSubscriber {
+class SimpleStatusMonitor extends StatusMonitor with ReportRegister {
   def getHtml(params: Map[String, String]) = {
     val sb = new StringBuilder
     sb.append("<html><head><title>Integration Job Report</title>")
     sb.append(addParams(params))
     sb.append("</head><body>\n")
     sb.append("<h1>Status Report for Integration Job</h1>\n")
-    for(publisher <- publishers) {
+    for(publisher <- getPublishers()) {
       sb.append("<h3>"+publisher.getPublisherName+"</h2>\n")
       sb.append("<table border=\"1\" cellpadding=\"3\" cellspacing=\"0\">")
       sb.append("<tr><th>report item</th><th>status</th><th>value</th></tr>")
@@ -43,7 +43,7 @@ class SimpleStatusMonitor extends StatusMonitor with ReportSubscriber {
   def getText = {
     val sb = new StringBuilder
     sb.append("Status Report for Integration Job: \n\n")
-    for(publisher <- publishers) {
+    for(publisher <- getPublishers()) {
       sb.append(publisher.getPublisherName).append(":\n")
       for(reportItem <- publisher.getReport.items) {
         sb.append("    Item: ").append(reportItem.name).append("\n    Status: ")

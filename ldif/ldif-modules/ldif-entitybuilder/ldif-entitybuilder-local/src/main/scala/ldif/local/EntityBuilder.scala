@@ -29,7 +29,7 @@ import ldif.local.runtime.{LocalNode, EntityWriter, QuadReader, ConfigParameters
 import ldif.runtime.Quad
 import java.util.{HashSet => JHashSet}
 import util.{EntityBuilderReportPublisher, StringPool}
-import ldif.util.{GlobalStatusMonitor, ReportPublisher, Consts, Uri}
+import ldif.util.{JobStatusMonitor, ReportPublisher, Consts, Uri}
 
 class EntityBuilder (entityDescriptions : IndexedSeq[EntityDescription], readers : Seq[QuadReader], config: ConfigParameters) extends FactumBuilder with EntityBuilderTrait {
   private val log = LoggerFactory.getLogger(getClass.getName)

@@ -49,7 +49,7 @@ class StringPool(poolSize : Int, maxSize : Int){
 
   def size = map.size
 
-  def reset = map.clear
+  def reset() = map.clear
 
   // Simple URI prefix compression
   private def compress(str : String) : String = {

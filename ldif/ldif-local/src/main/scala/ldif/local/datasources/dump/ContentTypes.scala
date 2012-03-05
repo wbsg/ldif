@@ -105,7 +105,7 @@ object ContentTypes {
 	 */
 	def getLangFromExtension(urlOrPath:String):String = {
 		var result:String = null
-    if (Pattern.matches(".*\\.(rdf|rdfxml|xml)(\\..*)?", urlOrPath))
+    if (Pattern.matches(".*\\.(rdf|rdfxml|xml|owl)(\\..*)?", urlOrPath))
 			result = langXML
 		else if (Pattern.matches(".*\\.n3(\\..*)?", urlOrPath))
 			result = langN3
