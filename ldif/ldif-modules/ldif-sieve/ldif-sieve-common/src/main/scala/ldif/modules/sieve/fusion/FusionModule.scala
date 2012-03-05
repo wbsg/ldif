@@ -25,7 +25,7 @@ import ldif.modules.sieve.quality.QualityAssessmentProvider
 /**
  * Sieve Module.
  */
-class FusionModule(val config : FusionModuleConfig, qualityProvider: QualityAssessmentProvider) extends Module
+class FusionModule(val config : FusionModuleConfig, val qualityProvider: QualityAssessmentProvider) extends Module
 {
 
   type ConfigType = FusionModuleConfig

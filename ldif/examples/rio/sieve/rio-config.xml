@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"  ?>
+<Sieve xmlns="http://www4.wiwiss.fu-berlin.de/ldif/">
+    <Prefixes>
+        <Prefix id="gn" namespace="http://www.geonames.org/ontology#"/>
+        <Prefix id="foaf" namespace="http://xmlns.com/foaf/0.1/"/>
+        <Prefix id="dbpedia-owl" namespace="http://dbpedia.org/ontology/"/>
+        <Prefix id="dbpedia" namespace="http://dbpedia.org/resource/"/>
+        <Prefix id="genes" namespace="http://wiking.vulcan.com/neurobase/kegg_genes/resource/vocab/"/>
+        <Prefix id="smwprop" namespace="http://mywiki/resource/property/"/>
+        <Prefix id="smwcat" namespace="http://mywiki/resource/category/"/>
+        <Prefix id="wiki" namespace="http://www.example.com/smw#"/>
+        <Prefix id="ldif" namespace="http://www4.wiwiss.fu-berlin.de/ldif/"/>
+        <Prefix id="xsd" namespace="http://www.w3.org/2001/XMLSchema#"/>
+        <Prefix id="rdf" namespace="http://www.w3.org/1999/02/22-rdf-syntax-ns#"/>
+        <Prefix id="rdfs" namespace="http://www.w3.org/2000/01/rdf-schema#"/>
+        <Prefix id="owl" namespace="http://www.w3.org/2002/07/owl#"/>
+    </Prefixes>
+
+    <QualityAssessment name="Recent and Reputable is Best"
+                       description="The idea that more recent articles from Wikipedia could capture better values that change over time (recency),
+                       while if there is a conflict between two Wikipedias, trust the one which is more likely to have the right answer (reputation).">
+
+
+        <AssessmentMetric id="sieve:reputation">
+            <ScoringFunction class="ScoredList">
+                <Param name="list" value="http://pt.wikipedia.org http://en.wikipedia.org http://es.wikipedia.org http://fr.wikipedia.org http://de.wikipedia.org"/>
+            </ScoringFunction>
+        </AssessmentMetric>
+
+        <AssessmentMetric id="sieve:recency">
+            <ScoringFunction class="TimeCloseness">
+                <Param name="timeSpan" value="5000"/>
+                <Input path="?GRAPH/ldif:lastUpdate"/>
+            </ScoringFunction>
+        </AssessmentMetric>
+
+    </QualityAssessment>
+
+    <Fusion name="Fusion strategy for DBpedia City Entities"
+            description="The idea is to use values from multiple DBpedia languages to improve the quality of data about cities.">
+        <Class name="dbpedia-owl:Settlement">
+            <Property name="dbpedia-owl:areaTotal">
+                <FusionFunction class="KeepFirst" metric="sieve:recency"/>
+            </Property>
+            <Property name="dbpedia-owl:populationTotal">
+                <FusionFunction class="KeepFirst" metric="sieve:reputation"/>
+            </Property>
+            <Property name="dbpedia-owl:foundingDate">
+                <FusionFunction class="KeepFirst" metric="sieve:reputation"/>
+            </Property>
+        </Class>
+    </Fusion>
+
+</Sieve>

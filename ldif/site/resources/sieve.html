@@ -183,19 +183,25 @@
   <li><a href="#acknowledgments">Acknowledgments</a></li>
 </ol>
 
-<h2 id="about">1. About Sieve<br>
-</h2>
-<p>The <a href="http://linkeddatabook.com/editions/1.0/index.html#htoc23">Web of Linked Data</a> grows rapidly and contains data originating from <a href="http://www4.wiwiss.fu-berlin.de/lodcloud/state/">hundreds of data sources</a>.
-The quality of data from those sources is very diverse, as values may be out of date, incomplete or incorrect.
-Moreover, data sources may provide conflicting values for the same properties.
-</p>
-<p>
-In order for <a href="http://linkeddatabook.com/editions/1.0/index.html#htoc75">Linked Data applications</a> to consume data from this global data space in an integrated fashion, a number of challenges have to be overcome.
-The <a href="http://www4.wiwiss.fu-berlin.de/bizer/ldif/">Linked Data Integration Framework (LDIF)</a> provides a modular architecture that homogenizes Web data into a target representation as configured by the user. LDIF includes Data Access, <a href="http://www4.wiwiss.fu-berlin.de/bizer/r2r/">Schema Mapping</a>, <a href="http://www4.wiwiss.fu-berlin.de/bizer/silk/">Identity Resolution</a> and Data Output modules. This document describes Sieve, which adds quality assessment and data fusion capabilities to the LDIF architecture.
-</p>
-<p>
-Sieve uses metadata about named graphs (e.g. provenance) in order to assess data quality as defined by users. Sieve is agnostic to provenance vocabulary and quality models. Through its configuration files, Sieve is able to access provenance expressed in different ways, and uses customizable scoring functions to output data quality descriptors according to a user-specified data-quality vocabulary.
-</p>
+<h2 id="about">1. About Sieve</h2>
+  <p>
+      The <a href="http://linkeddatabook.com/editions/1.0/index.html#htoc23">Web of Linked Data</a> grows rapidly and contains data originating from <a href="http://www4.wiwiss.fu-berlin.de/lodcloud/state/">hundreds of data sources</a>.
+      The quality of data from those sources is very diverse, as values may be out of date, incomplete or incorrect.
+      Moreover, data sources may provide conflicting values for the same properties.
+  </p>
+  <p>
+      In order for <a href="http://linkeddatabook.com/editions/1.0/index.html#htoc75">Linked Data applications</a> to consume data from this global data space in an integrated fashion, a number of challenges have to be overcome.
+      The <a href="http://www4.wiwiss.fu-berlin.de/bizer/ldif/">Linked Data Integration Framework (LDIF)</a> provides a modular architecture that homogenizes Web data into a target representation as configured by the user. LDIF includes Data Access, <a href="http://www4.wiwiss.fu-berlin.de/bizer/r2r/">Schema Mapping</a>, <a href="http://www4.wiwiss.fu-berlin.de/bizer/silk/">Identity Resolution</a> and Data Output modules. This document describes Sieve, which adds quality assessment and data fusion capabilities to the LDIF architecture.
+  </p>
+  <p>
+      Sieve uses metadata about named graphs (e.g. provenance) in order to assess data quality as defined by users.
+      Sieve is agnostic to provenance vocabulary and quality models.
+      Through its configuration files, Sieve is able to access provenance expressed in different ways, and uses customizable scoring functions
+      to output data quality descriptors according to a user-specified data-quality vocabulary.
+  </p>
+  <p>
+      Based on these quality descriptors (and/or optionally other descriptors computed elsewhere), Sieve can use configurable FusionFunctions to clean the data according to task-specific requirements.
+  </p>
 
 <!--p>The LDIF integration pipeline consists of the following steps:
 </p><ol>
@@ -333,11 +339,27 @@ is described by this <a href="http://www.assembla.com/code/ldif/git/nodes/ldif/l
       Example output: {en.wikipedia.org=0.9, pt.wikipedia.org=0.6, es.wikipedia.org=0.3}</li>
 </li>
   <li><i>SetMembership</i>: assigns 1 if the value of the indicator provided as input belongs to the set informed as parameter, 0 otherwise.</li>
-  <li><i>Threshold</i>: assigns 1 if the value of the indicator provided as input is higher than a threshold informed as parameter, 0 otherwise.</li>
-  <li><i>Interval</i>: assigns 1 if the value of the indicator provided as input is within the interval informed as parameter, 0 otherwise.</li>
+  <li><i>Threshold</i>: assigns 1 if the value of the indicator provided as input is higher than a threshold informed as parameter, 0 otherwise.
+<pre>
+&lt;ScoringFunction class="Threshold"&gt;
+  &lt;Param name="threshold" value="5"/&gt;gt;
+  &lt;lt;Input path="?GRAPH/example:numberOfEdits"/&gt;
+&lt;/ScoringFunction&gt;
+</pre>
+      Example output: {http://en.wikipedia.org/wiki/DBpedia=1, http://pt.wikipedia.org/wiki/DBpedia=0}
+  </li>
+  <li><i>IntervalMembership</i>: assigns 1 if the value of the indicator provided as input is within the interval informed as parameter, 0 otherwise.
+<pre>
+&lt;ScoringFunction class="IntervalMembership"&gt;
+  &lt;Param name="from" value="6"/&gt;
+  &lt;lt;Param name="to" value="42"/&gt;
+  &lt;Input path="?GRAPH/provenance:whatever"/&gt;
+&lt;/ScoringFunction&gt;
+</pre>
+  </li>
 </ul>
 
-  <!--aggregation functions-->
+  <!--aggregation functions--
   <!--ul>
       <li><i>Max,Min,Count,Sum,Average</i>: computes mathematical functions over the value of the indicator informed as parameter. These functions can be applied, for example, over ratings, number of edits, number of views, etc. according to the application needs.</li>
       <li><i>TieBreaker</i>: takes as input a set of real valued indicators. If there is a tie for the first indicator, it uses the second, and if there is still a tie, it keeps going through the list.</li>
@@ -361,8 +383,9 @@ trait ScoringFunction {
 
 <h3 id=qualityoutput>Output</h3>
 <p>The quality-describing metadata computed by this step can be output and stored as an extension to the <a href="http://www4.wiwiss.fu-berlin.de/bizer/ldif/#provenance">LDIF Provenance Graph</a>.
-   If you wish to omit the quality scores from the final output (e.g. to reduce output size), you can set the configuration property <code>outputQualityScores=false</code> in <a href="http://ldif.wbsg.de/#configuration" target="ldif">integration.properties</a>.
-   Regardless, the quality scores will always be passed on to the fusion module.
+   In this case, all non-zero scores are written out as quads, for each graph evaluated in LDIF. Metrics with score=0.0 are omitted, as in Sieve a missing quality assessment is equivalent to a zero score.
+   If you wish to omit all quality scores from the final output (e.g. to reduce output size), you can set the configuration property <code>outputQualityScores=false</code> in <a href="http://ldif.wbsg.de/#configuration" target="ldif">integration.properties</a>.
+   Regardless, the quality scores will always be passed on to the fusion module, if a Fusion configuration exists.
 
 <pre>
 enwiki:Juiz_de_Fora sieve:recency "0.4" ldif:provenance .
@@ -452,6 +475,7 @@ trait FusionFunction
  </li>
  <li><i>Average</i>: takes the average of all input data for a given property.</li>
 </ul>
+
 <!--h2 id="examples">5. Examples</h2>
 <p>This section provides a Sieve usage example.</p-->
 

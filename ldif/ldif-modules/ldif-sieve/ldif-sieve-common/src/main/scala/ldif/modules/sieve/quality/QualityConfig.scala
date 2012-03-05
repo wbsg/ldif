@@ -32,13 +32,22 @@ import ldif.util.Prefixes
  * @author Pablo Mendes
  * @author Hannes Mühleisen
  */
-class QualityConfig(val name: String, val description: String, val prefixes: Prefixes,
+class QualityConfig(val name: String,
+                    val description: String,
+                    val prefixes: Prefixes,
                     val qualitySpecs: Traversable[QualitySpecification]) {
 
+
   def merge(c: QualityConfig): QualityConfig = {
-    //TODO implement (for what?)(if user gives many files?)
+    //TODO implement to allow multiple config files
     throw new NotImplementedException
-    //this
+  }
+
+  override def equals(obj: Any) = {
+    obj match {
+      case ots: QualityConfig => name.equals(ots.name) && qualitySpecs.equals(ots.qualitySpecs)
+      case _ => false
+    }
   }
 }
 
@@ -46,10 +55,11 @@ object QualityConfig {
   private val log = LoggerFactory.getLogger(getClass.getName)
 
   def fromXML(node: scala.xml.Node)(implicit prefixes: Prefixes = Prefixes.empty) = {
+     val augmentedPrefixes = (prefixes++Prefixes.stdPrefixes)
     val configName = (node \ "@name").text
     val configDesc = (node \ "@description").text
-    val specs = (node \\ "AssessmentMetric").map(QualitySpecification.fromXML(_)(prefixes))
-    new QualityConfig(configName, configDesc, prefixes, specs)
+    val specs = (node \\ "AssessmentMetric").map(QualitySpecification.fromXML(_)(augmentedPrefixes))
+    new QualityConfig(configName, configDesc, augmentedPrefixes, specs)
     // TODO: handle aggregate Metrics (next version)
   }
   def empty = new EmptyQualityConfig

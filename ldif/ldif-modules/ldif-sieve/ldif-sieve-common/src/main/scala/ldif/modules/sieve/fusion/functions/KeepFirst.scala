@@ -20,26 +20,45 @@ import org.slf4j.LoggerFactory
 import ldif.entity.NodeTrait
 import ldif.modules.sieve.fusion.FusionFunction
 import ldif.modules.sieve.quality.{ScoringFunction, QualityAssessmentProvider}
+import java.util.Comparator
+import ldif.util.Prefixes
 
 /**
- * example fusion function that keeps the first value
+ * Fusion function that keeps the best rated value according to a given quality assessment metric.
+ *
  * @author pablomendes
  */
 
-class KeepFirst extends FusionFunction {
+class KeepFirst(metricId: String) extends FusionFunction(metricId) {
 
   private val log = LoggerFactory.getLogger(getClass.getName)
 
-  //TODO sort!
-  override def fuse(values: Traversable[IndexedSeq[NodeTrait]], quality: QualityAssessmentProvider) : Traversable[IndexedSeq[NodeTrait]] = {
-    if (values.nonEmpty) Seq(values.head) else Seq[IndexedSeq[NodeTrait]]()
+  /**
+   * Picks the value with the highest quality assessment with one pass over all nodes in all patterns in input.
+   */
+  override def fuse(patterns: Traversable[IndexedSeq[NodeTrait]], quality: QualityAssessmentProvider) : Traversable[IndexedSeq[NodeTrait]] = {
+    var bestValue = IndexedSeq[NodeTrait]()
+    if (patterns.nonEmpty) {
+      bestValue = patterns.head
+      var bestScore = 0.0
+      patterns.foreach( nodes =>
+        nodes.foreach( n =>{
+          val score = quality.getScore(metricId, n.graph)
+          if (score > bestScore) {
+            bestScore = score
+            bestValue = IndexedSeq(n)
+          }
+      }))
+    }
+    Traversable(bestValue)
   }
 
 }
 
 object KeepFirst {
 
-  def fromXML(node: scala.xml.Node) : FusionFunction = {
-    new KeepFirst
+  def fromXML(node: scala.xml.Node)(implicit prefixes: Prefixes) : FusionFunction = {
+    val metricId = prefixes.resolve((node \ "@metric").text)
+    new KeepFirst(metricId)
   }
 }

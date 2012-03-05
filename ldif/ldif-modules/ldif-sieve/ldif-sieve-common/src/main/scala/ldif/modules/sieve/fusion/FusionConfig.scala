@@ -30,11 +30,13 @@ import ldif.util.Prefixes
  * @author Pablo Mendes
  * @author Hannes Muehleisen
  */
-class FusionConfig(val fusionSpecs: IndexedSeq[FusionSpecification],
+class FusionConfig(//val name: String,
+                   //val description: String,
+                   val fusionSpecs: IndexedSeq[FusionSpecification],
                    val entityDescriptions: IndexedSeq[EntityDescription]) {
 
   def merge(c: FusionConfig): FusionConfig = {
-    //TODO implement
+    //TODO implement (to allow multiple configuration files)
     throw new NotImplementedException
   }
 
@@ -53,8 +55,9 @@ class FusionConfig(val fusionSpecs: IndexedSeq[FusionSpecification],
 
 object FusionConfig {
   def fromXML(node: scala.xml.Node)(implicit prefixes: Prefixes = Prefixes.empty) = {
-    val specs = (node \ "Class").map(FusionSpecification.fromXML(_)(prefixes))
-    val ed = (node \ "Class").map(FusionEntityDescription.fromXML(_)(prefixes))
+    val augmentedPrefixes = (prefixes++Prefixes.stdPrefixes)
+    val specs = (node \ "Class").map(FusionSpecification.fromXML(_)(augmentedPrefixes))
+    val ed = (node \ "Class").map(FusionEntityDescription.fromXML(_)(augmentedPrefixes))
     new FusionConfig(specs.toIndexedSeq, ed.toIndexedSeq)
   }
 
