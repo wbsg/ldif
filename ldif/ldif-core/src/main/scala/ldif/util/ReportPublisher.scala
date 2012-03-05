@@ -14,15 +14,7 @@ import java.util.GregorianCalendar
 /**
  * A report publisher publishes reports about a specific component/publisher
  */
-trait ReportPublisher {
-  private var startTime = new GregorianCalendar()//getTimeStampReport("Start time")
-  private var finishTime = new GregorianCalendar()//: ReportItem = ReportItem("", "", "")
-  var finished = false
-  /**
-   * The name of the publisher (should be globally unique)
-   */
-  def getPublisherName: String
-
+trait ReportPublisher extends Publisher {
   /**
    * Assemble a report to be published
    */
@@ -38,13 +30,6 @@ trait ReportPublisher {
     val dateFormat = new SimpleDateFormat("yyyy-MM-dd' 'HH:mm:ss")
     val time = dateFormat.format(calendar.getTime)
     return ReportItem(name, "-",time)
-  }
-
-  def setStartTime = startTime = new GregorianCalendar() //getTimeStampReport("Start time")
-
-  def setFinishTime = {
-    finishTime = new GregorianCalendar()//getTimeStampReport("Finish time")
-    finished = true
   }
 
   def getDurationTimeReportItem: ReportItem = {

@@ -37,7 +37,6 @@ case class QuadImportJob(dumpLocation : String, id : Identifier, refreshSchedule
 
     // get bufferReader from Url
     val inputStream = DumpLoader.getStream(dumpLocation)
-
     val parser = new QuadParser
     val lines = scala.io.Source.fromInputStream(inputStream).getLines
     var invalidQuads = 0

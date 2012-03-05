@@ -21,16 +21,15 @@ package ldif.local.datasources.dump
 import org.slf4j.LoggerFactory
 import scala.collection.mutable.ArrayBuffer
 import scala.Predef._
-import java.io.BufferedReader
-import java.io.FileReader
 import ldif.runtime.QuadWriter
-import ldif.local.runtime.LocalNode
 import scala.actors.Actor
 import scala._
-import ldif.local.runtime.impl.DummyQuadWriter
 import ldif.runtime.Quad
 import ldif.util.Consts
 import ldif.datasources.dump.QuadParser
+import ldif.local.runtime.{QuadReader, LocalNode}
+import ldif.local.runtime.impl.{FileQuadReader, FileQuadWriter, DummyQuadWriter}
+import java.io._
 
 /**
  * Created by IntelliJ IDEA.
@@ -203,6 +202,33 @@ object MTTest {
 //    for(result <- results)
 //      println("Error: Line " + result._1 + ": " + result._2)
     println("That's it. Took " + (System.currentTimeMillis-start)/1000.0 + "s")
+  }
+}
+
+object QuadFileLoader {
+  def loadQuadsIntoTempFileQuadQueue(file: File, graph: String, dicardFaultyQuads: Boolean): FileQuadReader = {
+    val reader = new BufferedReader(new FileReader(file))
+    loadQuadsIntoTempFileQuadQueue(reader, graph, dicardFaultyQuads)
+  }
+
+  def loadQuadsIntoTempFileQuadQueue(inputStream: InputStream, graph: String = Consts.DEFAULT_GRAPH, dicardFaultyQuads: Boolean=false): FileQuadReader = {
+    val reader = new BufferedReader(new InputStreamReader(inputStream))
+    loadQuadsIntoTempFileQuadQueue(reader, graph, dicardFaultyQuads)
+  }
+
+  def loadQuadsIntoTempFileQuadQueue(reader: Reader, graph: String, dicardFaultyQuads: Boolean): FileQuadReader = {
+    val bufReader = new BufferedReader(reader)
+    loadQuadsIntoTempFileQuadQueue(bufReader, graph, dicardFaultyQuads)
+  }
+
+  def loadQuadsIntoTempFileQuadQueue(reader: BufferedReader, graph: String, dicardFaultyQuads: Boolean): FileQuadReader = {
+    val output = File.createTempFile("ldif-quadqueue", ".dat")
+    output.deleteOnExit()
+    val writer = new FileQuadWriter(output)
+    val loader = new QuadFileLoader(graph, dicardFaultyQuads)
+    loader.readQuads(reader, writer)
+    writer.finish()
+    return new FileQuadReader(output)
   }
 }
 

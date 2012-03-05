@@ -12,7 +12,7 @@ import javax.ws.rs._
 import com.sun.jersey.api.container.httpserver.HttpServerFactory
 import core.Response
 import com.sun.net.httpserver.HttpServer
-import ldif.util.{GlobalStatusMonitor, StatusMonitor}
+import ldif.util.{JobStatusMonitor, StatusMonitor}
 
 @Path("/")
 class MonitorServer {
@@ -29,7 +29,7 @@ class MonitorServer {
 }
 
 object MonitorServer {
-  val generalStatusMonitor: StatusMonitor = GlobalStatusMonitor.value
+  val generalStatusMonitor: StatusMonitor = JobStatusMonitor.value
   private var server: HttpServer = null
 
   def stop() {

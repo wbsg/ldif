@@ -24,6 +24,8 @@ import org.deri.any23.Any23
 import org.deri.any23.source.ByteArrayDocumentSource
 import java.io._
 import org.deri.any23.writer.NTriplesWriter
+import ldif.local.runtime.QuadReader
+import ldif.local.runtime.impl.FileQuadReader
 
 
 /**
@@ -124,5 +126,10 @@ object DumpLoader {
       new ByteArrayInputStream(out.toByteArray)
     }
     else inputStream
+  }
+
+  def dumpIntoFileQuadQueue(sourceLocation: String): FileQuadReader = {
+    val stream = getStream(sourceLocation)
+    QuadFileLoader.loadQuadsIntoTempFileQuadQueue(stream)
   }
 }

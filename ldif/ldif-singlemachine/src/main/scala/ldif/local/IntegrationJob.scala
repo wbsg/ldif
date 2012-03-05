@@ -350,7 +350,7 @@ class IntegrationJob (val config : IntegrationConfig, debugMode : Boolean = fals
     val outputFile = File.createTempFile("ldif-mapped-quads", ".bin")
     outputFile.deleteOnExit
     val executor = new R2RLocalExecutor
-    GlobalStatusMonitor.value.addPublisher(executor.reporter)
+    JobStatusMonitor.value.addPublisher(executor.reporter)
     val writer = new FileQuadWriter(outputFile)
 
      //runInBackground

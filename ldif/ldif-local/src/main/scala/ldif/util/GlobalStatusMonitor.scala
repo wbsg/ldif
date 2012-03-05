@@ -1,15 +1,17 @@
 package ldif.util
 
+import java.util.concurrent.atomic.AtomicInteger
+
 /**
  * Created by IntelliJ IDEA.
  * User: andreas
- * Date: 2/21/12
- * Time: 5:37 PM
+ * Date: 3/5/12
+ * Time: 2:41 PM
  * To change this template use File | Settings | File Templates.
  */
 
-object GlobalStatusMonitor {
-  val value: StatusMonitor with ReportSubscriber = new SimpleStatusMonitor
+class GlobalStatusMonitor {
+  val jobCounter = new AtomicInteger(1)
 
-  def clean() = value.clean()
+
 }

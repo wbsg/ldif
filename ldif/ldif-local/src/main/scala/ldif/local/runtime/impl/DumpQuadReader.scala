@@ -27,7 +27,7 @@ class DumpQuadReader(inputQuadReader: QuadReader, config: ConfigParameters) exte
   private val useExternalSameAsLinks = config.configProperties.getProperty("useExternalSameAsLinks", "true").toLowerCase=="true"
 //  private val ignoreProvenance = !(outputFormat=="nq" || outputFormat=="sparql")//TODO: implement this feature in output component
   private val reporter = new DumpLoadReportPublisher(useExternalSameAsLinks)
-  GlobalStatusMonitor.value.addPublisher(reporter)
+  JobStatusMonitor.value.addPublisher(reporter)
 
   def size: Int = inputQuadReader.size
 
