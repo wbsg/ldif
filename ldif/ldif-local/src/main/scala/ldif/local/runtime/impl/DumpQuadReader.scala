@@ -6,6 +6,7 @@ import ldif.local.runtime.{ConfigParameters, QuadReader}
 import java.util.concurrent.atomic.AtomicInteger
 import collection.mutable.ArrayBuffer
 import ldif.util._
+import ldif.local.IntegrationJobStatusMonitor
 
 /**
  * Created by IntelliJ IDEA.
@@ -27,7 +28,7 @@ class DumpQuadReader(inputQuadReader: QuadReader, config: ConfigParameters) exte
   private val useExternalSameAsLinks = config.configProperties.getProperty("useExternalSameAsLinks", "true").toLowerCase=="true"
 //  private val ignoreProvenance = !(outputFormat=="nq" || outputFormat=="sparql")//TODO: implement this feature in output component
   private val reporter = new DumpLoadReportPublisher(useExternalSameAsLinks)
-  JobStatusMonitor.value.addPublisher(reporter)
+  IntegrationJobStatusMonitor.value.addPublisher(reporter)
 
   def size: Int = inputQuadReader.size
 

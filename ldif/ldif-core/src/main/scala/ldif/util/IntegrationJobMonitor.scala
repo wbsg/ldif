@@ -8,7 +8,7 @@ package ldif.util
  * To change this template use File | Settings | File Templates.
  */
 
-class SimpleStatusMonitor extends StatusMonitor with ReportRegister {
+class IntegrationJobMonitor extends StatusMonitor with ReportRegister {
   def getHtml(params: Map[String, String]) = {
     val sb = new StringBuilder
     sb.append("<html><head><title>Integration Job Report</title>")
@@ -28,16 +28,6 @@ class SimpleStatusMonitor extends StatusMonitor with ReportRegister {
     }
     sb.append("</body></html>")
     sb.toString()
-  }
-
-  def addParams(params: Map[String, String]): String = {
-    val sb = new StringBuilder
-    if(params.get("refresh").get!="0") {
-      sb.append("<meta http-equiv=\"refresh\" content=\"")
-      sb.append(params.get("refresh").get)
-      sb.append("\">")
-    }
-    sb.toString
   }
 
   def getText = {

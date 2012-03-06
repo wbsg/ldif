@@ -14,4 +14,14 @@ trait StatusMonitor {
   def getHtml(params: Map[String, String]): String
 
   def getText: String
+
+  def addParams(params: Map[String, String]): String = {
+    val sb = new StringBuilder
+    if(params.get("refresh").get!="0") {
+      sb.append("<meta http-equiv=\"refresh\" content=\"")
+      sb.append(params.get("refresh").get)
+      sb.append("\">")
+    }
+    sb.toString
+  }
 }

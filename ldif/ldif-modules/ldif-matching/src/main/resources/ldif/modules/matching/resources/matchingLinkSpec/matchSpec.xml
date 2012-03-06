@@ -21,20 +21,20 @@
             </TargetDataset>
 
             <LinkageRule>
-                <Compare metric="equality" threshold="0.8" >
+                <Compare metric="equality" >
                     <!--<TransformInput function="removeSpecialChars">-->
                       <!--<TransformInput function="lowerCase">-->
                        <!--<TransformInput function="removeBlanks">-->
-                         <TransformInput function="tokenize">
+                         <!--<TransformInput function="tokenize">-->
                          <!--<TransformInput function="stem">-->
                           <TransformInput function="lowerCase">
                            <TransformInput function="replace">
-                             <Input path="?a/rdfs:subClassOf/rdfs:label" />
+                             <Input path="?a/rdfs:label" />
                              <Param name="search" value="_" />
                              <Param name="replace" value=" " />
                            </TransformInput>
                           </TransformInput>
-                         </TransformInput>
+                         <!--</TransformInput>-->
                        <!--</TransformInput>-->
                       <!--</TransformInput>-->
                      <!--</TransformInput>-->
@@ -43,16 +43,16 @@
                      <!--<TransformInput function="stem">-->
                       <!--<TransformInput function="lowerCase">-->
                        <!--<TransformInput function="removeBlanks">-->
-                         <TransformInput function="tokenize">
+                         <!--<TransformInput function="tokenize">-->
                              <!--<TransformInput function="stem">-->
                           <TransformInput function="lowerCase">
                            <TransformInput function="replace">
-                             <Input path="?b/rdfs:subClassOf/rdfs:label" />
+                             <Input path="?b/rdfs:label" />
                              <Param name="search" value="_" />
                              <Param name="replace" value=" " />
                            </TransformInput>
                           </TransformInput>
-                         </TransformInput>
+                         <!--</TransformInput>-->
                        <!--</TransformInput>-->
                       <!--</TransformInput>-->
                      <!--</TransformInput>-->
@@ -62,78 +62,70 @@
 
             <Filter />
         </Interlink>
-        <!--<Interlink id="ObjectProperty">-->
-            <!--<LinkType>owl:sameAs</LinkType>-->
+        <Interlink id="ObjectProperty">
+            <LinkType>owl:sameAs</LinkType>
 
-            <!--<SourceDataset dataSource="SOURCE" var="a">-->
-                <!--<RestrictTo>?a rdf:type owl:ObjectProperty .</RestrictTo>-->
-            <!--</SourceDataset>-->
+            <SourceDataset dataSource="SOURCE" var="a">
+                <RestrictTo>?a rdf:type owl:ObjectProperty .</RestrictTo>
+            </SourceDataset>
 
-            <!--<TargetDataset dataSource="TARGET" var="b">-->
-                <!--<RestrictTo>?b rdf:type owl:ObjectProperty .</RestrictTo>-->
-            <!--</TargetDataset>-->
+            <TargetDataset dataSource="TARGET" var="b">
+                <RestrictTo>?b rdf:type owl:ObjectProperty .</RestrictTo>
+            </TargetDataset>
 
-            <!--<LinkageRule>-->
-                <!--<Compare metric="equality">-->
-                    <!--<TransformInput function="removeSpecialChars">-->
-                     <!--<TransformInput function="stem">-->
-                      <!--<TransformInput function="lowerCase">-->
-                       <!--<TransformInput function="removeBlanks">-->
-                        <!--<Input path="?a/rdfs:label" />-->
-                       <!--</TransformInput>-->
-                      <!--</TransformInput>-->
-                     <!--</TransformInput>-->
-                    <!--</TransformInput>-->
-                    <!--<TransformInput function="removeSpecialChars">-->
-                     <!--<TransformInput function="stem">-->
-                      <!--<TransformInput function="lowerCase">-->
-                       <!--<TransformInput function="removeBlanks">-->
-                        <!--<Input path="?b/rdfs:label" />-->
-                       <!--</TransformInput>-->
-                      <!--</TransformInput>-->
-                     <!--</TransformInput>-->
-                    <!--</TransformInput>-->
-                <!--</Compare>-->
-            <!--</LinkageRule>-->
+            <LinkageRule>
+                <Compare metric="equality">
+                   <TransformInput function="lowerCase">
+                           <TransformInput function="replace">
+                             <Input path="?a/rdfs:label" />
+                             <Param name="search" value="_" />
+                             <Param name="replace" value=" " />
+                           </TransformInput>
+                    </TransformInput>
+                    <TransformInput function="lowerCase">
+                           <TransformInput function="replace">
+                             <Input path="?b/rdfs:label" />
+                             <Param name="search" value="_" />
+                             <Param name="replace" value=" " />
+                           </TransformInput>
+                    </TransformInput>
+                </Compare>
+            </LinkageRule>
 
-            <!--<Filter />-->
-        <!--</Interlink>-->
-        <!--<Interlink id="ObjectProperty">-->
-            <!--<LinkType>owl:sameAs</LinkType>-->
+            <Filter />
+        </Interlink>
+        <Interlink id="AnnotationProperty">
+            <LinkType>owl:sameAs</LinkType>
 
-            <!--<SourceDataset dataSource="SOURCE" var="a">-->
-                <!--<RestrictTo>?a rdf:type owl:AnnotationProperty .</RestrictTo>-->
-            <!--</SourceDataset>-->
+            <SourceDataset dataSource="SOURCE" var="a">
+                <RestrictTo>?a rdf:type owl:DatatypeProperty .</RestrictTo>
+            </SourceDataset>
 
-            <!--<TargetDataset dataSource="TARGET" var="b">-->
-                <!--<RestrictTo>?b rdf:type owl:AnnotationProperty .</RestrictTo>-->
-            <!--</TargetDataset>-->
+            <TargetDataset dataSource="TARGET" var="b">
+                <RestrictTo>?b rdf:type owl:DatatypeProperty .</RestrictTo>
+            </TargetDataset>
 
-            <!--<LinkageRule>-->
-                <!--<Compare metric="equality">-->
-                    <!--<TransformInput function="removeSpecialChars">-->
-                     <!--<TransformInput function="stem">-->
-                      <!--<TransformInput function="lowerCase">-->
-                       <!--<TransformInput function="removeBlanks">-->
-                        <!--<Input path="?a/rdfs:label" />-->
-                       <!--</TransformInput>-->
-                      <!--</TransformInput>-->
-                     <!--</TransformInput>-->
-                    <!--</TransformInput>-->
-                    <!--<TransformInput function="removeSpecialChars">-->
-                     <!--<TransformInput function="stem">-->
-                      <!--<TransformInput function="lowerCase">-->
-                       <!--<TransformInput function="removeBlanks">-->
-                        <!--<Input path="?b/rdfs:label" />-->
-                       <!--</TransformInput>-->
-                      <!--</TransformInput>-->
-                     <!--</TransformInput>-->
-                    <!--</TransformInput>-->
-                <!--</Compare>-->
-            <!--</LinkageRule>-->
+            <LinkageRule>
+                <Compare metric="equality">
+                    <TransformInput function="lowerCase">
+                           <TransformInput function="replace">
+                             <Input path="?a/rdfs:label" />
+                             <Param name="search" value="_" />
+                             <Param name="replace" value=" " />
+                           </TransformInput>
+                    </TransformInput>
+                    <TransformInput function="lowerCase">
+                           <TransformInput function="replace">
+                             <Input path="?b/rdfs:label" />
+                             <Param name="search" value="_" />
+                             <Param name="replace" value=" " />
+                           </TransformInput>
+                    </TransformInput>
+                </Compare>
+            </LinkageRule>
 
-            <!--<Filter />-->
-        <!--</Interlink>-->
+            <Filter />
+        </Interlink>
     </Interlinks>
 
 </Silk>

@@ -25,7 +25,7 @@ import ldif.util.JobStatusMonitor
 
 trait EntityBuilderTrait {
   val entityBuilderReportPublisher = new EntityBuilderReportPublisher("Entity Builder")
-  JobStatusMonitor.value.addPublisher(entityBuilderReportPublisher)
+  IntegrationJobStatusMonitor.value.addPublisher(entityBuilderReportPublisher)
 
   def buildEntities (ed : EntityDescription, writer : EntityWriter)
   //

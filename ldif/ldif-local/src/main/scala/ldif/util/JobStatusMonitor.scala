@@ -9,7 +9,7 @@ package ldif.util
  */
 
 object JobStatusMonitor {
-  val value: StatusMonitor with ReportRegister = new SimpleStatusMonitor
+  val value: StatusMonitor with Register[Publisher] = new JobMonitor
 
   def clean() = value.clean()
 }

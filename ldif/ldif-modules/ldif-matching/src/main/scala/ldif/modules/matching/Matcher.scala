@@ -12,6 +12,8 @@ import ldif.util.Consts
 import ldif.{EntityBuilderModule, EntityBuilderConfig}
 import ldif.local.util.StringPool
 import utils.SameAsToAlignmentFormatConverter
+import collection.mutable.ArrayBuffer
+import java.util.Properties
 
 /**
  * Created by IntelliJ IDEA.
@@ -24,16 +26,22 @@ import utils.SameAsToAlignmentFormatConverter
 object Matcher {
   def main(args: Array[String]) {
     if(args.length < 3) {
-      println("Parameters: <ontology1> <ontology2> <outputFile>")
+      println("Parameters: <ontology1> <ontology2> <outputFile> [linkSpec]")
       sys.exit(1)
     }
     val startTime = System.currentTimeMillis()
     val ont1Reader = DumpLoader.dumpIntoFileQuadQueue(args(0))
     val ont2Reader = DumpLoader.dumpIntoFileQuadQueue(args(1))
-    val silkModule = SilkModule.load(getLinkSpecDir)
-    val silkExecutor = new SilkLocalExecutor(true)
+    val linkSpec = if(args.length==4)
+      new File(args(3))
+    else
+      getLinkSpecDir
+    val silkModule = SilkModule.load(linkSpec)
+    val silkExecutor = new SilkLocalExecutor(useFileInstanceCache = true, allowLinksForSameURIs = true)
     val entityDescriptions = silkModule.tasks.toIndexedSeq.map(silkExecutor.input).flatMap{ case StaticEntityFormat(ed) => ed }
-    val entityReaders = buildEntities(Seq(ont1Reader, ont2Reader), entityDescriptions)
+    val entityReaders1 = buildEntities(Seq(ont1Reader), entityDescriptions.zipWithIndex.filter(a => a._2 % 2 == 0).map(a=>a._1))
+    val entityReaders2 = buildEntities(Seq(ont2Reader), entityDescriptions.zipWithIndex.filter(a => a._2 % 2 == 1).map(a=>a._1))
+    val entityReaders = mergeReaders(entityReaders1, entityReaders2)
     StringPool.reset()
     val outputQueue = new QuadQueue
     for((silkTask, readers) <- silkModule.tasks.toList zip entityReaders.grouped(2).toList)
@@ -42,6 +50,15 @@ object Matcher {
     }
     SameAsToAlignmentFormatConverter.convert(outputQueue, args(2))
     println("Finished matching after " + (System.currentTimeMillis()-startTime)/1000.0 + "s")
+  }
+
+  private def mergeReaders(readers1: Seq[EntityReader], readers2: Seq[EntityReader]): Seq[EntityReader] = {
+    val result = new ArrayBuffer[EntityReader]()
+    for ((a,b) <- readers1 zip readers2) {
+      result.append(a)
+      result.append(b)
+    }
+    result
   }
 
   private def getLinkSpecDir: File = {
@@ -58,7 +75,9 @@ object Matcher {
 
   private def buildEntities(readers : Seq[QuadReader], entityDescriptions : Seq[EntityDescription]) : Seq[EntityReader] =
   {
-    buildEntities(readers, entityDescriptions, new EntityBuilderExecutor())
+    val properties = new Properties()
+    properties.put("entityBuilderType", "quad-store")
+    buildEntities(readers, entityDescriptions, new EntityBuilderExecutor(ConfigParameters(properties) ))
   }
 
   private def buildEntities(readers : Seq[QuadReader], entityDescriptions : Seq[EntityDescription], entityBuilderExecutor : EntityBuilderExecutor, inmemory: Boolean = true) : Seq[EntityReader] =
@@ -95,4 +114,6 @@ object Matcher {
     else
       return fileEntityQueues.map((entityWriter) => new FileEntityReader(entityWriter.entityDescription, entityWriter.inputFile, enableCompression = true ))
   }
+
+
 }

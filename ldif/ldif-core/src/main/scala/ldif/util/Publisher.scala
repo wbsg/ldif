@@ -1,6 +1,7 @@
 package ldif.util
 
-import java.util.GregorianCalendar
+import java.text.SimpleDateFormat
+import java.util.{Calendar, GregorianCalendar}
 
 /**
  * Created by IntelliJ IDEA.
@@ -23,11 +24,31 @@ trait Publisher {
    */
   def getPublisherName: String
 
-
   def setStartTime = startTime = new GregorianCalendar()
 
   def setFinishTime = {
     finishTime = new GregorianCalendar()
     finished = true
   }
+
+  def formatDateTime(calendar: Calendar): String = {
+    val dateFormat = new SimpleDateFormat("yyyy-MM-dd' 'HH:mm:ss")
+    return dateFormat.format(calendar.getTime)
+  }
+
+  def isFinished = finished
+
+  def getFormattedStartTime = formatDateTime(startTime)
+
+  def getFormattedFinishTime = formatDateTime(finishTime)
+
+  /**
+   * This should return the URI prefix that a link would have, if there is one
+   */
+  def getLink: Option[String]
+
+  /**
+   * The duration of the job in seconds as string representation
+   */
+  def getDuration: String = ""+(finishTime.getTime.getTime - startTime.getTime.getTime)/1000.0
 }

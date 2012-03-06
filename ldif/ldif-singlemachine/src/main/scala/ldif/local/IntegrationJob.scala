@@ -42,11 +42,12 @@ import collection.mutable.HashMap
 import ldif.config._
 import util.{StringPool}
 
-class IntegrationJob (val config : IntegrationConfig, debugMode : Boolean = false, enableReportingServer: Boolean = false) {
+class IntegrationJob (val config : IntegrationConfig, debugMode : Boolean = false) {
 
   private val log = LoggerFactory.getLogger(getClass.getName)
-//  if(enableReportingServer)
-//    MonitorServer.start("http://localhost:5343/")
+  private val reporter = new IntegrationJobPublisher
+  JobStatusMonitor.value.addPublisher(reporter)
+  IntegrationJobStatusMonitor.value = reporter
 
   // Object to store all kinds of configuration data
   private var configParameters: ConfigParameters = null
@@ -66,6 +67,7 @@ class IntegrationJob (val config : IntegrationConfig, debugMode : Boolean = fals
   }
 
   def runIntegration {
+    reporter.setStartTime
     if (config.sources == null || config.sources.size == 0)
       log.info("Integration Job skipped - No data source files found")
 
@@ -132,7 +134,7 @@ class IntegrationJob (val config : IntegrationConfig, debugMode : Boolean = fals
         val allSameAsLinks = if(skipSilk)
           sameAsReader
         else
-          new MultiQuadReader(new MultiQuadReader(linkReader: _*), sameAsReader) // TODO: If R2R is skipped no sameAs links are currently extracted
+          new MultiQuadReader(new MultiQuadReader(linkReader: _*), sameAsReader)
 
         // Execute URI Clustering/Translation
         var integratedReader: QuadReader = null
@@ -148,9 +150,8 @@ class IntegrationJob (val config : IntegrationConfig, debugMode : Boolean = fals
 
 //        writeOutput(config, integratedReader)
         writeOutput(config, sieveReader)
+        reporter.setFinishTime
       }
-//    if(enableReportingServer)
-//      MonitorServer.stop()
   }
 
   private def copyQuads(reader: QuadReader, writer: QuadWriter) {
@@ -349,7 +350,7 @@ class IntegrationJob (val config : IntegrationConfig, debugMode : Boolean = fals
     val outputFile = File.createTempFile("ldif-mapped-quads", ".bin")
     outputFile.deleteOnExit
     val executor = new R2RLocalExecutor
-    JobStatusMonitor.value.addPublisher(executor.reporter)
+    reporter.addPublisher(executor.reporter)
     val writer = new FileQuadWriter(outputFile)
 
      //runInBackground
@@ -607,6 +608,7 @@ object IntegrationJob {
       log.warn("No configuration file given. \nUsage: IntegrationJob <integration job configuration file>")
       System.exit(1)
     }
+    MonitorServer.start("http://localhost:5343/")
     var debug = false
     val configFile = new File(args(args.length-1))
 
@@ -625,8 +627,10 @@ object IntegrationJob {
       }
     }
 
-    val integrator = new IntegrationJob(config, debug, true)
+    val integrator = new IntegrationJob(config, debug)
     integrator.runIntegration
+
+//    MonitorServer.stop()
   }
 }
 
