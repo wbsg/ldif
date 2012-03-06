@@ -28,7 +28,7 @@ import ldif.util.Prefixes
  * @author pablomendes
  */
 
-class FusionFunction(val metricId: String) {
+class FusionFunction(val metricId: String="") {
 
   var name : String = getClass.getSimpleName.toString
 

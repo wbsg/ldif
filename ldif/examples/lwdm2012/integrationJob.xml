@@ -6,7 +6,7 @@
     <sources><source>dumps</source></sources>
     <!--linkSpecifications>linkspecs</linkSpecifications>
     <mappings>mappings</mappings-->
-    <sieve>sieve-broken</sieve>
-    <outputs><output><file><path>ldif/examples/rio/integrated.nq</path></file></output></outputs>
+    <sieve>sieve</sieve>
+    <outputs><output><file><path>/data/ldif/integrated_cities.nq</path></file></output></outputs>
     <runSchedule>onStartup</runSchedule>
 </integrationJob>

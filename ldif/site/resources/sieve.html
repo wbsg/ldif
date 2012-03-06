@@ -254,37 +254,31 @@ is described by this <a href="http://www.assembla.com/code/ldif/git/nodes/ldif/l
 <p>A typical configuration document looks like this:</p>
 
 <pre>
-&lt;Sieve&gt;
-  &lt;Prefixes&gt;
-    &lt;Prefix id="rdfs" namespace="http://www.w3.org/2000/01/rdf-schema#" /&gt;
-    &lt;Prefix id="dbpedia" namespace="http://dbpedia.org/ontology/" /&gt;
-    &lt;Prefix id="gn" namespace="http://www.geonames.org/ontology#" /&gt;
-  &lt;/Prefixes&gt;
+&lt;Sieve xmlns="http://www4.wiwiss.fu-berlin.de/ldif/"&gt;
+    &lt;Prefixes&gt;
+        &lt;Prefix id="dbpedia-owl" namespace="http://dbpedia.org/ontology/"/&gt;
+        &lt;Prefix id="dbpedia" namespace="http://dbpedia.org/resource/"/&gt;
+    &lt;/Prefixes&gt;
 
-  &lt;QualityAssessment name="Prefer new information from authors with good rating" description="The idea is to BlaBla"&gt;
+    &lt;QualityAssessment name="Recent and Reputable is Best"
+                       description="The idea that more recent articles from Wikipedia could capture better values that change over time (recency),
+                       while if there is a conflict between two Wikipedias, trust the one which is more likely to have the right answer (reputation)."&gt;
 
-     &lt;AggregateMetric id="sieve:believability" class="Average"&gt;
 
-         &lt;AssessmentMetric id="sieve:recency"&gt;
-             &lt;ScoringFunction class="TimeCloseness"&gt;
-           	&lt;Param name="timeSpan" value="7" /&gt;
-           	&lt;Input path="?GRAPH/provenance:lastUpdated" /&gt;
+        &lt;AssessmentMetric id="sieve:reputation"&gt;
+            &lt;ScoringFunction class="ScoredList"&gt;
+                &lt;Param name="list" value="http://pt.wikipedia.org http://en.wikipedia.org http://es.wikipedia.org http://fr.wikipedia.org http://de.wikipedia.org"/&gt;
             &lt;/ScoringFunction&gt;
-         &lt;/AssessmentMetric&gt;
+        &lt;/AssessmentMetric&gt;
 
-         &lt;AssessmentMetric id="sieve:reputation"&gt;
-             &lt;ScoringFunction class="TidalTrustRating"&gt;
-                &lt;EnvironmentVariable name="user" value="http://URIofTheUser" /&gt;
-                &lt;!--Get the author of the graph --&gt;
-                &lt;Input path="?GRAPH/dc:author" /&gt;
-                &lt;!--Get the ratings --&gt;
-                &lt;Input query="Select ?rater, ?ratedObject, ?rating FROM http://graphURI PATTERN {}" /&gt;
-	     &lt;/ScoringFunction&gt;
-         &lt;/AssessmentMetric&gt;
+        &lt;AssessmentMetric id="sieve:recency"&gt;
+            &lt;ScoringFunction class="TimeCloseness"&gt;
+                &lt;Param name="timeSpan" value="50000"/&gt;
+                &lt;Input path="?GRAPH/ldif:lastUpdate"/&gt;
+            &lt;/ScoringFunction&gt;
+        &lt;/AssessmentMetric&gt;
 
-     &lt;/AggregateMetric&gt;
-
-  &lt;/QualityAssessment&gt;
+    &lt;/QualityAssessment&gt;
 &lt;/Sieve&gt;
 </pre>
 
@@ -305,9 +299,11 @@ is described by this <a href="http://www.assembla.com/code/ldif/git/nodes/ldif/l
   <p>
   In its most basic form, the input for the quality assessment task is the <a href="http://www4.wiwiss.fu-berlin.de/bizer/ldif/#provenance">LDIF provenance metadata</a>.
   When LDIF imports a new data source, it generates <code>ldif:ImportedGraph</code> descriptions for all graphs in the input (see <a href="http://www4.wiwiss.fu-berlin.de/bizer/ldif/#importjob">Data Import</a> for module-specific details).
-  Sieve will mash that with any other graph metadata provided as input, and feed through the scoring functions defined in the configuration.
+  Sieve will (by default) mash that with any other graph metadata provided as input, and feed that through the scoring functions defined in the configuration.
   This allows the configuration to use automatically computed metadata by LDIF, as well as metadata from the original source, or from other third-parties.
-  Examples of such metadata include ratings, prominence statistics, etc.
+  Examples of such third-party metadata include ratings, prominence statistics, etc.
+  Optionally, if all the metadata you need is contained within the LDIF provenance graph, you can set the configuration property <code>qualityFromProvenanceOnly=true</code> in <a href="http://ldif.wbsg.de/#configuration" target="ldif">integration.properties</a>.
+  This will instruct Sieve to limit the input data to the quality module to only the provenance graph, reducing computation effort, time and output size.
   </p>
   <!--p>Example metadata:</p>
   <pre>
@@ -363,6 +359,7 @@ is described by this <a href="http://www.assembla.com/code/ldif/git/nodes/ldif/l
   <!--ul>
       <li><i>Max,Min,Count,Sum,Average</i>: computes mathematical functions over the value of the indicator informed as parameter. These functions can be applied, for example, over ratings, number of edits, number of views, etc. according to the application needs.</li>
       <li><i>TieBreaker</i>: takes as input a set of real valued indicators. If there is a tie for the first indicator, it uses the second, and if there is still a tie, it keeps going through the list.</li>
+      <li><i>Mixture</i>: performs a weighted sum of scores like: 0.3 * sieve:recency + 0.7 * sieve:reputation</li>
   </ul-->
 
 <!--table>
@@ -377,7 +374,10 @@ The framework is extensible, and users can define their own set of <code>Scoring
 <pre>
 trait ScoringFunction {
   def score(graphId: NodeTrait, metadataValues: Traversable[IndexedSeq[NodeTrait]]): Double
+}
+object ScoringFunction {
   def fromXML(node: Node) : ScoringFunction
+}
 </pre>
 
 
@@ -451,9 +451,14 @@ In order to output a clean value for each property, it applies fusion fuctions i
 <li><i>Property</i> - defines which <code>FusionFunction</code> should be applied to the values of a given RDF property. The property qName should be given in the attribute <code>name</code>, and the <code>FusionFunction</code> element must be specified as a child of <code>Property</code>.</li>
 <li><i>FusionFunction</i> - specifies in the <code>name</code> attribute which java/scala class should be used to fuse values for a given property. It can take in a number of <code>Parameter</code> elements, which specify <code>name</code> of the parameter and <code>value</code> for that parameter. The framework is extensible, and users can define their own set of <code>FusionFunction</code> classes. The class should implement <code>ldif.modules.sieve.fusion.FusionFunction</code>, which defines the method <code>fromXML</code> (a method to create a new object of the class given the configuration parameters) and the method <code>fuse</code> (which will be called at runtime to perform fusion based on a number of values and quality assessment metadata). Method signatures (in Scala): 
 <pre>
-trait FusionFunction
+class FusionFunction(val metricId: String="") {
+  def fuse(values: Traversable[IndexedSeq[NodeTrait]], quality: QualityAssessment) : Traversable[IndexedSeq[NodeTrait]]
+}
+object FusionFunction {
   def fromXML(node: Node) : FusionFunction
-  def fuse(values: Traversable[IndexedSeq[NodeTrait]], quality: QualityAssessment) : Traversable[IndexedSeq[NodeTrait]]</pre> 
+}
+</pre>
+
 </li>
 </ul>
 
@@ -468,19 +473,78 @@ trait FusionFunction
  &lt;/FusionFunction&gt;
 </pre> 
   </li>
-  <li><i>KeepSingleValueByQualityScore</i>:
+  <li><i>KeepSingleValueByQualityScore or KeepFirst</i>:
 <pre>
  &ltFusionFunction class="KeepSingleValueByQualityScore" metric="sieve:reputation"/&gt;
 </pre> 
  </li>
  <li><i>Average</i>: takes the average of all input data for a given property.</li>
+ <li><i>Voting</i>: picks the value that appeared most frequently across sources. Each named graph has one vote, the most voted value is chosen.</li>
+ <li><i>WeightedVoting</i>: picks the value that appeared most frequently across higly rated sources. Each named graph has one vote proportional to its score for a given quality metric, the value with highest aggregated scores is chosen.</li>
 </ul>
 
-<!--h2 id="examples">5. Examples</h2>
-<p>This section provides a Sieve usage example.</p-->
+<h2 id="examples">5. Examples</h2>
+<p>This section provides a Sieve usage example. We will explore the use case of integrating information about cities coming from different DBpedia editions.
+   We have included the configuration files for this example in our distribution under <code>ldif/examples/lwdm2012</code>.</p>
 
-<h2 id="development">Source
-Code and Development</h2>
+<!--p>
+Here is how you can run this example:
+  <ol>
+    <li>Download Sieve</li>
+    <li>Download our example configuration files</li>
+    <li>Run:</li>
+  </ol>
+</p-->
+
+<p>
+  The directory <code>ImportJobs</code> contains a list of configuration files that will download the data into your server. One example configuration is shown below:
+
+<pre>&lt;importJob &gt;
+    &lt;internalId&gt;pt.dbpedia.org&lt;/internalId&gt;
+    &lt;dataSource&gt;DBpedia&lt;/dataSource&gt;
+    &lt;refreshSchedule&gt;onStartup&lt;/refreshSchedule&gt;
+    &lt;tripleImportJob&gt;
+        &lt;dumpLocation&gt;http://sieve.wbsg.de/download/lwdm2012/pt.nq.bz2&lt;/dumpLocation&gt;
+    &lt;/tripleImportJob&gt;
+&lt;/importJob&gt;</pre>
+</p>
+
+<p>
+The directory <code>sieve</code> contains configuration for quality assessment and fusion of these data. For this use case, we consider reputation and recency to be important quality aspects.
+We will assign higher reputation to data coming from the English Wikipedia (because it is the largest and most viewed), followed by the Portuguese (because it's the most relevant for the use case), Spanish, French and German (in subjective order of language similarity to Portuguese).
+Recency will be measured by looking at the <code>lastUpdated</code> property, which was extracted from Wikipedia Dumps.
+</p>
+
+<p>
+After running you should obtain data that looks like this:
+<pre>
+&lt;http://dbpedia.org/resource/Cachoeiras_de_Macacu&gt; &lt;http://dbpedia.org/ontology/areaTotal&gt; "9.55806E11"^^&lt;http://www.w3.org/2001/XMLSchema#double&gt; &lt;http://pt.wikipedia.org/wiki/Cachoeiras_de_Macacu&gt; .
+&lt;http://dbpedia.org/resource/Cachoeiras_de_Macacu&gt; &lt;http://dbpedia.org/ontology/populationTotal&gt; "54370"^^&lt;http://www.w3.org/2001/XMLSchema#nonNegativeInteger&gt; &lt;http://pt.wikipedia.org/wiki/Cachoeiras_de_Macacu&gt; .
+</pre>
+</p>
+
+<p>
+If you choose to output quality scores, then you should also notice many triples assigned to your graph URIs, like this:
+<pre>
+&lt;http://es.wikipedia.org/wiki/Rio_de_Janeiro&gt; &lt;http://sieve.wbsg.de/vocab/reputation&gt; "0.4010"^^&lt;http://www.w3.org/2001/XMLSchema#double&gt; &lt;http://www4.wiwiss.fu-berlin.de/ldif/provenance&gt; .
+&lt;http://pt.wikipedia.org/wiki/Rio_de_Janeiro&gt; &lt;http://sieve.wbsg.de/vocab/reputation&gt; "1.0000"^^&lt;http://www.w3.org/2001/XMLSchema#double&gt; &lt;http://www4.wiwiss.fu-berlin.de/ldif/provenance&gt; .
+&lt;http://fr.wikipedia.org/wiki/Rio_de_Janeiro&gt; &lt;http://sieve.wbsg.de/vocab/reputation&gt; "0.2010"^^&lt;http://www.w3.org/2001/XMLSchema#double&gt; &lt;http://www4.wiwiss.fu-berlin.de/ldif/provenance&gt; .
+&lt;http://de.wikipedia.org/wiki/Rio_de_Janeiro&gt; &lt;http://sieve.wbsg.de/vocab/reputation&gt; "0.0010"^^&lt;http://www.w3.org/2001/XMLSchema#double&gt; &lt;http://www4.wiwiss.fu-berlin.de/ldif/provenance&gt; .
+&lt;http://en.wikipedia.org/wiki/Rio_de_Janeiro&gt; &lt;http://sieve.wbsg.de/vocab/reputation&gt; "0.6010"^^&lt;http://www.w3.org/2001/XMLSchema#double&gt; &lt;http://www4.wiwiss.fu-berlin.de/ldif/provenance&gt; .
+&lt;http://de.wikipedia.org/wiki/Rio_de_Janeiro&gt; &lt;http://sieve.wbsg.de/vocab/recency&gt; "0.9956"^^&lt;http://www.w3.org/2001/XMLSchema#double&gt; &lt;http://www4.wiwiss.fu-berlin.de/ldif/provenance&gt; .
+&lt;http://en.wikipedia.org/wiki/Rio_de_Janeiro&gt; &lt;http://sieve.wbsg.de/vocab/recency&gt; "0.9955"^^&lt;http://www.w3.org/2001/XMLSchema#double&gt; &lt;http://www4.wiwiss.fu-berlin.de/ldif/provenance&gt; .
+&lt;http://es.wikipedia.org/wiki/Rio_de_Janeiro&gt; &lt;http://sieve.wbsg.de/vocab/recency&gt; "0.9648"^^&lt;http://www.w3.org/2001/XMLSchema#double&gt; &lt;http://www4.wiwiss.fu-berlin.de/ldif/provenance&gt; .
+&lt;http://fr.wikipedia.org/wiki/Rio_de_Janeiro&gt; &lt;http://sieve.wbsg.de/vocab/recency&gt; "0.9956"^^&lt;http://www.w3.org/2001/XMLSchema#double&gt; &lt;http://www4.wiwiss.fu-berlin.de/ldif/provenance&gt; .
+&lt;http://pt.wikipedia.org/wiki/Rio_de_Janeiro&gt; &lt;http://sieve.wbsg.de/vocab/recency&gt; "0.9953"^^&lt;http://www.w3.org/2001/XMLSchema#double&gt; &lt;http://www4.wiwiss.fu-berlin.de/ldif/provenance&gt; .
+</pre>
+</p>
+
+  <p>
+      Now you can play with the assessment metrics and the fusion functions and check the differences in the output. You may also add your own data via an ImportJob, and see how that changes the results.
+      Have fun sifting data for a better Web!
+  </p>
+
+<h2 id="development">Source Code and Development</h2>
 <p>The latest source code is available from the <a href="http://www.assembla.com/spaces/ldif/wiki">LDIF development page</a>
 on Assembla.com.</p>
 <p>The framework can be used under the terms of the <a href="http://www.apache.org/licenses/LICENSE-2.0">Apache Software License</a>.

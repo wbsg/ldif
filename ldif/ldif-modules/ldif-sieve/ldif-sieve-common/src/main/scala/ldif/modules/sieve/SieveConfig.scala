@@ -5,6 +5,7 @@ import quality.QualityConfig
 import xml.XML
 import ldif.util.{Prefixes, ValidatingXMLReader}
 import java.io.File
+import org.slf4j.LoggerFactory
 
 /*
 * Copyright 2011-2012 Freie Universität Berlin, MediaEvent Services GmbH & Co. KG
@@ -28,18 +29,7 @@ class SieveConfig(val qualityConfig: QualityConfig, val fusionConfig: FusionConf
 
 object SieveConfig {
 
-  val stdPrefixes = Map("foaf" -> "http://xmlns.com/foaf/0.1/",
-    "dbpedia-owl" -> "http://dbpedia.org/ontology/",
-    "dbpedia" -> "http://dbpedia.org/resource/",
-    "genes" -> "http://wiking.vulcan.com/neurobase/kegg_genes/resource/vocab/",
-    "smwprop" -> "http://mywiki/resource/property/",
-    "smwcat" -> "http://mywiki/resource/category/",
-    "wiki" -> "http://www.example.com/smw#",
-    "ldif" -> "http://www4.wiwiss.fu-berlin.de/ldif/",
-    "xsd" -> "http://www.w3.org/2001/XMLSchema#",
-    "rdf" -> "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
-    "rdfs" -> "http://www.w3.org/2000/01/rdf-schema#",
-    "owl" -> "http://www.w3.org/2002/07/owl#")
+  private val log = LoggerFactory.getLogger(getClass.getName)
 
   def reader = new ValidatingXMLReader(fromSieveXmlConfig, "Sieve.xsd")
 
@@ -48,7 +38,7 @@ object SieveConfig {
     val prefixes = Prefixes.fromXML(sieveConfig \ "Prefixes" head)
     val qualityConfig = (sieveConfig \ "QualityAssessment").map(QualityConfig.fromXML(_)(prefixes))
     val fusionConfig = (sieveConfig \ "Fusion").map(FusionConfig.fromXML(_)(prefixes))
-    new SieveConfig(qualityConfig.head, fusionConfig.head)
+    new SieveConfig(qualityConfig.head, fusionConfig.head) //TODO could we have more than one, e.g. multiple files?
   }
 
   def load(configFile: File): SieveConfig = {
@@ -57,4 +47,22 @@ object SieveConfig {
     })
   }
 
+  /**
+   * This is a helper method to inform R2R of all the properties used in Sieve,
+   * so that it can create workaround IdentityMappings to pass all necessary properties to Sieve.
+   */
+  def getUsedProperties(configFile: File) = {
+    val sieveConfig = XML.loadFile(configFile)
+    val prefixes = Prefixes.fromXML(sieveConfig \ "Prefixes" head) ++ Prefixes.stdPrefixes
+    val qualityProperties = (sieveConfig \ "QualityAssessment" \ "AssessmentMetric").map( n => prefixes.resolve((n \ "@id").text ))
+    val fusionProperties = (sieveConfig \\ "Fusion" \\ "Class" \\ "Property").map(n => prefixes.resolve((n \ "@name").text ))
+    val r = (qualityProperties ++ fusionProperties)
+    log.trace("Used properties: %s".format(r.toString()))
+    r
+  }
+
+  def main(args: Array[String]) {
+
+    SieveConfig.getUsedProperties(new File("ldif/examples/rio/sieve/rio-config.xml"))
+  }
 }

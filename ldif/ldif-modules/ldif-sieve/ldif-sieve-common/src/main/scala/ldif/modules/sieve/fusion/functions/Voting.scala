@@ -28,6 +28,7 @@ import collection.mutable.HashMap
  * Each source has one vote for the value.
  * See @link{WeightedVoting} for an alternative that weights the votes by a quality score.
  *
+ * TODO if there is a tie, currently we pick the first that appears.
  * @author pablomendes
  */
 

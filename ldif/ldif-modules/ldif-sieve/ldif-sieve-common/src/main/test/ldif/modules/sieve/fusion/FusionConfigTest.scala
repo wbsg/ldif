@@ -46,6 +46,10 @@ class FusionConfigTest extends FlatSpec with ShouldMatchers {
     (gFusion) should equal(mcFusion)
   }
 
+  it should  "cry out loud" in {
+    (true equals false)
+  }
+
 }
 
 
