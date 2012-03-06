@@ -59,7 +59,7 @@ object OutputConfig {
     (parseOutputWriter(xml.child.head), parseOutputPhase((xml \ "phase").headOption))
 
   private def parseOutputWriter (xml : Node) : QuadWriter =
-    if (xml.label == "sparlql") //TODO FIXME is this a typo?
+    if (xml.label == "sparql") //TODO FIXME this is is hackish...
       getSparqlWriter(xml)
     else getFileWriter(xml)
 
