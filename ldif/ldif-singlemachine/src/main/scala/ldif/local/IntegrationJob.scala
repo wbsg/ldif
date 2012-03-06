@@ -141,7 +141,7 @@ class IntegrationJob (val config : IntegrationConfig, debugMode : Boolean = fals
         else integratedReader = new MultiQuadReader(allQuads, allSameAsLinks) // TODO: Really add allSameAsLinks here (already)?
 
         //Execute sieve (quality and fusion)
-        val sieveInput = Seq(integratedReader, provenanceQuadReader)//val sieveInput = Seq(integratedReader)
+        val sieveInput = Map("all"->integratedReader, "provenance"->provenanceQuadReader)//val sieveInput = Seq(integratedReader)
         val sieveReader: QuadReader = executeSieve(config, sieveInput)
 
         lastUpdate = Calendar.getInstance
@@ -231,8 +231,12 @@ class IntegrationJob (val config : IntegrationConfig, debugMode : Boolean = fals
     }
   }
 
-  private def executeSieve(config: IntegrationConfig, inputQuadsReaders : Seq[QuadReader]) : QuadReader = {
+  private def executeSieve(config: IntegrationConfig, inputQuadsReaders : Map[String,QuadReader]) : QuadReader = {
+
     val outputQualityScores : Boolean = config.properties.getProperty("outputQualityScores", "false").equals("true")
+    val qualityFromProvenanceOnly : Boolean = config.properties.getProperty("qualityFromProvenanceOnly", "false").equals("true")
+
+    val qualityInput = if (qualityFromProvenanceOnly) Seq(inputQuadsReaders("provenance")) else inputQuadsReaders.values.toSeq
     val qualityModule = QualityModule.load(config.sieveSpecDir)
     val sieveQualityReader = qualityModule.config.qualityConfig match {
       case e: EmptyQualityConfig => {
@@ -240,7 +244,7 @@ class IntegrationJob (val config : IntegrationConfig, debugMode : Boolean = fals
         new QuadQueue() // return empty queue
       }
       case c: QualityConfig => {
-        executeQualityPhase(config, inputQuadsReaders, qualityModule)
+        executeQualityPhase(config, qualityInput, qualityModule)
       }
     }
 
@@ -249,7 +253,7 @@ class IntegrationJob (val config : IntegrationConfig, debugMode : Boolean = fals
     // This is the loosely coupled solution.
     // However, we also provide a simple (tightly coupled) solution for the time being.
     // If the two modules are run together, then qualitymodule stores scores while computing them in there already.
-    val fusionInput : Seq[QuadReader] = cloneQuadReaders(inputQuadsReaders)
+    val fusionInput : Seq[QuadReader] = cloneQuadReaders(inputQuadsReaders.values.toSeq)
     val fusionModule = FusionModule.load(config.sieveSpecDir, qualityModule)
     val sieveFusionReader = fusionModule.config.fusionConfig match {
       case e: EmptyFusionConfig => {
@@ -290,7 +294,7 @@ class IntegrationJob (val config : IntegrationConfig, debugMode : Boolean = fals
   }
 
   /**
-   * Loads the dump files.
+   * Loads the dump files. //TODO move to a DumpLoaderUtil object? This method is useful in other places too
    */
   private def loadDumps(sources : Traversable[String]) : Seq[QuadReader] =
   {
@@ -309,7 +313,7 @@ class IntegrationJob (val config : IntegrationConfig, debugMode : Boolean = fals
   }
 
   /**
-   * Loads a dump file.
+   * Loads a dump file. //TODO move to a DumpLoaderUtil object? This method is useful in other places too
    */
   private def loadDump(dump : File) : QuadReader = {
     // Integration component expects input data to be represented as Named Graphs, other formats are skipped
