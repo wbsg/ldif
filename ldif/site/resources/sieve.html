@@ -363,6 +363,7 @@ is described by this <a href="http://www.assembla.com/code/ldif/git/nodes/ldif/l
   <!--ul>
       <li><i>Max,Min,Count,Sum,Average</i>: computes mathematical functions over the value of the indicator informed as parameter. These functions can be applied, for example, over ratings, number of edits, number of views, etc. according to the application needs.</li>
       <li><i>TieBreaker</i>: takes as input a set of real valued indicators. If there is a tie for the first indicator, it uses the second, and if there is still a tie, it keeps going through the list.</li>
+      <li><i>Mixture</i>: performs a weighted sum of scores like: 0.3 * sieve:recency + 0.7 * sieve:reputation</li>
   </ul-->
 
 <!--table>
@@ -377,7 +378,10 @@ The framework is extensible, and users can define their own set of <code>Scoring
 <pre>
 trait ScoringFunction {
   def score(graphId: NodeTrait, metadataValues: Traversable[IndexedSeq[NodeTrait]]): Double
+}
+object ScoringFunction {
   def fromXML(node: Node) : ScoringFunction
+}
 </pre>
 
 
@@ -451,9 +455,14 @@ In order to output a clean value for each property, it applies fusion fuctions i
 <li><i>Property</i> - defines which <code>FusionFunction</code> should be applied to the values of a given RDF property. The property qName should be given in the attribute <code>name</code>, and the <code>FusionFunction</code> element must be specified as a child of <code>Property</code>.</li>
 <li><i>FusionFunction</i> - specifies in the <code>name</code> attribute which java/scala class should be used to fuse values for a given property. It can take in a number of <code>Parameter</code> elements, which specify <code>name</code> of the parameter and <code>value</code> for that parameter. The framework is extensible, and users can define their own set of <code>FusionFunction</code> classes. The class should implement <code>ldif.modules.sieve.fusion.FusionFunction</code>, which defines the method <code>fromXML</code> (a method to create a new object of the class given the configuration parameters) and the method <code>fuse</code> (which will be called at runtime to perform fusion based on a number of values and quality assessment metadata). Method signatures (in Scala): 
 <pre>
-trait FusionFunction
+class FusionFunction(val metricId: String="") {
+  def fuse(values: Traversable[IndexedSeq[NodeTrait]], quality: QualityAssessment) : Traversable[IndexedSeq[NodeTrait]]
+}
+object FusionFunction {
   def fromXML(node: Node) : FusionFunction
-  def fuse(values: Traversable[IndexedSeq[NodeTrait]], quality: QualityAssessment) : Traversable[IndexedSeq[NodeTrait]]</pre> 
+}
+</pre>
+
 </li>
 </ul>
 
@@ -468,12 +477,14 @@ trait FusionFunction
  &lt;/FusionFunction&gt;
 </pre> 
   </li>
-  <li><i>KeepSingleValueByQualityScore</i>:
+  <li><i>KeepSingleValueByQualityScore or KeepFirst</i>:
 <pre>
  &ltFusionFunction class="KeepSingleValueByQualityScore" metric="sieve:reputation"/&gt;
 </pre> 
  </li>
  <li><i>Average</i>: takes the average of all input data for a given property.</li>
+ <li><i>Voting</i>: picks the value that appeared most frequently across sources. Each named graph has one vote, the most voted value is chosen.</li>
+ <li><i>WeightedVoting</i>: picks the value that appeared most frequently across higly rated sources. Each named graph has one vote proportional to its score for a given quality metric, the value with highest aggregated scores is chosen.</li>
 </ul>
 
 <!--h2 id="examples">5. Examples</h2>
