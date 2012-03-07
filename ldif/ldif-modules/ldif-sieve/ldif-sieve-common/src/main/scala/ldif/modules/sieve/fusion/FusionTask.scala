@@ -26,5 +26,5 @@ import ldif.modules.sieve.quality.{QualityAssessmentProvider}
  */
 class FusionTask(val sieveConfig : FusionModuleConfig, val fusionSpec : FusionSpecification, val qualityAssessment: QualityAssessmentProvider) extends ModuleTask
 {
- val name : Identifier = fusionSpec.id.toString
+ val name : Identifier = fusionSpec.id.toString.replaceAll(" ","_")
 }

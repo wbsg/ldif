@@ -431,6 +431,8 @@ class IntegrationJob (val config : IntegrationConfig, debugMode : Boolean = fals
       qualityExecutor.execute(task, readers, output)
     }
 
+    //run aggregations of scores?
+
     //new MultiQuadReader(output, entityBuilderExecutor.getNotUsedQuads) //andrea
     output
   }

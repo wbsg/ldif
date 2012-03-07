@@ -29,8 +29,6 @@ import ldif.util.Prefixes
  *   -- one entity description for all Inputs as a pattern
  *   -- one quality spec mapping a scoring function to an assessment metric id to be output.
  *
- * @author Pablo Mendes
- * @author Hannes Mühleisen
  */
 class QualityConfig(val name: String,
                     val description: String,
@@ -63,6 +61,10 @@ object QualityConfig {
     // TODO: handle aggregate Metrics (next version)
   }
   def empty = new EmptyQualityConfig
+
+  def main(args: Array[String]) {
+
+  }
 }
 
 /*

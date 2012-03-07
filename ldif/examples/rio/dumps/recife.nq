@@ -1,0 +1,10 @@
+<http://de.dbpedia.org/resource/Recife> <http://dbpedia.org/ontology/areaTotal> "2.195E8"^^<http://www.w3.org/2001/XMLSchema#double> <http://de.wikipedia.org/wiki/Recife> .
+<http://dbpedia.org/resource/Recife> <http://dbpedia.org/ontology/areaTotal> "2.18E8"^^<http://www.w3.org/2001/XMLSchema#double> <http://en.wikipedia.org/wiki/Recife> .
+<http://dbpedia.org/resource/Recife> <http://dbpedia.org/ontology/areaTotal> "2.179992992469811E8"^^<http://www.w3.org/2001/XMLSchema#double> <http://en.wikipedia.org/wiki/Recife> .
+<http://dbpedia.org/resource/Recife> <http://dbpedia.org/ontology/areaTotal> "2.17494E11"^^<http://www.w3.org/2001/XMLSchema#double> <http://pt.wikipedia.org/wiki/Recife> .
+<http://de.dbpedia.org/resource/Recife> <http://dbpedia.org/ontology/populationTotal> "3587000"^^<http://www.w3.org/2001/XMLSchema#nonNegativeInteger> <http://de.wikipedia.org/wiki/Recife> .
+<http://dbpedia.org/resource/Recife> <http://dbpedia.org/ontology/populationTotal> "1536934"^^<http://www.w3.org/2001/XMLSchema#nonNegativeInteger> <http://en.wikipedia.org/wiki/Recife> .
+<http://dbpedia.org/resource/Recife> <http://dbpedia.org/ontology/populationTotal> "1536934"^^<http://www.w3.org/2001/XMLSchema#nonNegativeInteger> <http://pt.wikipedia.org/wiki/Recife> .
+<http://de.dbpedia.org/resource/Recife> <http://dbpedia.org/ontology/foundingDate> "1537-03-12"^^<http://www.w3.org/2001/XMLSchema#date> <http://de.wikipedia.org/wiki/Recife> .
+<http://dbpedia.org/resource/Recife> <http://dbpedia.org/ontology/foundingDate> "1537-03-12"^^<http://www.w3.org/2001/XMLSchema#date> <http://en.wikipedia.org/wiki/Recife> .
+<http://dbpedia.org/resource/Recife> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://dbpedia.org/ontology/Settlement> <http://pt.wikipedia.org/wiki/Anexo:Lista_de_munic%C3%ADpios_do_Brasil> .
