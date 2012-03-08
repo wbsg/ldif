@@ -64,6 +64,7 @@ object FusionConfig {
   def empty: EmptyFusionConfig = {
     new EmptyFusionConfig
   }
+
 }
 
 /*
