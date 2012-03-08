@@ -13,5 +13,5 @@ import ldif.util.{ReportPublisher, Register, Publisher}
 class ImportJobPublisher extends Publisher with Register[ReportPublisher] {
   def getPublisherName = "Import Job"
 
-  def getLink: Option[String] = Some("integrationJob")
+  def getLink: Option[String] = None
 }

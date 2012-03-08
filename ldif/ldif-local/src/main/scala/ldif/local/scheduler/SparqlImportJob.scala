@@ -24,15 +24,17 @@ import ldif.local.runtime.LocalNode
 import com.hp.hpl.jena.rdf.model.{Model, RDFNode}
 import java.io.{Writer, OutputStreamWriter, OutputStream}
 import com.hp.hpl.jena.query.QueryExecutionFactory
-import ldif.util.{Consts, Identifier}
 import javax.xml.ws.http.HTTPException
 import com.hp.hpl.jena.sparql.engine.http.QueryExceptionHTTP
+import ldif.util.{JobMonitor, Consts, Identifier}
 
 case class SparqlImportJob(conf : SparqlConfig, id :  Identifier, refreshSchedule : String, dataSource : String) extends ImportJob{
   private val log = LoggerFactory.getLogger(getClass.getName)
   private val graph = Consts.DEFAULT_IMPORTED_GRAPH_PREFIX+id
 
   override def load(out : OutputStream) : Boolean = {
+    val reporter = new SparqlImportJobPublisher
+    JobMonitor.value.addPublisher(reporter)
     val writer = new OutputStreamWriter(out)
 
     if (conf.endpointLocation == null) {
@@ -47,6 +49,7 @@ case class SparqlImportJob(conf : SparqlConfig, id :  Identifier, refreshSchedul
 
     val success = execQuery(query, writer)
     writer.close
+    reporter.setFinishTime
     success
   }
 
@@ -179,4 +182,8 @@ case class SparqlConfig(endpointLocation : URI,  graphName : URI, sparqlPatterns
     query
   }
 
+}
+
+class SparqlImportJobPublisher extends ImportJobPublisher {
+  override def getPublisherName = "SPARQL Import Job"
 }

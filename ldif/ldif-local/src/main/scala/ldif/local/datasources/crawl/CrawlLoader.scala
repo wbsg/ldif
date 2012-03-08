@@ -28,10 +28,11 @@ import com.ontologycentral.ldspider.hooks.links.LinkFilterSelect
 import org.semanticweb.yars.nx.{Resource, Node}
 import com.ontologycentral.ldspider.hooks.sink.SinkCallback
 import java.io.OutputStream
-import ldif.local.scheduler.CallbackOutputStream
 import java.util.ArrayList
 import org.semanticweb.yars.nx.parser.Callback
 import collection.mutable.Set
+import ldif.local.scheduler.{CrawlImportJobPublisher, CallbackOutputStream}
+import ldif.util.JobMonitor
 
 /**
  * Streams data into temporary graph, crawling from given resource/URI seeds.
@@ -60,6 +61,9 @@ class CrawlLoader(seedUris : Traversable[URI], predicates : Traversable[URI] = T
   }
 
   private def crawl(callback : Callback, levels : Int = 1, limit : Int = -1, includeProvenance :Boolean = false) {
+    val reporter = new CrawlImportJobPublisher
+    JobMonitor.value.addPublisher(reporter)
+
     val sink = new SinkCallback(callback, includeProvenance)
 
     for (seed <- seedUris){
@@ -95,5 +99,6 @@ class CrawlLoader(seedUris : Traversable[URI], predicates : Traversable[URI] = T
 
       log.debug("Crawled seed: "+seed)
     }
+    reporter.setFinishTime
   }
 }

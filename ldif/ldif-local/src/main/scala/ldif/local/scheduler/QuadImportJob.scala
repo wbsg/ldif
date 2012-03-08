@@ -22,17 +22,18 @@ import ldif.local.datasources.dump.DumpLoader
 import xml.Node
 import ldif.datasources.dump.QuadParser
 import java.io.{OutputStreamWriter, OutputStream}
-import ldif.util.{Consts, Identifier}
 import org.slf4j.LoggerFactory
 import ldif.runtime.Quad
 import ldif.datasources.dump.parser.ParseException
+import ldif.util.{JobMonitor, Consts, Identifier}
 
 case class QuadImportJob(dumpLocation : String, id : Identifier, refreshSchedule : String, dataSource : String) extends ImportJob {
 
   private val log = LoggerFactory.getLogger(getClass.getName)
 
   override def load(out : OutputStream) : Boolean = {
-
+    val reporter = new QuadImportJobPublisher
+    JobMonitor.value.addPublisher(reporter)
     val writer = new OutputStreamWriter(out)
 
     // get bufferReader from Url
@@ -65,6 +66,7 @@ case class QuadImportJob(dumpLocation : String, id : Identifier, refreshSchedule
 
     writer.flush
     writer.close
+    reporter.setFinishTime
     true
   }
 
@@ -79,4 +81,8 @@ object QuadImportJob{
     val job = new QuadImportJob(dumpLocation.trim, id, refreshSchedule, dataSource)
     job
   }
+}
+
+class QuadImportJobPublisher extends ImportJobPublisher {
+  override def getPublisherName = "Quad Import Job"
 }

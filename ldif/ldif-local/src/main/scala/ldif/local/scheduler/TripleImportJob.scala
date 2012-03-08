@@ -22,10 +22,10 @@ import ldif.local.datasources.dump.DumpLoader
 import xml.Node
 import ldif.datasources.dump.QuadParser
 import java.io.{OutputStreamWriter, OutputStream}
-import ldif.util.{Consts, Identifier}
 import ldif.runtime.Quad
 import ldif.datasources.dump.parser.ParseException
 import org.slf4j.LoggerFactory
+import ldif.util.{Publisher, JobMonitor, Consts, Identifier}
 
 case class TripleImportJob(dumpLocation : String, id : Identifier, refreshSchedule : String, dataSource : String) extends ImportJob {
 
@@ -34,6 +34,8 @@ case class TripleImportJob(dumpLocation : String, id : Identifier, refreshSchedu
   val graph = Consts.DEFAULT_IMPORTED_GRAPH_PREFIX+id
 
   override def load(out : OutputStream) : Boolean = {
+    val reporter = new TripleImportJobPublisher
+    JobMonitor.value.addPublisher(reporter)
 
     val writer = new OutputStreamWriter(out)
 
@@ -67,6 +69,7 @@ case class TripleImportJob(dumpLocation : String, id : Identifier, refreshSchedu
 
     writer.flush
     writer.close
+    reporter.setFinishTime
     true
   }
 
@@ -81,4 +84,8 @@ object TripleImportJob {
     val job = new TripleImportJob(dumpLocation.trim, id, refreshSchedule, dataSource)
     job
   }
+}
+
+class TripleImportJobPublisher extends ImportJobPublisher {
+  override def getPublisherName = "Triple Import Job"
 }

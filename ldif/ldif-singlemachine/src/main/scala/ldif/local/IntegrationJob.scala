@@ -612,7 +612,6 @@ object IntegrationJob {
       log.warn("No configuration file given. \nUsage: IntegrationJob <integration job configuration file>")
       System.exit(1)
     }
-    MonitorServer.start("http://localhost:5343/")
     var debug = false
     val configFile = new File(args(args.length-1))
 
@@ -633,8 +632,6 @@ object IntegrationJob {
 
     val integrator = new IntegrationJob(config, debug)
     integrator.runIntegration
-
-//    MonitorServer.stop()
   }
 }
 

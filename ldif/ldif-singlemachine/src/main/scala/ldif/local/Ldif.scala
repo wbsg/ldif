@@ -22,6 +22,7 @@ import ldif.config.SchedulerConfig
 import java.io.File
 import org.slf4j.LoggerFactory
 import ldif.util.{ValidationException, LogUtil}
+import rest.MonitorServer
 ;
 
 
@@ -61,6 +62,9 @@ object Ldif {
         }
       }
       val scheduler = new Scheduler(config, debug)
+
+      // Start REST HTTP Server
+      MonitorServer.start("http://localhost:5343/")
 
       // check if dumpDir exists or can be created
       val dumpDir = new File(config.dumpLocationDir)

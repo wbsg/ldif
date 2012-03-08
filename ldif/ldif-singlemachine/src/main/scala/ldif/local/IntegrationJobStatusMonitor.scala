@@ -11,7 +11,7 @@ import ldif.util.{StatusMonitor, Register, ReportPublisher, Publisher}
  */
 
 class IntegrationJobStatusMonitor extends Publisher with StatusMonitor with Register[ReportPublisher] {
-  def getPublisherName = "integration job"
+  def getPublisherName = "Integration Job"
 
   def getLink: Option[String] = Some("integrationJob")
 
