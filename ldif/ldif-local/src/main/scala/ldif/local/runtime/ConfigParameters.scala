@@ -18,9 +18,10 @@
 
 package ldif.local.runtime
 
+import impl.FileQuadWriter
 import java.util.Properties
 import ldif.runtime.QuadWriter
 
-case class ConfigParameters(configProperties: Properties, otherQuadsWriter: QuadWriter = null, sameAsWriter: QuadWriter = null, provenanceQuadsWriter: QuadWriter = null, collectNotUsedQuads : Boolean = false)
+case class ConfigParameters(configProperties: Properties, otherQuadsWriter: FileQuadWriter = null, sameAsWriter: FileQuadWriter = null, provenanceQuadsWriter: FileQuadWriter = null, passOnToSieveWriter: FileQuadWriter = null, collectNotUsedQuads : Boolean = false)
 
 

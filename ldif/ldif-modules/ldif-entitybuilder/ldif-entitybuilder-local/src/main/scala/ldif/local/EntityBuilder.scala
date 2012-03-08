@@ -32,6 +32,7 @@ import util.{EntityBuilderReportPublisher, StringPool}
 import ldif.util.{JobMonitor, ReportPublisher, Consts, Uri}
 
 class EntityBuilder (entityDescriptions : IndexedSeq[EntityDescription], readers : Seq[QuadReader], config: ConfigParameters) extends FactumBuilder with EntityBuilderTrait {
+  entityBuilderReportPublisher.name = "Entity Builder (in-memory)"
   private val log = LoggerFactory.getLogger(getClass.getName)
   // If this is true, quads like provenance quads (or even all quads) are saved for later use (merge)
   private val collectNotUsedQuads = config.collectNotUsedQuads

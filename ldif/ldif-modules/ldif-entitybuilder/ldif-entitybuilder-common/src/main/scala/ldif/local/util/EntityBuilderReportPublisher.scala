@@ -15,7 +15,6 @@ import java.util.concurrent.atomic.AtomicInteger
 class EntityBuilderReportPublisher(var name: String) extends ReportPublisher {
   var quadsReadCounter = new AtomicInteger(0)
   var finishedReading = false
-  var sameAsQuadCounter = new AtomicInteger(0)
   var entityQueuesFilled = new AtomicInteger(0)
   var finishedBuilding = false
   var entitiesBuilt = new AtomicInteger(0)
@@ -36,8 +35,6 @@ class EntityBuilderReportPublisher(var name: String) extends ReportPublisher {
       else
         reportItems.append(ReportItem("Loading quads", "Running...", quadsReadCounter + " quads loaded"))
     }
-    if(sameAsQuadCounter.get>0)
-      reportItems.append(ReportItem("External sameAs quads", "-", sameAsQuadCounter + " sameAs quads read"))
     if(entitiesBuilt.get > 0 || finishedBuilding)
       reportItems.append(ReportItem("Entities built", "-", entitiesBuilt.toString))
     if(finished) {

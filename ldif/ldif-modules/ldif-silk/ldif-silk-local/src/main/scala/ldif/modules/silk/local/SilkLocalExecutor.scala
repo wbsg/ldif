@@ -43,6 +43,8 @@ class SilkLocalExecutor(useFileInstanceCache: Boolean = false, allowLinksForSame
 
   type OutputFormat = GraphFormat
 
+  val reporter = new SilkReportPublisher
+
   def input(task : SilkTask) = {
     implicit val prefixes = task.silkConfig.silkConfig.prefixes
     val entityDescriptions = CreateEntityDescriptions(task.linkSpec)

@@ -33,6 +33,7 @@ import ldif.modules.sieve.quality.QualityAssessmentProvider
 class SieveLocalFusionExecutor(useFileInstanceCache: Boolean = false) extends Executor
 {
   private val log = LoggerFactory.getLogger(getClass.getName)
+  val reporter = new SieveFusionPhaseReportPublisher
 
   //private val numThreads = 8
   //private val numThreads = Runtime.getRuntime.availableProcessors

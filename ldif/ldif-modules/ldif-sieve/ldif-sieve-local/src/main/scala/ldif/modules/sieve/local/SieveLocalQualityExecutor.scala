@@ -32,6 +32,7 @@ import ldif.runtime.QuadWriter
 class SieveLocalQualityExecutor(useFileInstanceCache: Boolean = false) extends Executor
 {
   private val log = LoggerFactory.getLogger(getClass.getName)
+  val reporter = new SieveQualityPhaseReportPublisher
 
   //private val numThreads = 8
   //private val numThreads = Runtime.getRuntime.availableProcessors

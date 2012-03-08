@@ -24,9 +24,9 @@ trait Publisher {
    */
   def getPublisherName: String
 
-  def setStartTime = startTime = new GregorianCalendar()
+  def setStartTime() = startTime = new GregorianCalendar()
 
-  def setFinishTime = {
+  def setFinishTime() = {
     finishTime = new GregorianCalendar()
     finished = true
   }

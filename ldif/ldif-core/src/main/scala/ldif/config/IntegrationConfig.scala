@@ -80,6 +80,9 @@ object IntegrationConfig {
     value
   }
 
+  /**
+   * Returns a File object if the element is defined and the value is not empty, else it returns null
+   */
   protected def getFile(key : String, baseDir : String, skipIfNotDefined : Boolean = false) : File = {
     val value : String = (xml \ key text)
     var file : File = null

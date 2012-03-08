@@ -36,9 +36,7 @@ object EntityBuilderFactory {
     val entityBuilderType = configParameters.configProperties.getProperty("entityBuilderType", "in-memory").toLowerCase
     entityBuilderType match {
       case "voldemort" => new EntityBuilder(entityDescriptions, reader, configParameters)
-      case "in-memory" => val eb = new EntityBuilder(entityDescriptions, reader, configParameters)
-        eb.entityBuilderReportPublisher.name = "Entity Builder (in-memory)"
-        return eb
+      case "in-memory" => return new EntityBuilder(entityDescriptions, reader, configParameters)
       case "quad-store" => {
         createQuadStoreEntityBuilder(configParameters, entityDescriptions, reader)
       }
@@ -63,8 +61,6 @@ object EntityBuilderFactory {
         configParameters.configProperties.getProperty("databaseLocation", System.getProperty("java.io.tmpdir"))
 
     val quadStore = createQuadStore(quadStoreType, databaseLocation, reuseDatabase)
-    val eb = new QuadStoreEntityBuilder(quadStore, entityDescriptions, reader, configParameters, reuseDatabase)
-    eb.entityBuilderReportPublisher.name = "Entity Builder (quad store)"
-    eb
+    new QuadStoreEntityBuilder(quadStore, entityDescriptions, reader, configParameters, reuseDatabase)
   }
 }

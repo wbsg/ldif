@@ -43,6 +43,7 @@ class QuadStoreEntityBuilder(store: QuadStoreTrait, entityDescriptions : Seq[Ent
   private val tmpDir = new File(config.configProperties.getProperty("databaseLocation", System.getProperty("java.io.tmpdir")))
 
   private val PHT = new PropertyHashTable(entityDescriptions)
+  entityBuilderReportPublisher.name = "Entity Builder (quad store)"
 
   initStore
   loadDataset
