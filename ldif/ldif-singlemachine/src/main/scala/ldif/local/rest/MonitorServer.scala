@@ -29,18 +29,21 @@ class MonitorServer {
   }
 }
 
-@Path("/integrationJob")
+@Path("/{jobtype}")
 class IntegrationJobMonitorServer {
   @GET @Produces(Array[String]("text/html"))
   @Path("/{index}")
   def getIntegrationJobHtml(
          @PathParam("index") index: Int,
+         @PathParam("jobtype") jobtype: String,
          @DefaultValue("0") @QueryParam("refresh") refreshTimeInSeconds: Int): String = {
-    val integrationJobMonitor = MonitorServer.generalStatusMonitor.getPublisher(index)
-    if(integrationJobMonitor.isInstanceOf[IntegrationJobStatusMonitor])
-      return integrationJobMonitor.asInstanceOf[IntegrationJobStatusMonitor].getHtml(Map("refresh" -> refreshTimeInSeconds.toString ))
-    else
-"FUCK"//      throw new WebApplicationException(Response.Status.NOT_FOUND)
+    val jobPublisher = MonitorServer.generalStatusMonitor.getPublisher(index)
+
+    if(jobPublisher!=None && jobPublisher.get.isInstanceOf[StatusMonitor] && jobPublisher.get.getLink!=None && jobPublisher.get.getLink.get==jobtype) {
+      val statusMonitor = jobPublisher.get.asInstanceOf[StatusMonitor]
+      return statusMonitor.getHtml(Map("refresh" -> refreshTimeInSeconds.toString ))
+    } else
+      throw new WebApplicationException(Response.Status.NOT_FOUND)
   }
 
   @GET @Produces(Array[String]("text/plain"))

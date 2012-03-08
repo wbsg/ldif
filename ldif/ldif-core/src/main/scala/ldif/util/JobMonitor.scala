@@ -16,7 +16,7 @@ class JobMonitor extends StatusMonitor with Register[Publisher]{
     sb.append("</head><body>\n")
     sb.append("<h1>Status Report for LDIF Jobs</h1>\n")
     sb.append("<table border=\"1\" cellpadding=\"3\" cellspacing=\"0\">")
-    sb.append("<tr><th>Job Name</th><th>Start Time</th><th>Finish Time</th><th>Duration</th><th>Link</th></tr>")
+    sb.append("<tr><th>Job Name</th><th>Start Time</th><th>Finish Time</th><th>Duration</th><th>Job Infos</th></tr>")
     for((publisher, index) <- getPublishers().zipWithIndex) {
       sb.append("<tr><td>").append(publisher.getPublisherName).append("</td><td>")
         .append(publisher.getFormattedStartTime).append("</td><td>")
@@ -32,7 +32,7 @@ class JobMonitor extends StatusMonitor with Register[Publisher]{
       sb.append("</td><td>")
       publisher.getLink match {
         case None => sb.append("-")
-        case Some(uriPrefix) => sb.append("<a href=\"").append(uriPrefix).append("/").append(index).append("\">link</a>")
+        case Some(uriPrefix) => sb.append("<a href=\"").append(uriPrefix).append("/").append(index).append("\">show</a>")
       }
       sb.append("</td></tr>\n")
     }
