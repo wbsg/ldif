@@ -40,14 +40,14 @@ import ldif.runtime.QuadWriter
 import ldif.modules.sieve.quality.{QualityTask, QualityConfig, QualityModule, EmptyQualityConfig}
 import collection.mutable.HashMap
 import ldif.config._
-import util.{StringPool}
+import util.StringPool
 
 class IntegrationJob (val config : IntegrationConfig, debugMode : Boolean = false) {
 
   private val log = LoggerFactory.getLogger(getClass.getName)
-  private val reporter = new IntegrationJobPublisher
-  JobStatusMonitor.value.addPublisher(reporter)
-  IntegrationJobStatusMonitor.value = reporter
+  private val reporter = new IntegrationJobStatusMonitor
+  JobMonitor.value.addPublisher(reporter)
+  IntegrationJobMonitor.value = reporter
 
   // Object to store all kinds of configuration data
   private var configParameters: ConfigParameters = null

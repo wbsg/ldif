@@ -1,14 +1,20 @@
-package ldif.util
+package ldif.local
+
+import ldif.util.{StatusMonitor, Register, ReportPublisher, Publisher}
 
 /**
  * Created by IntelliJ IDEA.
  * User: andreas
- * Date: 2/21/12
- * Time: 4:20 PM
+ * Date: 3/5/12
+ * Time: 6:26 PM
  * To change this template use File | Settings | File Templates.
  */
 
-class IntegrationJobMonitor extends StatusMonitor with ReportRegister {
+class IntegrationJobStatusMonitor extends Publisher with StatusMonitor with Register[ReportPublisher] {
+  def getPublisherName = "integration job"
+
+  def getLink: Option[String] = Some("integrationJob")
+
   def getHtml(params: Map[String, String]) = {
     val sb = new StringBuilder
     sb.append("<html><head><title>Integration Job Report</title>")

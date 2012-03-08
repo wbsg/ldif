@@ -42,3 +42,9 @@ class JobMonitor extends StatusMonitor with Register[Publisher]{
 
   def getText = "Text report not implemented, yet" //TODO
 }
+
+object JobMonitor {
+  val value: StatusMonitor with Register[Publisher] = new JobMonitor
+
+  def clean() = value.clean()
+}

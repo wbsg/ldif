@@ -10,7 +10,7 @@ import ldif.util.{ReportPublisher, StatusMonitor, Publisher, Register}
  * To change this template use File | Settings | File Templates.
  */
 
-object IntegrationJobStatusMonitor {
+object IntegrationJobMonitor {
   private[local] var value: Register[ReportPublisher] = new Register[ReportPublisher] {}
 
   def getIntegrationJobPublisher = value

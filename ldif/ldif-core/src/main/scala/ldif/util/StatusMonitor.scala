@@ -8,6 +8,9 @@ package ldif.util
  * To change this template use File | Settings | File Templates.
  */
 
+/**
+ * Objects of this trait give text and HTML representations for a REST interface.
+ */
 trait StatusMonitor {
   def getHtml: String = getHtml(Map())
 

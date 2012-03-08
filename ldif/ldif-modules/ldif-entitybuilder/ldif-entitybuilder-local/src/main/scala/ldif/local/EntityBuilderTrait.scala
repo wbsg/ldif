@@ -21,11 +21,11 @@ package ldif.local
 import ldif.entity.EntityDescription
 import runtime.{QuadReader, EntityWriter}
 import util.EntityBuilderReportPublisher
-import ldif.util.JobStatusMonitor
+import ldif.util.JobMonitor
 
 trait EntityBuilderTrait {
   val entityBuilderReportPublisher = new EntityBuilderReportPublisher("Entity Builder")
-  IntegrationJobStatusMonitor.value.addPublisher(entityBuilderReportPublisher)
+  IntegrationJobMonitor.value.addPublisher(entityBuilderReportPublisher)
 
   def buildEntities (ed : EntityDescription, writer : EntityWriter)
   //
