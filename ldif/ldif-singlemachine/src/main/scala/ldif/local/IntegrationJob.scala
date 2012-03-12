@@ -423,15 +423,16 @@ class IntegrationJob (val config : IntegrationConfig, debugMode : Boolean = fals
 
     // create a mapping between quality task and entity reader for corresponding entities
     // todo: this could also work if we created only one entitydescription for all task? bad for distributed computing, maybe?
-    var taskToReaders = new HashMap[QualityTask, Seq[EntityReader]]
-    for ((task) <- qualityModule.tasks) {
-      val readers : Seq[EntityReader] =  buildEntities(cloneQuadReaders(inputQuadsReader), Seq(task.qualitySpec.entityDescription), ConfigParameters(config.properties))
-      if (readers.size > 0) {
-        taskToReaders += task -> readers
-      } else {
-        throw new Exception("No reader was created from buildEntities.")
-      }
-    }
+//  var taskToReaders = new HashMap[QualityTask, Seq[EntityReader]]
+    val entityDescriptions = qualityModule.tasks.toSeq.map(_.qualitySpec.entityDescription)
+    val readers = buildEntities(cloneQuadReaders(inputQuadsReader), entityDescriptions, ConfigParameters(config.properties))
+//    for ((task) <- qualityModule.tasks) {
+//      if (readers.size > 0) {
+//        taskToReaders += task -> readers
+//      } else {
+//        throw new Exception("No reader was created from buildEntities.")
+//      }
+//    }
 
     StringPool.reset
     log.info("Time needed to build entities for quality assessment phase: " + stopWatch.getTimeSpanInSeconds + "s")
@@ -439,10 +440,10 @@ class IntegrationJob (val config : IntegrationConfig, debugMode : Boolean = fals
     val output = new QuadQueue
     val qualityExecutor = new SieveLocalQualityExecutor
     reporter.addPublisher(qualityExecutor.reporter)
-    //for((sieveTask, readers) <- sieveModule.tasks.toList zip entityReaders.toList)
-    for ((task, readers) <- taskToReaders) {
+    for((task, reader) <- qualityModule.tasks.toSeq zip readers)  {
+//  for ((task, readers) <- taskToReaders) {
       log.debug("\n\tMetric: %s\n\tFunction: %s\n\tEntityDescription: %s".format(task.qualitySpec.outputPropertyNames,task.qualitySpec.scoringFunctions,readers.map(r => r.entityDescription)))
-      qualityExecutor.execute(task, readers, output)
+      qualityExecutor.execute(task, Seq(reader), output)
     }
 
     qualityExecutor.reporter.setFinishTime
