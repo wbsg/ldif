@@ -43,7 +43,7 @@
 
   <xs:element name="crawlImportJob" substitutionGroup="ldif:job">
     <xs:complexType>
-      <xs:sequence>
+      <xs:all>
         <xs:element name="seedURIs" >
           <xs:complexType>
             <xs:sequence>
@@ -60,13 +60,13 @@
         </xs:element>
 	    <xs:element name="levels" type="xs:unsignedShort" minOccurs="0" />
         <xs:element name="resourceLimit" type="xs:unsignedInt" minOccurs="0" />
-      </xs:sequence>
+      </xs:all>
     </xs:complexType>
   </xs:element>
 
   <xs:element name="sparqlImportJob" substitutionGroup="ldif:job">
     <xs:complexType>
-      <xs:sequence>
+     <xs:all>
         <xs:element name="endpointLocation" type="xs:anyURI" />
 
         <xs:element name="graphName" type="xs:anyURI" minOccurs="0" />
@@ -80,13 +80,14 @@
             </xs:sequence>
           </xs:complexType>
         </xs:element>
-      </xs:sequence>
+     </xs:all>
     </xs:complexType>
   </xs:element>
 
   <xs:element name="importJob">
     <xs:complexType>
-      <xs:sequence>
+      <xs:all>
+                <!-- the elements are unordered -->
 
         <xs:element name="internalId" type="ldif:internalIdType" minOccurs="0" />
 
@@ -94,9 +95,11 @@
 
         <xs:element name="refreshSchedule" type="ldif:refreshScheduleType" />
 
+        <xs:element name="renameGraphs" type="xs:string" minOccurs="0" />
+
         <xs:element ref="ldif:job" />
 
-       </xs:sequence>
+     </xs:all>
     </xs:complexType>
   </xs:element>
 

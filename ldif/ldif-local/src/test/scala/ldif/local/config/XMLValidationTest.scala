@@ -44,7 +44,7 @@ class XMLValidationTest extends FlatSpec with ShouldMatchers {
     }
     catch {
       case e:ValidationException => {
-        e.getMessage should equal ("The content of element 'scheduler' is not complete. One of '{\"http//www4.wiwiss.fu-berlin.de/ldif/\"dumpLocation}' is expected.")
+        e.getMessage should equal ("The content of element 'scheduler' is not complete. One of '{\"http//www4.wiwiss.fu-berlin.de/ldif/\"properties, \"http//www4.wiwiss.fu-berlin.de/ldif/\"dumpLocation}' is expected.")
       }
     }
   }

@@ -35,11 +35,9 @@ import org.slf4j.LoggerFactory
 import ldif.util._
 import ldif.modules.sieve.fusion.{FusionModule, EmptyFusionConfig, FusionConfig}
 import ldif.runtime.QuadWriter
-import ldif.modules.sieve.quality.{QualityTask, QualityConfig, QualityModule, EmptyQualityConfig}
-import collection.mutable.HashMap
+import ldif.modules.sieve.quality.{QualityConfig, QualityModule, EmptyQualityConfig}
 import ldif.config._
 import util.StringPool
-import ldif.modules.sieve.SieveConfig
 import ldif.modules.silk.local.{SilkReportPublisher, SilkLocalExecutor}
 import ldif.modules.sieve.local.{SieveFusionPhaseReportPublisher, SieveQualityPhaseReportPublisher, SieveLocalQualityExecutor, SieveLocalFusionExecutor}
 
@@ -559,8 +557,9 @@ class IntegrationJob (val config : IntegrationConfig, debugMode : Boolean = fals
     for (writer <- config.outputs.getByPhase(COMPLETE)) {
       var count = 0
 
-      //TODO add quadWriter string desc
-      // log.info("Writing output to "+config.output.getCanonicalPath)
+      //TODO consider adding a QuadWriter.getDescription method
+      // log.info("Writing output to "+config.output.description)
+      log.info("Writing integration output...")
       if (writer != null) {
         while(reader.hasNext) {
           writer.write(reader.read())
@@ -650,6 +649,7 @@ object IntegrationJob {
 
     val integrator = new IntegrationJob(config, debug)
     integrator.runIntegration
+    sys.exit(0)
   }
 }
 

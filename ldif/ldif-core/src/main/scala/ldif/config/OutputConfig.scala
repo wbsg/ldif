@@ -18,13 +18,13 @@
 
 package ldif.config
 
-import xml.Node
 import ldif.output._
 import ldif.runtime.QuadWriter
 import org.slf4j.LoggerFactory
 import ldif.util.{Consts, CommonUtils}
+import xml.{Elem, Node}
 
-sealed trait IntegrationPhase   {val name: String}
+sealed trait IntegrationPhase {val name: String}
 case object DT extends IntegrationPhase {val name = "Data translation" }
 case object IR extends IntegrationPhase {val name = "Identity resolution" }
 case object COMPLETE extends IntegrationPhase {val name = "Complete" }
@@ -56,16 +56,16 @@ object OutputConfig {
     new OutputConfig((xml \ "output").map(parseOutput(_)))
 
   private def parseOutput(xml : Node) : (QuadWriter, IntegrationPhase) =
-    (parseOutputWriter(xml.child.head), parseOutputPhase((xml \ "phase").headOption))
+    (parseOutputWriter(xml.child.filter(_.isInstanceOf[Elem]).head), parseOutputPhase((xml \ "phase").filter(_.isInstanceOf[Elem]).headOption))
 
   private def parseOutputWriter (xml : Node) : QuadWriter =
-    if (xml.label == "sparql") //TODO FIXME this is is hackish...
+    if (xml.label == "sparql")
       getSparqlWriter(xml)
     else getFileWriter(xml)
 
   private def parseOutputPhase (xml : Option[Node]) : IntegrationPhase = {
     val phase = xml match {
-      case Some(node) =>  node.text
+      case Some(node) =>  node.text.trim.toLowerCase
       case None =>  Consts.OutputPhaseDefault
     }
    phase match {
@@ -92,7 +92,7 @@ object OutputConfig {
   }
 
   private def getFileWriter(xml : Node) : SerializingQuadWriter = {
-    val outputUriOrPath = CommonUtils.getValueAsString(xml,"path")
+    val outputUriOrPath = CommonUtils.getValueAsString(xml,"path").trim
     if (outputUriOrPath == "") {
       log.warn("Invalid file output config. Please check http://www.assembla.com/code/ldif/git/nodes/ldif/ldif-core/src/main/resources/xsd/IntegrationJob.xsd")
       null
