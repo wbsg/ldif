@@ -24,12 +24,12 @@ import java.util.{Date, Calendar}
 import java.io._
 import java.util.concurrent.ConcurrentHashMap
 import org.apache.commons.io.FileUtils
-import ldif.util.{Consts, StopWatch, FatalErrorListener}
 import ldif.local.scheduler.ImportJob
 import ldif.datasources.dump.QuadParser
 import org.apache.hadoop.conf.Configuration
 import org.apache.hadoop.fs.{Path, FileSystem}
 import ldif.config.IntegrationConfig
+import ldif.util.{CommonUtils, Consts, StopWatch, FatalErrorListener}
 
 /*
  * A singlemachine scheduler/importer that uploads dumps to HDFS and runs Hadoop integration jobs
@@ -257,7 +257,7 @@ class HadoopScheduler (val config : SchedulerConfig, debug : Boolean = false) {
       Traversable(loadImportJob(file))
     }
     else {// file is a directory
-      file.listFiles.toTraversable.map(loadImportJob(_))
+      CommonUtils.listFiles(file,"xml").map(loadImportJob(_))#
     }
   }
 
@@ -335,5 +335,7 @@ class HadoopScheduler (val config : SchedulerConfig, debug : Boolean = false) {
       cal.setTime(date)
       cal
   }
+
+  def getImportJobs = importJobs
 }
 
