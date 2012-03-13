@@ -22,6 +22,7 @@ import ldif.module.Module
 import java.io.File
 import de.fuberlin.wiwiss.silk.plugins.Plugins
 import de.fuberlin.wiwiss.silk.config.LinkingConfig
+import ldif.util.CommonUtils
 
 /**
  * Silk Module.
@@ -49,7 +50,7 @@ object SilkModule {
     if(file!=null && file.isFile)
       LinkingConfig.load(file)
     else if(file !=null && file.isDirectory && file.listFiles.size > 0)
-      file.listFiles.map(loadConfig).reduceLeft(_ merge _)
+      CommonUtils.listFiles(file,"xml").map(loadConfig).reduceLeft(_ merge _)
     else
       LinkingConfig.empty
   }

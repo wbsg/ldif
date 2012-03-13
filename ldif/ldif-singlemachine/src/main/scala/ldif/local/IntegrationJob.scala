@@ -313,7 +313,7 @@ class IntegrationJob (val config : IntegrationConfig, debugMode : Boolean = fals
     for (source <-  sources) {
       val sourceFile = new File(source)
       if(sourceFile.isDirectory) {
-          for (dump <- sourceFile.listFiles)  {
+        for (dump <- sourceFile.listFiles.filterNot(_.isHidden))  {
            quadQueues = loadDump(dump) +: quadQueues
           }
       }
@@ -440,7 +440,7 @@ class IntegrationJob (val config : IntegrationConfig, debugMode : Boolean = fals
     reporter.addPublisher(qualityExecutor.reporter)
     for((task, reader) <- qualityModule.tasks.toSeq zip readers)  {
 //  for ((task, readers) <- taskToReaders) {
-      log.debug("\n\tMetric: %s\n\tFunction: %s\n\tEntityDescription: %s".format(task.qualitySpec.outputPropertyNames,task.qualitySpec.scoringFunctions,readers.map(r => r.entityDescription)))
+      log.debug("\n\tMetric: %s\n\tFunction: %s\n\tEntityDescription: %s".format(task.qualitySpec.outputPropertyNames,task.qualitySpec.scoringFunctions,reader.entityDescription))
       qualityExecutor.execute(task, Seq(reader), output)
     }
 

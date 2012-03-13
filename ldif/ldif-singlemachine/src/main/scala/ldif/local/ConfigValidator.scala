@@ -102,7 +102,7 @@ object ConfigValidator {
     for(source <- sources) {
       val sourceFile = new File(source)
       if(sourceFile.isDirectory)
-        sourceFile.listFiles().map(validateSourceFile(_,errorMap))
+        sourceFile.listFiles().filterNot(_.isHidden).map(validateSourceFile(_,errorMap))
       else
         validateSourceFile(sourceFile,errorMap)
     }
