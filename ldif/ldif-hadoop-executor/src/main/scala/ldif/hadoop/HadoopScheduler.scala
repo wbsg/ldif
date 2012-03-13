@@ -257,7 +257,7 @@ class HadoopScheduler (val config : SchedulerConfig, debug : Boolean = false) {
       Traversable(loadImportJob(file))
     }
     else {// file is a directory
-      CommonUtils.listFiles(file,"xml").map(loadImportJob(_))#
+      CommonUtils.listFiles(file,"xml").map(loadImportJob(_))
     }
   }
 
