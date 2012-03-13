@@ -16,20 +16,20 @@
  * limitations under the License.
  */
 
-package ldif.hadoop
+package ldif.local
 
 import org.scalatest.FlatSpec
 import org.scalatest.matchers.ShouldMatchers
 import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner
-import ldif.util.{CommonUtils, OutputValidator}
+import ldif.util.{OutputValidator, CommonUtils}
 import java.io.File
 import java.util.Properties
 import ldif.config.IntegrationConfig
 import ldif.output.SerializingQuadWriter
 
 @RunWith(classOf[JUnitRunner])
-class HadoopIntegrationTest extends FlatSpec with ShouldMatchers {
+class IntegrationTest extends FlatSpec with ShouldMatchers {
 
   val configFile = CommonUtils.loadFile("integration/integrationJob.xml")
 
@@ -42,50 +42,69 @@ class HadoopIntegrationTest extends FlatSpec with ShouldMatchers {
 
     val ldifOutput = runLdif(configFile, CommonUtils.buildProperties(fixedProperties))
 
-    // ldifOutput.size should equal (9)
-
     val correctQuads = CommonUtils.getQuads(List(
-      "<http://source/uriB> <http://www.w3.org/2002/07/owl#sameAs> <http://source/uriC> <http://www4.wiwiss.fu-berlin.de/ldif/graph#uriRewriting> .  ",
+      "<http://source/uriB> <http://www.w3.org/2002/07/owl#sameAs> <http://source/uriC> <http://source/graph7> .  ",
       "<http://source/uriC> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://ldif/class> <http://source/graph7> . ",
-      "<http://source/uriA> <http://www.w3.org/2002/07/owl#sameAs> <http://source/uriC> <http://www4.wiwiss.fu-berlin.de/ldif/graph#uriRewriting> . ",
+      "<http://source/uriA> <http://www.w3.org/2002/07/owl#sameAs> <http://source/uriC> <http://source/graph6> . ",
       "<http://source/uriC> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://ldif/class> <http://source/graph6> . ",
-      "<http://source/uriB> <http://www.w3.org/2002/07/owl#sameAs> <http://source/uriA> <http://www4.wiwiss.fu-berlin.de/ldif/graph#generatedBySilk> . ",
+      "<http://source/uriB> <http://www.w3.org/2002/07/owl#sameAs> <http://source/uriC> <http://source/graph4> . ",
       "<http://source/uriC> <http://ldif/mapProp> \"map\" <http://source/graph4> . ",
-      "<http://source/uriA> <http://www.w3.org/2002/07/owl#sameAs> <http://source/uriB> <http://www4.wiwiss.fu-berlin.de/ldif/graph#generatedBySilk> . ",
+      "<http://source/uriA> <http://www.w3.org/2002/07/owl#sameAs> <http://source/uriC> <http://source/graph3> . ",
       "<http://source/uriC> <http://ldif/mapProp> \"map\" <http://source/graph3> . "
     ))
+    //TODO Fix - Output should contain the following provenance quads!
+    // <http://source/graph1> <http://ldif/provProp> "_" <http://ldif/provGraph> .
     OutputValidator.contains(ldifOutput, correctQuads) should equal(true)
 
     val incorrectQuads = CommonUtils.getQuads(List(
-      "<http://source/uriA> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://source/class> ." ,
+      "<http://source/uriA> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://source/class> .",
       "<http://source/uriA> <http://www.w3.org/2002/07/owl#sameAs> <http://source/uriC> <http://source/graph1> ."
     ))
-    OutputValidator.contains(ldifOutput, incorrectQuads) should equal (false)
+    OutputValidator.contains(ldifOutput, incorrectQuads) should equal(false)
   }
 
   it should "run the whole integration flow correctly (custom properties)" in {
-    val properties = CommonUtils.buildProperties(fixedProperties ++ Map(("uriMinting","true"),("useExternalSameAsLinks","false"), ("output","all")))
+    val properties = CommonUtils.buildProperties(fixedProperties ++ Map(("uriMinting", "true"), ("useExternalSameAsLinks", "false"), ("output", "all")))
 
     val ldifOutput = runLdif(configFile, properties)
 
-    // ldifOutput.size should equal (15)
+    ldifOutput.size should equal (17)
 
     val correctQuads = CommonUtils.getQuads(List(
       "<http://ldif/mint> <http://ldif/mapProp> \"map\" <http://source/graph4> .",
-      "<http://source/uriB> <http://www.w3.org/2002/07/owl#sameAs> <http://ldif/mint> <http://www4.wiwiss.fu-berlin.de/ldif/graph#uriMinting> ."
+      "<http://source/uriA> <http://www.w3.org/2002/07/owl#sameAs> <http://ldif/mint> <http://source/graph2> ."
     ))
     OutputValidator.contains(ldifOutput, correctQuads) should equal(true)
 
   }
 
+  //TODO Fix - Provenance data should be discarded when outputFormat=nt
+  //  it should "run the whole integration flow correctly (ouput=nt)" in {
+  //    val properties = CommonUtils.buildProperties(fixedProperties ++ Map(("outputFormat","nt"), ("output","all")))
+  //
+  //    val ldifOutput = runLdif(configFile, properties)
+  //
+  //    val incorrectQuads = CommonUtils.getQuads(List(
+  //      "<http://source/graph1> <http://ldif/provProp> \"_\" ."
+  //    ))
+  //
+  //    OutputValidator.contains(ldifOutput, incorrectQuads) should equal(false)
+  //  }
+
   //TODO see http://www.assembla.com/spaces/ldif/wiki/Integration_behaviours
 
-  private def runLdif(configFile : File, customProperties : Properties, debugMode: Boolean = false) = {
+  private def runLdif(configFile: File, customProperties: Properties, debugMode: Boolean = false) = {
     var config = IntegrationConfig.load(configFile)
-    // override properties
+    // Override properties
+    //  Default values:
+    //  - uriMinting=false
+    //  - rewriteURIs=true
+    //  - output=mapped-only
+    //  - useExternalSameAsLinks=true
+    //  - outputFormat=nq
     config = config.copy(properties = customProperties)
-    val integrator = new HadoopIntegrationJob(config, debugMode)
-    // run integration
+    val integrator = new IntegrationJob(config, debugMode)
+    // Run integration
     integrator.runIntegration
     CommonUtils.getQuads(new File(integrator.config.outputs.outputs.head._1.asInstanceOf[SerializingQuadWriter].filepath))
   }

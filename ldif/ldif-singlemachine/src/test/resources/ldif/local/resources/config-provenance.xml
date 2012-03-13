@@ -1,8 +1,0 @@
-<integrationJob xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-           xmlns="http://www4.wiwiss.fu-berlin.de/ldif/">
-  <properties>test-provenance.properties</properties>
-  <sources><source>sources-provenance</source></sources>
-  <linkSpecifications>linkSpecs</linkSpecifications>
-  <mappings>mappings</mappings>
-  <outputs><output><file><path>output.nq</path></file></output></outputs>
-</integrationJob>

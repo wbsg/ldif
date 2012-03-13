@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Silk xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:noNamespaceSchemaLocation="../../xsd/LinkSpecificationLanguage.xsd" >
+    <Prefixes>
+        <Prefix id="rdf" namespace="http://www.w3.org/1999/02/22-rdf-syntax-ns#" />
+        <Prefix id="rdfs" namespace="http://www.w3.org/2000/01/rdf-schema#" />
+        <Prefix id="owl" namespace="http://www.w3.org/2002/07/owl#" />
+	<Prefix id="source" namespace="http://source/" />
+	<Prefix id="target" namespace="http://ldif/" />
+    </Prefixes>
+
+    <Interlinks>
+        <Interlink id="link">
+            <LinkType>owl:sameAs</LinkType>
+
+            <SourceDataset dataSource="SOURCE" var="a">
+                <RestrictTo>?a rdf:type target:class</RestrictTo>
+            </SourceDataset>
+
+            <TargetDataset dataSource="TARGET" var="b">
+                <RestrictTo>?b rdf:type target:class</RestrictTo>
+            </TargetDataset>
+
+            <LinkageRule>
+                <Compare metric="equality">
+                    <TransformInput function="lowerCase">
+                        <Input path="?a/target:mapProp" />
+                    </TransformInput>
+                    <TransformInput function="lowerCase">
+                        <Input path="?b/target:mapProp" />
+                    </TransformInput>
+                </Compare>
+            </LinkageRule>
+
+            <Filter />
+        </Interlink>
+    </Interlinks>
+
+</Silk>

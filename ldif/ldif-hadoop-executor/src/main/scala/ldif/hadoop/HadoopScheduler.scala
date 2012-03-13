@@ -337,5 +337,6 @@ class HadoopScheduler (val config : SchedulerConfig, debug : Boolean = false) {
   }
 
   def getImportJobs = importJobs
+  def getIntegrationJob = integrationJob
 }
 

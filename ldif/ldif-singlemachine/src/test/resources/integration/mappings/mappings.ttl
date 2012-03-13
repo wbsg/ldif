@@ -1,0 +1,12 @@
+# R2R mappings
+
+@prefix source: <http://source/> .
+@prefix target: <http://ldif/> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+
+source:mapProp rdfs:subPropertyOf target:mapProp .
+
+#added for Silk SourceDataset restrictions  (doesn't support other restriction, eg. ?a p:prop ?x OR ?a rdf:type OR ?a ?a p:prop "value")
+source:class rdfs:subClassOf target:class .
+
+
