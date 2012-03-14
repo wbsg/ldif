@@ -30,7 +30,7 @@
             description="The idea is to use values from multiple DBpedia languages to improve the quality of data about cities.">
         <Class name="dbpedia-owl:City">
             <Property name="dbpedia-owl:areaTotal">
-                <FusionFunction class="KeepFirst" metric="sieve:recency"/>
+                <FusionFunction class="KeepValuesWithHighestScore" metric="sieve:recency"/>
             </Property>
             <Property name="dbpedia-owl:populationTotal">
                 <FusionFunction class="KeepFirst" metric="sieve:recency"/>
