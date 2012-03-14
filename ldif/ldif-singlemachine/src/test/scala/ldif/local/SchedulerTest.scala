@@ -30,7 +30,7 @@ import ldif.util.{OutputValidator, CommonUtils}
 @RunWith(classOf[JUnitRunner])
 class SchedulerTest extends FlatSpec with ShouldMatchers {
 
-  val configFile = loadConfig("scheduler/scheduler-config.xml")
+  val configFile = CommonUtils.loadFile("scheduler/scheduler-config.xml")
   val scheduler = new Scheduler(SchedulerConfig.load(configFile))
 
   it should "schedule a job correctly" in {
@@ -45,6 +45,7 @@ class SchedulerTest extends FlatSpec with ShouldMatchers {
   it should "load a dump and provenance correctly" in {
     // run local import
     scheduler.evaluateImportJobs
+    // wait for the import to be completed
     Thread.sleep(1000)
 
     val dumpDir = new File(scheduler.config.dumpLocationDir)
@@ -84,11 +85,6 @@ class SchedulerTest extends FlatSpec with ShouldMatchers {
       "<http://source/graph6> <http://www4.wiwiss.fu-berlin.de/ldif/hasImportJob> _:test2Elocal <http://www4.wiwiss.fu-berlin.de/ldif/provenance> ."
     ))
     OutputValidator.contains(provenanceQuads, provCorrectQuads) should equal(true)
-  }
-
-  protected def loadConfig(config : String) =  {
-    val configUrl = getClass.getClassLoader.getResource(config)
-    new File(configUrl.toString.stripPrefix("file:"))
   }
 
   lazy val importJobRemote = {

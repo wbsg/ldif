@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"  ?>
+<Sieve xmlns="http://www4.wiwiss.fu-berlin.de/ldif/">
+    <Prefixes>
+        <Prefix id="ldif" namespace="http://www4.wiwiss.fu-berlin.de/ldif/"/>
+        <Prefix id="sieve" namespace="http://sieve.wbsg.de/vocab/"/>
+        <Prefix id="dbpedia-owl" namespace="http://dbpedia.org/ontology/"/>
+        <Prefix id="dbpedia" namespace="http://dbpedia.org/resource/"/>
+    </Prefixes>
+
+    <QualityAssessment name="Recent and Reputable is Best"
+                       description="The idea that more recent articles from Wikipedia could capture better values that change over time (recency),
+                       while if there is a conflict between two Wikipedias, trust the one which is more likely to have the right answer (reputation).">
+
+        <AssessmentMetric id="sieve:recency">
+            <ScoringFunction class="TimeCloseness">
+                <Param name="timeSpan" value="500"/>
+                <Input path="?GRAPH/ldif:lastUpdate"/>
+            </ScoringFunction>
+        </AssessmentMetric>
+
+        <AssessmentMetric id="sieve:reputation">
+            <ScoringFunction class="ScoredList">
+                <Param name="list" value="http://en.wikipedia.org http://pt.wikipedia.org http://es.wikipedia.org http://fr.wikipedia.org http://de.wikipedia.org"/>
+            </ScoringFunction>
+        </AssessmentMetric>
+
+    </QualityAssessment>
+
+    <Fusion name="Fusion strategy for DBpedia City Entities"
+            description="The idea is to use values from multiple DBpedia languages to improve the quality of data about cities.">
+        <Class name="dbpedia-owl:City">
+            <Property name="dbpedia-owl:areaTotal">
+                <FusionFunction class="KeepFirst" metric="sieve:recency"/>
+            </Property>
+            <Property name="dbpedia-owl:populationTotal">
+                <FusionFunction class="KeepFirst" metric="sieve:recency"/>
+            </Property>
+            <Property name="dbpedia-owl:foundingDate">
+                <FusionFunction class="KeepFirst" metric="sieve:reputation"/>
+            </Property>
+        </Class>
+    </Fusion>
+
+</Sieve>

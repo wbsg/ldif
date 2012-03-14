@@ -60,7 +60,7 @@ class HadoopIntegrationTest extends FlatSpec with ShouldMatchers {
       "<http://source/uriA> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://source/class> ." ,
       "<http://source/uriA> <http://www.w3.org/2002/07/owl#sameAs> <http://source/uriC> <http://source/graph1> ."
     ))
-    OutputValidator.contains(ldifOutput, incorrectQuads) should equal (false)
+    OutputValidator.containsNot(ldifOutput, incorrectQuads) should equal (true)
   }
 
   it should "run the whole integration flow correctly (custom properties)" in {

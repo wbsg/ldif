@@ -37,7 +37,7 @@ object OutputValidator {
     contains(lines.toTraversable.map(parser.parseLine(_)),quads)
   }
 
-  def contains(quads : Traversable[Quad], testQuads : Traversable[Quad]) : Boolean = {
+  def contains(quads : Traversable[Quad], testQuads : Traversable[Quad], testQuadsAreCorrect : Boolean = true) : Boolean = {
     val isContained = new Array[Boolean](testQuads.size)
 
     for (oq <- quads){
@@ -46,8 +46,14 @@ object OutputValidator {
           isContained(i) = true
     }
 
-    //log.warn("Quads missing: "+isContained.count(false))
-    isContained.filter(x => !x).isEmpty
+    if (testQuadsAreCorrect)
+      isContained.filter(x => !x).isEmpty
+    else
+      isContained.filter(x => x).isEmpty
+  }
+
+  def containsNot(quads : Traversable[Quad], testQuads : Traversable[Quad]) = {
+    contains(quads, testQuads, false)
   }
 
 }
