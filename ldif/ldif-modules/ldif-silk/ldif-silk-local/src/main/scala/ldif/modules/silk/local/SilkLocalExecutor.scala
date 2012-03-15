@@ -35,13 +35,15 @@ import ldif.runtime.QuadWriter
 /**
  * Executes Silk on a local machine.
  */
-class SilkLocalExecutor(useFileInstanceCache: Boolean = false) extends Executor {
+class SilkLocalExecutor(useFileInstanceCache: Boolean = false, allowLinksForSameURIs: Boolean = false) extends Executor {
 
   type TaskType = SilkTask
 
   type InputFormat = StaticEntityFormat
 
   type OutputFormat = GraphFormat
+
+  val reporter = new SilkReportPublisher
 
   def input(task : SilkTask) = {
     implicit val prefixes = task.silkConfig.silkConfig.prefixes
@@ -89,7 +91,7 @@ class SilkLocalExecutor(useFileInstanceCache: Boolean = false) extends Executor 
     val filteredLinks = filterTask()
 
     //Write links
-    val linkWriter = new LdifLinkWriter(writer)
+    val linkWriter = new LdifLinkWriter(writer, allowLinksForSameURIs)
     val outputTask = new OutputTask(filteredLinks, linkSpec.linkType, Output("output", linkWriter) :: Nil)
     outputTask()
   }

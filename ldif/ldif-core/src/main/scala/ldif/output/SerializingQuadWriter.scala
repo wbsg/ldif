@@ -24,7 +24,7 @@ import java.io.{FileWriter, BufferedWriter}
 class SerializingQuadWriter(val filepath: String, val syntax: RDFSyntax) extends QuadWriter {
   var writer:BufferedWriter = new BufferedWriter(new FileWriter(filepath))
 
-  def write(quad: Quad) = {
+  def write(quad: Quad) {
     syntax match {
       case NTRIPLES => writer.write(quad.toNTripleFormat)
       case NQUADS => writer.write(quad.toNQuadFormat)
@@ -32,7 +32,7 @@ class SerializingQuadWriter(val filepath: String, val syntax: RDFSyntax) extends
     writer.write(" .\n")
   }
 
-  def finish() = {writer.flush(); writer.close()}
+  def finish() {writer.flush(); writer.close()}
 }
 
 sealed trait RDFSyntax {val name: String}

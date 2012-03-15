@@ -25,7 +25,6 @@ import impl._
 import ldif.modules.r2r.local.R2RLocalExecutor
 import ldif.modules.r2r.{R2RModule, R2RConfig}
 import ldif.modules.silk.SilkModule
-import ldif.modules.silk.local.SilkLocalExecutor
 import ldif.entity.EntityDescription
 import ldif.{EntityBuilderModule, EntityBuilderConfig}
 import java.util.{Calendar, Properties}
@@ -35,24 +34,30 @@ import de.fuberlin.wiwiss.r2r.{JenaModelSource, EnumeratingURIGenerator, FileOrU
 import org.slf4j.LoggerFactory
 import ldif.util._
 import ldif.modules.sieve.fusion.{FusionModule, EmptyFusionConfig, FusionConfig}
-import ldif.modules.sieve.local.{SieveLocalQualityExecutor, SieveLocalFusionExecutor}
 import ldif.runtime.QuadWriter
-import ldif.modules.sieve.quality.{QualityTask, QualityConfig, QualityModule, EmptyQualityConfig}
-import collection.mutable.HashMap
+import ldif.modules.sieve.quality.{QualityConfig, QualityModule, EmptyQualityConfig}
 import ldif.config._
-import util.{StringPool}
+import util.StringPool
+import ldif.modules.silk.local.{SilkReportPublisher, SilkLocalExecutor}
+import ldif.modules.sieve.local.{SieveFusionPhaseReportPublisher, SieveQualityPhaseReportPublisher, SieveLocalQualityExecutor, SieveLocalFusionExecutor}
 
-class IntegrationJob (val config : IntegrationConfig, debugMode : Boolean = false, enableReportingServer: Boolean = false) {
+class IntegrationJob (val config : IntegrationConfig, debugMode : Boolean = false) {
 
   private val log = LoggerFactory.getLogger(getClass.getName)
-//  if(enableReportingServer)
-//    MonitorServer.start("http://localhost:5343/")
+  private val reporter = new IntegrationJobStatusMonitor
+  JobMonitor.value.addPublisher(reporter)
+  IntegrationJobMonitor.value = reporter
 
   // Object to store all kinds of configuration data
   private var configParameters: ConfigParameters = null
   private val stopWatch = new StopWatch
 
   private var lastUpdate : Calendar = null
+
+  // Which phases should be skipped
+  val skipR2R = config.properties.getProperty("mappings.skip", "false")=="true"
+  val skipSilk = config.properties.getProperty("linkSpecifications.skip", "false")=="true"
+  val skipSieve = config.properties.getProperty("sieve.skip", "false")=="true"
 
   private def updateReaderAfterR2RPhase(r2rReader: Option[scala.Seq[QuadReader]]): Option[scala.Seq[QuadReader]] = {
     if (isIntialQuadReader(r2rReader.get)) {
@@ -66,6 +71,7 @@ class IntegrationJob (val config : IntegrationConfig, debugMode : Boolean = fals
   }
 
   def runIntegration {
+    reporter.setStartTime
     if (config.sources == null || config.sources.size == 0)
       log.info("Integration Job skipped - No data source files found")
 
@@ -91,36 +97,27 @@ class IntegrationJob (val config : IntegrationConfig, debugMode : Boolean = fals
           log.info("Validation phase succeeded in " + stopWatch.getTimeSpanInSeconds + "s")
         }
 
-        // Quads that are not used in the integration flow, but should still be output
-        val otherQuadsFile = File.createTempFile("ldif-other-quads", ".bin")
-        // Quads that contain external sameAs links
-        val sameAsQuadsFile = File.createTempFile("ldif-sameas-quads", ".bin")
-        // Quads that lie in the provenance graph
-        val provenanceQuadsFile = File.createTempFile("ldif-provenance-quads", "bin")
-
-        setupConfigParameters(otherQuadsFile, sameAsQuadsFile, provenanceQuadsFile)
+        setupConfigParameters()
 
         // Load source data sets and wrap the quad readers in a filter quad reader
         val quadReaders = Seq(new DumpQuadReader(new MultiQuadReader(loadDumps(config.sources):_*), configParameters))
 
         // Execute mapping phase
-        val skipR2R = config.properties.getProperty("mappings.skip", "false")=="true"
         var r2rReader: Option[Seq[QuadReader]] = executeMappingPhase(config, quadReaders, skipR2R)
 
         r2rReader = updateReaderAfterR2RPhase(r2rReader)
 
         // Execute linking phase
-        val skipSilk = config.properties.getProperty("linkSpecifications.skip", "false")=="true"
         var linkReader: Seq[QuadReader] = executeLinkingPhase(config, r2rReader.get, skipSilk)
-
+//        SieveConfig.getUsedProperties(config.sieveSpecDir)
 
         // Setup sameAs reader and otherQuads reader
         configParameters.otherQuadsWriter.finish()
-        val otherQuadsReader = new FileQuadReader(otherQuadsFile)
+        val otherQuadsReader = new FileQuadReader(configParameters.otherQuadsWriter.outputFile)
         configParameters.provenanceQuadsWriter.finish()
-        val provenanceQuadReader = new FileQuadReader(provenanceQuadsFile)
+        val provenanceQuadReader = new FileQuadReader(configParameters.provenanceQuadsWriter.outputFile)
         configParameters.sameAsWriter.finish()
-        val sameAsReader = new FileQuadReader(sameAsQuadsFile)
+        val sameAsReader = new FileQuadReader(configParameters.sameAsWriter.outputFile)
 
         val clonedR2rReader = setupQuadReader(r2rReader.get)
 
@@ -132,15 +129,15 @@ class IntegrationJob (val config : IntegrationConfig, debugMode : Boolean = fals
         val allSameAsLinks = if(skipSilk)
           sameAsReader
         else
-          new MultiQuadReader(new MultiQuadReader(linkReader: _*), sameAsReader) // TODO: If R2R is skipped no sameAs links are currently extracted
+          new MultiQuadReader(new MultiQuadReader(linkReader: _*), sameAsReader)
 
-        // Execute URI Clustering/Translation
+        /***  Execute URI Clustering/Translation ***/
         var integratedReader: QuadReader = null
         if(config.properties.getProperty("rewriteURIs", "true").toLowerCase=="true")
           integratedReader = executeURITranslation(allQuads, allSameAsLinks, config.properties)
         else integratedReader = new MultiQuadReader(allQuads, allSameAsLinks) // TODO: Really add allSameAsLinks here (already)?
 
-        //Execute sieve (quality and fusion)
+        /***  Execute sieve (quality and fusion) ***/
         val sieveInput = Map("all"->integratedReader, "provenance"->provenanceQuadReader)//val sieveInput = Seq(integratedReader)
         val sieveReader: QuadReader = executeSieve(config, sieveInput)
 
@@ -148,9 +145,8 @@ class IntegrationJob (val config : IntegrationConfig, debugMode : Boolean = fals
 
 //        writeOutput(config, integratedReader)
         writeOutput(config, sieveReader)
+        reporter.setFinishTime
       }
-//    if(enableReportingServer)
-//      MonitorServer.stop()
   }
 
   private def copyQuads(reader: QuadReader, writer: QuadWriter) {
@@ -184,17 +180,32 @@ class IntegrationJob (val config : IntegrationConfig, debugMode : Boolean = fals
   }
 
   // Setup config parameters
-  def setupConfigParameters(outputFile: File, sameasFile: File, provenanceFile: File) {
-    outputFile.deleteOnExit()
-    sameasFile.deleteOnExit()
-    provenanceFile.deleteOnExit()
+  def setupConfigParameters() {
+    // Quads that are not used in the integration flow, but should still be output
+    val otherQuadsFile = File.createTempFile("ldif-other-quads", ".bin")
+    // Quads that contain external sameAs links
+    val sameAsQuadsFile = File.createTempFile("ldif-sameas-quads", ".bin")
+    // Quads that lie in the provenance graph
+    val provenanceQuadsFile = File.createTempFile("ldif-provenance-quads", "bin")
 
-    var otherQuads: QuadWriter = new FileQuadWriter(outputFile)
-    var sameAsQuads: QuadWriter = new FileQuadWriter(sameasFile)
-    var provenanceQuads: QuadWriter = new FileQuadWriter(provenanceFile)
+    otherQuadsFile.deleteOnExit()
+    sameAsQuadsFile.deleteOnExit()
+    provenanceQuadsFile.deleteOnExit()
 
+    var otherQuads: FileQuadWriter = new FileQuadWriter(otherQuadsFile)
+    var sameAsQuads: FileQuadWriter = new FileQuadWriter(sameAsQuadsFile)
+    var provenanceQuads: FileQuadWriter = new FileQuadWriter(provenanceQuadsFile)
 
-    configParameters = ConfigParameters(config.properties, otherQuads, sameAsQuads, provenanceQuads)
+    val skipSieve = config.properties.getProperty("sieve.skip", "false")=="true"
+    val passToSieveWriter: FileQuadWriter  = if(skipSieve)
+      null
+    else {
+      val passToSieveFile = File.createTempFile("ldif-sieve-quads", "bin")
+      passToSieveFile.deleteOnExit()
+      new FileQuadWriter(passToSieveFile)
+    }
+
+    configParameters = ConfigParameters(config.properties, otherQuads, sameAsQuads, provenanceQuads, passToSieveWriter)
 
     // Setup LocalNode (to pool strings etc.)
     LocalNode.reconfigure(config.properties)
@@ -302,7 +313,7 @@ class IntegrationJob (val config : IntegrationConfig, debugMode : Boolean = fals
     for (source <-  sources) {
       val sourceFile = new File(source)
       if(sourceFile.isDirectory) {
-          for (dump <- sourceFile.listFiles)  {
+        for (dump <- sourceFile.listFiles.filterNot(_.isHidden))  {
            quadQueues = loadDump(dump) +: quadQueues
           }
       }
@@ -353,7 +364,7 @@ class IntegrationJob (val config : IntegrationConfig, debugMode : Boolean = fals
     val outputFile = File.createTempFile("ldif-mapped-quads", ".bin")
     outputFile.deleteOnExit
     val executor = new R2RLocalExecutor
-    JobStatusMonitor.value.addPublisher(executor.reporter)
+    reporter.addPublisher(executor.reporter)
     val writer = new FileQuadWriter(outputFile)
 
      //runInBackground
@@ -378,6 +389,7 @@ class IntegrationJob (val config : IntegrationConfig, debugMode : Boolean = fals
         new SilkLocalExecutor
       else
         new SilkLocalExecutor(true)
+    reporter.addPublisher(silkExecutor.reporter)
 
     val entityDescriptions = silkModule.tasks.toIndexedSeq.map(silkExecutor.input).flatMap{ case StaticEntityFormat(ed) => ed }
     val entityReaders = buildEntities(readers, entityDescriptions, ConfigParameters(config.properties))
@@ -393,7 +405,7 @@ class IntegrationJob (val config : IntegrationConfig, debugMode : Boolean = fals
         silkExecutor.execute(silkTask, readers, outputQueue)
       }
     }
-
+    silkExecutor.reporter.setFinishTime
     outputQueue
   }
 
@@ -406,33 +418,35 @@ class IntegrationJob (val config : IntegrationConfig, debugMode : Boolean = fals
   {
     log.info("[QUALITY]")
     log.debug("Sieve will perform quality assessment, config=%s.".format(sieveSpecDir.getAbsolutePath))
-    val qualityExecutor = new SieveLocalQualityExecutor
 
     // create a mapping between quality task and entity reader for corresponding entities
     // todo: this could also work if we created only one entitydescription for all task? bad for distributed computing, maybe?
-    var taskToReaders = new HashMap[QualityTask, Seq[EntityReader]]
-    for ((task) <- qualityModule.tasks) {
-      val readers : Seq[EntityReader] =  buildEntities(cloneQuadReaders(inputQuadsReader), Seq(task.qualitySpec.entityDescription), ConfigParameters(config.properties))
-      if (readers.size > 0) {
-        taskToReaders += task -> readers
-      } else {
-        throw new Exception("No reader was created from buildEntities.")
-      }
-    }
+//  var taskToReaders = new HashMap[QualityTask, Seq[EntityReader]]
+    val entityDescriptions = qualityModule.tasks.toSeq.map(_.qualitySpec.entityDescription)
+    val readers = buildEntities(cloneQuadReaders(inputQuadsReader), entityDescriptions, ConfigParameters(config.properties))
+//    for ((task) <- qualityModule.tasks) {
+//      if (readers.size > 0) {
+//        taskToReaders += task -> readers
+//      } else {
+//        throw new Exception("No reader was created from buildEntities.")
+//      }
+//    }
 
     StringPool.reset
     log.info("Time needed to build entities for quality assessment phase: " + stopWatch.getTimeSpanInSeconds + "s")
 
     val output = new QuadQueue
-
-    //for((sieveTask, readers) <- sieveModule.tasks.toList zip entityReaders.toList)
-    for ((task, readers) <- taskToReaders) {
-      log.debug("\n\tMetric: %s\n\tFunction: %s\n\tEntityDescription: %s".format(task.qualitySpec.outputPropertyNames,task.qualitySpec.scoringFunctions,readers.map(r => r.entityDescription)))
-      qualityExecutor.execute(task, readers, output)
+    val qualityExecutor = new SieveLocalQualityExecutor
+    reporter.addPublisher(qualityExecutor.reporter)
+    for((task, reader) <- qualityModule.tasks.toSeq zip readers)  {
+//  for ((task, readers) <- taskToReaders) {
+      log.debug("\n\tMetric: %s\n\tFunction: %s\n\tEntityDescription: %s".format(task.qualitySpec.outputPropertyNames,task.qualitySpec.scoringFunctions,reader.entityDescription))
+      qualityExecutor.execute(task, Seq(reader), output)
     }
 
     //run aggregations of scores?
 
+    qualityExecutor.reporter.setFinishTime
     //new MultiQuadReader(output, entityBuilderExecutor.getNotUsedQuads) //andrea
     output
   }
@@ -446,7 +460,6 @@ class IntegrationJob (val config : IntegrationConfig, debugMode : Boolean = fals
     log.debug("Sieve will perform fusion, config=%s.".format(sieveSpecDir.getAbsolutePath))
 
     val fusionExecutor = new SieveLocalFusionExecutor
-
     val entityDescriptions = fusionModule.tasks.toIndexedSeq.map(fusionExecutor.input).flatMap{ case StaticEntityFormat(ed) => ed }
 
       //       val entityBuilderExecutor = getEntityBuilderExecutor(configParameters.copy(collectNotUsedQuads = true))    //andrea
@@ -456,6 +469,8 @@ class IntegrationJob (val config : IntegrationConfig, debugMode : Boolean = fals
     StringPool.reset
     log.info("Time needed to build entities for fusion phase: " + stopWatch.getTimeSpanInSeconds + "s")
 
+    reporter.addPublisher(fusionExecutor.reporter)
+    fusionExecutor.reporter.setStartTime()
     val outputQueue = new QuadQueue
 
     //runInBackground
@@ -467,6 +482,7 @@ class IntegrationJob (val config : IntegrationConfig, debugMode : Boolean = fals
         fusionExecutor.execute(fusionTask, Seq(reader), outputQueue)
       }
     }
+    fusionExecutor.reporter.setFinishTime
 
     outputQueue
 
@@ -543,8 +559,9 @@ class IntegrationJob (val config : IntegrationConfig, debugMode : Boolean = fals
     for (writer <- config.outputs.getByPhase(COMPLETE)) {
       var count = 0
 
-      //TODO add quadWriter string desc
-      // log.info("Writing output to "+config.output.getCanonicalPath)
+      //TODO consider adding a QuadWriter.getDescription method
+      // log.info("Writing output to "+config.output.description)
+      log.info("Writing integration output...")
       if (writer != null) {
         while(reader.hasNext) {
           writer.write(reader.read())
@@ -613,6 +630,7 @@ object IntegrationJob {
       log.warn("No configuration file given. \nUsage: IntegrationJob <integration job configuration file>")
       System.exit(1)
     }
+    MonitorServer.start("http://localhost:5343/")
     var debug = false
     val configFile = new File(args(args.length-1))
 
@@ -631,8 +649,9 @@ object IntegrationJob {
       }
     }
 
-    val integrator = new IntegrationJob(config, debug, true)
+    val integrator = new IntegrationJob(config, debug)
     integrator.runIntegration
+    sys.exit(0)
   }
 }
 

@@ -1,0 +1,9 @@
+<http://source/graph1>	<http://ldif/provProp>  "_" <http://ldif/provGraph> .
+<http://source/uriA> <http://www.w3.org/2002/07/owl#sameAs> <http://source/uriC> <http://source/graph1> .
+<http://source/uriA> <http://source/mintProp> "mint" <http://source/graph2> .
+<http://source/uriA> <http://source/mapProp> "map" <http://source/graph3> .
+<http://source/uriB> <http://source/mapProp> "map" <http://source/graph4> .
+<http://source/uriD> <http://source/mintProp> "mintNotMapped" <http://source/graph5> .
+#added for Silk SourceDataset restrictions
+<http://source/uriA> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://source/class> <http://source/graph6>.
+<http://source/uriB> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://source/class> <http://source/graph7> .

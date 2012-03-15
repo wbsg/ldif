@@ -37,6 +37,9 @@ trait ImportJob {
   // Used to tmp store the list of the imported graphs, if there are too many graphs
   var importedGraphsFile : File = null
 
+  /**
+   * Start import and write results to output stream
+   */
   def load(out : OutputStream) : Boolean
 
   def getType : String

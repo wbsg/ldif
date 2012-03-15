@@ -8,10 +8,23 @@ package ldif.util
  * To change this template use File | Settings | File Templates.
  */
 
+/**
+ * Objects of this trait give text and HTML representations for a REST interface.
+ */
 trait StatusMonitor {
   def getHtml: String = getHtml(Map())
 
   def getHtml(params: Map[String, String]): String
 
   def getText: String
+
+  def addParams(params: Map[String, String]): String = {
+    val sb = new StringBuilder
+    if(params.get("refresh").get!="0") {
+      sb.append("<meta http-equiv=\"refresh\" content=\"")
+      sb.append(params.get("refresh").get)
+      sb.append("\">")
+    }
+    sb.toString
+  }
 }

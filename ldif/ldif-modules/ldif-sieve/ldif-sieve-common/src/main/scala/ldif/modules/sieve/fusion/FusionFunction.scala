@@ -16,7 +16,7 @@
 
 package ldif.modules.sieve.fusion
 
-import functions.{PassItOn, KeepFirst}
+import functions.{KeepValuesWithHighestScore, PassItOn, KeepFirst}
 import ldif.entity.NodeTrait
 import ldif.modules.sieve.quality.QualityAssessmentProvider
 import xml.Node
@@ -79,6 +79,7 @@ object FusionFunction {
     // val factory = companion[FusionFunction](className).fromXML
     className.toLowerCase match {
       case "keepfirst" => return KeepFirst.fromXML(config)(prefixes)
+      case "keepvalueswithhighestscore" => return KeepValuesWithHighestScore.fromXML(config)(prefixes)
       case "passiton" => return PassItOn.fromXML(config)(prefixes)
 
       // NOTICE: add case statements for new scoring functions here

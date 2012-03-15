@@ -33,6 +33,7 @@ import ldif.modules.sieve.quality.QualityAssessmentProvider
 class SieveLocalFusionExecutor(useFileInstanceCache: Boolean = false) extends Executor
 {
   private val log = LoggerFactory.getLogger(getClass.getName)
+  val reporter = new SieveFusionPhaseReportPublisher
 
   //private val numThreads = 8
   //private val numThreads = Runtime.getRuntime.availableProcessors
@@ -113,12 +114,15 @@ class SieveLocalFusionExecutor(useFileInstanceCache: Boolean = false) extends Ex
               }
               val quad = new Quad(entity.resource, outputPropertyName, propertyValue, graph);
               writer.write(quad)
-            } else {               // fuse multiple values into one value and write it out
+            } else {
+              // fuse multiple values and write the picked value(s) out
               fusionFunction.fuse(factums, quality).foreach( patternNodes => { // for each property
                 if (patternNodes.nonEmpty) {
-                  val propertyValue = patternNodes(0) //TODO need to deal with case where the pattern is a tree (more than one path)
-                  val quad = new Quad(entity.resource, outputPropertyName, propertyValue, propertyValue.graph);
-                  writer.write(quad)
+                  //TODO need to deal with case where the pattern is a tree (more than one path)
+                  for (valueNode <- patternNodes) {
+                    val quad = new Quad(entity.resource, outputPropertyName, valueNode, valueNode.graph);
+                    writer.write(quad)
+                  }
                 }
               })
             }

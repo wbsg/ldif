@@ -8,28 +8,60 @@ package ldif.local.rest
  * To change this template use File | Settings | File Templates.
  */
 
-import javax.ws.rs._
 import com.sun.jersey.api.container.httpserver.HttpServerFactory
-import core.Response
 import com.sun.net.httpserver.HttpServer
-import ldif.util.{JobStatusMonitor, StatusMonitor}
+import ldif.util.{Publisher, Register, JobMonitor, StatusMonitor}
+import ldif.local.IntegrationJobStatusMonitor
+import javax.ws.rs._
+import core.Response
 
 @Path("/")
 class MonitorServer {
   @GET @Produces(Array[String]("text/plain"))
-  def getText(): String = {
+  def getJobsText(): String = {
     MonitorServer.generalStatusMonitor.getText
   }
 
   @GET @Produces(Array[String]("text/html"))
-  def getHtml(
+  def getJobsHtml(
     @DefaultValue("0") @QueryParam("refresh") refreshTimeInSeconds: Int): String = {
     MonitorServer.generalStatusMonitor.getHtml(Map("refresh" -> refreshTimeInSeconds.toString ))
   }
 }
 
-object MonitorServer {
-  val generalStatusMonitor: StatusMonitor = JobStatusMonitor.value
+@Path("/{jobtype}")
+class IntegrationJobMonitorServer {
+  @GET @Produces(Array[String]("text/html"))
+  @Path("/{index}")
+  def getIntegrationJobHtml(
+         @PathParam("index") index: Int,
+         @PathParam("jobtype") jobtype: String,
+         @DefaultValue("0") @QueryParam("refresh") refreshTimeInSeconds: Int): String = {
+    val jobPublisher = MonitorServer.generalStatusMonitor.getPublisher(index)
+
+    if(jobPublisher!=None && jobPublisher.get.isInstanceOf[StatusMonitor] && jobPublisher.get.getLink!=None && jobPublisher.get.getLink.get==jobtype) {
+      val statusMonitor = jobPublisher.get.asInstanceOf[StatusMonitor]
+      return statusMonitor.getHtml(Map("refresh" -> refreshTimeInSeconds.toString ))
+    } else
+      throw new WebApplicationException(Response.Status.NOT_FOUND)
+  }
+
+  @GET @Produces(Array[String]("text/plain"))
+  @Path("/{index}")
+  def getIntegrationJobHtml(
+         @PathParam("index") index: Int): String = {
+    val integrationJobMonitor = MonitorServer.generalStatusMonitor.getPublisher(index)
+    if(integrationJobMonitor.isInstanceOf[IntegrationJobStatusMonitor])
+      return integrationJobMonitor.asInstanceOf[IntegrationJobStatusMonitor].getText
+    else
+      throw new WebApplicationException(Response.Status.NOT_FOUND)
+  }
+}
+
+
+
+object  MonitorServer {
+  val generalStatusMonitor: StatusMonitor with Register[Publisher] = JobMonitor.value
   private var server: HttpServer = null
 
   def stop() {
@@ -43,12 +75,6 @@ object MonitorServer {
     server.start()
   }
 
-  def main(args: Array[String]) {
-    MonitorServer.start("http://160.45.137.77:9999/")
-    while(true) {
-
-    }
-  }
 }
 
 object dummyStatusMonitor extends StatusMonitor {

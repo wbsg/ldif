@@ -57,3 +57,7 @@ object CrawlImportJob {
 }
 
 case class CrawlConfig(seedUris : Traversable[URI], predicatesToFollow : Traversable[URI], levels : Int, resourceLimit: Int)
+
+class CrawlImportJobPublisher extends ImportJobPublisher {
+  override def getPublisherName = "Crawl Import Job"
+}

@@ -1,11 +1,3 @@
-package ldif.util
-
-import java.util.Properties
-import java.io.File
-import ldif.datasources.dump.QuadParser
-import ldif.runtime.Quad
-import xml.Node
-
 /*
  * LDIF
  *
@@ -23,7 +15,19 @@ import xml.Node
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
+package ldif.util
+
+import java.util.Properties
+import java.io.File
+import ldif.datasources.dump.QuadParser
+import ldif.runtime.Quad
+import xml.Node
+import org.slf4j.LoggerFactory
+
 object CommonUtils {
+
+  private val log = LoggerFactory.getLogger(getClass.getName)
 
   // convert a Map[String,String] to a Properties object
   def buildProperties(customProperties : Map[String,String]) = {
@@ -60,5 +64,23 @@ object CommonUtils {
     value
   }
 
+  // list files contained in the directory 'dir', filtering hidden files or by extension
+  def listFiles(dir : File, allowedExtensions : Seq[String] = Seq.empty[String], keepHidden : Boolean = false) : Traversable[File] = {
+    if (dir.isDirectory){
+      var files = dir.listFiles
+      if(keepHidden) files = files.filterNot(_.isHidden)
+      for(ext <- allowedExtensions) files = files.filter(_.getName.endsWith("."+ext))
+      files.toTraversable
+    }
+    else {
+      log.warn(dir.getCanonicalPath +" is not a Directory.")
+      Traversable.empty[File]
+    }
+  }
+
+  // helper method
+  def listFiles(dir : File, allowedExtension : String) : Traversable[File] = {
+    listFiles(dir,Seq(allowedExtension))
+  }
 }
 

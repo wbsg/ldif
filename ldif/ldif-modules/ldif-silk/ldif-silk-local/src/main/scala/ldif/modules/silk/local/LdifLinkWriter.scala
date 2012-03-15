@@ -28,10 +28,10 @@ import ldif.util.Consts
 /**
  * A Silk Link Writer which writes all links to a LDIF Quad Writer.
  */
-class LdifLinkWriter(quadWriter : QuadWriter) extends LinkWriter {
+class LdifLinkWriter(quadWriter : QuadWriter, allowLinksWithSameURIs: Boolean = false) extends LinkWriter {
 
   def write(link: Link, predicateUri : String) {
-    if(link.source!=link.target)
+    if(allowLinksWithSameURIs || link.source!=link.target)
       quadWriter.write(Quad(Node.createUriNode(link.source, null), predicateUri, Node.createUriNode(link.target, null), Consts.SILK_OUT_GRAPH))
   }
 }

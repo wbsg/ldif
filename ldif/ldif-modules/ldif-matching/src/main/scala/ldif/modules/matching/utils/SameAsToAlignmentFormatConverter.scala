@@ -38,11 +38,11 @@ object SameAsToAlignmentFormatConverter {
     for(quad<-input) {
       val entity1 = quad.subject.value
       val entity2 = quad.value.value
-      val (smallerEntity, largerEntity) = if(entity1 < entity2) (entity1, entity2) else (entity2, entity1)
       if(quad.predicate==Consts.SAMEAS_URI) {
-        if(!entitySet.contains(smallerEntity)) {
-          sb.append(generateCellXML(largerEntity, smallerEntity))
-          entitySet.add(smallerEntity)
+        if(!entitySet.contains(entity1) && !entitySet.contains(entity2)) {
+          sb.append(generateCellXML(entity1, entity2))
+          entitySet.add(entity1)
+          entitySet.add(entity2)
         }
       }
     }
@@ -86,6 +86,7 @@ object SameAsToAlignmentFormatConverter {
 
   def convert(input: QuadReader, outputFile: String) {
     val writer = new BufferedWriter(new FileWriter(outputFile))
+    println(input.size)
     writer.append(convertToXML(input))
     writer.flush()
     writer.close()

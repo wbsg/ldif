@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<integrationJob xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://www4.wiwiss.fu-berlin.de/ldif/ ../xsd/IntegrationJob.xsd"
+            xmlns="http://www4.wiwiss.fu-berlin.de/ldif/">
+    <properties>integration.properties</properties>
+    <sources>
+        <source>sources</source>
+    </sources>
+    <sieve>sieve</sieve>
+    <outputs>
+        <output>
+            <file>
+                <path>output_sieve_test.nq</path>
+            </file>
+        </output>
+    </outputs>
+    <runSchedule>onStartup</runSchedule>
+</integrationJob>

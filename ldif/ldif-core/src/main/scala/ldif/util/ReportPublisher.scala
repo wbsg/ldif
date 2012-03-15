@@ -21,25 +21,22 @@ trait ReportPublisher extends Publisher {
   def getReport: Report
 
   def getTimeStampReport(name: String): ReportItem = {
-    val dateFormat = new SimpleDateFormat("yyyy-MM-dd' 'HH:mm:ss")
-    val time = dateFormat.format(new GregorianCalendar().getTime)
-    return ReportItem(name, "-",time)
+    return ReportItem(name, "-", formatDateTime(new GregorianCalendar()))
   }
 
   def getTimeStampReport(name: String, calendar: GregorianCalendar): ReportItem = {
-    val dateFormat = new SimpleDateFormat("yyyy-MM-dd' 'HH:mm:ss")
-    val time = dateFormat.format(calendar.getTime)
-    return ReportItem(name, "-",time)
+    return ReportItem(name, "-",formatDateTime(calendar))
   }
 
   def getDurationTimeReportItem: ReportItem = {
-    val difference = finishTime.getTime.getTime - startTime.getTime.getTime
-    ReportItem("Duration (seconds)", "-", ""+difference/1000.0)
+    ReportItem("Duration (seconds)", "-", ""+getDuration)
   }
 
   def getStartTimeReportItem: ReportItem = getTimeStampReport("Start time", startTime)
 
   def getFinishTimeReportItem: ReportItem = getTimeStampReport("Finish time", finishTime)
+
+  override def getLink: Option[String] = None
 }
 
 case class Report(items: Seq[ReportItem])

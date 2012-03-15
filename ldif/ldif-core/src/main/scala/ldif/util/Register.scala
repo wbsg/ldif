@@ -13,9 +13,9 @@ import collection.mutable.ArrayBuffer
 trait Register[T] {
   private[this] val publishers = new ArrayBuffer[T]
 
-  def addPublisher(reportPublisher: T) {
+  def addPublisher(publisher: T) {
     this.synchronized {
-      publishers.append(reportPublisher)
+      publishers.append(publisher)
     }
   }
 
@@ -28,6 +28,15 @@ trait Register[T] {
 
   def getPublishers(): IndexedSeq[T] = {
     publishers.readOnly.toIndexedSeq
+  }
+
+  def getPublisher(index: Int): Option[T] = {
+    this.synchronized {
+      if(index>=0 && index<publishers.length)
+        return Some(publishers(index))
+      else
+        return None
+    }
   }
 
   def clean() {

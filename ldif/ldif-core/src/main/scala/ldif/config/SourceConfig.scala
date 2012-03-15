@@ -27,7 +27,7 @@ object SourceConfig {
     (xml \ "source").filter(_.text != "").map(parseSource(_, baseDir))
 
   private def parseSource(node : Node, baseDir : String) : String = {
-    val value = node.text
+    val value = node.text.trim
     val relativeFile = new File(baseDir + Consts.fileSeparator + value)
     if (relativeFile.exists)
       relativeFile.getCanonicalPath

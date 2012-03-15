@@ -1,4 +1,4 @@
-/* 
+/*
  * LDIF
  *
  * Copyright 2011-2012 Freie Universität Berlin, MediaEvent Services GmbH & Co. KG
@@ -18,44 +18,85 @@
 
 package ldif.local
 
-import ldif.config.SchedulerConfig
 import java.io.File
 import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner
 import org.scalatest.FlatSpec
 import org.scalatest.matchers.ShouldMatchers
 import scheduler._
+import ldif.config.SchedulerConfig
+import ldif.util.{OutputValidator, CommonUtils}
 
 @RunWith(classOf[JUnitRunner])
 class SchedulerTest extends FlatSpec with ShouldMatchers {
 
-  val configFile = loadConfig("ldif/local/resources/scheduler/scheduler-config.xml")
+  val configFile = CommonUtils.loadFile("scheduler/scheduler-config.xml")
   val scheduler = new Scheduler(SchedulerConfig.load(configFile))
 
-      /* Disabled - remote test */
-
-//  it should "schedule a job correctly" in {
-//    scheduler.checkUpdate(scheduler.importJobs.head) should equal (true)
-//  }
-//
-//  it should "parse a job configuration correctly" in {
-//    scheduler.importJobs.head should equal (job)
-//  }
-//
-//  it should "load a dump correctly" in {
-//    scheduler.runUpdate
-//    //TODO check dump is correct
-//    true should equal (true)
-//  }
-
-  protected def loadConfig(config : String) =  {
-    val configUrl = getClass.getClassLoader.getResource(config)
-    new File(configUrl.toString.stripPrefix("file:"))
+  it should "schedule a job correctly" in {
+    scheduler.checkUpdate(scheduler.getImportJobs.head) should equal (true)
   }
 
-  lazy val job = {
-    val url = "http://www.assembla.com/code/ldif/git/node/blob/ldif/ldif-singlemachine/src/test/resources/ldif/local/resources/sources/aba.nq.bz2"
-    new QuadImportJob(url,"ABA.0","always","ABA")
+  it should "parse a job configuration correctly" in {
+    scheduler.getImportJobs.head should equal (importJobLocal)
+    scheduler.getImportJobs.last should equal (importJobRemote)
   }
+
+  it should "load a dump and provenance correctly" in {
+    // run local import
+    scheduler.evaluateImportJobs
+    // wait for the import to be completed
+    Thread.sleep(1000)
+
+    val dumpDir = new File(scheduler.config.dumpLocationDir)
+
+    val dumpFile = dumpDir.listFiles().filter(_.getName.equals("test.local.nq")).head
+    val dumpQuads = CommonUtils.getQuads(dumpFile)
+
+    dumpQuads.size should equal (8)
+
+    val dumpCorrectQuads = CommonUtils.getQuads(List(
+      "<http://source/graph1> <http://ldif/provProp>  \"_\" <http://ldif/provGraph> . ",
+      "<http://source/uriA> <http://www.w3.org/2002/07/owl#sameAs> <http://source/uriC> <http://source/graph1> . ",
+      "<http://source/uriA> <http://source/mintProp> \"mint\" <http://source/graph2> . ",
+      "<http://source/uriA> <http://source/mapProp> \"map\" <http://source/graph3> . ",
+      "<http://source/uriB> <http://source/mapProp> \"map\" <http://source/graph4> . ",
+      "<http://source/uriD> <http://source/mintProp> \"mintNotMapped\" <http://source/graph5> . ",
+      "<http://source/uriA> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://source/class> <http://source/graph6>. ",
+      "<http://source/uriB> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://source/class> <http://source/graph7> . "
+    ))
+    OutputValidator.contains(dumpQuads, dumpCorrectQuads) should equal(true)
+
+    val provenanceFile = dumpDir.listFiles().filter(_.getName.equals("test.local.provenance.nq")).head
+    val provenanceQuads = CommonUtils.getQuads(provenanceFile)
+
+    provenanceQuads.size should equal (22)
+
+    val provCorrectQuads = CommonUtils.getQuads(List(
+      "_:test2Elocal <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www4.wiwiss.fu-berlin.de/ldif/ImportJob> <http://www4.wiwiss.fu-berlin.de/ldif/provenance> . ",
+      "_:test2Elocal <http://www4.wiwiss.fu-berlin.de/ldif/importId> \"test.local\" <http://www4.wiwiss.fu-berlin.de/ldif/provenance> .",
+      "_:test2Elocal <http://www4.wiwiss.fu-berlin.de/ldif/hasDatasource> \"test\" <http://www4.wiwiss.fu-berlin.de/ldif/provenance> .",
+      "_:test2Elocal <http://www4.wiwiss.fu-berlin.de/ldif/hasImportType> \"quad\" <http://www4.wiwiss.fu-berlin.de/ldif/provenance> .",
+      "_:test2Elocal <http://www4.wiwiss.fu-berlin.de/ldif/hasOriginalLocation> \"ldif-singlemachine/src/test/resources/integration/sources/source.nq\" <http://www4.wiwiss.fu-berlin.de/ldif/provenance> .",
+      "<http://source/graph3> <http://www4.wiwiss.fu-berlin.de/ldif/hasImportJob> _:test2Elocal <http://www4.wiwiss.fu-berlin.de/ldif/provenance> .",
+      "<http://source/graph3> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www4.wiwiss.fu-berlin.de/ldif/ImportedGraph> <http://www4.wiwiss.fu-berlin.de/ldif/provenance> .",
+      "<http://source/graph1> <http://www4.wiwiss.fu-berlin.de/ldif/hasImportJob> _:test2Elocal <http://www4.wiwiss.fu-berlin.de/ldif/provenance> .",
+      "<http://source/graph1> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www4.wiwiss.fu-berlin.de/ldif/ImportedGraph> <http://www4.wiwiss.fu-berlin.de/ldif/provenance> .",
+      "<http://source/graph6> <http://www4.wiwiss.fu-berlin.de/ldif/hasImportJob> _:test2Elocal <http://www4.wiwiss.fu-berlin.de/ldif/provenance> ."
+    ))
+    OutputValidator.contains(provenanceQuads, provCorrectQuads) should equal(true)
+  }
+
+  lazy val importJobRemote = {
+    /* Disabled - remote test */
+    val url = "http://www.assembla.com/code/ldif/git/node/blob/ldif/ldif-singlemachine/src/test/resources/integration/sources/source.nq"
+    new QuadImportJob(url,"test.remote","never","test")
+  }
+
+  lazy val importJobLocal = {
+    val url = "ldif-singlemachine/src/test/resources/integration/sources/source.nq"
+    new QuadImportJob(url,"test.local","always","test")
+  }
+
 }
 

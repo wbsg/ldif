@@ -33,7 +33,7 @@ import ldif.runtime.QuadWriter
 import collection.mutable.ArrayBuffer
 import ldif.entity.Entity
 import org.slf4j.LoggerFactory
-import ldif.util.JobStatusMonitor
+import ldif.util.JobMonitor
 
 class R2RLocalExecutor extends Executor {
   val maxEntitesPerIterable = 1000

@@ -25,9 +25,9 @@ import java.util.{Date, Calendar}
 import java.io._
 import java.util.concurrent.ConcurrentHashMap
 import org.apache.commons.io.FileUtils
-import ldif.util.{Consts, StopWatch, FatalErrorListener}
 import ldif.datasources.dump.QuadParser
 import ldif.config.IntegrationConfig
+import ldif.util.{CommonUtils, Consts, StopWatch, FatalErrorListener}
 
 class Scheduler (val config : SchedulerConfig, debug : Boolean = false) {
   private val log = LoggerFactory.getLogger(getClass.getName)
@@ -244,7 +244,7 @@ class Scheduler (val config : SchedulerConfig, debug : Boolean = false) {
       Traversable(loadImportJob(file))
     }
     else {// file is a directory
-      file.listFiles.toTraversable.map(loadImportJob(_))
+      CommonUtils.listFiles(file,"xml").map(loadImportJob(_))
     }
   }
 
@@ -322,5 +322,8 @@ class Scheduler (val config : SchedulerConfig, debug : Boolean = false) {
       cal.setTime(date)
       cal
   }
+
+  def getImportJobs = importJobs
+  def getIntegrationJob = integrationJob
 }
 
