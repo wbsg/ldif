@@ -462,15 +462,18 @@ object FusionFunction {
  &lt;/FusionFunction&gt;
 </pre> 
   </li>
-  <li><i>KeepSingleValueByQualityScore or KeepFirst</i>:
+  <li><i>KeepSingleValueByQualityScore or KeepFirst</i>: keeps the value with the highest value for a given quality assessment metric. In case of ties, the function keeps the first in order of input.
 <pre>
  &ltFusionFunction class="KeepSingleValueByQualityScore" metric="sieve:reputation"/&gt;
 </pre> 
  </li>
+ <li><i>KeepAllValuesByQualityScore</i>: similar to KeepSingleValueByQualityScore, but in case of ties, it keeps all values with the highest score.</li>
  <li><i>Average</i>: takes the average of all input data for a given property.</li>
  <li><i>Voting</i>: picks the value that appeared most frequently across sources. Each named graph has one vote, the most voted value is chosen.</li>
  <li><i>WeightedVoting</i>: picks the value that appeared most frequently across highly rated sources. Each named graph has one vote proportional to its score for a given quality metric, the value with highest aggregated scores is chosen.</li>
 </ul>
+
+
 
 <h2 id="examples">5. Examples</h2>
 <p>This section provides a Sieve usage example. We will explore the use case of integrating information about cities coming from different DBpedia editions.
