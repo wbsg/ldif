@@ -25,42 +25,42 @@ import ldif.util.Prefixes
  * Fusion function that keeps all the best rated values according to a given quality assessment metric.
  */
 
-class KeepValuesWithHighestScore(metricId: String) extends FusionFunction(metricId) {
+class KeepAllValuesWithHighestScore(metricId: String) extends FusionFunction(metricId) {
 
   private val log = LoggerFactory.getLogger(getClass.getName)
 
   /**
-   * Picks the values with the highest quality assessment with one pass over all nodes in all patterns in input.
+   * Picks all the values with the highest quality assessment with one pass over all nodes in all patterns in input.
    */
   override def fuse(patterns: Traversable[IndexedSeq[NodeTrait]], quality: QualityAssessmentProvider) : Traversable[IndexedSeq[NodeTrait]] = {
-    var bestValue = IndexedSeq[NodeTrait]()
+    var bestValues = IndexedSeq[NodeTrait]()
     if (patterns.nonEmpty) {
-      bestValue = patterns.head
+      bestValues = patterns.head
       var bestScore = 0.0
       patterns.foreach( nodes =>
         nodes.foreach( n =>{
           val score = quality.getScore(metricId, n.graph)
           if (score > bestScore) {
             bestScore = score
-            bestValue = IndexedSeq(n)
+            bestValues = IndexedSeq(n)
           }
           else if (score == bestScore) {
-            bestValue = bestValue :+ n
+            bestValues = bestValues :+ n
           }
       }))
     }
-    Traversable(bestValue)
+    Traversable(bestValues)
   }
 
 }
 
-object KeepValuesWithHighestScore {
+object KeepAllValuesWithHighestScore {
 
   def fromXML(node: scala.xml.Node)(implicit prefixes: Prefixes) : FusionFunction = {
     val metricQName = (node \ "@metric").text
     if (metricQName.isEmpty)
-      throw new IllegalArgumentException("Function %s needs the attribute 'metric' to be included in the tag FusionFunction.".format(KeepValuesWithHighestScore.getClass))
+      throw new IllegalArgumentException("Function %s needs the attribute 'metric' to be included in the tag FusionFunction.".format(KeepAllValuesWithHighestScore.getClass))
     val metricId = prefixes.resolve(metricQName)
-    new KeepValuesWithHighestScore(metricId)
+    new KeepAllValuesWithHighestScore(metricId)
   }
 }

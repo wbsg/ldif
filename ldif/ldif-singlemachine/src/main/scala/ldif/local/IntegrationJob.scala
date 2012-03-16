@@ -192,20 +192,20 @@ class IntegrationJob (val config : IntegrationConfig, debugMode : Boolean = fals
     sameAsQuadsFile.deleteOnExit()
     provenanceQuadsFile.deleteOnExit()
 
-    var otherQuads: FileQuadWriter = new FileQuadWriter(otherQuadsFile)
-    var sameAsQuads: FileQuadWriter = new FileQuadWriter(sameAsQuadsFile)
-    var provenanceQuads: FileQuadWriter = new FileQuadWriter(provenanceQuadsFile)
+    val otherQuads: FileQuadWriter = new FileQuadWriter(otherQuadsFile)
+    val sameAsQuads: FileQuadWriter = new FileQuadWriter(sameAsQuadsFile)
+    val provenanceQuads: FileQuadWriter = new FileQuadWriter(provenanceQuadsFile)
 
     val skipSieve = config.properties.getProperty("sieve.skip", "false")=="true"
-    val passToSieveWriter: FileQuadWriter  = if(skipSieve)
-      null
-    else {
-      val passToSieveFile = File.createTempFile("ldif-sieve-quads", "bin")
-      passToSieveFile.deleteOnExit()
-      new FileQuadWriter(passToSieveFile)
-    }
+//    val passToSieveWriter: FileQuadWriter  = if(skipSieve)
+//      null
+//    else {
+//      val passToSieveFile = File.createTempFile("ldif-sieve-quads", "bin")
+//      passToSieveFile.deleteOnExit()
+//      new FileQuadWriter(passToSieveFile)
+//    }
 
-    configParameters = ConfigParameters(config.properties, otherQuads, sameAsQuads, provenanceQuads, passToSieveWriter)
+    configParameters = ConfigParameters(config.properties, otherQuads, sameAsQuads, provenanceQuads)
 
     // Setup LocalNode (to pool strings etc.)
     LocalNode.reconfigure(config.properties)
@@ -353,11 +353,11 @@ class IntegrationJob (val config : IntegrationConfig, debugMode : Boolean = fals
     val uriGenerator = new EnumeratingURIGenerator("http://www4.wiwiss.fu-berlin.de/ldif/imported", BigInteger.ONE);
     val importedMappingModel = Repository.importMappingDataFromSource(mappingSource, uriGenerator)
     val repository = new Repository(new JenaModelSource(importedMappingModel))
-    val config = new R2RConfig(repository)
-    val module = new R2RModule(config)
+    val r2rConfig = new R2RConfig(repository)
+    val module = new R2RModule(r2rConfig)
 
     val entityDescriptions = for(task <- module.tasks) yield task.mapping.entityDescription
-    val entityReaders = buildEntities(readers, entityDescriptions.toSeq, configParameters)
+    val entityReaders = buildEntities(readers, entityDescriptions.toSeq, ConfigParameters(config.properties))
     StringPool.reset
     log.info("Time needed to load dump and build entities for mapping phase: " + stopWatch.getTimeSpanInSeconds + "s")
 
@@ -445,7 +445,7 @@ class IntegrationJob (val config : IntegrationConfig, debugMode : Boolean = fals
     }
 
     qualityExecutor.reporter.setFinishTime
-    //new MultiQuadReader(output, entityBuilderExecutor.getNotUsedQuads) //andrea
+
     output
   }
 
@@ -460,9 +460,15 @@ class IntegrationJob (val config : IntegrationConfig, debugMode : Boolean = fals
     val fusionExecutor = new SieveLocalFusionExecutor
     val entityDescriptions = fusionModule.tasks.toIndexedSeq.map(fusionExecutor.input).flatMap{ case StaticEntityFormat(ed) => ed }
 
-      //       val entityBuilderExecutor = getEntityBuilderExecutor(configParameters.copy(collectNotUsedQuads = true))    //andrea
-      //       val entityReaders = buildEntities(inputQuadsReader, entityDescriptions.toSeq, entityBuilderExecutor)             //andrea
-    val entityReaders = buildEntities(inputQuadsReader, entityDescriptions, ConfigParameters(config.properties))
+    // setup sieve config parameters
+    val irrelevantQuadsFile = File.createTempFile("ldif-fusion-quads", "bin")
+    irrelevantQuadsFile.deleteOnExit()
+    val irrelevantQuadsWriter = new FileQuadWriter(irrelevantQuadsFile)
+    val fusionConfigParam = ConfigParameters(configProperties = config.properties, otherQuadsWriter = irrelevantQuadsWriter, collectNotUsedQuads = true)
+
+    val entityBuilderExecutor = getEntityBuilderExecutor(fusionConfigParam)
+    val entityReaders = buildEntities(inputQuadsReader, entityDescriptions, entityBuilderExecutor)
+    //val entityReaders = buildEntities(inputQuadsReader, entityDescriptions, ConfigParameters(config.properties))
 
     StringPool.reset
     log.info("Time needed to build entities for fusion phase: " + stopWatch.getTimeSpanInSeconds + "s")
@@ -482,7 +488,9 @@ class IntegrationJob (val config : IntegrationConfig, debugMode : Boolean = fals
     }
     fusionExecutor.reporter.setFinishTime
 
-    outputQueue
+    irrelevantQuadsWriter.finish()
+    val otherQuadsReader = new FileQuadReader(irrelevantQuadsFile)
+    new MultiQuadReader(outputQueue, entityBuilderExecutor.getNotUsedQuads, otherQuadsReader)
 
   }
 
@@ -567,7 +575,6 @@ class IntegrationJob (val config : IntegrationConfig, debugMode : Boolean = fals
         }
         writer.finish
       }
-
       log.info(count + " Quads written")
     }
   }

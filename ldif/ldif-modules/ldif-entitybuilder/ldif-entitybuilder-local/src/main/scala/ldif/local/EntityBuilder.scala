@@ -34,7 +34,9 @@ import ldif.util.{JobMonitor, ReportPublisher, Consts, Uri}
 class EntityBuilder (entityDescriptions : IndexedSeq[EntityDescription], readers : Seq[QuadReader], config: ConfigParameters) extends FactumBuilder with EntityBuilderTrait {
   entityBuilderReportPublisher.name = "Entity Builder (in-memory)"
   private val log = LoggerFactory.getLogger(getClass.getName)
-  // If this is true, quads like provenance quads (or even all quads) are saved for later use (merge)
+  // if true, irrelevant quads are saved for later use (merge) - used in fusion phase
+  private val collectNotRelevantQuads = config.otherQuadsWriter != null
+  // if true, relevant quads that are not used for building entities are saved for later use (merge) - used in fusion phase
   private val collectNotUsedQuads = config.collectNotUsedQuads
 
   // Property HT - Describes all the properties used in the Entity Description
@@ -42,8 +44,8 @@ class EntityBuilder (entityDescriptions : IndexedSeq[EntityDescription], readers
   // Forward HT - Contains connections which are going to be explored straight/forward
   var FHT:HashTable =
     if (collectNotUsedQuads) {
-     // new MarkedMemHashTable
-     new MemHashTableReadOnce
+     new MarkedMemHashTable
+     //new MemHashTableReadOnce
     }
     else
       new MemHashTable
@@ -140,6 +142,8 @@ class EntityBuilder (entityDescriptions : IndexedSeq[EntityDescription], readers
             BHT.put(Pair(obj, prop), subj)
           }
         }
+        else if (collectNotRelevantQuads)
+          config.otherQuadsWriter.write(quad)
       }
     }
     entityBuilderReportPublisher.finishedReading = true
@@ -412,11 +416,6 @@ class EntityBuilder (entityDescriptions : IndexedSeq[EntityDescription], readers
 
   private def now = System.currentTimeMillis
 
-  private def appendToOtherQuads(reader : QuadReader) {
-      while (reader.hasNext)
-        config.otherQuadsWriter.write(reader.read())
-  }
-
   // Retrieves quads stored in the internal HTs but not used for building entities
   // Based on the assumption that EDs use only
   //  - rdf:type restrictions
@@ -424,8 +423,8 @@ class EntityBuilder (entityDescriptions : IndexedSeq[EntityDescription], readers
   override def getNotUsedQuads : QuadReader = {
     if (collectNotUsedQuads) {
       // retrieves not-used property quads
-      //val f = FHT.asInstanceOf[MarkedMemHashTable].getNotUsedQuads(PropertyType.FORW)
-      val f = FHT.asInstanceOf[MemHashTableReadOnce].getNotUsedQuads(PropertyType.FORW)
+      val f = FHT.asInstanceOf[MarkedMemHashTable].getNotUsedQuads(PropertyType.FORW)
+      //val f = FHT.asInstanceOf[MemHashTableReadOnce].getNotUsedQuads(PropertyType.FORW)
       // retrieves rdf:type quads
       val b = BHT.getAllQuads(PropertyType.BACK)
       new MultiQuadReader(f,b)

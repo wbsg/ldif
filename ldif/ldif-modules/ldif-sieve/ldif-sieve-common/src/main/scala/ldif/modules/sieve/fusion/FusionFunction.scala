@@ -16,11 +16,10 @@
 
 package ldif.modules.sieve.fusion
 
-import functions.{KeepValuesWithHighestScore, PassItOn, KeepFirst}
+import functions.{KeepAllValuesWithHighestScore, PassItOn, KeepFirst}
 import ldif.entity.NodeTrait
 import ldif.modules.sieve.quality.QualityAssessmentProvider
 import xml.Node
-import ldif.modules.sieve.quality.functions.{TimeCloseness, ScoredList}
 import ldif.util.Prefixes
 
 /**
@@ -78,9 +77,9 @@ object FusionFunction {
   def create(className : String, config: Node)(implicit prefixes: Prefixes) : FusionFunction = {
     // val factory = companion[FusionFunction](className).fromXML
     className.toLowerCase match {
-      case "keepfirst" => return KeepFirst.fromXML(config)(prefixes)
-      case "keepvalueswithhighestscore" => return KeepValuesWithHighestScore.fromXML(config)(prefixes)
-      case "passiton" => return PassItOn.fromXML(config)(prefixes)
+      case "keepfirst" => KeepFirst.fromXML(config)(prefixes)
+      case "keepallvalueswithhighestscore" => KeepAllValuesWithHighestScore.fromXML(config)(prefixes)
+      case "passiton" => PassItOn.fromXML(config)(prefixes)
 
       // NOTICE: add case statements for new scoring functions here
       case whatever => throw new IllegalArgumentException("Unable to construct scoring function for class name " + className)
