@@ -121,7 +121,7 @@ Start</span></a> </div>
 	<strong>02/06/2012: Presentation:</strong> LDIF is presented at <a href="http://semtechbizberlin2012.semanticweb.com/">SEMTECHBIZ Berlin 2012</a> (<a href="http://www.wiwiss.fu-berlin.de/en/institute/pwo/bizer/research/publications/BeckerMatteini-LDIF-SemTechBerlin2012-Talk.pdf">Slides</a>).
   </li>
   <li>
-	<strong>01/13/2012: Interview:</strong> <a href="http://semanticweb.com/easing-the-job-of-working-with-linked-data_b25940">semanticweb.com speaks with Christian Becker on how LDIF eases the job of working with Linked Data.</a>
+     <strong>01/13/2012: Interview:</strong> <a href="http://semanticweb.com">semanticweb.com</a> speaks with Christian Becker on how <a href="http://semanticweb.com/easing-the-job-of-working-with-linked-data_b25940">LDIF eases the job of working with Linked Data.</a>
    </li>
   <li>
       <strong>01/10/2012: Version 0.4 Scale-out released.</strong>  Up till now, LDIF stored data
@@ -448,18 +448,41 @@ references all the other configuration files like the for the import
 jobs for accessing remote sources and for the integration job.<br>
 </p>
 <p>A typical configuration document looks like this:</p>
-<pre>&lt;scheduler xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"<br>           xmlns="http://www4.wiwiss.fu-berlin.de/ldif/"&gt;<br>    &lt;properties&gt;scheduler.properties&lt;/properties&gt;<br>    &lt;dataSources&gt;datasources&lt;/dataSources&gt;<br>    &lt;importJobs&gt;importJobs&lt;/importJobs&gt;<br>    &lt;integrationJobs&gt;integration-config.xml&lt;/integrationJob&gt;<br>    &lt;dumpLocation&gt;dumps&lt;/dumpLocation&gt;<br>&lt;/scheduler&gt;<br></pre>
+<pre>&lt;integrationJob xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xmlns="http://www4.wiwiss.fu-berlin.de/ldif/"&gt;
+    &lt;properties&gt;test.properties&lt;/properties&gt;
+    &lt;sources&gt;
+        &lt;source&gt;dumps&lt;/source&gt;
+    &lt;/sources&gt;
+    &lt;linkSpecifications&gt;linkSpecs&lt;/linkSpecifications&gt;
+    &lt;mappings&gt;mappings&lt;/mappings&gt;
+    &lt;outputs&gt;
+        &lt;output&gt;
+            &lt;file&gt;
+                &lt;path&gt;output.nq&lt;/path&gt;
+                &lt;format&gt;nquads&lt;/format&gt;
+            &lt;/file&gt;
+            &lt;phase&gt;complete&lt;/phase&gt;
+        &lt;/output&gt;
+    &lt;/outputs&gt;
+    &lt;runSchedule&gt;daily&lt;/runSchedule&gt;
+&lt;/integrationJob&gt;<br></pre>
 <p>It has the following elements:</p>
 <ul>
-  <li><i>properties</i> - the path to a Java properties file for
-configuration parameters, <a href="#configprops">see below</a> for
-more details; </li>
-  <li><i>dataSources</i> - a directory containing the <a href="#datasource">Data Sources</a> configurations;</li>
-  <li><i>importJobs</i> - a directory containing the <a href="#importjob">Import Jobs</a> configurations;</li>
-  <li><i>integrationJob</i> - a document containing the <a href="#integrationjob">Integration Job</a> configurations;</li>
-  <li><i>dumpLocation</i> - a directory where the local dumps should be
-cached<br>
-  </li>
+    <li><i>properties</i> - the path to a Java properties file for
+        configuration parameters, <a href="#configurationproperties">see below</a>
+        for more details; </li>
+    <li><i>sources</i> - each <i>source</i> specifies a path (to a file or a directory) in the local or distributed file system,
+        all files must be in <a href="http://sw.deri.org/2008/07/n-quads/">N-Quads</a> format and may
+        be compressed (.gz, .zip or .bz2);<br>
+    </li>
+    <li><i>linkSpecifications</i> - a directory containing the <a href="http://www.assembla.com/wiki/show/silk/Link_Specification_Language">Silk
+        link specifications</a>;</li>
+    <li><i>mappings</i> - a directory containing the <a href="http://www4.wiwiss.fu-berlin.de/bizer/r2r/spec/index.html#mappings">R2R
+        mappings</a>;</li>
+    <li><i>outputs</i> - each <i>output</i> specifies a destination where data are written to, both file and <a href="http://www.assembla.com/wiki/show/ldif/QuadStore_Compatibility">SPARQL/Update</a> outputs are supported;</li>
+    <li><i>runSchedule</i> - how often the integration is expected to be
+        run. Valid values are: <span style="font-family: monospace;">onStartup</span>,<span style="font-family: monospace;"> always</span>,<span style="font-family: monospace;"> hourly</span>,<span style="font-family: monospace;"> daily</span>,<span style="font-family: monospace;"> weekly</span>,<span style="font-family: monospace;"> monthly</span>,<span style="font-family: monospace;"> yearly </span>and <span style="font-family: monospace;">never</span>. <span class="Apple-style-span" style="border-collapse: separate; color: rgb(0, 0, 0); font-family: 'Times New Roman'; font-style: normal; font-variant: normal; font-weight: normal; letter-spacing: normal; line-height: normal; orphans: 2; text-indent: 0px; text-transform: none; white-space: normal; widows: 2; word-spacing: 0px; font-size: medium;"><span class="Apple-style-span" style="border-collapse: collapse; font-family: Arial,Helvetica,'Liberation Sans',FreeSans,sans-serif; font-size: 12px; line-height: 18px; text-align: left;"></span></span></li>
 </ul>
 <p>Both relative and absolute paths are supported.</p>
 <h4 id="configprops">Configuration Properties</h4>
