@@ -252,7 +252,7 @@ local target vocabulary.</li>
   <li><b>Resolve Identities</b>: An identity resolution component
 discovers URI aliases in the input data and replaces them with a
 single target URI based on user-provided matching heuristics.</li>
-  <li><b>Output</b>: LDIF outputs the integrated data in a single file.
+  <li><b>Output</b>: LDIF outputs the integrated data and that can be written to file or to a QuadStore.
 For provenance tracking, LDIF employs the Named Graphs data model.</li>
 </ol>
 <p>The figure below shows the schematic <a href="http://linkeddatabook.com/editions/1.0/index.html#htoc84">architecture
@@ -368,24 +368,18 @@ Specification Language</a>.
 <br>An overview and examples can be found on the <a href="http://www4.wiwiss.fu-berlin.de/bizer/silk/">Silk website</a>.<br>
 </p>
 <h4>Data Output</h4>
-<p>Two output formats are currently supported by LDIF.</p>
-<h5>N-Quads Writer</h5>
-<p>The N-Quads writer dumps the final output of the integration
-workflow into a single N-Quads file. This file contains the translated
-versions of all graphs from the input graph set as well as the content
-of the provenance graph and sameAs-links.
-<br>
-Currently, the provenance information is just copied to the final
-output. In future releases, we will use the provenance information for
-data quality assessment and data fusion (see
-<a href="#nextSteps">Next Steps</a>).
-</p>
-<h5>N-Triples Writer</h5>
-<p>The N-Triples writer dumps the final output of the integration
-workflow into a single N-Triples file. Since there exists no connection
-to the provenance data anymore after outputting it as N-Triple, the
-provenance data is discarded instead of being output.<br>
-</p>
+<p>LDIF final and intermediate results can be written to file or to a QuadStore.</p>
+
+<h5>File Output</h5>
+<p>Two file output formats are currently supported by LDIF: </p>
+<ul><li>N-Quads - dumps the data into a single N-Quads file, this file contains the translated versions of all graphs from the input graph set as well as the content
+of the provenance graph and sameAs-links;    </li>
+<li> N-Triples - dumps the data into a single N-Triples file, since there exists no connection to the provenance data anymore after outputting it as N-Triple,
+the provenance data is discarded instead of being output. </li>
+</ul>
+<h5>QuadStore Output</h5>
+<p>Data is written to a QuadStore as SPARQL/Update stream. Here is a list of the <a href="http://www.assembla.com/spaces/ldif/wiki/Quadstore_Compatibility">supported stores</a>.</p>
+
 <h4>Runtime Environments </h4>
 
 <p>The Runtime Environment for the integration component manages the data
