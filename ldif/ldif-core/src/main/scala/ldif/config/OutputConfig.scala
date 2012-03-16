@@ -99,9 +99,9 @@ object OutputConfig {
     }
     else {
       val outputFormat = CommonUtils.getValueAsString(xml,"format",Consts.FileOutputFormatDefault)
-      if (outputFormat == "nq")
+      if (outputFormat == "nquads")
         new SerializingQuadWriter(outputUriOrPath, NQUADS)
-      else if (outputFormat == "nt")
+      else if (outputFormat == "ntriples")
         new SerializingQuadWriter(outputUriOrPath, NTRIPLES)
       else {
         log.warn("Output format not supported: "+ outputFormat )

@@ -3,11 +3,17 @@
            xsi:schemaLocation="http://www4.wiwiss.fu-berlin.de/ldif/ ../xsd/IntegrationJob.xsd"
             xmlns="http://www4.wiwiss.fu-berlin.de/ldif/">
     <properties>integration.properties</properties>
-    <sources>examples/music/light/dumps</sources>
+    <sources>
+        <source>examples/music/light/dumps</source>
+    </sources>
     <linkSpecifications>linkspecs</linkSpecifications>
     <mappings>mappings</mappings>
-    <quality>quality</quality>
-    <fusion>fusion</fusion>
-    <output>integrated_music_light</output>
+    <outputs>
+        <output>
+            <file>
+                <path>integrated_music_light</path>
+            </file>
+        </output>
+    </outputs>
     <runSchedule>onStartup</runSchedule>
 </integrationJob>

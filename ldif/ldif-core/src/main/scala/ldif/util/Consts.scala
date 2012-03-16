@@ -82,6 +82,6 @@ object Consts {
   val SparqlMaxStatmentsPerRequest = 200
   val SparqlUseDirectPostDefault = "true"
 
-  val FileOutputFormatDefault = "nq"
+  val FileOutputFormatDefault = "nquads"
   val OutputPhaseDefault = "complete"
 }
