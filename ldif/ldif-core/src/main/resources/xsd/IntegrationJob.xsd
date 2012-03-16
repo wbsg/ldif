@@ -83,8 +83,8 @@
 
     <xs:simpleType name="outputFormat">
         <xs:restriction base="xs:normalizedString">
-            <xs:enumeration value="nq"/>
-            <xs:enumeration value="nt"/>
+            <xs:enumeration value="nquads"/>
+            <xs:enumeration value="ntriples"/>
         </xs:restriction>
     </xs:simpleType>
 

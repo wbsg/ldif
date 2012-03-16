@@ -367,6 +367,9 @@ the declarative <a href="http://www4.wiwiss.fu-berlin.de/bizer/silk/spec/">Silk 
 Specification Language</a>.
 <br>An overview and examples can be found on the <a href="http://www4.wiwiss.fu-berlin.de/bizer/silk/">Silk website</a>.<br>
 </p>
+<h5>Data Quality Evaluation and Data Fusion</h5>
+<p><span class="note">TODO</span> </p>
+
 <h4>Data Output</h4>
 <p>LDIF final and intermediate results can be written to file or to a QuadStore.</p>
 
@@ -438,10 +441,6 @@ Some initial performance figures comparing the run times of the in-memory, quad 
 following lines:<br>
 </p>
 <ol>
-  <li>Add a <strong>Data Quality Evaluation and Data Fusion Module</strong>
-which allows Web data to be filtered according to different data
-quality assessment policies and provides for fusing Web data according
-to different conflict resolution methods.</li>
   <li><strong>Flexible integration workflow</strong>. Currently the
 integration flow is static and can only be influenced by predefined
 configuration parameters. We plan to make the workflow and its
@@ -1042,7 +1041,21 @@ genes and other expressions that are described in multiple data sets.</p>
 configuration. The configuration options are explained in the Section <a href="#configuration">Configuration</a> below. <br>
 </p>
 <ul>
-  <pre>&lt;integrationJob&gt;<br>  &lt;properties&gt;life-science.properties&lt;/properties&gt;<br>  &lt;sources&gt;sources&lt;/sources&gt;<br>  &lt;linkSpecifications&gt;linkSpecs&lt;/linkSpecifications&gt;<br>  &lt;mappings&gt;mappings&lt;/mappings&gt;<br>  &lt;output&gt;output.nq&lt;/output&gt;<br>&lt;/integrationJob&gt;</pre>
+  <pre>&lt;integrationJob&gt;
+    &lt;properties&gt;life-science.properties&lt;/properties&gt;
+    &lt;sources&gt;
+        &lt;source&gt;sources&lt;/source&gt;
+    &lt;/sources&gt;
+    &lt;linkSpecifications&gt;linkSpecs&lt;/linkSpecifications&gt;
+    &lt;mappings&gt;mappings&lt;/mappings&gt;
+    &lt;outputs&gt;
+        &lt;output&gt;
+            &lt;file&gt;
+                &lt;path&gt;output.nq&lt;/path&gt;
+            &lt;/file&gt;
+        &lt;/output&gt;
+    &lt;/outputs&gt;
+&lt;/integrationJob&gt;</pre>
 </ul>
 <h4>Execution instructions</h4>
 <ul>
