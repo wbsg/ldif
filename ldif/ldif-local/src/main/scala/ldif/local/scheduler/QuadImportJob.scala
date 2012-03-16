@@ -27,9 +27,10 @@ import ldif.runtime.Quad
 import ldif.datasources.dump.parser.ParseException
 import ldif.util.{JobMonitor, Consts, Identifier}
 
-case class QuadImportJob(dumpLocation : String, id : Identifier, refreshSchedule : String, dataSource : String) extends ImportJob {
+case class QuadImportJob(dumpLocation : String, id : Identifier, refreshSchedule : String, dataSource : String, renameGraphs : String = "") extends ImportJob {
 
   private val log = LoggerFactory.getLogger(getClass.getName)
+  private val renamingGraphEnabled = renameGraphs != ""
 
   override def load(out : OutputStream) : Boolean = {
     val reporter = new QuadImportJobPublisher
@@ -54,6 +55,8 @@ case class QuadImportJob(dumpLocation : String, id : Identifier, refreshSchedule
         }
       }
       if (quad != null) {
+        if (renamingGraphEnabled)
+          quad = quad.copy(graph = renameGraph(quad.graph))
         importedGraphs += quad.graph
         writer.write(quad.toNQuadFormat+" . \n")
         if (importedGraphs.size >= Consts.MAX_NUM_GRAPHS_IN_MEMORY)
@@ -70,6 +73,15 @@ case class QuadImportJob(dumpLocation : String, id : Identifier, refreshSchedule
     true
   }
 
+  /* Rename graph according to a given regex */
+  protected def renameGraph(from : String, to : String = "") : String = {
+    //    from match {
+    //      case re(g, sub) => g
+    //      case _ => from
+    //    }
+    from.replaceAll(renameGraphs, to)
+  }
+
   override def getType = "quad"
   override def getOriginalLocation = dumpLocation
 }
@@ -78,7 +90,8 @@ object QuadImportJob{
 
   def fromXML (node : Node, id : Identifier, refreshSchedule : String, dataSource : String) : ImportJob = {
     val dumpLocation : String = (node \ "dumpLocation" text)
-    val job = new QuadImportJob(dumpLocation.trim, id, refreshSchedule, dataSource)
+    val renameGraphs = (node \ "renameGraphs" text)
+    val job = new QuadImportJob(dumpLocation.trim, id, refreshSchedule, dataSource, renameGraphs)
     job
   }
 }

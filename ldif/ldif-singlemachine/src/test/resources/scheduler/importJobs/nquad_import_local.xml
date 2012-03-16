@@ -6,7 +6,8 @@
     <refreshSchedule>always</refreshSchedule>
     <quadImportJob>
         <dumpLocation>
-            ldif-singlemachine/src/test/resources/integration/sources/source.nq
+            ldif-singlemachine/src/test/resources/scheduler/sources/source.nq
         </dumpLocation>
+        <renameGraphs>#.+</renameGraphs>
     </quadImportJob>
 </importJob>
