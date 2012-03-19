@@ -4,8 +4,9 @@ import fusion.FusionConfig
 import quality.QualityConfig
 import xml.XML
 import ldif.util.{Prefixes, ValidatingXMLReader}
-import java.io.File
 import org.slf4j.LoggerFactory
+import java.io.{FilenameFilter, File}
+import collection.mutable.{HashSet,Set}
 
 /*
 * Copyright 2011-2012 Freie Universität Berlin, MediaEvent Services GmbH & Co. KG
@@ -51,14 +52,33 @@ object SieveConfig {
    * This is a helper method to inform R2R of all the properties used in Sieve,
    * so that it can create workaround IdentityMappings to pass all necessary properties to Sieve.
    */
-  def getUsedProperties(configFile: File) = {
-    val sieveConfig = XML.loadFile(configFile)
+  def getUsedProperties(configFile: File): Set[String] = {
+    if(configFile==null)
+      return Set[String]()
+    val realConfigFile: File = {
+      if(configFile.isDirectory) {
+        val files = configFile.list(new FilenameFilter {
+          override def accept(dir: File, name: String): Boolean = {
+            return name.toLowerCase.endsWith(".xml")
+          }
+        })
+        if(files.length>0)
+          new File(configFile, files(0))
+        else
+          return Set[String]()
+      }
+      else
+        configFile
+    }
+    val sieveConfig = XML.loadFile(realConfigFile)
     val prefixes = Prefixes.fromXML(sieveConfig \ "Prefixes" head) ++ Prefixes.stdPrefixes
     val qualityProperties = (sieveConfig \ "QualityAssessment" \ "AssessmentMetric").map( n => prefixes.resolve((n \ "@id").text ))
     val fusionProperties = (sieveConfig \\ "Fusion" \\ "Class" \\ "Property").map(n => prefixes.resolve((n \ "@name").text ))
     val r = (qualityProperties ++ fusionProperties)
     log.trace("Used properties: %s".format(r.toString()))
-    r
+    val set = new HashSet[String]
+    set ++= r
+    set
   }
 
   def main(args: Array[String]) {

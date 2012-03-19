@@ -40,6 +40,7 @@ import ldif.config._
 import util.StringPool
 import ldif.modules.silk.local.{SilkReportPublisher, SilkLocalExecutor}
 import ldif.modules.sieve.local.{SieveFusionPhaseReportPublisher, SieveQualityPhaseReportPublisher, SieveLocalQualityExecutor, SieveLocalFusionExecutor}
+import ldif.modules.sieve.SieveConfig
 
 class IntegrationJob (val config : IntegrationConfig, debugMode : Boolean = false) {
 
@@ -98,9 +99,18 @@ class IntegrationJob (val config : IntegrationConfig, debugMode : Boolean = fals
         }
 
         setupConfigParameters()
+        val terms = SieveConfig.getUsedProperties(config.sieveSpecDir)
 
         // Load source data sets and wrap the quad readers in a filter quad reader
-        val quadReaders = Seq(new DumpQuadReader(new MultiQuadReader(loadDumps(config.sources):_*), configParameters))
+        val quadReaders = {
+          val dumpQuadReader = new DumpQuadReader(new MultiQuadReader(loadDumps(config.sources):_*), configParameters)
+          if(terms.size==0 || skipR2R)
+            Seq(dumpQuadReader)
+          else {
+            val copyQuadsReader = new CopyQuadsQuadReader(dumpQuadReader, terms.toSet, configParameters.passOnToSieveWriter)
+            Seq(copyQuadsReader)
+          }
+        }
 
         // Execute mapping phase
         var r2rReader: Option[Seq[QuadReader]] = executeMappingPhase(config, quadReaders, skipR2R)
@@ -109,7 +119,6 @@ class IntegrationJob (val config : IntegrationConfig, debugMode : Boolean = fals
 
         // Execute linking phase
         var linkReader: Seq[QuadReader] = executeLinkingPhase(config, r2rReader.get, skipSilk)
-//        SieveConfig.getUsedProperties(config.sieveSpecDir)
 
         // Setup sameAs reader and otherQuads reader
         configParameters.otherQuadsWriter.finish()
@@ -118,13 +127,15 @@ class IntegrationJob (val config : IntegrationConfig, debugMode : Boolean = fals
         val provenanceQuadReader = new FileQuadReader(configParameters.provenanceQuadsWriter.outputFile)
         configParameters.sameAsWriter.finish()
         val sameAsReader = new FileQuadReader(configParameters.sameAsWriter.outputFile)
+        configParameters.passOnToSieveWriter.finish()
+        val passOnToSieveReader = new FileQuadReader(configParameters.passOnToSieveWriter.outputFile)
 
         val clonedR2rReader = setupQuadReader(r2rReader.get)
 
         val allQuads = if(skipR2R)
           new MultiQuadReader(clonedR2rReader: _*) // These are the source data sets
         else
-          new MultiQuadReader(clonedR2rReader.head, otherQuadsReader)
+          new MultiQuadReader(clonedR2rReader.head, otherQuadsReader, passOnToSieveReader)
 
         val allSameAsLinks = if(skipSilk)
           sameAsReader
@@ -181,20 +192,25 @@ class IntegrationJob (val config : IntegrationConfig, debugMode : Boolean = fals
 
   // Setup config parameters
   def setupConfigParameters() {
+    val terms = SieveConfig.getUsedProperties(config.sieveSpecDir)
     // Quads that are not used in the integration flow, but should still be output
     val otherQuadsFile = File.createTempFile("ldif-other-quads", ".bin")
     // Quads that contain external sameAs links
     val sameAsQuadsFile = File.createTempFile("ldif-sameas-quads", ".bin")
     // Quads that lie in the provenance graph
     val provenanceQuadsFile = File.createTempFile("ldif-provenance-quads", "bin")
+    // Quads that are already in target vocabulary representation
+    val noMapNeedQuadsFile = File.createTempFile("ldif-nomapneed-quads", "bin")
 
     otherQuadsFile.deleteOnExit()
     sameAsQuadsFile.deleteOnExit()
     provenanceQuadsFile.deleteOnExit()
+    noMapNeedQuadsFile.deleteOnExit()
 
     val otherQuads: FileQuadWriter = new FileQuadWriter(otherQuadsFile)
     val sameAsQuads: FileQuadWriter = new FileQuadWriter(sameAsQuadsFile)
     val provenanceQuads: FileQuadWriter = new FileQuadWriter(provenanceQuadsFile)
+    val noMapNeedQuads: FileQuadWriter = new FileQuadWriter(noMapNeedQuadsFile)
 
     val skipSieve = config.properties.getProperty("sieve.skip", "false")=="true"
 //    val passToSieveWriter: FileQuadWriter  = if(skipSieve)
@@ -205,7 +221,7 @@ class IntegrationJob (val config : IntegrationConfig, debugMode : Boolean = fals
 //      new FileQuadWriter(passToSieveFile)
 //    }
 
-    configParameters = ConfigParameters(config.properties, otherQuads, sameAsQuads, provenanceQuads)
+    configParameters = ConfigParameters(config.properties, otherQuads, sameAsQuads, provenanceQuads, noMapNeedQuads)
 
     // Setup LocalNode (to pool strings etc.)
     LocalNode.reconfigure(config.properties)
@@ -635,7 +651,7 @@ object IntegrationJob {
       log.warn("No configuration file given. \nUsage: IntegrationJob <integration job configuration file>")
       System.exit(1)
     }
-    MonitorServer.start("http://localhost:5343/")
+//    MonitorServer.start("http://localhost:5343/")
     var debug = false
     val configFile = new File(args(args.length-1))
 
