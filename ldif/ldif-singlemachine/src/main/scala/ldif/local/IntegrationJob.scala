@@ -67,7 +67,7 @@ class IntegrationJob (val config : IntegrationConfig, debugMode : Boolean = fals
       val fileQuadWriter = new FileQuadWriter(inputQuadsFile)
       copyQuads(r2rReader.get.head, fileQuadWriter)
       fileQuadWriter.finish()
-      Some(Seq(new FileQuadReader(inputQuadsFile)))
+      Some(Seq(new FileQuadReader(inputQuadsFile, numberOfQuads = fileQuadWriter.size)))
     } else r2rReader
   }
 
@@ -122,13 +122,13 @@ class IntegrationJob (val config : IntegrationConfig, debugMode : Boolean = fals
 
         // Setup sameAs reader and otherQuads reader
         configParameters.otherQuadsWriter.finish()
-        val otherQuadsReader = new FileQuadReader(configParameters.otherQuadsWriter.outputFile)
+        val otherQuadsReader = new FileQuadReader(configParameters.otherQuadsWriter)
         configParameters.provenanceQuadsWriter.finish()
-        val provenanceQuadReader = new FileQuadReader(configParameters.provenanceQuadsWriter.outputFile)
+        val provenanceQuadReader = new FileQuadReader(configParameters.provenanceQuadsWriter)
         configParameters.sameAsWriter.finish()
-        val sameAsReader = new FileQuadReader(configParameters.sameAsWriter.outputFile)
+        val sameAsReader = new FileQuadReader(configParameters.sameAsWriter)
         configParameters.passOnToSieveWriter.finish()
-        val passOnToSieveReader = new FileQuadReader(configParameters.passOnToSieveWriter.outputFile)
+        val passOnToSieveReader = new FileQuadReader(configParameters.passOnToSieveWriter)
 
         val clonedR2rReader = setupQuadReader(r2rReader.get)
 
@@ -309,7 +309,7 @@ class IntegrationJob (val config : IntegrationConfig, debugMode : Boolean = fals
   private def executeFusionPhase(config: IntegrationConfig, inputQuadsReader: Seq[QuadReader], fusionModule: FusionModule): QuadReader = {
     val sieveFusionReader = fuseQuads(config.sieveSpecDir, inputQuadsReader, fusionModule)
     log.info("Time needed to fuse data: " + stopWatch.getTimeSpanInSeconds + "s")
-    log.info("Number of entities fused by sieve: " + sieveFusionReader.size)
+    log.info("Number of quads output by sieve fusion phase: " + sieveFusionReader.size)
     sieveFusionReader
   }
 
@@ -391,7 +391,7 @@ class IntegrationJob (val config : IntegrationConfig, debugMode : Boolean = fals
     writer.finish
     executor.reporter.setFinishTime
 
-    Some(Seq(new FileQuadReader(writer.asInstanceOf[FileQuadWriter].outputFile)))
+    Some(Seq(new FileQuadReader(writer.asInstanceOf[FileQuadWriter])))
   }
 
   /**
@@ -505,7 +505,7 @@ class IntegrationJob (val config : IntegrationConfig, debugMode : Boolean = fals
     fusionExecutor.reporter.setFinishTime
 
     irrelevantQuadsWriter.finish()
-    val otherQuadsReader = new FileQuadReader(irrelevantQuadsFile)
+    val otherQuadsReader = new FileQuadReader(irrelevantQuadsWriter)
     new MultiQuadReader(outputQueue, entityBuilderExecutor.getNotUsedQuads, otherQuadsReader)
 
   }
@@ -634,7 +634,7 @@ class IntegrationJob (val config : IntegrationConfig, debugMode : Boolean = fals
     quadWriter.flush()
     quadWriter.close()
     writer.finish
-    return new FileQuadReader(writer.outputFile)
+    return new FileQuadReader(writer)
   }
 
   def getLastUpdate = lastUpdate
