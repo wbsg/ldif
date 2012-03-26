@@ -680,134 +680,122 @@ properties file to further tweak certain parameters concerning the
 integration workflow. Here is a list with all properties that can be
 set at the moment and the possible values for each property:</p>
 <ul>
-  <li>
-    <p><i>output</i><br>
-Specify if all input quads from the
-input should be included in the output file or only the quads that were
-mapped/translated by LDIF. Default: <span style="font-family: monospace;">mapped-only</span></p>
-    <pre>output = all | mapped-only</pre>
-  </li>
-</ul>
-<ul>
-  <li>
-    <p><i>rewriteURIs</i><br>
-Specify if URI aliases in the input data should be rewritten to a
-single target URI in the output data. Default: <span style="font-family: monospace;">true</span></p>
-    <pre>rewriteURIs = true | false</pre>
-  </li>
-</ul>
-<ul>
-  <li>
-    <p><i>provenanceGraphURI</i> <br>
-Specify the graph
-containing the provenance information. Quads from
-this
-graph are only written to the final output data set and not processed
-any further in the integration workflow. Default graph name: <span style="font-family: monospace;">http://www4.wiwiss.fu-berlin.de/ldif/provenance</span></p>
-    <pre>provenanceGraphURI = http://www4.wiwiss.fu-berlin.de/ldif/provenance</pre>
-  </li>
-</ul>
-<ul>
-  <li>
-    <p><i>validateSources</i><br>
-Source data sets, R2R mappings and Silk link specifications are all
-validated before starting with the actual integration. Since the syntax
-validation of the sources (N-Triples / N-Quads files) takes some time
-(about 15s/GB), if you already know that they are correct, it is
-possible to disable this step by setting the property to false.
-Default: <span style="font-family: monospace;">true</span></p>
-    <pre>validateSources = true | false</pre>
-  </li>
-</ul>
-<ul>
-  <li>
-    <p><i>discardFaultyQuads</i><br>
-If LDIF finds a (syntax) error -
-like spaces in URIs - in the source data, it does not progress with the
-integration to give you the opportunity to fix these errors first.
-However, sometimes you just don't care that some quads are faulty and
-want them to be ignored instead, so that the overall integration can
-still proceed. Set this property to <span style="font-family: monospace;">true</span> in order to ignore syntax
-errors in the source data sets. Default: <span style="font-family: monospace;">false</span></p>
-    <pre>discardFaultyQuads = false | true</pre>
-  </li>
-  <li>
-    <p><i>useExternalSameAsLinks</i><br>
-Besides discovering
-equal entities in the identity resolution phase, LDIF also offers the
-opportunity to input these relationships in form of owl:sameAs links.
-The NT/N-Quads file with these sameAs-links has to be placed in the
-source directory with the other data sets. If you don’t want to use
-sameAs-links from the input data, set this property to false. Default: <span style="font-family: monospace;">true</span></p>
-    <pre>useExternalSameAsLinks = true | false</pre>
-  </li>
-</ul>
-<ul>
-  <li>
-    <p><i>outputFormat</i><br>
-Although the default output format is N-Quads, LDIF also offers a
-triple output as N-Triple. Default: <span style="font-family: monospace;">nq</span></p>
-    <pre>outputFormat = nq | nt</pre>
-  </li>
-</ul>
-<ul>
-  <li><span style="font-style: italic;">entityBuilderType</span><br>
-Specify the type of the entity builder component used for the local
-execution profile of LDIF. This choice heavily influences the
-performance and memory foot print. For large data sets and/or low
-memory machines it is a good idea to set this to <span style="font-family: monospace;">quad-store</span> because the
-in-memory version of LDIF is very memory intensive. Default: <span style="font-family: monospace;">in-memory</span>
-    <pre>entityBuilderType = in-memory | quad-store</pre>
-  </li>
-  <li><i>quadStoreType</i><br>
-Specify the concrete store that should be used as backend for the quad
-store version, see configuration property <span style="font-style: italic;">entityBuilderType</span>. Right now there
-is only one store, Jena TDB, that is supported by LDIF, so this
-property doesn't need to be set explicitly. Default: <span style="font-family: monospace;">tdb</span>
-    <pre>quadStoreType = tdb</pre>
-  </li>
-  <li><i>databaseLocation</i><br>
-This property allows to set the location of the data base on the local
-file system. This value is used by the quad store system to configure
-its database location. Default: The temporary directory of the
-operating system<span style="font-family: monospace;"></span>
-    <pre>databaseLocation = Path-To-Database-Dir<br></pre>
-  </li>
-  <li>
-    <p><i>uriMinting</i><br>
-Specify if output resources should be given an URI within the target
-namespace. URI minting. Default: <span style="font-family: monospace;">false</span></p>
-    <pre>uriMinting = true | false</pre>
-  </li>
-</ul>
-<ul>
-  <li>
-    <p><i>uriMintNamespace</i><br>
-Specify the namespace into which the URIs of all output resources are
-translated, if URI minting is enabled. Default: <span style="font-family: monospace;">http://www4.wiwiss.fu-berlin.de/ldif/resource/</span></p>
-    <pre>uriMintNamespace = http://www4.wiwiss.fu-berlin.de/ldif/resource/</pre>
-  </li>
-</ul>
-<ul>
-  <li>
-    <p><i>uriMintLabelPredicate</i><br>
-The value of this property is a
-space separated list of property URIs, which will be used to expand the
-name space URI specified with <i>uriMintNamespace.</i> For each entity
-one value of the specified URIs is used to act as the local part of the
-minted URI. If there are many values to pick from, the max value
-(lexicographic order) is taken. If no value could be found for any of
-the properties, the URI of the entity is not minted. Note that there is
-no way to prevent name clashes at the moment. </p>
-    <pre>uriMintLabelPredicate = http://www.w3.org/2000/01/rdf-schema#label http://www4.wiwiss.fu-berlin.de/ldif/property-example/id</pre>
-  </li>
-</ul>
-    <ul>
-      <li>
-        <p><i>uriMintLanguageRestriction</i><br>If set this parameter restricts the values that are considered for URI minting to specific language literals/tags. The value of this parameter is a whitespace separated list of language tags. Default: not set <b></b></p>
+    <li>
+        <p><i>output</i><br/>
+            Specify if all input quads from the input should be included in the output file or only the quads that were
+            mapped/translated by LDIF. Default: <span style="font-family: monospace;">mapped-only</span></p>
+        <pre>output = all | mapped-only</pre>
+    </li>
+    <li>
+        <p><i>rewriteURIs</i><br>
+            Specify if URI aliases in the input data should be rewritten to a single target URI in the output data.
+            Default: <span style="font-family: monospace;">true</span></p>
+        <pre>rewriteURIs = true | false</pre>
+    </li>
+    <li>
+        <p><i>provenanceGraphURI</i> <br/>
+            Specify the graph containing the provenance information. Quads from this graph are only written to the final
+            output data set and not processed any further in the integration workflow.
+            Default graph name: <span style="font-family: monospace;">http://www4.wiwiss.fu-berlin.de/ldif/provenance</span></p>
+        <pre>provenanceGraphURI = http://www4.wiwiss.fu-berlin.de/ldif/provenance</pre>
+    </li>
+    <li>
+        <p><i>validateSources</i><br/>
+            Source data sets, R2R mappings and Silk link specifications are all
+            validated before starting with the actual integration. Since the syntax
+            validation of the sources (N-Triples / N-Quads files) takes some time
+            (about 15s/GB), if you already know that they are correct, it is
+            possible to disable this step by setting the property to false.
+            Default: <span style="font-family: monospace;">true</span></p>
+        <pre>validateSources = true | false</pre>
+    </li>
+    <li>
+        <p><i>discardFaultyQuads</i><br/>
+            If LDIF finds a (syntax) error - like spaces in URIs - in the source data, it does not progress with the
+            integration to give you the opportunity to fix these errors first.
+            However, sometimes you just don't care that some quads are faulty and
+            want them to be ignored instead, so that the overall integration can
+            still proceed. Set this property to <span style="font-family: monospace;">true</span> in order to ignore syntax
+            errors in the source data sets. Default: <span style="font-family: monospace;">false</span></p>
+        <pre>discardFaultyQuads = false | true</pre>
+    </li>
+    <li>
+        <p><i>useExternalSameAsLinks</i><br/>
+            Besides discovering equal entities in the identity resolution phase, LDIF also offers the
+            opportunity to input these relationships in form of owl:sameAs links.
+            The NT/N-Quads file with these sameAs-links has to be placed in the
+            source directory with the other data sets. If you don’t want to use
+            sameAs-links from the input data, set this property to false. Default: <span style="font-family: monospace;">true</span></p>
+        <pre>useExternalSameAsLinks = true | false</pre>
+    </li>
+    <li>
+        <p><i>outputFormat</i><br/>
+            Although the default output format is N-Quads, LDIF also offers a
+            triple output as N-Triple. Default: <span style="font-family: monospace;">nq</span></p>
+        <pre>outputFormat = nq | nt</pre>
+    </li>
+    <li><i>entityBuilderType</i><br/>
+        Specify the type of the entity builder component used for the local
+        execution profile of LDIF. This choice heavily influences the
+        performance and memory foot print. For large data sets and/or low
+        memory machines it is a good idea to set this to <span style="font-family: monospace;">quad-store</span> because the
+        in-memory version of LDIF is very memory intensive. Default: <span style="font-family: monospace;">in-memory</span>
+        <pre>entityBuilderType = in-memory | quad-store</pre>
+    </li>
+    <li><i>quadStoreType</i><br/>
+        Specify the concrete store that should be used as backend for the quad
+        store version, see configuration property <i>entityBuilderType</i>. Right now there
+        is only one store, Jena TDB, that is supported by LDIF, so this
+        property doesn't need to be set explicitly. Default: <span style="font-family: monospace;">tdb</span>
+        <pre>quadStoreType = tdb</pre>
+    </li>
+    <li><i>databaseLocation</i><br/>
+        This property allows to set the location of the data base on the local
+        file system. This value is used by the quad store system to configure
+        its database location. Default: The temporary directory of the
+        operating system<span style="font-family: monospace;"></span>
+        <pre>databaseLocation = Path-To-Database-Dir<br></pre>
+    </li>
+    <li>
+        <i>uriMinting</i><br/>
+            Specify if output resources should be given an URI within the target
+            namespace. URI minting. Default: <span style="font-family: monospace;">false</span></p>
+        <pre>uriMinting = true | false</pre>
+    </li>
+    <li>
+        <p><i>uriMintNamespace</i><br/>
+            Specify the namespace into which the URIs of all output resources are
+            translated, if URI minting is enabled. Default: <span style="font-family: monospace;">http://www4.wiwiss.fu-berlin.de/ldif/resource/</span></p>
+        <pre>uriMintNamespace = http://www4.wiwiss.fu-berlin.de/ldif/resource/</pre>
+    </li>
+    <li>
+        <p><i>uriMintLabelPredicate</i><br/>
+            The value of this property is a space separated list of property URIs, which will be used to expand the
+            name space URI specified with <i>uriMintNamespace.</i> For each entity
+            one value of the specified URIs is used to act as the local part of the
+            minted URI. If there are many values to pick from, the max value
+            (lexicographic order) is taken. If no value could be found for any of
+            the properties, the URI of the entity is not minted. Note that there is
+            no way to prevent name clashes at the moment. </p>
+        <pre>uriMintLabelPredicate = http://www.w3.org/2000/01/rdf-schema#label http://www4.wiwiss.fu-berlin.de/ldif/property-example/id</pre>
+    </li>
+    <li>
+        <p><i>uriMintLanguageRestriction</i><br/>
+            If set this parameter restricts the values that are considered for URI minting to specific language literals/tags.
+            The value of this parameter is a whitespace separated list of language tags. Default: <span style="font-family: monospace;">not set</span></p>
         <pre>uriMintLanguageRestriction = en fr es</pre>
-      </li>
-    </ul>
+    </li>
+    <li>
+        <p><i>outputQualityScores</i><br/>
+            Specify if the data quality scores quads (generated by the Data Quality Assessment module) should be also included in the output. Default: <span style="font-family: monospace;">false</span></p>
+        <pre>outputQualityScores = true | false</pre>
+    </li>
+    <li>
+        <p><i>qualityFromProvenanceOnly</i><br/>
+            Specify if only the content of the provenance graph should be used in the data quality evaluation. Default: <span style="font-family: monospace;">false</span></p>
+        <pre>qualityFromProvenanceOnly = true | false</pre>
+    </li>
+</ul>
 
 <h3><a name="importjob"></a>Import Job Configuration<br>
 </h3>
