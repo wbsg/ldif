@@ -45,9 +45,7 @@ import ldif.modules.sieve.SieveConfig
 class IntegrationJob (val config : IntegrationConfig, debugMode : Boolean = false) {
 
   private val log = LoggerFactory.getLogger(getClass.getName)
-  private val reporter = new IntegrationJobStatusMonitor
-  JobMonitor.value.addPublisher(reporter)
-  IntegrationJobMonitor.value = reporter
+  private var reporter = new IntegrationJobStatusMonitor
 
   // Object to store all kinds of configuration data
   private var configParameters: ConfigParameters = null
@@ -83,6 +81,9 @@ class IntegrationJob (val config : IntegrationConfig, debugMode : Boolean = fals
 
     else
       synchronized {
+        reporter = new IntegrationJobStatusMonitor
+        JobMonitor.value.addPublisher(reporter)
+        IntegrationJobMonitor.value = reporter
         val sourceNumber = config.sources.size
 
         log.info("Integration Job started")

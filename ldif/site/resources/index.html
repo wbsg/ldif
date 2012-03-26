@@ -613,7 +613,18 @@ then (as all of these have finished) the integration job starts.
 Default: <span style="font-family: monospace;">false</span></p>
     <pre>oneTimeExecution = true | false</pre>
   </li>
+    <li>
+        <p><i>runStatusMonitor</i><br/>
+            Specify if the status monitor should be run when starting LDIF (via ldif.local.Ldif main). Default: <span style="font-family: monospace;">true</span></p>
+        <pre>runStatusMonitor = true | false</pre>
+    </li>
+    <li>
+        <p><i>statusMonitorURI</i><br/>
+            Specify the root URI of the status monitor. Default: <span style="font-family: monospace;">http://localhost:5343/</span></p>
+        <pre>statusMonitorURI = http://localhost:5343/</pre>
+    </li>
 </ul>
+
 <h3><a name="integrationjob"></a>Integration Job Configuration<br>
 </h3>
 <p>An Integration Job is configured with an XML document, whose
@@ -794,6 +805,11 @@ set at the moment and the possible values for each property:</p>
         <p><i>qualityFromProvenanceOnly</i><br/>
             Specify if only the content of the provenance graph should be used in the data quality evaluation. Default: <span style="font-family: monospace;">false</span></p>
         <pre>qualityFromProvenanceOnly = true | false</pre>
+    </li>
+    <li>
+        <p><i>outputProvenance</i><br/>
+            Specify if the provenance data should be output. Default: <span style="font-family: monospace;">true</span></p>
+        <pre>outputProvenance = true | false</pre>
     </li>
 </ul>
 
