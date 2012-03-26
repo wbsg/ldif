@@ -29,6 +29,7 @@
     <xs:complexType>
        <xs:sequence>
         <xs:element name="dumpLocation" type="xs:string" />
+        <xs:element name="renameGraphs" type="xs:string" minOccurs="0" />
       </xs:sequence>
     </xs:complexType>
   </xs:element>
@@ -94,8 +95,6 @@
         <xs:element name="dataSource" type="xs:string" />
 
         <xs:element name="refreshSchedule" type="ldif:refreshScheduleType" />
-
-        <xs:element name="renameGraphs" type="xs:string" minOccurs="0" />
 
         <xs:element ref="ldif:job" />
 

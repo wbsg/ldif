@@ -20,13 +20,13 @@ package ldif.local
 
 import ldif.entity.EntityDescription
 import org.slf4j.LoggerFactory
-import ldif.util.Uri
 import ldif.local.runtime.{ConfigParameters, QuadReader, EntityWriter}
 import ldif.runtime.Quad
 import java.io._
 import java.util.zip.GZIPOutputStream
 import runtime.impl.QuadQueue
 import java.util.concurrent.atomic.AtomicInteger
+import ldif.util.{Consts, Uri}
 
 /**
  * Created by IntelliJ IDEA.
@@ -44,6 +44,9 @@ class QuadStoreEntityBuilder(store: QuadStoreTrait, entityDescriptions : Seq[Ent
 
   private val PHT = new PropertyHashTable(entityDescriptions)
   entityBuilderReportPublisher.name = "Entity Builder (quad store)"
+
+  // if true, irrelevant quads are saved for later use (merge) - used in fusion phase
+  private val collectNotRelevantQuads = config.otherQuadsWriter != null
 
   initStore
   loadDataset
@@ -90,9 +93,15 @@ class QuadStoreEntityBuilder(store: QuadStoreTrait, entityDescriptions : Seq[Ent
           writer.write(quad.toLine.getBytes)
           if(counter!=null)
             counter.incrementAndGet()
+
+          // save rdf:type quads for later use (merge) - used in fusion phase
+          //TODO move into getNotUsedQuads implementation
+          if(quad.predicate.equals(Consts.RDFTYPE_URI) && collectNotRelevantQuads)
+            config.otherQuadsWriter.write(quad)
         }
-//          writer.write(quad.toLine)
-      }
+        else if(collectNotRelevantQuads)
+          config.otherQuadsWriter.write(quad)
+        }
     }
     writer.flush
     writer.close

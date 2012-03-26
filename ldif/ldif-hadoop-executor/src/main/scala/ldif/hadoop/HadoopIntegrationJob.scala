@@ -56,6 +56,7 @@ class HadoopIntegrationJob(val config : IntegrationConfig, debug : Boolean = fal
   private val uriMinting = config.properties.getProperty("uriMinting", "false").toLowerCase=="true"
   private val outputFormat = config.properties.getProperty("outputFormat", "nq").toLowerCase
   private val ignoreProvenance = !(outputFormat=="nq" || outputFormat=="sparql")
+  private val outputProvenance = config.properties.getProperty("outputProvenance", "true").equals("true")
 
   private val externalSameAsLinksDir = clean("sameAsFromSources")
   // Contains quads that are not processed but must be added to the output
@@ -111,7 +112,8 @@ class HadoopIntegrationJob(val config : IntegrationConfig, debug : Boolean = fal
     }
 
     // add provenance quads to the output path
-    move(provenanceQuadsDir, outputPath)
+    if(outputProvenance)
+      move(provenanceQuadsDir, outputPath)
     // add sameAs links to the output path
     move(sameAsLinks, outputPath)
 

@@ -29,7 +29,7 @@ class MultiQuadReader(quadReaders: QuadReader*) extends ClonableQuadReader {
   var index = 0
   var closed = (quadReaders.size == 0) // initialize closed=true if no quadReaders are passed
 
-  def size = 0
+  def size = quadReaders.foldRight(0)((qR,b) => qR.size+b)
 
   def hasNext: Boolean = {
     if(closed)

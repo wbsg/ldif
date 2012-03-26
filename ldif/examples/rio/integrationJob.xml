@@ -12,7 +12,7 @@
     <outputs>
         <output>
             <file>
-                <path>ldif/examples/rio/integrated.nq</path>
+                <path>integrated.nq</path>
             </file>
         </output>
     </outputs>

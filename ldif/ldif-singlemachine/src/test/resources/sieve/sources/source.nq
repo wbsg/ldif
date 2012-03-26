@@ -3,25 +3,17 @@
 <http://dbpedia.org/resource/Ubatuba> <http://dbpedia.org/ontology/areaTotal> "3.3669845434368E8"^^<http://www.w3.org/2001/XMLSchema#double> <http://en.wikipedia.org/wiki/Ubatuba>.
 <http://dbpedia.org/resource/Ubatuba> <http://dbpedia.org/ontology/foundingDate> "1637-10-28"^^<http://www.w3.org/2001/XMLSchema#date> <http://en.wikipedia.org/wiki/Ubatuba>.
 <http://dbpedia.org/resource/Ubatuba> <http://dbpedia.org/ontology/populationTotal> "81246"^^<http://www.w3.org/2001/XMLSchema#nonNegativeInteger> <http://en.wikipedia.org/wiki/Ubatuba>.
-<http://dbpedia.org/resource/Tombos> <http://dbpedia.org/ontology/areaTotal> "2.83483E8"^^<http://www.w3.org/2001/XMLSchema#double> <http://en.wikipedia.org/wiki/Tombos>.
-<http://dbpedia.org/resource/Tombos> <http://dbpedia.org/ontology/populationTotal> "12619"^^<http://www.w3.org/2001/XMLSchema#nonNegativeInteger> <http://en.wikipedia.org/wiki/Tombos>.
 # from pt.dbpedia.org.nq
 <http://dbpedia.org/resource/Ubatuba> <http://dbpedia.org/ontology/areaTotal> "7.12116E11"^^<http://www.w3.org/2001/XMLSchema#double> <http://pt.wikipedia.org/wiki/Ubatuba>.
 <http://dbpedia.org/resource/Ubatuba> <http://dbpedia.org/ontology/populationTotal> "78870"^^<http://www.w3.org/2001/XMLSchema#nonNegativeInteger> <http://pt.wikipedia.org/wiki/Ubatuba>.
-<http://dbpedia.org/resource/Ubatuba> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://dbpedia.org/ontology/City> <http://pt.wikipedia.org/wiki/Ubatuba#absolute-line=1>.
-<http://dbpedia.org/resource/Tombos> <http://dbpedia.org/ontology/areaTotal> "2.83483E11"^^<http://www.w3.org/2001/XMLSchema#double> <http://pt.wikipedia.org/wiki/Tombos>.
-<http://dbpedia.org/resource/Tombos> <http://dbpedia.org/ontology/populationTotal> "9542"^^<http://www.w3.org/2001/XMLSchema#nonNegativeInteger> <http://pt.wikipedia.org/wiki/Tombos>.
-<http://dbpedia.org/resource/Tombos> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://dbpedia.org/ontology/City> <http://pt.wikipedia.org/wiki/Tombos#absolute-line=1>.
+<http://dbpedia.org/resource/Ubatuba> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://dbpedia.org/ontology/City> <http://pt.wikipedia.org/wiki/Ubatuba>.
 # from provenance.dbpedia.org.nq
 <http://en.wikipedia.org/wiki/Ubatuba> <http://www4.wiwiss.fu-berlin.de/ldif/lastUpdate> "2011-07-26T18:49:34Z"^^<http://www.w3.org/2001/XMLSchema#dateTime> <http://www4.wiwiss.fu-berlin.de/ldif/provenance>.
 <http://pt.wikipedia.org/wiki/Ubatuba> <http://www4.wiwiss.fu-berlin.de/ldif/lastUpdate> "2010-07-26T18:52:08Z"^^<http://www.w3.org/2001/XMLSchema#dateTime> <http://www4.wiwiss.fu-berlin.de/ldif/provenance>.
 <http://en.wikipedia.org/wiki/Ubatuba> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www4.wiwiss.fu-berlin.de/ldif/ImportedGraph> <http://www4.wiwiss.fu-berlin.de/ldif/provenance>.
 <http://pt.wikipedia.org/wiki/Ubatuba> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www4.wiwiss.fu-berlin.de/ldif/ImportedGraph> <http://www4.wiwiss.fu-berlin.de/ldif/provenance>.
-<http://en.wikipedia.org/wiki/Tombos> <http://www4.wiwiss.fu-berlin.de/ldif/lastUpdate> "2011-03-09T00:42:38Z"^^<http://www.w3.org/2001/XMLSchema#dateTime> <http://www4.wiwiss.fu-berlin.de/ldif/provenance>.
-<http://pt.wikipedia.org/wiki/Tombos> <http://www4.wiwiss.fu-berlin.de/ldif/lastUpdate> "2011-05-09T00:43:07Z"^^<http://www.w3.org/2001/XMLSchema#dateTime> <http://www4.wiwiss.fu-berlin.de/ldif/provenance>.
-<http://en.wikipedia.org/wiki/Tombos> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www4.wiwiss.fu-berlin.de/ldif/ImportedGraph> <http://www4.wiwiss.fu-berlin.de/ldif/provenance>.
-<http://pt.wikipedia.org/wiki/Tombos> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www4.wiwiss.fu-berlin.de/ldif/ImportedGraph> <http://www4.wiwiss.fu-berlin.de/ldif/provenance>.
-# from extras.dbpedia.org.nq
-#<http://dbpedia.org/resource/Tombos> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://dbpedia.org/ontology/Settlement> <http://pt.wikipedia.org/wiki/Anexo:Lista_de_munic%C3%ADpios_do_Brasil>.
-#<http://dbpedia.org/resource/Ubatuba> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://dbpedia.org/ontology/Settlement> <http://pt.wikipedia.org/wiki/Anexo:Lista_de_munic%C3%ADpios_do_Brasil>.
-
+# Other
+<http://dbpedia.org/resource/Recife> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://dbpedia.org/ontology/City> <http://pt.wikipedia.org/wiki/Recife>.
+<http://dbpedia.org/resource/Brazil> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://dbpedia.org/ontology/Country> <http://pt.wikipedia.org/wiki/Brazil>.
+<http://dbpedia.org/resource/Brazil> <http://dbpedia.org/ontology/areaTotal> "8.51E9"^^<http://www.w3.org/2001/XMLSchema#double> <http://en.wikipedia.org/wiki/Brazil>.
+<http://dbpedia.org/resource/Brazil> <http://dbpedia.org/ontology/capital> <http://dbpedia.org/resource/Brasilia> <http://en.wikipedia.org/wiki/Brazil>.

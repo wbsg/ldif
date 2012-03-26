@@ -20,11 +20,15 @@
 
     <!-- Source element -->
 
-    <xs:element name="sources">
+    <xs:element name="in" abstract="true" />
+
+    <xs:element name="source" type="xs:string" substitutionGroup="ldif:in"/>
+
+    <xs:element name="sources" substitutionGroup="ldif:in">
       <xs:complexType>
             <xs:sequence>
                  <!-- support files and directories, both from local and hdfs -->
-                <xs:element name="source" type="xs:string" maxOccurs="unbounded"/>
+                <xs:element name="source" maxOccurs="unbounded"/>
             </xs:sequence>
         </xs:complexType>
     </xs:element>
@@ -32,7 +36,9 @@
 
     <!-- Output elements -->
 
-    <xs:element name="outputs">
+    <xs:element name="out" abstract="true" />
+
+    <xs:element name="outputs" substitutionGroup="ldif:out">
       <xs:complexType>
             <xs:sequence>
                 <xs:element ref="ldif:output" maxOccurs="unbounded"/>
@@ -40,7 +46,7 @@
         </xs:complexType>
     </xs:element>
 
-    <xs:element name="output">
+    <xs:element name="output" substitutionGroup="ldif:out">
         <xs:complexType>
             <xs:all>
                 <xs:element ref="ldif:abstractOutput" />
@@ -53,10 +59,11 @@
 
     <xs:element name="file" substitutionGroup="ldif:abstractOutput">
         <xs:complexType>
-            <xs:all>
-                <xs:element name="path" type="xs:string" />
-                <xs:element name="format" type="ldif:outputFormat" minOccurs="0" />
-            </xs:all>
+            <xs:simpleContent>
+                <xs:extension base="xs:string">
+                    <xs:attribute name="format" type="ldif:outputFormat" use="optional"/>
+                </xs:extension>
+            </xs:simpleContent>
         </xs:complexType>
     </xs:element>
 
@@ -83,8 +90,8 @@
 
     <xs:simpleType name="outputFormat">
         <xs:restriction base="xs:normalizedString">
-            <xs:enumeration value="nq"/>
-            <xs:enumeration value="nt"/>
+            <xs:enumeration value="nquads"/>
+            <xs:enumeration value="ntriples"/>
         </xs:restriction>
     </xs:simpleType>
 
@@ -114,7 +121,7 @@
 
                 <xs:element name="properties" type="xs:string" minOccurs="0"/>
 
-                <xs:element name="sources" />
+                <xs:element ref="ldif:in" />
 
                 <xs:element name="linkSpecifications" type="xs:string" minOccurs="0"/>
 
@@ -122,7 +129,7 @@
 
                 <xs:element name="sieve" type="xs:string" minOccurs="0"/>
 
-                <xs:element name="outputs" />
+                <xs:element ref="ldif:out"/>
 
                 <xs:element name="runSchedule" type="ldif:runScheduleType" minOccurs="0" />
 

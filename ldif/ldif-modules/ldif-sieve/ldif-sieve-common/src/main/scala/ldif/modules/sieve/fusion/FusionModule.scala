@@ -60,7 +60,7 @@ object FusionModule
     }
     else if(file!=null && file.isDirectory && file.listFiles.size > 0)
     {
-      file.listFiles.map(loadConfig).reduceLeft(_ merge _)
+      file.listFiles.filter(p => !p.isDirectory).map(loadConfig).reduceLeft(_ merge _)
     }
     else
     {

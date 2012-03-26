@@ -21,19 +21,19 @@
             </TargetDataset>
 
             <LinkageRule>
-                <Compare metric="equality" >
+                <Compare metric="equality" threshold="0.0">
                     <!--<TransformInput function="removeSpecialChars">-->
                       <!--<TransformInput function="lowerCase">-->
                        <!--<TransformInput function="removeBlanks">-->
                          <!--<TransformInput function="tokenize">-->
                          <!--<TransformInput function="stem">-->
-                          <TransformInput function="lowerCase">
-                           <TransformInput function="replace">
+                          <!--<TransformInput function="lowerCase">-->
+                           <!--<TransformInput function="replace">-->
                              <Input path="?a/rdfs:label" />
-                             <Param name="search" value="_" />
-                             <Param name="replace" value=" " />
-                           </TransformInput>
-                          </TransformInput>
+                             <!--<Param name="search" value="_" />-->
+                             <!--<Param name="replace" value=" " />-->
+                           <!--</TransformInput>-->
+                          <!--</TransformInput>-->
                          <!--</TransformInput>-->
                        <!--</TransformInput>-->
                       <!--</TransformInput>-->
@@ -45,13 +45,13 @@
                        <!--<TransformInput function="removeBlanks">-->
                          <!--<TransformInput function="tokenize">-->
                              <!--<TransformInput function="stem">-->
-                          <TransformInput function="lowerCase">
-                           <TransformInput function="replace">
+                          <!--<TransformInput function="lowerCase">-->
+                           <!--<TransformInput function="replace">-->
                              <Input path="?b/rdfs:label" />
-                             <Param name="search" value="_" />
-                             <Param name="replace" value=" " />
-                           </TransformInput>
-                          </TransformInput>
+                             <!--<Param name="search" value="_" />-->
+                             <!--<Param name="replace" value=" " />-->
+                           <!--</TransformInput>-->
+                          <!--</TransformInput>-->
                          <!--</TransformInput>-->
                        <!--</TransformInput>-->
                       <!--</TransformInput>-->

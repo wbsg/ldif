@@ -20,8 +20,8 @@ package ldif.local.runtime
 
 import impl.FileQuadWriter
 import java.util.Properties
-import ldif.runtime.QuadWriter
 
+//TODO This class is used to configure both Entity Builders and DumpQuadReader, maybe we should split that in two different classes
 case class ConfigParameters(configProperties: Properties, otherQuadsWriter: FileQuadWriter = null, sameAsWriter: FileQuadWriter = null, provenanceQuadsWriter: FileQuadWriter = null, passOnToSieveWriter: FileQuadWriter = null, collectNotUsedQuads : Boolean = false)
 
 

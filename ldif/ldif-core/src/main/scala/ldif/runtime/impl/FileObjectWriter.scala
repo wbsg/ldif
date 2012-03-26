@@ -33,7 +33,7 @@ class FileObjectWriter[T <: AnyRef](val outputFile: File, val endObject: T, val 
   var counter = 0
   var objectOutput: ObjectOutputStream = null
 
-  def finish() { write(endObject); objectOutput.reset(); objectOutput.flush(); objectOutput.close()}
+  def finish() { write(endObject); counter -= 1; objectOutput.reset(); objectOutput.flush(); objectOutput.close()}
 
   def write(obj: T) {
     // to reduce number of open files
@@ -51,4 +51,6 @@ class FileObjectWriter[T <: AnyRef](val outputFile: File, val endObject: T, val 
     else
       objectOutput = new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream(outputFile)))
   }
+
+  def size = counter
 }

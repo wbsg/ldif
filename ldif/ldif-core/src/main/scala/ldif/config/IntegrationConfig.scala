@@ -66,11 +66,21 @@ object IntegrationConfig {
     )
   }
 
-  protected def getSources = SourceConfig.fromXML((xml \ "sources").head, baseDir)
+  protected def getSources = {
+    if((xml \ "sources").length>0)
+      SourceConfig.fromSourcesXML((xml \ "sources").head, baseDir)
+    else
+      SourceConfig.fromSourceNode((xml \ "source").head, baseDir)
+  }
   protected def getLinkSpecDir = getFile("linkSpecifications", baseDir, true)
   protected def getMappingDir = getFile("mappings", baseDir, true)
   protected def getSieveSpecDir = getFile("sieve", baseDir, true)
-  protected def getOutput = OutputConfig.fromXML((xml \ "outputs").head)
+  protected def getOutput = {
+    if((xml \ "outputs").length>0)
+      OutputConfig.fromOutputsXML((xml \ "outputs").head)
+    else
+      OutputConfig.fromOutputXML((xml \ "output").head)
+  }
   protected def getRunSchedule = getString("runSchedule", "onStartup")
 
   protected def getString(key : String, default : String = null) = {

@@ -2,11 +2,13 @@
 <integrationJob xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
             xmlns="http://www4.wiwiss.fu-berlin.de/ldif/">
   <properties>test1.properties</properties>
-  <sources><source>sources</source></sources>
+  <source>sources</source>
+  <!--<source>sources</source>-->
   <linkSpecifications>linkSpecs</linkSpecifications>
   <mappings>mappings</mappings>
-  <sieve></sieve>
-  <outputs><output><file><path>output_minimal</path></file></output></outputs>
+  <!--<sieve></sieve>-->
+  <!--<outputs><output><file><path>output_minimal</path></file></output></outputs>-->
+  <output><file>output_minimal</file></output>
   <!--<outputPhase>r2r</outputPhase>-->
   <runSchedule>onStartup</runSchedule>
 </integrationJob>

@@ -35,8 +35,7 @@ object EntityBuilderFactory {
   def getEntityBuilder(configParameters: ConfigParameters, entityDescriptions: IndexedSeq[EntityDescription], reader : Seq[QuadReader]): EntityBuilderTrait = {
     val entityBuilderType = configParameters.configProperties.getProperty("entityBuilderType", "in-memory").toLowerCase
     entityBuilderType match {
-      case "voldemort" => new EntityBuilder(entityDescriptions, reader, configParameters)
-      case "in-memory" => return new EntityBuilder(entityDescriptions, reader, configParameters)
+      case "in-memory" => new EntityBuilder(entityDescriptions, reader, configParameters)
       case "quad-store" => {
         createQuadStoreEntityBuilder(configParameters, entityDescriptions, reader)
       }

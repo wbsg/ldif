@@ -30,11 +30,12 @@ import java.util.zip.GZIPInputStream
  * To change this template use File | Settings | File Templates.
  */
 
-class FileObjectReader[T >: Null](val inputFile: File, val endObject: T, val compression: Boolean = false) {
+class FileObjectReader[T >: Null](val inputFile: File, val endObject: T, val compression: Boolean = false, numberOfObjects: Int = 0) {
   var objectInput: ObjectInputStream = null
   var closed = false
   var bufferedObject: T = null
   var buffered = false
+  private var nrOfObjects = numberOfObjects
 
   def hasNext: Boolean = {
     if(closed)
@@ -63,6 +64,8 @@ class FileObjectReader[T >: Null](val inputFile: File, val endObject: T, val com
   }
 
   def read(): T = {
+    if(nrOfObjects>0)
+      nrOfObjects -= 1
     if(buffered) {
       buffered = false
       return bufferedObject
@@ -76,7 +79,7 @@ class FileObjectReader[T >: Null](val inputFile: File, val endObject: T, val com
 
   def isEmpty = !hasNext
 
-  def size = throw new RuntimeException("Method 'size' not implemented in FileObjectReader")
+  def size = nrOfObjects
 
   def close() = if(objectInput!=null) objectInput.close()
 
