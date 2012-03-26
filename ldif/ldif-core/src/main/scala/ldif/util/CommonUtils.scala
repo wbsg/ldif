@@ -64,6 +64,14 @@ object CommonUtils {
     value
   }
 
+  def getAttributeAsString(xml: Node, name: String, default: String="") = {
+    val attributeRef = "@"+name
+    var value: String = (xml \ attributeRef text)
+    if (value == "" || value == null)
+      value = default
+    value
+  }
+
   // list files contained in the directory 'dir', filtering hidden files or by extension
   def listFiles(dir : File, allowedExtensions : Seq[String] = Seq.empty[String], keepHidden : Boolean = false) : Traversable[File] = {
     if (dir.isDirectory){

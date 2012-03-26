@@ -7,7 +7,7 @@
   <mappings>mappings</mappings>
   <!--<sieve></sieve>-->
   <!--<outputs><output><file><path>output_minimal</path></file></output></outputs>-->
-  <output><file><path>output_minimal</path></file></output>
+  <output><file format="ntriples">output_minimal</file></output>
   <!--<outputPhase>r2r</outputPhase>-->
   <runSchedule>onStartup</runSchedule>
 </integrationJob>

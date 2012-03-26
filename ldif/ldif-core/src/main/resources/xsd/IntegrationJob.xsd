@@ -55,10 +55,11 @@
 
     <xs:element name="file" substitutionGroup="ldif:abstractOutput">
         <xs:complexType>
-            <xs:all>
-                <xs:element name="path" type="xs:string" />
-                <xs:element name="format" type="ldif:outputFormat" minOccurs="0" />
-            </xs:all>
+            <xs:simpleContent>
+                <xs:extension base="xs:string">
+                    <xs:attribute name="format" type="ldif:outputFormat" use="optional"/>
+                </xs:extension>
+            </xs:simpleContent>
         </xs:complexType>
     </xs:element>
 

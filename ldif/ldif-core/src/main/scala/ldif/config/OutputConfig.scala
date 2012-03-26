@@ -97,13 +97,13 @@ object OutputConfig {
   }
 
   private def getFileWriter(xml : Node) : SerializingQuadWriter = {
-    val outputUriOrPath = CommonUtils.getValueAsString(xml,"path").trim
+    val outputUriOrPath = (xml text).trim//CommonUtils.getValueAsString(xml,"path").trim
     if (outputUriOrPath == "") {
       log.warn("Invalid file output config. Please check http://www.assembla.com/code/ldif/git/nodes/ldif/ldif-core/src/main/resources/xsd/IntegrationJob.xsd")
       null
     }
     else {
-      val outputFormat = CommonUtils.getValueAsString(xml,"format",Consts.FileOutputFormatDefault)
+      val outputFormat = CommonUtils.getAttributeAsString(xml,"format",Consts.FileOutputFormatDefault)
       if (outputFormat == "nquads")
         new SerializingQuadWriter(outputUriOrPath, NQUADS)
       else if (outputFormat == "ntriples")
