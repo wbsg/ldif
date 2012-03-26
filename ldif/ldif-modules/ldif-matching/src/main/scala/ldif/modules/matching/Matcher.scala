@@ -76,12 +76,13 @@ object Matcher {
   private def buildEntities(readers : Seq[QuadReader], entityDescriptions : Seq[EntityDescription]) : Seq[EntityReader] =
   {
     val properties = new Properties()
-    properties.put("entityBuilderType", "quad-store")
-    buildEntities(readers, entityDescriptions, new EntityBuilderExecutor(ConfigParameters(properties) ))
+//    properties.put("entityBuilderType", "quad-store")
+    buildEntities(readers, entityDescriptions, new EntityBuilderExecutor(ConfigParameters(properties)), properties)
   }
 
-  private def buildEntities(readers : Seq[QuadReader], entityDescriptions : Seq[EntityDescription], entityBuilderExecutor : EntityBuilderExecutor, inmemory: Boolean = true) : Seq[EntityReader] =
+  private def buildEntities(readers : Seq[QuadReader], entityDescriptions : Seq[EntityDescription], entityBuilderExecutor : EntityBuilderExecutor, properties: Properties) : Seq[EntityReader] =
   {
+    val inmemory = properties.getProperty("entityBuilderType", "inmemory")=="inmemory"
     var entityWriters: Seq[EntityWriter] = null
     val entityQueues = entityDescriptions.map(new EntityQueue(_, Consts.DEFAULT_ENTITY_QUEUE_CAPACITY))
     val fileEntityQueues = for(eD <- entityDescriptions) yield {
