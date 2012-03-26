@@ -50,10 +50,9 @@ class IntegrationTest extends FlatSpec with ShouldMatchers {
       "<http://source/uriB> <http://www.w3.org/2002/07/owl#sameAs> <http://source/uriC> <http://source/graph4> . ",
       "<http://source/uriC> <http://ldif/mapProp> \"map\" <http://source/graph4> . ",
       "<http://source/uriA> <http://www.w3.org/2002/07/owl#sameAs> <http://source/uriC> <http://source/graph3> . ",
-      "<http://source/uriC> <http://ldif/mapProp> \"map\" <http://source/graph3> . "
+      "<http://source/uriC> <http://ldif/mapProp> \"map\" <http://source/graph3> . ",
+      "<http://source/graph1> <http://ldif/provProp> \"_\" <http://ldif/provGraph> . "
     ))
-    //TODO Fix - Output should contain the following provenance quads!
-    // <http://source/graph1> <http://ldif/provProp> "_" <http://ldif/provGraph> .
     OutputValidator.contains(ldifOutput, correctQuads) should equal(true)
 
     val incorrectQuads = CommonUtils.getQuads(List(
