@@ -23,8 +23,11 @@ import java.io.File
 
 object SourceConfig {
 
-  def fromXML(xml : Node, baseDir : String = null) : Traversable[String] =
+  def fromSourcesXML(xml : Node, baseDir : String = null) : Traversable[String] =
     (xml \ "source").filter(_.text != "").map(parseSource(_, baseDir))
+
+  def fromSourceNode(sourceNode : Node, baseDir : String = null) : Traversable[String] =
+    Seq(sourceNode).filter(_.text != "").map(parseSource(_, baseDir))
 
   private def parseSource(node : Node, baseDir : String) : String = {
     val value = node.text.trim

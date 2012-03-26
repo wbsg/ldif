@@ -21,8 +21,7 @@
             </phase>
         </output>
         <output>
-            <file><path>output.nq
-            </path></file>
+            <file>output.nq</file>
         </output>
     </outputs>
 </integrationJob>

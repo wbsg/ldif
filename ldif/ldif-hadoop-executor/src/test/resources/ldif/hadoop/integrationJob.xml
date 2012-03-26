@@ -3,9 +3,9 @@
            xsi:schemaLocation="http://www4.wiwiss.fu-berlin.de/ldif/ ../xsd/IntegrationJob.xsd"
             xmlns="http://www4.wiwiss.fu-berlin.de/ldif/">
     <properties>integration.properties</properties>
-    <sources><source>src/test/resources/ldif/hadoop/sources</source></sources>
+    <source>src/test/resources/ldif/hadoop/sources</source>
     <linkSpecifications>linkSpecs</linkSpecifications>
     <mappings>mappings</mappings>
-    <outputs><output><file><path>ldif_hadoop_output</path></file></output></outputs>
+    <outputs><output><file>ldif_hadoop_output</file></output></outputs>
     <runSchedule>onStartup</runSchedule>
 </integrationJob>

@@ -20,11 +20,15 @@
 
     <!-- Source element -->
 
-    <xs:element name="sources">
+    <xs:element name="in" abstract="true" />
+
+    <xs:element name="source" type="xs:string" substitutionGroup="ldif:in"/>
+
+    <xs:element name="sources" substitutionGroup="ldif:in">
       <xs:complexType>
             <xs:sequence>
                  <!-- support files and directories, both from local and hdfs -->
-                <xs:element name="source" type="xs:string" maxOccurs="unbounded"/>
+                <xs:element name="source" maxOccurs="unbounded"/>
             </xs:sequence>
         </xs:complexType>
     </xs:element>
@@ -117,7 +121,7 @@
 
                 <xs:element name="properties" type="xs:string" minOccurs="0"/>
 
-                <xs:element name="sources" />
+                <xs:element ref="ldif:in" />
 
                 <xs:element name="linkSpecifications" type="xs:string" minOccurs="0"/>
 

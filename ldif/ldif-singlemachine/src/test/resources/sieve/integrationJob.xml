@@ -9,9 +9,7 @@
     <sieve>sieve</sieve>
     <outputs>
         <output>
-            <file>
-                <path>output_sieve_test.nq</path>
-            </file>
+            <file>output_sieve_test.nq</file>
         </output>
     </outputs>
     <runSchedule>onStartup</runSchedule>
