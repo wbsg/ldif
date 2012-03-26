@@ -21,9 +21,10 @@ import impl.NoEntitiesLeft
 import org.slf4j.LoggerFactory
 import ldif.runtime.Quad
 import ldif.modules.sieve.fusion.{FusionTask, FusionConfig, FusionFunction}
-import ldif.modules.sieve.quality.QualityTask
-import ldif.entity.{Node, Entity}
 import ldif.runtime.QuadWriter
+import ldif.modules.sieve.quality.{QualitySpecification, QualityAssessmentProvider, QualityTask}
+import ldif.modules.sieve.quality.functions.RandomScoringFunction
+import ldif.entity.{EntityDescription, Node, Entity}
 
 /**
  * Executes Sieve Data Fusion on a local machine.
@@ -58,6 +59,32 @@ class SieveLocalQualityExecutor(useFileInstanceCache: Boolean = false) extends E
   }
 
   def output(task : QualityTask) = new GraphFormat()
+
+
+  //def aggregate(task : QualityTask, qualityAssessment: QualityAssessmentProvider, writer : QuadWriter) {
+  def aggregate(task : QualityTask, reader : Seq[EntityReader], writer : QuadWriter) {
+    log.info("Executing Sieve Quality Assessment Task [%s]".format(task.name))
+
+    //foreach graph in qualityAssessment
+    //qualityAssessment.
+      //foreach metric that we will aggregate
+        //get score (graph,metric)
+      //aggregationScoringFunction.score(individualScores)
+
+
+
+//    val outputPropertyName = task.qualitySpec.outputPropertyNames(patternId)
+//    val scoringFunction = task.qualitySpec.scoringFunctions(patternId)
+//    // score a graph according to each scoringFunction
+//    val score = scoringFunction.score(graphId, indicators)
+//    // write quad out
+//    val scoreNode = Node.createTypedLiteral(score.formatted("%.4f"),"http://www.w3.org/2001/XMLSchema#double")
+//    val quad = new Quad(graphId, outputPropertyName, scoreNode, task.qualityConfig.qualityMetadataGraph);
+//    writer.write(quad)
+//    // also add to the QualityAssessment so that Fusion can grab directly from it.
+//    task.qualityAssessment.putScore(outputPropertyName, graphId.value, score)
+
+  }
 
   /**
    * Executes a Sieve Quality task.

@@ -20,23 +20,24 @@
 
     <QualityAssessment name="Prefer new information from authors with good rating" description="The idea is to BlaBla">
 
+        <AggregateMetric id="sieve:believability" class="Average">
+
             <AssessmentMetric id="sieve:recency">
                 <ScoringFunction class="TimeCloseness">
                     <Param name="timeSpan" value="7"/>
                     <Input path="?GRAPH/provenance:lastUpdated"/>
                     <Input path="?GRAPH/provenance:whatever"/>
-
                 </ScoringFunction>
             </AssessmentMetric>
 
+            <AssessmentMetric id="sieve:recency">
+                <ScoringFunction class="ScoredList">
+                    <Param name="list" value="en.wikipedia.org pt.wikipedia.org es.wikipedia.org"/>
+                    <Input path="?GRAPH/provenance:whenever"/>
+                </ScoringFunction>
+            </AssessmentMetric>
 
-        <AssessmentMetric id="sieve:recency">
-        <ScoringFunction class="ScoredList">
-            <Param name="list" value="en.wikipedia.org pt.wikipedia.org es.wikipedia.org"/>
-            <Input path="?GRAPH/provenance:whenever"/>
-
-        </ScoringFunction>
-        </AssessmentMetric>
+        </AggregateMetric>
 
     </QualityAssessment>
 

@@ -33,7 +33,8 @@ import ldif.util.Prefixes
 class QualityConfig(val name: String,
                     val description: String,
                     val prefixes: Prefixes,
-                    val qualitySpecs: Traversable[QualitySpecification]) {
+                    val qualitySpecs: Traversable[QualitySpecification],
+                    val aggregationQualitySpecs: Traversable[QualitySpecification]) {
 
 
   def merge(c: QualityConfig): QualityConfig = {
@@ -57,8 +58,8 @@ object QualityConfig {
     val configName = (node \ "@name").text
     val configDesc = (node \ "@description").text
     val specs = (node \\ "AssessmentMetric").map(QualitySpecification.fromXML(_)(augmentedPrefixes))
-    new QualityConfig(configName, configDesc, augmentedPrefixes, specs)
-    // TODO: handle aggregate Metrics (next version)
+    val aggregationSpecs = Traversable[QualitySpecification]() // TODO: handle aggregate Metrics (next version)
+    new QualityConfig(configName, configDesc, augmentedPrefixes, specs, aggregationSpecs)
   }
   def empty = new EmptyQualityConfig
 
@@ -71,5 +72,6 @@ object QualityConfig {
  This class should never be actually used for fusion. It simply signals that no config exists, and the framework should repeat the input.
  */
 class EmptyQualityConfig extends QualityConfig("", "", Prefixes.stdPrefixes,
+  List(new QualitySpecification("Empty", IndexedSeq(RandomScoringFunction), IndexedSeq("DEFAULT"),EntityDescription.empty)),
   List(new QualitySpecification("Empty", IndexedSeq(RandomScoringFunction), IndexedSeq("DEFAULT"),EntityDescription.empty))) {
 }

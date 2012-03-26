@@ -25,8 +25,7 @@ import collection.mutable.HashMap
 /**
  * Sieve Quality Assessment Module.
  */
-class QualityModule(val config : QualityModuleConfig) extends Module with QualityAssessmentProvider
-{
+class QualityModule(val config : QualityModuleConfig) extends Module with QualityAssessmentProvider {
 
   private val log = LoggerFactory.getLogger(getClass.getName)
 
@@ -39,6 +38,16 @@ class QualityModule(val config : QualityModuleConfig) extends Module with Qualit
     for(qualitySpec <- config.qualityConfig.qualitySpecs) yield {
       val task = new QualityTask(config, qualitySpec)
       qaMap.put(qualitySpec.outputPropertyNames.head,task.qualityAssessment)
+      task
+    }
+  }
+
+  //these need to be separate because they use values computed by the QualityModule.tasks
+  lazy val aggregationTasks : Traversable[QualityTask] =
+  {
+    for(aggQualitySpec <- config.qualityConfig.aggregationQualitySpecs) yield {
+      val task = new QualityTask(config, aggQualitySpec)
+      qaMap.put(aggQualitySpec.outputPropertyNames.head,task.qualityAssessment)
       task
     }
   }

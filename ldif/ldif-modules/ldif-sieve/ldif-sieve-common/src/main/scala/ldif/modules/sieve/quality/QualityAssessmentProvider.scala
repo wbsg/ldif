@@ -2,6 +2,7 @@ package ldif.modules.sieve.quality
 
 import java.lang.Math
 import collection.mutable.HashMap
+import sun.reflect.generics.reflectiveObjects.NotImplementedException
 
 /**
  * Contains scored graphs for each indicator.
@@ -17,6 +18,12 @@ trait QualityAssessmentProvider {
   def size : Int
   //def asQuads : QuadReader
   def putScore(propertyName:String, graph: String, score:Double)
+
+  /**
+   * Given a metricId, returns scored graphs in the form of a Map( graphId: String -> score: Double )
+   */
+  //def getScoredGraphs(propertyName: String): Map[String,Double]
+
 }
 
 
@@ -34,6 +41,9 @@ class RandomQualityAssessment extends QualityAssessmentProvider {
     count = count + 1
   }
 
+//  def getScoredGraphs(propertyName: String) = {
+//    throw new NotImplementedException //todo implement
+//  }
 }
 
 /**
@@ -61,5 +71,9 @@ class HashBasedQualityAssessment extends QualityAssessmentProvider { //todo impl
       case None => 0.0
     }
   }
+
+//  def getScoredGraphs(propertyName: String) = {
+//    property2metric.getOrElse(propertyName, Map[String,Double]())
+//  }
 
 }
