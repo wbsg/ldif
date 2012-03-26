@@ -23,7 +23,7 @@ import ldif.local.IntegrationJobMonitor
 class DumpQuadReader(inputQuadReader: QuadReader, config: ConfigParameters) extends QuadReader {
   private var bufferedQuad: Quad = null
   private val outputAllQuads = config.configProperties.getProperty("output", "mapped-only").toLowerCase=="all"
-  private val provenanceGraph = config.configProperties.getProperty("provenanceGraph", Consts.DEFAULT_PROVENANCE_GRAPH)
+  private val provenanceGraph = config.configProperties.getProperty("provenanceGraphURI", Consts.DEFAULT_PROVENANCE_GRAPH)
 //  private val outputFormat = config.configProperties.getProperty("outputFormat", "nq").toLowerCase
   private val useExternalSameAsLinks = config.configProperties.getProperty("useExternalSameAsLinks", "true").toLowerCase=="true"
 //  private val ignoreProvenance = !(outputFormat=="nq" || outputFormat=="sparql")//TODO: implement this feature in output component

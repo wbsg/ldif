@@ -23,10 +23,10 @@ import org.scalatest.matchers.ShouldMatchers
 import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner
 import ldif.util.{OutputValidator, CommonUtils}
-import java.io.File
 import java.util.Properties
 import ldif.config.IntegrationConfig
 import ldif.output.SerializingQuadWriter
+import java.io.{FileWriter, File}
 
 @RunWith(classOf[JUnitRunner])
 class IntegrationTest extends FlatSpec with ShouldMatchers {
@@ -78,18 +78,30 @@ class IntegrationTest extends FlatSpec with ShouldMatchers {
 
   }
 
+  it should "not output provenance data if configured so" in {
+    val properties = CommonUtils.buildProperties(fixedProperties ++ Map(("outputProvenance", "false")))
+    val ldifOutput = runLdif(configFile, properties)
+    val writer = new FileWriter("test.test")
+    for(quad<-ldifOutput)
+      writer.append(quad.toNQuadFormat).append("\n")
+    writer.flush()
+    writer.close()
+
+    ldifOutput.size should equal (8)
+  }
+
   //TODO Fix - Provenance data should be discarded when outputFormat=nt
-  //  it should "run the whole integration flow correctly (ouput=nt)" in {
-  //    val properties = CommonUtils.buildProperties(fixedProperties ++ Map(("outputFormat","nt"), ("output","all")))
-  //
-  //    val ldifOutput = runLdif(configFile, properties)
-  //
-  //    val incorrectQuads = CommonUtils.getQuads(List(
-  //      "<http://source/graph1> <http://ldif/provProp> \"_\" ."
-  //    ))
-  //
-  //    OutputValidator.containsNot(ldifOutput, incorrectQuads) should equal(true)
-  //  }
+    it should "run the whole integration flow correctly (ouput=nt)" in {
+      val properties = CommonUtils.buildProperties(fixedProperties ++ Map(("outputFormat","nt"), ("output","all")))
+
+      val ldifOutput = runLdif(configFile, properties)
+
+      val incorrectQuads = CommonUtils.getQuads(List(
+        "<http://source/graph1> <http://ldif/provProp> \"_\" ."
+      ))
+
+      OutputValidator.containsNot(ldifOutput, incorrectQuads) should equal(true)
+    }
 
   //TODO see http://www.assembla.com/spaces/ldif/wiki/Integration_behaviours
 
