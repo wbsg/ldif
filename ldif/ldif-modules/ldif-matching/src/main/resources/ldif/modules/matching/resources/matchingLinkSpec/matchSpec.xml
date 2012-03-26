@@ -21,7 +21,7 @@
             </TargetDataset>
 
             <LinkageRule>
-                <Compare metric="substring" threshold="0.0">
+                <Compare metric="equality" threshold="0.0">
                     <!--<TransformInput function="removeSpecialChars">-->
                       <!--<TransformInput function="lowerCase">-->
                        <!--<TransformInput function="removeBlanks">-->

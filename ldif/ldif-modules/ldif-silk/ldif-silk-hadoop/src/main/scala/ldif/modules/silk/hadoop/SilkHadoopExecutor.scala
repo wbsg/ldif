@@ -66,12 +66,18 @@ class SilkHadoopExecutor extends Executor {
   private def runIndexingJob(task: SilkTask, inputPath: Path, outputPath: Path, isSource: Boolean) {
     val job = new JobConf(new Configuration(), classOf[SilkHadoopExecutor])
     job.setJobName("Silk Indexing")
+    val hdfs = FileSystem.get(job)
 
     // Distribute Configuration
     Configured.write(job, task.linkSpec, isSource)
 
     //Set Input
-    FileInputFormat.setInputPaths(job, inputPath)
+    if(hdfs.exists(inputPath))
+      FileInputFormat.setInputPaths(job, inputPath)
+    else {
+      log.warn("Input path " + inputPath + " does not exist.")
+      return
+    }
     job.setInputFormat(classOf[SequenceFileInputFormat[IntWritable, EntityWritable]])
 
     //Set Mapper
@@ -82,7 +88,6 @@ class SilkHadoopExecutor extends Executor {
     job.setMapOutputValueClass(classOf[IndexedEntityWritable])
 
     //Set Output
-    val hdfs = FileSystem.get(job)
     if (hdfs.exists(outputPath))
       hdfs.delete(outputPath, true)
     FileOutputFormat.setOutputPath(job, outputPath)

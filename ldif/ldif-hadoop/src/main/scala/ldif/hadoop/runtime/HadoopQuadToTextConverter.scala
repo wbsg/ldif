@@ -35,6 +35,9 @@ import org.slf4j.LoggerFactory
  */
 
 class HadoopQuadToTextConverter extends Configured with Tool {
+  /**
+   * First argument is the output path, second to n arguments are input paths
+   */
   def run(args: Array[String]): Int = {
     val conf = getConf
     val job = new JobConf(conf, classOf[HadoopQuadToTextConverter])
@@ -52,10 +55,15 @@ class HadoopQuadToTextConverter extends Configured with Tool {
     job.setInputFormat(classOf[QuadSequenceFileInput])
     job.setOutputFormat(classOf[TextOutputFormat[NullWritable, QuadWritable]])
 
-    var in = new Path(args(0))
-    FileInputFormat.addInputPath(job, in)
+    val hdfs = FileSystem.get(new Configuration())
 
-    val out = new Path(args(1))
+    for(i <- 1 until  args.length) {
+      var in = new Path(args(i))
+      if(hdfs.exists(in))
+        FileInputFormat.addInputPath(job, in)
+    }
+
+    val out = new Path(args(0))
     FileOutputFormat.setOutputPath(job, out)
     // disable output compression
     FileOutputFormat.setCompressOutput(job, false)
@@ -73,6 +81,10 @@ object HadoopQuadToTextConverter {
   private val log = LoggerFactory.getLogger(getClass.getName)
 
   def execute(inputPath: String, outputPath: String): Int = {
+    execute(Seq(inputPath), outputPath)
+  }
+
+  def execute(inputPaths: Seq[String], outputPath: String): Int = {
     log.info("Starting quad to N-Quads conversion...")
     val start = System.currentTimeMillis
     val conf = new Configuration
@@ -83,9 +95,10 @@ object HadoopQuadToTextConverter {
     if (hdfs.exists(hdPath))
       hdfs.delete(hdPath, true)
 
-    val res = ToolRunner.run(conf, new HadoopQuadToTextConverter, Array[String](inputPath, outputPath))
+    val res = ToolRunner.run(conf, new HadoopQuadToTextConverter, Array[String]((outputPath::inputPaths.toList) : _*))
     log.info("That's it. quad conversion took " + (System.currentTimeMillis-start)/1000.0 + "s")
     res
+
   }
 
   // For Debugging

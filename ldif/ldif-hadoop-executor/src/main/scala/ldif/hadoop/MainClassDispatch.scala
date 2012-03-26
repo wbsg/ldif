@@ -22,6 +22,7 @@ object MainClassDispatcher {
       case "integrate" => HadoopIntegrationJob.main(parameters)
       case "urisets" => UriSets.execute(parameters)
       case "r2r" => R2R.execute(parameters)
+      case "silk" => Silk.execute(parameters)
       case _ => System.err.println("Error: command " + command + " invalid.")
         exitDispatcher
     }

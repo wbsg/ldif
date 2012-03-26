@@ -40,7 +40,7 @@ object R2R {
     val mappings = getLdifMappings(mappingsPath)
     val entityDescriptions = getEntityDescriptions(mappings)
 
-    buildEntities(input, tempDir, entityDescriptions)
+    EB.buildEntities(input, tempDir, entityDescriptions)
 
     RunHadoopR2RJob.execute(tempDir, output, mappings, standalone = true)
     clean(tempDir)
@@ -56,20 +56,6 @@ object R2R {
 
   private def getEntityDescriptions(mappings: IndexedSeq[LDIFMapping]): IndexedSeq[EntityDescription] = {
     (for(mapping <- mappings) yield mapping.entityDescription).toIndexedSeq
-  }
-
-  private def buildEntities(input: String, output: String, entityDescriptions: IndexedSeq[EntityDescription]) {
-    val properties = {
-      if(System.getProperty("ldif.properties", "")!="")
-        ConfigProperties.loadProperties(System.getProperty("ldif.properties"))
-      else if(new File("ldif.properties").exists())
-        ConfigProperties.loadProperties("ldif.properties")
-      else
-        new Properties()
-    }
-    val configParameters = ConfigParameters(new Properties(), null, null, null, true)
-    val eb = new HadoopEntityBuilder(entityDescriptions, Seq(new Path(input)), configParameters)
-    eb.buildEntities(new Path(output))
   }
 
   // Delete path/directory
