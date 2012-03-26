@@ -32,7 +32,9 @@
 
     <!-- Output elements -->
 
-    <xs:element name="outputs">
+    <xs:element name="out" abstract="true" />
+
+    <xs:element name="outputs" substitutionGroup="ldif:out">
       <xs:complexType>
             <xs:sequence>
                 <xs:element ref="ldif:output" maxOccurs="unbounded"/>
@@ -40,7 +42,7 @@
         </xs:complexType>
     </xs:element>
 
-    <xs:element name="output">
+    <xs:element name="output" substitutionGroup="ldif:out">
         <xs:complexType>
             <xs:all>
                 <xs:element ref="ldif:abstractOutput" />
@@ -122,7 +124,7 @@
 
                 <xs:element name="sieve" type="xs:string" minOccurs="0"/>
 
-                <xs:element name="outputs" />
+                <xs:element ref="ldif:out"/>
 
                 <xs:element name="runSchedule" type="ldif:runScheduleType" minOccurs="0" />
 

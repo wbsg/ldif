@@ -52,8 +52,13 @@ object OutputConfig {
 
   private val log = LoggerFactory.getLogger(getClass.getName)
 
-  def fromXML(xml : Node) : OutputConfig =
-    new OutputConfig((xml \ "output").map(parseOutput(_)))
+  // use this on an outputs element
+  def fromOutputsXML(outputsNode : Node) : OutputConfig =
+    new OutputConfig((outputsNode \ "output").map(parseOutput(_)))
+
+  // Use this on an output element
+  def fromOutputXML(outputNode: Node) : OutputConfig =
+    new OutputConfig(Seq(parseOutput(outputNode)))
 
   private def parseOutput(xml : Node) : (QuadWriter, IntegrationPhase) =
     (parseOutputWriter(xml.child.filter(_.isInstanceOf[Elem]).head), parseOutputPhase((xml \ "phase").filter(_.isInstanceOf[Elem]).headOption))
