@@ -32,6 +32,7 @@ class CallbackOutputStream(val out : OutputStream, renameGraphs : String) extend
 
   override def processStatement(nodes : Array[Node]) {
     val graph = nodes(3).toN3.replaceAll(renameGraphs, "")
+    println(nodes(0).toN3 + nodes(1).toN3 + nodes(2).toN3 +nodes(3).toN3)
     try {
       for(i <- 0 to 2){
         out.write(nodes(i).toN3.getBytes)//TODO: Change toN3 to toNT/toNQ
@@ -48,7 +49,7 @@ class CallbackOutputStream(val out : OutputStream, renameGraphs : String) extend
       }
     }
     //super.processStatement(nodes)
-    graphs += graph.substring(1,graph.length)
+    graphs += graph.substring(1,graph.length-1)
     statements += 1
   }
 }
