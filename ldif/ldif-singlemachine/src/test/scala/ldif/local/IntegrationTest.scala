@@ -121,11 +121,6 @@ class IntegrationTest extends FlatSpec with ShouldMatchers {
   it should "not output provenance data if configured so" in {
     val properties = CommonUtils.buildProperties(fixedProperties ++ Map(("outputProvenance", "false")))
     val ldifOutput = runLdif(configFile, properties)
-    val writer = new FileWriter("test.test")
-    for(quad<-ldifOutput)
-      writer.append(quad.toNQuadFormat).append("\n")
-    writer.flush()
-    writer.close()
 
     ldifOutput.size should equal (8)
   }
