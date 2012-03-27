@@ -26,8 +26,6 @@ import ldif.entity.Node
 
 class MemHashTableReadOnce extends MemHashTable {
 
-  private val hashTable:MultiMap[Pair[Node,String], Node] = new HashMap[Pair[Node,String], Set[Node]] with MultiMap[Pair[Node,String], Node]
-
   override def get(key : Pair[Node,String]) = {
     val values = hashTable.get(key)
     hashTable.remove(key)

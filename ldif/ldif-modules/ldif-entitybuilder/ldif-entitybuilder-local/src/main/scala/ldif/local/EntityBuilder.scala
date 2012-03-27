@@ -44,8 +44,8 @@ class EntityBuilder (entityDescriptions : IndexedSeq[EntityDescription], readers
   // Forward HT - Contains connections which are going to be explored straight/forward
   var FHT:HashTable =
     if (collectNotUsedQuads) {
-     new MarkedMemHashTable
-     //new MemHashTableReadOnce
+     //new MarkedMemHashTable
+     new MemHashTableReadOnce
     }
     else
       new MemHashTable
@@ -424,8 +424,8 @@ class EntityBuilder (entityDescriptions : IndexedSeq[EntityDescription], readers
   override def getNotUsedQuads : QuadReader = {
     if (collectNotUsedQuads) {
       // retrieves not-used property quads
-      val f = FHT.asInstanceOf[MarkedMemHashTable].getNotUsedQuads(PropertyType.FORW)
-      //val f = FHT.asInstanceOf[MemHashTableReadOnce].getNotUsedQuads(PropertyType.FORW)
+      // val f = FHT.asInstanceOf[MarkedMemHashTable].getNotUsedQuads(PropertyType.FORW)
+      val f = FHT.asInstanceOf[MemHashTableReadOnce].getNotUsedQuads(PropertyType.FORW)
       // retrieves rdf:type quads
       val b = BHT.getAllQuads(PropertyType.BACK)
       new MultiQuadReader(f,b)
