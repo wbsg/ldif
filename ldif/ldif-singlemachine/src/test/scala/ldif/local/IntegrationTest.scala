@@ -125,19 +125,6 @@ class IntegrationTest extends FlatSpec with ShouldMatchers {
     ldifOutput.size should equal (8)
   }
 
-  //TODO Fix - Provenance data should be discarded when outputFormat=nt
-    it should "run the whole integration flow correctly (ouput=nt)" in {
-      val properties = CommonUtils.buildProperties(fixedProperties ++ Map(("outputFormat","nt"), ("output","all")))
-
-      val ldifOutput = runLdif(configFile, properties)
-
-      val incorrectQuads = CommonUtils.getQuads(List(
-        "<http://source/graph1> <http://ldif/provProp> \"_\" ."
-      ))
-
-      OutputValidator.containsNot(ldifOutput, incorrectQuads) should equal(true)
-    }
-
   //TODO see http://www.assembla.com/spaces/ldif/wiki/Integration_behaviours
 
   private def runLdif(configFile: File, customProperties: Properties, debugMode: Boolean = false) = {

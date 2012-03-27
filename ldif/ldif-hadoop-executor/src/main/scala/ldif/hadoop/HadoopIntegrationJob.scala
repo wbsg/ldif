@@ -54,8 +54,6 @@ class HadoopIntegrationJob(val config : IntegrationConfig, debug : Boolean = fal
   private val outputAllQuads = config.properties.getProperty("output", "mapped-only").toLowerCase=="all"
   private val rewriteUris = config.properties.getProperty("rewriteURIs", "true").toLowerCase=="true"
   private val uriMinting = config.properties.getProperty("uriMinting", "false").toLowerCase=="true"
-  private val outputFormat = config.properties.getProperty("outputFormat", "nq").toLowerCase
-  private val ignoreProvenance = !(outputFormat=="nq" || outputFormat=="sparql")
   private val outputProvenance = config.properties.getProperty("outputProvenance", "true").equals("true")
 
   private val externalSameAsLinksDir = clean("sameAsFromSources")
@@ -193,7 +191,7 @@ class HadoopIntegrationJob(val config : IntegrationConfig, debug : Boolean = fal
       configParameters = configParameters.copy(sameAsPath = externalSameAsLinksDir)
     if (outputAllQuads)
       configParameters = configParameters.copy(allQuadsPath = allQuadsDir)
-    if (!ignoreProvenance)
+    if (outputProvenance)
       configParameters = configParameters.copy(provenanceQuadsPath = provenanceQuadsDir)
     buildEntities(config.sources.toSeq, entitiesPath, entityDescriptions, configParameters)
     log.info("Time needed to load dump and build entities for mapping phase: " + stopWatch.getTimeSpanInSeconds + "s")
