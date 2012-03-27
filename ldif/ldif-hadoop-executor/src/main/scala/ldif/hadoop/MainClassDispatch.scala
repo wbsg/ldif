@@ -33,6 +33,7 @@ object MainClassDispatcher {
     System.err.println("        hadoop jar ldif-hadoop-executor* integrate <integrationJobConfig>")
     System.err.println("        hadoop jar ldif-hadoop-executor* urisets <input path> <output path>")
     System.err.println("        hadoop jar ldif-hadoop-executor* r2r <local path to mappings> <input path> <output path>")
+    System.err.println("        hadoop jar ldif-hadoop-executor* silk <local path to link spec> <input path> <output path>")
     System.exit(1)
   }
 }

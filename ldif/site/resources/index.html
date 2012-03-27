@@ -657,7 +657,7 @@ all import jobs to finish.<br>
     &lt;mappings&gt;mappings&lt;/mappings&gt;
     &lt;outputs&gt;
         &lt;output&gt;
-            &lt;file format="nquads"&gt;output.nq&lt;/file&gt;
+            &lt;file format="nquads"&gt;output.nq&lt;/file&gt;&nbsp;&lt;!-- format attribute is optional, default is nquads -->
         &lt;/output&gt;
     &lt;/outputs&gt;
     &lt;runSchedule&gt;daily&lt;/runSchedule&gt;
@@ -667,7 +667,7 @@ all import jobs to finish.<br>
     <li><i>properties</i> - the path to a Java properties file for
         configuration parameters, <a href="#configurationproperties">see below</a>
         for more details; </li>
-    <li><i>sources</i> - each <i>source</i> specifies a path (to a file or a directory) in the local or distributed file system,
+    <li><i>sources</i> or one <i>source</i> element - each <i>source</i> specifies a path (to a file or a directory) in the local or distributed file system,
         all files must be in <a href="http://sw.deri.org/2008/07/n-quads/">N-Quads</a> format and may
         be compressed (.gz, .zip or .bz2);<br>
     </li>
@@ -675,7 +675,7 @@ all import jobs to finish.<br>
         link specifications</a>;</li>
     <li><i>mappings</i> - a directory containing the <a href="http://www4.wiwiss.fu-berlin.de/bizer/r2r/spec/index.html#mappings">R2R
         mappings</a>;</li>
-    <li><i>outputs</i> - each <i>output</i> specifies a destination where data are written to, both file (N-Quads or N-Triples) and <a href="http://www.assembla.com/wiki/show/ldif/QuadStore_Compatibility">SPARQL/Update</a> outputs are supported;</li>
+    <li><i>outputs</i> or one <i>output</i> element - each <i>output</i> specifies a destination where data are written to, both <i>file</i> (N-Quads or N-Triples) and <a href="http://www.assembla.com/wiki/show/ldif/QuadStore_Compatibility">SPARQL/Update</a> outputs are supported;</li>
     <li><i>runSchedule</i> - how often the integration is expected to be
         run. Valid values are: <span style="font-family: monospace;">onStartup</span>,<span style="font-family: monospace;"> always</span>,<span style="font-family: monospace;"> hourly</span>,<span style="font-family: monospace;"> daily</span>,<span style="font-family: monospace;"> weekly</span>,<span style="font-family: monospace;"> monthly</span>,<span style="font-family: monospace;"> yearly </span>and <span style="font-family: monospace;">never</span>. <span class="Apple-style-span" style="border-collapse: separate; color: rgb(0, 0, 0); font-family: 'Times New Roman'; font-style: normal; font-variant: normal; font-weight: normal; letter-spacing: normal; line-height: normal; orphans: 2; text-indent: 0px; text-transform: none; white-space: normal; widows: 2; word-spacing: 0px; font-size: medium;"><span class="Apple-style-span" style="border-collapse: collapse; font-family: Arial,Helvetica,'Liberation Sans',FreeSans,sans-serif; font-size: 12px; line-height: 18px; text-align: left;"></span></span></li>
 </ul>
@@ -959,6 +959,18 @@ the latest LDIF release</li>
 
 <p>Please note that most of the run time for this small use case is dominated by the Hadoop overhead.</p>
 
+<p>Besides running the scheduler as in the example above, single phases are also supported to run in isolation. There exist following possibilities:</p>
+<ul>
+    <li>run integration job only:</a>
+      <pre>hadoop jar lib/ldif-hadoop-*.jar integrate &lt;integrationJobConfigFile&gt;</pre></li>
+    <li>run R2R only:</a>
+      <pre>hadoop jar lib/ldif-hadoop-*.jar r2r &lt;local path to mappings&gt; &lt;input path&gt; &lt;output path&gt;</pre></li>
+    <li>run Silk only:</a>
+      <pre>hadoop jar lib/ldif-hadoop-*.jar silk &lt;local path to link spec.&gt; &lt;input path&gt; &lt;output path&gt;</pre></li>
+</ul>
+
+<p>Where <i>input path</i> is the (HDFS) path to the source data sets directory and <i>output path</i> is the location where on the (HDFS) file system the result should be written to.</p>
+
 <p>Learn more about Hadoop configuration by looking at our <a href="http://www.assembla.com/spaces/ldif/wiki/Benchmark">Benchmark</a> and <a href="http://www.assembla.com/spaces/ldif/wiki/Hadoop_troubleshooting">Troubleshooting</a> wiki pages.</p>
 
 <p>In order to have a cleaner console output, consider replacing the Hadoop default logging configuration (<tt>[HADOOP-HOME]/conf/log4j.properties</tt>) with our customized <a href ="http://www.assembla.com/code/ldif/git/nodes/ldif/resources/hadoop_log4j.properties">log4j.properties</a> file.</p>
@@ -1240,6 +1252,10 @@ value was extracted from the URI string <span style="font-family: monospace;">&l
 on line 10 in the output was produced by a complex mapping that had to
 consider all three quads of the input (lines 12-14).<br>
   </li>
+</ul>
+<p>Data Fusion: </p>
+<ul>
+  <li>The specification for Sieve defines that only one value for the property <span style="font-family: monospace;">smwprop:EntrezGeneId</span> should be picked. As fusion function we picked <i>KeepFirst</i>, which just chooses the first value it sees for each entity. This means that only one of the quads in the output lines 5 and 10 would show up in the target data set, which in this case would result in the same value.</li>
 </ul>
 <h2 id="performance">6. Performance Evaluation</h2>
 <p>We regularly carry out performance evaluations. For more
