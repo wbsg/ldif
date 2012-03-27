@@ -62,6 +62,31 @@ class IntegrationTest extends FlatSpec with ShouldMatchers {
     OutputValidator.containsNot(ldifOutput, incorrectQuads) should equal(true)
   }
 
+  it should "run the whole integration flow correctly (TDB)" in {
+    if(System.getProperty("os.name")=="Linux") {
+      val ldifOutput = runLdif(configFile, CommonUtils.buildProperties(fixedProperties ++ Map(("entityBuilderType", "quad-store"))))
+
+      val correctQuads = CommonUtils.getQuads(List(
+        "<http://source/uriB> <http://www.w3.org/2002/07/owl#sameAs> <http://source/uriC> <http://source/graph7> .  ",
+        "<http://source/uriC> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://ldif/class> <http://source/graph7> . ",
+        "<http://source/uriA> <http://www.w3.org/2002/07/owl#sameAs> <http://source/uriC> <http://source/graph6> . ",
+        "<http://source/uriC> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://ldif/class> <http://source/graph6> . ",
+        "<http://source/uriB> <http://www.w3.org/2002/07/owl#sameAs> <http://source/uriC> <http://source/graph4> . ",
+        "<http://source/uriC> <http://ldif/mapProp> \"map\" <http://source/graph4> . ",
+        "<http://source/uriA> <http://www.w3.org/2002/07/owl#sameAs> <http://source/uriC> <http://source/graph3> . ",
+        "<http://source/uriC> <http://ldif/mapProp> \"map\" <http://source/graph3> . ",
+        "<http://source/graph1> <http://ldif/provProp> \"_\" <http://ldif/provGraph> . "
+      ))
+      OutputValidator.contains(ldifOutput, correctQuads) should equal(true)
+
+      val incorrectQuads = CommonUtils.getQuads(List(
+        "<http://source/uriA> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://source/class> .",
+        "<http://source/uriA> <http://www.w3.org/2002/07/owl#sameAs> <http://source/uriC> <http://source/graph1> ."
+      ))
+      OutputValidator.containsNot(ldifOutput, incorrectQuads) should equal(true)
+    }
+  }
+
   it should "run the whole integration flow correctly (custom properties)" in {
     val properties = CommonUtils.buildProperties(fixedProperties ++ Map(("uriMinting", "true"), ("useExternalSameAsLinks", "false"), ("output", "all")))
 
@@ -75,6 +100,22 @@ class IntegrationTest extends FlatSpec with ShouldMatchers {
     ))
     OutputValidator.contains(ldifOutput, correctQuads) should equal(true)
 
+  }
+
+  it should "run the whole integration flow correctly (custom properties + TDB)" in {
+    if(System.getProperty("os.name")=="Linux") {
+      val properties = CommonUtils.buildProperties(fixedProperties ++ Map(("entityBuilderType", "quad-store"), ("uriMinting", "true"), ("useExternalSameAsLinks", "false"), ("output", "all")))
+
+      val ldifOutput = runLdif(configFile, properties)
+
+      ldifOutput.size should equal (17)
+
+      val correctQuads = CommonUtils.getQuads(List(
+        "<http://ldif/mint> <http://ldif/mapProp> \"map\" <http://source/graph4> .",
+        "<http://source/uriA> <http://www.w3.org/2002/07/owl#sameAs> <http://ldif/mint> <http://source/graph2> ."
+      ))
+      OutputValidator.contains(ldifOutput, correctQuads) should equal(true)
+    }
   }
 
   it should "not output provenance data if configured so" in {

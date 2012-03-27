@@ -357,6 +357,7 @@ local target vocabulary.</li>
   <li><b>Resolve Identities</b>: An identity resolution component
 discovers URI aliases in the input data and replaces them with a
 single target URI based on user-provided matching heuristics.</li>
+  <li><b>Quality Assessment and Data Fusion</b>: A quality component TODO.</li>
   <li><b>Output</b>: LDIF outputs the integrated data and that can be written to file or to a QuadStore.
 For provenance tracking, LDIF employs the Named Graphs data model.</li>
 </ol>
@@ -377,7 +378,7 @@ pluggable modules. These modules are organized as data input, data transformatio
 
 <h3>Scheduler</h3>
 <p>
-The Scheduler is used for triggering pending data import jobs or integration jobs. It is configured with an XML document (see <a href="#scheduler">Configuration</a>) and offers several ways to express when and how often a certain job should be executed.
+The Scheduler is used for triggering pending data import jobs or integration jobs. It is configured with an XML document (see <a href="#scheduler">Configuration</a>) and offers several ways to express when and how often a certain job should be executed. Since LDIF version 0.5 there is a REST based status monitor that informs about the progress of the scheduled jobs.
 
 <br/>
 This component is useful when you want to load external data or run the integration periodically, otherwise you could just run the integration component.
