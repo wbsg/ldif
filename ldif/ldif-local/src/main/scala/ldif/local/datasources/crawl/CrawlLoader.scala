@@ -39,7 +39,7 @@ import ldif.util.JobMonitor
  **/
 
 @throws(classOf[Exception])
-class CrawlLoader(seedUris : Traversable[URI], predicates : Traversable[URI] = Traversable.empty[URI]) {
+class CrawlLoader(seedUris : Traversable[URI], predicates : Traversable[URI] = Traversable.empty[URI], renameGraphs : String = "") {
   private val log = LoggerFactory.getLogger(getClass.getName)
 
   /** Crawl and write to a file
@@ -47,7 +47,7 @@ class CrawlLoader(seedUris : Traversable[URI], predicates : Traversable[URI] = T
    * @return set of imported pages/graphs
    */
   def crawl(out : OutputStream, levels : Int, limit : Int) : Set[String] = {
-    val callback = new CallbackOutputStream(out)
+    val callback = new CallbackOutputStream(out, renameGraphs)
     crawl(callback, levels, limit)
     log.info("Loaded "+  callback.graphs.size + " resources and "+ callback.statements + " statements")
     callback.graphs
