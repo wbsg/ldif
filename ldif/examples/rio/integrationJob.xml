@@ -11,9 +11,7 @@
     <sieve>sieve</sieve>
     <outputs>
         <output>
-            <file>
-                <path>integrated.nq</path>
-            </file>
+            <file>integrated.nq</file>
         </output>
     </outputs>
     <runSchedule>onStartup</runSchedule>

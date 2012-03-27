@@ -10,9 +10,7 @@
     <mappings>mappings</mappings>
     <outputs>
         <output>
-            <file>
-                <path>integrated_music_full.nq</path>
-            </file>
+            <file>integrated_music_full.nq</file>
         </output>
     </outputs>
     <runSchedule>onStartup</runSchedule>

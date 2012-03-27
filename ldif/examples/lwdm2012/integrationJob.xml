@@ -11,9 +11,7 @@
     <sieve>sieve</sieve>
     <outputs>
         <output>
-            <file>
-                <path>integrated_cities.nq</path>
-            </file>
+            <file>integrated_cities.nq</file>
         </output>
     </outputs>
     <runSchedule>onStartup</runSchedule>
