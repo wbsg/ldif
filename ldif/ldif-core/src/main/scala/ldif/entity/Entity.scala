@@ -24,7 +24,7 @@ trait Entity extends Serializable
 
 //  def entityDescription : EntityDescription // Entity Descriptions can be accessed via the QuadReader
 
-  def factums(patternId : Int) : Traversable[IndexedSeq[NodeTrait]]
+  def factums(patternId : Int, factumBuilder : FactumBuilder = null) : Traversable[IndexedSeq[NodeTrait]]
 }
 
 

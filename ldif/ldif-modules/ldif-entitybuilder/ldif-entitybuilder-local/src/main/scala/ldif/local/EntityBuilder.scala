@@ -61,6 +61,8 @@ class EntityBuilder (entityDescriptions : IndexedSeq[EntityDescription], readers
   // Build entities and write those into the EntityWriter
   def buildEntities (ed : EntityDescription, writer : EntityWriter) {
     val startTime = now
+    // Add a reference to the factumBuilder to the EntityWriter
+    writer.setFactumBuilder(this)
 //    writer.entityDescription = ed
     val useAllUris = {
       ed.restriction.operator match {
@@ -103,7 +105,6 @@ class EntityBuilder (entityDescriptions : IndexedSeq[EntityDescription], readers
   // Init memory structures
   private def init {
     entityBuilderReportPublisher.setStartTime
-    EntityLocalMetadata.factumBuilder = this
     if(PHT.areAllUriNodesNeeded)
       allUriNodes = new JHashSet[Node]
       buildHashTables

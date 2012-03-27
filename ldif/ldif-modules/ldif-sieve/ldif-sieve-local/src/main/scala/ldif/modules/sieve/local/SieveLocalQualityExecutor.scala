@@ -94,7 +94,7 @@ class SieveLocalQualityExecutor(useFileInstanceCache: Boolean = false) extends E
           val graphId = entity.resource
           // get all indicators for this graph as provided by configuration file
           for (patternId <- 0 until lastPatternId) {
-            val indicators = entity.factums(patternId)
+            val indicators = entity.factums(patternId, in.factumBuilder)
             val outputPropertyName = task.qualitySpec.outputPropertyNames(patternId)
             val scoringFunction = task.qualitySpec.scoringFunctions(patternId)
 

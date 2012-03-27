@@ -61,7 +61,7 @@ class R2RLocalExecutor extends Executor {
         entities.append(inputQueue.read())
         counter += 1
       }
-      for(quad <- mapping.executeMappingMT(entities).toList) {
+      for(quad <- mapping.executeMappingMT(entities, inputQueue.factumBuilder).toList) {
         quadCounter += 1
         writer.write(quad)
         reporter.quadsOutput.incrementAndGet()

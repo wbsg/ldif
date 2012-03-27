@@ -26,6 +26,7 @@ import java.util.Properties
 import java.io.File
 import runtime.impl.{FileEntityReader, FileEntityWriter, EntityQueue}
 import runtime.{EntityReader, EntityWriter, ConfigParameters}
+import ldif.entity.FactumBuilder
 
 /**
  * Unit Test for the Entity Builder Module Local.
@@ -77,7 +78,7 @@ class EBLocalIT extends FlatSpec with ShouldMatchers
 
     // Create entity queue readers
     val eqReaders = eqWriters.map((entityWriter) =>
-      new FileEntityReader(entityWriter.entityDescription, entityWriter.inputFile))
+      new FileEntityReader(entityWriter))
 
     // Check results
     checkEntityQuality(eqReaders, "in-memory+files")
@@ -145,19 +146,21 @@ class EBLocalIT extends FlatSpec with ShouldMatchers
   def checkEntityQuality (eqs : IndexedSeq[EntityReader], ebType : String)  {
     "EBLocal" should "retrieve the correct factums "+ebType in  {
 
+      var fb : FactumBuilder = eqs(0).factumBuilder
+
       // EntityDescription(Restriction(Some(Condition(?SUBJ/rdf:type>,Set(<http://WhatEver>)))),
       // Vector(Vector()))
       while(eqs(0).hasNext){
         val entity = eqs(0).read
-        entity.factums(0).size should equal (1)
-        entity.factums(0).head.size should equal (0)
+        entity.factums(0,fb).size should equal (1)
+        entity.factums(0,fb).head.size should equal (0)
       }
 
       // EntityDescription(Restriction(None),Vector(Vector(?SUBJ/<http://someProp>)))
       while(eqs(1).hasNext){
         val entity = eqs(1).read
         if (entity.resource.value == "http://oooo") {
-          val factums = entity.factums(0)
+          val factums = entity.factums(0,fb)
           factums.size should equal (2)
           val nodes = for (factum <- factums) yield
           {
@@ -174,21 +177,21 @@ class EBLocalIT extends FlatSpec with ShouldMatchers
 
         }
         else
-          entity.factums(0).size should equal (0)
+          entity.factums(0,fb).size should equal (0)
       }
 
       // EntityDescription(Restriction(None),Vector(Vector(?SUBJ/<http://n>, ?SUBJ/<http://v>)))
       while(eqs(2).hasNext){
         val entity = eqs(2).read
         if (entity.resource.value == "http://o1"){
-          val factum = entity.factums(0).head
+          val factum = entity.factums(0,fb).head
           // ?SUBJ/<http://n>
           factum(0).value should equal ("Locke")
           // ?SUBJ/<http://v>
           factum(1).value should equal ("John")
         }
         else
-          entity.factums(0).size should equal (0)
+          entity.factums(0,fb).size should equal (0)
       }
 
       //EntityDescription(Restriction(Some(Condition(?SUBJ/rdf:type,Set(<http://WhatEver>)))),
@@ -196,41 +199,41 @@ class EBLocalIT extends FlatSpec with ShouldMatchers
       while(eqs(3).hasNext){
         val entity = eqs(3).read
         if (entity.resource.value == "http://testNamespace/resource2")
-          entity.factums(0).head.head.value should equal ("same")
+          entity.factums(0,fb).head.head.value should equal ("same")
         else if (entity.resource.value == "http://testNamespace/resource1")
-          entity.factums(0).head.head.value should equal ("same")
+          entity.factums(0,fb).head.head.value should equal ("same")
         else
-          entity.factums(0).size should equal (0)
+          entity.factums(0,fb).size should equal (0)
       }
 
       // EntityDescription(Restriction(None),Vector(Vector(?SUBJ/<http://a>/<http://c>/<http://d>)))
       while(eqs(4).hasNext){
         val entity = eqs(4).read
         if (entity.resource.value == "http://anotherPathResource") {
-          entity.factums(0).size should equal (1)
-          entity.factums(0).head.head.value should equal ("value even further away")
+          entity.factums(0,fb).size should equal (1)
+          entity.factums(0,fb).head.head.value should equal ("value even further away")
         }
         else
-          entity.factums(0).size should equal (0)
+          entity.factums(0,fb).size should equal (0)
       }
 
       // EntityDescription(Restriction(None),Vector(Vector(?SUBJ/<http://a>/<http://b>)))
       while(eqs(5).hasNext){
         val entity = eqs(5).read
         if (entity.resource.value == "http://pathResource") {
-          entity.factums(0).size should equal (1)
-          entity.factums(0).head.head.value should equal ("value at the end of the path")
+          entity.factums(0,fb).size should equal (1)
+          entity.factums(0,fb).head.head.value should equal ("value at the end of the path")
         }
         else
-          entity.factums(0).size should equal (0)
+          entity.factums(0,fb).size should equal (0)
       }
 
       // EntityDescription(Restriction(Some(Condition(?SUBJ/<rdf:type>,Set(<http://testNamespace/someOldClass>)))),
       // Vector(Vector()))
       while(eqs(6).hasNext){
         val entity = eqs(6).read
-        entity.factums(0).size should equal (1)
-        entity.factums(0).head.size should equal (0)
+        entity.factums(0,fb).size should equal (1)
+        entity.factums(0,fb).head.size should equal (0)
       }
 
       // EntityDescription(Restriction(Some(Exists(?SUBJ/http://n))),
@@ -238,8 +241,8 @@ class EBLocalIT extends FlatSpec with ShouldMatchers
       while(eqs(7).hasNext){
         val entity = eqs(7).read
         entity.resource.value should equal ("http://o1")
-        entity.factums(0).size should equal (1)
-        entity.factums(0).head.size should equal (0)
+        entity.factums(0,fb).size should equal (1)
+        entity.factums(0,fb).head.size should equal (0)
       }
 
     }

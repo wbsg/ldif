@@ -32,7 +32,7 @@ case class LdifDataSource(reader : EntityReader) extends DataSource {
   override def retrieve(entityDesc : SilkEntityDescription, instances : Seq[String] = Seq.empty) = new Traversable[SilkEntity] {
     def foreach[U](f: SilkEntity => U) {
       while(reader.hasNext) {
-        f(new LdifEntity(reader.read(), entityDesc))
+        f(new LdifEntity(reader.read(), entityDesc, reader.factumBuilder))
       }
     }
   }

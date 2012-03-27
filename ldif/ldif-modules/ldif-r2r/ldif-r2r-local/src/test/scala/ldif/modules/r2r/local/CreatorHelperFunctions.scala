@@ -52,7 +52,7 @@ object CreatorHelperFunctions {
 
 class MutableEntity(val resource : Node, mapping: LDIFMapping) extends Entity {
   val resultTable = new HashSet[FactumRow] with FactumTable
-  override def factums(patternID: Int) : FactumTable = resultTable
+  override def factums(patternID: Int, factumBuilder : FactumBuilder = null) : FactumTable = resultTable
   def entityDescription = mapping.entityDescription
   def addFactumRow(nodes: Node*) {
     val row = new FactumRow {

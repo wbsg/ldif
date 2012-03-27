@@ -18,12 +18,16 @@
 
 package ldif.local.runtime
 
-import ldif.entity.{EntityDescription, Entity}
+import ldif.entity.{FactumBuilder, EntityDescription, Entity}
+
 
 trait EntityReader
 {
   val entityDescription : EntityDescription
   def size : Int
   def read() : Entity
-  def hasNext : Boolean 
+  def hasNext : Boolean
+
+  var factumBuilder : FactumBuilder = null
+
 }

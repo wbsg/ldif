@@ -18,11 +18,14 @@
 
 package ldif.local.runtime
 
-import ldif.entity.{EntityDescription, Entity}
+import ldif.entity.{FactumBuilder, EntityDescription, Entity}
+
 
 trait EntityWriter
 {
   val entityDescription : EntityDescription
   def write(entity : Entity)
   def finish
+
+  def setFactumBuilder(factumBuilder : FactumBuilder)
 }
