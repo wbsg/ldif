@@ -493,7 +493,7 @@ An overview and examples can be found on the <a href="http://sieve.wbsg.de">Siev
 <p>Two file output formats are currently supported by LDIF: </p>
 <ul><li>N-Quads - dumps the data into a single N-Quads file, this file contains the translated versions of all graphs from the input graph set as well as the content
 of the provenance graph and sameAs-links;    </li>
-<li> N-Triples - dumps the data into a single N-Triples file, since there exists no connection to the provenance data anymore after outputting it as N-Triple,
+<li> N-Triples - dumps the data into a single N-Triples file, since there exists no connection to the provenance data anymore after outputting it as N-Triples,
 the provenance data is discarded instead of being output. </li>
 </ul>
 <h5>QuadStore Output</h5>
@@ -826,8 +826,8 @@ be run. Valid values are: <span style="font-family: monospace;">onStartup</span>
 </ul>
 <p>LDIF supports four different mechanisms to import external data: </p>
 <ul>
-  <li><i>Quad Import Job</i> – import N-Quad dumps</li>
-  <li><i>Triple Import Job</i> – import RDF/N-Triple dumps</li>
+  <li><i>Quad Import Job</i> – import N-Quads dumps</li>
+  <li><i>Triple Import Job</i> – import RDF/N-Triples dumps</li>
   <li><i>Crawl Import Job</i> – import by dereferencing URIs as RDF
 data, using the LDSpider Web Crawling Framework</li>
   <li><i>SPARQL Import Job</i> – import by querying a SPARQL endpoint</li>
