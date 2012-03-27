@@ -556,7 +556,7 @@ class IntegrationJob (val config : IntegrationConfig, debugMode : Boolean = fals
     if(inmemory)
       return entityQueues
     else
-      return fileEntityQueues.map((entityWriter) => new FileEntityReader(entityWriter.entityDescription, entityWriter.inputFile, enableCompression = true ))
+      return fileEntityQueues.map((entityWriter) => new FileEntityReader(entityWriter))
   }
 
   private def buildEntities(readers : Seq[QuadReader], entityDescriptions : Seq[EntityDescription], configParameters: ConfigParameters) : Seq[EntityReader] =

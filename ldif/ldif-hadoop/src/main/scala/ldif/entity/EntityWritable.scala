@@ -54,7 +54,7 @@ class EntityWritable(var resource : NodeWritable, var resultTable: ResultTableAr
     entityDescriptionID.write(out)
   }
 
-  def factums(patternId: Int): Traversable[IndexedSeq[NodeTrait]] = {
+  def factums(patternId: Int, factumBuilder : FactumBuilder = null): Traversable[IndexedSeq[NodeTrait]] = {
     try {
       val patternResult = EntityWritable.convertResultTable(resultTable)
       return patternResult(patternId)

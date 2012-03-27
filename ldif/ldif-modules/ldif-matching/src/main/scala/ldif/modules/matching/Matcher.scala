@@ -113,7 +113,7 @@ object Matcher {
     if(inmemory)
       return entityQueues
     else
-      return fileEntityQueues.map((entityWriter) => new FileEntityReader(entityWriter.entityDescription, entityWriter.inputFile, enableCompression = true ))
+      return fileEntityQueues.map((entityWriter) => new FileEntityReader(entityWriter))
   }
 
 

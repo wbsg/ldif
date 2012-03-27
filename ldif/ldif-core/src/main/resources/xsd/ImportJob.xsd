@@ -61,6 +61,7 @@
         </xs:element>
 	    <xs:element name="levels" type="xs:unsignedShort" minOccurs="0" />
         <xs:element name="resourceLimit" type="xs:unsignedInt" minOccurs="0" />
+        <xs:element name="renameGraphs" type="xs:string" minOccurs="0" />
       </xs:all>
     </xs:complexType>
   </xs:element>

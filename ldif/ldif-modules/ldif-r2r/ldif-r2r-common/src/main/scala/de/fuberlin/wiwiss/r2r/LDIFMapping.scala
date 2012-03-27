@@ -46,9 +46,9 @@ class LDIFMapping(val mapping: Mapping, val entityDescription: EntityDescription
     }
   }
 
-  def executeMapping(entity: Entity): Traversable[Quad] = {
+  def executeMapping(entity: Entity, factumBuilder : FactumBuilder = null): Traversable[Quad] = {
     try {
-      val results = entity.factums(0)
+      val results = entity.factums(0, factumBuilder)
       (for(row <- results) yield {
         val variableResults = getResults(row)
         variableResults.addVariableResult("SUBJ", entity.resource)
@@ -63,9 +63,9 @@ class LDIFMapping(val mapping: Mapping, val entityDescription: EntityDescription
   /**
    * A multi-tasking version of the executeMapping function
    */
-  def executeMappingMT(entities: Iterable[Entity]): ParIterable[Quad] = {
+  def executeMappingMT(entities: Iterable[Entity], factumBuilder : FactumBuilder = null): ParIterable[Quad] = {
     val parEntites = entities.par
-    return parEntites.flatMap(entity => executeMapping(entity))
+    return parEntites.flatMap(entity => executeMapping(entity, factumBuilder))
   }
 
   def executeTargetPatterns(results: LDIFVariableResults): Iterable[Quad] = {

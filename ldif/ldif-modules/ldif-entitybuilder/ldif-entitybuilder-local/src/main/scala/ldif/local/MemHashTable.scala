@@ -28,7 +28,7 @@ import runtime.{LocalNode, QuadReader}
 
 class MemHashTable extends HashTable {
 
-  private val hashTable:MultiMap[Pair[Node,String], Node] = new HashMap[Pair[Node,String], Set[Node]] with MultiMap[Pair[Node,String], Node]
+  protected val hashTable:MultiMap[Pair[Node,String], Node] = new HashMap[Pair[Node,String], Set[Node]] with MultiMap[Pair[Node,String], Node]
 
   override def put(key : Pair[Node,String], value: Node) {
     hashTable.addBinding(key,value)
@@ -48,7 +48,7 @@ class MemHashTable extends HashTable {
     qq
   }
 
-  private def getAllQuads(elem : ((Node,String),Set[Node]), writer : QuadWriter, direction : PropertyType.Value)  {
+  private def getAllQuads(elem : ((Node,String),Set[Node]), writer : QuadWriter, direction : PropertyType.Value) : Unit = {
     val subj = LocalNode.decompress(elem._1._1)
     val prop = elem._1._2
     for (cObj <- elem._2)  {

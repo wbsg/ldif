@@ -23,7 +23,7 @@ import java.io.{IOException, OutputStream}
 import org.semanticweb.yars.nx.Node
 import collection.mutable.{HashSet, Set}
 
-class CallbackOutputStream(val out : OutputStream) extends CallbackNxOutputStream(out) {
+class CallbackOutputStream(val out : OutputStream, renameGraphs : String) extends CallbackNxOutputStream(out) {
 
   var statements = 0
   var graphs : Set[String] = new HashSet[String]
@@ -31,12 +31,15 @@ class CallbackOutputStream(val out : OutputStream) extends CallbackNxOutputStrea
 	val dot_nl = ("."+System.getProperty("line.separator")).getBytes
 
   override def processStatement(nodes : Array[Node]) {
+    val graph = nodes(3).toN3.replaceAll(renameGraphs, "")
     try {
-      for(n <- nodes){
-        out.write(n.toN3.getBytes)//TODO: Change toN3 to toNT/toNQ
+      for(i <- 0 to 2){
+        out.write(nodes(i).toN3.getBytes)//TODO: Change toN3 to toNT/toNQ
         out.write(space)
       }
       //graphs += nodes(3).toString
+      out.write(graph.getBytes)
+      out.write(space)
       out.write(dot_nl)
     } catch {
       case e:IOException => {
@@ -45,7 +48,7 @@ class CallbackOutputStream(val out : OutputStream) extends CallbackNxOutputStrea
       }
     }
     //super.processStatement(nodes)
-    graphs += nodes(3).toString
+    graphs += graph.substring(1,graph.length)
     statements += 1
   }
 }

@@ -10,9 +10,7 @@
     <mappings>mappings</mappings>
     <outputs>
         <output>
-            <file>
-                <path>integrated_life_science.nq</path>
-            </file>
+            <file>integrated_life_science.nq</file>
         </output>
     </outputs>
     <outputPhase>silk</outputPhase>

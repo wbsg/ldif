@@ -20,8 +20,8 @@ package ldif.local.runtime.impl
 
 import java.io.File
 import ldif.local.runtime.EntityWriter
-import ldif.entity.{EntityDescription, Entity}
 import ldif.runtime.impl.FileObjectWriter
+import ldif.entity.{FactumBuilder, EntityDescription, Entity}
 
 /**
  * Created by IntelliJ IDEA.
@@ -31,4 +31,7 @@ import ldif.runtime.impl.FileObjectWriter
  * To change this template use File | Settings | File Templates.
  */
 
-class FileEntityWriter(val entityDescription : EntityDescription, val inputFile: File, enableCompression: Boolean = false) extends FileObjectWriter[Entity](inputFile, NoEntitiesLeft, enableCompression) with EntityWriter
+class FileEntityWriter(val entityDescription : EntityDescription, val inputFile: File, enableCompression: Boolean = false) extends FileObjectWriter[Entity](inputFile, NoEntitiesLeft, enableCompression) with EntityWriter {
+  var factumBuilder : FactumBuilder = null
+  def setFactumBuilder(fb : FactumBuilder) { factumBuilder = fb  }
+}
