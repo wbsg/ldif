@@ -401,12 +401,10 @@ configured to refresh (<span style="font-style: italic;">hourly</span>,
 <span style="font-style: italic;">daily</span> etc.) the local cache
 for each source. </p>
 <h4>Triple/Quad Dump Import</h4>
-<p>In order to get a local replication of data sets from the Web of
-Data
-the simplest way is to download a file containing the data set. The
-triple/quad dump import does exactly this, with the difference that
-LDIF generates a provenance graph for a triple dump import, whereas it
-takes the given graphs from a quad dump import as provenance graphs.</p>
+<p>In order to get a local replication of data sets from the Web of Data the simplest way is to download a file containing
+the data set. The triple/quad dump import does exactly this, with the difference that LDIF generates a provenance graph
+for a triple dump import, whereas it takes the given graphs from a quad dump import as provenance graphs.
+Formats that are currently supported are RDF/XML, N-Triples, N-Quads and Turtle.</p>
 <h4>Crawler Import</h4>
 <p>
 Data sets that can only be accessed via dereferencable URIs are a good
@@ -835,7 +833,7 @@ be run. Valid values are: <span style="font-family: monospace;">onStartup</span>
 <p>LDIF supports four different mechanisms to import external data: </p>
 <ul>
   <li><i>Quad Import Job</i> – import N-Quads dumps</li>
-  <li><i>Triple Import Job</i> – import RDF/N-Triples dumps</li>
+  <li><i>Triple Import Job</i> – import RDF/XML, N-Triples or Turtle dumps</li>
   <li><i>Crawl Import Job</i> – import by dereferencing URIs as RDF
 data, using the LDSpider Web Crawling Framework</li>
   <li><i>SPARQL Import Job</i> – import by querying a SPARQL endpoint</li>
@@ -1286,8 +1284,9 @@ License</a>.
         <td>
             Data Quality Assessment and Fusion module<br/>
             REST based status monitor<br/>
-            Output module extended: QuadStore and intermediate results output are supported <br/>
-            More flexible workflow: single phases cna now be executed/skipped <br/>
+            Output module: QuadStore and intermediate results output are now supported <br/>
+            Data Access Module: RDF/XML and Turtle formats are now supported <br/>
+            More flexible Integration workflow: single phases can now be executed or skipped <br/>
         </td>
         <td> 03/28/2012</td>
     </tr>
