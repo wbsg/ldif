@@ -11,7 +11,7 @@
     <QualityAssessment>
         <AssessmentMetric id="sieve:reputation">
             <ScoringFunction class="ScoredList">
-                <Param name="list" value="http://www4.wiwiss.fu-berlin.de/ldif/graph#dbpedia.3 http://www4.wiwiss.fu-berlin.de/ldif/graph#dbpedia.2 http://www4.wiwiss.fu-berlin.de/ldif/graph#dbpedia.1 http://rdf.freebase.com/rdf/en/bob_marley http://www4.wiwiss.fu-berlin.de/ldif/graph#musicbrainz.3 http://www4.wiwiss.fu-berlin.de/ldif/graph#bbc.2"/>
+                <Param name="list" value="file:///datasets/aba_mouse_20101010_1000.nq file:///datasets/uniprot-organism-human-reviewed-complete_1000.nq file:///datasets/kegg_genes_20101227_1000.nq file:///datasets/kegg_pathway_20101227_1000.nq file:///datasets/pharmgkb_20101101_1000.nq"/>
             </ScoringFunction>
         </AssessmentMetric>
     </QualityAssessment>
