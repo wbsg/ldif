@@ -1,5 +1,3 @@
-package ldif.hadoop
-
 /*
  * LDIF
  *
@@ -17,6 +15,8 @@ package ldif.hadoop
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
+package ldif.hadoop
 
 import ldif.config.SchedulerConfig
 import java.io.File
