@@ -31,7 +31,10 @@ case class IntegrationConfig (sources : Traversable[String],
                               sieveSpecDir : File,
                               outputs : OutputConfig,
                               properties : Properties,
-                              runSchedule : String)
+                              runSchedule : String)   {
+
+  def hasValidOutputs = outputs.validOutputs.size > 0
+}
 
 object IntegrationConfig {
 
@@ -115,5 +118,4 @@ object IntegrationConfig {
     }
     file
   }
-
 }

@@ -26,7 +26,7 @@ import ldif.util.{OutputValidator, CommonUtils}
 import java.util.Properties
 import ldif.config.IntegrationConfig
 import ldif.output.SerializingQuadWriter
-import java.io.{FileWriter, File}
+import java.io.File
 
 @RunWith(classOf[JUnitRunner])
 class IntegrationTest extends FlatSpec with ShouldMatchers {
@@ -135,11 +135,10 @@ class IntegrationTest extends FlatSpec with ShouldMatchers {
     //  - rewriteURIs=true
     //  - output=mapped-only
     //  - useExternalSameAsLinks=true
-    //  - outputFormat=nq
     config = config.copy(properties = customProperties)
     val integrator = new IntegrationJob(config, debugMode)
     // Run integration
     integrator.runIntegration
-    CommonUtils.getQuads(new File(integrator.config.outputs.outputs.head._1.asInstanceOf[SerializingQuadWriter].filepath))
+    CommonUtils.getQuads(new File(integrator.config.outputs.validOutputs.head._1.get.asInstanceOf[SerializingQuadWriter].filepath))
   }
 }

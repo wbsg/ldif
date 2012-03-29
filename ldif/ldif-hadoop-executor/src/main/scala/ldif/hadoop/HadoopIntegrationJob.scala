@@ -289,12 +289,9 @@ class HadoopIntegrationJob(val config : IntegrationConfig, debug : Boolean = fal
     for (outputFile <- outputDir.filterNot(_.getPath.getName.startsWith("_"))){
       instream = hdfs.open(outputFile.getPath)
       val lines = scala.io.Source.fromInputStream(instream).getLines
-
-      if (writer != null) {
-        for (quad <- lines.toTraversable.map(parser.parseLine(_))){
-          writer.write(quad)
-          count += 1
-        }
+      for (quad <- lines.toTraversable.map(parser.parseLine(_))){
+        writer.write(quad)
+        count += 1
       }
     }
     writer.finish()
@@ -356,6 +353,11 @@ object HadoopIntegrationJob {
           "\n- More details: http://www.assembla.com/code/ldif/git/nodes/ldif/ldif-core/src/main/resources/xsd/IntegrationJob.xsd")
         System.exit(1)
       }
+    }
+
+    if(!config.hasValidOutputs) {
+      log.error("No valid output has been specified for the Integration Job.")
+      System.exit(1)
     }
 
     val integrator = new HadoopIntegrationJob(config, debug)

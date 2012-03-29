@@ -589,13 +589,11 @@ class IntegrationJob (val config : IntegrationConfig, debugMode : Boolean = fals
       //TODO consider adding a QuadWriter.getDescription method
       // log.info("Writing output to "+config.output.description)
       log.info("Writing integration output...")
-      if (writer != null) {
-        while(reader.hasNext) {
-          writer.write(reader.read())
-          count += 1
-        }
-        writer.finish
+      while(reader.hasNext) {
+        writer.write(reader.read())
+        count += 1
       }
+      writer.finish
       log.info(count + " Quads written")
     }
   }
@@ -673,6 +671,11 @@ object IntegrationJob {
           "\n- More details: http://www.assembla.com/code/ldif/git/nodes/ldif/ldif-core/src/main/resources/xsd/IntegrationJob.xsd")
         System.exit(1)
       }
+    }
+
+    if(!config.hasValidOutputs) {
+      log.error("No valid output has been specified for the Integration Job.")
+      System.exit(1)
     }
 
     val integrator = new IntegrationJob(config, debug)

@@ -42,8 +42,8 @@ class HadoopIntegrationTest extends FlatSpec with ShouldMatchers {
 
     val ldifOutput = runLdif(configFile, CommonUtils.buildProperties(fixedProperties))
 
-    // ldifOutput.size should equal (9)
-
+    ldifOutput.size should equal (9)
+    
     val correctQuads = CommonUtils.getQuads(List(
       "<http://source/uriB> <http://www.w3.org/2002/07/owl#sameAs> <http://source/uriC> <http://www4.wiwiss.fu-berlin.de/ldif/graph#uriRewriting> .  ",
       "<http://source/uriC> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://ldif/class> <http://source/graph7> . ",
@@ -52,13 +52,13 @@ class HadoopIntegrationTest extends FlatSpec with ShouldMatchers {
       "<http://source/uriB> <http://www.w3.org/2002/07/owl#sameAs> <http://source/uriA> <http://www4.wiwiss.fu-berlin.de/ldif/graph#generatedBySilk> . ",
       "<http://source/uriC> <http://ldif/mapProp> \"map\" <http://source/graph4> . ",
       "<http://source/uriA> <http://www.w3.org/2002/07/owl#sameAs> <http://source/uriB> <http://www4.wiwiss.fu-berlin.de/ldif/graph#generatedBySilk> . ",
-      "<http://source/uriC> <http://ldif/mapProp> \"map\" <http://source/graph3> . "
+      "<http://source/uriC> <http://ldif/mapProp> \"map\" <http://source/graph3> . ",
+      "<http://source/uriA> <http://www.w3.org/2002/07/owl#sameAs> <http://source/uriC> <http://source/graph1> ."
     ))
     OutputValidator.contains(ldifOutput, correctQuads) should equal(true)
 
     val incorrectQuads = CommonUtils.getQuads(List(
-      "<http://source/uriA> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://source/class> ." ,
-      "<http://source/uriA> <http://www.w3.org/2002/07/owl#sameAs> <http://source/uriC> <http://source/graph1> ."
+      "<http://source/uriA> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://source/class> ."
     ))
     OutputValidator.containsNot(ldifOutput, incorrectQuads) should equal (true)
   }
@@ -87,6 +87,6 @@ class HadoopIntegrationTest extends FlatSpec with ShouldMatchers {
     val integrator = new HadoopIntegrationJob(config, debugMode)
     // run integration
     integrator.runIntegration
-    CommonUtils.getQuads(new File(integrator.config.outputs.outputs.head._1.asInstanceOf[SerializingQuadWriter].filepath))
+    CommonUtils.getQuads(new File(integrator.config.outputs.validOutputs.head._1.get.asInstanceOf[SerializingQuadWriter].filepath))
   }
 }

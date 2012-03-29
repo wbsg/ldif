@@ -20,24 +20,27 @@ package ldif.config
 
 import ldif.output._
 import ldif.runtime.QuadWriter
-import org.slf4j.LoggerFactory
 import ldif.util.{Consts, CommonUtils}
 import xml.{Elem, Node}
+import java.io.File
+import org.slf4j.LoggerFactory
 
 sealed trait IntegrationPhase {val name: String}
 case object DT extends IntegrationPhase {val name = "Data translation" }
 case object IR extends IntegrationPhase {val name = "Identity resolution" }
 case object COMPLETE extends IntegrationPhase {val name = "Complete" }
 
-class OutputConfig (val outputs : Traversable[(QuadWriter, IntegrationPhase)])
+class OutputConfig (val outputs : Traversable[(Option[QuadWriter], IntegrationPhase)])
 {
   def getByPhase(phase : IntegrationPhase) : Traversable[QuadWriter] =
-      outputs.filter(_._2 == phase).map(_._1)
+    validOutputs.filter(_._2 == phase).map(_._1.get)
+
+  def validOutputs = outputs.filter(_._1 != None)
 
   override def toString = {
     var text = ""
-    for (output <- outputs) {
-      output._1 match {
+    for (output <- validOutputs) {
+      output._1.get match {
         case s:SparqlWriter => text += s.uri
         case f:SerializingQuadWriter => text += f.filepath
         case _ =>
@@ -60,10 +63,10 @@ object OutputConfig {
   def fromOutputXML(outputNode: Node) : OutputConfig =
     new OutputConfig(Seq(parseOutput(outputNode)))
 
-  private def parseOutput(xml : Node) : (QuadWriter, IntegrationPhase) =
+  private def parseOutput(xml : Node) : (Option[QuadWriter], IntegrationPhase) =
     (parseOutputWriter(xml.child.filter(_.isInstanceOf[Elem]).head), parseOutputPhase((xml \ "phase").filter(_.isInstanceOf[Elem]).headOption))
 
-  private def parseOutputWriter (xml : Node) : QuadWriter =
+  private def parseOutputWriter (xml : Node) : Option[QuadWriter] =
     if (xml.label == "sparql")
       getSparqlWriter(xml)
     else getFileWriter(xml)
@@ -80,11 +83,11 @@ object OutputConfig {
    }
   }
 
-  private def getSparqlWriter(xml : Node) : SparqlWriter = {
+  private def getSparqlWriter(xml : Node) : Option[SparqlWriter] = {
     val endpointURI =  CommonUtils.getValueAsString(xml,"endpointURI")
     if (endpointURI == "") {
       log.warn("Invalid SPARQL output config. Please check http://www.assembla.com/code/ldif/git/nodes/ldif/ldif-core/src/main/resources/xsd/IntegrationJob.xsd")
-      null
+      None
     }
     else {
       val user = CommonUtils.getValueAsString(xml,"user")
@@ -92,26 +95,46 @@ object OutputConfig {
       val sparqlVersion = CommonUtils.getValueAsString(xml,"sparqlVersion", Consts.SparqlUpdateVersionDefault)
       val useDirectPost = CommonUtils.getValueAsString(xml,"useDirectPost", Consts.SparqlUseDirectPostDefault).toLowerCase.equals("true")
       val queryParameter = CommonUtils.getValueAsString(xml,"queryParameter", Consts.SparqlQueryParameterDefault)
-      SparqlWriter(endpointURI, Some(user, password), sparqlVersion, useDirectPost, queryParameter)
+      Some(SparqlWriter(endpointURI, Some(user, password), sparqlVersion, useDirectPost, queryParameter))
     }
   }
 
-  private def getFileWriter(xml : Node) : SerializingQuadWriter = {
+  private def getFileWriter(xml : Node) : Option[SerializingQuadWriter] = {
     val outputUriOrPath = (xml text).trim//CommonUtils.getValueAsString(xml,"path").trim
     if (outputUriOrPath == "") {
       log.warn("Invalid file output config. Please check http://www.assembla.com/code/ldif/git/nodes/ldif/ldif-core/src/main/resources/xsd/IntegrationJob.xsd")
-      null
+      None
     }
     else {
       val outputFormat = CommonUtils.getAttributeAsString(xml,"format",Consts.FileOutputFormatDefault)
-      if (outputFormat == "nquads")
-        new SerializingQuadWriter(outputUriOrPath, NQUADS)
+      if (!touch(outputUriOrPath))
+        None
+      else if (outputFormat == "nquads")
+        Some(new SerializingQuadWriter(outputUriOrPath, NQUADS))
       else if (outputFormat == "ntriples")
-        new SerializingQuadWriter(outputUriOrPath, NTRIPLES)
+        Some(new SerializingQuadWriter(outputUriOrPath, NTRIPLES))
       else {
         log.warn("Output format not supported: "+ outputFormat )
-        null
+        None
       }
     }
+  }
+
+  // creates a file at the given location
+  private def touch(filepath : String) : Boolean = {
+    val file = new File(filepath).getCanonicalFile
+    if (!file.exists)
+      try  {
+        val dir = file.getParentFile
+        if(!dir.exists && !dir.mkdirs())
+          throw new Exception()
+        file.createNewFile()
+        true
+      }
+      catch {
+        case e:Exception => log.warn("Could not create " + filepath); false
+      }
+    else 
+      true
   }
 }
