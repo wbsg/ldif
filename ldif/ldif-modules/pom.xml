@@ -5,7 +5,7 @@
     <parent>
       <groupId>ldif</groupId>
       <artifactId>ldif</artifactId>
-      <version>0.4</version>
+      <version>0.5</version>
     </parent>
 
   <modules>
@@ -17,7 +17,7 @@
   </modules>
 
 	<artifactId>ldif-modules</artifactId>
-	<version>0.4</version>
+	<version>0.5</version>
     <packaging>pom</packaging>
 	<name>LDIF Modules</name>
 

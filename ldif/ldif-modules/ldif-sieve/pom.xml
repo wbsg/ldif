@@ -5,12 +5,12 @@
   <parent>
     <groupId>ldif</groupId>
     <artifactId>ldif-modules</artifactId>
-    <version>0.4</version>
+    <version>0.5</version>
   </parent>
 
 	<artifactId>ldif-sieve</artifactId>
 	<packaging>pom</packaging>
-	<version>0.4</version>
+	<version>0.5</version>
 	<name>LDIF Sieve Module</name>
   
   <modules>
@@ -22,7 +22,7 @@
     <dependency>
       <groupId>ldif</groupId>
       <artifactId>ldif-core</artifactId>
-      <version>0.4</version>
+      <version>0.5</version>
     </dependency>
     <dependency>
       <groupId>org.scala-tools</groupId>
