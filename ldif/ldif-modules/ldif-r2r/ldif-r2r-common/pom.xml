@@ -42,9 +42,8 @@
 	</pluginRepositories>
 
 	<build>
-          <pluginManagement>
-            <plugins>
-              <plugin>
+        <plugins>
+            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-install-plugin</artifactId>
                 <version>2.3.1</version>
@@ -64,8 +63,7 @@
                         </configuration>
                     </execution>
                 </executions>
-              </plugin>
-            </plugins>
-          </pluginManagement>
-        </build>
+            </plugin>
+        </plugins>
+    </build>
 </project>
