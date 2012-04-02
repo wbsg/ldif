@@ -657,6 +657,7 @@ all import jobs to finish.<br>
     &lt;/sources&gt;
     &lt;linkSpecifications&gt;linkSpecs&lt;/linkSpecifications&gt;
     &lt;mappings&gt;mappings&lt;/mappings&gt;
+    &lt;sieve&gt;sieve&lt;/sieve&gt;
     &lt;outputs&gt;
         &lt;output&gt;
             &lt;file format="nquads"&gt;output.nq&lt;/file&gt;&nbsp;&lt;!-- format attribute is optional, default is nquads -->
@@ -677,6 +678,7 @@ all import jobs to finish.<br>
         link specifications</a>;</li>
     <li><i>mappings</i> - a directory containing the <a href="http://www4.wiwiss.fu-berlin.de/bizer/r2r/spec/index.html#mappings">R2R
         mappings</a>;</li>
+    <li><i>sieve</i> - a directory containing the configuration for data <a href="http://sieve.wbsg.de/#qualityassessmentconfig">quality assessment</a> and <a href="http://sieve.wbsg.de/#fusionconfig">fusion;</a></li>
     <li><i>outputs</i> or one <i>output</i> element - each <i>output</i> specifies a destination where data are written to, both <i>file</i> (N-Quads or N-Triples) and <a href="http://www.assembla.com/wiki/show/ldif/QuadStore_Compatibility">SPARQL/Update</a> outputs are supported;</li>
     <li><i>runSchedule</i> - how often the integration is expected to be
         run. Valid values are: <span style="font-family: monospace;">onStartup</span>,<span style="font-family: monospace;"> always</span>,<span style="font-family: monospace;"> hourly</span>,<span style="font-family: monospace;"> daily</span>,<span style="font-family: monospace;"> weekly</span>,<span style="font-family: monospace;"> monthly</span>,<span style="font-family: monospace;"> yearly </span>and <span style="font-family: monospace;">never</span>. <span class="Apple-style-span" style="border-collapse: separate; color: rgb(0, 0, 0); font-family: 'Times New Roman'; font-style: normal; font-variant: normal; font-weight: normal; letter-spacing: normal; line-height: normal; orphans: 2; text-indent: 0px; text-transform: none; white-space: normal; widows: 2; word-spacing: 0px; font-size: medium;"><span class="Apple-style-span" style="border-collapse: collapse; font-family: Arial,Helvetica,'Liberation Sans',FreeSans,sans-serif; font-size: 12px; line-height: 18px; text-align: left;"></span></span></li>
