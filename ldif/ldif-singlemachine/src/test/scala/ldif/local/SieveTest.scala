@@ -72,7 +72,7 @@ class SieveTest extends FlatSpec with ShouldMatchers {
     val integrator = new IntegrationJob(config, debugMode)
     // Run integration
     integrator.runIntegration
-    CommonUtils.getQuads(new File(integrator.config.outputs.outputs.head._1.asInstanceOf[SerializingQuadWriter].filepath))
+    CommonUtils.getQuads(new File(integrator.config.outputs.outputs.head._1.get.asInstanceOf[SerializingQuadWriter].filepath))
   }
 
 }

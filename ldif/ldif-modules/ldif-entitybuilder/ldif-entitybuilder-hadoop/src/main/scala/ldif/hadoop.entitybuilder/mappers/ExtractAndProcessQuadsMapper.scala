@@ -54,6 +54,7 @@ class ExtractAndProcessQuadsMapper extends MapReduceBase with Mapper[LongWritabl
       case e: Exception => quad = null
       System.err.println("Invalid line found in data set: " + value.toString)
       reporter.getCounter("LDIF Stats","Invalid quads found in data set").increment(1)
+      return
     }
 
     if(quad==null)
