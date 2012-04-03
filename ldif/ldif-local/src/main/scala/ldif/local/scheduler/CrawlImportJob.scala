@@ -26,7 +26,7 @@ import java.io.OutputStream
 
 case class CrawlImportJob(conf : CrawlConfig, id :  Identifier, refreshSchedule : String, dataSource : String) extends ImportJob{
 
-  val crawler = new CrawlLoader(conf.seedUris, conf.predicatesToFollow)
+  val crawler = new CrawlLoader(conf.seedUris, conf.predicatesToFollow, conf.renameGraphs)
 
   override def load(out : OutputStream) : Boolean = {
     val limit = conf.resourceLimit
@@ -48,15 +48,17 @@ object CrawlImportJob {
         resourceLimit = resourceLimitString.toInt
       val seedUris = (node \ "seedURIs" \ "uri").map(x => new URI(x text)).toTraversable
       val predicatesToFollow = (node \ "predicatesToFollow" \ "uri").map(x => new URI(x text)).toTraversable
+      val renameGraphs = (node \ "renameGraphs" text)
 
-      val crawlConfig = CrawlConfig(seedUris, predicatesToFollow, levels.toInt, resourceLimit)
+      val crawlConfig = CrawlConfig(seedUris, predicatesToFollow, levels.toInt, resourceLimit, renameGraphs)
+
       val job = new CrawlImportJob(crawlConfig, id, refreshSchedule, dataSource)
       job
     }
 
 }
 
-case class CrawlConfig(seedUris : Traversable[URI], predicatesToFollow : Traversable[URI], levels : Int, resourceLimit: Int)
+case class CrawlConfig(seedUris : Traversable[URI], predicatesToFollow : Traversable[URI], levels : Int, resourceLimit: Int, renameGraphs : String)
 
 class CrawlImportJobPublisher extends ImportJobPublisher {
   override def getPublisherName = "Crawl Import Job"

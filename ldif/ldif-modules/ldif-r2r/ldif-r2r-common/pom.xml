@@ -5,7 +5,7 @@
     <parent>
       <groupId>ldif</groupId>
       <artifactId>ldif-r2r</artifactId>
-      <version>0.4</version>
+      <version>0.5</version>
     </parent>
 
     <dependencies>
@@ -18,7 +18,7 @@
 
 	<artifactId>ldif-r2r-common</artifactId>
 	<packaging>jar</packaging>
-	<version>0.4</version>
+	<version>0.5</version>
 	<name>LDIF R2R Module - Common</name>
 
 	<properties>
@@ -42,9 +42,8 @@
 	</pluginRepositories>
 
 	<build>
-          <pluginManagement>
-            <plugins>
-              <plugin>
+        <plugins>
+            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-install-plugin</artifactId>
                 <version>2.3.1</version>
@@ -64,8 +63,7 @@
                         </configuration>
                     </execution>
                 </executions>
-              </plugin>
-            </plugins>
-          </pluginManagement>
-        </build>
+            </plugin>
+        </plugins>
+    </build>
 </project>

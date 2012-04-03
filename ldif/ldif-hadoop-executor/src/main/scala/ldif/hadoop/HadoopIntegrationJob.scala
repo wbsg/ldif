@@ -54,8 +54,6 @@ class HadoopIntegrationJob(val config : IntegrationConfig, debug : Boolean = fal
   private val outputAllQuads = config.properties.getProperty("output", "mapped-only").toLowerCase=="all"
   private val rewriteUris = config.properties.getProperty("rewriteURIs", "true").toLowerCase=="true"
   private val uriMinting = config.properties.getProperty("uriMinting", "false").toLowerCase=="true"
-  private val outputFormat = config.properties.getProperty("outputFormat", "nq").toLowerCase
-  private val ignoreProvenance = !(outputFormat=="nq" || outputFormat=="sparql")
   private val outputProvenance = config.properties.getProperty("outputProvenance", "true").equals("true")
 
   private val externalSameAsLinksDir = clean("sameAsFromSources")
@@ -193,7 +191,7 @@ class HadoopIntegrationJob(val config : IntegrationConfig, debug : Boolean = fal
       configParameters = configParameters.copy(sameAsPath = externalSameAsLinksDir)
     if (outputAllQuads)
       configParameters = configParameters.copy(allQuadsPath = allQuadsDir)
-    if (!ignoreProvenance)
+    if (outputProvenance)
       configParameters = configParameters.copy(provenanceQuadsPath = provenanceQuadsDir)
     buildEntities(config.sources.toSeq, entitiesPath, entityDescriptions, configParameters)
     log.info("Time needed to load dump and build entities for mapping phase: " + stopWatch.getTimeSpanInSeconds + "s")
@@ -291,12 +289,9 @@ class HadoopIntegrationJob(val config : IntegrationConfig, debug : Boolean = fal
     for (outputFile <- outputDir.filterNot(_.getPath.getName.startsWith("_"))){
       instream = hdfs.open(outputFile.getPath)
       val lines = scala.io.Source.fromInputStream(instream).getLines
-
-      if (writer != null) {
-        for (quad <- lines.toTraversable.map(parser.parseLine(_))){
-          writer.write(quad)
-          count += 1
-        }
+      for (quad <- lines.toTraversable.map(parser.parseLine(_))){
+        writer.write(quad)
+        count += 1
       }
     }
     writer.finish()
@@ -358,6 +353,11 @@ object HadoopIntegrationJob {
           "\n- More details: http://www.assembla.com/code/ldif/git/nodes/ldif/ldif-core/src/main/resources/xsd/IntegrationJob.xsd")
         System.exit(1)
       }
+    }
+
+    if(!config.hasValidOutputs) {
+      log.error("No valid output has been specified for the Integration Job.")
+      System.exit(1)
     }
 
     val integrator = new HadoopIntegrationJob(config, debug)

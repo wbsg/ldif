@@ -45,9 +45,7 @@ import ldif.modules.sieve.SieveConfig
 class IntegrationJob (val config : IntegrationConfig, debugMode : Boolean = false) {
 
   private val log = LoggerFactory.getLogger(getClass.getName)
-  private val reporter = new IntegrationJobStatusMonitor
-  JobMonitor.value.addPublisher(reporter)
-  IntegrationJobMonitor.value = reporter
+  private var reporter = new IntegrationJobStatusMonitor
 
   // Object to store all kinds of configuration data
   private var configParameters: ConfigParameters = null
@@ -83,6 +81,9 @@ class IntegrationJob (val config : IntegrationConfig, debugMode : Boolean = fals
 
     else
       synchronized {
+        reporter = new IntegrationJobStatusMonitor
+        JobMonitor.value.addPublisher(reporter)
+        IntegrationJobMonitor.value = reporter
         val sourceNumber = config.sources.size
 
         log.info("Integration Job started")
@@ -571,7 +572,7 @@ class IntegrationJob (val config : IntegrationConfig, debugMode : Boolean = fals
     if(inmemory)
       return entityQueues
     else
-      return fileEntityQueues.map((entityWriter) => new FileEntityReader(entityWriter.entityDescription, entityWriter.inputFile, enableCompression = true ))
+      return fileEntityQueues.map((entityWriter) => new FileEntityReader(entityWriter))
   }
 
   private def buildEntities(readers : Seq[QuadReader], entityDescriptions : Seq[EntityDescription], configParameters: ConfigParameters) : Seq[EntityReader] =
@@ -604,13 +605,11 @@ class IntegrationJob (val config : IntegrationConfig, debugMode : Boolean = fals
       //TODO consider adding a QuadWriter.getDescription method
       // log.info("Writing output to "+config.output.description)
       log.info("Writing integration output...")
-      if (writer != null) {
-        while(reader.hasNext) {
-          writer.write(reader.read())
-          count += 1
-        }
-        writer.finish
+      while(reader.hasNext) {
+        writer.write(reader.read())
+        count += 1
       }
+      writer.finish
       log.info(count + " Quads written")
     }
   }
@@ -688,6 +687,11 @@ object IntegrationJob {
           "\n- More details: http://www.assembla.com/code/ldif/git/nodes/ldif/ldif-core/src/main/resources/xsd/IntegrationJob.xsd")
         System.exit(1)
       }
+    }
+
+    if(!config.hasValidOutputs) {
+      log.error("No valid output has been specified for the Integration Job.")
+      System.exit(1)
     }
 
     val integrator = new IntegrationJob(config, debug)

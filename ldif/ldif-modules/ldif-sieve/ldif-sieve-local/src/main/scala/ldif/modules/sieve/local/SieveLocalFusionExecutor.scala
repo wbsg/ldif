@@ -99,7 +99,7 @@ class SieveLocalFusionExecutor(useFileInstanceCache: Boolean = false) extends Ex
 
         if (entity!=null && entity!=NoEntitiesLeft) {
           for (patternId <- 0 until lastPatternId) {
-            val factums = entity.factums(patternId)
+            val factums = entity.factums(patternId, in.factumBuilder)
             val outputPropertyName = task.fusionSpec.outputPropertyNames(patternId)
             val fusionFunction = task.fusionSpec.fusionFunctions(patternId)
             //log.debug("Pattern %s: FusionFunction used: %s".format(patternId, fusionFunction))

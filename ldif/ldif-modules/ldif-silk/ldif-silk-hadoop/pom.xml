@@ -5,13 +5,13 @@
     <parent>
         <artifactId>ldif-r2r</artifactId>
         <groupId>ldif</groupId>
-        <version>0.4</version>
+        <version>0.5</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>ldif-silk-hadoop</artifactId>
     <packaging>jar</packaging>
-	<version>0.4</version>
+	<version>0.5</version>
 	<name>LDIF Silk Module - Hadoop</name>
 
     <dependencies>
@@ -29,12 +29,12 @@
         <dependency>
           <groupId>ldif</groupId>
           <artifactId>ldif-hadoop</artifactId>
-          <version>0.4</version>
+          <version>0.5</version>
         </dependency>
         <dependency>
             <groupId>ldif</groupId>
             <artifactId>ldif-silk-common</artifactId>
-            <version>0.4</version>
+            <version>0.5</version>
         </dependency>
     </dependencies>
 </project>

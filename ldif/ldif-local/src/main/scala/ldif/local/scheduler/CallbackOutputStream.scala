@@ -20,23 +20,27 @@ package ldif.local.scheduler
 
 import org.semanticweb.yars.util.CallbackNxOutputStream
 import java.io.{IOException, OutputStream}
-import org.semanticweb.yars.nx.Node
+import org.semanticweb.yars.nx.{Node => NxNode}
 import collection.mutable.{HashSet, Set}
+import ldif.entity.Node
 
-class CallbackOutputStream(val out : OutputStream) extends CallbackNxOutputStream(out) {
+class CallbackOutputStream(val out : OutputStream, renameGraphs : String) extends CallbackNxOutputStream(out) {
 
   var statements = 0
   var graphs : Set[String] = new HashSet[String]
   val space = " ".getBytes
 	val dot_nl = ("."+System.getProperty("line.separator")).getBytes
 
-  override def processStatement(nodes : Array[Node]) {
+  override def processStatement(nodes : Array[NxNode]) {
+    val graph = Node.fromNxNode(nodes(3)).toNQuadsFormat.replaceAll(renameGraphs, "")
     try {
-      for(n <- nodes){
-        out.write(n.toN3.getBytes)//TODO: Change toN3 to toNT/toNQ
+      for(i <- 0 to 2){
+        out.write(Node.fromNxNode(nodes(i)).toNQuadsFormat.getBytes)
         out.write(space)
       }
       //graphs += nodes(3).toString
+      out.write(graph.getBytes)
+      out.write(space)
       out.write(dot_nl)
     } catch {
       case e:IOException => {
@@ -45,7 +49,7 @@ class CallbackOutputStream(val out : OutputStream) extends CallbackNxOutputStrea
       }
     }
     //super.processStatement(nodes)
-    graphs += nodes(3).toString
+    graphs += graph.substring(1,graph.length-1)
     statements += 1
   }
 }

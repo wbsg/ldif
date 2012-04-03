@@ -10,9 +10,7 @@
     <mappings>mappings</mappings>
     <outputs>
         <output>
-            <file>
-                <path>integrated_music_light</path>
-            </file>
+            <file>integrated_music_light</file>
         </output>
     </outputs>
     <runSchedule>onStartup</runSchedule>

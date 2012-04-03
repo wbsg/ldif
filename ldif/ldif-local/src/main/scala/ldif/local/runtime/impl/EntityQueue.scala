@@ -19,8 +19,8 @@
 package ldif.local.runtime.impl
 
 import ldif.local.runtime.{EntityWriter, EntityReader}
-import ldif.entity.{EntityDescription, Entity}
 import java.util.concurrent.{TimeUnit, LinkedBlockingQueue}
+import ldif.entity.{FactumBuilder, EntityDescription, Entity}
 
 /**
  * The EntityQueue is made for exactly one producer and one consumer. Not thread safe!
@@ -112,6 +112,9 @@ class EntityQueue(val entityDescription : EntityDescription, capacity: Int) exte
     stillArriving = false
     write(NoEntitiesLeft)
   }
+
+  def setFactumBuilder(fb : FactumBuilder) { factumBuilder = fb  }
+
 }
 
 /**
@@ -122,7 +125,7 @@ case object NoEntitiesLeft extends Entity{
 
   def entityDescription = null
 
-  def factums(patternId: Int) = null
+  def factums(patternId: Int, factumBuilder : FactumBuilder) = null
 
   def graph = null
 }

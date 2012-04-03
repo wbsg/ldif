@@ -26,7 +26,7 @@ import ldif.util.{OutputValidator, CommonUtils}
 import java.util.Properties
 import ldif.config.IntegrationConfig
 import ldif.output.SerializingQuadWriter
-import java.io.{FileWriter, File}
+import java.io.File
 
 @RunWith(classOf[JUnitRunner])
 class IntegrationTest extends FlatSpec with ShouldMatchers {
@@ -50,10 +50,9 @@ class IntegrationTest extends FlatSpec with ShouldMatchers {
       "<http://source/uriB> <http://www.w3.org/2002/07/owl#sameAs> <http://source/uriC> <http://source/graph4> . ",
       "<http://source/uriC> <http://ldif/mapProp> \"map\" <http://source/graph4> . ",
       "<http://source/uriA> <http://www.w3.org/2002/07/owl#sameAs> <http://source/uriC> <http://source/graph3> . ",
-      "<http://source/uriC> <http://ldif/mapProp> \"map\" <http://source/graph3> . "
+      "<http://source/uriC> <http://ldif/mapProp> \"map\" <http://source/graph3> . ",
+      "<http://source/graph1> <http://ldif/provProp> \"_\" <http://ldif/provGraph> . "
     ))
-    //TODO Fix - Output should contain the following provenance quads!
-    // <http://source/graph1> <http://ldif/provProp> "_" <http://ldif/provGraph> .
     OutputValidator.contains(ldifOutput, correctQuads) should equal(true)
 
     val incorrectQuads = CommonUtils.getQuads(List(
@@ -61,6 +60,31 @@ class IntegrationTest extends FlatSpec with ShouldMatchers {
       "<http://source/uriA> <http://www.w3.org/2002/07/owl#sameAs> <http://source/uriC> <http://source/graph1> ."
     ))
     OutputValidator.containsNot(ldifOutput, incorrectQuads) should equal(true)
+  }
+
+  it should "run the whole integration flow correctly (TDB)" in {
+    if(System.getProperty("os.name")=="Linux") {
+      val ldifOutput = runLdif(configFile, CommonUtils.buildProperties(fixedProperties ++ Map(("entityBuilderType", "quad-store"))))
+
+      val correctQuads = CommonUtils.getQuads(List(
+        "<http://source/uriB> <http://www.w3.org/2002/07/owl#sameAs> <http://source/uriC> <http://source/graph7> .  ",
+        "<http://source/uriC> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://ldif/class> <http://source/graph7> . ",
+        "<http://source/uriA> <http://www.w3.org/2002/07/owl#sameAs> <http://source/uriC> <http://source/graph6> . ",
+        "<http://source/uriC> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://ldif/class> <http://source/graph6> . ",
+        "<http://source/uriB> <http://www.w3.org/2002/07/owl#sameAs> <http://source/uriC> <http://source/graph4> . ",
+        "<http://source/uriC> <http://ldif/mapProp> \"map\" <http://source/graph4> . ",
+        "<http://source/uriA> <http://www.w3.org/2002/07/owl#sameAs> <http://source/uriC> <http://source/graph3> . ",
+        "<http://source/uriC> <http://ldif/mapProp> \"map\" <http://source/graph3> . ",
+        "<http://source/graph1> <http://ldif/provProp> \"_\" <http://ldif/provGraph> . "
+      ))
+      OutputValidator.contains(ldifOutput, correctQuads) should equal(true)
+
+      val incorrectQuads = CommonUtils.getQuads(List(
+        "<http://source/uriA> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://source/class> .",
+        "<http://source/uriA> <http://www.w3.org/2002/07/owl#sameAs> <http://source/uriC> <http://source/graph1> ."
+      ))
+      OutputValidator.containsNot(ldifOutput, incorrectQuads) should equal(true)
+    }
   }
 
   it should "run the whole integration flow correctly (custom properties)" in {
@@ -78,30 +102,28 @@ class IntegrationTest extends FlatSpec with ShouldMatchers {
 
   }
 
-  it should "not output provenance data if configured so" in {
-    val properties = CommonUtils.buildProperties(fixedProperties ++ Map(("outputProvenance", "false")))
-    val ldifOutput = runLdif(configFile, properties)
-    val writer = new FileWriter("test.test")
-    for(quad<-ldifOutput)
-      writer.append(quad.toNQuadFormat).append("\n")
-    writer.flush()
-    writer.close()
-
-    ldifOutput.size should equal (8)
-  }
-
-  //TODO Fix - Provenance data should be discarded when outputFormat=nt
-    it should "run the whole integration flow correctly (ouput=nt)" in {
-      val properties = CommonUtils.buildProperties(fixedProperties ++ Map(("outputFormat","nt"), ("output","all")))
+  it should "run the whole integration flow correctly (custom properties + TDB)" in {
+    if(System.getProperty("os.name")=="Linux") {
+      val properties = CommonUtils.buildProperties(fixedProperties ++ Map(("entityBuilderType", "quad-store"), ("uriMinting", "true"), ("useExternalSameAsLinks", "false"), ("output", "all")))
 
       val ldifOutput = runLdif(configFile, properties)
 
-      val incorrectQuads = CommonUtils.getQuads(List(
-        "<http://source/graph1> <http://ldif/provProp> \"_\" ."
-      ))
+      ldifOutput.size should equal (17)
 
-      OutputValidator.containsNot(ldifOutput, incorrectQuads) should equal(true)
+      val correctQuads = CommonUtils.getQuads(List(
+        "<http://ldif/mint> <http://ldif/mapProp> \"map\" <http://source/graph4> .",
+        "<http://source/uriA> <http://www.w3.org/2002/07/owl#sameAs> <http://ldif/mint> <http://source/graph2> ."
+      ))
+      OutputValidator.contains(ldifOutput, correctQuads) should equal(true)
     }
+  }
+
+  it should "not output provenance data if configured so" in {
+    val properties = CommonUtils.buildProperties(fixedProperties ++ Map(("outputProvenance", "false")))
+    val ldifOutput = runLdif(configFile, properties)
+
+    ldifOutput.size should equal (8)
+  }
 
   //TODO see http://www.assembla.com/spaces/ldif/wiki/Integration_behaviours
 
@@ -113,11 +135,10 @@ class IntegrationTest extends FlatSpec with ShouldMatchers {
     //  - rewriteURIs=true
     //  - output=mapped-only
     //  - useExternalSameAsLinks=true
-    //  - outputFormat=nq
     config = config.copy(properties = customProperties)
     val integrator = new IntegrationJob(config, debugMode)
     // Run integration
     integrator.runIntegration
-    CommonUtils.getQuads(new File(integrator.config.outputs.outputs.head._1.asInstanceOf[SerializingQuadWriter].filepath))
+    CommonUtils.getQuads(new File(integrator.config.outputs.validOutputs.head._1.get.asInstanceOf[SerializingQuadWriter].filepath))
   }
 }

@@ -1,19 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <integrationJob xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-                xsi:schemaLocation="http://www4.wiwiss.fu-berlin.de/ldif/ ../../xsd/IntegrationJob.xsd"
                 xmlns="http://www4.wiwiss.fu-berlin.de/ldif/">
     <properties>life-science.properties</properties>
     <sources>
         <source>sources</source>
     </sources>
     <linkSpecifications>linkSpecs</linkSpecifications>
+    <sieve>sieve</sieve>
     <mappings>mappings</mappings>
     <outputs>
         <output>
-            <file>
-                <path>integrated_life_science.nq</path>
-            </file>
+            <file>integrated_life_science.nq</file>
         </output>
     </outputs>
-    <outputPhase>silk</outputPhase>
 </integrationJob>

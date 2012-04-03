@@ -23,9 +23,9 @@ import scala.Predef._
 import org.scalatest.junit.JUnitRunner
 import org.scalatest.FlatSpec
 import org.scalatest.matchers.ShouldMatchers
-import ldif.entity.{Entity, EntityDescription}
 import ldif.local.runtime.LocalNode
 import ldif.util.Consts
+import ldif.entity.{FactumBuilder, Entity, EntityDescription}
 
 /**
  * Created by IntelliJ IDEA.
@@ -51,7 +51,7 @@ class EntityQueueTest extends FlatSpec with ShouldMatchers {
 
        def entityDescription = null
 
-       def factums(patternId: Int) = null
+       def factums(patternId: Int, factumBuilder : FactumBuilder) = null
      }
   }
 

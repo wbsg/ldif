@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"  ?>
+<Sieve xmlns="http://www4.wiwiss.fu-berlin.de/ldif/">
+    <Prefixes>
+        <Prefix id="ldif" namespace="http://www4.wiwiss.fu-berlin.de/ldif/"/>
+        <Prefix id="sieve" namespace="http://sieve.wbsg.de/vocab/"/>
+        <Prefix id="rdfs" namespace="http://www.w3.org/2000/01/rdf-schema#" />
+        <Prefix id="smwcat" namespace="http://mywiki/resource/category/" />
+        <Prefix id="smwprop" namespace="http://mywiki/resource/property/" />
+    </Prefixes>
+
+    <QualityAssessment>
+        <AssessmentMetric id="sieve:reputation">
+            <ScoringFunction class="ScoredList">
+                <Param name="list" value="file:///datasets/aba_mouse_20101010_1000.nq file:///datasets/uniprot-organism-human-reviewed-complete_1000.nq file:///datasets/kegg_genes_20101227_1000.nq file:///datasets/kegg_pathway_20101227_1000.nq file:///datasets/pharmgkb_20101101_1000.nq"/>
+            </ScoringFunction>
+        </AssessmentMetric>
+    </QualityAssessment>
+
+    <Fusion>
+        <Class name="smwcat:Gene">
+            <Property name="smwprop:EntrezGeneId">
+                <FusionFunction class="KeepFirst" metric="sieve:reputation"/>
+            </Property>
+        </Class>
+        <Class name="smwcat:Drug">
+            <Property name="smwprop:EntrezGeneId">
+                <FusionFunction class="KeepFirst" metric="sieve:reputation"/>
+            </Property>
+        </Class>
+    </Fusion>
+
+</Sieve>

@@ -18,15 +18,15 @@
 
 package ldif.modules.silk
 
-import ldif.entity.Entity
 import de.fuberlin.wiwiss.silk.entity.{Entity => SilkEntity}
 import de.fuberlin.wiwiss.silk.entity.{EntityDescription => SilkEntityDescription}
+import ldif.entity.{FactumBuilder, Entity}
 
 /**
  * A Silk instance which can be viewed as a LDIF entity.
  */
-class LdifEntity(val entity : Entity, entityDesc : SilkEntityDescription)
-    extends SilkEntity(entity.resource.value, IndexedSeq.tabulate(entityDesc.paths.size)(i => entity.factums(i).map(_.last.value).toSet), entityDesc)
+class LdifEntity(val entity : Entity, entityDesc : SilkEntityDescription, factumBuilder : FactumBuilder = null)
+    extends SilkEntity(entity.resource.value, IndexedSeq.tabulate(entityDesc.paths.size)(i => entity.factums(i,factumBuilder).map(_.last.value).toSet), entityDesc)
 {
 }
 

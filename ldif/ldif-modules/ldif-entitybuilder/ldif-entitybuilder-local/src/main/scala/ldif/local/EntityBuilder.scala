@@ -44,8 +44,8 @@ class EntityBuilder (entityDescriptions : IndexedSeq[EntityDescription], readers
   // Forward HT - Contains connections which are going to be explored straight/forward
   var FHT:HashTable =
     if (collectNotUsedQuads) {
-     new MarkedMemHashTable
-     //new MemHashTableReadOnce
+     //new MarkedMemHashTable
+     new MemHashTableReadOnce
     }
     else
       new MemHashTable
@@ -61,6 +61,8 @@ class EntityBuilder (entityDescriptions : IndexedSeq[EntityDescription], readers
   // Build entities and write those into the EntityWriter
   def buildEntities (ed : EntityDescription, writer : EntityWriter) {
     val startTime = now
+    // Add a reference to the factumBuilder to the EntityWriter
+    writer.setFactumBuilder(this)
 //    writer.entityDescription = ed
     val useAllUris = {
       ed.restriction.operator match {
@@ -103,7 +105,6 @@ class EntityBuilder (entityDescriptions : IndexedSeq[EntityDescription], readers
   // Init memory structures
   private def init {
     entityBuilderReportPublisher.setStartTime
-    EntityLocalMetadata.factumBuilder = this
     if(PHT.areAllUriNodesNeeded)
       allUriNodes = new JHashSet[Node]
       buildHashTables
@@ -423,8 +424,8 @@ class EntityBuilder (entityDescriptions : IndexedSeq[EntityDescription], readers
   override def getNotUsedQuads : QuadReader = {
     if (collectNotUsedQuads) {
       // retrieves not-used property quads
-      val f = FHT.asInstanceOf[MarkedMemHashTable].getNotUsedQuads(PropertyType.FORW)
-      //val f = FHT.asInstanceOf[MemHashTableReadOnce].getNotUsedQuads(PropertyType.FORW)
+      // val f = FHT.asInstanceOf[MarkedMemHashTable].getNotUsedQuads(PropertyType.FORW)
+      val f = FHT.asInstanceOf[MemHashTableReadOnce].getNotUsedQuads(PropertyType.FORW)
       // retrieves rdf:type quads
       val b = BHT.getAllQuads(PropertyType.BACK)
       new MultiQuadReader(f,b)

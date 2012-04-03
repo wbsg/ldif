@@ -29,20 +29,22 @@ ol.toc li a { text-decoration: none; }
 #footer { border-top: 1px solid #ccc; color: #aaa; margin: 2em 0 0; }
 #top-container { height: 150px; width: 750px; padding: 20px; }
 #purpose { font-size: 110%; letter-spacing: 0.05em; word-spacing: 0.15em; width: 700px; margin: 0 auto 40px auto; }
-#boxcontainer { width: 670px; margin-left: auto; margin-right: auto; }
-.box { border: 1px solid #D3D3D3; height: 75px; text-align: center; float: left; margin-right: 20px; }
+#boxcontainer { width: 850px; margin-left: auto; margin-right: auto; }
+.box { border: 1px solid #D3D3D3; height: 75px; text-align: center; float: left; margin-right: 20px; padding-top:5px; }
 .box:hover { background: none repeat scroll 0 0 #FCFDFF; box-shadow: 0 0 9px 1px #DFEFFF; }
 .box a:link, .box a:visited, .box a:hover, .box a:active { color: #1C5489; display: block; font-size: 110%; margin-left: 5px; min-height: 55px; padding: 9px 5px 5px 5px; text-decoration: none; }		
 .box a:hover, .box a:active { color: #16426B !important; cursor: pointer; text-decoration: none !important; }
 .box a span { display: block; margin-left: 40px; text-align: left; }
 .box a span small { color: #888; font-size: 70%; }
 
-#downloadbox { width: 240px; }
+#downloadbox { width: 420px; padding-left: 10px;  color: #888; }
+#downloadbox a { display:inline; }
+#downloadbox span { margin-top: 20px; display:block; }
+#downloadbox small { display:block; font-size: 70%; }
 #quickstartbox, #supportbox { width: 175px; }
-#downloadbox a span { padding: 10px 5px; }
 #quickstartbox a span, #supportbox a span { padding: 15px 5px; }
 
-#downloadbox a { background: url("img/arrow_down_32.png") no-repeat scroll 5px 20px transparent; }
+#downloadbox { background: url("img/arrow_down_32.png") no-repeat scroll 10px 25px transparent; }
 #quickstartbox a { background: url("img/clock_32.png") no-repeat scroll 5px 20px transparent; }
 #supportbox a { background: url("img/comment_32.png") no-repeat scroll 5px 20px transparent; }
 
@@ -230,9 +232,11 @@ Web into a clean, local target representation while keeping track of
 data
 provenance.</div>
 <div id="boxcontainer">
-<div id="downloadbox" class="box"> <a href="http://www4.wiwiss.fu-berlin.de/bizer/ldif/releases/ldif-0.5.zip"><span>Download
-LDIF<br>
-<small>v0.5, released 2012-03-XX</small></span></a> </div>
+<div id="downloadbox" class="box">
+    <span><a href="http://www4.wiwiss.fu-berlin.de/bizer/ldif/releases/ldif-0.5.zip" title="Download LDIF Single Machine version">LDIF Single machine</a> |
+    <a href="http://www4.wiwiss.fu-berlin.de/bizer/ldif/releases/ldif-hadoop-0.5.zip" title="Download LDIF Hadoop version">LDIF Hadoop</a></span>
+<small>v0.5, released 2012-03-28</small>
+</div>
 <div id="quickstartbox" class="box"> <a href="#quickstart"><span>Quick
 Start</span></a> </div>
 <div id="supportbox" class="box"> <a href="#feedback"><span>Get Support</span></a>
@@ -242,12 +246,14 @@ Start</span></a> </div>
 <h2 id="news">News</h2>
 <ul>
   <li>
-    <strong class="todo">03/XX/2012: Version 0.5 released:</strong>
+    <strong>03/28/2012: Version 0.5 released.</strong>
+      This release provides a data quality assessment and fusion module for cleansing data according to
+      user-provided quality assessment policies and conflict resolution methods.
   <li>
 	<strong>02/06/2012: Presentation:</strong> LDIF is presented at <a href="http://semtechbizberlin2012.semanticweb.com/">SEMTECHBIZ Berlin 2012</a> (<a href="http://www.wiwiss.fu-berlin.de/en/institute/pwo/bizer/research/publications/BeckerMatteini-LDIF-SemTechBerlin2012-Talk.pdf">Slides</a>).
   </li>
   <li>
-     <strong>01/13/2012: Interview:</strong> <a href="http://semanticweb.com">semanticweb.com</a> speaks with Christian Becker on how <a href="http://semanticweb.com/easing-the-job-of-working-with-linked-data_b25940">LDIF eases the job of working with Linked Data.</a>
+     <strong>01/13/2012: Interview:</strong> <a href="http://semanticweb.com">semanticweb.com</a> speaks with Christian Becker on how <a href="http://semanticweb.com/easing-the-job-of-working-with-linked-data_b25940">LDIF eases the job of working with Linked Data</a>.
    </li>
   <li>
       <strong>01/10/2012: Version 0.4 Scale-out released.</strong>  Up till now, LDIF stored data
@@ -259,7 +265,7 @@ machine with lower memory consumption at the expense of processing time. 2.
 The new Hadoop-based implementation provides for processing very large data
 sets on a Hadoop cluster, for instance within Amazon EC2. A comparison of the
 performance of all three implementations of the runtime environment is found
-on the <a href="http://www.assembla.com/spaces/ldif/wiki/Benchmark">LDIF benchmark page</a></li>
+on the <a href="http://www.assembla.com/spaces/ldif/wiki/Benchmark">LDIF benchmark page</a>.</li>
   <li><strong>11/03/2011: Version 0.3.1 released.</strong> Minor
 release: updated the music use case, optimized Entity Builder memory
 usage. </li>
@@ -322,11 +328,12 @@ Freebase. <a href="http://linkeddatabook.com/editions/1.0/index.html#htoc75">Lin
 Data applications</a> that want to consume data from this global data
 space face the challenges that:</p>
 <ol>
-  <li> data sources use a wide range of different RDF vocabularies to
+  <li>Data sources use a wide range of different RDF vocabularies to
 represent data about the same type of entity. </li>
-  <li>the
+  <li>The
 same real-world entity, for instance a person or a place, is
-identified with different URIs within different data sources. </li>
+identified with different URIs within different data sources, </li>
+  <li>Data about the same real-world entity coming from different sources may contain conflicting value. For example the single value attribute <i>population</i> for a specific country can have multiple, different values after merging data from different sources.</li>
 </ol>
 <p>This usage of different vocabularies as well as the usage of URI
 aliases makes it very cumbersome for an application
@@ -357,6 +364,9 @@ local target vocabulary.</li>
   <li><b>Resolve Identities</b>: An identity resolution component
 discovers URI aliases in the input data and replaces them with a
 single target URI based on user-provided matching heuristics.</li>
+  <li><b>Quality Assessment and Data Fusion</b>:
+      A data cleansing component filters data according to different quality assessment policies and
+      provides for fusing data according to different conflict resolution methods.</li>
   <li><b>Output</b>: LDIF outputs the integrated data and that can be written to file or to a QuadStore.
 For provenance tracking, LDIF employs the Named Graphs data model.</li>
 </ol>
@@ -377,10 +387,9 @@ pluggable modules. These modules are organized as data input, data transformatio
 
 <h3>Scheduler</h3>
 <p>
-The Scheduler is used for triggering pending data import jobs or integration jobs. It is configured with an XML document (see <a href="#scheduler">Configuration</a>) and offers several ways to express when and how often a certain job should be executed.
+The Scheduler is used for triggering pending data import jobs or integration jobs. It is configured with an XML document (see <a href="#scheduler">Configuration</a>) and offers several ways to express when and how often a certain job should be executed. This component is useful when you want to load external data or run the integration periodically, otherwise you could just run the integration component. Since LDIF version 0.5 there is a REST based status monitor that informs about the progress of the scheduled jobs.
+</p>
 
-<br/>
-This component is useful when you want to load external data or run the integration periodically, otherwise you could just run the integration component.
 
 <h3>Data Import</h3>
 <p>LDIF provides access modules for replicating data sets locally via
@@ -392,12 +401,10 @@ configured to refresh (<span style="font-style: italic;">hourly</span>,
 <span style="font-style: italic;">daily</span> etc.) the local cache
 for each source. </p>
 <h4>Triple/Quad Dump Import</h4>
-<p>In order to get a local replication of data sets from the Web of
-Data
-the simplest way is to download a file containing the data set. The
-triple/quad dump import does exactly this, with the difference that
-LDIF generates a provenance graph for a triple dump import, whereas it
-takes the given graphs from a quad dump import as provenance graphs.</p>
+<p>In order to get a local replication of data sets from the Web of Data the simplest way is to download a file containing
+the data set. The triple/quad dump import does exactly this, with the difference that LDIF generates a provenance graph
+for a triple dump import, whereas it takes the given graphs from a quad dump import as provenance graphs.
+Formats that are currently supported are RDF/XML, N-Triples, N-Quads and Turtle.</p>
 <h4>Crawler Import</h4>
 <p>
 Data sets that can only be accessed via dereferencable URIs are a good
@@ -475,13 +482,13 @@ Specification Language</a>.
 </p>
 
 <h5>Data Quality Assessment and Fusion</h5>
-<p>LDIF employs <a href="http://sieve.wbsg.de">Sieve</a> to provide data quality evaluation and cleansing. The procedure consists of two separate steps.<br/>
+<p>LDIF employs <a href="http://sieve.wbsg.de">Sieve</a> to provide data quality evaluation and cleansing. The procedure consists of two separate steps.
 First, the Data Quality Assessment module assigns each Named Graph within the processed data one or several quality scores based on user-configurable
 quality assessment policies. These policies combine a assessment function with the definition of the quality-related meta-information which
 should be used in the assessment process.
-<br/>Then the Data Fusion module takes the quality scores as input and resolves data conflicts based on the
+Then the Data Fusion module takes the quality scores as input and resolves data conflicts based on the
 assessment scores. The applied fusion functions can be configured on property level.
-<br/>Sieve provides a basic set of quality assessment functions and fusion functions as well as an open interface for the implementation of additional
+Sieve provides a basic set of quality assessment functions and fusion functions as well as an open interface for the implementation of additional
 domain-specific functions. <br/>
 An overview and examples can be found on the <a href="http://sieve.wbsg.de">Sieve website</a>.</p>
 
@@ -492,7 +499,7 @@ An overview and examples can be found on the <a href="http://sieve.wbsg.de">Siev
 <p>Two file output formats are currently supported by LDIF: </p>
 <ul><li>N-Quads - dumps the data into a single N-Quads file, this file contains the translated versions of all graphs from the input graph set as well as the content
 of the provenance graph and sameAs-links;    </li>
-<li> N-Triples - dumps the data into a single N-Triples file, since there exists no connection to the provenance data anymore after outputting it as N-Triple,
+<li> N-Triples - dumps the data into a single N-Triples file, since there exists no connection to the provenance data anymore after outputting it as N-Triples,
 the provenance data is discarded instead of being output. </li>
 </ul>
 <h5>QuadStore Output</h5>
@@ -613,7 +620,18 @@ then (as all of these have finished) the integration job starts.
 Default: <span style="font-family: monospace;">false</span></p>
     <pre>oneTimeExecution = true | false</pre>
   </li>
+    <li>
+        <p><i>runStatusMonitor</i><br/>
+            Specify if the status monitor should be run when starting LDIF (via ldif.local.Ldif main). Default: <span style="font-family: monospace;">true</span></p>
+        <pre>runStatusMonitor = true | false</pre>
+    </li>
+    <li>
+        <p><i>statusMonitorURI</i><br/>
+            Specify the root URI of the status monitor. Default: <span style="font-family: monospace;">http://localhost:5343/</span></p>
+        <pre>statusMonitorURI = http://localhost:5343/</pre>
+    </li>
 </ul>
+
 <h3><a name="integrationjob"></a>Integration Job Configuration<br>
 </h3>
 <p>An Integration Job is configured with an XML document, whose
@@ -639,12 +657,10 @@ all import jobs to finish.<br>
     &lt;/sources&gt;
     &lt;linkSpecifications&gt;linkSpecs&lt;/linkSpecifications&gt;
     &lt;mappings&gt;mappings&lt;/mappings&gt;
+    &lt;sieve&gt;sieve&lt;/sieve&gt;
     &lt;outputs&gt;
         &lt;output&gt;
-            &lt;file&gt;
-                &lt;path&gt;output.nq&lt;/path&gt;
-                &lt;format&gt;nquads&lt;/format&gt;
-            &lt;/file&gt;
+            &lt;file format="nquads"&gt;output.nq&lt;/file&gt;&nbsp;&lt;!-- format attribute is optional, default is nquads -->
         &lt;/output&gt;
     &lt;/outputs&gt;
     &lt;runSchedule&gt;daily&lt;/runSchedule&gt;
@@ -654,7 +670,7 @@ all import jobs to finish.<br>
     <li><i>properties</i> - the path to a Java properties file for
         configuration parameters, <a href="#configurationproperties">see below</a>
         for more details; </li>
-    <li><i>sources</i> - each <i>source</i> specifies a path (to a file or a directory) in the local or distributed file system,
+    <li><i>sources</i> or one <i>source</i> element - each <i>source</i> specifies a path (to a file or a directory) in the local or distributed file system,
         all files must be in <a href="http://sw.deri.org/2008/07/n-quads/">N-Quads</a> format and may
         be compressed (.gz, .zip or .bz2);<br>
     </li>
@@ -662,7 +678,8 @@ all import jobs to finish.<br>
         link specifications</a>;</li>
     <li><i>mappings</i> - a directory containing the <a href="http://www4.wiwiss.fu-berlin.de/bizer/r2r/spec/index.html#mappings">R2R
         mappings</a>;</li>
-    <li><i>outputs</i> - each <i>output</i> specifies a destination where data are written to, both file and <a href="http://www.assembla.com/wiki/show/ldif/QuadStore_Compatibility">SPARQL/Update</a> outputs are supported;</li>
+    <li><i>sieve</i> - a directory containing the configuration for data <a href="http://sieve.wbsg.de/#qualityassessmentconfig">quality assessment</a> and <a href="http://sieve.wbsg.de/#fusionconfig">fusion</a>;</li>
+    <li><i>outputs</i> or one <i>output</i> element - each <i>output</i> specifies a destination where data are written to, both <i>file</i> (N-Quads or N-Triples) and <a href="http://www.assembla.com/wiki/show/ldif/QuadStore_Compatibility">SPARQL/Update</a> outputs are supported;</li>
     <li><i>runSchedule</i> - how often the integration is expected to be
         run. Valid values are: <span style="font-family: monospace;">onStartup</span>,<span style="font-family: monospace;"> always</span>,<span style="font-family: monospace;"> hourly</span>,<span style="font-family: monospace;"> daily</span>,<span style="font-family: monospace;"> weekly</span>,<span style="font-family: monospace;"> monthly</span>,<span style="font-family: monospace;"> yearly </span>and <span style="font-family: monospace;">never</span>. <span class="Apple-style-span" style="border-collapse: separate; color: rgb(0, 0, 0); font-family: 'Times New Roman'; font-style: normal; font-variant: normal; font-weight: normal; letter-spacing: normal; line-height: normal; orphans: 2; text-indent: 0px; text-transform: none; white-space: normal; widows: 2; word-spacing: 0px; font-size: medium;"><span class="Apple-style-span" style="border-collapse: collapse; font-family: Arial,Helvetica,'Liberation Sans',FreeSans,sans-serif; font-size: 12px; line-height: 18px; text-align: left;"></span></span></li>
 </ul>
@@ -728,12 +745,6 @@ set at the moment and the possible values for each property:</p>
             sameAs-links from the input data, set this property to false. Default: <span style="font-family: monospace;">true</span></p>
         <pre>useExternalSameAsLinks = true | false</pre>
     </li>
-    <li>
-        <p><i>outputFormat</i><br/>
-            Although the default output format is N-Quads, LDIF also offers a
-            triple output as N-Triple. Default: <span style="font-family: monospace;">nq</span></p>
-        <pre>outputFormat = nq | nt</pre>
-    </li>
     <li><i>entityBuilderType</i><br/>
         Specify the type of the entity builder component used for the local
         execution profile of LDIF. This choice heavily influences the
@@ -795,6 +806,11 @@ set at the moment and the possible values for each property:</p>
             Specify if only the content of the provenance graph should be used in the data quality evaluation. Default: <span style="font-family: monospace;">false</span></p>
         <pre>qualityFromProvenanceOnly = true | false</pre>
     </li>
+    <li>
+        <p><i>outputProvenance</i><br/>
+            Specify if the provenance data should be output. Default: <span style="font-family: monospace;">true</span></p>
+        <pre>outputProvenance = true | false</pre>
+    </li>
 </ul>
 
 <h3><a name="importjob"></a>Import Job Configuration<br>
@@ -818,8 +834,8 @@ be run. Valid values are: <span style="font-family: monospace;">onStartup</span>
 </ul>
 <p>LDIF supports four different mechanisms to import external data: </p>
 <ul>
-  <li><i>Quad Import Job</i> – import N-Quad dumps</li>
-  <li><i>Triple Import Job</i> – import RDF/N-Triple dumps</li>
+  <li><i>Quad Import Job</i> – import N-Quads dumps</li>
+  <li><i>Triple Import Job</i> – import RDF/XML, N-Triples or Turtle dumps</li>
   <li><i>Crawl Import Job</i> – import by dereferencing URIs as RDF
 data, using the LDSpider Web Crawling Framework</li>
   <li><i>SPARQL Import Job</i> – import by querying a SPARQL endpoint</li>
@@ -946,6 +962,18 @@ the latest LDIF release</li>
 <p>This will import the data sets as defined by the LDIF import jobs and copies them afterwards to the Hadoop file system. Integration results will be written into the <tt>/user/hduser/integrated_music_light.nq</tt> directory in the Hadoop distributed file system (HDFS).</li> You can check the content of this directory using the following command: <tt>hadoop dfs -ls /user/hduser/integrated_music_light.nq</tt></p>
 
 <p>Please note that most of the run time for this small use case is dominated by the Hadoop overhead.</p>
+
+<p>Besides running the scheduler as in the example above, single phases are also supported to run in isolation. There exist following possibilities:</p>
+<ul>
+    <li>run integration job only:</a>
+      <pre>hadoop jar lib/ldif-hadoop-*.jar integrate &lt;integrationJobConfigFile&gt;</pre></li>
+    <li>run R2R only:</a>
+      <pre>hadoop jar lib/ldif-hadoop-*.jar r2r &lt;local path to mappings&gt; &lt;input path&gt; &lt;output path&gt;</pre></li>
+    <li>run Silk only:</a>
+      <pre>hadoop jar lib/ldif-hadoop-*.jar silk &lt;local path to link spec.&gt; &lt;input path&gt; &lt;output path&gt;</pre></li>
+</ul>
+
+<p>Where <i>input path</i> is the (HDFS) path to the source data sets directory and <i>output path</i> is the location where on the (HDFS) file system the result should be written to.</p>
 
 <p>Learn more about Hadoop configuration by looking at our <a href="http://www.assembla.com/spaces/ldif/wiki/Benchmark">Benchmark</a> and <a href="http://www.assembla.com/spaces/ldif/wiki/Hadoop_troubleshooting">Troubleshooting</a> wiki pages.</p>
 
@@ -1153,9 +1181,7 @@ configuration. The configuration options are explained in the Section <a href="#
     &lt;mappings&gt;mappings&lt;/mappings&gt;
     &lt;outputs&gt;
         &lt;output&gt;
-            &lt;file&gt;
-                &lt;path&gt;output.nq&lt;/path&gt;
-            &lt;/file&gt;
+            &lt;file&gt;output.nq&lt;/file&gt;
         &lt;/output&gt;
     &lt;/outputs&gt;
 &lt;/integrationJob&gt;</pre>
@@ -1231,6 +1257,10 @@ on line 10 in the output was produced by a complex mapping that had to
 consider all three quads of the input (lines 12-14).<br>
   </li>
 </ul>
+<p>Data Fusion: </p>
+<ul>
+  <li>The specification for Sieve defines that only one value for the property <span style="font-family: monospace;">smwprop:EntrezGeneId</span> should be picked. As fusion function we picked <i>KeepFirst</i>, which just chooses the first value it sees for each entity. This means that only one of the quads in the output lines 5 and 10 would show up in the target data set, which in this case would result in the same value.</li>
+</ul>
 <h2 id="performance">6. Performance Evaluation</h2>
 <p>We regularly carry out performance evaluations. For more
 details and the latest results please visit our <a href="http://www.assembla.com/spaces/ldif/wiki/Benchmark">Benchmark results</a> page.</p>
@@ -1253,11 +1283,14 @@ License</a>.
     </tr>
     <tr class="even">
         <td> 0.5</td>
-        <td class="todo">Data Quality Assessment and Fusion module<br>
-            QuadStore output<br>
-
+        <td>
+            Data Quality Assessment and Fusion module<br/>
+            REST based status monitor<br/>
+            Output module: QuadStore and intermediate results output are now supported <br/>
+            Data Access Module: RDF/XML and Turtle formats are now supported <br/>
+            More flexible Integration workflow: single phases can now be executed or skipped <br/>
         </td>
-        <td> 03/XX/2011</td>
+        <td> 03/28/2012</td>
     </tr>
     <tr class="odd">
       <td> 0.4</td>
@@ -1307,6 +1340,7 @@ only for relevant data </td>
 <ul>
 </ul>
 <ol>
+    <li>Pablo N. Mendes, Hannes Mühleisen, Christian Bizer: <a href="">Sieve: Linked Data Quality Assessment and Fusion</a>. 2nd International Workshop on Linked Web Data Management (LWDM 2012) at the 15th International Conference on Extending Database Technology (EDBT 2012), Berlin, March 2012.</li>
 	  <li>Christian Becker, Andrea Matteini: LDIF - Linked Data Integration Framework ( <a href="http://www.wiwiss.fu-berlin.de/en/institute/pwo/bizer/research/publications/BeckerMatteini-LDIF-SemTechBerlin2012-Talk.pdf">Slides</a> ). SemTechBiz 2012, Berlin, February 2012.</li>
   <li>Andreas Schultz, Andrea Matteini, Robert Isele, Christian Bizer,
 Christian Becker: <a href="http://www.wiwiss.fu-berlin.de/en/institute/pwo/bizer/research/publications/Schultz-etal-Cold2011-LDIF-Paper.pdf">LDIF

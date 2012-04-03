@@ -63,8 +63,12 @@ object Ldif {
       }
       val scheduler = new Scheduler(config, debug)
 
+      val runStatusMonitor = config.properties.getProperty("runStatusMonitor", "true").toLowerCase=="true"
+      val statusMonitorURI = config.properties.getProperty("statusMonitorURI", "http://localhost:5343/")
+
       // Start REST HTTP Server
-      MonitorServer.start("http://localhost:5343/")
+      if(runStatusMonitor)
+        MonitorServer.start(statusMonitorURI)
 
       // check if dumpDir exists or can be created
       val dumpDir = new File(config.dumpLocationDir)

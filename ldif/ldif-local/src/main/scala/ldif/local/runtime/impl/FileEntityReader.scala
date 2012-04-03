@@ -19,9 +19,9 @@
 package ldif.local.runtime.impl
 
 import java.io.File
-import ldif.entity.{EntityDescription, Entity}
 import ldif.local.runtime.EntityReader
 import ldif.runtime.impl.FileObjectReader
+import ldif.entity.{EntityDescription, Entity}
 
 /**
  * Created by IntelliJ IDEA.
@@ -31,4 +31,11 @@ import ldif.runtime.impl.FileObjectReader
  * To change this template use File | Settings | File Templates.
  */
 
-class FileEntityReader(val entityDescription : EntityDescription, inputFile: File, enableCompression: Boolean = false) extends FileObjectReader[Entity](inputFile, NoEntitiesLeft, enableCompression) with EntityReader
+class FileEntityReader(val entityDescription : EntityDescription, inputFile: File, enableCompression: Boolean = false) extends FileObjectReader[Entity](inputFile, NoEntitiesLeft, enableCompression) with EntityReader {
+
+  def this(entityWriter : FileEntityWriter) = {
+    this(entityWriter.entityDescription, entityWriter.inputFile, entityWriter.enableCompression)
+    this.factumBuilder = entityWriter.factumBuilder
+  }
+
+}

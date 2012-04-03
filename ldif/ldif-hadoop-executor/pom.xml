@@ -8,7 +8,7 @@
     <parent>
         <groupId>ldif</groupId>
         <artifactId>ldif</artifactId>
-        <version>0.4</version>
+        <version>0.5</version>
     </parent>
 
     <artifactId>ldif-hadoop-executor</artifactId>
@@ -85,7 +85,7 @@
         <dependency>
             <groupId>ldif</groupId>
             <artifactId>ldif-core</artifactId>
-            <version>0.4</version>
+            <version>0.5</version>
         </dependency>
 
         <dependency>
@@ -105,19 +105,19 @@
         <dependency>
             <groupId>ldif</groupId>
             <artifactId>ldif-entitybuilder-hadoop</artifactId>
-            <version>0.4</version>
+            <version>0.5</version>
         </dependency>
 
         <dependency>
             <groupId>ldif</groupId>
             <artifactId>ldif-r2r-hadoop</artifactId>
-            <version>0.4</version>
+            <version>0.5</version>
         </dependency>
 
       <dependency>
           <groupId>ldif</groupId>
           <artifactId>ldif-silk-hadoop</artifactId>
-          <version>0.4</version>
+          <version>0.5</version>
       </dependency>
 
         <!--<dependency>-->

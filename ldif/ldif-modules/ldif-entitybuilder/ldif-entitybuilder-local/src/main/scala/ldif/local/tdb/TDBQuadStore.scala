@@ -24,11 +24,10 @@ import com.hp.hpl.jena.tdb.TDBFactory
 import ldif.util.EntityDescriptionToSparqlConverter
 import ldif.entity.EntityDescription
 import ldif.local.QuadStoreTrait
-import com.hp.hpl.jena.query.{QueryExecution, ResultSet, QueryExecutionFactory, Dataset}
 import ldif.local.util.JenaResultSetEntityBuilderHelper
-import com.hp.hpl.jena.query.ARQ
 import org.slf4j.LoggerFactory
 import java.util.concurrent.atomic.AtomicInteger
+import com.hp.hpl.jena.query._
 
 /**
  * Created by IntelliJ IDEA.
@@ -101,12 +100,12 @@ class TDBQuadStore(databaseRoot: File, reuseExistingDatabaseDir: Boolean = false
   }
 
   private def getQueryExecutions(queries: Seq[(String, Seq[String])]): Seq[QueryExecution] = {
-    for(query <- queries) yield QueryExecutionFactory.create(query._1, dataset)
+    for(query <- queries) yield QueryExecutionFactory.create(query._1, Syntax.syntaxSPARQL_11, dataset)
   }
 
   private def executeAllQueries(queryExecutions: Seq[QueryExecution]): Seq[ResultSet] = {
     for(queryExecution <- queryExecutions)
-      queryExecution.getContext.set(ARQ.spillOnDiskSortingThreshold, 50000l)
+      queryExecution.getContext.set(ARQ.spillOnDiskSortingThreshold, 100000l)
     for(queryExecution <- queryExecutions) yield queryExecution.execSelect
   }
 }

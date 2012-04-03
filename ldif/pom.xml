@@ -6,7 +6,7 @@
   <modelVersion>4.0.0</modelVersion>
 
   <properties>
-    <ldif.version>0.4</ldif.version>
+    <ldif.version>0.5</ldif.version>
     <scala.version>2.9.1</scala.version>
     <scala.plugin.version>2.15.2</scala.plugin.version>
   </properties>
@@ -14,7 +14,7 @@
   <groupId>ldif</groupId>
   <artifactId>ldif</artifactId>
   <packaging>pom</packaging>
-  <version>0.4</version>
+  <version>0.5</version>
   <name>LDIF</name>
   <url>http://www4.wiwiss.fu-berlin.de/bizer/ldif/</url>
 
@@ -37,7 +37,7 @@
 
   <build>
     <plugins>
-      <plugin>
+      <!--plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>cobertura-maven-plugin</artifactId>
                 <version>2.2</version>
@@ -54,7 +54,7 @@
                         </goals>
                     </execution>
                 </executions>
-      </plugin>
+      </plugin-->
       <plugin>
         <groupId>org.scala-tools</groupId>
         <artifactId>maven-scala-plugin</artifactId>

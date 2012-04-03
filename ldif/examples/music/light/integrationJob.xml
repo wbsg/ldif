@@ -9,12 +9,8 @@
     <linkSpecifications>linkspecs</linkSpecifications>
     <mappings>mappings</mappings>
     <sieve>sieve</sieve>
-    <outputs>
-        <output>
-            <file>
-                <path>integrated_music_light.nq</path>
-            </file>
-        </output>
-    </outputs>
+    <output>
+       <file>integrated_music_light.nq</file>
+    </output>
     <runSchedule>onStartup</runSchedule>
 </integrationJob>
