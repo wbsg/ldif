@@ -37,12 +37,18 @@ import org.apache.hadoop.fs.Path
 object EB {
   def buildEntities(input: String, output: String, entityDescriptions: IndexedSeq[EntityDescription]) {
     val properties = {
-      if(System.getProperty("ldif.properties", "")!="")
+      if(System.getProperty("ldif.properties", "")!="") {
+        println("Using properties file: " + System.getProperty("ldif.properties"))
         ConfigProperties.loadProperties(System.getProperty("ldif.properties"))
-      else if(new File("ldif.properties").exists())
+      }
+      else if(new File("ldif.properties").exists()) {
+        println("Using properties file: ldif.properties from working directory")
         ConfigProperties.loadProperties("ldif.properties")
-      else
+      }
+      else {
+        println("No ldif.properties file found.")
         new Properties()
+      }
     }
     val configParameters = ConfigParameters(new Properties(), null, null, null, true)
     val eb = new HadoopEntityBuilder(entityDescriptions, Seq(new Path(input)), configParameters)

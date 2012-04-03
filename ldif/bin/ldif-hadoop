@@ -1,4 +1,4 @@
 #!/bin/bash
 basedir=${0%/*}
-java -server -Xmx4G -Xms256M -Dlog4j.configuration=file:$basedir/../resources/log4j.properties -jar $basedir/../ldif-hadoop-executor/target/ldif-hadoop-exe-0.5-jar-with-dependencies.jar scheduler $*
+java -server -Xmx4G -Xms256M -Dlog4j.configuration=file:$basedir/../resources/log4j.properties -jar $basedir/../ldif-hadoop-executor/target/ldif-hadoop-exe-*-jar-with-dependencies.jar scheduler $*
 
