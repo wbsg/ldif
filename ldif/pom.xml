@@ -37,7 +37,7 @@
 
   <build>
     <plugins>
-      <!--plugin>
+      <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>cobertura-maven-plugin</artifactId>
                 <version>2.2</version>
@@ -54,7 +54,7 @@
                         </goals>
                     </execution>
                 </executions>
-      </plugin-->
+      </plugin>
       <plugin>
         <groupId>org.scala-tools</groupId>
         <artifactId>maven-scala-plugin</artifactId>
