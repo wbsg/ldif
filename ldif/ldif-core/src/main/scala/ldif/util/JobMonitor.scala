@@ -29,12 +29,10 @@ package ldif.util
 class JobMonitor extends StatusMonitor with Register[Publisher]{
   def getHtml(params: Map[String, String]) = {
     val sb = new StringBuilder
-    sb.append("<html><head><title>LDIF Job Report</title>")
-    sb.append(addParams(params))
-    sb.append("</head><body>\n")
+    sb.append(addHeader("LDIF Job Report", params))
     sb.append("<h1>Status Report for LDIF Jobs</h1>\n")
     sb.append("<table border=\"1\" cellpadding=\"3\" cellspacing=\"0\">")
-    sb.append("<tr><th>Job Name</th><th>Start Time</th><th>Finish Time</th><th>Duration</th><th>Job Infos</th></tr>")
+    sb.append("<tr><th>Job Name</th><th>Start Time</th><th>Finish Time</th><th>Duration</th><th>Status</th><th>Job Infos</th></tr>")
     for((publisher, index) <- getPublishers().zipWithIndex) {
       sb.append("<tr><td>").append(publisher.getPublisherName).append("</td><td>")
         .append(publisher.getFormattedStartTime).append("</td><td>")
@@ -48,9 +46,11 @@ class JobMonitor extends StatusMonitor with Register[Publisher]{
       else
        sb.append("-")
       sb.append("</td><td>")
+      sb.append(publisher.getStatus.getOrElse("-"))
+      sb.append("</td><td>")
       publisher.getLink match {
         case None => sb.append("-")
-        case Some(uriPrefix) => sb.append("<a href=\"").append(uriPrefix).append("/").append(index).append("\">show</a>")
+        case Some(uriPrefix) => sb.append("<a href=\"").append(uriPrefix).append("/").append(index).append("\">details</a>")
       }
       sb.append("</td></tr>\n")
     }
@@ -64,5 +64,5 @@ class JobMonitor extends StatusMonitor with Register[Publisher]{
 object JobMonitor {
   val value: StatusMonitor with Register[Publisher] = new JobMonitor
 
-  def clean() = value.clean()
+  def clean() {value.clean()}
 }

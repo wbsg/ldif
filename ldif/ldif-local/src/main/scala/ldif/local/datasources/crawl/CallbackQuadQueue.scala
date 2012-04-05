@@ -23,8 +23,9 @@ import org.semanticweb.yars.nx.Node
 import java.io.IOException
 import ldif.runtime.QuadWriter
 import ldif.runtime.Quad
+import ldif.local.scheduler.CrawlImportJobPublisher
 
-class CallbackQuadQueue(quadWriter : QuadWriter) extends Callback {
+class CallbackQuadQueue(quadWriter : QuadWriter, reporter : CrawlImportJobPublisher = null) extends Callback {
 
   var statements = 0
 
@@ -43,5 +44,8 @@ class CallbackQuadQueue(quadWriter : QuadWriter) extends Callback {
         }
       }
     statements += 1
+    if (reporter != null)
+      reporter.importedQuads.incrementAndGet()
   }
+
 }

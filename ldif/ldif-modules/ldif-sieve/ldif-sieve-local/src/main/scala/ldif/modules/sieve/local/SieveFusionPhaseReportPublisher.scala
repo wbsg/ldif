@@ -19,9 +19,7 @@
 package ldif.modules.sieve.local
 
 import collection.mutable.ArrayBuffer
-import ldif.util.{ReportItem, Report, ReportPublisher, Publisher}
-import ldif.util.ReportItem._
-import ldif.util.Report._
+import ldif.util.{ReportItem, Report, ReportPublisher}
 
 /**
  * Created by IntelliJ IDEA.
@@ -44,4 +42,6 @@ class SieveFusionPhaseReportPublisher extends ReportPublisher {
 
     return Report(reportItems)
   }
+
+  override def getStatus : Option[String] = None
 }

@@ -35,6 +35,16 @@ trait StatusMonitor {
   def getHtml(params: Map[String, String]): String
 
   def getText: String
+  
+  def addHeader(title : String, params: Map[String, String]): String = {
+    val sb = new StringBuilder
+    sb.append("<html><head><title>")
+    sb.append(title)
+    sb.append("</title>")
+    sb.append(addParams(params))
+    sb.append("</head><body>\n")
+    sb.toString
+  }
 
   def addParams(params: Map[String, String]): String = {
     val sb = new StringBuilder

@@ -20,12 +20,12 @@ package ldif.local.scheduler
 
 import ldif.runtime.Quad
 import ldif.entity.Node
-import collection.mutable.{HashSet, ListBuffer, Set}
+import collection.mutable.{HashSet, Set}
 import java.util.Date
 import xml.XML
-import ldif.util.{ValidatingXMLReader, Consts, Identifier}
 import java.io._
 import org.slf4j.LoggerFactory
+import ldif.util.{ValidatingXMLReader, Consts, Identifier}
 
 trait ImportJob {
   private val log = LoggerFactory.getLogger(getClass.getName)
@@ -36,11 +36,13 @@ trait ImportJob {
   var importedGraphs : Set[String] = new HashSet[String]
   // Used to tmp store the list of the imported graphs, if there are too many graphs
   var importedGraphsFile : File = null
+  // The number of imported quads
+  var importedQuadsNumber : Double = 0
 
   /**
-   * Start import and write results to output stream
+   * Start import and write results to output stream. Return the number of loaded quads, or -1 if loading fails
    */
-  def load(out : OutputStream) : Boolean
+  def load(out : OutputStream, estimatedNumberOfQuads : Option[Double]) : Boolean
 
   def getType : String
   def getOriginalLocation : String
@@ -64,6 +66,7 @@ trait ImportJob {
     writer.write(Quad(jobBlankNode, Consts.hasDatasourceProp, Node.createLiteral(dataSource), provenanceGraph).toLine)
     writer.write(Quad(jobBlankNode, Consts.hasImportTypeProp, Node.createLiteral(getType), provenanceGraph).toLine)
     writer.write(Quad(jobBlankNode, Consts.hasOriginalLocationProp, Node.createLiteral(getOriginalLocation), provenanceGraph).toLine)
+    writer.write(Quad(jobBlankNode, Consts.importedQuadsProp, Node.createTypedLiteral(importedQuadsNumber.toString,Consts.xsdDouble),provenanceGraph).toLine)
 
     // add graphs
     val importedGraph = Node.createUriNode(Consts.importedGraphClass)

@@ -69,4 +69,9 @@ trait Publisher {
    * The duration of the job in seconds as string representation
    */
   def getDuration: String = ""+(finishTime.getTime.getTime - startTime.getTime.getTime)/1000.0
+
+  /**
+   * The status of the job 
+   */
+  def getStatus : Option[String]
 }

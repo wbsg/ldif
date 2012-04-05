@@ -20,8 +20,6 @@ package ldif.modules.r2r.local
 
 import collection.mutable.ArrayBuffer
 import ldif.util.{ReportItem, Report, ReportPublisher}
-import ldif.util.ReportItem._
-import ldif.util.Report._
 import java.util.concurrent.atomic.AtomicInteger
 
 /**
@@ -50,4 +48,6 @@ class R2RReportPublisher extends ReportPublisher {
 
     return Report(reportItems)
   }
+
+  override def getStatus : Option[String] = None
 }

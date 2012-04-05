@@ -29,15 +29,16 @@ import ldif.util.{StatusMonitor, Register, ReportPublisher, Publisher}
  */
 
 class IntegrationJobStatusMonitor extends Publisher with StatusMonitor with Register[ReportPublisher] {
+
+  private var status : String = "-"
+
   def getPublisherName = "Integration Job"
 
   def getLink: Option[String] = Some("integrationJob")
 
   def getHtml(params: Map[String, String]) = {
     val sb = new StringBuilder
-    sb.append("<html><head><title>Integration Job Report</title>")
-    sb.append(addParams(params))
-    sb.append("</head><body>\n")
+    sb.append(addHeader("Integration Job Report", params))
     sb.append("<h1>Status Report for Integration Job</h1>\n")
     for(publisher <- getPublishers()) {
       sb.append("<h3>"+publisher.getPublisherName+"</h2>\n")
@@ -46,7 +47,7 @@ class IntegrationJobStatusMonitor extends Publisher with StatusMonitor with Regi
       for(reportItem <- publisher.getReport.items) {
         sb.append("<tr><td>").append(reportItem.name).append("</td><td>")
           .append(reportItem.status).append("</td><td>")
-          .append(reportItem.progress).append("</td></tr>\n")
+          .append(reportItem.value).append("</td></tr>\n")
       }
       sb.append("</table>")
     }
@@ -62,9 +63,13 @@ class IntegrationJobStatusMonitor extends Publisher with StatusMonitor with Regi
       for(reportItem <- publisher.getReport.items) {
         sb.append("    Item: ").append(reportItem.name).append("\n    Status: ")
           .append(reportItem.status).append("\n    Progress: ")
-          .append(reportItem.progress).append("\n")
+          .append(reportItem.value).append("\n")
       }
     }
     sb.toString
   }
+
+  def setStatus(status : String) {this.status = status}
+
+  override def getStatus : Option[String] = Some(status)
 }

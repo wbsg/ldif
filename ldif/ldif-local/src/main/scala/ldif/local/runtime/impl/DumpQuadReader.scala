@@ -138,4 +138,6 @@ class DumpLoadReportPublisher(val useSameAs: Boolean) extends ReportPublisher {
 
     return Report(reports)
   }
+
+  override def getStatus : Option[String] = None
 }

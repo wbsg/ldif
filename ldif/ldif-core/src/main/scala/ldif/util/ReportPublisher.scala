@@ -18,7 +18,6 @@
 
 package ldif.util
 
-import java.text.SimpleDateFormat
 import java.util.GregorianCalendar
 
 /**
@@ -36,7 +35,7 @@ trait ReportPublisher extends Publisher {
   /**
    * Assemble a report to be published
    */
-  def getReport: Report
+  def getReport : Report
 
   def getTimeStampReport(name: String): ReportItem = {
     return ReportItem(name, "-", formatDateTime(new GregorianCalendar()))
@@ -55,8 +54,8 @@ trait ReportPublisher extends Publisher {
   def getFinishTimeReportItem: ReportItem = getTimeStampReport("Finish time", finishTime)
 
   override def getLink: Option[String] = None
+
+  override def getStatus : Option[String] = None
 }
 
 case class Report(items: Seq[ReportItem])
-
-case class ReportItem(name: String, status: String, progress: String)

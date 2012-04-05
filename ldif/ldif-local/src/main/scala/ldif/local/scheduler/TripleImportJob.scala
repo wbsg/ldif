@@ -21,23 +21,27 @@ package ldif.local.scheduler
 import ldif.local.datasources.dump.DumpLoader
 import xml.Node
 import ldif.datasources.dump.QuadParser
-import java.io.{OutputStreamWriter, OutputStream}
+import java.io.OutputStream
 import ldif.runtime.Quad
 import ldif.datasources.dump.parser.ParseException
 import org.slf4j.LoggerFactory
-import ldif.util.{Publisher, JobMonitor, Consts, Identifier}
+import ldif.util._
 
 case class TripleImportJob(dumpLocation : String, id : Identifier, refreshSchedule : String, dataSource : String) extends ImportJob {
 
   private val log = LoggerFactory.getLogger(getClass.getName)
+  private val reporter = new TripleImportJobPublisher(id)
+  JobMonitor.value.addPublisher(reporter)
 
   val graph = Consts.DEFAULT_IMPORTED_GRAPH_PREFIX+id
 
-  override def load(out : OutputStream) : Boolean = {
-    val reporter = new TripleImportJobPublisher
-    JobMonitor.value.addPublisher(reporter)
+  override def load(out : OutputStream, estimatedNumberOfQuads : Option[Double] = None) : Boolean = {
+    reporter.setStartTime()
+    importedQuadsNumber = 0
 
-    val writer = new OutputStreamWriter(out)
+    reporter.estimatedQuads = estimatedNumberOfQuads
+
+    val writer = new ReportingOutputStreamWriter(out,reporter)
 
     // get bufferReader from Url
     val inputStream = DumpLoader.getStream(dumpLocation)
@@ -57,19 +61,23 @@ case class TripleImportJob(dumpLocation : String, id : Identifier, refreshSchedu
         case e:ParseException => {
           // skip invalid quads
           invalidQuads  += 1
+          reporter.invalidQuads.incrementAndGet()
           log.debug("Invalid quad found: "+line)
         }
       }
       if(quad != null)
-        writer.write(quad.toNQuadFormat+". \n")
+        importedQuadsNumber += 1
+        writer.write(quad)
     }
 
     if (invalidQuads>0)
       log.warn("Invalid quads ("+invalidQuads+") found and skipped in "+ dumpLocation)
 
+    log.debug(importedQuadsNumber + " valid quads loaded from "+id+" ("+dumpLocation+")" )
+
     writer.flush
     writer.close
-    reporter.setFinishTime
+    reporter.setFinishTime()
     true
   }
 
@@ -86,6 +94,6 @@ object TripleImportJob {
   }
 }
 
-class TripleImportJobPublisher extends ImportJobPublisher {
-  override def getPublisherName = "Triple Import Job"
+class TripleImportJobPublisher (id : Identifier) extends ImportJobStatusMonitor(id) with ReportPublisher {
+  override def getPublisherName = super.getPublisherName + " (triple)"
 }

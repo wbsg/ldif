@@ -21,21 +21,23 @@ package ldif.local.scheduler
 import ldif.local.datasources.dump.DumpLoader
 import xml.Node
 import ldif.datasources.dump.QuadParser
-import java.io.{OutputStreamWriter, OutputStream}
+import java.io.OutputStream
 import org.slf4j.LoggerFactory
 import ldif.runtime.Quad
 import ldif.datasources.dump.parser.ParseException
-import ldif.util.{JobMonitor, Consts, Identifier}
+import ldif.util._
 
 case class QuadImportJob(dumpLocation : String, id : Identifier, refreshSchedule : String, dataSource : String, renameGraphs : String = "") extends ImportJob {
 
   private val log = LoggerFactory.getLogger(getClass.getName)
   private val renamingGraphEnabled = renameGraphs != ""
+  private val reporter = new QuadImportJobPublisher(id)
+  JobMonitor.value.addPublisher(reporter)
 
-  override def load(out : OutputStream) : Boolean = {
-    val reporter = new QuadImportJobPublisher
-    JobMonitor.value.addPublisher(reporter)
-    val writer = new OutputStreamWriter(out)
+  override def load(out : OutputStream, estimatedNumberOfQuads : Option[Double] = None) : Boolean = {
+    reporter.setStartTime()
+    // ImportJobMonitor.value = reporter
+    val writer = new ReportingOutputStreamWriter(out, reporter)
 
     // get bufferReader from Url
     val inputStream = DumpLoader.getStream(dumpLocation)
@@ -51,10 +53,12 @@ case class QuadImportJob(dumpLocation : String, id : Identifier, refreshSchedule
         case e:ParseException => {
           // skip invalid quads
           invalidQuads  += 1
+          reporter.invalidQuads.incrementAndGet()
           log.debug("Invalid quad found: "+line)
         }
       }
       if (quad != null) {
+        importedQuadsNumber += 1
         if (renamingGraphEnabled)
           quad = quad.copy(graph = renameGraph(quad.graph))
         importedGraphs += quad.graph
@@ -67,9 +71,11 @@ case class QuadImportJob(dumpLocation : String, id : Identifier, refreshSchedule
     if (invalidQuads>0)
       log.warn("Invalid quads ("+invalidQuads+") found and skipped in "+ dumpLocation)
 
+    log.debug(importedQuadsNumber + " valid quads loaded from "+id+" ("+dumpLocation+")" )
+
     writer.flush
     writer.close
-    reporter.setFinishTime
+    reporter.setFinishTime()
     true
   }
 
@@ -96,6 +102,6 @@ object QuadImportJob{
   }
 }
 
-class QuadImportJobPublisher extends ImportJobPublisher {
-  override def getPublisherName = "Quad Import Job"
+class QuadImportJobPublisher (id : Identifier) extends ImportJobStatusMonitor(id) with ReportPublisher {
+  override def getPublisherName = super.getPublisherName + " (quad)"
 }

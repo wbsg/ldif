@@ -114,7 +114,7 @@ class HadoopScheduler (val config : SchedulerConfig, debug : Boolean = false) {
       val tmpProvenanceFile = getTmpProvenanceFile(job)
 
       // create local dump
-      val success = job.load(new FileOutputStream(tmpDumpFile))
+      val success = job.load(new FileOutputStream(tmpDumpFile), getNumberOfQuads(job))
 
       if(success) {
         // create provenance metadata
@@ -246,6 +246,28 @@ class HadoopScheduler (val config : SchedulerConfig, debug : Boolean = false) {
     else {
       //log.warn("Job "+job.id+" - provenance file not found at "+provenanceFile.getCanonicalPath)
       null
+    }
+  }
+
+  /* Retrieve the number of imported quads from provenance info */
+  private def getNumberOfQuads(job : ImportJob) : Option[Double] = {
+    val provenanceFile = getProvenanceFile(job)
+    if (hdfs.exists(provenanceFile)) {
+      val provenanceFileLocal = getTmpProvenanceFile(job)
+      hdfs.copyToLocalFile(provenanceFile, new Path(provenanceFileLocal.getCanonicalPath))
+      val lines = scala.io.Source.fromFile(provenanceFileLocal).getLines
+      val parser = new QuadParser
+      // loop and stop as the first numberOfQuads property is found
+      for (quad <- lines.toTraversable.map(parser.parseLine(_))){
+        if (quad.predicate.equals(Consts.importedQuadsProp))
+          return Some(quad.value.value.toDouble)
+      }
+      log.warn("Job "+job.id+" - provenance file does not contain last update metadata")
+      None
+    }
+    else {
+      //log.warn("Job "+job.id+" - provenance file not found at "+provenanceFile.getCanonicalPath)
+      None
     }
   }
 

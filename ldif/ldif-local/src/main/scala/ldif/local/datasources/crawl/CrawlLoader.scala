@@ -39,30 +39,28 @@ import ldif.util.JobMonitor
  **/
 
 @throws(classOf[Exception])
-class CrawlLoader(seedUris : Traversable[URI], predicates : Traversable[URI] = Traversable.empty[URI], renameGraphs : String = "") {
+class CrawlLoader(seedUris : Traversable[URI], predicates : Traversable[URI] = Traversable.empty[URI], renameGraphs : String = "", reporter : CrawlImportJobPublisher = null) {
   private val log = LoggerFactory.getLogger(getClass.getName)
 
   /** Crawl and write to a file
    *
    * @return set of imported pages/graphs
    */
-  def crawl(out : OutputStream, levels : Int, limit : Int) : Set[String] = {
-    val callback = new CallbackOutputStream(out, renameGraphs)
+  def crawl(out : OutputStream, levels : Int, limit : Int) : (Int, Set[String]) = {
+    val callback = new CallbackOutputStream(out, renameGraphs, reporter)
     crawl(callback, levels, limit)
     log.info("Loaded "+  callback.graphs.size + " resources and "+ callback.statements + " statements")
-    callback.graphs
+    (callback.statements, callback.graphs)
   }
 
   // Crawl and write to a QuadQueue
   def crawl(quadWriter : QuadWriter, levels : Int, limit : Int) {
-    val callback = new CallbackQuadQueue(quadWriter)
+    val callback = new CallbackQuadQueue(quadWriter, reporter)
     crawl(callback, levels, limit)
     log.info("Loaded "+  callback.statements + " statements")
   }
 
   private def crawl(callback : Callback, levels : Int = 1, limit : Int = -1, includeProvenance :Boolean = false) {
-    val reporter = new CrawlImportJobPublisher
-    JobMonitor.value.addPublisher(reporter)
 
     val sink = new SinkCallback(callback, includeProvenance)
 
@@ -99,6 +97,5 @@ class CrawlLoader(seedUris : Traversable[URI], predicates : Traversable[URI] = T
 
       log.debug("Crawled seed: "+seed)
     }
-    reporter.setFinishTime
   }
 }

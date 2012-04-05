@@ -77,7 +77,7 @@ object OutputConfig {
       case None =>  Consts.OutputPhaseDefault
     }
    phase match {
-     case "r2r" => DT   // TODO change names?
+     case "r2r" => DT
      case "silk" => IR
      case _ => COMPLETE
    }

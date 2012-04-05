@@ -22,20 +22,24 @@ import java.net.URI
 import org.slf4j.LoggerFactory
 import ldif.local.runtime.LocalNode
 import com.hp.hpl.jena.rdf.model.{Model, RDFNode}
-import java.io.{Writer, OutputStreamWriter, OutputStream}
+import java.io.{Writer, OutputStream}
 import com.hp.hpl.jena.query.QueryExecutionFactory
 import javax.xml.ws.http.HTTPException
 import com.hp.hpl.jena.sparql.engine.http.QueryExceptionHTTP
-import ldif.util.{JobMonitor, Consts, Identifier}
+import ldif.util._
+import ldif.runtime.Quad
 
 case class SparqlImportJob(conf : SparqlConfig, id :  Identifier, refreshSchedule : String, dataSource : String) extends ImportJob{
   private val log = LoggerFactory.getLogger(getClass.getName)
   private val graph = Consts.DEFAULT_IMPORTED_GRAPH_PREFIX+id
+  val reporter = new SparqlImportJobPublisher(id)
+  JobMonitor.value.addPublisher(reporter)
 
-  override def load(out : OutputStream) : Boolean = {
-    val reporter = new SparqlImportJobPublisher
-    JobMonitor.value.addPublisher(reporter)
-    val writer = new OutputStreamWriter(out)
+  override def load(out : OutputStream, estimatedNumberOfQuads : Option[Double] = None) : Boolean = {
+    reporter.setStartTime()
+    reporter.estimatedQuads = estimatedNumberOfQuads
+
+    val writer = new ReportingOutputStreamWriter(out, reporter)
 
     if (conf.endpointLocation == null) {
       log.warn("Import failed for job "+ id +" - SPARQL endpoint location not defined")
@@ -49,7 +53,7 @@ case class SparqlImportJob(conf : SparqlConfig, id :  Identifier, refreshSchedul
 
     val success = execQuery(query, writer)
     writer.close
-    reporter.setFinishTime
+    reporter.setFinishTime()
     success
   }
 
@@ -112,6 +116,7 @@ case class SparqlImportJob(conf : SparqlConfig, id :  Identifier, refreshSchedul
       if (offset == 0) {
          // set page size for the sparql endpoint
          limit = results.size
+         reporter.actualLimit = limit.toInt
       }
       offset += results.size
       loop = (results.size == limit) && (limit != 0) && !(offset == conf.tripleLimit)
@@ -119,6 +124,8 @@ case class SparqlImportJob(conf : SparqlConfig, id :  Identifier, refreshSchedul
       if (results.size!=0 || limit == 0)
         log.info(id +" - loaded "+offset+" quads")
     }
+
+    importedQuadsNumber = offset.toDouble
     true
   }
 
@@ -131,7 +138,8 @@ case class SparqlImportJob(conf : SparqlConfig, id :  Identifier, refreshSchedul
       val s = LocalNode.fromRDFNode(stmt.getSubject.asInstanceOf[RDFNode])
       val p = stmt.getPredicate.getURI
       val o = LocalNode.fromRDFNode(stmt.getObject)
-      writer.write(s.toNQuadsFormat +" <"+ p +"> "+ o.toNQuadsFormat +" <"+ graph +"> . \n")
+      val quad = Quad(s,p,o,graph)
+      writer.write(quad.toLine)
     }
     writer.flush
   }
@@ -184,6 +192,16 @@ case class SparqlConfig(endpointLocation : URI,  graphName : URI, sparqlPatterns
 
 }
 
-class SparqlImportJobPublisher extends ImportJobPublisher {
-  override def getPublisherName = "SPARQL Import Job"
+class SparqlImportJobPublisher (id : Identifier) extends ImportJobStatusMonitor(id) with ReportPublisher {
+
+  //var limit : Int = 0
+  var actualLimit : Int = 0
+
+  override def getPublisherName = super.getPublisherName + "(sparql)"
+
+  override def getReport : Report = {
+    val customReportItems = Seq(ReportItem.get("Query limit",actualLimit))
+    super.getReport(customReportItems)
+  }
+
 }

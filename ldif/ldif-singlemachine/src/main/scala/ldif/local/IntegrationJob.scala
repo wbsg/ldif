@@ -19,7 +19,6 @@
 package ldif.local
 
 import datasources.dump.{QuadFileLoader, DumpLoader}
-import rest.MonitorServer
 import runtime._
 import impl._
 import ldif.modules.r2r.local.R2RLocalExecutor
@@ -38,8 +37,8 @@ import ldif.runtime.QuadWriter
 import ldif.modules.sieve.quality.{QualityConfig, QualityModule, EmptyQualityConfig}
 import ldif.config._
 import util.StringPool
-import ldif.modules.silk.local.{SilkReportPublisher, SilkLocalExecutor}
-import ldif.modules.sieve.local.{SieveFusionPhaseReportPublisher, SieveQualityPhaseReportPublisher, SieveLocalQualityExecutor, SieveLocalFusionExecutor}
+import ldif.modules.silk.local.SilkLocalExecutor
+import ldif.modules.sieve.local.{SieveLocalQualityExecutor, SieveLocalFusionExecutor}
 import ldif.modules.sieve.SieveConfig
 
 class IntegrationJob (val config : IntegrationConfig, debugMode : Boolean = false) {
@@ -81,7 +80,7 @@ class IntegrationJob (val config : IntegrationConfig, debugMode : Boolean = fals
 
     else
       synchronized {
-        reporter = new IntegrationJobStatusMonitor
+        //reporter = new IntegrationJobStatusMonitor
         JobMonitor.value.addPublisher(reporter)
         IntegrationJobMonitor.value = reporter
         val sourceNumber = config.sources.size
@@ -232,7 +231,7 @@ class IntegrationJob (val config : IntegrationConfig, debugMode : Boolean = fals
   private def executeMappingPhase(config: IntegrationConfig, quadReaders: Seq[QuadReader], skip: Boolean): Option[Seq[QuadReader]] = {
     if(skip) {
       log.info("Skipping R2R phase.")
-      return Some(quadReaders) // Skip R2R phase
+      Some(quadReaders) // Skip R2R phase
     }
     else {
       var r2rReader = mapQuads(config, quadReaders)
@@ -386,6 +385,7 @@ class IntegrationJob (val config : IntegrationConfig, debugMode : Boolean = fals
     outputFile.deleteOnExit
     val executor = new R2RLocalExecutor
     reporter.addPublisher(executor.reporter)
+    reporter.setStatus("Data Translation")
     val writer = new FileQuadWriter(outputFile)
 
      //runInBackground
@@ -411,6 +411,7 @@ class IntegrationJob (val config : IntegrationConfig, debugMode : Boolean = fals
       else
         new SilkLocalExecutor(true)
     reporter.addPublisher(silkExecutor.reporter)
+    reporter.setStatus("Identity Resolution")
 
     val entityDescriptions = silkModule.tasks.toIndexedSeq.map(silkExecutor.input).flatMap{ case StaticEntityFormat(ed) => ed }
     val entityReaders = buildEntities(readers, entityDescriptions, ConfigParameters(config.properties))
@@ -459,6 +460,7 @@ class IntegrationJob (val config : IntegrationConfig, debugMode : Boolean = fals
     val output = new QuadQueue
     val qualityExecutor = new SieveLocalQualityExecutor
     reporter.addPublisher(qualityExecutor.reporter)
+    reporter.setStatus("Sieve - Quality")
     for((task, reader) <- qualityModule.tasks.toSeq zip readers)  {
 //  for ((task, readers) <- taskToReaders) {
       log.debug("\n\tMetric: %s\n\tFunction: %s\n\tEntityDescription: %s".format(task.qualitySpec.outputPropertyNames,task.qualitySpec.scoringFunctions,reader.entityDescription))
@@ -495,6 +497,7 @@ class IntegrationJob (val config : IntegrationConfig, debugMode : Boolean = fals
     log.info("Time needed to build entities for fusion phase: " + stopWatch.getTimeSpanInSeconds + "s")
 
     reporter.addPublisher(fusionExecutor.reporter)
+    reporter.setStatus("Sieve - Fusion")
     fusionExecutor.reporter.setStartTime()
     val outputQueue = new QuadQueue
 
