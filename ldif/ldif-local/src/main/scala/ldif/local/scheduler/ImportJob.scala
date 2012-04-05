@@ -66,6 +66,10 @@ trait ImportJob {
     writer.write(Quad(jobBlankNode, Consts.hasDatasourceProp, Node.createLiteral(dataSource), provenanceGraph).toLine)
     writer.write(Quad(jobBlankNode, Consts.hasImportTypeProp, Node.createLiteral(getType), provenanceGraph).toLine)
     writer.write(Quad(jobBlankNode, Consts.hasOriginalLocationProp, Node.createLiteral(getOriginalLocation), provenanceGraph).toLine)
+    var importedGraphsNumber : Int = importedGraphs.size
+    if(importedGraphsFile != null && importedGraphsFile.exists)
+      importedGraphsNumber += scala.io.Source.fromFile(importedGraphsFile).getLines().size
+    importedQuadsNumber += importedGraphsNumber*2 + 7 // add number of provenance quads
     writer.write(Quad(jobBlankNode, Consts.importedQuadsProp, Node.createTypedLiteral(importedQuadsNumber.toString,Consts.xsdDouble),provenanceGraph).toLine)
 
     // add graphs

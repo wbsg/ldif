@@ -18,13 +18,11 @@
 
 package ldif.local.runtime.impl
 
-import java.io.File
 import ldif.runtime.Quad
 import ldif.local.runtime.{ConfigParameters, QuadReader}
-import java.util.concurrent.atomic.AtomicInteger
-import collection.mutable.ArrayBuffer
 import ldif.util._
 import ldif.local.IntegrationJobMonitor
+import ldif.local.report.DumpLoadReportPublisher
 
 /**
  * Created by IntelliJ IDEA.
@@ -43,7 +41,7 @@ class DumpQuadReader(inputQuadReader: QuadReader, config: ConfigParameters) exte
   private val outputAllQuads = config.configProperties.getProperty("output", "mapped-only").toLowerCase=="all"
   private val provenanceGraph = config.configProperties.getProperty("provenanceGraphURI", Consts.DEFAULT_PROVENANCE_GRAPH)
   private val useExternalSameAsLinks = config.configProperties.getProperty("useExternalSameAsLinks", "true").toLowerCase=="true"
-  private val reporter = new DumpLoadReportPublisher(useExternalSameAsLinks)
+  val reporter = new DumpLoadReportPublisher(useExternalSameAsLinks)
   IntegrationJobMonitor.value.addPublisher(reporter)
 
   def size: Int = inputQuadReader.size
@@ -99,45 +97,3 @@ class DumpQuadReader(inputQuadReader: QuadReader, config: ConfigParameters) exte
   }
 }
 
-class DumpLoadReportPublisher(val useSameAs: Boolean) extends ReportPublisher {
-  var loadedQuads = new AtomicInteger(0)
-  var externalSameAsQuads = new AtomicInteger(0)
-  var provenanceQuads = new AtomicInteger(0)
-
-  def getPublisherName = "Dump Loader"
-
-  private def createSameAsReportItem: ReportItem = {
-    if (useSameAs)
-      ReportItem("Nr. of sameAs links extracted", "store", externalSameAsQuads + " quads")
-    else
-      ReportItem("Nr. of sameAs links extracted", "ignore", "-")
-  }
-
-  private def createProvenanceReportItem: ReportItem = {
-    ReportItem("Nr. of provenance quads extracted", "store", provenanceQuads + " quads")
-  }
-
-  private def createLoadedQuadsReportItem: ReportItem = {
-    val status = if(finished)
-      "Done"
-    else
-      "Loading..."
-    ReportItem("Nr. of quads loaded", status, loadedQuads + " quads")
-  }
-
-  def getReport: Report = {
-    val reports = new ArrayBuffer[ReportItem]
-    reports.append(getStartTimeReportItem)
-    reports.append(createLoadedQuadsReportItem)
-    reports.append(createSameAsReportItem)
-    reports.append(createProvenanceReportItem)
-    if(finished) {
-      reports.append(getFinishTimeReportItem)
-      reports.append(getDurationTimeReportItem)
-    }
-
-    return Report(reports)
-  }
-
-  override def getStatus : Option[String] = None
-}

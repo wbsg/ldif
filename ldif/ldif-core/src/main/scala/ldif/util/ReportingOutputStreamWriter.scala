@@ -15,21 +15,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package ldif.util
 
-package ldif.local.scheduler
+import java.io.{OutputStream, OutputStreamWriter}
+import ldif.runtime.Quad
 
-import ldif.util.{ReportPublisher, Register, Publisher}
+/*
+* Wrapper for OutputStreamWriter, to report the number of written quads
+*/
+class ReportingOutputStreamWriter(out : OutputStream, reporter : ImportJobStatusMonitor) extends OutputStreamWriter(out) {
+  
+  override def write(s : String) : Unit = {
+    super.write(s)
+    reporter.importedQuads.incrementAndGet()
+  }
+  
+  def write(quad : Quad) {
+    super.write(quad.toLine)
+    reporter.importedQuads.incrementAndGet()
+  }
 
-/**
- * Created by IntelliJ IDEA.
- * User: andreas
- * Date: 3/6/12
- * Time: 7:19 PM
- * To change this template use File | Settings | File Templates.
- */
-
-class ImportJobPublisher extends Publisher with Register[ReportPublisher] {
-  def getPublisherName = "Import Job"
-
-  def getLink: Option[String] = None
+  def write(quads : Traversable[Quad]) {
+    for (quad <- quads)
+      write(quad)
+  }
 }

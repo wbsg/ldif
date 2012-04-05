@@ -118,6 +118,7 @@ class SieveLocalQualityExecutor(useFileInstanceCache: Boolean = false) extends E
         log.error("Found %d null entities. Is this normal?".format(numberOfNullEntities))
 
     })
+    reporter.setFinishTime()
   }
 
 }

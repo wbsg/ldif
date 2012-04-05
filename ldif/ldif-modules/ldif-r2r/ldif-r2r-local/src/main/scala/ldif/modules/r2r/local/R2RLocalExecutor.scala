@@ -71,5 +71,5 @@ class R2RLocalExecutor extends Executor {
     log.info("...output " + quadCounter + " quad(s).")
   }
 
-  def finish = reporter.setFinishTime
+  def finish {reporter.setFinishTime}
 }

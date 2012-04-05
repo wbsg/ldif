@@ -18,7 +18,7 @@
 
 package ldif.local
 
-import ldif.util.{StatusMonitor, Register, ReportPublisher, Publisher}
+import ldif.util._
 
 /**
  * Created by IntelliJ IDEA.
@@ -30,7 +30,10 @@ import ldif.util.{StatusMonitor, Register, ReportPublisher, Publisher}
 
 class IntegrationJobStatusMonitor extends Publisher with StatusMonitor with Register[ReportPublisher] {
 
-  private var status : String = "-"
+  override def addPublisher(publisher: ReportPublisher) {
+     JobMonitor.addPublisher(publisher)
+     super.addPublisher(publisher)
+  }
 
   def getPublisherName = "Integration Job"
 
@@ -45,9 +48,11 @@ class IntegrationJobStatusMonitor extends Publisher with StatusMonitor with Regi
       sb.append("<table border=\"1\" cellpadding=\"3\" cellspacing=\"0\">")
       sb.append("<tr><th>report item</th><th>status</th><th>value</th></tr>")
       for(reportItem <- publisher.getReport.items) {
-        sb.append("<tr><td>").append(reportItem.name).append("</td><td>")
-          .append(reportItem.status).append("</td><td>")
-          .append(reportItem.value).append("</td></tr>\n")
+        sb.append("<tr>")
+          .append(buildCell(reportItem.name))
+          .append(buildCell(reportItem.status))
+          .append(buildCell(reportItem.value))
+          .append("</tr>\n")
       }
       sb.append("</table>")
     }
@@ -69,7 +74,5 @@ class IntegrationJobStatusMonitor extends Publisher with StatusMonitor with Regi
     sb.toString
   }
 
-  def setStatus(status : String) {this.status = status}
-
-  override def getStatus : Option[String] = Some(status)
+  override def getStatus : Option[String] = status
 }

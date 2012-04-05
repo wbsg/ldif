@@ -36,42 +36,56 @@ trait Publisher {
   protected[this] var startTime = new GregorianCalendar()
   protected[this] var finishTime = new GregorianCalendar()
   protected[this] var finished = false
+  protected[this] var status : Option[String] = None
 
   /**
    * The name of the publisher (should be globally unique)
    */
   def getPublisherName: String
 
-  def setStartTime() = startTime = new GregorianCalendar()
+  def setStartTime() {startTime = new GregorianCalendar()}
 
-  def setFinishTime() = {
+  def setFinishTime() {
     finishTime = new GregorianCalendar()
     finished = true
+    status = Some("Done")
   }
 
-  def formatDateTime(calendar: Calendar): String = {
+  def formatDateTime(calendar: Calendar) : String = {
     val dateFormat = new SimpleDateFormat("yyyy-MM-dd' 'HH:mm:ss")
-    return dateFormat.format(calendar.getTime)
+    dateFormat.format(calendar.getTime)
   }
 
   def isFinished = finished
 
   def getFormattedStartTime = formatDateTime(startTime)
 
-  def getFormattedFinishTime = formatDateTime(finishTime)
+  def getFormattedFinishTime = if(finished) formatDateTime(finishTime) else "-"
 
   /**
    * This should return the URI prefix that a link would have, if there is one
    */
   def getLink: Option[String]
 
+  def getLinkAsHtml(index : Int) = getLink match {
+    case Some(uriPrefix) => "<a href=\""+uriPrefix+"/"+index+"\">details</a>"
+    case None => ""
+  }
+
   /**
    * The duration of the job in seconds as string representation
    */
-  def getDuration: String = ""+(finishTime.getTime.getTime - startTime.getTime.getTime)/1000.0
+  def getDuration: String = if (finished) (finishTime.getTime.getTime - startTime.getTime.getTime)/1000.0+" s"  else ""
 
   /**
    * The status of the job 
    */
-  def getStatus : Option[String]
+  def getStatus : Option[String] = status
+
+  def getStatusAsString = getStatus match {
+    case Some(s) => s
+    case None => ""
+  }
+
+  def setStatus(status : String) {this.status = Some(status)}
 }

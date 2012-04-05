@@ -38,11 +38,11 @@ trait ReportPublisher extends Publisher {
   def getReport : Report
 
   def getTimeStampReport(name: String): ReportItem = {
-    return ReportItem(name, "-", formatDateTime(new GregorianCalendar()))
+    ReportItem.get (name, formatDateTime(new GregorianCalendar()))
   }
 
   def getTimeStampReport(name: String, calendar: GregorianCalendar): ReportItem = {
-    return ReportItem(name, "-",formatDateTime(calendar))
+    ReportItem.get(name, formatDateTime(calendar))
   }
 
   def getDurationTimeReportItem: ReportItem = {
@@ -54,8 +54,6 @@ trait ReportPublisher extends Publisher {
   def getFinishTimeReportItem: ReportItem = getTimeStampReport("Finish time", finishTime)
 
   override def getLink: Option[String] = None
-
-  override def getStatus : Option[String] = None
 }
 
 case class Report(items: Seq[ReportItem])

@@ -42,6 +42,4 @@ class SilkReportPublisher extends ReportPublisher {
 
     return Report(reportItems)
   }
-
-  override def getStatus : Option[String] = None
 }

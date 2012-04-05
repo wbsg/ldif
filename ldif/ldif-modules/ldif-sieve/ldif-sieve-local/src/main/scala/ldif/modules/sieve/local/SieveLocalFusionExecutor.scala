@@ -112,7 +112,7 @@ class SieveLocalFusionExecutor(useFileInstanceCache: Boolean = false) extends Ex
                 println(patternNodes(0))
                 graph = "null" //TODO FIXME not sure why this is happening.
               }
-              val quad = new Quad(entity.resource, outputPropertyName, propertyValue, graph);
+              val quad = Quad(entity.resource, outputPropertyName, propertyValue, graph);
               writer.write(quad)
             } else {
               // fuse multiple values and write the picked value(s) out
@@ -131,7 +131,7 @@ class SieveLocalFusionExecutor(useFileInstanceCache: Boolean = false) extends Ex
         }
       }
     })
-
+    reporter.setFinishTime()
   }
 
 }

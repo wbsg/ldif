@@ -27,7 +27,7 @@ import ldif.util.{JobMonitor, ReportPublisher, ImportJobStatusMonitor, Identifie
 case class CrawlImportJob(conf : CrawlConfig, id :  Identifier, refreshSchedule : String, dataSource : String) extends ImportJob {
 
   val reporter = new CrawlImportJobPublisher(id)
-  JobMonitor.value.addPublisher(reporter)
+  JobMonitor.addPublisher(reporter)
   val crawler = new CrawlLoader(conf.seedUris, conf.predicatesToFollow, conf.renameGraphs, reporter)
 
   override def load(out : OutputStream, estimatedNumberOfQuads : Option[Double] = None) : Boolean = {
@@ -68,6 +68,6 @@ object CrawlImportJob {
 case class CrawlConfig(seedUris : Traversable[URI], predicatesToFollow : Traversable[URI], levels : Int, resourceLimit: Int, renameGraphs : String)
 
 class CrawlImportJobPublisher (id : Identifier) extends ImportJobStatusMonitor(id) with ReportPublisher {
-  override def getPublisherName = super.getPublisherName + "(crawl)"
+  override def getPublisherName = super.getPublisherName + " (crawl)"
 }
 

@@ -33,7 +33,7 @@ case class SparqlImportJob(conf : SparqlConfig, id :  Identifier, refreshSchedul
   private val log = LoggerFactory.getLogger(getClass.getName)
   private val graph = Consts.DEFAULT_IMPORTED_GRAPH_PREFIX+id
   val reporter = new SparqlImportJobPublisher(id)
-  JobMonitor.value.addPublisher(reporter)
+  JobMonitor.addPublisher(reporter)
 
   override def load(out : OutputStream, estimatedNumberOfQuads : Option[Double] = None) : Boolean = {
     reporter.setStartTime()
@@ -197,7 +197,7 @@ class SparqlImportJobPublisher (id : Identifier) extends ImportJobStatusMonitor(
   //var limit : Int = 0
   var actualLimit : Int = 0
 
-  override def getPublisherName = super.getPublisherName + "(sparql)"
+  override def getPublisherName = super.getPublisherName + " (sparql)"
 
   override def getReport : Report = {
     val customReportItems = Seq(ReportItem.get("Query limit",actualLimit))

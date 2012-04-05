@@ -79,7 +79,7 @@ class IntegrationJobMonitorServer {
 
 
 object  MonitorServer {
-  val generalStatusMonitor: StatusMonitor with Register[Publisher] = JobMonitor.value
+  val generalStatusMonitor: StatusMonitor with Register[Publisher] = JobMonitor
   private var server: HttpServer = null
 
   def stop() {

@@ -40,8 +40,7 @@ class SieveFusionPhaseReportPublisher extends ReportPublisher {
       reportItems.append(getDurationTimeReportItem)
     }
 
-    return Report(reportItems)
+    Report(reportItems)
   }
 
-  override def getStatus : Option[String] = None
 }

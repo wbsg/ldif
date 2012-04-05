@@ -32,7 +32,7 @@ case class QuadImportJob(dumpLocation : String, id : Identifier, refreshSchedule
   private val log = LoggerFactory.getLogger(getClass.getName)
   private val renamingGraphEnabled = renameGraphs != ""
   private val reporter = new QuadImportJobPublisher(id)
-  JobMonitor.value.addPublisher(reporter)
+  JobMonitor.addPublisher(reporter)
 
   override def load(out : OutputStream, estimatedNumberOfQuads : Option[Double] = None) : Boolean = {
     reporter.setStartTime()

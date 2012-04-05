@@ -31,7 +31,7 @@ case class TripleImportJob(dumpLocation : String, id : Identifier, refreshSchedu
 
   private val log = LoggerFactory.getLogger(getClass.getName)
   private val reporter = new TripleImportJobPublisher(id)
-  JobMonitor.value.addPublisher(reporter)
+  JobMonitor.addPublisher(reporter)
 
   val graph = Consts.DEFAULT_IMPORTED_GRAPH_PREFIX+id
 

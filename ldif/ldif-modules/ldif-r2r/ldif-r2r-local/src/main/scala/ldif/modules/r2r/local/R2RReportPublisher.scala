@@ -33,21 +33,25 @@ import java.util.concurrent.atomic.AtomicInteger
 class R2RReportPublisher extends ReportPublisher {
   var quadsOutput = new AtomicInteger(0)
   var mappingsExecuted = new AtomicInteger(0)
+  var mappingsTotal : Int = 0
 
   def getPublisherName = "R2R"
 
   def getReport: Report = {
     val reportItems = new ArrayBuffer[ReportItem]
     reportItems.append(getStartTimeReportItem)
-    val status = if(finished) "Done" else "running..."
-    reportItems.append(ReportItem("Mappings", status, mappingsExecuted + " mappings executed<br>" + quadsOutput + " quads output"))
+    reportItems.append(ReportItem("Mappings", getProgress, mappingsExecuted + " mappings executed<br>" + quadsOutput + " quads output"))
     if(finished) {
       reportItems.append(getFinishTimeReportItem)
       reportItems.append(getDurationTimeReportItem)
     }
+    // reportItems.append(ReportItem.get("mappingsTotal",mappingsTotal))
 
-    return Report(reportItems)
+    Report(reportItems)
   }
 
-  override def getStatus : Option[String] = None
+  private def getProgress : String =
+    (mappingsExecuted.get*100/mappingsTotal).toInt + "%"
+
+  override def getStatus : Option[String] = status.orElse(Some(getProgress))
 }

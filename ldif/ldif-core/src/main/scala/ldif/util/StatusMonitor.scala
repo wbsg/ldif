@@ -55,4 +55,6 @@ trait StatusMonitor {
     }
     sb.toString
   }
+
+  def buildCell(text : String) = "<td>"+text+"</td>"
 }

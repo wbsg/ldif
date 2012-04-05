@@ -27,6 +27,7 @@ import java.util.zip.GZIPOutputStream
 import runtime.impl.QuadQueue
 import java.util.concurrent.atomic.AtomicInteger
 import ldif.util.{Consts, Uri}
+import util.EntityBuilderReportPublisher
 
 /**
  * Created by IntelliJ IDEA.
@@ -36,14 +37,13 @@ import ldif.util.{Consts, Uri}
  * To change this template use File | Settings | File Templates.
  */
 
-class QuadStoreEntityBuilder(store: QuadStoreTrait, entityDescriptions : Seq[EntityDescription], readers : Seq[QuadReader], config: ConfigParameters, reuseDatabase: Boolean = false) extends EntityBuilderTrait {
+class QuadStoreEntityBuilder(store: QuadStoreTrait, entityDescriptions : Seq[EntityDescription], readers : Seq[QuadReader], config: ConfigParameters, reporter : EntityBuilderReportPublisher, reuseDatabase: Boolean = false) extends EntityBuilderTrait {
   private val log = LoggerFactory.getLogger(getClass.getName)
   private val quadCounter = new AtomicInteger(0)
 
   private val tmpDir = new File(config.configProperties.getProperty("databaseLocation", System.getProperty("java.io.tmpdir")))
 
   private val PHT = new PropertyHashTable(entityDescriptions)
-  entityBuilderReportPublisher.name = "Entity Builder (quad store)"
 
   // if true, irrelevant quads are saved for later use (merge) - used in fusion phase
   private val collectNotRelevantQuads = config.otherQuadsWriter != null
@@ -62,8 +62,8 @@ class QuadStoreEntityBuilder(store: QuadStoreTrait, entityDescriptions : Seq[Ent
     if(!reuseDatabase) {
       val quadOutput = filterAndDumpDataset(readers, quadCounter)
       store.loadDataset(quadOutput)
-      entityBuilderReportPublisher.quadsReadCounter.set(quadCounter.get)
-      entityBuilderReportPublisher.finishedReading=true
+      reporter.loadedQuads.set(quadCounter.get)
+      reporter.finishedReading=true
     } else
       store.loadDataset(null)
   }
@@ -123,12 +123,14 @@ class QuadStoreEntityBuilder(store: QuadStoreTrait, entityDescriptions : Seq[Ent
     val entityCounter = new AtomicInteger(0)
     log.info("Starting to build entities...")
     store.queryStore(ed, writer, entityCounter)//TODO: Maybe handle return value
-    entityBuilderReportPublisher.entitiesBuilt.addAndGet(entityCounter.get)
-    entityBuilderReportPublisher.entityQueuesFilled.incrementAndGet()
+    reporter.entitiesBuilt.addAndGet(entityCounter.get)
+    reporter.entityQueuesFilled.incrementAndGet()
     log.info("Finished building " + entityCounter + " entities in " + (now - start)/1000.0 + "s")
   }
 
   // TODO to be implemented
   override def getNotUsedQuads : QuadReader = new QuadQueue
+
+  def getType = "quad-store"
 
 }

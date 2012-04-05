@@ -87,6 +87,7 @@ class Scheduler (val config : SchedulerConfig, debug : Boolean = false) {
 
   /* Execute the integration job */
   def runIntegration() {
+      integrationJob.dumpsQuads = getNumberOfQuads(importJobs)
       integrationJob.runIntegration
       log.info("Integration Job completed")
       runningIntegrationJobs = false
@@ -256,6 +257,14 @@ class Scheduler (val config : SchedulerConfig, debug : Boolean = false) {
       None
     }
   }
+
+  private def getNumberOfQuads(jobs : Traversable[ImportJob]) : Int = {
+    var result = 0
+    for (job <- importJobs)
+       result += getNumberOfQuads(job).get.toInt
+    result
+  }
+
 
   private def loadImportJobs(file : File) : Traversable[ImportJob] =  {
     if(file == null) {
