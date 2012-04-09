@@ -29,7 +29,7 @@ import ldif.datasources.dump.QuadParser
 import ldif.config.IntegrationConfig
 import ldif.util.{CommonUtils, Consts, StopWatch, FatalErrorListener}
 
-class Scheduler (val config : SchedulerConfig, debug : Boolean = false) {
+case class Scheduler (config : SchedulerConfig, debug : Boolean = false) {
   private val log = LoggerFactory.getLogger(getClass.getName)
 
   // load jobs
@@ -40,6 +40,30 @@ class Scheduler (val config : SchedulerConfig, debug : Boolean = false) {
   private var startup = true
   private var runningIntegrationJobs = false
   private val runningImportJobs = initRunningJobsMap
+
+  /* Evaluate and run the jobs */
+  def run(stopExecution : Boolean = false) {
+    if (runOnce) {
+      // Evaluate jobs at most once. Evaluate import first, then integrate.
+      evaluateImportJobs
+      Thread.sleep(1000)
+      while (!allJobsCompleted) {
+        // wait for jobs to be completed
+        Thread.sleep(1000)
+      }
+      evaluateIntegrationJob(false)
+      if(stopExecution)
+        sys.exit(0)
+    }
+    else {
+      // Run as server, evaluate jobs every 10 sec
+      log.info("Running LDIF as server")
+      while(true){
+        evaluateJobs
+        Thread.sleep(10 * 1000)
+      }
+    }
+  }
 
   /* Evaluate updates/integration */
   def evaluateJobs() {
@@ -295,7 +319,7 @@ class Scheduler (val config : SchedulerConfig, debug : Boolean = false) {
       // if properties are not defined for the integration job, then use scheduler properties
       if (integrationConfig.properties.size == 0)
         integrationConfig = integrationConfig.copy(properties = config.properties)
-      val integrationJob = new IntegrationJob(integrationConfig, debug)
+      val integrationJob = IntegrationJob(integrationConfig, debug)
       log.info("Integration job loaded from "+ configFile.getCanonicalPath)
       integrationJob
     }

@@ -83,6 +83,15 @@ case class TripleImportJob(dumpLocation : String, id : Identifier, refreshSchedu
 
   override def getType = "triple"
   override def getOriginalLocation = dumpLocation
+
+  override def toXML = {
+    val xml = {
+      <tripleImportJob>
+        <dumpLocation>{dumpLocation}</dumpLocation>
+      </tripleImportJob>
+    }
+    toXML(xml)
+  }
 }
 
 object TripleImportJob {

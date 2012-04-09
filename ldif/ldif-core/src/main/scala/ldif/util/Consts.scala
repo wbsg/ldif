@@ -83,7 +83,11 @@ object Consts {
   val SparqlUpdateVersionDefault = "1.1"
   val SparqlMaxStatmentsPerRequest = 200
   val SparqlUseDirectPostDefault = "true"
+  val SparqlTripleLimitDefault = Long.MaxValue
 
   val FileOutputFormatDefault = "nquads"
   val OutputPhaseDefault = "complete"
+
+  // Status interface
+  val DefaultStatusMonitorrURI = "http://localhost:5343/"
 }

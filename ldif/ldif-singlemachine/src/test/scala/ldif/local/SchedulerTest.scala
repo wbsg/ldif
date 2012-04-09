@@ -31,7 +31,7 @@ import ldif.util.{OutputValidator, CommonUtils}
 class SchedulerTest extends FlatSpec with ShouldMatchers {
 
   val configFile = CommonUtils.loadFile("scheduler/scheduler-config.xml")
-  val scheduler = new Scheduler(SchedulerConfig.load(configFile))
+  val scheduler = Scheduler(SchedulerConfig.load(configFile))
 
   it should "schedule a job correctly" in {
     scheduler.checkUpdate(scheduler.getImportJobs.head) should equal (true)
@@ -90,12 +90,12 @@ class SchedulerTest extends FlatSpec with ShouldMatchers {
   lazy val importJobRemote = {
     /* Disabled - remote test */
     val url = "http://www.assembla.com/code/ldif/git/node/blob/ldif/ldif-singlemachine/src/test/resources/integration/sources/source.nq"
-    new QuadImportJob(url,"test.remote","never","test")
+    QuadImportJob(url,"test.remote","never","test")
   }
 
   lazy val importJobLocal = {
     val url = "ldif-singlemachine/src/test/resources/scheduler/sources/source.nq"
-    new QuadImportJob(url,"test.local","always","test","#.+")
+    QuadImportJob(url,"test.local","always","test","#.+")
   }
 
 }

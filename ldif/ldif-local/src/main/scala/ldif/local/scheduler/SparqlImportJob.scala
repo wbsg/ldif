@@ -143,6 +143,22 @@ case class SparqlImportJob(conf : SparqlConfig, id :  Identifier, refreshSchedul
     }
     writer.flush
   }
+
+  def toXML = {
+    val xml = {
+      <sparqlImportJob>
+        <endpointLocation>{conf.endpointLocation}</endpointLocation>
+        {if (conf.isTripleLimitDefined) <tripleLimit>{conf.tripleLimit}</tripleLimit>}
+        {if (conf.isGraphDefined) <graphName>{conf.graphName}</graphName>}
+        {if (conf.isAnyPatternDefined){
+            <sparqlPatterns>
+              {for (pattern <- conf.sparqlPatterns) yield { <pattern>{pattern}</pattern> } }
+            </sparqlPatterns>}
+        }
+      </sparqlImportJob>
+    }
+    toXML(xml)
+  }
 }
 
 object SparqlImportJob {
@@ -165,11 +181,13 @@ object SparqlImportJob {
 
 }
 
-case class SparqlConfig(endpointLocation : URI,  graphName : URI, sparqlPatterns : Traversable[String], tripleLimit : Long = Long.MaxValue) {
+case class SparqlConfig(endpointLocation : URI,  graphName : URI, sparqlPatterns : Traversable[String], tripleLimit : Long = Consts.SparqlTripleLimitDefault) {
+
+  def isTripleLimitDefined = tripleLimit!=Consts.SparqlTripleLimitDefault
+  def isGraphDefined = graphName.toString.trim != ""
+  def isAnyPatternDefined = sparqlPatterns.size>0
 
   def buildQuery : String = {
-    val isGraphDefined = graphName.toString.trim != ""
-
     var query = "CONSTRUCT { ?s ?p ?o }\n" + "WHERE {\n"
 
     if (isGraphDefined) {

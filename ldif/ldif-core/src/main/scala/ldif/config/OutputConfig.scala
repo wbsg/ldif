@@ -109,7 +109,7 @@ object OutputConfig {
       val outputFormat = CommonUtils.getAttributeAsString(xml,"format",Consts.FileOutputFormatDefault)
       if (!touch(outputUriOrPath))
         None
-      else if (outputFormat == "nquads")
+      if (outputFormat == "nquads")
         Some(new SerializingQuadWriter(outputUriOrPath, NQUADS))
       else if (outputFormat == "ntriples")
         Some(new SerializingQuadWriter(outputUriOrPath, NTRIPLES))

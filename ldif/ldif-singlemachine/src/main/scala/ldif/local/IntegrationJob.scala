@@ -42,7 +42,7 @@ import ldif.modules.sieve.local.{SieveLocalQualityExecutor, SieveLocalFusionExec
 import ldif.modules.sieve.SieveConfig
 import util.StringPool
 
-class IntegrationJob (val config : IntegrationConfig, debugMode : Boolean = false) {
+case class IntegrationJob (val config : IntegrationConfig, debugMode : Boolean = false) {
 
   private val log = LoggerFactory.getLogger(getClass.getName)
   private var reporter = new IntegrationJobStatusMonitor
@@ -660,17 +660,40 @@ class IntegrationJob (val config : IntegrationConfig, debugMode : Boolean = fals
 
   def getLastUpdate = lastUpdate
 
-  // Retrieve the number of quads in the sources (excluding provenance quads)
-  def getSourcesQuads = {
-
-  }
-
 }
 
 
 object IntegrationJob {
   LogUtil.init
   private val log = LoggerFactory.getLogger(getClass.getName)
+
+
+  def load (configFile : File, debug : Boolean = false) : IntegrationJob = {
+    if(configFile != null)  {
+      var config : IntegrationConfig = null
+      try {
+        config = IntegrationConfig.load(configFile)
+      }
+      catch {
+        case e:ValidationException => {
+          log.error("Invalid Integration Job configuration: "+e.toString +
+            "\n- More details: http://www.assembla.com/code/ldif/git/nodes/ldif/ldif-core/src/main/resources/xsd/IntegrationJob.xsd")
+          System.exit(1)
+        }
+      }
+      if(!config.hasValidOutputs) {
+        log.error("No valid output has been specified for the Integration Job.")
+        System.exit(1)
+      }
+      val integrationJob = IntegrationJob(config, debug)
+      log.info("Integration job loaded from "+ configFile.getCanonicalPath)
+      integrationJob
+    }
+    else {
+      log.warn("Integration job configuration file not found")
+      null
+    }
+  }
 
   def main(args : Array[String])
   {
@@ -685,27 +708,10 @@ object IntegrationJob {
     if(args.length>=2 && args(0)=="--debug")
       debug = true
 
-    var config : IntegrationConfig = null
-    try {
-      config = IntegrationConfig.load(configFile)
-    }
-    catch {
-      case e:ValidationException => {
-        log.error("Invalid Integration Job configuration: "+e.toString +
-          "\n- More details: http://www.assembla.com/code/ldif/git/nodes/ldif/ldif-core/src/main/resources/xsd/IntegrationJob.xsd")
-        System.exit(1)
-      }
-    }
+    val integrator = IntegrationJob.load(configFile, debug)
 
-    if(!config.hasValidOutputs) {
-      log.error("No valid output has been specified for the Integration Job.")
-      System.exit(1)
-    }
-
-    val integrator = new IntegrationJob(config, debug)
-
-    val runStatusMonitor = config.properties.getProperty("runStatusMonitor", "true").toLowerCase=="true"
-    val statusMonitorURI = config.properties.getProperty("statusMonitorURI", "http://localhost:5343/")
+    val runStatusMonitor = integrator.config.properties.getProperty("runStatusMonitor", "true").toLowerCase=="true"
+    val statusMonitorURI = integrator.config.properties.getProperty("statusMonitorURI", Consts.DefaultStatusMonitorrURI)
 
     // Start REST HTTP Server
     if(runStatusMonitor)

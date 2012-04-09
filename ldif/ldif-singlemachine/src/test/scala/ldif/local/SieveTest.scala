@@ -69,7 +69,7 @@ class SieveTest extends FlatSpec with ShouldMatchers {
 
   private def runLdif(configFile: File, debugMode: Boolean = false) = {
     var config = IntegrationConfig.load(configFile)
-    val integrator = new IntegrationJob(config, debugMode)
+    val integrator = IntegrationJob(config, debugMode)
     // Run integration
     integrator.runIntegration
     CommonUtils.getQuads(new File(integrator.config.outputs.outputs.head._1.get.asInstanceOf[SerializingQuadWriter].filepath))

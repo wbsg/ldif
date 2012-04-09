@@ -30,9 +30,10 @@ import ldif.util._
 case class QuadImportJob(dumpLocation : String, id : Identifier, refreshSchedule : String, dataSource : String, renameGraphs : String = "") extends ImportJob {
 
   private val log = LoggerFactory.getLogger(getClass.getName)
-  private val renamingGraphEnabled = renameGraphs != ""
   private val reporter = new QuadImportJobPublisher(id)
   JobMonitor.addPublisher(reporter)
+
+  def isRenameGraphEnabled = renameGraphs != ""
 
   override def load(out : OutputStream, estimatedNumberOfQuads : Option[Double] = None) : Boolean = {
     reporter.setStartTime()
@@ -59,7 +60,7 @@ case class QuadImportJob(dumpLocation : String, id : Identifier, refreshSchedule
       }
       if (quad != null) {
         importedQuadsNumber += 1
-        if (renamingGraphEnabled)
+        if (isRenameGraphEnabled)
           quad = quad.copy(graph = renameGraph(quad.graph))
         importedGraphs += quad.graph
         writer.write(quad.toNQuadFormat+" . \n")
@@ -90,6 +91,16 @@ case class QuadImportJob(dumpLocation : String, id : Identifier, refreshSchedule
 
   override def getType = "quad"
   override def getOriginalLocation = dumpLocation
+
+  def toXML = {
+    val xml = {
+      <quadImportJob>
+        <dumpLocation>{dumpLocation}</dumpLocation>
+        {if(isRenameGraphEnabled) <renameGraphs>{renameGraphs}</renameGraphs>}
+      </quadImportJob>
+    }
+    toXML(xml)
+  }
 }
 
 object QuadImportJob{

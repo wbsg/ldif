@@ -43,6 +43,25 @@ case class CrawlImportJob(conf : CrawlConfig, id :  Identifier, refreshSchedule 
 
   override def getType = "crawl"
   override def getOriginalLocation = ""
+
+  def toXML = {
+    val xml = {
+      <crawlImportJob>
+        <seedURIs>
+          {for (uri <- conf.seedUris) yield { <uri>{uri}</uri> } }
+        </seedURIs>
+        {if (conf.isAnyPredicateDefined){
+            <predicatesToFollow>
+              {for (uri <- conf.predicatesToFollow) yield { <uri>{uri}</uri> } }
+            </predicatesToFollow>   }
+        }
+        {if(conf.isLevelsDefined) <levels>{conf.levels}</levels>}
+        {if(conf.isResourceLimitDefined) <resourceLimit>{conf.resourceLimit}</resourceLimit>}
+        {if(conf.isRenameGraphEnabled) <renameGraphs>{conf.renameGraphs}</renameGraphs>}
+      </crawlImportJob>
+    }
+    toXML(xml)
+  }
 }
 
 object CrawlImportJob {
@@ -65,7 +84,12 @@ object CrawlImportJob {
 
 }
 
-case class CrawlConfig(seedUris : Traversable[URI], predicatesToFollow : Traversable[URI], levels : Int, resourceLimit: Int, renameGraphs : String)
+case class CrawlConfig(seedUris : Traversable[URI], predicatesToFollow : Traversable[URI], levels : Int, resourceLimit: Int, renameGraphs : String){
+  def isRenameGraphEnabled = renameGraphs != ""
+  def isAnyPredicateDefined = predicatesToFollow.size > 0
+  def isResourceLimitDefined = resourceLimit > 0
+  def isLevelsDefined = levels > 0
+}
 
 class CrawlImportJobPublisher (id : Identifier) extends ImportJobStatusMonitor(id) with ReportPublisher {
   override def getPublisherName = super.getPublisherName + " (crawl)"

@@ -107,6 +107,19 @@ trait ImportJob {
     writer.close
     importedGraphs = HashSet.empty[String]
   }
+
+  def toXML : xml.Node
+
+  def toXML(core : xml.Node): xml.Node = {
+    <importJob xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+            xsi:schemaLocation="http://www4.wiwiss.fu-berlin.de/ldif/ ../../xsd/ImportJob.xsd"
+            xmlns="http://www4.wiwiss.fu-berlin.de/ldif/">
+      <internalId>{id}</internalId>
+      <dataSource>{dataSource}</dataSource>
+      <refreshSchedule>{refreshSchedule}</refreshSchedule>
+      {core}
+    </importJob>
+  }
 }
 
 object ImportJob {
@@ -117,6 +130,10 @@ object ImportJob {
 
   def fromFile(file : File) = {
     fromXML(XML.loadFile(file))
+  }
+
+  def fromString(xmlString : String) = {
+    fromXML(XML.loadString(xmlString))
   }
 
   /* Build an Import Job from XML config */
