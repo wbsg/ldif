@@ -25,10 +25,11 @@ import java.util.Date
 import xml.XML
 import java.io._
 import org.slf4j.LoggerFactory
-import ldif.util.{ValidatingXMLReader, Consts, Identifier}
+import ldif.util.{Publisher, ValidatingXMLReader, Consts, Identifier}
 
 trait ImportJob {
   private val log = LoggerFactory.getLogger(getClass.getName)
+  val reporter : Publisher
   val id : Identifier
   val refreshSchedule : String
   val dataSource : String

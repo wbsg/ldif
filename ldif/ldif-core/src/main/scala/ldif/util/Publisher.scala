@@ -56,6 +56,8 @@ trait Publisher {
     dateFormat.format(calendar.getTime)
   }
 
+  def setFailed = status = Some("Failed")
+
   def isFinished = finished
 
   def getFormattedStartTime = formatDateTime(startTime)

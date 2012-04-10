@@ -173,6 +173,7 @@ case class Scheduler (config : SchedulerConfig, debug : Boolean = false) {
         }
       }
       else {
+        job.reporter.setFailed
         if (!debug) {
           FileUtils.deleteQuietly(tmpDumpFile)
           FileUtils.deleteQuietly(tmpProvenanceFile)

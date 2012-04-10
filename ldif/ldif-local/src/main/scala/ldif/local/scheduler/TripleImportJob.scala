@@ -30,7 +30,7 @@ import ldif.util._
 case class TripleImportJob(dumpLocation : String, id : Identifier, refreshSchedule : String, dataSource : String) extends ImportJob {
 
   private val log = LoggerFactory.getLogger(getClass.getName)
-  private val reporter = new TripleImportJobPublisher(id)
+  val reporter = new TripleImportJobPublisher(id)
   JobMonitor.addPublisher(reporter)
 
   val graph = Consts.DEFAULT_IMPORTED_GRAPH_PREFIX+id

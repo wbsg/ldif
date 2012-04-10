@@ -30,7 +30,7 @@ import ldif.util._
 case class QuadImportJob(dumpLocation : String, id : Identifier, refreshSchedule : String, dataSource : String, renameGraphs : String = "") extends ImportJob {
 
   private val log = LoggerFactory.getLogger(getClass.getName)
-  private val reporter = new QuadImportJobPublisher(id)
+  val reporter = new QuadImportJobPublisher(id)
   JobMonitor.addPublisher(reporter)
 
   def isRenameGraphEnabled = renameGraphs != ""
