@@ -65,9 +65,10 @@ case class TripleImportJob(dumpLocation : String, id : Identifier, refreshSchedu
           log.debug("Invalid quad found: "+line)
         }
       }
-      if(quad != null)
+      if(quad != null) {
         importedQuadsNumber += 1
         writer.write(quad)
+      }
     }
 
     if (invalidQuads>0)
