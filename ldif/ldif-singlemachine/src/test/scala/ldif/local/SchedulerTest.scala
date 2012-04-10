@@ -34,7 +34,11 @@ class SchedulerTest extends FlatSpec with ShouldMatchers {
   val scheduler = Scheduler(SchedulerConfig.load(configFile))
 
   it should "schedule a job correctly" in {
-    scheduler.checkUpdate(scheduler.getImportJobs.head) should equal (true)
+    val importJobs = scheduler.getImportJobs
+    if(importJobs.head.id=="test.local")
+      scheduler.checkUpdate(scheduler.getImportJobs.head) should equal (true)
+    else
+      scheduler.checkUpdate(scheduler.getImportJobs.tail.head) should equal (true)
   }
 
   it should "parse a job configuration correctly" in {
