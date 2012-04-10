@@ -38,8 +38,15 @@ class SchedulerTest extends FlatSpec with ShouldMatchers {
   }
 
   it should "parse a job configuration correctly" in {
-    scheduler.getImportJobs.head should equal (importJobLocal)
-    scheduler.getImportJobs.last should equal (importJobRemote)
+    val importJobs = scheduler.getImportJobs
+    if(importJobs.head.id=="test.local") {
+      importJobs.head should equal (importJobLocal)
+      importJobs.last should equal (importJobRemote)
+    } else {
+      importJobs.head should equal (importJobRemote)
+      importJobs.last should equal (importJobLocal)
+    }
+
   }
 
   it should "load a dump and provenance correctly" in {
@@ -70,7 +77,7 @@ class SchedulerTest extends FlatSpec with ShouldMatchers {
     val provenanceFile = dumpDir.listFiles().filter(_.getName.equals("test.local.provenance.nq")).head
     val provenanceQuads = CommonUtils.getQuads(provenanceFile)
 
-    provenanceQuads.size should equal (22)
+    provenanceQuads.size should equal (23)
 
     val provCorrectQuads = CommonUtils.getQuads(List(
       "_:test2Elocal <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www4.wiwiss.fu-berlin.de/ldif/ImportJob> <http://www4.wiwiss.fu-berlin.de/ldif/provenance> . ",
