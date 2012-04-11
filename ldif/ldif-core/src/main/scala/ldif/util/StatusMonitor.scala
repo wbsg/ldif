@@ -42,6 +42,7 @@ trait StatusMonitor {
     sb.append(title)
     sb.append("</title>")
     sb.append(addParams(params))
+    sb.append(addStyle)
     sb.append("</head><body>\n")
     sb.toString
   }
@@ -54,6 +55,23 @@ trait StatusMonitor {
       sb.append("\">")
     }
     sb.toString
+  }
+
+  def addStyle() : String = {
+  val sb = new StringBuilder
+  sb.append("<style>")
+  sb.append("body { background: white; color: black; font-family: sans-serif; line-height: 1.3em; margin: 0; padding: 2.5em 3em; }\n" +
+    "table {border-collapse: collapse; margin-bottom: .75em;}\n" +
+    "table th {text-align: left; background: #EAF3FA; padding: .4em .8em; height: 20px; font-weight: bold; font-size: 1em; color: #333}\n" +
+    "table th a {text-decoration: none !important}\n" +
+    "table td {vertical-align: top; text-align: left; padding: .4em 1em;}\n" +
+    "table tr.even {background-color: #fff}\n" +
+    "table tr.odd {background-color: #f6f6f6}\n" +
+    "a:link, a:visited, a:hover, a:active { color: #1C5489; display: block; text-decoration: none; }\n" +
+    "a:hover, a:active { color: #16426B; cursor: pointer; }\n" +
+    "h1, h2, h3, h4 { color: #800; clear: both; }\n")
+  sb.append("</style>")
+  sb.toString
   }
 
   def buildCell(text : String) = "<td>"+text+"</td>"

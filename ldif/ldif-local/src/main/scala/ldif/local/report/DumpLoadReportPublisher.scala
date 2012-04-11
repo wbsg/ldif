@@ -37,7 +37,7 @@ class DumpLoadReportPublisher(val useSameAs: Boolean) extends ReportPublisher {
     reportItems.append(createSameAsReportItem)
     reportItems.append(createProvenanceReportItem)
     if (dumpsQuads > 0)
-    reportItems.append(ReportItem.get("Quads contained in the dumps",dumpsQuads))
+    reportItems.append(ReportItem.get("Quads contained in the dumps",dumpsQuads.toInt))
     if(finished) {
       reportItems.append(getFinishTimeReportItem)
       reportItems.append(getDurationTimeReportItem)

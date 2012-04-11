@@ -64,7 +64,7 @@ case class IntegrationJob (config : IntegrationConfig, debugMode : Boolean = fal
   val skipSieve = config.properties.getProperty("sieve.skip", "false")=="true"
 
   // The number of quads contained in the input dumps - use for progress estimations
-  var dumpsQuads : Double = 0
+  var dumpsQuads : Double = getSourcesQuads
 
   private def updateReaderAfterR2RPhase(r2rReader: Option[scala.Seq[QuadReader]]): Option[scala.Seq[QuadReader]] = {
     if (isIntialQuadReader(r2rReader.get)) {
