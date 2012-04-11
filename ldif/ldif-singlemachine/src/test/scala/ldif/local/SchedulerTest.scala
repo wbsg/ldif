@@ -60,9 +60,6 @@ class SchedulerTest extends FlatSpec with ShouldMatchers {
     Thread.sleep(1000)
 
     val dumpDir = new File(scheduler.config.dumpLocationDir)
-    System.err.println(dumpDir.getAbsolutePath)
-    dumpDir.listFiles().foreach(a => System.err.println(a.getAbsolutePath))
-    dumpDir.listFiles().foreach(a => System.err.println(a.getName))
     val dumpFile = dumpDir.listFiles().filter(_.getName.equals("test.local.nq")).head
     val dumpQuads = CommonUtils.getQuads(dumpFile)
 
@@ -90,7 +87,8 @@ class SchedulerTest extends FlatSpec with ShouldMatchers {
       "_:test2Elocal <http://www4.wiwiss.fu-berlin.de/ldif/importId> \"test.local\" <http://www4.wiwiss.fu-berlin.de/ldif/provenance> .",
       "_:test2Elocal <http://www4.wiwiss.fu-berlin.de/ldif/hasDatasource> \"test\" <http://www4.wiwiss.fu-berlin.de/ldif/provenance> .",
       "_:test2Elocal <http://www4.wiwiss.fu-berlin.de/ldif/hasImportType> \"quad\" <http://www4.wiwiss.fu-berlin.de/ldif/provenance> .",
-      "_:test2Elocal <http://www4.wiwiss.fu-berlin.de/ldif/hasOriginalLocation> \"ldif-singlemachine/src/test/resources/scheduler/sources/source.nq\" <http://www4.wiwiss.fu-berlin.de/ldif/provenance> .",
+      "_:test2Elocal <http://www4.wiwiss.fu-berlin.de/ldif/numberOfQuads> \"31.0\"^^<http://www.w3.org/2001/XMLSchema#double> <http://www4.wiwiss.fu-berlin.de/ldif/provenance> .",
+      "_:test2Elocal <http://www4.wiwiss.fu-berlin.de/ldif/hasOriginalLocation> \"ldif-singlemachine/target/test-classes/scheduler/sources/source.nq\" <http://www4.wiwiss.fu-berlin.de/ldif/provenance> .",
       "<http://source/graph3> <http://www4.wiwiss.fu-berlin.de/ldif/hasImportJob> _:test2Elocal <http://www4.wiwiss.fu-berlin.de/ldif/provenance> .",
       "<http://source/graph3> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www4.wiwiss.fu-berlin.de/ldif/ImportedGraph> <http://www4.wiwiss.fu-berlin.de/ldif/provenance> .",
       "<http://source/graph1> <http://www4.wiwiss.fu-berlin.de/ldif/hasImportJob> _:test2Elocal <http://www4.wiwiss.fu-berlin.de/ldif/provenance> .",
@@ -107,7 +105,7 @@ class SchedulerTest extends FlatSpec with ShouldMatchers {
   }
 
   lazy val importJobLocal = {
-    val url = "ldif-singlemachine/src/test/resources/scheduler/sources/source.nq"
+    val url = "ldif-singlemachine/target/test-classes/scheduler/sources/source.nq"
     QuadImportJob(url,"test.local","always","test","#.+")
   }
 
