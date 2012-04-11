@@ -488,7 +488,10 @@ case class IntegrationJob (config : IntegrationConfig, debugMode : Boolean = fal
     log.debug("Sieve will perform fusion, config=%s.".format(sieveSpecDir.getAbsolutePath))
 
     val fusionExecutor = new SieveLocalFusionExecutor
-    val entityDescriptions = fusionModule.tasks.toIndexedSeq.map(fusionExecutor.input).flatMap{ case StaticEntityFormat(ed) => ed }
+
+    val entityDescriptions = fusionModule.tasks.head.sieveConfig.fusionConfig.entityDescriptions
+    // why build more entity queues (<- entity description) if we only consume one for each task? (see below)
+    //val entityDescriptions = fusionModule.tasks.toIndexedSeq.map(fusionExecutor.input).flatMap{ case StaticEntityFormat(ed) => ed }
 
     // setup sieve config parameters
     val irrelevantQuadsFile = File.createTempFile("ldif-fusion-quads", "bin")
@@ -498,7 +501,6 @@ case class IntegrationJob (config : IntegrationConfig, debugMode : Boolean = fal
 
     val entityBuilderExecutor = getEntityBuilderExecutor(fusionConfigParam)
     val entityReaders = buildEntities(inputQuadsReader, entityDescriptions, entityBuilderExecutor)
-    //val entityReaders = buildEntities(inputQuadsReader, entityDescriptions, ConfigParameters(config.properties))
 
     StringPool.reset
     log.info("Time needed to build entities for fusion phase: " + stopWatch.getTimeSpanInSeconds + "s")
@@ -513,7 +515,7 @@ case class IntegrationJob (config : IntegrationConfig, debugMode : Boolean = fal
       for((fusionTask, reader) <- fusionModule.tasks.toList zip entityReaders.toList)
       {
         log.debug("fusionTask: %s; reader: %s.".format(fusionTask.name, reader.entityDescription))
-        //fusionTask.qualityAssessment
+        // consume one entity queue for each task
         fusionExecutor.execute(fusionTask, Seq(reader), outputQueue)
       }
     }

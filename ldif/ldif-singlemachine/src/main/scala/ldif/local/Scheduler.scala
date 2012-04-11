@@ -114,7 +114,6 @@ case class Scheduler (config : SchedulerConfig, debug : Boolean = false) {
 
   /* Execute the integration job */
   def runIntegration() {
-      //integrationJob.dumpsQuads = importedDumps.getNumberOfQuads(importJobs)
       integrationJob.runIntegration
       log.info("Integration Job completed")
       runningIntegrationJobs = false
