@@ -60,7 +60,9 @@ class SchedulerTest extends FlatSpec with ShouldMatchers {
     Thread.sleep(1000)
 
     val dumpDir = new File(scheduler.config.dumpLocationDir)
-
+    System.err.println(dumpDir.getAbsolutePath)
+    dumpDir.listFiles().foreach(a => System.err.println(a.getAbsolutePath))
+    dumpDir.listFiles().foreach(a => System.err.println(a.getName))
     val dumpFile = dumpDir.listFiles().filter(_.getName.equals("test.local.nq")).head
     val dumpQuads = CommonUtils.getQuads(dumpFile)
 
