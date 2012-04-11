@@ -40,9 +40,9 @@ import ldif.config._
 import ldif.modules.silk.local.SilkLocalExecutor
 import ldif.modules.sieve.local.{SieveLocalQualityExecutor, SieveLocalFusionExecutor}
 import ldif.modules.sieve.SieveConfig
-import util.StringPool
+import util.{ImportedDumpsUtils, StringPool}
 
-case class IntegrationJob (val config : IntegrationConfig, debugMode : Boolean = false) {
+case class IntegrationJob (config : IntegrationConfig, debugMode : Boolean = false) {
 
   private val log = LoggerFactory.getLogger(getClass.getName)
   private var reporter = new IntegrationJobStatusMonitor
@@ -64,7 +64,7 @@ case class IntegrationJob (val config : IntegrationConfig, debugMode : Boolean =
   val skipSieve = config.properties.getProperty("sieve.skip", "false")=="true"
 
   // The number of quads contained in the input dumps - use for progress estimations
-  var dumpsQuads = 0
+  var dumpsQuads : Double = 0
 
   private def updateReaderAfterR2RPhase(r2rReader: Option[scala.Seq[QuadReader]]): Option[scala.Seq[QuadReader]] = {
     if (isIntialQuadReader(r2rReader.get)) {
@@ -156,7 +156,7 @@ case class IntegrationJob (val config : IntegrationConfig, debugMode : Boolean =
           sameAsReader
         else
           new MultiQuadReader(new MultiQuadReader(linkReader: _*), sameAsReader)
-
+        //println("debug")
         /***  Execute URI Clustering/Translation ***/
         var integratedReader: QuadReader = null
         if(rewriteURIs)
@@ -589,7 +589,6 @@ case class IntegrationJob (val config : IntegrationConfig, debugMode : Boolean =
     else
     {
       ebReporter.setFinishTime()
-      ebReporter.finishedBuilding = true
       fileEntityQueues.map((entityWriter) => new FileEntityReader(entityWriter))
     }
   }
@@ -677,6 +676,8 @@ case class IntegrationJob (val config : IntegrationConfig, debugMode : Boolean =
 
   def getLastUpdate = lastUpdate
 
+  // Retrieve the number of quads in the sources (excluding provenance quads)
+  def getSourcesQuads = config.sources.map(ImportedDumpsUtils(_).getNumberOfQuads).sum
 }
 
 

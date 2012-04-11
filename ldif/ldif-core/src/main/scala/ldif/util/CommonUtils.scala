@@ -18,12 +18,12 @@
 
 package ldif.util
 
-import java.util.Properties
 import java.io.File
 import ldif.datasources.dump.QuadParser
 import ldif.runtime.Quad
 import xml.Node
 import org.slf4j.LoggerFactory
+import java.util.{Calendar, Date, Properties}
 
 object CommonUtils {
 
@@ -90,5 +90,13 @@ object CommonUtils {
   def listFiles(dir : File, allowedExtension : String) : Traversable[File] = {
     listFiles(dir,Seq(allowedExtension))
   }
+
+  // Convert Date to a Calendar
+  def dateToCalendar(date : Date) : Calendar = {
+    val cal = Calendar.getInstance
+    cal.setTime(date)
+    cal
+  }
+
 }
 
