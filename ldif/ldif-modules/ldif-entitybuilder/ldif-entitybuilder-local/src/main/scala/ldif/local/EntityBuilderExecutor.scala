@@ -21,8 +21,9 @@ package ldif.local
 import ldif.module.Executor
 import ldif.local.runtime._
 import java.util.Properties
-import ldif.util.{MemoryUsage, FatalErrorListener}
+import ldif.util.FatalErrorListener
 import ldif.EntityBuilderTask
+import util.EntityBuilderReportPublisher
 
 class EntityBuilderExecutor(configParameters: ConfigParameters = ConfigParameters(new Properties)) extends Executor {
 
@@ -31,6 +32,8 @@ class EntityBuilderExecutor(configParameters: ConfigParameters = ConfigParameter
   type OutputFormat = DynamicEntityFormat
 
   var eb : EntityBuilderTrait = null
+
+  val reporter = new EntityBuilderReportPublisher
 
   /**
    * Determines the accepted input format of a specific task.
@@ -51,21 +54,20 @@ class EntityBuilderExecutor(configParameters: ConfigParameters = ConfigParameter
    */
   override def execute(task : EntityBuilderTask, reader : Seq[QuadReader], writer : Seq[EntityWriter])
   {
-    eb = EntityBuilderFactory.getEntityBuilder(configParameters, task.entityDescriptions, reader)
-    val inmemory = configParameters.configProperties.getProperty("entityBuilderType", "in-memory")=="in-memory"
+    reporter.setStartTime()
+    eb = EntityBuilderFactory.getEntityBuilder(configParameters, task.entityDescriptions, reader, reporter)
+    reporter.ebType = eb.getType
+    reporter.entityQueuesTotal = task.entityDescriptions.size
+    val inMemory = eb.getType=="in-memory"
 
 //    println("Memory used (before build entities): " + MemoryUsage.getMemoryUsage())   //TODO: remove
     for ((ed, i) <- task.entityDescriptions.zipWithIndex ) {
-      if(inmemory)
+      if(inMemory)
         runInBackground {
           eb.buildEntities(ed, writer(i))
         }
       else
         eb.buildEntities(ed, writer(i))
-    }
-    if(!inmemory) {
-      eb.entityBuilderReportPublisher.setFinishTime
-      eb.entityBuilderReportPublisher.finishedBuilding=true
     }
   }
 

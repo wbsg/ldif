@@ -19,8 +19,7 @@
 package ldif.modules.sieve.local
 
 import collection.mutable.ArrayBuffer
-import ldif.util.{ReportItem, Report, ReportPublisher, Publisher}
-import ldif.util.Report._
+import ldif.util.{ReportItem, Report, ReportPublisher}
 
 /**
  * Created by IntelliJ IDEA.
@@ -41,6 +40,6 @@ class SieveQualityPhaseReportPublisher extends ReportPublisher {
       reportItems.append(getDurationTimeReportItem)
     }
 
-    return Report(reportItems)
+    Report(reportItems)
   }
 }

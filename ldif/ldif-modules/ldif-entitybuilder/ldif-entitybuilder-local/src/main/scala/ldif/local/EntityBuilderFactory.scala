@@ -22,6 +22,7 @@ import ldif.local.runtime.{ConfigParameters, QuadReader}
 import ldif.entity.EntityDescription
 import tdb.TDBQuadStore
 import java.io.File
+import util.EntityBuilderReportPublisher
 
 /**
  * Created by IntelliJ IDEA.
@@ -32,12 +33,12 @@ import java.io.File
  */
 
 object EntityBuilderFactory {
-  def getEntityBuilder(configParameters: ConfigParameters, entityDescriptions: IndexedSeq[EntityDescription], reader : Seq[QuadReader]): EntityBuilderTrait = {
+  def getEntityBuilder(configParameters: ConfigParameters, entityDescriptions: IndexedSeq[EntityDescription], reader : Seq[QuadReader], reporter : EntityBuilderReportPublisher) : EntityBuilderTrait = {
     val entityBuilderType = configParameters.configProperties.getProperty("entityBuilderType", "in-memory").toLowerCase
     entityBuilderType match {
-      case "in-memory" => new EntityBuilder(entityDescriptions, reader, configParameters)
+      case "in-memory" => new EntityBuilder(entityDescriptions, reader, configParameters, reporter)
       case "quad-store" => {
-        createQuadStoreEntityBuilder(configParameters, entityDescriptions, reader)
+        createQuadStoreEntityBuilder(configParameters, entityDescriptions, reader, reporter)
       }
     }
   }
@@ -49,7 +50,7 @@ object EntityBuilderFactory {
     }
   }
 
-  private def createQuadStoreEntityBuilder(configParameters: ConfigParameters, entityDescriptions: scala.Seq[EntityDescription], reader: scala.Seq[QuadReader]): EntityBuilderTrait = {
+  private def createQuadStoreEntityBuilder(configParameters: ConfigParameters, entityDescriptions: scala.Seq[EntityDescription], reader: scala.Seq[QuadReader],reporter : EntityBuilderReportPublisher) : EntityBuilderTrait = {
     val reuseDatabase = configParameters.configProperties.getProperty("reuseDatabase", "false").toLowerCase=="true"
     configParameters.configProperties.remove("reuseDatabase") // Only use for first phase
     val reuseDatabaseLocation = configParameters.configProperties.getProperty("reuseDatabaseLocation", System.getProperty("java.io.tmpdir"))
@@ -60,6 +61,6 @@ object EntityBuilderFactory {
         configParameters.configProperties.getProperty("databaseLocation", System.getProperty("java.io.tmpdir"))
 
     val quadStore = createQuadStore(quadStoreType, databaseLocation, reuseDatabase)
-    new QuadStoreEntityBuilder(quadStore, entityDescriptions, reader, configParameters, reuseDatabase)
+    new QuadStoreEntityBuilder(quadStore, entityDescriptions, reader, configParameters, reporter, reuseDatabase)
   }
 }

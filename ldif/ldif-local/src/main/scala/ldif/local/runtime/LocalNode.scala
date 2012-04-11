@@ -101,7 +101,7 @@ object LocalNode
       Node.createLiteral(lexicalValue, graphURI)
   }
 
-  def fromRDFNode(node: RDFNode, graphURI: String = defaultGraph): Node = {
+  def fromRDFNode(node: RDFNode, graphURI: String = defaultGraph): NodeTrait = {
     if(node.isURIResource) {
       Node.createUriNode(node.asInstanceOf[Resource].getURI, graphURI)
     } else if(node.isLiteral) {

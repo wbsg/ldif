@@ -37,12 +37,12 @@ import ldif.modules.sieve.fusion.{FusionModule, EmptyFusionConfig, FusionConfig}
 import ldif.runtime.QuadWriter
 import ldif.modules.sieve.quality.{QualityConfig, QualityModule, EmptyQualityConfig}
 import ldif.config._
-import util.StringPool
-import ldif.modules.silk.local.{SilkReportPublisher, SilkLocalExecutor}
-import ldif.modules.sieve.local.{SieveFusionPhaseReportPublisher, SieveQualityPhaseReportPublisher, SieveLocalQualityExecutor, SieveLocalFusionExecutor}
+import ldif.modules.silk.local.SilkLocalExecutor
+import ldif.modules.sieve.local.{SieveLocalQualityExecutor, SieveLocalFusionExecutor}
 import ldif.modules.sieve.SieveConfig
+import util.StringPool
 
-class IntegrationJob (val config : IntegrationConfig, debugMode : Boolean = false) {
+case class IntegrationJob (val config : IntegrationConfig, debugMode : Boolean = false) {
 
   private val log = LoggerFactory.getLogger(getClass.getName)
   private var reporter = new IntegrationJobStatusMonitor
@@ -63,6 +63,9 @@ class IntegrationJob (val config : IntegrationConfig, debugMode : Boolean = fals
   val skipSilk = config.properties.getProperty("linkSpecifications.skip", "false")=="true"
   val skipSieve = config.properties.getProperty("sieve.skip", "false")=="true"
 
+  // The number of quads contained in the input dumps - use for progress estimations
+  var dumpsQuads = 0
+
   private def updateReaderAfterR2RPhase(r2rReader: Option[scala.Seq[QuadReader]]): Option[scala.Seq[QuadReader]] = {
     if (isIntialQuadReader(r2rReader.get)) {
       val inputQuadsFile = File.createTempFile("ldif-filtered-input", ".bin")
@@ -81,8 +84,8 @@ class IntegrationJob (val config : IntegrationConfig, debugMode : Boolean = fals
 
     else
       synchronized {
-        reporter = new IntegrationJobStatusMonitor
-        JobMonitor.value.addPublisher(reporter)
+        //reporter = new IntegrationJobStatusMonitor
+        JobMonitor.addPublisher(reporter)
         IntegrationJobMonitor.value = reporter
         val sourceNumber = config.sources.size
 
@@ -110,6 +113,7 @@ class IntegrationJob (val config : IntegrationConfig, debugMode : Boolean = fals
         // Load source data sets and wrap the quad readers in a filter quad reader
         val quadReaders = {
           val dumpQuadReader = new DumpQuadReader(new MultiQuadReader(loadDumps(config.sources):_*), configParameters)
+          dumpQuadReader.reporter.setInputQuads(dumpsQuads)
           if(terms.size==0 || skipR2R)
             Seq(dumpQuadReader)
           else {
@@ -165,7 +169,7 @@ class IntegrationJob (val config : IntegrationConfig, debugMode : Boolean = fals
 
         lastUpdate = Calendar.getInstance
 
-//        writeOutput(config, integratedReader)
+        //        writeOutput(config, integratedReader)
         writeOutput(config, sieveReader)
         reporter.setFinishTime
       }
@@ -232,7 +236,7 @@ class IntegrationJob (val config : IntegrationConfig, debugMode : Boolean = fals
   private def executeMappingPhase(config: IntegrationConfig, quadReaders: Seq[QuadReader], skip: Boolean): Option[Seq[QuadReader]] = {
     if(skip) {
       log.info("Skipping R2R phase.")
-      return Some(quadReaders) // Skip R2R phase
+      Some(quadReaders) // Skip R2R phase
     }
     else {
       var r2rReader = mapQuads(config, quadReaders)
@@ -337,11 +341,11 @@ class IntegrationJob (val config : IntegrationConfig, debugMode : Boolean = fals
       val sourceFile = new File(source)
       if(sourceFile.isDirectory) {
         for (dump <- sourceFile.listFiles.filterNot(_.isHidden))  {
-           quadQueues = loadDump(dump) +: quadQueues
-          }
+          quadQueues = loadDump(dump) +: quadQueues
+        }
       }
       else
-         quadQueues = loadDump(sourceFile) +: quadQueues
+        quadQueues = loadDump(sourceFile) +: quadQueues
     }
     quadQueues
   }
@@ -388,15 +392,18 @@ class IntegrationJob (val config : IntegrationConfig, debugMode : Boolean = fals
     outputFile.deleteOnExit
     val executor = new R2RLocalExecutor
     reporter.addPublisher(executor.reporter)
+    reporter.setStatus("Data Translation")
     val writer = new FileQuadWriter(outputFile)
 
-     //runInBackground
+    executor.reporter.mappingsTotal = module.tasks.size
+
+      //runInBackground
     {
       for((r2rTask, reader) <- module.tasks.toList zip entityReaders)
         executor.execute(r2rTask, Seq(reader), writer)
     }
     writer.finish
-    executor.reporter.setFinishTime
+    executor.reporter.setFinishTime()
 
     Some(Seq(new FileQuadReader(writer.asInstanceOf[FileQuadWriter])))
   }
@@ -409,10 +416,11 @@ class IntegrationJob (val config : IntegrationConfig, debugMode : Boolean = fals
     val silkModule = SilkModule.load(linkSpecDir)
     val inmemory = config.properties.getProperty("entityBuilderType", "in-memory")=="in-memory"
     val silkExecutor = if(inmemory)
-        new SilkLocalExecutor
-      else
-        new SilkLocalExecutor(true)
+      new SilkLocalExecutor
+    else
+      new SilkLocalExecutor(true)
     reporter.addPublisher(silkExecutor.reporter)
+    reporter.setStatus("Identity Resolution")
 
     val entityDescriptions = silkModule.tasks.toIndexedSeq.map(silkExecutor.input).flatMap{ case StaticEntityFormat(ed) => ed }
     val entityReaders = buildEntities(readers, entityDescriptions, ConfigParameters(config.properties))
@@ -428,7 +436,7 @@ class IntegrationJob (val config : IntegrationConfig, debugMode : Boolean = fals
         silkExecutor.execute(silkTask, readers, outputQueue)
       }
     }
-    silkExecutor.reporter.setFinishTime
+    silkExecutor.reporter.setFinishTime()
     outputQueue
   }
 
@@ -452,12 +460,12 @@ class IntegrationJob (val config : IntegrationConfig, debugMode : Boolean = fals
     val singleScoresOutput = new QuadQueue
     val qualityExecutor = new SieveLocalQualityExecutor
     reporter.addPublisher(qualityExecutor.reporter)
+    reporter.setStatus("Sieve - Quality")
     for((task, reader) <- qualityModule.tasks.toSeq zip readers)  {
       log.debug("\n\tMetric: %s\n\tFunction: %s\n\tEntityDescription: %s".format(task.qualitySpec.outputPropertyNames,task.qualitySpec.scoringFunctions,reader.entityDescription))
       qualityExecutor.execute(task, Seq(reader), singleScoresOutput)
     }
 
-    qualityExecutor.reporter.setFinishTime
     //new MultiQuadReader(output, entityBuilderExecutor.getNotUsedQuads) //andrea todo
     singleScoresOutput
   }
@@ -481,8 +489,10 @@ class IntegrationJob (val config : IntegrationConfig, debugMode : Boolean = fals
     }
     // another way (perhaps not hadoop friendly)
     //qualityModule.aggregationTasks.foreach( task => qualityExecutor.aggregate(task, qualityAssessment, output) )
-    aggregatedScoresOutput
 
+    qualityExecutor.reporter.setFinishTime()
+
+    aggregatedScoresOutput
   }
 
 
@@ -511,6 +521,7 @@ class IntegrationJob (val config : IntegrationConfig, debugMode : Boolean = fals
     log.info("Time needed to build entities for fusion phase: " + stopWatch.getTimeSpanInSeconds + "s")
 
     reporter.addPublisher(fusionExecutor.reporter)
+    reporter.setStatus("Sieve - Fusion")
     fusionExecutor.reporter.setStartTime()
     val outputQueue = new QuadQueue
 
@@ -523,7 +534,7 @@ class IntegrationJob (val config : IntegrationConfig, debugMode : Boolean = fals
         fusionExecutor.execute(fusionTask, Seq(reader), outputQueue)
       }
     }
-    fusionExecutor.reporter.setFinishTime
+    fusionExecutor.reporter.setFinishTime()
 
     irrelevantQuadsWriter.finish()
     val otherQuadsReader = new FileQuadReader(irrelevantQuadsWriter)
@@ -532,7 +543,7 @@ class IntegrationJob (val config : IntegrationConfig, debugMode : Boolean = fals
   }
 
   private def getEntityBuilderExecutor(configParameters: ConfigParameters) = {
-      new EntityBuilderExecutor(configParameters)
+    new EntityBuilderExecutor(configParameters)
   }
 
   /**
@@ -556,6 +567,10 @@ class IntegrationJob (val config : IntegrationConfig, debugMode : Boolean = fals
     else
       entityWriters = fileEntityQueues
 
+    val ebReporter = entityBuilderExecutor.reporter
+    ebReporter.setInputQuads(dumpsQuads)
+    reporter.addPublisher(ebReporter)
+
     try
     {
       val entityBuilderConfig = new EntityBuilderConfig(entityDescriptions.toIndexedSeq)
@@ -570,9 +585,13 @@ class IntegrationJob (val config : IntegrationConfig, debugMode : Boolean = fals
     }
 
     if(inmemory)
-      return entityQueues
+      entityQueues
     else
-      return fileEntityQueues.map((entityWriter) => new FileEntityReader(entityWriter))
+    {
+      ebReporter.setFinishTime()
+      ebReporter.finishedBuilding = true
+      fileEntityQueues.map((entityWriter) => new FileEntityReader(entityWriter))
+    }
   }
 
   private def buildEntities(readers : Seq[QuadReader], entityDescriptions : Seq[EntityDescription], configParameters: ConfigParameters) : Seq[EntityReader] =
@@ -657,6 +676,7 @@ class IntegrationJob (val config : IntegrationConfig, debugMode : Boolean = fals
   }
 
   def getLastUpdate = lastUpdate
+
 }
 
 
@@ -664,37 +684,56 @@ object IntegrationJob {
   LogUtil.init
   private val log = LoggerFactory.getLogger(getClass.getName)
 
+
+  def load (configFile : File, debug : Boolean = false) : IntegrationJob = {
+    if(configFile != null)  {
+      var config : IntegrationConfig = null
+      try {
+        config = IntegrationConfig.load(configFile)
+      }
+      catch {
+        case e:ValidationException => {
+          log.error("Invalid Integration Job configuration: "+e.toString +
+            "\n- More details: http://www.assembla.com/code/ldif/git/nodes/ldif/ldif-core/src/main/resources/xsd/IntegrationJob.xsd")
+          System.exit(1)
+        }
+      }
+      if(!config.hasValidOutputs) {
+        log.error("No valid output has been specified for the Integration Job.")
+        System.exit(1)
+      }
+      val integrationJob = IntegrationJob(config, debug)
+      log.info("Integration job loaded from "+ configFile.getCanonicalPath)
+      integrationJob
+    }
+    else {
+      log.warn("Integration job configuration file not found")
+      null
+    }
+  }
+
   def main(args : Array[String])
   {
     if(args.length == 0) {
       log.warn("No configuration file given. \nUsage: IntegrationJob <integration job configuration file>")
       System.exit(1)
     }
-//    MonitorServer.start("http://localhost:5343/")
+
     var debug = false
     val configFile = new File(args(args.length-1))
 
     if(args.length>=2 && args(0)=="--debug")
       debug = true
 
-    var config : IntegrationConfig = null
-    try {
-      config = IntegrationConfig.load(configFile)
-    }
-    catch {
-      case e:ValidationException => {
-        log.error("Invalid Integration Job configuration: "+e.toString +
-          "\n- More details: http://www.assembla.com/code/ldif/git/nodes/ldif/ldif-core/src/main/resources/xsd/IntegrationJob.xsd")
-        System.exit(1)
-      }
-    }
+    val integrator = IntegrationJob.load(configFile, debug)
 
-    if(!config.hasValidOutputs) {
-      log.error("No valid output has been specified for the Integration Job.")
-      System.exit(1)
-    }
+    val runStatusMonitor = integrator.config.properties.getProperty("runStatusMonitor", "true").toLowerCase=="true"
+    val statusMonitorURI = integrator.config.properties.getProperty("statusMonitorURI", Consts.DefaultStatusMonitorrURI)
 
-    val integrator = new IntegrationJob(config, debug)
+    // Start REST HTTP Server
+    if(runStatusMonitor)
+      MonitorServer.start(statusMonitorURI)
+
     integrator.runIntegration
     sys.exit(0)
   }

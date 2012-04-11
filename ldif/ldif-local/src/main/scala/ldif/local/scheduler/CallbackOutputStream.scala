@@ -24,7 +24,7 @@ import org.semanticweb.yars.nx.{Node => NxNode}
 import collection.mutable.{HashSet, Set}
 import ldif.entity.Node
 
-class CallbackOutputStream(val out : OutputStream, renameGraphs : String) extends CallbackNxOutputStream(out) {
+class CallbackOutputStream(val out : OutputStream, renameGraphs : String, reporter : CrawlImportJobPublisher = null) extends CallbackNxOutputStream(out) {
 
   var statements = 0
   var graphs : Set[String] = new HashSet[String]
@@ -51,5 +51,7 @@ class CallbackOutputStream(val out : OutputStream, renameGraphs : String) extend
     //super.processStatement(nodes)
     graphs += graph.substring(1,graph.length-1)
     statements += 1
+    if (reporter!=null)
+      reporter.importedQuads.incrementAndGet()
   }
 }

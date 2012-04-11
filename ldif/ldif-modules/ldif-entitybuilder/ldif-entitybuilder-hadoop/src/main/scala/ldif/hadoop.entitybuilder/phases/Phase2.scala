@@ -44,13 +44,13 @@ class Phase2 extends Configured with Tool {
     val conf = getConf
     val job = new JobConf(conf, classOf[Phase2])
     val getsTextInput = args(6).toBoolean
-    val useLzoInputFormar = args(7).toBoolean
+    val useLzoInputFormat = args(7).toBoolean
 
     job.setJobName("HEB-Phase2")
     job.setNumReduceTasks(0)
 
     if(getsTextInput) {
-      if(useLzoInputFormar)
+      if(useLzoInputFormat)
         job.setInputFormat(Class.forName("com.hadoop.mapred.DeprecatedLzoTextInputFormat").asSubclass(classOf[InputFormat[Long, Text]]))
       job.setMapperClass(classOf[ExtractAndProcessQuadsMapper])
 

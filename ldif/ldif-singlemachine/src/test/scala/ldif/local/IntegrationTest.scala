@@ -136,7 +136,7 @@ class IntegrationTest extends FlatSpec with ShouldMatchers {
     //  - output=mapped-only
     //  - useExternalSameAsLinks=true
     config = config.copy(properties = customProperties)
-    val integrator = new IntegrationJob(config, debugMode)
+    val integrator = IntegrationJob(config, debugMode)
     // Run integration
     integrator.runIntegration
     CommonUtils.getQuads(new File(integrator.config.outputs.validOutputs.head._1.get.asInstanceOf[SerializingQuadWriter].filepath))

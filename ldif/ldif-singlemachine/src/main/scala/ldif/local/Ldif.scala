@@ -21,8 +21,8 @@ package ldif.local
 import ldif.config.SchedulerConfig
 import java.io.File
 import org.slf4j.LoggerFactory
-import ldif.util.{ValidationException, LogUtil}
 import rest.MonitorServer
+import ldif.util.{Consts, ValidationException, LogUtil}
 ;
 
 
@@ -61,10 +61,10 @@ object Ldif {
           System.exit(1)
         }
       }
-      val scheduler = new Scheduler(config, debug)
+      val scheduler = Scheduler(config, debug)
 
       val runStatusMonitor = config.properties.getProperty("runStatusMonitor", "true").toLowerCase=="true"
-      val statusMonitorURI = config.properties.getProperty("statusMonitorURI", "http://localhost:5343/")
+      val statusMonitorURI = config.properties.getProperty("statusMonitorURI", Consts.DefaultStatusMonitorrURI)
 
       // Start REST HTTP Server
       if(runStatusMonitor)
@@ -77,25 +77,7 @@ object Ldif {
         sys.exit(1)
       }
 
-      // Evaluate jobs at most once. Evaluate import first, then integrate.
-      if (scheduler.runOnce) {
-        scheduler.evaluateImportJobs
-        Thread.sleep(1000)
-        while (!scheduler.allJobsCompleted) {
-            // wait for jobs to be completed
-            Thread.sleep(1000)
-        }
-        scheduler.evaluateIntegrationJob(false)
-        sys.exit(0)
-      }
-      else {
-        log.info("Running LDIF as server")
-        // Evaluate jobs every 10 sec, run as server
-        while(true){
-          scheduler.evaluateJobs
-          Thread.sleep(10 * 1000)
-        }
-      }
+      scheduler.run(true)
     }
   }
 

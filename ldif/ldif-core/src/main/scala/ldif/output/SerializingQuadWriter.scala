@@ -22,9 +22,16 @@ import ldif.runtime.{Quad, QuadWriter}
 import java.io.{FileWriter, BufferedWriter}
 
 class SerializingQuadWriter(val filepath: String, val syntax: RDFSyntax) extends QuadWriter {
-  var writer:BufferedWriter = new BufferedWriter(new FileWriter(filepath))
+  var writer:BufferedWriter = null
+
+  def initWriter() {
+      writer = new BufferedWriter(new FileWriter(filepath))
+  }
 
   def write(quad: Quad) {
+    // Initialize the writer only when used for the first time
+    if(writer==null)
+      initWriter()
     syntax match {
       case NTRIPLES => writer.write(quad.toNTripleFormat)
       case NQUADS => writer.write(quad.toNQuadFormat)

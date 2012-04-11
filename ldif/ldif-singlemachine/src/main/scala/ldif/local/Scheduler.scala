@@ -29,7 +29,7 @@ import ldif.datasources.dump.QuadParser
 import ldif.config.IntegrationConfig
 import ldif.util.{CommonUtils, Consts, StopWatch, FatalErrorListener}
 
-class Scheduler (val config : SchedulerConfig, debug : Boolean = false) {
+case class Scheduler (config : SchedulerConfig, debug : Boolean = false) {
   private val log = LoggerFactory.getLogger(getClass.getName)
 
   // load jobs
@@ -40,6 +40,30 @@ class Scheduler (val config : SchedulerConfig, debug : Boolean = false) {
   private var startup = true
   private var runningIntegrationJobs = false
   private val runningImportJobs = initRunningJobsMap
+
+  /* Evaluate and run the jobs */
+  def run(stopExecution : Boolean = false) {
+    if (runOnce) {
+      // Evaluate jobs at most once. Evaluate import first, then integrate.
+      evaluateImportJobs
+      Thread.sleep(1000)
+      while (!allJobsCompleted) {
+        // wait for jobs to be completed
+        Thread.sleep(1000)
+      }
+      evaluateIntegrationJob(false)
+      if(stopExecution)
+        sys.exit(0)
+    }
+    else {
+      // Run as server, evaluate jobs every 10 sec
+      log.info("Running LDIF as server")
+      while(true){
+        evaluateJobs
+        Thread.sleep(10 * 1000)
+      }
+    }
+  }
 
   /* Evaluate updates/integration */
   def evaluateJobs() {
@@ -87,6 +111,7 @@ class Scheduler (val config : SchedulerConfig, debug : Boolean = false) {
 
   /* Execute the integration job */
   def runIntegration() {
+      integrationJob.dumpsQuads = getNumberOfQuads(importJobs)
       integrationJob.runIntegration
       log.info("Integration Job completed")
       runningIntegrationJobs = false
@@ -105,7 +130,7 @@ class Scheduler (val config : SchedulerConfig, debug : Boolean = false) {
       val tmpProvenanceFile = getTmpProvenanceFile(job)
 
       // create local dump
-      val success = job.load(new FileOutputStream(tmpDumpFile))
+      val success = job.load(new FileOutputStream(tmpDumpFile), getNumberOfQuads(job))
 
       if(success) {
         // create provenance metadata
@@ -148,6 +173,7 @@ class Scheduler (val config : SchedulerConfig, debug : Boolean = false) {
         }
       }
       else {
+        job.reporter.setFailed
         if (!debug) {
           FileUtils.deleteQuietly(tmpDumpFile)
           FileUtils.deleteQuietly(tmpProvenanceFile)
@@ -236,6 +262,35 @@ class Scheduler (val config : SchedulerConfig, debug : Boolean = false) {
     }
   }
 
+
+  /* Retrieve the number of imported quads from provenance info */
+  private def getNumberOfQuads(job : ImportJob) : Option[Double] = {
+    val provenanceFile = getProvenanceFile(job)
+    if (provenanceFile.exists) {
+      val lines = scala.io.Source.fromFile(provenanceFile).getLines
+      val parser = new QuadParser
+      // loop and stop as the first numberOfQuads property is found
+      for (quad <- lines.toTraversable.map(parser.parseLine(_))){
+        if (quad.predicate.equals(Consts.importedQuadsProp))
+            return Some(quad.value.value.toDouble)
+      }
+      log.warn("Job "+job.id+" - provenance file does not contain last update metadata")
+      None
+    }
+    else {
+      //log.warn("Job "+job.id+" - provenance file not found at "+provenanceFile.getCanonicalPath)
+      None
+    }
+  }
+
+  private def getNumberOfQuads(jobs : Traversable[ImportJob]) : Int = {
+    var result = 0
+    for (job <- importJobs)
+       result += getNumberOfQuads(job).get.toInt
+    result
+  }
+
+
   private def loadImportJobs(file : File) : Traversable[ImportJob] =  {
     if(file == null) {
       Traversable.empty[ImportJob]
@@ -265,7 +320,7 @@ class Scheduler (val config : SchedulerConfig, debug : Boolean = false) {
       // if properties are not defined for the integration job, then use scheduler properties
       if (integrationConfig.properties.size == 0)
         integrationConfig = integrationConfig.copy(properties = config.properties)
-      val integrationJob = new IntegrationJob(integrationConfig, debug)
+      val integrationJob = IntegrationJob(integrationConfig, debug)
       log.info("Integration job loaded from "+ configFile.getCanonicalPath)
       integrationJob
     }

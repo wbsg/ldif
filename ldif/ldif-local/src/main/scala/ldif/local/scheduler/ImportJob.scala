@@ -20,15 +20,16 @@ package ldif.local.scheduler
 
 import ldif.runtime.Quad
 import ldif.entity.Node
-import collection.mutable.{HashSet, ListBuffer, Set}
+import collection.mutable.{HashSet, Set}
 import java.util.Date
 import xml.XML
-import ldif.util.{ValidatingXMLReader, Consts, Identifier}
 import java.io._
 import org.slf4j.LoggerFactory
+import ldif.util.{Publisher, ValidatingXMLReader, Consts, Identifier}
 
 trait ImportJob {
   private val log = LoggerFactory.getLogger(getClass.getName)
+  val reporter : Publisher
   val id : Identifier
   val refreshSchedule : String
   val dataSource : String
@@ -36,11 +37,13 @@ trait ImportJob {
   var importedGraphs : Set[String] = new HashSet[String]
   // Used to tmp store the list of the imported graphs, if there are too many graphs
   var importedGraphsFile : File = null
+  // The number of imported quads
+  var importedQuadsNumber : Double = 0
 
   /**
-   * Start import and write results to output stream
+   * Start import and write results to output stream. Return the number of loaded quads, or -1 if loading fails
    */
-  def load(out : OutputStream) : Boolean
+  def load(out : OutputStream, estimatedNumberOfQuads : Option[Double]) : Boolean
 
   def getType : String
   def getOriginalLocation : String
@@ -64,6 +67,11 @@ trait ImportJob {
     writer.write(Quad(jobBlankNode, Consts.hasDatasourceProp, Node.createLiteral(dataSource), provenanceGraph).toLine)
     writer.write(Quad(jobBlankNode, Consts.hasImportTypeProp, Node.createLiteral(getType), provenanceGraph).toLine)
     writer.write(Quad(jobBlankNode, Consts.hasOriginalLocationProp, Node.createLiteral(getOriginalLocation), provenanceGraph).toLine)
+    var importedGraphsNumber : Int = importedGraphs.size
+    if(importedGraphsFile != null && importedGraphsFile.exists)
+      importedGraphsNumber += scala.io.Source.fromFile(importedGraphsFile).getLines().size
+    importedQuadsNumber += importedGraphsNumber*2 + 7 // add number of provenance quads
+    writer.write(Quad(jobBlankNode, Consts.importedQuadsProp, Node.createTypedLiteral(importedQuadsNumber.toString,Consts.xsdDouble),provenanceGraph).toLine)
 
     // add graphs
     val importedGraph = Node.createUriNode(Consts.importedGraphClass)
@@ -100,6 +108,19 @@ trait ImportJob {
     writer.close
     importedGraphs = HashSet.empty[String]
   }
+
+  def toXML : xml.Node
+
+  def toXML(core : xml.Node): xml.Node = {
+    <importJob xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+            xsi:schemaLocation="http://www4.wiwiss.fu-berlin.de/ldif/ ../../xsd/ImportJob.xsd"
+            xmlns="http://www4.wiwiss.fu-berlin.de/ldif/">
+      <internalId>{id}</internalId>
+      <dataSource>{dataSource}</dataSource>
+      <refreshSchedule>{refreshSchedule}</refreshSchedule>
+      {core}
+    </importJob>
+  }
 }
 
 object ImportJob {
@@ -110,6 +131,10 @@ object ImportJob {
 
   def fromFile(file : File) = {
     fromXML(XML.loadFile(file))
+  }
+
+  def fromString(xmlString : String) = {
+    fromXML(XML.loadString(xmlString))
   }
 
   /* Build an Import Job from XML config */

@@ -1,3 +1,5 @@
+package ldif.util
+
 /*
  * LDIF
  *
@@ -16,20 +18,11 @@
  * limitations under the License.
  */
 
-package ldif.local.scheduler
+case class ReportItem(name: String,  status: String, value: String) {
 
-import ldif.util.{ReportPublisher, Register, Publisher}
+}
 
-/**
- * Created by IntelliJ IDEA.
- * User: andreas
- * Date: 3/6/12
- * Time: 7:19 PM
- * To change this template use File | Settings | File Templates.
- */
-
-class ImportJobPublisher extends Publisher with Register[ReportPublisher] {
-  def getPublisherName = "Import Job"
-
-  def getLink: Option[String] = None
+object ReportItem {
+  def get(name : String,  value : Any) : ReportItem = get(name, "", value)
+  def get(name : String,  status : String,  value : Any) : ReportItem = ReportItem(name, status, value.toString)
 }

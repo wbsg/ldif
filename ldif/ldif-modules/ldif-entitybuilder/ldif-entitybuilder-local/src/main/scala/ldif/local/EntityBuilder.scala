@@ -28,11 +28,10 @@ import scala.collection.JavaConversions._
 import ldif.local.runtime.{LocalNode, EntityWriter, QuadReader, ConfigParameters}
 import ldif.runtime.Quad
 import java.util.{HashSet => JHashSet}
+import ldif.util.{Consts, Uri}
 import util.{EntityBuilderReportPublisher, StringPool}
-import ldif.util.{JobMonitor, ReportPublisher, Consts, Uri}
 
-class EntityBuilder (entityDescriptions : IndexedSeq[EntityDescription], readers : Seq[QuadReader], config: ConfigParameters) extends FactumBuilder with EntityBuilderTrait {
-  entityBuilderReportPublisher.name = "Entity Builder (in-memory)"
+class EntityBuilder (entityDescriptions : IndexedSeq[EntityDescription], readers : Seq[QuadReader], config: ConfigParameters, reporter : EntityBuilderReportPublisher) extends FactumBuilder with EntityBuilderTrait {
   private val log = LoggerFactory.getLogger(getClass.getName)
   // if true, irrelevant quads are saved for later use (merge) - used in fusion phase
   private val collectNotRelevantQuads = config.otherQuadsWriter != null
@@ -77,7 +76,7 @@ class EntityBuilder (entityDescriptions : IndexedSeq[EntityDescription], readers
       for (e <- entityNodes) {
           val entity = new EntityLocal(e, ed)
           writer.write(entity)
-          entityBuilderReportPublisher.entitiesBuilt.incrementAndGet()
+          reporter.entitiesBuilt.incrementAndGet()
       }
     }
     else
@@ -85,7 +84,7 @@ class EntityBuilder (entityDescriptions : IndexedSeq[EntityDescription], readers
         writer.write(new EntityLocal(LocalNode.decompress(node), ed))
 //    log.info("Memory used (after writing all entities): " + MemoryUsage.getMemoryUsage()+" KB")   //TODO: remove
     writer.finish
-    entityBuilderReportPublisher.entityQueuesFilled.incrementAndGet()
+    reporter.entityQueuesFilled.incrementAndGet()
 
     log.debug("Build Entities took " + ((now - startTime)) + " ms")
   }
@@ -104,7 +103,6 @@ class EntityBuilder (entityDescriptions : IndexedSeq[EntityDescription], readers
 
   // Init memory structures
   private def init {
-    entityBuilderReportPublisher.setStartTime
     if(PHT.areAllUriNodesNeeded)
       allUriNodes = new JHashSet[Node]
       buildHashTables
@@ -121,7 +119,7 @@ class EntityBuilder (entityDescriptions : IndexedSeq[EntityDescription], readers
       for (reader <- readers.filter(_.hasNext)) {
         val quad = reader.read
 
-        entityBuilderReportPublisher.quadsReadCounter.incrementAndGet()
+        reporter.loadedQuads.incrementAndGet()
 
         if(isRelevantQuad(quad))  {
           counter += 1
@@ -147,7 +145,7 @@ class EntityBuilder (entityDescriptions : IndexedSeq[EntityDescription], readers
           config.otherQuadsWriter.write(quad)
       }
     }
-    entityBuilderReportPublisher.finishedReading = true
+    reporter.finishedReading = true
     log.info("EntityBuilder: " + counter + " quads loaded into the entity builder")
 
     //log.info("Read in Quads took " + ((now - startTime)) + " ms")
@@ -433,4 +431,6 @@ class EntityBuilder (entityDescriptions : IndexedSeq[EntityDescription], readers
     else
       new QuadQueue
   }
+
+  def getType = "in-memory"
 }

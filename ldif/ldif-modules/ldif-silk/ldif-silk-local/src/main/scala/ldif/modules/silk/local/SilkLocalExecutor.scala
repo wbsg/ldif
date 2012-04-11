@@ -62,6 +62,8 @@ class SilkLocalExecutor(useFileInstanceCache: Boolean = false, allowLinksForSame
     val linkSpec = task.linkSpec
     val entityDescs = linkSpec.entityDescriptions
 
+    reporter.setStartTime()
+    reporter.setStatus("Building instance caches (1/5)")
     //Create instance caches
     val caches = if(useFileInstanceCache) {
       val tempSource = TemporaryFileCreator.createTemporaryDirectory("ldif_silk_s", "", true)
@@ -76,20 +78,24 @@ class SilkLocalExecutor(useFileInstanceCache: Boolean = false, allowLinksForSame
         new MemoryEntityCache(entityDescs.target, linkSpec.rule.index(_))
       )
 
+    reporter.setStatus("Loading instance into caches (2/5)")
     //Load instances into cache
     val sources = DPair.fromSeq(reader).map(reader => Source("id", LdifDataSource(reader)))
 
     val loadTask = new LoadTask(sources, caches)
     loadTask()
 
+    reporter.setStatus("Executing matching (3/5)")
     //Execute matching
     val matchTask = new MatchTask(linkSpec.rule, caches, config)
     val links = matchTask()
 
+    reporter.setStatus("Filtering links (4/5)")
     //Filter links
     val filterTask = new FilterTask(links, linkSpec.filter)
     val filteredLinks = filterTask()
 
+    reporter.setStatus("Writing links (5/5)")
     //Write links
     val linkWriter = new LdifLinkWriter(writer, allowLinksForSameURIs)
     val outputTask = new OutputTask(filteredLinks, linkSpec.linkType, Output("output", linkWriter) :: Nil)

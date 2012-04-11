@@ -15,32 +15,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package ldif.util
 
-package ldif.modules.sieve.local
+import java.io.{OutputStream, OutputStreamWriter}
+import ldif.runtime.Quad
 
-import collection.mutable.ArrayBuffer
-import ldif.util.{ReportItem, Report, ReportPublisher}
-
-/**
- * Created by IntelliJ IDEA.
- * User: andreas
- * Date: 3/8/12
- * Time: 6:13 PM
- * To change this template use File | Settings | File Templates.
- */
-
-class SieveFusionPhaseReportPublisher extends ReportPublisher {
-  def getPublisherName = "Sieve Fusion"
-
-  def getReport: Report = {
-    val reportItems = new ArrayBuffer[ReportItem]
-    reportItems.append(getStartTimeReportItem)
-    if(finished) {
-      reportItems.append(getFinishTimeReportItem)
-      reportItems.append(getDurationTimeReportItem)
-    }
-
-    Report(reportItems)
+/*
+* Wrapper for OutputStreamWriter, to report the number of written quads
+*/
+class ReportingOutputStreamWriter(out : OutputStream, reporter : ImportJobStatusMonitor) extends OutputStreamWriter(out) {
+  
+  override def write(s : String) : Unit = {
+    super.write(s)
+    reporter.importedQuads.incrementAndGet()
+  }
+  
+  def write(quad : Quad) {
+    super.write(quad.toLine)
+    reporter.importedQuads.incrementAndGet()
   }
 
+  def write(quads : Traversable[Quad]) {
+    for (quad <- quads)
+      write(quad)
+  }
 }

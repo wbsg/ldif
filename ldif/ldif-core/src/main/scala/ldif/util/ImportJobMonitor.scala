@@ -1,3 +1,5 @@
+package ldif.util
+
 /*
  * LDIF
  *
@@ -16,17 +18,8 @@
  * limitations under the License.
  */
 
-package ldif.local
+object ImportJobMonitor {
+  var value: Register[ReportPublisher] = new Register[ReportPublisher] {}
 
-import ldif.entity.EntityDescription
-import runtime.{QuadReader, EntityWriter}
-
-trait EntityBuilderTrait {
-
-  def buildEntities (ed : EntityDescription, writer : EntityWriter)
-
-  def getNotUsedQuads : QuadReader
-
-  // Return the type of Entity Builder: in-memory or quad-store
-  def getType : String
+  def getIntegrationJobPublisher = value
 }

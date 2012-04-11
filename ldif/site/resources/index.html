@@ -214,15 +214,12 @@ table tr.odd {background-color: #f6f6f6}
 <div id="tagline">A framework for building Linked Data applications
 </div>
 
-<div id="authors"><a href="http://www.wiwiss.fu-berlin.de/en/institute/pwo/bizer/team/SchultzAndreas.html">Andreas
-Schultz</a><br>
-<a href="mailto:a.matteini@mes-info.de">Andrea Matteini</a><br>
-<a href="http://www.wiwiss.fu-berlin.de/en/institute/pwo/bizer/team/IseleRobert.html">Robert
-Isele</a><br>
-<a href="http://www.wiwiss.fu-berlin.de/en/institute/pwo/bizer/team/BizerChristian.html">Chris
-Bizer</a><br>
-<a href="mailto:c.becker@mes-info.de">Christian
-Becker</a><br>
+<div id="authors"><a href="http://www.wiwiss.fu-berlin.de/en/institute/pwo/bizer/team/SchultzAndreas.html">Andreas Schultz</a><br>
+<a href="mailto:a.matteini@mes-semantics.com">Andrea Matteini</a><br>
+<a href="http://www.wiwiss.fu-berlin.de/en/institute/pwo/bizer/team/IseleRobert.html">Robert Isele</a><br>
+<a href="http://www.wiwiss.fu-berlin.de/en/institute/pwo/bizer/team/MendesPablo.html">Pablo N. Mendes</a><br>
+<a href="http://www.wiwiss.fu-berlin.de/en/institute/pwo/bizer/team/BizerChristian.html">Chris Bizer</a><br>
+<a href="mailto:c.becker@mes-semantics.com">Christian Becker</a><br>
 </div>
 
 <div id="content">
@@ -247,7 +244,7 @@ Start</span></a> </div>
 <ul>
   <li>
     <strong>03/28/2012: Version 0.5 released.</strong>
-      This release provides a data quality assessment and fusion module for cleansing data according to
+      This release provides a <a href="#qualityfusion">data quality assessment and fusion</a> module for cleansing data according to
       user-provided quality assessment policies and conflict resolution methods.
   <li>
 	<strong>02/06/2012: Presentation:</strong> LDIF is presented at <a href="http://semtechbizberlin2012.semanticweb.com/">SEMTECHBIZ Berlin 2012</a> (<a href="http://www.wiwiss.fu-berlin.de/en/institute/pwo/bizer/research/publications/BeckerMatteini-LDIF-SemTechBerlin2012-Talk.pdf">Slides</a>).
@@ -328,12 +325,10 @@ Freebase. <a href="http://linkeddatabook.com/editions/1.0/index.html#htoc75">Lin
 Data applications</a> that want to consume data from this global data
 space face the challenges that:</p>
 <ol>
-  <li>Data sources use a wide range of different RDF vocabularies to
-represent data about the same type of entity. </li>
-  <li>The
-same real-world entity, for instance a person or a place, is
-identified with different URIs within different data sources, </li>
-  <li>Data about the same real-world entity coming from different sources may contain conflicting value. For example the single value attribute <i>population</i> for a specific country can have multiple, different values after merging data from different sources.</li>
+  <li>Data sources use a wide range of different RDF vocabularies to represent data about the same type of entity; </li>
+  <li>The same real-world entity, for instance a person or a place, is identified with different URIs within different data sources; </li>
+  <li>Data about the same real-world entity coming from different sources may contain conflicting value. For example the single value attribute <i>population</i>
+      for a specific country can have multiple, different values after merging data from different sources.</li>
 </ol>
 <p>This usage of different vocabularies as well as the usage of URI
 aliases makes it very cumbersome for an application
@@ -481,7 +476,7 @@ Specification Language</a>.
 <br>An overview and examples can be found on the <a href="http://www4.wiwiss.fu-berlin.de/bizer/silk/">Silk website</a>.<br>
 </p>
 
-<h5>Data Quality Assessment and Fusion</h5>
+<h5 id="qualityfusion">Data Quality Assessment and Fusion</h5>
 <p>LDIF employs <a href="http://sieve.wbsg.de">Sieve</a> to provide data quality evaluation and cleansing. The procedure consists of two separate steps.
 First, the Data Quality Assessment module assigns each Named Graph within the processed data one or several quality scores based on user-configurable
 quality assessment policies. These policies combine a assessment function with the definition of the quality-related meta-information which

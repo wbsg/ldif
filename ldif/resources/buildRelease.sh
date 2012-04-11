@@ -12,8 +12,13 @@ mkdir ${ldifhadoopdir}
 mkdir ${ldifdir}/bin
 mkdir ${ldifhadoopdir}/bin
 cp bin/ldif-hadoop* ${ldifhadoopdir}/bin/
+sed -i 's/..\/ldif-hadoop-executor\/target/..\/lib/' ${ldifhadoopdir}/bin/*
+sed -i 's/ldif-hadoop-executor\\target/lib/' ${ldifhadoopdir}/bin/*
+
 cp bin/ldif* ${ldifdir}/bin
 rm ${ldifdir}/bin/ldif-hadoop*
+sed -i 's/..\/ldif-singlemachine\/target/..\/lib/' ${ldifdir}/bin/*
+sed -i 's/ldif-singlemachine\\target/lib/' ${ldifdir}/bin/*
 
 mkdir ${ldifdir}/lib
 mkdir ${ldifhadoopdir}/lib
@@ -38,3 +43,5 @@ cp ldif-hadoop-executor/target/ldif-hadoop-exe-*-jar-with-dependencies.jar ${ldi
 
 zip -r ${ldifdir}.zip ${ldifdir}
 zip -r ${ldifhadoopdir}.zip ${ldifhadoopdir}
+
+mv *.zip ../..
