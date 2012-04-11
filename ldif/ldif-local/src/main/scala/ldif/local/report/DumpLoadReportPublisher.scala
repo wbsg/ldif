@@ -26,7 +26,7 @@ class DumpLoadReportPublisher(val useSameAs: Boolean) extends ReportPublisher {
   var loadedQuads = new AtomicInteger(0)
   var externalSameAsQuads = new AtomicInteger(0)
   var provenanceQuads = new AtomicInteger(0)
-  var dumpsQuads : Int = 0
+  var dumpsQuads : Double = 0
 
   def getPublisherName = "Dump Loader"
 
@@ -61,13 +61,13 @@ class DumpLoadReportPublisher(val useSameAs: Boolean) extends ReportPublisher {
 
   private def getProgress : Option[String] =
   if(dumpsQuads!=0 && !finished) {
-      val progress = (loadedQuads.floatValue*100/(dumpsQuads)).toInt
+      val progress = (loadedQuads.intValue*100/(dumpsQuads)).toInt
       Some(progress +" %")
     }
     else None
 
   override def getStatus : Option[String] =  status.orElse(getProgress)
 
-  def setInputQuads(n : Int) {dumpsQuads = n}
+  def setInputQuads(n : Double) {dumpsQuads = n}
   def getInputQuads = dumpsQuads
 }
