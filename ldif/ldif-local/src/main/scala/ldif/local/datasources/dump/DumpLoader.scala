@@ -26,6 +26,7 @@ import java.io._
 import org.deri.any23.writer.NTriplesWriter
 import ldif.local.runtime.QuadReader
 import ldif.local.runtime.impl.FileQuadReader
+import ldif.util.CommonUtils
 
 
 /**
@@ -52,7 +53,9 @@ object DumpLoader {
       case e:Exception => {
         file = new File(sourceLocation)
         if (!file.exists) {
-          throw new Exception("File does not exist: "	+ file.getCanonicalPath)
+          file = CommonUtils.loadFile(sourceLocation)
+          if(!file.exists())
+            throw new Exception("File does not exist: "	+ new File(sourceLocation).getAbsolutePath)
         }
       }
     }
