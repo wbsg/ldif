@@ -25,9 +25,9 @@ import java.util.{Date, Calendar}
 import java.io._
 import java.util.concurrent.ConcurrentHashMap
 import org.apache.commons.io.FileUtils
-import ldif.datasources.dump.QuadParser
 import ldif.config.IntegrationConfig
 import ldif.util.{CommonUtils, Consts, StopWatch, FatalErrorListener}
+import util.ImportedDumpsUtils
 
 case class Scheduler (config : SchedulerConfig, debug : Boolean = false) {
   private val log = LoggerFactory.getLogger(getClass.getName)
@@ -40,6 +40,8 @@ case class Scheduler (config : SchedulerConfig, debug : Boolean = false) {
   private var startup = true
   private var runningIntegrationJobs = false
   private val runningImportJobs = initRunningJobsMap
+
+  private val importedDumps = ImportedDumpsUtils(config.dumpLocationDir)
 
   /* Evaluate and run the jobs */
   def run(stopExecution : Boolean = false) {
@@ -111,7 +113,7 @@ case class Scheduler (config : SchedulerConfig, debug : Boolean = false) {
 
   /* Execute the integration job */
   def runIntegration() {
-      integrationJob.dumpsQuads = getNumberOfQuads(importJobs)
+      integrationJob.dumpsQuads = importedDumps.getNumberOfQuads(importJobs)
       integrationJob.runIntegration
       log.info("Integration Job completed")
       runningIntegrationJobs = false
@@ -130,7 +132,7 @@ case class Scheduler (config : SchedulerConfig, debug : Boolean = false) {
       val tmpProvenanceFile = getTmpProvenanceFile(job)
 
       // create local dump
-      val success = job.load(new FileOutputStream(tmpDumpFile), getNumberOfQuads(job))
+      val success = job.load(new FileOutputStream(tmpDumpFile), importedDumps.getNumberOfQuads(job))
 
       if(success) {
         // create provenance metadata
@@ -198,7 +200,7 @@ case class Scheduler (config : SchedulerConfig, debug : Boolean = false) {
 
   /* Check if an update is required for the import job */
   def checkUpdate(job : ImportJob) : Boolean = {
-    checkUpdate(job.refreshSchedule, getLastUpdate(job))
+    checkUpdate(job.refreshSchedule, importedDumps.getLastUpdate(job))
   }
 
 
@@ -232,63 +234,6 @@ case class Scheduler (config : SchedulerConfig, debug : Boolean = false) {
     }
   }
 
-  /* Retrieve last update from provenance info */
-  private def getLastUpdate(job : ImportJob) : Calendar = {
-    val provenanceFile = getProvenanceFile(job)
-    if (provenanceFile.exists) {
-      val lines = scala.io.Source.fromFile(provenanceFile).getLines
-      val parser = new QuadParser
-      // loop and stop as the first lastUpdate quad is found
-      for (quad <- lines.toTraversable.map(parser.parseLine(_))){
-        if (quad.predicate.equals(Consts.lastUpdateProp))  {
-          val lastUpdateStr = quad.value.value
-          if (lastUpdateStr.length != 25)  {
-            log.warn("Job "+job.id+" - wrong datetime format for last update metadata")
-            return null
-          }
-          else {
-            val sb = new StringBuilder(lastUpdateStr).deleteCharAt(22)
-            val lastUpdateDate = Consts.xsdDateTimeFormat.parse(sb.toString)
-            return dateToCalendar(lastUpdateDate)
-          }
-        }
-      }
-      log.warn("Job "+job.id+" - provenance file does not contain last update metadata")
-      null
-    }
-    else {
-      //log.warn("Job "+job.id+" - provenance file not found at "+provenanceFile.getCanonicalPath)
-      null
-    }
-  }
-
-
-  /* Retrieve the number of imported quads from provenance info */
-  private def getNumberOfQuads(job : ImportJob) : Option[Double] = {
-    val provenanceFile = getProvenanceFile(job)
-    if (provenanceFile.exists) {
-      val lines = scala.io.Source.fromFile(provenanceFile).getLines
-      val parser = new QuadParser
-      // loop and stop as the first numberOfQuads property is found
-      for (quad <- lines.toTraversable.map(parser.parseLine(_))){
-        if (quad.predicate.equals(Consts.importedQuadsProp))
-            return Some(quad.value.value.toDouble)
-      }
-      log.warn("Job "+job.id+" - provenance file does not contain last update metadata")
-      None
-    }
-    else {
-      //log.warn("Job "+job.id+" - provenance file not found at "+provenanceFile.getCanonicalPath)
-      None
-    }
-  }
-
-  private def getNumberOfQuads(jobs : Traversable[ImportJob]) : Int = {
-    var result = 0
-    for (job <- importJobs)
-       result += getNumberOfQuads(job).get.toInt
-    result
-  }
 
 
   private def loadImportJobs(file : File) : Traversable[ImportJob] =  {
@@ -369,13 +314,6 @@ case class Scheduler (config : SchedulerConfig, debug : Boolean = false) {
       }
     }
     thread.start()
-  }
-
-  /* Convert Date to a Calendar   */
-  private def dateToCalendar(date : Date) : Calendar = {
-      val cal = Calendar.getInstance
-      cal.setTime(date)
-      cal
   }
 
   def getImportJobs = importJobs

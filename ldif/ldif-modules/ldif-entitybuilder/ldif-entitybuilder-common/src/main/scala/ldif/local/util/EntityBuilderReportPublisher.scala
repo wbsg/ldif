@@ -31,14 +31,14 @@ import java.util.concurrent.atomic.AtomicInteger
  */
 
 class EntityBuilderReportPublisher extends ReportPublisher {
-  var dumpsQuads : Int = 0
+  var dumpsQuads : Double = 0
   var loadedQuads = new AtomicInteger(0)
   var finishedReading = false
 
   var entityQueuesTotal : Int = 0
-  var entityQueuesFilled = new AtomicInteger(0)
-  var finishedBuilding = false
   var entitiesBuilt = new AtomicInteger(0)
+  var entityQueuesFilled = new AtomicInteger(0)
+  def finishedBuilding = entityQueuesTotal>0 && entityQueuesTotal==entityQueuesFilled.intValue()
 
   var ebType : String = ""
 
@@ -47,21 +47,12 @@ class EntityBuilderReportPublisher extends ReportPublisher {
   def getReport: Report = {
     val reportItems = new ArrayBuffer[ReportItem]
     reportItems.append(getStartTimeReportItem)
-    if(finishedReading) {
-      reportItems.append(ReportItem("Loading quads", "Done", loadedQuads + " quads loaded"))
-      val buildStatus = if(finishedBuilding) "Done" else "-"
-      reportItems.append(ReportItem("Building entities", buildStatus, entityQueuesFilled.get() + " entity queues finished"))
-    }
-    else {
-      if(loadedQuads==0)
-        reportItems.append(ReportItem("Loading quads", "Not started yet", "-"))
-      else
-        reportItems.append(ReportItem("Loading quads", "Running...", loadedQuads + " quads loaded"))
-    }
+    reportItems.append(ReportItem("Loading quads", getLoadingStatus, loadedQuads + " quads loaded"))
+    reportItems.append(ReportItem("Building entities", getBuildingStatus, entityQueuesFilled.get() + "/"+ entityQueuesTotal +" entity queues finished"))
     if(entitiesBuilt.get > 0 || finishedBuilding)
       reportItems.append(ReportItem.get("Entities built", entitiesBuilt))
     if(dumpsQuads > 0)
-      reportItems.append(ReportItem.get("Quads",dumpsQuads))
+      reportItems.append(ReportItem.get("Input Quads",dumpsQuads))  //TODO only on first
     if(finished) {
       reportItems.append(getFinishTimeReportItem)
       reportItems.append(getDurationTimeReportItem)
@@ -70,7 +61,7 @@ class EntityBuilderReportPublisher extends ReportPublisher {
     Report(reportItems)
   }
 
-  def setInputQuads(n : Int) {dumpsQuads = n}
+  def setInputQuads(n : Double) {dumpsQuads = n}
   def getInputQuads = dumpsQuads
 
   private def getLoadingStatus : String =
@@ -80,12 +71,19 @@ class EntityBuilderReportPublisher extends ReportPublisher {
     }
     else "Done"
 
-  private def getBuildingStatus : String =
+  private def getBuildingStatus : String = {
     if(entityQueuesTotal!=0 && !finishedBuilding) {
       val progress = (entityQueuesFilled.intValue*100/(entityQueuesTotal)).toInt
       progress +" %"
     }
     else "Done"
+  }
 
-  override def getStatus : Option[String] = status.orElse(Some("Loading Quad: "+getLoadingStatus +" - Building Entities: "+ getBuildingStatus))
+  override def getStatus : Option[String] = {
+    if(finishedBuilding && finishedReading) {
+      //in-memory entity building runs in background
+      status=Some("Done")
+    }
+    status.orElse(Some("Loading Quad: "+getLoadingStatus +" <br/> Building Entities: "+ getBuildingStatus))
+  }
 }
