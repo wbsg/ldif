@@ -87,11 +87,12 @@ case class Scheduler (config : SchedulerConfig, debug : Boolean = false) {
   }
 
   def evaluateImportJobs {
-    for (job <- importJobs.filter(checkUpdate(_))) {
+    for (job <- importJobs) {
       // check if this job is already running
-      if (!runningImportJobs.get(job.id)) {
+      if (checkUpdate(job) && !runningImportJobs.get(job.id)) {
         runImport(job)
       }
+      else job.reporter.setSkipped
     }
   }
 
@@ -113,7 +114,7 @@ case class Scheduler (config : SchedulerConfig, debug : Boolean = false) {
 
   /* Execute the integration job */
   def runIntegration() {
-      integrationJob.dumpsQuads = importedDumps.getNumberOfQuads(importJobs)
+      //integrationJob.dumpsQuads = importedDumps.getNumberOfQuads(importJobs)
       integrationJob.runIntegration
       log.info("Integration Job completed")
       runningIntegrationJobs = false

@@ -52,7 +52,7 @@ class EntityBuilderReportPublisher extends ReportPublisher {
     if(entitiesBuilt.get > 0 || finishedBuilding)
       reportItems.append(ReportItem.get("Entities built", entitiesBuilt))
     if(dumpsQuads > 0)
-      reportItems.append(ReportItem.get("Input Quads",dumpsQuads))  //TODO only on first
+      reportItems.append(ReportItem.get("Input Quads",dumpsQuads.toInt))  //TODO only on first
     if(finished) {
       reportItems.append(getFinishTimeReportItem)
       reportItems.append(getDurationTimeReportItem)
