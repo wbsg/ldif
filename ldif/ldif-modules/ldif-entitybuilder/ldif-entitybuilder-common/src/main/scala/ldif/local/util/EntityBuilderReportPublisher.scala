@@ -72,10 +72,13 @@ class EntityBuilderReportPublisher extends ReportPublisher {
     else "Done"
 
   private def getBuildingStatus : String = {
-    if(entityQueuesTotal!=0 && !finishedBuilding) {
-      val progress = (entityQueuesFilled.intValue*100/(entityQueuesTotal)).toInt
-      progress +" %"
+    if(!finishedBuilding) {
+      if (entityQueuesTotal!=0)
+        (entityQueuesFilled.intValue*100/(entityQueuesTotal)).toInt + "%"
+      else
+        "Not started yet"
     }
+
     else "Done"
   }
 

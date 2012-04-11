@@ -43,7 +43,7 @@ case class ImportedDumpsUtils(dumpsLocation : String) {
       null
     }
     else {
-      log.warn("Provenance file not found at "+provenanceFile.getCanonicalPath)
+      //log.warn("Provenance file not found at "+provenanceFile.getCanonicalPath)
       null
     }
   }
@@ -67,7 +67,7 @@ case class ImportedDumpsUtils(dumpsLocation : String) {
       None
     }
     else {
-      log.warn("Provenance file not found at "+provenanceFile.getCanonicalPath)
+      //log.warn("Provenance file not found at "+provenanceFile.getCanonicalPath)
       None
     }
   }
