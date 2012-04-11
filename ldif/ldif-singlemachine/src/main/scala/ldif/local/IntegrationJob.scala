@@ -273,7 +273,7 @@ case class IntegrationJob (config : IntegrationConfig, debugMode : Boolean = fal
     val qualityModule = QualityModule.load(config.sieveSpecDir)
     val sieveQualityReader = qualityModule.config.qualityConfig match {
       case e: EmptyQualityConfig => {
-        log.info("[QUALITY] No Sieve configuration found. No quality assessment will be performed.")
+        log.info("No Sieve configuration found. No quality assessment will be performed.")
         new QuadQueue() // return empty queue
       }
       case c: QualityConfig => {
@@ -290,7 +290,7 @@ case class IntegrationJob (config : IntegrationConfig, debugMode : Boolean = fal
     val fusionModule = FusionModule.load(config.sieveSpecDir, qualityModule)
     val sieveFusionReader = fusionModule.config.fusionConfig match {
       case e: EmptyFusionConfig => {
-        log.info("[FUSION] No Sieve configuration found. No fusion will be performed.")
+        log.info("No Sieve configuration found. No fusion will be performed.")
         if(outputProvenance)
           new MultiQuadReader(fusionInput:_*)
         else
@@ -602,19 +602,21 @@ case class IntegrationJob (config : IntegrationConfig, debugMode : Boolean = fal
   }
 
   private def writeOutput(config : IntegrationConfig, reader : QuadReader) {
-    for (writer <- config.outputs.getByPhase(COMPLETE)) {
+    val writers = config.outputs.getByPhase(COMPLETE)
+    if(writers.size > 0 ){
       var count = 0
-
-      //TODO consider adding a QuadWriter.getDescription method
+     //TODO consider adding a QuadWriter.getDescription method
       // log.info("Writing output to "+config.output.description)
       log.info("Writing integration output...")
       while(reader.hasNext) {
-        writer.write(reader.read())
+        val next = reader.read
+        writers.foreach(_.write(next))
         count += 1
       }
-      writer.finish
-      log.info(count + " Quads written")
-    }
+      writers.foreach(_.finish())
+      log.info(count + " Quads written") }
+    else
+      log.info("No final output has been specified for the Integration Job. Integration output is discarded.")
   }
 
   // Writes the content of #reader to all output writers defined for #phase in #config
@@ -626,37 +628,12 @@ case class IntegrationJob (config : IntegrationConfig, debugMode : Boolean = fal
       val readerCopy = new QuadQueue
       while(reader.hasNext) {
         val next = reader.read
-        for (writer <- writers)
-          writer.write(next)
+        writers.foreach(_.write(next))
         readerCopy.write(next)
       }
-      for (writer <- writers)
-        writer.finish
+      writers.foreach(_.finish())
       readerCopy
     }
-  }
-
-  private def writeDebugOutput(phase: String, outputFile: File, reader: QuadReader): QuadReader = {
-    val newOutputFile = new File(outputFile.getAbsolutePath + "." + phase)
-    copyAndDumpQuadQueue(reader, newOutputFile.getAbsolutePath)
-  }
-
-  def copyAndDumpQuadQueue(quadQueue: QuadReader, outputFile: String): QuadReader = {
-    val quadOutput = File.createTempFile("ldif-debug-quads", ".bin")
-    quadOutput.deleteOnExit
-    val writer = new FileQuadWriter(quadOutput)
-    val quadWriter = new BufferedWriter(new FileWriter(outputFile))
-
-    while(quadQueue.hasNext) {
-      val next = quadQueue.read
-      quadWriter.write(next.toNQuadFormat)
-      quadWriter.write(" .\n")
-      writer.write(next)
-    }
-    quadWriter.flush()
-    quadWriter.close()
-    writer.finish
-    return new FileQuadReader(writer)
   }
 
   def getLastUpdate = lastUpdate
