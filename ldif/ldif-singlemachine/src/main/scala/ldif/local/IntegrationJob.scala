@@ -85,7 +85,7 @@ case class IntegrationJob (config : IntegrationConfig, debugMode : Boolean = fal
     else
       synchronized {
         //reporter = new IntegrationJobStatusMonitor
-        JobMonitor.addPublisher(reporter)
+        //JobMonitor.addPublisher(reporter)
         IntegrationJobMonitor.value = reporter
         val sourceNumber = config.sources.size
 
