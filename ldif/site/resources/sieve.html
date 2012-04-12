@@ -558,7 +558,9 @@ Recency will be measured by looking at the <code>lastUpdated</code> property, wh
 </p>
 
 <p>
-After running you should obtain data that looks like this:
+After running you should obtain results saved in a file called "integrated_cities.nq". This file name is configurable in <code>integrationJob.xml</code>.
+The output contains all the fused properties and every other property that came in the input for which no fusion was specified.
+Some example data for fused properties:
 <pre>
 &lt;http://dbpedia.org/resource/Cachoeiras_de_Macacu&gt; &lt;http://dbpedia.org/ontology/areaTotal&gt; "9.55806E11"^^&lt;http://www.w3.org/2001/XMLSchema#double&gt; &lt;http://pt.wikipedia.org/wiki/Cachoeiras_de_Macacu&gt; .
 &lt;http://dbpedia.org/resource/Cachoeiras_de_Macacu&gt; &lt;http://dbpedia.org/ontology/populationTotal&gt; "54370"^^&lt;http://www.w3.org/2001/XMLSchema#nonNegativeInteger&gt; &lt;http://pt.wikipedia.org/wiki/Cachoeiras_de_Macacu&gt; .
