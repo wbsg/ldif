@@ -58,6 +58,10 @@ trait Publisher {
 
   def setFailed = status = Some("Failed")
 
+  def setSkipped() {
+    status = Some("Skipped")
+  }
+
   def isFinished = finished
 
   def getFormattedStartTime = formatDateTime(startTime)

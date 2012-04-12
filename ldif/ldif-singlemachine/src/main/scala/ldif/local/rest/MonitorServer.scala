@@ -28,10 +28,10 @@ package ldif.local.rest
 
 import com.sun.jersey.api.container.httpserver.HttpServerFactory
 import com.sun.net.httpserver.HttpServer
-import ldif.util.{Publisher, Register, JobMonitor, StatusMonitor}
 import ldif.local.IntegrationJobStatusMonitor
 import javax.ws.rs._
 import core.Response
+import ldif.util._
 
 @Path("/")
 class MonitorServer {
@@ -79,7 +79,7 @@ class IntegrationJobMonitorServer {
 
 
 object  MonitorServer {
-  val generalStatusMonitor: StatusMonitor with Register[Publisher] = JobMonitor
+  val generalStatusMonitor: StatusMonitor with ReportRegister = JobMonitor
   private var server: HttpServer = null
 
   def stop() {

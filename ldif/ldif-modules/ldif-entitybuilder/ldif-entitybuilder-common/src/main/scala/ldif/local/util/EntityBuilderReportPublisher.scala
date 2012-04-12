@@ -52,7 +52,7 @@ class EntityBuilderReportPublisher extends ReportPublisher {
     if(entitiesBuilt.get > 0 || finishedBuilding)
       reportItems.append(ReportItem.get("Entities built", entitiesBuilt))
     if(dumpsQuads > 0)
-      reportItems.append(ReportItem.get("Input Quads",dumpsQuads))  //TODO only on first
+      reportItems.append(ReportItem.get("Input Quads",dumpsQuads.toInt))  //TODO only on first
     if(finished) {
       reportItems.append(getFinishTimeReportItem)
       reportItems.append(getDurationTimeReportItem)
@@ -72,10 +72,13 @@ class EntityBuilderReportPublisher extends ReportPublisher {
     else "Done"
 
   private def getBuildingStatus : String = {
-    if(entityQueuesTotal!=0 && !finishedBuilding) {
-      val progress = (entityQueuesFilled.intValue*100/(entityQueuesTotal)).toInt
-      progress +" %"
+    if(!finishedBuilding) {
+      if (entityQueuesTotal!=0)
+        (entityQueuesFilled.intValue*100/(entityQueuesTotal)).toInt + "%"
+      else
+        "Not started yet"
     }
+
     else "Done"
   }
 

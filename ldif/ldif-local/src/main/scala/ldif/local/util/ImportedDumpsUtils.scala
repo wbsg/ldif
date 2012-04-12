@@ -54,14 +54,14 @@ case class ImportedDumpsUtils(dumpsLocation : String) {
   def getNumberOfQuads(jobId : Identifier) : Option[Double] = getNumberOfQuads(getProvenanceFile(jobId))
 
   def getNumberOfQuads(provenanceFile : File) : Option[Double] = {
-
     if (provenanceFile.exists) {
       val lines = scala.io.Source.fromFile(provenanceFile).getLines
       val parser = new QuadParser
       // loop and stop as the first numberOfQuads property is found
       for (quad <- lines.toTraversable.map(parser.parseLine(_))){
-        if (quad.predicate.equals(Consts.importedQuadsProp))
+        if (quad.predicate.equals(Consts.importedQuadsProp)){
           return Some(quad.value.value.toDouble)
+        }
       }
       log.warn("Provenance file does not contain last update metadata: "+ provenanceFile.getCanonicalPath)
       None
@@ -78,11 +78,11 @@ case class ImportedDumpsUtils(dumpsLocation : String) {
 
   /* Retrieve the number of imported quads for all dumps in dumpsDir (from provenance info) */
   def getNumberOfQuads : Double = {
-    val provenanceFiles = CommonUtils.listFiles(dumpsDir, "proveance.nq")
+    val provenanceFiles = CommonUtils.listFiles(dumpsDir, "provenance.nq")
     provenanceFiles.map(getNumberOfQuads(_).get).sum
   }
 
-  private def getProvenanceFile(jobId : Identifier) : File = new File(dumpsDir + jobId +".provenance.nq")
+  private def getProvenanceFile(jobId : Identifier) : File = new File(dumpsDir + "/"+ jobId +".provenance.nq")
 
 
 

@@ -28,7 +28,7 @@ import ldif.util._
  * To change this template use File | Settings | File Templates.
  */
 
-class IntegrationJobStatusMonitor extends Publisher with StatusMonitor with Register[ReportPublisher] {
+class IntegrationJobStatusMonitor extends Publisher with StatusMonitor with ReportRegister {
 
   override def addPublisher(publisher: ReportPublisher) {
      JobMonitor.addPublisher(publisher)

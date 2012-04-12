@@ -18,28 +18,51 @@
 
 package ldif.util
 
-class JobMonitor extends StatusMonitor with Register[Publisher]{
+class JobMonitor extends StatusMonitor with ReportRegister {
   def getHtml(params: Map[String, String]) = {
+
+    val runningJobs = getRunningJobs
+    val completedJobs = getCompleteJobs
+    val failedJobs = getFailedJobs
+
     val sb = new StringBuilder
     sb.append(addHeader("LDIF Job Report", params))
     sb.append("<h1>Status Report for LDIF Jobs</h1>\n")
-    sb.append("<table border=\"1\" cellpadding=\"3\" cellspacing=\"0\">")
-    sb.append("<tr><th>Job Name</th><th>Start Time</th><th>Finish Time</th><th>Duration</th><th>Status</th><th>Job Infos</th></tr>")
-    for((publisher, index) <- getPublishers().zipWithIndex) {
-      sb.append("<tr>")
-        .append(buildCell(publisher.getPublisherName))
-        .append(buildCell(publisher.getFormattedStartTime))
-        .append(buildCell(publisher.getFormattedFinishTime))
-        .append(buildCell(publisher.getDuration))
-        .append(buildCell(publisher.getStatus.getOrElse("-")))
-        .append(buildCell(publisher.getLinkAsHtml(index)))
-        .append("</tr>\n")
-    }
-    sb.append("</table></body></html>")
+
+    //Running tasks
+    sb.append(buildTable(runningJobs, "Running Jobs"))
+
+    //Completed tasks
+    sb.append(buildTable(completedJobs, "Completed Jobs"))
+
+    //Failed tasks
+    if (failedJobs.size>0)
+      sb.append(buildTable(failedJobs, "Failed Jobs"))
+
+    sb.append("</body></html>")
     sb.toString()
   }
 
   def getText = "Text report not implemented, yet" //TODO
+
+  def buildTable (jobs : IndexedSeq[ReportPublisher], caption : String = null) : String = {
+    val sb = new StringBuilder
+    sb.append("<table  border=\"1\" >")
+    if(caption!=null) sb.append("<caption>"+caption+"</caption>")
+    sb.append("<tr><th>Job Name</th><th>Status</th><th>Duration</th><th>Start Time</th><th>Job Infos</th></tr>")
+    for((publisher, index) <- jobs.zipWithIndex) {
+      sb.append("<tr>")
+        .append(buildCell(publisher.getPublisherName))
+        .append(buildCell(publisher.getStatus.getOrElse("-")))
+        .append(buildCell(publisher.getDuration))
+        .append(buildCell(publisher.getFormattedStartTime))
+        //        .append(buildCell(publisher.getFormattedFinishTime))
+        .append(buildCell(publisher.getLinkAsHtml(index)))
+        .append("</tr>\n")
+    }
+    sb.append("</table>")
+    sb.toString()
+  }
 }
 
 object JobMonitor extends JobMonitor
