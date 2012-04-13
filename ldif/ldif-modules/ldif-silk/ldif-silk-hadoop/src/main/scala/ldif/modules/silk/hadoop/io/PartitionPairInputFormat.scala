@@ -72,10 +72,13 @@ class PartitionPairInputFormat extends InputFormat[BooleanWritable, PartitionPai
 
     private val currentTargetValue = new PartitionWritable()
 
-    targetReader.next(currentTargetIndex, currentTargetValue)
+    //Read first target partition and set a flag if there is none
+    private val isEmpty = !targetReader.next(currentTargetIndex, currentTargetValue)
 
     override def next(key: BooleanWritable, value: PartitionPairWritable): Boolean = {
-      if(sourceReader.next(currentSourceIndex, currentSourceValue)) {
+      if(isEmpty)
+        false
+      else if(sourceReader.next(currentSourceIndex, currentSourceValue)) {
         setValues(key, value)
         true
       }
