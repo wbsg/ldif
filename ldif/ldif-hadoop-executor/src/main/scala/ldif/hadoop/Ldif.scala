@@ -19,9 +19,9 @@
 package ldif.hadoop
 
 import ldif.config.SchedulerConfig
-import java.io.File
 import org.slf4j.LoggerFactory
-import ldif.util.{ValidationException, LogUtil}
+import java.io.File
+import ldif.util.{CommonUtils, ValidationException, LogUtil}
 ;
 
 
@@ -43,7 +43,7 @@ object Ldif {
       val configUrl = getClass.getClassLoader.getResource("ldif/local/neurowiki/scheduler-config.xml")
       new File(configUrl.toString.stripPrefix("file:"))
     } else
-      new File(args(args.length-1))
+      CommonUtils.getFileFromPathOrUrl(args(args.length-1))
 
     if(!configFile.exists)
       log.warn("Configuration file not found at "+ configFile.getCanonicalPath)

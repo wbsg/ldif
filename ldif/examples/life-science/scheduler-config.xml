@@ -4,7 +4,7 @@
            xmlns="http://www4.wiwiss.fu-berlin.de/ldif/">
   <properties>life-science.properties</properties>
   <dataSources>dataSources</dataSources>
-  <importJobs>importJobs</importJobs>
+  <importJob>importJobs</importJob>
   <integrationJob>integration-config.xml</integrationJob>
   <dumpLocation>dumps</dumpLocation>
 </scheduler>

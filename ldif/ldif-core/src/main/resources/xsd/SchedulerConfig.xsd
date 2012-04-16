@@ -1,8 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
-           xmlns="http://www4.wiwiss.fu-berlin.de/ldif/"
+           xmlns:ldif="http://www4.wiwiss.fu-berlin.de/ldif/"
            elementFormDefault="qualified"
            targetNamespace="http://www4.wiwiss.fu-berlin.de/ldif/">
+
+
+    <!-- importJobs element -->
+    <xs:element name="import" abstract="true" />
+
+    <xs:element name="importJob" type="xs:string" substitutionGroup="ldif:import"/>
+
+    <xs:element name="importJobs" substitutionGroup="ldif:import">
+        <xs:complexType>
+            <xs:sequence>
+                <!-- support files and directories, both from local and hdfs -->
+                <xs:element name="importJob" maxOccurs="unbounded"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
 
 <xs:element name="scheduler">
     <xs:complexType>
@@ -12,7 +27,7 @@
 
         <xs:element name="dataSources" type="xs:string" minOccurs="0" />
 
-        <xs:element name="importJobs" type="xs:string" />
+        <xs:element ref="ldif:import" />
 
         <xs:element name="integrationJob" type="xs:string" />
 

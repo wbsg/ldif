@@ -26,14 +26,14 @@ import java.io._
 import java.util.concurrent.ConcurrentHashMap
 import org.apache.commons.io.FileUtils
 import ldif.config.IntegrationConfig
-import ldif.util.{CommonUtils, Consts, StopWatch, FatalErrorListener}
+import ldif.util.{Consts, StopWatch, FatalErrorListener}
 import util.ImportedDumpsUtils
 
 case class Scheduler (config : SchedulerConfig, debug : Boolean = false) {
   private val log = LoggerFactory.getLogger(getClass.getName)
 
   // load jobs
-  private val importJobs = loadImportJobs(config.importJobsDir)
+  private val importJobs = loadImportJobs(config.importJobsFiles)
   private val integrationJob : IntegrationJob = loadIntegrationJob(config.integrationJob)
 
   // init status variables
@@ -234,21 +234,8 @@ case class Scheduler (config : SchedulerConfig, debug : Boolean = false) {
     }
   }
 
-
-
-  private def loadImportJobs(file : File) : Traversable[ImportJob] =  {
-    if(file == null) {
-      Traversable.empty[ImportJob]
-    }
-    else if(file.isFile) {
-      Traversable(loadImportJob(file))
-    }
-    else {// file is a directory
-      CommonUtils.listFiles(file,"xml").map(loadImportJob(_))
-    }
-  }
-
-  private def loadImportJob(file : File) = ImportJob.load(file)
+  private def loadImportJobs(files : Traversable[File]) : Traversable[ImportJob] =
+     files.map(ImportJob.load(_))
 
   // Build local files for the import job
   private def getDumpFile(job : ImportJob) = new File(config.dumpLocationDir, job.id +".nq")

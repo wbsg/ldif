@@ -23,7 +23,7 @@ import org.slf4j.LoggerFactory
 import xml.{Node, XML}
 import java.util.Properties
 import java.lang.Boolean
-import ldif.util.{ValidatingXMLReader, ConfigProperties, Consts}
+import ldif.util.{CommonUtils, ValidatingXMLReader, ConfigProperties, Consts}
 
 case class IntegrationConfig (sources : Traversable[String],
                               linkSpecDir : File,
@@ -98,21 +98,9 @@ object IntegrationConfig {
    */
   protected def getFile(key : String, baseDir : String, skipIfNotDefined : Boolean = false) : File = {
     val value : String = (xml \ key text)
-    var file : File = null
-    if (value != ""){
-      val relativeFile = new File(baseDir + Consts.fileSeparator + value)
-      val absoluteFile = new File(value)
-      if (relativeFile.exists || absoluteFile.exists) {
-        if (relativeFile.exists)
-          file = relativeFile
-        else file = absoluteFile
-      }
-      else {
-        log.warn("\'"+key+"\' path not found. Searched: " + relativeFile.getCanonicalPath + ", " + absoluteFile.getCanonicalPath)
-      }
-    }
-    else{
-      if(skipIfNotDefined && properties != null)
+    val file = CommonUtils.getFileFromPathOrUrl(value, baseDir)
+    if(file == null){
+      if (skipIfNotDefined && properties != null)
         properties.setProperty(key + ".skip", "true")
       log.warn("\'"+key+"\' is not defined in the IntegrationJob config")
     }

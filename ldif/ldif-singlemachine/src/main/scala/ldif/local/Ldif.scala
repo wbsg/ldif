@@ -22,9 +22,7 @@ import ldif.config.SchedulerConfig
 import java.io.File
 import org.slf4j.LoggerFactory
 import rest.MonitorServer
-import ldif.util.{Consts, ValidationException, LogUtil}
-;
-
+import ldif.util.{CommonUtils, Consts, ValidationException, LogUtil}
 
 object Ldif {
   LogUtil.init
@@ -44,7 +42,7 @@ object Ldif {
       val configUrl = getClass.getClassLoader.getResource("ldif/local/neurowiki/scheduler-config.xml")
       new File(configUrl.toString.stripPrefix("file:"))
     } else
-      new File(args(args.length-1))
+        CommonUtils.getFileFromPathOrUrl(args(args.length-1))
 
     if(!configFile.exists)
       log.warn("Configuration file not found at "+ configFile.getCanonicalPath)
