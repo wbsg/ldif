@@ -35,16 +35,11 @@ class R2RReportPublisher extends JobDetailsStatusMonitor("R2R") {
   var mappingsExecuted = new AtomicInteger(0)
   var mappingsTotal : Int = 0
 
-  def getReport: Report = {
+  override def getReport: Report = {
     val reportItems = new ArrayBuffer[ReportItem]
-    reportItems.append(getStartTimeReportItem)
-    reportItems.append(ReportItem("Mappings", getProgress, mappingsExecuted + " mappings executed<br>" + quadsOutput + " quads output"))
-    if(finished) {
-      reportItems.append(getFinishTimeReportItem)
-      reportItems.append(getDurationTimeReportItem)
-    }
-    // reportItems.append(ReportItem.get("mappingsTotal",mappingsTotal))
-    Report(reportItems)
+    reportItems.append(ReportItem.get("Executed mappings", getProgress, mappingsExecuted +"/"+ mappingsTotal))
+    reportItems.append(ReportItem.get("Output quads", quadsOutput))
+    super.getReport(reportItems)
   }
 
   private def getProgress : String =

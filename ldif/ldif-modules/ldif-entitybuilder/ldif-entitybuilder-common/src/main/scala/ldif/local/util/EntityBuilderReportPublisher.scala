@@ -36,29 +36,24 @@ class EntityBuilderReportPublisher extends JobDetailsStatusMonitor("Entity Build
   var finishedReading = false
 
   var entityQueuesTotal : Int = 0
-  var entitiesBuilt = new AtomicInteger(0)
   var entityQueuesFilled = new AtomicInteger(0)
+  var entitiesTotal = new AtomicInteger(0)
+  var entitiesBuilt = new AtomicInteger(0)
   def finishedBuilding = entityQueuesTotal>0 && entityQueuesTotal==entityQueuesFilled.intValue()
 
   var ebType : String = ""
 
-  def getReport: Report = {
+  override def getReport: Report = {
     val reportItems = new ArrayBuffer[ReportItem]
-    reportItems.append(getStartTimeReportItem)
     if(ebType!="")
       reportItems.append(ReportItem.get("Type", ebType))
-    reportItems.append(ReportItem("Loading quads", getLoadingStatus, loadedQuads + " quads loaded"))
-    reportItems.append(ReportItem("Building entities", getBuildingStatus, entityQueuesFilled.get() + "/"+ entityQueuesTotal +" entity queues finished"))
+    reportItems.append(ReportItem.get("Loaded quads", getLoadingStatus, loadedQuads))
+    reportItems.append(ReportItem.get("Entities queues completed", entityQueuesFilled.get() + "/"+ entityQueuesTotal))
     if(entitiesBuilt.get > 0 || finishedBuilding)
-      reportItems.append(ReportItem.get("Entities built", entitiesBuilt))
+      reportItems.append(ReportItem.get("Entities built", getBuildingStatus, entitiesBuilt +"/"+ entitiesTotal))
     if(dumpsQuads > 0)
       reportItems.append(ReportItem.get("Input Quads",dumpsQuads.toInt))  //TODO only on first
-    if(finished) {
-      reportItems.append(getFinishTimeReportItem)
-      reportItems.append(getDurationTimeReportItem)
-    }
-
-    Report(reportItems)
+    super.getReport(reportItems)
   }
 
   def setInputQuads(n : Double) {dumpsQuads = n}
@@ -73,12 +68,13 @@ class EntityBuilderReportPublisher extends JobDetailsStatusMonitor("Entity Build
 
   private def getBuildingStatus : String = {
     if(!finishedBuilding) {
-      if (entityQueuesTotal!=0)
-        (entityQueuesFilled.intValue*100/(entityQueuesTotal)).toInt + "%"
+      if (entitiesTotal.intValue>0)
+        (entitiesBuilt.intValue*100/(entitiesTotal.intValue)).toInt + "%"
+      else if(entityQueuesTotal.intValue>0)
+        (entityQueuesFilled.intValue*100/(entityQueuesTotal.intValue)).toInt + "%"
       else
         "Not started yet"
     }
-
     else "Done"
   }
 

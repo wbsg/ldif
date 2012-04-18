@@ -28,21 +28,14 @@ class DumpLoadReportPublisher(val useSameAs: Boolean) extends JobDetailsStatusMo
   var provenanceQuads = new AtomicInteger(0)
   var dumpsQuads : Double = 0
 
-
-  def getReport: Report = {
+  override def getReport: Report = {
     val reportItems = new ArrayBuffer[ReportItem]
-    reportItems.append(getStartTimeReportItem)
     reportItems.append(createLoadedQuadsReportItem)
     reportItems.append(createSameAsReportItem)
     reportItems.append(createProvenanceReportItem)
     if (dumpsQuads > 0)
     reportItems.append(ReportItem.get("Quads contained in the dumps",dumpsQuads.toInt))
-    if(finished) {
-      reportItems.append(getFinishTimeReportItem)
-      reportItems.append(getDurationTimeReportItem)
-    }
-
-    Report(reportItems)
+    super.getReport(reportItems)
   }
 
   private def createSameAsReportItem: ReportItem = {
@@ -58,14 +51,14 @@ class DumpLoadReportPublisher(val useSameAs: Boolean) extends JobDetailsStatusMo
   private def createLoadedQuadsReportItem: ReportItem =
     ReportItem("Nr. of quads loaded", getStatusAsString, loadedQuads + " quads")
 
-  private def getProgress : Option[String] =
+  private def getProgress : String =
   if(dumpsQuads!=0 && !finished) {
       val progress = (loadedQuads.intValue*100/(dumpsQuads)).toInt
-      Some(progress +"%")
+      progress +"%"
     }
-    else None
+    else "Loading..."
 
-  override def getStatus : Option[String] =  status.orElse(getProgress)
+  override def getStatus : Option[String] =  status.orElse(Some(getProgress))
 
   def setInputQuads(n : Double) {dumpsQuads = n}
   def getInputQuads = dumpsQuads

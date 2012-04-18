@@ -21,12 +21,14 @@ import collection.mutable.ArrayBuffer
  * limitations under the License.
  */
 
-class ImportJobStatusMonitor(jobId : Identifier) extends Publisher with StatusMonitor with ReportPublisher {
+class ImportJobStatusMonitor(jobId : Identifier) extends JobDetailsStatusMonitor(jobId) {
 
   var importedQuads = new AtomicInteger(0)
   var invalidQuads = new AtomicInteger(0)
 
   var estimatedQuads : Option[Double] = None
+
+  override def getPublisherName = "Import "+jobId
 
   def getImportedQuads = importedQuads
 
@@ -37,45 +39,9 @@ class ImportJobStatusMonitor(jobId : Identifier) extends Publisher with StatusMo
     }
   }
 
-  def getPublisherName = "Import Job "+ jobId
-
   override def getLink: Option[String] = Some(jobId)
 
-  def getHtml(params: Map[String, String]) = {
-    val sb = new StringBuilder
-    sb.append(addHeader("Import Job Report", params))
-    sb.append("<h1>Status Report for Import Job</h1>\n")
-    sb.append("<h3>"+getPublisherName+"</h2>\n")
-    sb.append("<table border=\"1\" cellpadding=\"3\" cellspacing=\"0\">")
-    sb.append("<tr><th>report item</th><th>status</th><th>value</th></tr>")
-    for(reportItem <- getReport.items) {
-      sb.append("<tr>")
-      sb.append(buildCell(reportItem.name))
-        .append(buildCell(reportItem.status))
-        .append(buildCell(reportItem.value))
-        .append("</tr>\n")
-    }
-    sb.append("</table>")
-
-    sb.append("</body></html>")
-    sb.toString()
-  }
-
-  def getText = {
-    val sb = new StringBuilder
-    sb.append("Status Report for Import Job: \n\n")
-    sb.append(getPublisherName).append(":\n")
-    for(reportItem <- getReport.items) {
-      sb.append("    Item: ").append(reportItem.name).append("\n    Status: ")
-        .append(reportItem.status).append("\n    Progress: ")
-        .append(reportItem.value).append("\n")
-    }
-    sb.toString
-  }
-
-  def getReport : Report = getReport(Seq.empty[ReportItem])
-
-  def getReport(customReportItems : Seq[ReportItem] = Seq.empty[ReportItem]) : Report = {
+  override def getReport(customReportItems : Seq[ReportItem]) : Report = {
     val reportItems = new ArrayBuffer[ReportItem]
     reportItems.append(getStartTimeReportItem)
     if(finished) {
@@ -93,14 +59,14 @@ class ImportJobStatusMonitor(jobId : Identifier) extends Publisher with StatusMo
     Report(reportItems)
   }
 
-  private def getProgress : Option[String] =
+  private def getProgress : String =
     if(estimatedQuads!=None && !finished) {
       val progress = (importedQuads.intValue*100/(estimatedQuads.get*1.05)).toInt  // add a 5% margin to the estimation
       if (progress > 99)  // and not finished
-        Some("loading quads more than expected...")
-      else Some(progress +"%")
+        "Loading quads more than expected..."
+      else progress +"%"
     }
-    else Some("loading...")
+    else "Loading..."
 
-  override def getStatus : Option[String] =  status.orElse(getProgress)
+  override def getStatus : Option[String] =  status.orElse(Some(getProgress))
 }

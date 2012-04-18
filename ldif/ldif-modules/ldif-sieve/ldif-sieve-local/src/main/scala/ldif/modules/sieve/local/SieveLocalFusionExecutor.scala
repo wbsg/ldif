@@ -81,9 +81,10 @@ class SieveLocalFusionExecutor(useFileInstanceCache: Boolean = false) extends Ex
 
     // for each entity reader (one per input file?)
     reader.foreach( in => {
+      reporter.entitiesProcessed.incrementAndGet()
       val lastPatternId = in.entityDescription.patterns.size
 
-      var entity : Entity = NoEntitiesLeft;
+      var entity : Entity = NoEntitiesLeft
 
       while(in.hasNext) {
         entity = in.read()
@@ -131,7 +132,6 @@ class SieveLocalFusionExecutor(useFileInstanceCache: Boolean = false) extends Ex
         }
       }
     })
-    reporter.setFinishTime()
   }
 
 }

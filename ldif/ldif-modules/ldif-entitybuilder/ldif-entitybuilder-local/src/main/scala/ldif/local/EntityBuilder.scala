@@ -73,15 +73,20 @@ class EntityBuilder (entityDescriptions : IndexedSeq[EntityDescription], readers
     if(!useAllUris){
       // entityNodes <- combination (as in the restriction pattern) of all the subjSets
       val entityNodes = getSubjSet(ed.restriction.operator) map (n => LocalNode.decompress(n))
+      reporter.entitiesTotal.addAndGet(entityNodes.size)
       for (e <- entityNodes) {
           val entity = new EntityLocal(e, ed)
           writer.write(entity)
           reporter.entitiesBuilt.incrementAndGet()
       }
     }
-    else
-      for(node <- allUriNodes)
+    else {
+      reporter.entitiesTotal.addAndGet(allUriNodes.size)
+      for(node <- allUriNodes) {
         writer.write(new EntityLocal(LocalNode.decompress(node), ed))
+      reporter.entitiesBuilt.incrementAndGet()
+      }
+    }
 //    log.info("Memory used (after writing all entities): " + MemoryUsage.getMemoryUsage()+" KB")   //TODO: remove
     writer.finish
     reporter.entityQueuesFilled.incrementAndGet()

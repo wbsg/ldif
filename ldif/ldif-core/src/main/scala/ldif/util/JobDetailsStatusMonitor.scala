@@ -18,17 +18,17 @@
 
 package ldif.util
 
+import collection.mutable.ArrayBuffer
 
-abstract class JobDetailsStatusMonitor(jobId: String) extends Publisher with StatusMonitor with ReportPublisher {
+class JobDetailsStatusMonitor(jobId: String) extends Publisher with StatusMonitor with ReportPublisher {
 
   def getHtml(params: Map[String, String]) = {
     val sb = new StringBuilder
     sb.append(addHeader(jobId+" Job Report", params))
     sb.append("<h1>Status Report for "+jobId+ " Job</h1>\n")
-
     sb.append("<h3>"+getPublisherName+"</h2>\n")
     sb.append("<table border=\"1\" cellpadding=\"3\" cellspacing=\"0\">")
-    sb.append("<tr><th>report item</th><th>status</th><th>value</th></tr>")
+    sb.append("<tr><th>Report item</th><th>Status</th><th>Value</th></tr>")
     for(reportItem <- getReport.items) {
       sb.append("<tr>")
         .append(buildCell(reportItem.name))
@@ -37,7 +37,6 @@ abstract class JobDetailsStatusMonitor(jobId: String) extends Publisher with Sta
         .append("</tr>\n")
     }
     sb.append("</table>")
-
     sb.append("</body></html>")
     sb.toString()
   }
@@ -59,5 +58,18 @@ abstract class JobDetailsStatusMonitor(jobId: String) extends Publisher with Sta
   def getPublisherName = jobId
 
   override def getLink: Option[String] = Some(jobId)
+
+  def getReport : Report = getReport(Seq.empty[ReportItem])
+
+  def getReport(customReportItems : Seq[ReportItem]) : Report = {
+    val reportItems = new ArrayBuffer[ReportItem]
+    reportItems.append(getStartTimeReportItem)
+    if(finished) {
+      reportItems.append(getFinishTimeReportItem)
+      reportItems.append(getDurationTimeReportItem)
+    }
+    customReportItems.map(reportItems.append(_))
+    Report(reportItems)
+  }
 
 }
