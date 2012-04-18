@@ -95,11 +95,12 @@ trait Publisher {
     if (msec > 0){
       val sb = new StringBuilder
       val hh = TimeUnit.MILLISECONDS.toHours(msec)
-      val mm = "%02d".format(TimeUnit.MILLISECONDS.toMinutes(msec))
-      val ss = "%02d".format(TimeUnit.MILLISECONDS.toSeconds(msec))
+      val mm = TimeUnit.MILLISECONDS.toMinutes(msec)-hh*60
+      val ss = TimeUnit.MILLISECONDS.toSeconds(msec)-hh*3600-mm*60
       if (hh>0)
-        sb.append(hh+" : ")
-      sb.append(mm+" : "+ss)
+        sb.append("%02d".format(hh)+":")
+      sb.append("%02d".format(mm)+":"+"%02d".format(ss))
+      //sb.append(" < "+msec)
       sb.toString
     }
     else "00:00"

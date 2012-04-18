@@ -62,7 +62,7 @@ class DumpLoadReportPublisher(val useSameAs: Boolean) extends ReportPublisher {
   private def getProgress : Option[String] =
   if(dumpsQuads!=0 && !finished) {
       val progress = (loadedQuads.intValue*100/(dumpsQuads)).toInt
-      Some(progress +" %")
+      Some(progress +"%")
     }
     else None
 

@@ -32,6 +32,8 @@ import ldif.local.IntegrationJobStatusMonitor
 import javax.ws.rs._
 import core.Response
 import ldif.util._
+import java.io.File
+import javax.activation.MimetypesFileTypeMap
 
 @Path("/")
 class MonitorServer {
@@ -44,6 +46,17 @@ class MonitorServer {
   def getJobsHtml(
     @DefaultValue("0") @QueryParam("refresh") refreshTimeInSeconds: Int): String = {
     MonitorServer.generalStatusMonitor.getHtml(Map("refresh" -> refreshTimeInSeconds.toString ))
+  }
+
+  @GET @Produces(Array[String]("image/*"))
+  @Path("images/{image}")
+  def getImage(@PathParam("image") image: String) = {
+    val f = new File(image)
+    val d = f.getCanonicalPath
+    if (!f.exists())
+      throw new WebApplicationException(404)
+    val mt = new MimetypesFileTypeMap().getContentType(f)
+    Response.ok(f, mt).build()
   }
 }
 

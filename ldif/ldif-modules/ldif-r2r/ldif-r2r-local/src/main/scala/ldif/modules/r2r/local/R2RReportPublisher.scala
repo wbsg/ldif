@@ -19,8 +19,8 @@
 package ldif.modules.r2r.local
 
 import collection.mutable.ArrayBuffer
-import ldif.util.{ReportItem, Report, ReportPublisher}
 import java.util.concurrent.atomic.AtomicInteger
+import ldif.util.{JobDetailsStatusMonitor, ReportItem, Report}
 
 /**
  * Created by IntelliJ IDEA.
@@ -30,12 +30,10 @@ import java.util.concurrent.atomic.AtomicInteger
  * To change this template use File | Settings | File Templates.
  */
 
-class R2RReportPublisher extends ReportPublisher {
+class R2RReportPublisher extends JobDetailsStatusMonitor("R2R") {
   var quadsOutput = new AtomicInteger(0)
   var mappingsExecuted = new AtomicInteger(0)
   var mappingsTotal : Int = 0
-
-  def getPublisherName = "R2R"
 
   def getReport: Report = {
     val reportItems = new ArrayBuffer[ReportItem]
@@ -46,7 +44,6 @@ class R2RReportPublisher extends ReportPublisher {
       reportItems.append(getDurationTimeReportItem)
     }
     // reportItems.append(ReportItem.get("mappingsTotal",mappingsTotal))
-
     Report(reportItems)
   }
 

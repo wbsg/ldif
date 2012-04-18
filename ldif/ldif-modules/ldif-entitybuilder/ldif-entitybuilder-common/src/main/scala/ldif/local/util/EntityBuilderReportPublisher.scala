@@ -19,8 +19,8 @@
 package ldif.local.util
 
 import collection.mutable.ArrayBuffer
-import ldif.util.{Report, ReportItem, ReportPublisher}
 import java.util.concurrent.atomic.AtomicInteger
+import ldif.util.{JobDetailsStatusMonitor, Report, ReportItem}
 
 /**
  * Created by IntelliJ IDEA.
@@ -30,7 +30,7 @@ import java.util.concurrent.atomic.AtomicInteger
  * To change this template use File | Settings | File Templates.
  */
 
-class EntityBuilderReportPublisher extends ReportPublisher {
+class EntityBuilderReportPublisher extends JobDetailsStatusMonitor("Entity Builder") {
   var dumpsQuads : Double = 0
   var loadedQuads = new AtomicInteger(0)
   var finishedReading = false
@@ -42,7 +42,7 @@ class EntityBuilderReportPublisher extends ReportPublisher {
 
   var ebType : String = ""
 
-  def getPublisherName = "Entity Builder ("+ebType+")"
+  override def getPublisherName = "Entity Builder ("+ebType+")"
 
   def getReport: Report = {
     val reportItems = new ArrayBuffer[ReportItem]
@@ -67,7 +67,7 @@ class EntityBuilderReportPublisher extends ReportPublisher {
   private def getLoadingStatus : String =
     if(dumpsQuads!=0 && !finishedReading) {
       val progress = (loadedQuads.intValue*100/(dumpsQuads)).toInt
-      progress +" %"
+      progress +"%"
     }
     else "Done"
 

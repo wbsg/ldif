@@ -19,7 +19,7 @@
 package ldif.modules.sieve.local
 
 import collection.mutable.ArrayBuffer
-import ldif.util.{ReportItem, Report, ReportPublisher}
+import ldif.util.{JobDetailsStatusMonitor, ReportItem, Report}
 
 /**
  * Created by IntelliJ IDEA.
@@ -29,8 +29,7 @@ import ldif.util.{ReportItem, Report, ReportPublisher}
  * To change this template use File | Settings | File Templates.
  */
 
-class SieveQualityPhaseReportPublisher extends ReportPublisher {
-  def getPublisherName = "Sieve Quality Assessment"
+class SieveQualityPhaseReportPublisher extends JobDetailsStatusMonitor("Sieve Quality Assessment") {
 
   def getReport: Report = {
     val reportItems = new ArrayBuffer[ReportItem]

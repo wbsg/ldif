@@ -50,14 +50,14 @@ class JobMonitor extends StatusMonitor with ReportRegister {
     sb.append("<table  border=\"1\" >")
     if(caption!=null) sb.append("<caption>"+caption+"</caption>")
     sb.append("<tr><th>Job Name</th><th>Status</th><th>Duration</th><th>Start Time</th><th>Job Infos</th></tr>")
-    for((publisher, index) <- jobs.zipWithIndex) {
+    for(publisher <- jobs) {
       sb.append("<tr>")
         .append(buildCell(publisher.getPublisherName))
-        .append(buildCell(publisher.getStatus.getOrElse("-")))
+        .append(buildStatusCell(publisher.getStatus.getOrElse("-")))
         .append(buildCell(publisher.getDuration))
         .append(buildCell(publisher.getFormattedStartTime))
         //        .append(buildCell(publisher.getFormattedFinishTime))
-        .append(buildCell(publisher.getLinkAsHtml(index)))
+        .append(buildCell(publisher.getLinkAsHtml(getIndex(publisher).get)))
         .append("</tr>\n")
     }
     sb.append("</table>")

@@ -98,9 +98,9 @@ class ImportJobStatusMonitor(jobId : Identifier) extends Publisher with StatusMo
       val progress = (importedQuads.intValue*100/(estimatedQuads.get*1.05)).toInt  // add a 5% margin to the estimation
       if (progress > 99)  // and not finished
         Some("loading quads more than expected...")
-      else Some(progress +" %")
+      else Some(progress +"%")
     }
-    else None
+    else Some("loading...")
 
   override def getStatus : Option[String] =  status.orElse(getProgress)
 }
