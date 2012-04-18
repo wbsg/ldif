@@ -61,7 +61,7 @@ trait StatusMonitor {
   val sb = new StringBuilder
   sb.append("<style>")
   sb.append("body { background: white; color: black; font-family: sans-serif; line-height: 1.3em; margin: 0; padding: 2.5em 3em; }\n" +
-    "table {border-collapse: collapse; margin-bottom: .75em;}\n" +
+    "table {border-collapse: collapse; margin-bottom: .75em; width: 50%;}\n" +
     "table th {text-align: left; background: #EAF3FA; padding: .4em .8em; height: 20px; font-weight: bold; font-size: 1em; color: #333}\n" +
     "table th a {text-decoration: none !important}\n" +
     "table td {vertical-align: top; text-align: left; padding: .4em 1em;}\n" +
@@ -84,6 +84,6 @@ trait StatusMonitor {
     buildCell("""\d+%""".r.replaceAllIn(text, m => buildProgressBar(m.group(0))))
 
   private def buildProgressBar (text : String) =
-    "<div class=\"meter\" title=\""+text+"\"><span style=\"width:"+text+"\"></span>"
+    "<div class=\"meter\" title=\""+text+"\"><span style=\"width:"+text+"\"></span></div>"
 
 }

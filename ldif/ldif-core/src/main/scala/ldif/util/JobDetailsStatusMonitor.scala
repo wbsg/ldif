@@ -23,8 +23,8 @@ abstract class JobDetailsStatusMonitor(jobId: String) extends Publisher with Sta
 
   def getHtml(params: Map[String, String]) = {
     val sb = new StringBuilder
-    sb.append(addHeader("Integration Job Report", params))
-    sb.append("<h1>Status Report for Integration Job</h1>\n")
+    sb.append(addHeader(jobId+" Job Report", params))
+    sb.append("<h1>Status Report for "+jobId+ " Job</h1>\n")
 
     sb.append("<h3>"+getPublisherName+"</h2>\n")
     sb.append("<table border=\"1\" cellpadding=\"3\" cellspacing=\"0\">")
@@ -44,7 +44,7 @@ abstract class JobDetailsStatusMonitor(jobId: String) extends Publisher with Sta
 
   def getText = {
     val sb = new StringBuilder
-    sb.append("Status Report for Integration Job: \n\n")
+    sb.append("Status Report for "+jobId+ " Job: \n\n")
     sb.append(getPublisherName).append(":\n")
     for(reportItem <- getReport.items) {
       sb.append("    Item: ").append(reportItem.name).append("\n    Status: ")

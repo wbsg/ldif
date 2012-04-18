@@ -19,16 +19,15 @@
 package ldif.local.report
 
 import java.util.concurrent.atomic.AtomicInteger
-import ldif.util.{Report, ReportItem, ReportPublisher}
 import collection.mutable.ArrayBuffer
+import ldif.util.{JobDetailsStatusMonitor, Report, ReportItem}
 
-class DumpLoadReportPublisher(val useSameAs: Boolean) extends ReportPublisher {
+class DumpLoadReportPublisher(val useSameAs: Boolean) extends JobDetailsStatusMonitor("Dump Loader") {
   var loadedQuads = new AtomicInteger(0)
   var externalSameAsQuads = new AtomicInteger(0)
   var provenanceQuads = new AtomicInteger(0)
   var dumpsQuads : Double = 0
 
-  def getPublisherName = "Dump Loader"
 
   def getReport: Report = {
     val reportItems = new ArrayBuffer[ReportItem]

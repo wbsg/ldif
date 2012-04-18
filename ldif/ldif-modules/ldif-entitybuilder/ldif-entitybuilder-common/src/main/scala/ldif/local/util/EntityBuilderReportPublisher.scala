@@ -42,11 +42,11 @@ class EntityBuilderReportPublisher extends JobDetailsStatusMonitor("Entity Build
 
   var ebType : String = ""
 
-  override def getPublisherName = "Entity Builder ("+ebType+")"
-
   def getReport: Report = {
     val reportItems = new ArrayBuffer[ReportItem]
     reportItems.append(getStartTimeReportItem)
+    if(ebType!="")
+      reportItems.append(ReportItem.get("Type", ebType))
     reportItems.append(ReportItem("Loading quads", getLoadingStatus, loadedQuads + " quads loaded"))
     reportItems.append(ReportItem("Building entities", getBuildingStatus, entityQueuesFilled.get() + "/"+ entityQueuesTotal +" entity queues finished"))
     if(entitiesBuilt.get > 0 || finishedBuilding)
