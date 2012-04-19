@@ -6,6 +6,6 @@
   <dataSources>dataSources</dataSources>
   <importJob>importJobs</importJob>
   <integrationJob>integration-config.xml</integrationJob>
-  <dumpLocation>dumps</dumpLocation>
+  <dumpLocation>dumps-life-science</dumpLocation>
 </scheduler>
 
