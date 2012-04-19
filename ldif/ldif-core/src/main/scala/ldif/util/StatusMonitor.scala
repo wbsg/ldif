@@ -49,11 +49,11 @@ trait StatusMonitor {
 
   def addParams(params: Map[String, String]): String = {
     val sb = new StringBuilder
-    if(params.get("refresh").get!="0") {
       sb.append("<meta http-equiv=\"refresh\" content=\"")
+    if(params.get("refresh").get!="0")
       sb.append(params.get("refresh").get)
-      sb.append("\">")
-    }
+    else sb.append(1)  // by default refresh every second
+    sb.append("\">")
     sb.toString
   }
 
