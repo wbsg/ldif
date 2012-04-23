@@ -105,6 +105,7 @@ class SieveLocalQualityExecutor(useFileInstanceCache: Boolean = false) extends E
       var entity : Entity = NoEntitiesLeft;
       while ( in.hasNext ) {
         entity = in.read()
+        reporter.entitiesProcessed.incrementAndGet()
         // for scoringFunctions that need the graphId, use entity.resource, therefore the assumption below will not hold
       //  assume(task.qualitySpec.scoringFunctions.size==in.entityDescription.patterns.size, "Number of scoringFunctions must be the same as number of patterns.")
        // assume(task.qualitySpec.outputPropertyNames.size==in.entityDescription.patterns.size, "Number of outputPropertyNames must be the same as number of patterns.")
@@ -145,7 +146,6 @@ class SieveLocalQualityExecutor(useFileInstanceCache: Boolean = false) extends E
         log.error("Found %d null entities. Is this normal?".format(numberOfNullEntities))
 
     })
-    reporter.setFinishTime()
   }
 
 }

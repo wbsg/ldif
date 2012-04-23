@@ -147,6 +147,7 @@ case class SparqlWriter(uri: String,
       connection.setRequestProperty("Content-Type", "application/sparql-update")
     else
       connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded")
+    connection.setRequestProperty("Accept", "application/rdf+xml")
 
     connection
   }

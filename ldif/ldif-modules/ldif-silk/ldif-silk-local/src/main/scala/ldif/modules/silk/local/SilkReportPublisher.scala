@@ -18,8 +18,7 @@
 
 package ldif.modules.silk.local
 
-import collection.mutable.ArrayBuffer
-import ldif.util.{ReportItem, Report, ReportPublisher}
+import ldif.util.JobDetailsStatusMonitor
 
 /**
  * Created by IntelliJ IDEA.
@@ -29,17 +28,4 @@ import ldif.util.{ReportItem, Report, ReportPublisher}
  * To change this template use File | Settings | File Templates.
  */
 
-class SilkReportPublisher extends ReportPublisher {
-  def getPublisherName = "Silk"
-
-  def getReport: Report = {
-    val reportItems = new ArrayBuffer[ReportItem]
-    reportItems.append(getStartTimeReportItem)
-    if(finished) {
-      reportItems.append(getFinishTimeReportItem)
-      reportItems.append(getDurationTimeReportItem)
-    }
-
-    return Report(reportItems)
-  }
-}
+class SilkReportPublisher extends JobDetailsStatusMonitor("Silk") {}

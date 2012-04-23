@@ -19,7 +19,9 @@
 package ldif.modules.sieve.local
 
 import collection.mutable.ArrayBuffer
-import ldif.util.{ReportItem, Report, ReportPublisher}
+import ldif.util.{ReportItem, Report, JobDetailsStatusMonitor}
+import java.util.concurrent.atomic.AtomicInteger
+
 
 /**
  * Created by IntelliJ IDEA.
@@ -29,17 +31,22 @@ import ldif.util.{ReportItem, Report, ReportPublisher}
  * To change this template use File | Settings | File Templates.
  */
 
-class SieveQualityPhaseReportPublisher extends ReportPublisher {
-  def getPublisherName = "Sieve Quality Assessment"
+class SieveQualityPhaseReportPublisher extends JobDetailsStatusMonitor("Sieve Quality Assessment")       {
 
-  def getReport: Report = {
-    val reportItems = new ArrayBuffer[ReportItem]
-    reportItems.append(getStartTimeReportItem)
-    if(finished) {
-      reportItems.append(getFinishTimeReportItem)
-      reportItems.append(getDurationTimeReportItem)
-    }
+  var entitiesTotal = 0
+  var entitiesProcessed = new AtomicInteger(0)
 
-    Report(reportItems)
+  override def getReport: Report = {
+    var customReportItems = new ArrayBuffer[ReportItem]
+    if(entitiesTotal>0)
+      customReportItems = customReportItems :+ ReportItem.get("Entities processed",entitiesProcessed +"/"+entitiesTotal)
+    super.getReport(customReportItems)
   }
+
+  private def getProgress : String =
+   if (entitiesTotal>0)
+    (entitiesProcessed.get*100/entitiesTotal).toInt + "%"
+   else "Running..."
+
+  override def getStatus : Option[String] =  status.orElse(Some(getProgress))
 }

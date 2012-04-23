@@ -397,11 +397,9 @@ case class IntegrationJob (config : IntegrationConfig, debugMode : Boolean = fal
 
     executor.reporter.mappingsTotal = module.tasks.size
 
-      //runInBackground
-    {
-      for((r2rTask, reader) <- module.tasks.toList zip entityReaders)
-        executor.execute(r2rTask, Seq(reader), writer)
-    }
+    //runInBackground
+    for((r2rTask, reader) <- module.tasks.toList zip entityReaders)
+      executor.execute(r2rTask, Seq(reader), writer)
     writer.finish
     executor.reporter.setFinishTime()
 
@@ -453,7 +451,8 @@ case class IntegrationJob (config : IntegrationConfig, debugMode : Boolean = fal
     // create a mapping between quality task and entity reader for corresponding entities
     // todo: this could also work if we created only one entitydescription for all task? bad for distributed computing, maybe?
     val entityDescriptions = qualityModule.tasks.toSeq.map(_.qualitySpec.entityDescription)
-    val readers = buildEntities(cloneQuadReaders(inputQuadsReader), entityDescriptions, ConfigParameters(config.properties))
+    val ebe = new EntityBuilderExecutor(ConfigParameters(config.properties))
+    val readers = buildEntities(cloneQuadReaders(inputQuadsReader), entityDescriptions, ebe)
 
     log.info("Time needed to build entities for quality assessment phase: " + stopWatch.getTimeSpanInSeconds + "s")
 
@@ -461,6 +460,7 @@ case class IntegrationJob (config : IntegrationConfig, debugMode : Boolean = fal
     val qualityExecutor = new SieveLocalQualityExecutor
     reporter.addPublisher(qualityExecutor.reporter)
     reporter.setStatus("Sieve - Quality")
+    qualityExecutor.reporter.entitiesTotal = ebe.reporter.entitiesTotal.intValue()
     for((task, reader) <- qualityModule.tasks.toSeq zip readers)  {
       log.debug("\n\tMetric: %s\n\tFunction: %s\n\tEntityDescription: %s".format(task.qualitySpec.outputPropertyNames,task.qualitySpec.scoringFunctions,reader.entityDescription))
       qualityExecutor.execute(task, Seq(reader), singleScoresOutput)
@@ -504,8 +504,6 @@ case class IntegrationJob (config : IntegrationConfig, debugMode : Boolean = fal
     log.info("[FUSION]")
     log.debug("Sieve will perform fusion, config=%s.".format(sieveSpecDir.getAbsolutePath))
 
-    val fusionExecutor = new SieveLocalFusionExecutor
-
     val entityDescriptions = fusionModule.tasks.head.sieveConfig.fusionConfig.entityDescriptions
     // why build more entity queues (<- entity description) if we only consume one for each task? (see below)
     //val entityDescriptions = fusionModule.tasks.toIndexedSeq.map(fusionExecutor.input).flatMap{ case StaticEntityFormat(ed) => ed }
@@ -522,20 +520,20 @@ case class IntegrationJob (config : IntegrationConfig, debugMode : Boolean = fal
     StringPool.reset
     log.info("Time needed to build entities for fusion phase: " + stopWatch.getTimeSpanInSeconds + "s")
 
+    val outputQueue = new QuadQueue
+    val fusionExecutor = new SieveLocalFusionExecutor
     reporter.addPublisher(fusionExecutor.reporter)
     reporter.setStatus("Sieve - Fusion")
-    fusionExecutor.reporter.setStartTime()
-    val outputQueue = new QuadQueue
+    fusionExecutor.reporter.entitiesTotal = entityBuilderExecutor.reporter.entitiesTotal.intValue()
 
     //runInBackground
+    for((fusionTask, reader) <- fusionModule.tasks.toList zip entityReaders.toList)
     {
-      for((fusionTask, reader) <- fusionModule.tasks.toList zip entityReaders.toList)
-      {
-        log.debug("fusionTask: %s; reader: %s.".format(fusionTask.name, reader.entityDescription))
-        // consume one entity queue for each task
-        fusionExecutor.execute(fusionTask, Seq(reader), outputQueue)
-      }
+      log.debug("fusionTask: %s; reader: %s.".format(fusionTask.name, reader.entityDescription))
+      // consume one entity queue for each task
+      fusionExecutor.execute(fusionTask, Seq(reader), outputQueue)
     }
+
     fusionExecutor.reporter.setFinishTime()
 
     irrelevantQuadsWriter.finish()

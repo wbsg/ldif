@@ -49,11 +49,11 @@ trait StatusMonitor {
 
   def addParams(params: Map[String, String]): String = {
     val sb = new StringBuilder
-    if(params.get("refresh").get!="0") {
       sb.append("<meta http-equiv=\"refresh\" content=\"")
+    if(params.get("refresh").get!="0")
       sb.append(params.get("refresh").get)
-      sb.append("\">")
-    }
+    else sb.append(1)  // by default refresh every second
+    sb.append("\">")
     sb.toString
   }
 
@@ -61,7 +61,8 @@ trait StatusMonitor {
   val sb = new StringBuilder
   sb.append("<style>")
   sb.append("body { background: white; color: black; font-family: sans-serif; line-height: 1.3em; margin: 0; padding: 2.5em 3em; }\n" +
-    "table {border-collapse: collapse; margin-bottom: .75em;}\n" +
+    "table {border-collapse: collapse; margin-bottom: .75em; width: 50%;}\n" +
+    "caption { color: #800;  padding: .2em .8em; font-weight: bold; }\n "+
     "table th {text-align: left; background: #EAF3FA; padding: .4em .8em; height: 20px; font-weight: bold; font-size: 1em; color: #333}\n" +
     "table th a {text-decoration: none !important}\n" +
     "table td {vertical-align: top; text-align: left; padding: .4em 1em;}\n" +
@@ -70,9 +71,20 @@ trait StatusMonitor {
     "a:link, a:visited, a:hover, a:active { color: #1C5489; display: block; text-decoration: none; }\n" +
     "a:hover, a:active { color: #16426B; cursor: pointer; }\n" +
     "h1, h2, h3, h4 { color: #800; clear: both; }\n")
-  sb.append("</style>")
+    // progress bar (pure css)
+    .append(".meter {\n\twidth: 200px;\n\theight: 10px;  /* Can be anything */\n\tposition: relative;\n\tbackground: #555;\n\t-moz-border-radius: 7px;\n\t-webkit-border-radius: 7px;\n\tborder-radius: 10px;\n\tpadding: 2px;\n\t-webkit-box-shadow: inset 0 -1px 1px rgba(255,255,255,0.3);\n\t-moz-box-shadow   : inset 0 -1px 1px rgba(255,255,255,0.3);\n\tbox-shadow        : inset 0 -1px 1px rgba(255,255,255,0.3);\n}")
+    .append(".meter > span {\n\tdisplay: block;\n\theight: 100%;\n\t   -webkit-border-top-right-radius: 8px;\n\t-webkit-border-bottom-right-radius: 8px;\n\t       -moz-border-radius-topright: 8px;\n\t    -moz-border-radius-bottomright: 8px;\n\t           border-top-right-radius: 8px;\n\t        border-bottom-right-radius: 8px;\n\t    -webkit-border-top-left-radius: 20px;\n\t -webkit-border-bottom-left-radius: 20px;\n\t        -moz-border-radius-topleft: 20px;\n\t     -moz-border-radius-bottomleft: 20px;\n\t            border-top-left-radius: 20px;\n\t         border-bottom-left-radius: 20px;\n\tbackground-color: rgb(43,194,83);\n\tbackground-image: -webkit-gradient(\n\t  linear,\n\t  left bottom,\n\t  left top,\n\t  color-stop(0, rgb(43,194,83)),\n\t  color-stop(1, rgb(84,240,84))\n\t );\n\tbackground-image: -webkit-linear-gradient(\n\t  center bottom,\n\t  rgb(43,194,83) 37%,\n\t  rgb(84,240,84) 69%\n\t );\n\tbackground-image: -moz-linear-gradient(\n\t  center bottom,\n\t  rgb(43,194,83) 37%,\n\t  rgb(84,240,84) 69%\n\t );\n\tbackground-image: -ms-linear-gradient(\n\t  center bottom,\n\t  rgb(43,194,83) 37%,\n\t  rgb(84,240,84) 69%\n\t );\n\tbackground-image: -o-linear-gradient(\n\t  center bottom,\n\t  rgb(43,194,83) 37%,\n\t  rgb(84,240,84) 69%\n\t );\n\t-webkit-box-shadow:\n\t  inset 0 2px 9px  rgba(255,255,255,0.3),\n\t  inset 0 -2px 6px rgba(0,0,0,0.4);\n\t-moz-box-shadow:\n\t  inset 0 2px 9px  rgba(255,255,255,0.3),\n\t  inset 0 -2px 6px rgba(0,0,0,0.4);\n\tposition: relative;\n\toverflow: hidden;\n}")
+    sb.append("</style>")
   sb.toString
   }
 
   def buildCell(text : String) = "<td>"+text+"</td>"
+
+  // replace all d+% with a progress bar
+  def buildStatusCell(text : String) =
+    buildCell("""\d+%""".r.replaceAllIn(text, m => buildProgressBar(m.group(0))))
+
+  private def buildProgressBar (text : String) =
+    "<div class=\"meter\" title=\""+text+"\"><span style=\"width:"+text+"\"></span></div>"
+
 }

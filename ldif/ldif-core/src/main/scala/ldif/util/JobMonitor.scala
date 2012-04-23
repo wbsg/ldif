@@ -33,7 +33,7 @@ class JobMonitor extends StatusMonitor with ReportRegister {
     sb.append(buildTable(runningJobs, "Running Jobs"))
 
     //Completed tasks
-    sb.append(buildTable(completedJobs, "Completed Jobs"))
+    sb.append(buildTable(completedJobs, "Completed Jobs", true))
 
     //Failed tasks
     if (failedJobs.size>0)
@@ -45,19 +45,23 @@ class JobMonitor extends StatusMonitor with ReportRegister {
 
   def getText = "Text report not implemented, yet" //TODO
 
-  def buildTable (jobs : IndexedSeq[ReportPublisher], caption : String = null) : String = {
+  def buildTable (jobs : IndexedSeq[ReportPublisher], caption : String = null, complete : Boolean = false) : String = {
     val sb = new StringBuilder
     sb.append("<table  border=\"1\" >")
     if(caption!=null) sb.append("<caption>"+caption+"</caption>")
-    sb.append("<tr><th>Job Name</th><th>Status</th><th>Duration</th><th>Start Time</th><th>Job Infos</th></tr>")
-    for((publisher, index) <- jobs.zipWithIndex) {
+    sb.append("<tr><th>Job Name</th><th>Status</th>")
+    if(complete)
+      sb.append("<th>Duration</th>")
+    else sb.append ("<th>Start Time</th>")
+    sb.append("<th>Job Infos</th></tr>")
+    for(publisher <- jobs) {
       sb.append("<tr>")
         .append(buildCell(publisher.getPublisherName))
-        .append(buildCell(publisher.getStatus.getOrElse("-")))
-        .append(buildCell(publisher.getDuration))
-        .append(buildCell(publisher.getFormattedStartTime))
-        //        .append(buildCell(publisher.getFormattedFinishTime))
-        .append(buildCell(publisher.getLinkAsHtml(index)))
+        .append(buildStatusCell(publisher.getStatus.getOrElse("-")))
+      if(complete)
+        sb.append(buildCell(publisher.getDuration))
+      else sb.append(buildCell(publisher.getFormattedStartTime))
+      sb.append(buildCell(publisher.getLinkAsHtml(getIndex(publisher).get)))
         .append("</tr>\n")
     }
     sb.append("</table>")

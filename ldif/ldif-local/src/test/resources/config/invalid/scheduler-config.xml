@@ -3,6 +3,6 @@
            xsi:schemaLocation="http://www4.wiwiss.fu-berlin.de/ldif/ ../xsd/SchedulerConfig.xsd"
            xmlns="http://www4.wiwiss.fu-berlin.de/ldif/">
     <dataSources>DataSource</dataSources>
-    <importJobs>ImportJob</importJobs>
+    <importJob>ImportJob</importJob>
     <integrationJob>job.xml</integrationJob>
 </scheduler>
