@@ -644,7 +644,6 @@ object IntegrationJob {
   LogUtil.init
   private val log = LoggerFactory.getLogger(getClass.getName)
 
-
   def load (configFile : File, debug : Boolean = false) : IntegrationJob = {
     if(configFile != null)  {
       var config : IntegrationConfig = null
@@ -675,8 +674,7 @@ object IntegrationJob {
   def main(args : Array[String])
   {
     if(args.length == 0) {
-      log.warn("No configuration file given. \nUsage: IntegrationJob <integration job configuration file>")
-      System.exit(1)
+      Ldif.printHelpAndExit()
     }
 
     var debug = false

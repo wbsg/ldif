@@ -34,6 +34,7 @@ import core.Response
 import ldif.util._
 import java.io.File
 import javax.activation.MimetypesFileTypeMap
+import org.slf4j.LoggerFactory
 
 @Path("/")
 class MonitorServer {
@@ -92,6 +93,9 @@ class IntegrationJobMonitorServer {
 
 
 object  MonitorServer {
+
+  private val log = LoggerFactory.getLogger(getClass.getName)
+
   val generalStatusMonitor: StatusMonitor with ReportRegister = JobMonitor
   private var server: HttpServer = null
 
@@ -104,6 +108,7 @@ object  MonitorServer {
       stop()
     server = HttpServerFactory.create(uri)
     server.start()
+    log.info("Status interface started at "+ uri)
   }
 
 }

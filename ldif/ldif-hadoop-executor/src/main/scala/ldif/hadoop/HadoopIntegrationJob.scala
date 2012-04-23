@@ -334,8 +334,8 @@ object HadoopIntegrationJob {
   def main(args : Array[String])
   {
     if(args.length == 0) {
-      log.warn("No configuration file given. \nUsage: HadoopIntegrationJob <integration-configuration-file>")
-      System.exit(1)
+      log.warn("No configuration file given.")
+      Ldif.printHelpAndExit()
     }
     var debug = false
     val configFile = new File(args(args.length-1))

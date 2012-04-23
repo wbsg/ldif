@@ -22,6 +22,11 @@ import java.text.SimpleDateFormat
 import collection.immutable.HashMap
 
 object Consts {
+  val LDIF_VERSION = "0.6"
+  val LDIF_WEBSITE = "http://ldif.wbsg.de"
+  val LDIF_HELP_HEADER = ("LDIF "+LDIF_VERSION+" \nLicensed under Apache License v2.0")
+  val LDIF_HELP_FOOTER = ("\nMore information at "+LDIF_WEBSITE)
+
   val DEFAULT_GRAPH = "http://www4.wiwiss.fu-berlin.de/ldif/defaultGraph"
   val DEFAULT_PROVENANCE_GRAPH = "http://www4.wiwiss.fu-berlin.de/ldif/provenance"
   val DEFAULT_IMPORTED_GRAPH_PREFIX = "http://www4.wiwiss.fu-berlin.de/ldif/graph#"
