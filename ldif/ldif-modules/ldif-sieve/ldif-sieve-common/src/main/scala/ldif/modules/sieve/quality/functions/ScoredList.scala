@@ -55,15 +55,12 @@ class ScoredList(val priorityList: List[String]) extends ScoringFunction {
    */
   def score(graphId: NodeTrait, metadataValues: Traversable[IndexedSeq[NodeTrait]]): Double = {
         val position = getPosition(graphId.value)
-        if (position == 0) {
-            1
-        } else if (position>0) {
-            (1 - ((position+1).toDouble / priorityList.size)) + 0.001 // last bit to distinguish between last item and out of list
+        if (position >= 0) {
+           (1 - (position.toDouble / (priorityList.size)))
         } else {
             0.0
         }
   }
-
 }
 
 object ScoredList {
@@ -76,29 +73,3 @@ object ScoredList {
     new ScoredList(params)
   }
 }
-
-
-
-
-
-
-
-//  /**
-//   * Providing as input a list of nodes in an entity description, compute
-//   */
-//  def score(graphId: NodeTrait, metadataValues: Traversable[IndexedSeq[NodeTrait]]): Double = {
-//    graphIds.headOption match {
-//      case Some(g) => {
-//        val graphId = g(0).value // get value for first property path
-//        val position = getPosition(graphId)
-//        if (position == 0) {
-//            1
-//        } else if (position>0) {
-//            (1 - ((position+1).toDouble / priorityList.size)) + 0.001 // last bit to distinguish between last item and out of list
-//        } else {
-//            0.0
-//        }
-//      }
-//      case None => 0.0
-//    }
-//  }
