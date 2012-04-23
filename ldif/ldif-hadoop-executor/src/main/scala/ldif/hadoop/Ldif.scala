@@ -22,8 +22,6 @@ import ldif.config.SchedulerConfig
 import org.slf4j.LoggerFactory
 import java.io.File
 import ldif.util.{Consts, CommonUtils, ValidationException, LogUtil}
-;
-
 
 object Ldif {
   LogUtil.init

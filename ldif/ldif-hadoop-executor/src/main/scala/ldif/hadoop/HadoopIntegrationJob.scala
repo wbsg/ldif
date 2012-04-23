@@ -208,7 +208,7 @@ class HadoopIntegrationJob(val config : IntegrationConfig, debug : Boolean = fal
    */
   private def getMappingsRepository : Repository = {
     val mappingSource = new FileOrURISource(config.mappingDir)
-    val uriGenerator = new EnumeratingURIGenerator("http://www4.wiwiss.fu-berlin.de/ldif/imported", BigInteger.ONE);
+    val uriGenerator = new EnumeratingURIGenerator("http://www4.wiwiss.fu-berlin.de/ldif/imported", BigInteger.ONE)
     val importedMappingModel = Repository.importMappingDataFromSource(mappingSource, uriGenerator)
     new Repository(new JenaModelSource(importedMappingModel))
   }
