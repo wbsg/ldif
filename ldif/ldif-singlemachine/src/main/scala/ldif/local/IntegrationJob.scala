@@ -486,6 +486,8 @@ case class IntegrationJob (config : IntegrationConfig, debugMode : Boolean = fal
     log.info("[FUSION]")
     log.debug("Sieve will perform fusion, config=%s.".format(sieveSpecDir.getAbsolutePath))
 
+    val outputFusedOnly = config.properties.getProperty("output", "mapped-only").toLowerCase=="fused-only"
+
     val entityDescriptions = fusionModule.tasks.head.sieveConfig.fusionConfig.entityDescriptions
     // why build more entity queues (<- entity description) if we only consume one for each task? (see below)
     //val entityDescriptions = fusionModule.tasks.toIndexedSeq.map(fusionExecutor.input).flatMap{ case StaticEntityFormat(ed) => ed }
@@ -494,7 +496,11 @@ case class IntegrationJob (config : IntegrationConfig, debugMode : Boolean = fal
     val irrelevantQuadsFile = File.createTempFile("ldif-fusion-quads", "bin")
     irrelevantQuadsFile.deleteOnExit()
     val irrelevantQuadsWriter = new FileQuadWriter(irrelevantQuadsFile)
-    val fusionConfigParam = ConfigParameters(configProperties = config.properties, otherQuadsWriter = irrelevantQuadsWriter, collectNotUsedQuads = true)
+    val fusionConfigParam =
+      if (!outputFusedOnly)  {
+        ConfigParameters(configProperties = config.properties, otherQuadsWriter = irrelevantQuadsWriter, collectNotUsedQuads = true)
+      }
+      else ConfigParameters(configProperties = config.properties)
 
     val entityBuilderExecutor = getEntityBuilderExecutor(fusionConfigParam)
     val entityReaders = buildEntities(inputQuadsReader, entityDescriptions, entityBuilderExecutor)
@@ -518,10 +524,14 @@ case class IntegrationJob (config : IntegrationConfig, debugMode : Boolean = fal
 
     fusionExecutor.reporter.setFinishTime()
 
+    // build quad reader to be returned
     irrelevantQuadsWriter.finish()
-    val otherQuadsReader = new FileQuadReader(irrelevantQuadsWriter)
-    new MultiQuadReader(outputQueue, entityBuilderExecutor.getNotUsedQuads, otherQuadsReader)
-
+    if (outputFusedOnly)
+      outputQueue
+    else {
+      val otherQuadsReader = new FileQuadReader(irrelevantQuadsWriter)
+      new MultiQuadReader(outputQueue, entityBuilderExecutor.getNotUsedQuads, otherQuadsReader)
+    }
   }
 
   private def getEntityBuilderExecutor(configParameters: ConfigParameters) = {
