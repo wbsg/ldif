@@ -232,7 +232,9 @@ class SparqlImportJobPublisher (id : Identifier) extends ImportJobStatusMonitor(
   override def getPublisherName = super.getPublisherName + " (sparql)"
 
   override def getReport : Report = {
-    val customReportItems = Seq(ReportItem.get("Query limit",actualLimit))
+    var customReportItems = Seq.empty[ReportItem]
+    if(actualLimit>0)
+      customReportItems = customReportItems :+ ReportItem.get("Query limit",actualLimit)
     super.getReport(customReportItems)
   }
 

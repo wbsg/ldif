@@ -2,7 +2,7 @@
 <scheduler xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
            xsi:schemaLocation="http://www4.wiwiss.fu-berlin.de/ldif/ ../xsd/SchedulerConfig.xsd"
            xmlns="http://www4.wiwiss.fu-berlin.de/ldif/">
-  <importJobs>importJobs</importJobs>
+  <importJob>importJobs</importJob>
   <integrationJob>../integration/integrationJob.xml</integrationJob>
   <dumpLocation>../integration/dumps/</dumpLocation>
 </scheduler>

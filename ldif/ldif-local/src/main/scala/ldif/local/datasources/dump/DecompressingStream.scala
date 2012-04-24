@@ -20,9 +20,9 @@ package ldif.local.datasources.dump
 
 import java.io.{IOException, File, FileInputStream, InputStream}
 import collection.immutable.HashMap
-import java.util.zip.{GZIPInputStream, DeflaterInputStream}
 import java.net.URL
 import org.apache.tools.bzip2.CBZip2InputStream
+import java.util.zip.{ZipInputStream, GZIPInputStream, DeflaterInputStream}
 
 /**
  * Wrapper class to permit transparent decompression of a dump files.
@@ -35,20 +35,23 @@ class DecompressingStream(inputStream:InputStream, fileName:String) {
   val compressionType = detectCompressionType(inputStream, fileName)
 
   object CompressionType extends Enumeration {
-    val DEFLATE, GZIP, BZIP2 = Value
+    val DEFLATE, GZIP,  ZIP, BZIP2 = Value
   }
 
   def encodingToCompressionType =
     HashMap("deflate" -> CompressionType.DEFLATE,
             "gzip" -> CompressionType.GZIP,
+            "zip" -> CompressionType.ZIP,
             "bzip" -> CompressionType.BZIP2)
 
   def contentTypeToCompressionType =
     HashMap("application/x-gzip" -> CompressionType.GZIP,
+            "application/zip" -> CompressionType.GZIP,
             "application/x-bzip" -> CompressionType.BZIP2)
 
   def extensionToCompressionType =
     HashMap(".gz" -> CompressionType.GZIP,
+            ".zip" -> CompressionType.ZIP,
             ".bz2" -> CompressionType.BZIP2)
 
   // -- methods --
@@ -74,15 +77,18 @@ class DecompressingStream(inputStream:InputStream, fileName:String) {
   @throws(classOf[IOException])
   private def detectByMagicByte(inputStream:InputStream) : Option[CompressionType.Value] = {
     if (inputStream.markSupported) {
-      inputStream.mark(3);
+      inputStream.mark(4)
 
       val id1 = inputStream.read
       val id2 = inputStream.read
       val id3 = inputStream.read
+      val id4 = inputStream.read
 
       inputStream.reset()
       if ((id1 == 0x1f) && (id2 == 0x8b)) {
         Option(CompressionType.GZIP)
+      } else if ((id1 == 0x50) && (id2 == 0x4b) && (id3 == 0x03) && (id4 == 0x04)) {
+        Option(CompressionType.ZIP)
       } else if ((id1 == 0x42) && (id2 == 0x5a) && (id3 == 0x68)) {
         Option(CompressionType.BZIP2)
       } else None
@@ -96,6 +102,7 @@ class DecompressingStream(inputStream:InputStream, fileName:String) {
       case None => inputStream
       case Some(CompressionType.DEFLATE) => new DeflaterInputStream(inputStream)
       case Some(CompressionType.GZIP) => new GZIPInputStream(inputStream)
+      case Some(CompressionType.ZIP) => new ZipInputStream(inputStream)
       case Some(CompressionType.BZIP2) => {
          /* CBZip2InputStream expects the magic number to be consumed */
          inputStream.read

@@ -56,6 +56,15 @@ trait Register[T] {
         return None
     }
   }
+  
+  def getIndex(publisher: T): Option[Int] = {
+    this.synchronized {
+      for ((p,index) <- publishers.zipWithIndex)
+        if (p == publisher)
+          return Some(index)
+    }
+    None
+  }
 
   def clean() {
     this.synchronized {

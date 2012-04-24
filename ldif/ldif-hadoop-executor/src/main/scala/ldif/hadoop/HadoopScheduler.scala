@@ -29,7 +29,7 @@ import ldif.datasources.dump.QuadParser
 import org.apache.hadoop.conf.Configuration
 import org.apache.hadoop.fs.{Path, FileSystem}
 import ldif.config.IntegrationConfig
-import ldif.util.{CommonUtils, Consts, StopWatch, FatalErrorListener}
+import ldif.util.{Consts, StopWatch, FatalErrorListener}
 
 /*
  * A singlemachine scheduler/importer that uploads dumps to HDFS and runs Hadoop integration jobs
@@ -42,7 +42,7 @@ class HadoopScheduler (val config : SchedulerConfig, debug : Boolean = false) {
   val hdfs = FileSystem.get(conf)
 
   // load jobs
-  private val importJobs = loadImportJobs(config.importJobsDir)
+  private val importJobs = loadImportJobs(config.importJobsFiles)
   private val integrationJob : HadoopIntegrationJob = loadIntegrationJob(config.integrationJob)
 
   // init status variables
@@ -271,19 +271,8 @@ class HadoopScheduler (val config : SchedulerConfig, debug : Boolean = false) {
     }
   }
 
-  private def loadImportJobs(file : File) : Traversable[ImportJob] =  {
-    if(file == null) {
-      Traversable.empty[ImportJob]
-    }
-    else if(file.isFile) {
-      Traversable(loadImportJob(file))
-    }
-    else {// file is a directory
-      CommonUtils.listFiles(file,"xml").map(loadImportJob(_))
-    }
-  }
-
-  private def loadImportJob(file : File) = ImportJob.load(file)
+  private def loadImportJobs(files : Traversable[File]) : Traversable[ImportJob] =
+    files.map(ImportJob.load(_))
 
   // Build local files for the import job
   private def getDumpFile(job : ImportJob) = new Path(config.dumpLocationDir, job.id +".nq")

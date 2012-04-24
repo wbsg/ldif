@@ -28,10 +28,13 @@ package ldif.local.rest
 
 import com.sun.jersey.api.container.httpserver.HttpServerFactory
 import com.sun.net.httpserver.HttpServer
-import ldif.util.{Publisher, Register, JobMonitor, StatusMonitor}
 import ldif.local.IntegrationJobStatusMonitor
 import javax.ws.rs._
 import core.Response
+import ldif.util._
+import java.io.File
+import javax.activation.MimetypesFileTypeMap
+import org.slf4j.LoggerFactory
 
 @Path("/")
 class MonitorServer {
@@ -44,6 +47,17 @@ class MonitorServer {
   def getJobsHtml(
     @DefaultValue("0") @QueryParam("refresh") refreshTimeInSeconds: Int): String = {
     MonitorServer.generalStatusMonitor.getHtml(Map("refresh" -> refreshTimeInSeconds.toString ))
+  }
+
+  @GET @Produces(Array[String]("image/*"))
+  @Path("images/{image}")
+  def getImage(@PathParam("image") image: String) = {
+    val f = new File(image)
+    val d = f.getCanonicalPath
+    if (!f.exists())
+      throw new WebApplicationException(404)
+    val mt = new MimetypesFileTypeMap().getContentType(f)
+    Response.ok(f, mt).build()
   }
 }
 
@@ -79,7 +93,10 @@ class IntegrationJobMonitorServer {
 
 
 object  MonitorServer {
-  val generalStatusMonitor: StatusMonitor with Register[Publisher] = JobMonitor
+
+  private val log = LoggerFactory.getLogger(getClass.getName)
+
+  val generalStatusMonitor: StatusMonitor with ReportRegister = JobMonitor
   private var server: HttpServer = null
 
   def stop() {
@@ -91,6 +108,7 @@ object  MonitorServer {
       stop()
     server = HttpServerFactory.create(uri)
     server.start()
+    log.info("Status interface started at "+ uri)
   }
 
 }

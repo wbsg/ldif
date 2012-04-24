@@ -85,7 +85,7 @@ case class IntegrationJob (config : IntegrationConfig, debugMode : Boolean = fal
     else
       synchronized {
         //reporter = new IntegrationJobStatusMonitor
-        JobMonitor.addPublisher(reporter)
+        //JobMonitor.addPublisher(reporter)
         IntegrationJobMonitor.value = reporter
         val sourceNumber = config.sources.size
 
@@ -273,7 +273,7 @@ case class IntegrationJob (config : IntegrationConfig, debugMode : Boolean = fal
     val qualityModule = QualityModule.load(config.sieveSpecDir)
     val sieveQualityReader = qualityModule.config.qualityConfig match {
       case e: EmptyQualityConfig => {
-        log.info("[QUALITY] No Sieve configuration found. No quality assessment will be performed.")
+        log.info("No Sieve configuration found. No quality assessment will be performed.")
         new QuadQueue() // return empty queue
       }
       case c: QualityConfig => {
@@ -290,7 +290,7 @@ case class IntegrationJob (config : IntegrationConfig, debugMode : Boolean = fal
     val fusionModule = FusionModule.load(config.sieveSpecDir, qualityModule)
     val sieveFusionReader = fusionModule.config.fusionConfig match {
       case e: EmptyFusionConfig => {
-        log.info("[FUSION] No Sieve configuration found. No fusion will be performed.")
+        log.info("No Sieve configuration found. No fusion will be performed.")
         if(outputProvenance)
           new MultiQuadReader(fusionInput:_*)
         else
@@ -375,7 +375,7 @@ case class IntegrationJob (config : IntegrationConfig, debugMode : Boolean = fal
    */
   private def mapQuads(integrationConfig: IntegrationConfig, readers: Seq[QuadReader]) : Option[Seq[QuadReader]] = {
     val mappingSource = new FileOrURISource(integrationConfig.mappingDir)
-    val uriGenerator = new EnumeratingURIGenerator("http://www4.wiwiss.fu-berlin.de/ldif/imported", BigInteger.ONE);
+    val uriGenerator = new EnumeratingURIGenerator("http://www4.wiwiss.fu-berlin.de/ldif/imported", BigInteger.ONE)
     val importedMappingModel = Repository.importMappingDataFromSource(mappingSource, uriGenerator)
     val repository = new Repository(new JenaModelSource(importedMappingModel))
     val r2rConfig = new R2RConfig(repository)
@@ -395,11 +395,9 @@ case class IntegrationJob (config : IntegrationConfig, debugMode : Boolean = fal
 
     executor.reporter.mappingsTotal = module.tasks.size
 
-      //runInBackground
-    {
-      for((r2rTask, reader) <- module.tasks.toList zip entityReaders)
-        executor.execute(r2rTask, Seq(reader), writer)
-    }
+    //runInBackground
+    for((r2rTask, reader) <- module.tasks.toList zip entityReaders)
+      executor.execute(r2rTask, Seq(reader), writer)
     writer.finish
     executor.reporter.setFinishTime()
 
@@ -452,7 +450,8 @@ case class IntegrationJob (config : IntegrationConfig, debugMode : Boolean = fal
     // todo: this could also work if we created only one entitydescription for all task? bad for distributed computing, maybe?
 //  var taskToReaders = new HashMap[QualityTask, Seq[EntityReader]]
     val entityDescriptions = qualityModule.tasks.toSeq.map(_.qualitySpec.entityDescription)
-    val readers = buildEntities(cloneQuadReaders(inputQuadsReader), entityDescriptions, ConfigParameters(config.properties))
+    val ebe = new EntityBuilderExecutor(ConfigParameters(config.properties))
+    val readers = buildEntities(cloneQuadReaders(inputQuadsReader), entityDescriptions, ebe)
 //    for ((task) <- qualityModule.tasks) {
 //      if (readers.size > 0) {
 //        taskToReaders += task -> readers
@@ -468,12 +467,12 @@ case class IntegrationJob (config : IntegrationConfig, debugMode : Boolean = fal
     val qualityExecutor = new SieveLocalQualityExecutor
     reporter.addPublisher(qualityExecutor.reporter)
     reporter.setStatus("Sieve - Quality")
+    qualityExecutor.reporter.entitiesTotal = ebe.reporter.entitiesTotal.intValue()
     for((task, reader) <- qualityModule.tasks.toSeq zip readers)  {
-//  for ((task, readers) <- taskToReaders) {
+      //  for ((task, readers) <- taskToReaders) {
       log.debug("\n\tMetric: %s\n\tFunction: %s\n\tEntityDescription: %s".format(task.qualitySpec.outputPropertyNames,task.qualitySpec.scoringFunctions,reader.entityDescription))
       qualityExecutor.execute(task, Seq(reader), output)
     }
-
     qualityExecutor.reporter.setFinishTime()
 
     output
@@ -487,42 +486,52 @@ case class IntegrationJob (config : IntegrationConfig, debugMode : Boolean = fal
     log.info("[FUSION]")
     log.debug("Sieve will perform fusion, config=%s.".format(sieveSpecDir.getAbsolutePath))
 
-    val fusionExecutor = new SieveLocalFusionExecutor
-    val entityDescriptions = fusionModule.tasks.toIndexedSeq.map(fusionExecutor.input).flatMap{ case StaticEntityFormat(ed) => ed }
+    val outputFusedOnly = config.properties.getProperty("output", "mapped-only").toLowerCase=="fused-only"
+
+    val entityDescriptions = fusionModule.tasks.head.sieveConfig.fusionConfig.entityDescriptions
+    // why build more entity queues (<- entity description) if we only consume one for each task? (see below)
+    //val entityDescriptions = fusionModule.tasks.toIndexedSeq.map(fusionExecutor.input).flatMap{ case StaticEntityFormat(ed) => ed }
 
     // setup sieve config parameters
     val irrelevantQuadsFile = File.createTempFile("ldif-fusion-quads", "bin")
     irrelevantQuadsFile.deleteOnExit()
     val irrelevantQuadsWriter = new FileQuadWriter(irrelevantQuadsFile)
-    val fusionConfigParam = ConfigParameters(configProperties = config.properties, otherQuadsWriter = irrelevantQuadsWriter, collectNotUsedQuads = true)
+    val fusionConfigParam =
+      if (!outputFusedOnly)  {
+        ConfigParameters(configProperties = config.properties, otherQuadsWriter = irrelevantQuadsWriter, collectNotUsedQuads = true)
+      }
+      else ConfigParameters(configProperties = config.properties)
 
     val entityBuilderExecutor = getEntityBuilderExecutor(fusionConfigParam)
     val entityReaders = buildEntities(inputQuadsReader, entityDescriptions, entityBuilderExecutor)
-    //val entityReaders = buildEntities(inputQuadsReader, entityDescriptions, ConfigParameters(config.properties))
 
     StringPool.reset
     log.info("Time needed to build entities for fusion phase: " + stopWatch.getTimeSpanInSeconds + "s")
 
+    val outputQueue = new QuadQueue
+    val fusionExecutor = new SieveLocalFusionExecutor
     reporter.addPublisher(fusionExecutor.reporter)
     reporter.setStatus("Sieve - Fusion")
-    fusionExecutor.reporter.setStartTime()
-    val outputQueue = new QuadQueue
+    fusionExecutor.reporter.entitiesTotal = entityBuilderExecutor.reporter.entitiesTotal.intValue()
 
     //runInBackground
+    for((fusionTask, reader) <- fusionModule.tasks.toList zip entityReaders.toList)
     {
-      for((fusionTask, reader) <- fusionModule.tasks.toList zip entityReaders.toList)
-      {
-        log.debug("fusionTask: %s; reader: %s.".format(fusionTask.name, reader.entityDescription))
-        //fusionTask.qualityAssessment
-        fusionExecutor.execute(fusionTask, Seq(reader), outputQueue)
-      }
+      log.debug("fusionTask: %s; reader: %s.".format(fusionTask.name, reader.entityDescription))
+      // consume one entity queue for each task
+      fusionExecutor.execute(fusionTask, Seq(reader), outputQueue)
     }
+
     fusionExecutor.reporter.setFinishTime()
 
+    // build quad reader to be returned
     irrelevantQuadsWriter.finish()
-    val otherQuadsReader = new FileQuadReader(irrelevantQuadsWriter)
-    new MultiQuadReader(outputQueue, entityBuilderExecutor.getNotUsedQuads, otherQuadsReader)
-
+    if (outputFusedOnly)
+      outputQueue
+    else {
+      val otherQuadsReader = new FileQuadReader(irrelevantQuadsWriter)
+      new MultiQuadReader(outputQueue, entityBuilderExecutor.getNotUsedQuads, otherQuadsReader)
+    }
   }
 
   private def getEntityBuilderExecutor(configParameters: ConfigParameters) = {
@@ -600,19 +609,21 @@ case class IntegrationJob (config : IntegrationConfig, debugMode : Boolean = fal
   }
 
   private def writeOutput(config : IntegrationConfig, reader : QuadReader) {
-    for (writer <- config.outputs.getByPhase(COMPLETE)) {
+    val writers = config.outputs.getByPhase(COMPLETE)
+    if(writers.size > 0 ){
       var count = 0
-
-      //TODO consider adding a QuadWriter.getDescription method
+     //TODO consider adding a QuadWriter.getDescription method
       // log.info("Writing output to "+config.output.description)
       log.info("Writing integration output...")
       while(reader.hasNext) {
-        writer.write(reader.read())
+        val next = reader.read
+        writers.foreach(_.write(next))
         count += 1
       }
-      writer.finish
-      log.info(count + " Quads written")
-    }
+      writers.foreach(_.finish())
+      log.info(count + " Quads written") }
+    else
+      log.info("No final output has been specified for the Integration Job. Integration output is discarded.")
   }
 
   // Writes the content of #reader to all output writers defined for #phase in #config
@@ -624,37 +635,12 @@ case class IntegrationJob (config : IntegrationConfig, debugMode : Boolean = fal
       val readerCopy = new QuadQueue
       while(reader.hasNext) {
         val next = reader.read
-        for (writer <- writers)
-          writer.write(next)
+        writers.foreach(_.write(next))
         readerCopy.write(next)
       }
-      for (writer <- writers)
-        writer.finish
+      writers.foreach(_.finish())
       readerCopy
     }
-  }
-
-  private def writeDebugOutput(phase: String, outputFile: File, reader: QuadReader): QuadReader = {
-    val newOutputFile = new File(outputFile.getAbsolutePath + "." + phase)
-    copyAndDumpQuadQueue(reader, newOutputFile.getAbsolutePath)
-  }
-
-  def copyAndDumpQuadQueue(quadQueue: QuadReader, outputFile: String): QuadReader = {
-    val quadOutput = File.createTempFile("ldif-debug-quads", ".bin")
-    quadOutput.deleteOnExit
-    val writer = new FileQuadWriter(quadOutput)
-    val quadWriter = new BufferedWriter(new FileWriter(outputFile))
-
-    while(quadQueue.hasNext) {
-      val next = quadQueue.read
-      quadWriter.write(next.toNQuadFormat)
-      quadWriter.write(" .\n")
-      writer.write(next)
-    }
-    quadWriter.flush()
-    quadWriter.close()
-    writer.finish
-    return new FileQuadReader(writer)
   }
 
   def getLastUpdate = lastUpdate
@@ -667,7 +653,6 @@ case class IntegrationJob (config : IntegrationConfig, debugMode : Boolean = fal
 object IntegrationJob {
   LogUtil.init
   private val log = LoggerFactory.getLogger(getClass.getName)
-
 
   def load (configFile : File, debug : Boolean = false) : IntegrationJob = {
     if(configFile != null)  {
@@ -699,8 +684,7 @@ object IntegrationJob {
   def main(args : Array[String])
   {
     if(args.length == 0) {
-      log.warn("No configuration file given. \nUsage: IntegrationJob <integration job configuration file>")
-      System.exit(1)
+      Ldif.printHelpAndExit()
     }
 
     var debug = false

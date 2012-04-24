@@ -22,9 +22,7 @@ import ldif.config.SchedulerConfig
 import java.io.File
 import org.slf4j.LoggerFactory
 import rest.MonitorServer
-import ldif.util.{Consts, ValidationException, LogUtil}
-;
-
+import ldif.util.{CommonUtils, Consts, ValidationException, LogUtil}
 
 object Ldif {
   LogUtil.init
@@ -34,8 +32,8 @@ object Ldif {
   {
     var debug = false
     if(args.length==0) {
-      log.warn("No configuration file given. \nUsage: Ldif <scheduler-configuration-file>")
-      System.exit(1)
+      log.warn("No configuration file given.")
+      printHelpAndExit()
     }
     else if(args.length>=2 && args(0)=="--debug")
       debug = true
@@ -44,10 +42,12 @@ object Ldif {
       val configUrl = getClass.getClassLoader.getResource("ldif/local/neurowiki/scheduler-config.xml")
       new File(configUrl.toString.stripPrefix("file:"))
     } else
-      new File(args(args.length-1))
+        CommonUtils.getFileFromPathOrUrl(args(args.length-1))
 
-    if(!configFile.exists)
+    if(!configFile.exists){
       log.warn("Configuration file not found at "+ configFile.getCanonicalPath)
+      printHelpAndExit()
+    }
     else {
       // Setup Scheduler
       var config : SchedulerConfig = null
@@ -80,5 +80,14 @@ object Ldif {
       scheduler.run(true)
     }
   }
+
+  def printHelpAndExit() {
+    log.info(Consts.LDIF_HELP_HEADER+
+      "\nUsages: ldif <schedulerConfiguration>" +
+      "\n\tldif-integrate <integrationJobConfiguration>" +
+      Consts.LDIF_HELP_FOOTER)
+    System.exit(1)
+  }
+
 
 }

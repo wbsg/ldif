@@ -18,12 +18,14 @@
 
 package ldif.util
 
-import java.io.File
 import ldif.datasources.dump.QuadParser
 import ldif.runtime.Quad
 import xml.Node
 import org.slf4j.LoggerFactory
 import java.util.{Calendar, Date, Properties}
+import java.net.URL
+import io.Source
+import java.io.{FileWriter, File}
 
 object CommonUtils {
 
@@ -86,6 +88,16 @@ object CommonUtils {
     }
   }
 
+  // Check if the given file has a valid extension
+  def isValidFile(file : File, allowedExtensions : Seq[String])  : Boolean = {
+    if(allowedExtensions.size == 0)
+      return true
+    for(ext <- allowedExtensions)
+      if(file.getName.endsWith("."+ext))
+        return true
+    false
+  }
+
   // helper method
   def listFiles(dir : File, allowedExtension : String) : Traversable[File] = {
     listFiles(dir,Seq(allowedExtension))
@@ -96,6 +108,75 @@ object CommonUtils {
     val cal = Calendar.getInstance
     cal.setTime(date)
     cal
+  }
+
+  // Get a file from a given location (local path or url)
+  def getFileFromPathOrUrl(location : String, baseDir : String = null) : File = {
+    if (location.equals("") || location == null)
+      null
+    else if (!isLocal(location))
+      getFileFromUrl(location)
+    else
+      getFilefromLocalPath(location, baseDir)
+  }
+
+  // Get a file from a given URL (as String)
+  def getFileFromUrl(url : String) : File =
+    getFileFromUrl(new URL(url))
+
+  // Get a file from a given URL
+  def getFileFromUrl(url : URL) : File =  {
+    val urlString = url.toString
+    log.info("Loading " + urlString)
+    var file =  File.createTempFile("ldif", urlString.substring(urlString.lastIndexOf('/')+1))
+    val writer = new FileWriter(file.getCanonicalPath)
+    try {
+      val lines = Source.fromURL(url).getLines()
+      for (line <- lines)
+        writer.write(line+"\n")
+    } catch {
+      case e:Exception => {
+        log.warn(urlString + " did not provide any data")
+        file = null
+        throw e
+      }
+    }
+    writer.flush()
+    writer.close()
+    file
+  }
+
+  // Get a file from a given path
+  def getFilefromLocalPath(filepath : String, baseDir : String = null) : File = {
+    var file : File = null
+    val relativeFile = new File(baseDir + Consts.fileSeparator  + filepath)
+    val absoluteFile = new File(filepath)
+    if (relativeFile.exists || absoluteFile.exists) {
+      if (relativeFile.exists)
+        file = relativeFile
+      else file = absoluteFile
+    }
+    else
+    log.warn("\'Path not found. Searched: " + relativeFile.getCanonicalPath + ", " + absoluteFile.getCanonicalPath)
+    file
+  }
+
+  // Check if filepath is a local or remote path
+  def isLocal(filepath : String) : Boolean = {
+    var isLocal = true
+    var url:URL = null
+    try {
+      url = new URL(filepath)
+      isLocal = false
+    } catch {
+      case e:Exception => {}
+    }
+
+    if (url != null && url.getProtocol.toLowerCase.equals("file")) {
+      isLocal = true
+    }
+
+    isLocal
   }
 
 }

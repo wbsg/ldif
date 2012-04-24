@@ -208,7 +208,7 @@ class HadoopIntegrationJob(val config : IntegrationConfig, debug : Boolean = fal
    */
   private def getMappingsRepository : Repository = {
     val mappingSource = new FileOrURISource(config.mappingDir)
-    val uriGenerator = new EnumeratingURIGenerator("http://www4.wiwiss.fu-berlin.de/ldif/imported", BigInteger.ONE);
+    val uriGenerator = new EnumeratingURIGenerator("http://www4.wiwiss.fu-berlin.de/ldif/imported", BigInteger.ONE)
     val importedMappingModel = Repository.importMappingDataFromSource(mappingSource, uriGenerator)
     new Repository(new JenaModelSource(importedMappingModel))
   }
@@ -334,8 +334,8 @@ object HadoopIntegrationJob {
   def main(args : Array[String])
   {
     if(args.length == 0) {
-      log.warn("No configuration file given. \nUsage: HadoopIntegrationJob <integration-configuration-file>")
-      System.exit(1)
+      log.warn("No configuration file given.")
+      Ldif.printHelpAndExit()
     }
     var debug = false
     val configFile = new File(args(args.length-1))

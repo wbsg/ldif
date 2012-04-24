@@ -93,7 +93,7 @@
 
         <xs:element name="internalId" type="ldif:internalIdType" minOccurs="0" />
 
-        <xs:element name="dataSource" type="xs:string" />
+        <xs:element name="dataSource" type="xs:string" minOccurs="0" />
 
         <xs:element name="refreshSchedule" type="ldif:refreshScheduleType" />
 

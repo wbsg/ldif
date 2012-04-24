@@ -18,6 +18,9 @@
 
 package ldif.hadoop
 
+import org.slf4j.LoggerFactory
+import ldif.util.Consts
+
 /**
  * Created by IntelliJ IDEA.
  * User: andreas
@@ -27,11 +30,14 @@ package ldif.hadoop
  */
 
 object MainClassDispatcher {
+
+  private val log = LoggerFactory.getLogger(getClass.getName)
+
   def main(args : Array[String])
   {
     if(args.length<1) {
-      System.err.println("Error: No arguments given.")
-      exitDispatcher
+      log.warn("No arguments given.")
+      printHelpAndExit()
     }
     val command = args(0)
     val parameters = args.slice(1, args.length) // remove command from array
@@ -41,17 +47,19 @@ object MainClassDispatcher {
       case "urisets" => UriSets.execute(parameters)
       case "r2r" => R2R.execute(parameters)
       case "silk" => Silk.execute(parameters)
-      case _ => System.err.println("Error: command " + command + " invalid.")
-        exitDispatcher
+      case _ => log.info("Error: command " + command + " invalid.")
+      printHelpAndExit()
     }
   }
 
-  private def exitDispatcher {
-    System.err.println("Usages: hadoop jar ldif-hadoop-executor* scheduler <schedulerConfig>")
-    System.err.println("        hadoop jar ldif-hadoop-executor* integrate <integrationJobConfig>")
-    System.err.println("        hadoop jar ldif-hadoop-executor* urisets <input path> <output path>")
-    System.err.println("        hadoop jar ldif-hadoop-executor* r2r <local path to mappings> <input path> <output path>")
-    System.err.println("        hadoop jar ldif-hadoop-executor* silk <local path to link spec> <input path> <output path>")
+  private def printHelpAndExit() {
+    log.info(Consts.LDIF_HELP_HEADER+
+      "\nUsages: hadoop jar ldif-hadoop-executor* scheduler <schedulerConfig>"+
+      "\n        hadoop jar ldif-hadoop-executor* integrate <integrationJobConfig>"+
+      "\n        hadoop jar ldif-hadoop-executor* urisets <input path> <output path>"+
+      "\n        hadoop jar ldif-hadoop-executor* r2r <local path to mappings> <input path> <output path>"+
+      "\n        hadoop jar ldif-hadoop-executor* silk <local path to link spec> <input path> <output path>" +
+      Consts.LDIF_HELP_FOOTER)
     System.exit(1)
   }
 }

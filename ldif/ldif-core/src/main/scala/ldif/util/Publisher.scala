@@ -20,6 +20,7 @@ package ldif.util
 
 import java.text.SimpleDateFormat
 import java.util.{Calendar, GregorianCalendar}
+import java.util.concurrent.TimeUnit
 
 /**
  * Created by IntelliJ IDEA.
@@ -81,7 +82,29 @@ trait Publisher {
   /**
    * The duration of the job in seconds as string representation
    */
-  def getDuration: String = if (finished) (finishTime.getTime.getTime - startTime.getTime.getTime)/1000.0+" s"  else ""
+  def getDuration: String =
+    if (finished)
+      fromMillisecondsToDuration(finishTime.getTime.getTime - startTime.getTime.getTime)
+    else ""
+
+  /**
+   * Convert milliseconds to format hh:mm:ss
+   */
+  def fromMillisecondsToDuration(msec : Long) : String = {
+    // TODO use scala.util.FiniteDuration instead (as available)
+    if (msec > 0){
+      val sb = new StringBuilder
+      val hh = TimeUnit.MILLISECONDS.toHours(msec)
+      val mm = TimeUnit.MILLISECONDS.toMinutes(msec)-hh*60
+      val ss = TimeUnit.MILLISECONDS.toSeconds(msec)-hh*3600-mm*60
+      if (hh>0)
+        sb.append("%02d".format(hh)+":")
+      sb.append("%02d".format(mm)+":"+"%02d".format(ss))
+      //sb.append(" < "+msec)
+      sb.toString
+    }
+    else "00:00"
+  }
 
   /**
    * The status of the job 
