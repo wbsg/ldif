@@ -24,5 +24,5 @@ import ldif.util.Identifier
 
 
 case class IntegrationTask(job: IntegrationJob) extends ModuleTask {
-  val name = Identifier("integrationJob_"+ System.currentTimeMillis())  //TODO add integration jobs identifier
+  val name = Identifier("integrationJob")  //TODO add integration jobs identifier
 }

@@ -44,5 +44,7 @@ trait Workspace {
 
   def saveImportJob(name: Identifier, xml : String)
 
+  def saveIntegrationJob(name: Identifier, xml : String, properties : String)
+
   def importImportJob(file : File)
 }

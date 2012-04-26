@@ -400,6 +400,7 @@ $(function () {
 
                         var linkSpecifications = $("#integration-job-form-tabs-1 > form > input[name='linkSpecifications']").val();
                         var mappings = $("#integration-job-form-tabs-1 > form > input[name='mappings']").val();
+                        var sieve = $("#integration-job-form-tabs-1 > form > input[name='sieve']").val();
                         var output = $("#integration-job-form-tabs-1 > form > input[name='output']").val();
                         var runSchedule = $("#integration-job-form-tabs-1 > form > select[name='runSchedule']").val();
 
@@ -410,7 +411,8 @@ $(function () {
                                 errors.push('No file chosen.<br/>'); fields.push('file');
                             }
                         } else {
-                            if (!output) {
+                            //TODO update mandatory fields
+                           /* if (!output) {
                                 errors.push('Output value is empty.<br/>'); fields.push('output');
                             }
                             if (!linkSpecifications) {
@@ -418,7 +420,7 @@ $(function () {
                             }
                             if (!mappings) {
                                 errors.push('Mappings value is empty.<br/>'); fields.push('mappings');
-                            }
+                            }  */
                         }
 
                         if (errors.length > 0) {
@@ -445,17 +447,31 @@ $(function () {
                             xml.append($('<sources>'+sources+'</sources>'));
                              */
 
-                            xml.append($('<linkSpecifications>'+linkSpecifications+'</linkSpecifications>'));
-                            xml.append($('<mappings>'+mappings+'</mappings>'));
-                            xml.append($('<output>'+output+'</output>'));
+                            // TODO implement this properly
+                            if(linkSpecifications != '')
+                                xml.append($('<linkSpecifications>'+linkSpecifications+'</linkSpecifications>'));
+                            else xml.append($('<linkSpecifications>linkspecs</linkSpecifications>'));
+                            if(mappings != '')
+                                xml.append($('<mappings>'+mappings+'</mappings>'));
+                            else xml.append($('<mappings>mappings</mappings>'));
+                            if(sieve != '')
+                                xml.append($('<sieve>'+sieve+'</sieve>'));
+                            else xml.append($('<sieve>sieve</sieve>'));
+                            xml.append($('<source>dumps</source>'));
+                            xml.append($('<output><file>output/integrated.nq</file></output>'));
+
+
                             if (runSchedule != '')
                                 xml.append($('<runSchedule>'+runSchedule+'</runSchedule>'));
 
                             if (selectedTab == 1) {
                                 importIntegrationJob(projectName, file);
                             } else {
-                                saveIntegrationJob(xml, projectName, propertiesString);
+                                var xmlString = '<integrationJob>'+$(xml).html()+'</integrationJob>'
+                                saveIntegrationJob(xmlString, propertiesString);
                             }
+                            $(this).dialog("close");
+                            loadingShow;
                         }
                     },
                     Cancel: function() {
@@ -506,6 +522,8 @@ $(function () {
 
                             saveScheduler(xml, projectName, propertiesString);
                         }
+                        $(this).dialog("close");
+                        loadingShow;
                     },
                     Cancel: function() {
                         $(this).dialog("close");
@@ -669,7 +687,7 @@ function addIntegrationJob(jsonIntegrationJob, projectNode, projectName, p) {
     $(ds_actions).addClass('actions');
     $(ds_span).append(ds_actions);
     addAction('ds_edit', 'Edit', "Edit integration job", "editIntegrationJob('" + projectName + "'," + p + ")", ds_actions, projectName, true);
-    addAction('delete', 'Remove', "Remove integration job ", "confirmDelete('removeIntegrationJob','" + projectName + "')", ds_actions, projectName, true);
+    addAction('delete', 'Remove', "Remove integration job ", "confirmDelete('removeIntegrationJob','IntegrationJob')", ds_actions, projectName, true);
     addAction('run', 'Run', "Run integration job", "runIntegration('')", ds_actions, projectName, true);
 
     addLeaf(jsonIntegrationJob.runSchedule, ds_li, 'Run schedule: ', 'refresh-schedule-icon');
@@ -847,8 +865,8 @@ function updateWorkspace(obj) {
             addAction('integration_job', 'Integration Job', 'Add integration job', "createIntegrationJob('" + project.name + "'," + p + ")", proj_actions, project.name, !integrationJobExists(p));
             //### addAction('schedule_job', 'Scheduler', 'Configure scheduler', "editScheduler('" + project.name + "'," + p + ")", proj_actions, project.name, true);
             addAction('export', 'Export','Export scheduler: '+project.name,"exportProject('"+project.name+"')",proj_actions, project.name, true);
-            addAction('delete', 'Remove', 'Remove scheduler: '+project.name, "confirmDelete('removeProject','"+project.name+"','')", proj_actions, '', true);
-     	    addAction('run', 'Run', "Run scheduler: "+project.name, "runScheduler('')", proj_actions, project.name, true); //##
+            addAction('delete', 'Remove', 'Remove scheduler: '+project.name, "confirmDelete('removeProject','"+project.name+"')", proj_actions, project.name, true);
+     	    addAction('run', 'Run', "Run scheduler: "+project.name, "runScheduler('')", proj_actions, project.name, integrationJobExists(p));
 
             // display dataSource
             var dataSources = obj.workspace.project[p].scheduler.dataSources
@@ -895,7 +913,6 @@ function addAction(type, label, desc, action, parent, activeProject, enabled) {
                 console.log("Evaluate "+action);
                 //saveOpenNodes(activeProject);
                 if (activeProject!=""){
-                    console.log('Set current project: '+activeProject);
                     setCurrentProject(activeProject);}
                 $.globalEval(action);
             })
@@ -956,9 +973,10 @@ function callAction(action,res){
     // work-around : passing the action as string parameter -> the action would be invoked anyway
     switch (action)
         {
-        case 'removeProject' :  removeProject(res);  break;
+        case 'removeProject' :  removeProject();  break;
         case 'removeDataSource' :  removeDataSource(res);  break;
         case 'removeImportJob' :  removeImportJob(res);  break;
+        case 'removeIntegrationJob' : removeIntegrationJob(); break;
         default : alert("Error: Action \'"+action+"\' not defined!");
         }
 }
@@ -1214,10 +1232,8 @@ function editScheduler(projectName, p) {
 }
 
 // init and display the proper delete confirm dialog
-function confirmDelete(action,proj,res){
-    if (res === undefined)
-        res = ' Integration job';
-    $("#remove-form > span.ressource").html(proj+" "+res);
+function confirmDelete(action,res){
+    $("#remove-form > span.resource").html(res);
     $("#remove-form").dialog({
                 title: 'Remove',
                 height: 180,
@@ -1227,7 +1243,7 @@ function confirmDelete(action,proj,res){
                 buttons: {
                     "Yes, delete it": function() {
                         $(this).dialog("close");
-                        callAction(action,proj,res);
+                        callAction(action,res);
                     },
                     Cancel: function() {
                         $(this).dialog("close");

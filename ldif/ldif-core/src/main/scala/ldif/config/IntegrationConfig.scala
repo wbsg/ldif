@@ -44,7 +44,7 @@ case class IntegrationConfig (sources : Traversable[String],
 
   //TODO implement outputConfig.toXML
   def toXML : xml.Node = {
-    <intergrationJob xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    <integrationJob xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                      xsi:schemaLocation="http://www4.wiwiss.fu-berlin.de/ldif/ ../../xsd/IntegrationJob.xsd"
                      xmlns="http://www4.wiwiss.fu-berlin.de/ldif/">
       {if (isAnySourceDefined){
@@ -57,12 +57,12 @@ case class IntegrationConfig (sources : Traversable[String],
       {if (isSieveSpecDefined) <sieve>{sieveSpecDir}</sieve>}
       {if (isAnyOutputDefined){
       <outputs>
-        {for (output <- outputs.outputs) yield { <output>{output.toString()}</output> } }
+        {for (output <- outputs.outputs) yield { <output><file>todo</file></output> } }
       </outputs>}
       }
       {if (isAnyPropertyDefined) <properties>{properties.getProperty("propertiesFile")}</properties>}
       <runSchedule>{runSchedule}</runSchedule>
-    </intergrationJob>}
+    </integrationJob>}
 }
 
 object IntegrationConfig {
@@ -77,9 +77,15 @@ object IntegrationConfig {
 
   def load = new ValidatingXMLReader(fromFile, schemaLocation)
 
-  def fromFile(configFile : File)  : IntegrationConfig = {
-    baseDir = configFile.getParent
-    xml = XML.loadFile(configFile)
+  def fromFile(file : File)  : IntegrationConfig =
+    fromXML(XML.loadFile(file), file.getParent)
+
+  def fromString(xmlString : String, dir : String) =
+    fromXML(XML.loadString(xmlString), dir)
+
+  def fromXML(node : Node, dir : String) : IntegrationConfig = {
+    xml = node
+    baseDir = dir
 
     // Read in properties
     val propertiesFile = getFile("properties", baseDir)

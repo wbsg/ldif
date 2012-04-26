@@ -59,13 +59,15 @@ object Workspace {
 //      importProjectFunction &
 //      exportProjectFunction &
       injectFunction("setCurrentProject", setCurrentProject _, 1) &
-      injectFunction("removeProject", removeProject _ , 1) &
+      injectFunction("removeProject", removeProject _ , 0) &
+      injectFunction("removeIntegrationJob", removeIntegrationJob _ , 0) &
       injectFunction("removeDataSource", removeDataSource _ , 1) &
       injectFunction("removeImportJob", removeImportJob _ , 1) &
       injectFunction("saveDataSource", saveDataSource _ , 2) &
-      saveImportJobFunction &
-      runSchedulerFunction &
-      runIntegrationFunction
+      injectFunction("saveImportJob", saveImportJob _ , 2) &
+      injectFunction("saveIntegrationJob", saveIntegrationJob _ , 2) &
+      injectFunction("runScheduler", runScheduler _ , 0) &
+      injectFunction("runIntegration", runIntegration _ , 0)
   }
 
   //TODO Fix - ajax calls are executed more times
@@ -77,7 +79,10 @@ object Workspace {
     //Callback which executes the provided function
     def callback(args: String): JsCmd = {
       try {
-        val params = args.split(',')
+        val params =
+          if (numberOfParams>0)
+            args.split(',')
+          else Array.empty[String]
         // check number of parameters
         if (params.length != numberOfParams)
           throw new Exception("Wrong number of parameters for function "+name+
@@ -103,55 +108,56 @@ object Workspace {
   }
 
   // JS Command which defines the setCurrentProject function
-  private def setCurrentProject(params : Array[String]) : JsCmd = {
-    User().project = User().workspace.project(params(0))
+  private def setCurrentProject(args : Array[String]) : JsCmd = {
+    User().project = User().workspace.project(args(0))
     JSUtils.Empty
   }
 
   // JS Command which defines the removeDataSource function
-  private def removeDataSource(params : Array[String]) : JsCmd = {
-    User().project.dataSourceModule.remove(params(0))
+  private def removeDataSource(args : Array[String]) : JsCmd = {
+    User().project.dataSourceModule.remove(args(0))
     updateCmd
   }
 
   // JS Command which defines the removeImportJob function
-  private def removeImportJob(params : Array[String]) : JsCmd = {
-    User().project.importModule.remove(params(0))
+  private def removeImportJob(args : Array[String]) : JsCmd = {
+    User().project.importModule.remove(args(0))
     updateCmd
   }
 
   // JS Command which defines the removeProject function
-  private def removeProject(params : Array[String]) : JsCmd = {
-    User().workspace.removeProject(params(0))
+  private def removeProject(args : Array[String]) : JsCmd = {
+    User().workspace.removeProject(User().project.name)
     User().resetCurrentProject()
     updateCmd
   }
 
+  // JS Command which defines the removeIntegrationJob function
+  private def removeIntegrationJob(args : Array[String]) : JsCmd = {
+    User().project.integrationModule.remove("integrationJob")
+    updateCmd
+  }
+
   // JS Command which defines the saveDataSource function
-  private def saveDataSource(params : Array[String]) : JsCmd = {
-    User().workspace.saveDataSource(params(0), params(1))
-    updateCmd &
-      JSUtils.Log("Updated dataSource: " + params(0))
+  private def saveDataSource(args : Array[String]) : JsCmd = {
+    User().workspace.saveDataSource(args(0), args(1))
+    updateCmd
   }
 
-  private def saveImportJobFunction : JsCmd = {
-    def callback(args: String): JsCmd = {
-      try {
-        val Array(taskName, xml) = args.split(',')
-        User().workspace.saveImportJob(taskName, xml)
-        updateCmd &
-          JSUtils.Log("Updated importJob: " + taskName)
-      } catch {
-        case ex: Exception => Workspace.hideLoadingDialogCmd &
-          JSUtils.Message(ex.getMessage.encJs)
-      }
-    }
-    val ajaxCall = SHtml.ajaxCall(JsRaw("taskName + ',' + xml"), callback _)._2.cmd
-    JsCmds.Function("saveImportJob", "taskName" :: "xml" :: Nil, ajaxCall)
+  // JS Command which defines the saveImportJob function
+  private def saveImportJob(args : Array[String]) : JsCmd = {
+    User().workspace.saveImportJob(args(0), args(1))
+    updateCmd
   }
 
-  private def runIntegrationFunction : JsCmd = {
-    def callback(args: String): JsCmd = {
+  // JS Command which defines the saveIntegrationJob function
+  private def saveIntegrationJob(args : Array[String]) : JsCmd = {
+    User().workspace.saveIntegrationJob("integrationJob", args(0), args(1))
+    updateCmd
+  }
+
+  // JS Command which defines the runIntegration function
+  private def runIntegration(args : Array[String]) : JsCmd = {
       if (!runningIntegration) {
         runningIntegration =true
         try {
@@ -167,20 +173,17 @@ object Workspace {
         }
       }
       else JSUtils.Log("An other IntegrationJob is already running, please wait.")
-    }
-    val ajaxCall = SHtml.ajaxCall(JsRaw(""), callback _)._2.cmd
-    JsCmds.Function("runIntegration", Nil, ajaxCall)
   }
 
-  private def runSchedulerFunction : JsCmd = {
-    def callback(args: String): JsCmd = {
+  // JS Command which defines the runScheduler function
+  private def runScheduler(args : Array[String])  : JsCmd = {
       if (!runningScheduler)  {
         runningScheduler =true
         try {
           //MonitorServer.start(Consts.DefaultStatusMonitorrURI)
           Scheduler(User().project.config).run()
           runningScheduler = false
-          JSUtils.Empty
+          JSUtils.Message("Scheduler execution completed")
         } catch {
           case ex: Exception => {
             runningScheduler = false
@@ -189,9 +192,6 @@ object Workspace {
         }
       }
       else JSUtils.Log("An other Scheduler is already running, please wait.")
-    }
-    val ajaxCall = SHtml.ajaxCall(JsRaw(""), callback _)._2.cmd
-    JsCmds.Function("runIntegration", Nil, ajaxCall)
   }
 
   /**
@@ -207,8 +207,8 @@ object Workspace {
   /**
    * JS Command which defines the createProject function
    */
-  private def createProject (params : Array[String]): JsCmd = {
-      User().workspace.createProject(params(0))
+  private def createProject (args : Array[String]): JsCmd = {
+      User().workspace.createProject(args(0))
       updateCmd
   }
 

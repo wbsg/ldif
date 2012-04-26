@@ -26,6 +26,9 @@ import ldif.workbench.model.modules.ImportTask
 import ldif.util.Identifier
 import ldif.local.scheduler.{DataSource, ImportJob}
 import ldif.workbench.model.modules.dataSource.DataSourceTask
+import ldif.local.IntegrationJob
+import ldif.config.IntegrationConfig
+import ldif.workbench.model.modules.integration.IntegrationTask
 
 class FileWorkspace(file: File) extends Workspace {
   private val log = LoggerFactory.getLogger(getClass.getName)
@@ -63,6 +66,12 @@ class FileWorkspace(file: File) extends Workspace {
   override def saveImportJob(name: Identifier, xml: String) {
     val job = ImportJob.fromString(xml)
     User().project.importModule.update(ImportTask(job))
+  }
+
+  override def saveIntegrationJob(name: Identifier, xml: String, properties: String) {
+    val integrationBaseDir = (file +("/"+ User().project.name +"/integration")).getCanonicalPath
+    val config = IntegrationConfig.fromString(xml, integrationBaseDir)
+    User().project.integrationModule.update(IntegrationTask(IntegrationJob(config)))
   }
 
   override def importImportJob(file: File) {
