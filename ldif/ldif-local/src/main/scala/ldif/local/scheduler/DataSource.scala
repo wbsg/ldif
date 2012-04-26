@@ -18,6 +18,38 @@
 
 package ldif.local.scheduler
 
-class DataSource(val label : String, val description : String = null) {
+import ldif.util.ValidatingXMLReader
+import java.io.File
+import xml.{XML, Node}
 
+case class DataSource(label : String, description : String = null) {
+  def toXML = {
+    <dataSource xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                xsi:schemaLocation="http://www4.wiwiss.fu-berlin.de/ldif/ ../../xsd/DataSource.xsd"
+                xmlns="http://www4.wiwiss.fu-berlin.de/ldif/">
+      <label>{label}</label>
+      <description>{description}</description>
+    </dataSource>
+  }
+}
+
+object DataSource{
+
+  private val schemaLocation = "xsd/DataSource.xsd"
+
+  def load = new ValidatingXMLReader(fromFile, schemaLocation)
+
+  def fromFile(file : File) = {
+    fromXML(XML.loadFile(file))
+  }
+
+  def fromString(xmlString : String) = {
+    fromXML(XML.loadString(xmlString))
+  }
+
+  def fromXML (node : Node) : DataSource = {
+    val label : String = (node \ "label" text)
+    val description = (node \ "description" text)
+    DataSource(label, description)
+  }
 }

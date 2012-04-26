@@ -1,6 +1,7 @@
 <lift:surround with="default">
     <lift:bind-at name="content">
-     <div id="content"></div>
+
+    <div id="content"></div>
 
      <div style="display:none">
         <div class="dialog" id="new-project-form">
@@ -36,7 +37,7 @@
                     <a href="http://www.assembla.com/code/ldif/git/nodes/ldif/ldif-core/src/main/resources/xsd/DataSource.xsd">XML Schema</a>.
                     It contains human readable information about a data source. The label element should be a unique string in each integration use case, because it will be referenced by the import jobs.
                 </div>
-                <a class="help-icon" target="_blank" href="http://www4.wiwiss.fu-berlin.de/bizer/ldif/"></a>
+                <a class="help-icon" target="_blank" href="http://ldif.wbsg.de/"></a>
             </div>
             <div style="clear: both"></div>
 
@@ -78,7 +79,7 @@
                 An Import Job is configured with an XML document, whose structure is described by this
                 <a href="http://www.assembla.com/code/ldif/git/nodes/ldif/ldif-core/src/main/resources/xsd/ImportJob.xsd" target="_blank">XML Schema</a>.
                 </div>
-                <a class="help-icon" target="_blank" href="http://www4.wiwiss.fu-berlin.de/bizer/ldif/"></a>
+                <a class="help-icon" target="_blank" href="http://ldif.wbsg.de"></a>
             </div>
             <div style="clear: both"></div>
 
@@ -184,9 +185,11 @@
             </form>
             </div>
             <div id="import-job-form-tabs-2">
-                <form>
-                    <input type="file" name="file" class="text ui-widget-content ui-corner-all"/>
-                </form>
+                <lift:importImportJobDialog form="POST" multipart="true" id="importImportJob">
+                    <entry:file/>
+                    <br/>
+                    <entry:submit/>
+                </lift:importImportJobDialog>
             </div>
         </div>
         </div>
@@ -200,7 +203,7 @@
                     oneTimeExecution configuration property is set to true; then the integration waits for all import jobs to finish.
 
                 </div>
-                <a class="help-icon" target="_blank" href="http://www4.wiwiss.fu-berlin.de/bizer/ldif/"></a>
+                <a class="help-icon" target="_blank" href="http://ldif.wbsg.de"></a>
             </div>
             <div style="clear: both"></div>
 
@@ -286,13 +289,6 @@
                 </select>
                 <span class="help"></span><div style="clear: both;"></div>
 
-                <div class="input-label" style="width: 190px;">Output format</div>
-                <select name="outputFormat" class="conf text ui-widget-content ui-corner-all">
-                    <option value="nq">nq</option>
-                    <option value="nt">nt</option>
-                </select>
-                <span class="help"></span><div style="clear: both;"></div>
-
                 <div class="input-label" style="width: 190px;">URI minting</div>
                 <select name="uriMinting" class="conf text ui-widget-content ui-corner-all">
                     <option value="false">false</option>
@@ -334,7 +330,7 @@
                     . The scheduler configuration is the top configuration file that references all the other configuration files like the for the import jobs for accessing remote sources and for the integration job.
 
                 </div>
-                <a class="help-icon" target="_blank" href="http://www4.wiwiss.fu-berlin.de/bizer/ldif/"></a>
+                <a class="help-icon" target="_blank" href="http://ldif.wbsg.de"></a>
             </div>
             <form>
                 <!--
@@ -377,9 +373,15 @@
         </div>
 
         <div class="dialog" id="remove-form">
-            Delete ressource: <span class="ressource"></span>
+            Delete resource: <span class="resource"></span>
         </div>
      </div> <!-- close display:none div-->
+
+
+    <lift:workspace.content>
+        <entry:injectedJavascript/>
+    </lift:workspace.content>
+
 
     </lift:bind-at>
 </lift:surround>

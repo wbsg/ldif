@@ -13,7 +13,7 @@
     <module>ldif-silk</module>
     <module>ldif-entitybuilder</module>
     <module>ldif-sieve</module>
-    <module>ldif-matching</module>
+    <!--<module>ldif-matching</module>-->
   </modules>
 
 	<artifactId>ldif-modules</artifactId>

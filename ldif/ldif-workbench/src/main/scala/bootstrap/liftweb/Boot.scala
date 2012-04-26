@@ -16,28 +16,36 @@
  * limitations under the License.
  */
 
-import net.liftweb.http.LiftRules
+package bootstrap.liftweb
+
 import _root_.net.liftweb.sitemap._
+import net.liftweb.http.{SessionVar, LiftRules}
+import ldif.workbench.model.User
+import ldif.workbench.model.file.FileUser
 
 /**
- * A class that's instantiated early and run.  It allows the application
- * to modify lift's environment
+ * A class that's instantiated early and run.
+ * It allows the application to modify lift's environment
  */
 
 class Boot {
+
+  object UserManager extends SessionVar[User](new FileUser) {}
+
   def boot {
+    User.userManager = UserManager.is _
+
     // Where to search snippet
-    LiftRules.addToPackages("ldif")
+    LiftRules.addToPackages("ldif.workbench")
 
     // Build SiteMap
-     val entries =
-        Menu(Loc("Workspace", List("index"), "Workspace")) :: Nil
+    val entries =
+      Menu(Loc("Workspace", List("index"), "Workspace")) :: Nil
 
     LiftRules.setSiteMap(SiteMap(entries:_*))
 
   }
 }
-
 
 
 

@@ -34,6 +34,35 @@ case class IntegrationConfig (sources : Traversable[String],
                               runSchedule : String)   {
 
   def hasValidOutputs = outputs.validOutputs.size > 0
+
+  def isAnySourceDefined = sources.size > 0
+  def isAnyPropertyDefined = properties.isEmpty
+  def isLinkSpecDefined = linkSpecDir != null
+  def isMappingDefined = mappingDir != null
+  def isSieveSpecDefined = sieveSpecDir != null
+  def isAnyOutputDefined = outputs.outputs.size > 0
+
+  //TODO implement outputConfig.toXML
+  def toXML : xml.Node = {
+    <intergrationJob xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                     xsi:schemaLocation="http://www4.wiwiss.fu-berlin.de/ldif/ ../../xsd/IntegrationJob.xsd"
+                     xmlns="http://www4.wiwiss.fu-berlin.de/ldif/">
+      {if (isAnySourceDefined){
+        <sources>
+          {for (source <- sources) yield { <source>{source}</source> } }
+        </sources>}
+      }
+      {if (isMappingDefined) <mappings>{mappingDir}</mappings>}
+      {if (isLinkSpecDefined) <linkSpecifications>{linkSpecDir}</linkSpecifications>}
+      {if (isSieveSpecDefined) <sieve>{sieveSpecDir}</sieve>}
+      {if (isAnyOutputDefined){
+      <outputs>
+        {for (output <- outputs.outputs) yield { <output>{output.toString()}</output> } }
+      </outputs>}
+      }
+      {if (isAnyPropertyDefined) <properties>{properties.getProperty("propertiesFile")}</properties>}
+      <runSchedule>{runSchedule}</runSchedule>
+    </intergrationJob>}
 }
 
 object IntegrationConfig {

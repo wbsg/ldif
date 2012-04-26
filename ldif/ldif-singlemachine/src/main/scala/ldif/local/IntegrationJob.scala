@@ -647,6 +647,8 @@ case class IntegrationJob (config : IntegrationConfig, debugMode : Boolean = fal
 
   // Retrieve the number of quads in the sources (excluding provenance quads)
   def getSourcesQuads = config.sources.map(ImportedDumpsUtils(_).getNumberOfQuads).sum
+
+  def toXML : xml.Node = config.toXML
 }
 
 
