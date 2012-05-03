@@ -1,4 +1,4 @@
-/* 
+/*
  * LDIF
  *
  * Copyright 2011-2012 Freie Universität Berlin, MediaEvent Services GmbH & Co. KG
@@ -7,7 +7,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *       http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -16,25 +16,13 @@
  * limitations under the License.
  */
 
-package ldif.workbench
+package ldif.workbench.model.modules.dataSource
 
-import org.eclipse.jetty.server.Server
-import org.eclipse.jetty.webapp.WebAppContext
+import ldif.workbench.model.modules._
+import ldif.util.Identifier
+import ldif.local.scheduler.DataSource
 
-/**
- * Starts the Workbench.
- */
-object Main {
-  def main(args : Array[String]) {
-    val server = new Server(8050)
 
-    val webapp = new WebAppContext();
-    webapp.setContextPath("/");
-    val protectionDomain = Main.getClass.getProtectionDomain
-    val location = protectionDomain.getCodeSource.getLocation.toExternalForm
-    webapp.setWar(location);
-    server.setHandler(webapp);
-
-    server.start()
-  }
+case class DataSourceTask(datasource: DataSource) extends ModuleTask {
+  val name = Identifier(datasource.label) //TODO add dataSource identifier
 }

@@ -28,6 +28,8 @@ import javax.xml.ws.http.HTTPException
 import com.hp.hpl.jena.sparql.engine.http.QueryExceptionHTTP
 import ldif.util._
 import ldif.runtime.Quad
+import com.hp.hpl.jena.shared.JenaException
+import org.xml.sax.SAXParseException
 
 case class SparqlImportJob(conf : SparqlConfig, id :  Identifier, refreshSchedule : String, dataSource : String) extends ImportJob{
   private val log = LoggerFactory.getLogger(getClass.getName)
@@ -77,52 +79,64 @@ case class SparqlImportJob(conf : SparqlConfig, id :  Identifier, refreshSchedul
       var retryPause = Consts.retryPause
       val retryCount = Consts.retryCount
       var results : Model = null
-      while (results == null) {
-        try {
-          results = QueryExecutionFactory.sparqlService(endpointUrl, query).execConstruct
-        }
-        catch {
-          case e: HTTPException => {
-            // stop on client side errors
-            if(e.getStatusCode < 500 && e.getStatusCode >= 400) {
-              log.warn("Error executing query: " + query + ". Error Code: " + e.getStatusCode + " (" + e.getMessage + ")")
-              return false
-            }
+      try{
+        while (results == null) {
+          try {
+            results = QueryExecutionFactory.sparqlService(endpointUrl, query).execConstruct
+          }
+          catch {
+            case e: HTTPException => {
+              // stop on client side errors
+              if(e.getStatusCode < 500 && e.getStatusCode >= 400) {
+                log.warn("Error executing query: " + query + ". Error Code: " + e.getStatusCode + " (" + e.getMessage + ")")
+                return false
+              }
 
-            log.warn("Error executing query - retrying in " + retryPause + " ms. (" + retries + "/" + retryCount + ")\n"+query+" \non "+endpointUrl+" \n"+e.getCause)
-            retries += 1
-            if (retries > retryCount) {
-              return false
+              log.warn("Error executing query - retrying in " + retryPause + " ms. (" + retries + "/" + retryCount + ")\n"+query+" \non "+endpointUrl+" \n"+e.getCause)
+              retries += 1
+              if (retries > retryCount) {
+                return false
+              }
+              Thread.sleep(retryPause)
+              retryPause *= 2
             }
-            Thread.sleep(retryPause)
-            retryPause *= 2
+            case e: QueryExceptionHTTP => {
+              // stop on client side errors
+              if(e.getResponseCode < 500 && e.getResponseCode >= 400) {
+                log.warn("Error executing query: " + query + ". Error Code: " + e.getResponseCode + "(" + e.getResponseMessage + ")")
+                return false
+              }
+              log.warn("Error executing query - retrying in " + retryPause + " ms. (" + retries + "/" + retryCount + ")\n"+query+" \non "+endpointUrl+" \n"+e.getResponseMessage)
+              retries += 1
+              if (retries > retryCount) {
+                return false
+              }
+              Thread.sleep(retryPause)
+              retryPause *= 2
+            }
           }
-          case e: QueryExceptionHTTP => {
-            // stop on client side errors
-            if(e.getResponseCode < 500 && e.getResponseCode >= 400) {
-              log.warn("Error executing query: " + query + ". Error Code: " + e.getResponseCode + "(" + e.getResponseMessage + ")")
-              return false
-            }
-            log.warn("Error executing query - retrying in " + retryPause + " ms. (" + retries + "/" + retryCount + ")\n"+query+" \non "+endpointUrl+" \n"+e.getResponseMessage)
-            retries += 1
-            if (retries > retryCount) {
-              return false
-            }
-            Thread.sleep(retryPause)
-            retryPause *= 2
+        }
+      } catch {
+        case e: JenaException => {
+          if(e.getCause.isInstanceOf[SAXParseException]) {
+            offset += 100 // skip over bad value
+            log.warn("Parse error: Trying to skip over bad results")
           }
         }
       }
-      if (offset == 0) {
-         // set page size for the sparql endpoint
-         limit = results.size
-         reporter.actualLimit = limit.toInt
+
+      if(results!=null){
+        if (offset == 0) {
+           // set page size for the sparql endpoint
+           limit = results.size
+           reporter.actualLimit = limit.toInt
+        }
+        offset += results.size
+        loop = (results.size == limit) && (limit != 0) && !(offset == conf.tripleLimit)
+        write(results, writer)
+        if (results.size!=0 || limit == 0)
+          log.info(id +" - loaded "+offset+" quads")
       }
-      offset += results.size
-      loop = (results.size == limit) && (limit != 0) && !(offset == conf.tripleLimit)
-      write(results, writer)
-      if (results.size!=0 || limit == 0)
-        log.info(id +" - loaded "+offset+" quads")
     }
 
     importedQuadsNumber = offset.toDouble

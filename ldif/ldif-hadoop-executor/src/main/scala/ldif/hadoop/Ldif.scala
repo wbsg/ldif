@@ -21,9 +21,7 @@ package ldif.hadoop
 import ldif.config.SchedulerConfig
 import org.slf4j.LoggerFactory
 import java.io.File
-import ldif.util.{CommonUtils, ValidationException, LogUtil}
-;
-
+import ldif.util.{Consts, CommonUtils, ValidationException, LogUtil}
 
 object Ldif {
   LogUtil.init
@@ -33,8 +31,8 @@ object Ldif {
   {
     var debug = false
     if(args.length==0) {
-      log.warn("No configuration file given. \nUsage: Ldif <scheduler-configuration-file>")
-      System.exit(1)
+      log.warn("No configuration file given.")
+      printHelpAndExit()
     }
     else if(args.length>=2 && args(0)=="--debug")
       debug = true
@@ -45,8 +43,10 @@ object Ldif {
     } else
       CommonUtils.getFileFromPathOrUrl(args(args.length-1))
 
-    if(!configFile.exists)
+    if(!configFile.exists) {
       log.warn("Configuration file not found at "+ configFile.getCanonicalPath)
+      printHelpAndExit()
+    }
     else {
       // Setup Scheduler
       var config : SchedulerConfig = null
@@ -82,6 +82,14 @@ object Ldif {
         }
       }
     }
+  }
+
+  def printHelpAndExit() {
+    log.info(Consts.LDIF_HELP_HEADER+
+      "\nUsages: ldif-hadoop <schedulerConfiguration>" +
+      "\n\tldif-hadoop-integrate <integrationJobConfiguration>" +
+      Consts.LDIF_HELP_FOOTER)
+    System.exit(1)
   }
 
 }

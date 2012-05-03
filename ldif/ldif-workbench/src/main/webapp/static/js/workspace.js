@@ -55,6 +55,13 @@ var tooltips = {
 };
 
 
+// -- init
+$(document).ready(
+    function(){
+        initLoadingDialog();
+    }
+);
+
 $(function () {
 
      var workspaceObj = workspaceVar;
@@ -73,9 +80,9 @@ $(function () {
         UnTip();
     });
 
-    $("form").submit(function() {
-        return false;
-    });
+//    $("form").submit(function() {
+//        return false;
+//    });
 
     // Error messages wrapper
     $(".dialog").prepend('<div class="error description ui-state-error ui-corner-all" style="display: none"><span class="error-icon"></span><div class="message"></div></div>');
@@ -137,6 +144,8 @@ $(function () {
                                 createProject(name);
                             }
                         }
+                        $(this).dialog("close");
+                        loadingShow;
                     },
                     Cancel: function() {
                         $(this).dialog("close");
@@ -176,8 +185,8 @@ $(function () {
                             if (label.search(/[^a-zA-Z0-9_]+/) !== -1) {
                                 errors.push('Label identifier may only contain the following characters: (a - z, A - Z, 0 - 9, _).<br/>'); fields.push('label');
                             }
-                            for (var d in workspaceObj.workspace.project[projectIndex].dataSource) {
-                                var datasource_name = workspaceObj.workspace.project[projectIndex].dataSource[d].label;
+                            for (var d in workspaceObj.workspace.project[projectIndex].scheduler.dataSources) {
+                                var datasource_name = workspaceObj.workspace.project[projectIndex].scheduler.dataSources[d].label;
                                 if (dataSourceIndex !== d && label == datasource_name) {
                                     errors.push("A data source with label '" + label + "' already exists in "+projectName+".<br/>"); fields.push('label');
                                 }
@@ -193,14 +202,20 @@ $(function () {
                                 xml.append($('<description>'+description+'</description>'));
                             if (homepage)
                                 xml.append($('<homepage>'+homepage+'</homepage>'));
-                            if (dataSourceIndex != '')
-                                dataSourceName = workspaceObj.workspace.project[projectIndex].dataSource[dataSourceIndex].label;
+
+//                            if (dataSourceIndex != '')
+//                                dataSourceName = workspaceObj.workspace.project[projectIndex].scheduler.dataSources[dataSourceIndex].label;
 
                             if (selectedTab == 1) {
+                                // TODO
                                 importDataSource(projectName, file);
                             } else {
-                                saveDataSource(xml, projectName, dataSourceName);
+                                dataSourceName = label;
+                                var xmlString = '<dataSource>'+$(xml).html()+'</dataSource>'
+                                saveDataSource(dataSourceName, xmlString);
                             }
+                            $(this).dialog("close");
+                            loadingShow;
                         }
                     },
                     Cancel: function() {
@@ -243,7 +258,7 @@ $(function () {
                         var levels = $("#import-job-form-tabs-1 > form > #crawlImportJob > input[name='levels']").val();
                         var resourceLimit = $("#import-job-form-tabs-1 > form > #crawlImportJob > input[name='resourceLimit']").val();
 
-                        var file = $("#import-job-form-tabs-2 > form > input[name='file']").val();
+                        var file = $("#import-job-form-tabs-2 > form > input[type='file']").val();
 
                         $("#import-job-form-tabs-1 > form > #sparqlImportJob > #patterns > div").each(function() {
                             if ($(this).children("input").val() != '')
@@ -266,8 +281,8 @@ $(function () {
                             if (internalId.search(/[^a-zA-Z0-9_.]+/) !== -1) {
                                 errors.push('internalId may only contain the following characters (a - z, A - Z, 0 - 9, ., _).<br/>'); fields.push('internalId');
                             }
-                            for (var d in workspaceObj.workspace.project[projectIndex].importJob) {
-                                var importjob_name = workspaceObj.workspace.project[projectIndex].importJob[d].internalId;
+                            for (var d in workspaceObj.workspace.project[projectIndex].scheduler.importJobs) {
+                                var importjob_name = workspaceObj.workspace.project[projectIndex].scheduler.importJobs[d].internalId;
                                 if (importJobIndex !== d && internalId == importjob_name) {
                                     errors.push("A Import job with internalId '" + internalId + "' already exists in "+projectName+".<br/>"); fields.push('internalId');
                                 }
@@ -301,7 +316,9 @@ $(function () {
                             var xml = $('<importJob ></importJob >');
                             if (internalId)
                                 xml.append($('<internalId>'+internalId+'</internalId>'));
-                            xml.append($('<dataSource>'+dataSource+'</dataSource>'));
+                            if (dataSource != null) {
+                                xml.append($('<dataSource>'+dataSource+'</dataSource>'));
+                            }
                             xml.append($('<refreshSchedule>'+refreshSchedule+'</refreshSchedule>'));
 
                             var importType = $('<'+type+'></'+type+' >');
@@ -341,14 +358,21 @@ $(function () {
                             }
                             xml.append(importType);
 
-                            if (importJobIndex != '')
-                                importJobName = workspaceObj.workspace.project[projectIndex].importJob[importJobIndex].internalId;
+                            //if (importJobIndex != '')
+                            //    importJobName = workspaceObj.workspace.project[projectIndex].scheduler.importJobs[importJobIndex].internalId;
 
                             if (selectedTab == 1) {
-                                importImportJob(projectName, file);
+                                console.log("Use ImportImportJobDialog submit button instead.")
+                                console.log("TODO: importImportJob("+projectName+","+file+");");
+                                //importImportJob(projectName, file,'a');
+                                return;
                             } else {
-                                saveImportJob(xml, projectName, importJobName);
+                                importJobName = internalId;
+                                var xmlString = '<importJob>'+$(xml).html()+'</importJob>'
+                                saveImportJob(importJobName, xmlString);
                             }
+                            $(this).dialog("close");
+                            loadingShow;
                         }
                     },
                     Cancel: function() {
@@ -376,6 +400,7 @@ $(function () {
 
                         var linkSpecifications = $("#integration-job-form-tabs-1 > form > input[name='linkSpecifications']").val();
                         var mappings = $("#integration-job-form-tabs-1 > form > input[name='mappings']").val();
+                        var sieve = $("#integration-job-form-tabs-1 > form > input[name='sieve']").val();
                         var output = $("#integration-job-form-tabs-1 > form > input[name='output']").val();
                         var runSchedule = $("#integration-job-form-tabs-1 > form > select[name='runSchedule']").val();
 
@@ -386,7 +411,8 @@ $(function () {
                                 errors.push('No file chosen.<br/>'); fields.push('file');
                             }
                         } else {
-                            if (!output) {
+                            //TODO update mandatory fields
+                           /* if (!output) {
                                 errors.push('Output value is empty.<br/>'); fields.push('output');
                             }
                             if (!linkSpecifications) {
@@ -394,7 +420,7 @@ $(function () {
                             }
                             if (!mappings) {
                                 errors.push('Mappings value is empty.<br/>'); fields.push('mappings');
-                            }
+                            }  */
                         }
 
                         if (errors.length > 0) {
@@ -421,17 +447,31 @@ $(function () {
                             xml.append($('<sources>'+sources+'</sources>'));
                              */
 
-                            xml.append($('<linkSpecifications>'+linkSpecifications+'</linkSpecifications>'));
-                            xml.append($('<mappings>'+mappings+'</mappings>'));
-                            xml.append($('<output>'+output+'</output>'));
+                            // TODO implement this properly
+                            if(linkSpecifications != '')
+                                xml.append($('<linkSpecifications>'+linkSpecifications+'</linkSpecifications>'));
+                            else xml.append($('<linkSpecifications>linkspecs</linkSpecifications>'));
+                            if(mappings != '')
+                                xml.append($('<mappings>'+mappings+'</mappings>'));
+                            else xml.append($('<mappings>mappings</mappings>'));
+                            if(sieve != '')
+                                xml.append($('<sieve>'+sieve+'</sieve>'));
+                            else xml.append($('<sieve>sieve</sieve>'));
+                            xml.append($('<source>dumps</source>'));
+                            xml.append($('<output><file>output/integrated.nq</file></output>'));
+
+
                             if (runSchedule != '')
                                 xml.append($('<runSchedule>'+runSchedule+'</runSchedule>'));
 
                             if (selectedTab == 1) {
                                 importIntegrationJob(projectName, file);
                             } else {
-                                saveIntegrationJob(xml, projectName, propertiesString);
+                                var xmlString = '<integrationJob>'+$(xml).html()+'</integrationJob>'
+                                saveIntegrationJob(xmlString, propertiesString);
                             }
+                            $(this).dialog("close");
+                            loadingShow;
                         }
                     },
                     Cancel: function() {
@@ -482,6 +522,8 @@ $(function () {
 
                             saveScheduler(xml, projectName, propertiesString);
                         }
+                        $(this).dialog("close");
+                        loadingShow;
                     },
                     Cancel: function() {
                         $(this).dialog("close");
@@ -525,7 +567,7 @@ function addDataSource(jsonDataSource, projectNode, projectName, p, d) {
     $(ds_actions).addClass('actions');
     $(ds_span).append(ds_actions);
     addAction('ds_edit', 'Edit', "Edit data source: " + jsonDataSource.label, "editDataSource('" + projectName + "'," + p + "," + d + ")", ds_actions, projectName, true);
-    addAction('delete', 'Remove', "Remove data source: " + jsonDataSource.label, "confirmDelete('removeDataSource','" + projectName + "','" + jsonDataSource.label + "')", ds_actions, projectName, true);
+    addAction('delete', 'Remove', "Remove data source: " + jsonDataSource.label, "confirmDelete('removeDataSource','" + jsonDataSource.label + "')", ds_actions, projectName, true);
 
     addLeaf(jsonDataSource.description, ds_li, 'Description: ', 'description-icon');
     addLeaf(jsonDataSource.homepage, ds_li, 'Homepage: ', 'homepage-icon');
@@ -551,7 +593,7 @@ function addImportJob(jsonImportJob, projectNode, projectName, p, d) {
     $(ds_actions).addClass('actions');
     $(ds_span).append(ds_actions);
     addAction('ds_edit', 'Edit', "Edit import job: "+ jsonImportJob.internalId, "editImportJob('" + projectName + "'," + p + "," + d + ")", ds_actions, projectName, true);
-    addAction('delete', 'Remove', "Remove import job: " + jsonImportJob.internalId, "confirmDelete('removeImportJob','" + projectName + "','" + jsonImportJob.internalId + "')", ds_actions, projectName, true);
+    addAction('delete', 'Remove', "Remove import job: " + jsonImportJob.internalId, "confirmDelete('removeImportJob','" + jsonImportJob.internalId + "')", ds_actions, projectName, true);
 
     addLeaf(jsonImportJob.dataSource, ds_li, 'Data source: ', 'data-source-icon');
     addLeaf(jsonImportJob.refreshSchedule, ds_li, 'Refresh schedule: ', 'refresh-schedule-icon');
@@ -645,13 +687,14 @@ function addIntegrationJob(jsonIntegrationJob, projectNode, projectName, p) {
     $(ds_actions).addClass('actions');
     $(ds_span).append(ds_actions);
     addAction('ds_edit', 'Edit', "Edit integration job", "editIntegrationJob('" + projectName + "'," + p + ")", ds_actions, projectName, true);
-    addAction('delete', 'Remove', "Remove integration job ", "confirmDelete('removeIntegrationJob','" + projectName + "')", ds_actions, projectName, true);
-    addAction('run', 'Run', "Run integration job", "", ds_actions, projectName, true);
+    addAction('delete', 'Remove', "Remove integration job ", "confirmDelete('removeIntegrationJob','IntegrationJob')", ds_actions, projectName, true);
+    addAction('run', 'Run', "Run integration job", "runIntegration('')", ds_actions, projectName, true);
 
     addLeaf(jsonIntegrationJob.runSchedule, ds_li, 'Run schedule: ', 'refresh-schedule-icon');
     //### addLeaf(jsonIntegrationJob.sources, ds_li, 'Sources: ', 'folder-icon');
     addLeaf(jsonIntegrationJob.linkSpecifications, ds_li, 'Link specifications: ', 'folder-icon');
     addLeaf(jsonIntegrationJob.mappings, ds_li, 'Mappings: ', 'folder-icon');
+    addLeaf(jsonIntegrationJob.sieve, ds_li, 'Sieve: ', 'folder-icon');
     addLeaf(jsonIntegrationJob.output, ds_li, 'Output: ','properties-icon');
     //### addLeaf(jsonIntegrationJob.properties, ds_li, 'Properties: ','properties-icon');
 
@@ -667,32 +710,37 @@ function addIntegrationJob(jsonIntegrationJob, projectNode, projectName, p) {
     $(conf_label).addClass('label').text('Configuration properties');
     $(conf_span).append(conf_label);
 
+    //TODO to be updated, see http://ldif.wbsg.de/#configurationproperties
     addLeaf(jsonIntegrationJob.configurationProperties.output, conf_li, 'Output: ', 'foo-icon');
     addLeaf(jsonIntegrationJob.configurationProperties.rewriteURIs, conf_li, 'Rewrite URIs: ', 'foo-icon');
     addLeaf(jsonIntegrationJob.configurationProperties.provenanceGraphURI, conf_li, 'Provenance graph URI: ', 'foo-icon');
     addLeaf(jsonIntegrationJob.configurationProperties.validateSources, conf_li, 'Validate sources: ', 'foo-icon');
     addLeaf(jsonIntegrationJob.configurationProperties.discardFaultyQuads, conf_li, 'Discard faulty quads: ', 'foo-icon');
     addLeaf(jsonIntegrationJob.configurationProperties.useExternalSameAsLinks, conf_li, 'Use external sameAs-links: ', 'foo-icon');
-    addLeaf(jsonIntegrationJob.configurationProperties.outputFormat, conf_li, 'Output format: ', 'foo-icon');
     addLeaf(jsonIntegrationJob.configurationProperties.uriMinting, conf_li, 'URI minting: ', 'foo-icon');
     addLeaf(jsonIntegrationJob.configurationProperties.uriMintNamespace, conf_li, 'URI mint namespace: ', 'foo-icon');
+    addLeaf(jsonIntegrationJob.configurationProperties.uriMintLanguageRestriction, conf_li, 'URI mint language restriction: ', 'foo-icon');
+    addLeaf(jsonIntegrationJob.configurationProperties.outputQualityScores, conf_li, 'Output quality scores: ', 'foo-icon');
 
-    var pat_ul = document.createElement("ul");
-    $(conf_li).append(pat_ul);
-    var pat_li = document.createElement("li");
-    $(pat_li).attr("id", 'predicates_' + projectName + '_integrationjob').addClass('closed');
-    $(pat_ul).append(pat_li);
-    var pat_span = document.createElement("span");
-    $(pat_span).addClass('uri');
-    $(pat_li).append(pat_span);
-    var pat_label = document.createElement("span");
-    $(pat_label).addClass('label').text('Mint label predicates');
-    $(pat_span).append(pat_label);
-
-    for (var pat in jsonIntegrationJob.configurationProperties.uriMintLabelPredicate) {
-        addLeaf(jsonIntegrationJob.configurationProperties.uriMintLabelPredicate[pat].uri, pat_li, '');
-    }
-
+    addLeaf(jsonIntegrationJob.configurationProperties.uriMintLabelPredicate, conf_li, 'Mint label predicates: ', 'foo-icon');
+    //TODO parse uriMintLabelPredicate
+//    if (jsonIntegrationJob.configurationProperties.uriMintLabelPredicate) {
+//        var pat_ul = document.createElement("ul");
+//        $(conf_li).append(pat_ul);
+//        var pat_li = document.createElement("li");
+//        $(pat_li).attr("id", 'predicates_' + projectName + '_integrationjob').addClass('closed');
+//        $(pat_ul).append(pat_li);
+//        var pat_span = document.createElement("span");
+//        $(pat_span).addClass('uri');
+//        $(pat_li).append(pat_span);
+//        var pat_label = document.createElement("span");
+//        $(pat_label).addClass('label').text('Mint label predicates');
+//        $(pat_span).append(pat_label);
+//
+//        for (var pat in jsonIntegrationJob.configurationProperties.uriMintLabelPredicate) {
+//            addLeaf(jsonIntegrationJob.configurationProperties.uriMintLabelPredicate[pat].uri, pat_li, '');
+//        }
+//    }
 }
 
 function addScheduler(jsonScheduler, projectNode, projectName, p) {
@@ -716,8 +764,8 @@ function addScheduler(jsonScheduler, projectNode, projectName, p) {
     $(ds_span).append(ds_actions);
     addAction('ds_edit', 'Edit', "Edit scheduler", "editScheduler('" + projectName + "'," + p + ")", ds_actions, projectName, true);
 
-    addLeaf(jsonScheduler.dataSources, ds_li, 'Data sources: ', 'folder-icon');
-    addLeaf(jsonScheduler.importJobs, ds_li, 'Import jobs: ', 'folder-icon');
+    addLeaf(jsonScheduler.scheduler.dataSources, ds_li, 'Data sources: ', 'folder-icon');
+    addLeaf(jsonScheduler.scheduler.importJobs, ds_li, 'Import jobs: ', 'folder-icon');
     addLeaf(jsonScheduler.dumpLocation, ds_li, 'Dumps: ', 'folder-icon');
     addLeaf(jsonScheduler.integrationJob, ds_li, 'Integration job: ','properties-icon');
     addLeaf(jsonScheduler.properties, ds_li, 'Properties: ', 'properties-icon');
@@ -748,6 +796,8 @@ function addScheduler(jsonScheduler, projectNode, projectName, p) {
 
 // -- display the workspace as treeview
 function updateWorkspace(obj) {
+
+    removeNodeById("div_tree");
 
     // root folder
     if (!document.getElementById("root-folder")) {
@@ -787,6 +837,8 @@ function updateWorkspace(obj) {
 
     if (obj) {
 
+        console.log('updateWorkspace');
+
         // for each project
         for (var p in obj.workspace.project) {
             var project = obj.workspace.project[p];
@@ -812,23 +864,27 @@ function updateWorkspace(obj) {
             addAction('add_import_job', 'Import Job', 'Add import job', "createImportJob('" + project.name + "'," + p + ")", proj_actions, project.name, true);
             addAction('integration_job', 'Integration Job', 'Add integration job', "createIntegrationJob('" + project.name + "'," + p + ")", proj_actions, project.name, !integrationJobExists(p));
             //### addAction('schedule_job', 'Scheduler', 'Configure scheduler', "editScheduler('" + project.name + "'," + p + ")", proj_actions, project.name, true);
-            addAction('export', 'Export','Export scheduler: '+project.name,"exportProject('"+project.name+"')",proj_actions,project.name,true);
-            addAction('delete', 'Remove', 'Remove scheduler: '+project.name, "confirmDelete('removeProject','"+project.name+"','')", proj_actions, '', true);
- 	    addAction('run', 'Run', "Run scheduler: "+project.name, "",proj_actions, '', true); //##
+            addAction('export', 'Export','Export scheduler: '+project.name,"exportProject('"+project.name+"')",proj_actions, project.name, true);
+            addAction('delete', 'Remove', 'Remove scheduler: '+project.name, "confirmDelete('removeProject','"+project.name+"')", proj_actions, project.name, true);
+     	    addAction('run', 'Run', "Run scheduler: "+project.name, "runScheduler('')", proj_actions, project.name, integrationJobExists(p));
 
             // display dataSource
-            for (var d in obj.workspace.project[p].dataSource) {
-                addDataSource(project.dataSource[d], proj, project.name, p, d);
+            var dataSources = obj.workspace.project[p].scheduler.dataSources
+            for (var d in dataSources) {
+                addDataSource(dataSources[d], proj, project.name, p, d);
             }
 
             // display importJob
-            for (var d in obj.workspace.project[p].importJob) {
-                addImportJob(project.importJob[d], proj, project.name, p, d);
+            var importJobs = obj.workspace.project[p].scheduler.importJobs
+            for (var d in importJobs) {
+                addImportJob(importJobs[d], proj, project.name, p, d);
             }
 
+            console.log(project);
+
             // display integrationJob
-            if (project.integrationJob !== undefined)
-                addIntegrationJob(project.integrationJob, proj, project.name, p);
+            if (project.scheduler.integrationJob[0] !== undefined)
+                addIntegrationJob(project.scheduler.integrationJob[0], proj, project.name, p);
 
             // display scheduler
             if (project.scheduler !== undefined)
@@ -854,15 +910,18 @@ function addAction(type, label, desc, action, parent, activeProject, enabled) {
     var icon = getIcon(type);
     var action_button = document.createElement("button");
         $(action_button).click(function() {
-            //saveOpenNodes(activeProject);
-            eval(action);
-        })
-                .addClass("action")
-                .button({
-                    icons: {
-                        primary: icon
-                    },
-                    label: label
+                console.log("Evaluate "+action);
+                //saveOpenNodes(activeProject);
+                if (activeProject!=""){
+                    setCurrentProject(activeProject);}
+                $.globalEval(action);
+            })
+            .addClass("action")
+            .button({
+                icons: {
+                    primary: icon
+                },
+                label: label
                 });
 
     if (!enabled) {
@@ -910,13 +969,14 @@ function getIcon(type) {
     return icon;
 }
 
-function callAction(action,proj,res){
+function callAction(action,res){
     // work-around : passing the action as string parameter -> the action would be invoked anyway
     switch (action)
         {
-        case 'removeProject' :  removeProject(proj);  break;
-        case 'removeDataSource' :  removeDataSource(proj,res);  break;
-        case 'removeImportJob' :  removeImportJob(proj,res);  break;
+        case 'removeProject' :  removeProject();  break;
+        case 'removeDataSource' :  removeDataSource(res);  break;
+        case 'removeImportJob' :  removeImportJob(res);  break;
+        case 'removeIntegrationJob' : removeIntegrationJob(); break;
         default : alert("Error: Action \'"+action+"\' not defined!");
         }
 }
@@ -945,31 +1005,31 @@ function editDataSource(projectName, p, d) {
     $("#data-source-form-tabs-1 > form > input[name='projectName']").attr("value", projectName);
     $("#data-source-form-tabs-1 > form > input[name='projectIndex']").attr("value", p);
     $("#data-source-form-tabs-1 > form > input[name='dataSourceIndex']").attr("value", d);
-    var dataSource = workspaceObj.workspace.project[p].dataSource[d];
+    var dataSource = workspaceObj.workspace.project[p].scheduler.dataSources[d];
     $("#data-source-form-tabs-1 > form > input[name='label']").attr("value", dataSource.label);
     $("#data-source-form-tabs-1 > form > input[name='description']").attr("value", dataSource.description);
     $("#data-source-form-tabs-1 > form > input[name='homepage']").attr("value", dataSource.homepage);
     $('#data-source-form').dialog('open').dialog("option", "title", '<span class="title-icon edit-form-icon"></span>Edit data source');
 }
 
-function createImportJob(projectName, p) {
-    resetImportJobForm(p);
+function createImportJob(projectName, projectIndex) {
+    resetImportJobForm(projectIndex);
     $("#import-job-form-tabs-1 > form > select").each(function() {
             $(this).children("option:first").attr('selected', 'selected');
     });
     $("#import-job-form").tabs();
     $("#import-job-form-tabs > ul, #import-job-form-tabs-2").show();
     $("#import-job-form-tabs-1 > form > input[name='projectName']").attr("value", projectName);
-    $("#import-job-form-tabs-1 > form > input[name='projectIndex']").attr("value", p);
+    $("#import-job-form-tabs-1 > form > input[name='projectIndex']").attr("value", projectIndex);
     $("#data-source-form-tabs-1 > form > input[name='importJobIndex']").attr("value", "");
     $("div#quadImportJob").show();
     $('#import-job-form').dialog('open').dialog("option", "title", '<span class="title-icon add-icon"></span>Add import job');
 }
-function editImportJob(projectName, p, d) {
+function editImportJob(projectName, projectIndex, d) {
     $("#import-job-form").tabs("select", 0);
-    resetImportJobForm(p);
+    resetImportJobForm(projectIndex);
     $("#import-job-form-tabs > ul, #import-job-form-tabs-2").hide();
-    var importJob = workspaceObj.workspace.project[p].importJob[d];
+    var importJob = workspaceObj.workspace.project[projectIndex].scheduler.importJobs[d];
     if (importJob.quadImportJob) {
         $("#import-job-form-tabs-1 > form > #quadImportJob > input[name='dumpLocation']").attr("value", importJob.quadImportJob.dumpLocation);
         $("#import-job-form-tabs-1 > form > select[name='type'] > option[value='quadImportJob']").attr('selected','selected');
@@ -1026,12 +1086,12 @@ function editImportJob(projectName, p, d) {
         });
     });
     $("#import-job-form-tabs-1 > form > input[name='projectName']").attr("value", projectName);
-    $("#import-job-form-tabs-1 > form > input[name='projectIndex']").attr("value", p);
+    $("#import-job-form-tabs-1 > form > input[name='projectIndex']").attr("value", projectIndex);
     $("#import-job-form-tabs-1 > form > input[name='importJobIndex']").attr("value", d);
     $('#import-job-form').dialog('open').dialog("option", "title", '<span class="title-icon edit-form-icon"></span>Edit import job');
 }
 
-function resetImportJobForm(p) {
+function resetImportJobForm(projectIndex) {
     resetForm('import-job-form', true);
     $('#quadImportJob, #tripleImportJob, #sparqlImportJob, #crawlImportJob').hide();
     $("div#quadImportJob").show();
@@ -1047,8 +1107,9 @@ function resetImportJobForm(p) {
     $('#quadImportJob, #tripleImportJob, #sparqlImportJob, #crawlImportJob').hide();
     // load data sources:
     $("#import-job-form-tabs-1 > form > select[name='dataSource']").html('');
-    for (var i in workspaceObj.workspace.project[p].dataSource) {
-        var label = workspaceObj.workspace.project[p].dataSource[i].label;
+
+    for (var i in workspaceObj.workspace.project[projectIndex].scheduler.dataSources) {
+        var label = workspaceObj.workspace.project[projectIndex].scheduler.dataSources[i].label;
         $("#import-job-form-tabs-1 > form > select[name='dataSource']").append('<option value="'+label+'">'+label+'</option>');
     }
 }
@@ -1103,7 +1164,7 @@ function editIntegrationJob(projectName, p) {
     $("#integration-job-form").tabs("select", 0);
     resetForm('integration-job-form', false);
     $("#integration-job-form-tabs > ul, #integration-job-form-tabs-2").hide();
-    var integrationJob = workspaceObj.workspace.project[p].integrationJob;
+    var integrationJob = workspaceObj.workspace.project[p].scheduler.integrationJob[0];
     $("#integration-job-form-tabs-1 > form > input").each(function() {
        var name = $(this).attr('name');
         if ($(this).hasClass('conf')) {
@@ -1171,10 +1232,8 @@ function editScheduler(projectName, p) {
 }
 
 // init and display the proper delete confirm dialog
-function confirmDelete(action,proj,res){
-    if (res === undefined)
-        res = ' Integration job';
-    $("#remove-form > span.ressource").html(proj+" "+res);
+function confirmDelete(action,res){
+    $("#remove-form > span.resource").html(res);
     $("#remove-form").dialog({
                 title: 'Remove',
                 height: 180,
@@ -1183,7 +1242,8 @@ function confirmDelete(action,proj,res){
                 resizable: false,
                 buttons: {
                     "Yes, delete it": function() {
-                        callAction(action,proj,res);
+                        $(this).dialog("close");
+                        callAction(action,res);
                     },
                     Cancel: function() {
                         $(this).dialog("close");
@@ -1225,5 +1285,36 @@ function showErrors(id, errors, fields) {
 }
 
 function integrationJobExists(p) {
-    return (workspaceVar.workspace.project[p].integrationJob !== undefined);
+    return (workspaceVar.workspace.project[p].scheduler.integrationJob[0] !== undefined);
 }
+
+// display loading bar
+function loadingShow(){
+    $("#loading-dialog").dialog("open");
+}
+
+function loadingHide(){
+    $("#loading-dialog").dialog("close");
+}
+
+// init loading dialog
+function initLoadingDialog(){
+    $("#loading-dialog").dialog({
+        title: 'Loading...',
+        width: 330, height: 85,
+        modal: true,
+        resizable: false,
+        closable: false,
+        autoOpen: false,
+        closeOnEscape: false,
+        open: function(event, ui) { $(".ui-dialog-titlebar-close", $(this).parent()).hide();}
+    });
+    $("#loading-progressbar").progressbar({value: 100});
+}
+
+function removeNodeById(nodeId)
+{
+    var node = document.getElementById(nodeId);
+    if (node) node.parentNode.removeChild(node);
+}
+

@@ -126,8 +126,9 @@ object CommonUtils {
 
   // Get a file from a given URL
   def getFileFromUrl(url : URL) : File =  {
-    log.info("Loading " + url.toString)
-    var file =  File.createTempFile("ldif","tmp")
+    val urlString = url.toString
+    log.info("Loading " + urlString)
+    var file =  File.createTempFile("ldif", urlString.substring(urlString.lastIndexOf('/')+1))
     val writer = new FileWriter(file.getCanonicalPath)
     try {
       val lines = Source.fromURL(url).getLines()
@@ -135,7 +136,7 @@ object CommonUtils {
         writer.write(line+"\n")
     } catch {
       case e:Exception => {
-        log.warn(url + " did not provide any data")
+        log.warn(urlString + " did not provide any data")
         file = null
         throw e
       }

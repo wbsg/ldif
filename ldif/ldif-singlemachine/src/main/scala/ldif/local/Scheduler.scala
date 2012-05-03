@@ -305,5 +305,7 @@ case class Scheduler (config : SchedulerConfig, debug : Boolean = false) {
 
   def getImportJobs = importJobs
   def getIntegrationJob = integrationJob
+
+  def toXML : xml.Node = config.toXML
 }
 

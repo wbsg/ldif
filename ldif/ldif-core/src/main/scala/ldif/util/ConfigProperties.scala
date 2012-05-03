@@ -25,28 +25,30 @@ import java.io.{IOException, FileInputStream, BufferedInputStream, File}
 object ConfigProperties {
   private val log = LoggerFactory.getLogger(getClass.getName)
 
-  def loadProperties(propertyPath : String) : Properties = {
-    loadProperties(new File(propertyPath))
+  def loadProperties(propertiesFile : String) : Properties = {
+    loadProperties(new File(propertiesFile))
   }
 
-  def loadProperties(propertyFile : File): Properties = {
+  def loadProperties(propertiesFile : File): Properties = {
 
     val properties = new Properties
-    if(propertyFile.exists) {
+    if(propertiesFile.exists) {
 
       try {
-        val stream = new BufferedInputStream(new FileInputStream(propertyFile))
+        val stream = new BufferedInputStream(new FileInputStream(propertiesFile))
         properties.load(stream)
         stream.close
+        // add properties file path as propertiesFile value
+        properties.setProperty("propertiesFile", propertiesFile.getCanonicalPath)
 
       } catch {
         case e: IOException => {
-          log.error("Error reading the properties file at: " + propertyFile.getCanonicalPath)
+          log.error("Error reading the properties file at: " + propertiesFile.getCanonicalPath)
         }
       }
     }
     else
-      log.error("No properties file found at: " + propertyFile.getCanonicalPath)
+      log.warn("No properties file found at: " + propertiesFile.getCanonicalPath)
 
     properties
   }

@@ -377,7 +377,7 @@ case class IntegrationJob (config : IntegrationConfig, debugMode : Boolean = fal
    */
   private def mapQuads(integrationConfig: IntegrationConfig, readers: Seq[QuadReader]) : Option[Seq[QuadReader]] = {
     val mappingSource = new FileOrURISource(integrationConfig.mappingDir)
-    val uriGenerator = new EnumeratingURIGenerator("http://www4.wiwiss.fu-berlin.de/ldif/imported", BigInteger.ONE);
+    val uriGenerator = new EnumeratingURIGenerator("http://www4.wiwiss.fu-berlin.de/ldif/imported", BigInteger.ONE)
     val importedMappingModel = Repository.importMappingDataFromSource(mappingSource, uriGenerator)
     val repository = new Repository(new JenaModelSource(importedMappingModel))
     val r2rConfig = new R2RConfig(repository)
@@ -504,6 +504,8 @@ case class IntegrationJob (config : IntegrationConfig, debugMode : Boolean = fal
     log.info("[FUSION]")
     log.debug("Sieve will perform fusion, config=%s.".format(sieveSpecDir.getAbsolutePath))
 
+    val outputFusedOnly = config.properties.getProperty("output", "mapped-only").toLowerCase=="fused-only"
+
     val entityDescriptions = fusionModule.tasks.head.sieveConfig.fusionConfig.entityDescriptions
     // why build more entity queues (<- entity description) if we only consume one for each task? (see below)
     //val entityDescriptions = fusionModule.tasks.toIndexedSeq.map(fusionExecutor.input).flatMap{ case StaticEntityFormat(ed) => ed }
@@ -512,7 +514,11 @@ case class IntegrationJob (config : IntegrationConfig, debugMode : Boolean = fal
     val irrelevantQuadsFile = File.createTempFile("ldif-fusion-quads", "bin")
     irrelevantQuadsFile.deleteOnExit()
     val irrelevantQuadsWriter = new FileQuadWriter(irrelevantQuadsFile)
-    val fusionConfigParam = ConfigParameters(configProperties = config.properties, otherQuadsWriter = irrelevantQuadsWriter, collectNotUsedQuads = true)
+    val fusionConfigParam =
+      if (!outputFusedOnly)  {
+        ConfigParameters(configProperties = config.properties, otherQuadsWriter = irrelevantQuadsWriter, collectNotUsedQuads = true)
+      }
+      else ConfigParameters(configProperties = config.properties)
 
     val entityBuilderExecutor = getEntityBuilderExecutor(fusionConfigParam)
     val entityReaders = buildEntities(inputQuadsReader, entityDescriptions, entityBuilderExecutor)
@@ -536,10 +542,14 @@ case class IntegrationJob (config : IntegrationConfig, debugMode : Boolean = fal
 
     fusionExecutor.reporter.setFinishTime()
 
+    // build quad reader to be returned
     irrelevantQuadsWriter.finish()
-    val otherQuadsReader = new FileQuadReader(irrelevantQuadsWriter)
-    new MultiQuadReader(outputQueue, entityBuilderExecutor.getNotUsedQuads, otherQuadsReader)
-
+    if (outputFusedOnly)
+      outputQueue
+    else {
+      val otherQuadsReader = new FileQuadReader(irrelevantQuadsWriter)
+      new MultiQuadReader(outputQueue, entityBuilderExecutor.getNotUsedQuads, otherQuadsReader)
+    }
   }
 
   private def getEntityBuilderExecutor(configParameters: ConfigParameters) = {
@@ -655,13 +665,14 @@ case class IntegrationJob (config : IntegrationConfig, debugMode : Boolean = fal
 
   // Retrieve the number of quads in the sources (excluding provenance quads)
   def getSourcesQuads = config.sources.map(ImportedDumpsUtils(_).getNumberOfQuads).sum
+
+  def toXML : xml.Node = config.toXML
 }
 
 
 object IntegrationJob {
   LogUtil.init
   private val log = LoggerFactory.getLogger(getClass.getName)
-
 
   def load (configFile : File, debug : Boolean = false) : IntegrationJob = {
     if(configFile != null)  {
@@ -693,8 +704,7 @@ object IntegrationJob {
   def main(args : Array[String])
   {
     if(args.length == 0) {
-      log.warn("No configuration file given. \nUsage: IntegrationJob <integration job configuration file>")
-      System.exit(1)
+      Ldif.printHelpAndExit()
     }
 
     var debug = false

@@ -25,7 +25,31 @@ import xml.{Node, XML}
 import java.util.Properties
 import ldif.util.{CommonUtils, Consts, ConfigProperties, ValidatingXMLReader}
 
-case class SchedulerConfig (importJobsFiles : Traversable[File], integrationJob : File, dataSourcesFiles : Traversable[File], dumpLocationDir : String, properties : Properties)  {}
+case class SchedulerConfig (importJobsFiles : Traversable[File], integrationJob : File, dataSourcesFiles : Traversable[File], dumpLocationDir : String, properties : Properties)  {
+
+  def isAnyImportJobDefined = importJobsFiles.size > 0
+  def isAnyDataSourceDefined = dataSourcesFiles.size > 0
+  def isAnyPropertyDefined = properties.isEmpty
+
+  def toXML : xml.Node = {
+    <scheduler xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                     xsi:schemaLocation="http://www4.wiwiss.fu-berlin.de/ldif/ ../../xsd/SchedulerConfig.xsd"
+                     xmlns="http://www4.wiwiss.fu-berlin.de/ldif/">
+      {if (isAnyDataSourceDefined){
+          <dataSources>
+            {for (dataSource <- dataSourcesFiles) yield { <dataSource>{dataSource.getCanonicalPath}</dataSource> } }
+          </dataSources>}
+      }
+      {if (isAnyImportJobDefined){
+          <importJobs>
+            {for (importJob <- importJobsFiles) yield { <importJob>{importJob.getCanonicalPath}</importJob> } }
+          </importJobs>}
+      }
+      {if (isAnyPropertyDefined) <properties>{properties.getProperty("propertiesFile")}</properties>}
+      <integrationJob>{integrationJob.getCanonicalPath}</integrationJob>
+      <dumpLocation>{dumpLocationDir}</dumpLocation>
+    </scheduler>}
+}
 
 object SchedulerConfig
 {
@@ -53,12 +77,12 @@ object SchedulerConfig
     val dumpLocationDir = getFilePath((xml \ "dumpLocation" text), baseDir)
     val importJobsFiles = getFiles(xml, "importJob", baseDir, Seq("xml"))
     val integrationJobDir = getFile(xml, "integrationJob", baseDir)
-    val datasourceJobDir = getFiles(xml, "dataSources", baseDir, Seq("xml"))
+    val dataSourceFiles = getFiles(xml, "dataSources", baseDir, Seq("xml"))
 
     SchedulerConfig(
       importJobsFiles,
       integrationJobDir,
-      datasourceJobDir,
+      dataSourceFiles,
       dumpLocationDir,
       properties
     )

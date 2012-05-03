@@ -32,7 +32,7 @@ function saveDataSource(xml, projectName, dataSourceName) {}
     else: create new Data source
 */
 function importDataSource(projectName, file) {}
-function saveImportJob(xml, projectName, importJobName) {}
+function saveImportJob(projectName, importJobName, xml) {}
 /*
  if importJobName is set: update existing Import job (importJobName is the current 'internalId')
     else: create new Import job
