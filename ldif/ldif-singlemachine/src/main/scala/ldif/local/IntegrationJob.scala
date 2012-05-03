@@ -273,7 +273,7 @@ case class IntegrationJob (config : IntegrationConfig, debugMode : Boolean = fal
     val qualityModule = QualityModule.load(config.sieveSpecDir)
     val sieveQualityReader = qualityModule.config.qualityConfig match {
       case e: EmptyQualityConfig => {
-        log.info("No Sieve configuration found. No quality assessment will be performed.")
+        log.info("No Sieve Quality configuration found. No quality assessment will be performed.")
         new QuadQueue() // return empty queue
       }
       case c: QualityConfig => {
@@ -290,7 +290,7 @@ case class IntegrationJob (config : IntegrationConfig, debugMode : Boolean = fal
     val fusionModule = FusionModule.load(config.sieveSpecDir, qualityModule)
     val sieveFusionReader = fusionModule.config.fusionConfig match {
       case e: EmptyFusionConfig => {
-        log.info("No Sieve configuration found. No fusion will be performed.")
+        log.info("No Sieve Fusion configuration found. No fusion will be performed.")
         if(outputProvenance)
           new MultiQuadReader(fusionInput:_*)
         else

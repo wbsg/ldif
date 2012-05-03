@@ -7,11 +7,11 @@
     <!-- root element, the three sub-nodes can appear in any order, but all have to appear nonetheless -->
     <xs:element name="Sieve">
         <xs:complexType>
-            <xs:all>
-               <xs:element ref="Prefixes" />
-                <xs:element ref="QualityAssessment" />
-                <xs:element ref="Fusion" />
-            </xs:all>
+            <xs:sequence minOccurs="1" maxOccurs="1">
+                <xs:element ref="Prefixes" />
+                <xs:element ref="QualityAssessment" minOccurs="0"/>
+                <xs:element ref="Fusion" minOccurs="0"/>
+            </xs:sequence>
         </xs:complexType>
     </xs:element>
 
@@ -39,9 +39,9 @@
     <!-- Quality assessment parent element, contains at least one aggregate metric -->
     <xs:element name="QualityAssessment">
         <xs:complexType>
-            <xs:choice minOccurs="1" maxOccurs="unbounded">
+            <xs:choice minOccurs="0" maxOccurs="unbounded">
                <xs:element ref="AggregateMetric" />
-                <xs:element ref="AssessmentMetric" />
+               <xs:element ref="AssessmentMetric" />
             </xs:choice>
             <xs:attribute name="name" type="xs:string"/>
             <xs:attribute name="description" type="xs:string"/>
@@ -51,7 +51,7 @@
     <!-- Aggregate metric, aggregates several single metrics -->
     <xs:element name="AggregateMetric">
         <xs:complexType>
-            <xs:sequence minOccurs="1" maxOccurs="unbounded">
+            <xs:sequence minOccurs="0" maxOccurs="unbounded">
                 <xs:element ref="AssessmentMetric" />
             </xs:sequence>
             <xs:attribute name="id" type="xs:string"/>
@@ -62,7 +62,7 @@
     <!-- Single assessment metric -->
     <xs:element name="AssessmentMetric">
         <xs:complexType>
-            <xs:sequence minOccurs="1" maxOccurs="1">
+            <xs:sequence minOccurs="0" maxOccurs="1">
                 <xs:element ref="ScoringFunction" />
             </xs:sequence>
             <xs:attribute name="id" type="xs:string"/>
@@ -85,7 +85,7 @@
     <!-- Fusion main element, can contain a list of Class definitions -->
     <xs:element name="Fusion">
         <xs:complexType>
-            <xs:sequence minOccurs="1" maxOccurs="unbounded">
+            <xs:sequence minOccurs="0" maxOccurs="unbounded">
                <xs:element ref="Class" />
             </xs:sequence>
             <xs:attribute name="name" type="xs:string"/>
@@ -96,7 +96,7 @@
     <!-- RDF Class to be fused -->
     <xs:element name="Class">
         <xs:complexType>
-            <xs:sequence minOccurs="1" maxOccurs="unbounded">
+            <xs:sequence minOccurs="0" maxOccurs="unbounded">
                 <xs:element ref="Property" />
             </xs:sequence>
             <xs:attribute name="name" type="xs:string"/>
@@ -106,7 +106,7 @@
     <!-- RDF Property to be fused -->
     <xs:element name="Property">
         <xs:complexType>
-            <xs:sequence minOccurs="1" maxOccurs="1">
+            <xs:sequence minOccurs="0" maxOccurs="1">
                 <xs:element ref="FusionFunction" />
             </xs:sequence>
             <xs:attribute name="name" type="xs:string"/>

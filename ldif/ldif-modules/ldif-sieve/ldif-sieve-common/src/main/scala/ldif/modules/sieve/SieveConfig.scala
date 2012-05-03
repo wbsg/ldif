@@ -37,9 +37,15 @@ object SieveConfig {
   def fromSieveXmlConfig(configFile: File) = {
     val sieveConfig = XML.loadFile(configFile)
     val prefixes = Prefixes.fromXML(sieveConfig \ "Prefixes" head)
-    val qualityConfig = (sieveConfig \ "QualityAssessment").map(QualityConfig.fromXML(_)(prefixes))
-    val fusionConfig = (sieveConfig \ "Fusion").map(FusionConfig.fromXML(_)(prefixes))
-    new SieveConfig(qualityConfig.head, fusionConfig.head) //TODO could we have more than one, e.g. multiple files?
+    val qualityConfig = (sieveConfig \ "QualityAssessment").map(QualityConfig.fromXML(_)(prefixes)).headOption match {
+      case Some(config) => config
+      case None => QualityConfig.empty
+    }
+    val fusionConfig = (sieveConfig \ "Fusion").map(FusionConfig.fromXML(_)(prefixes)).headOption match {
+      case Some(config) => config
+      case None => FusionConfig.empty
+    }
+    new SieveConfig(qualityConfig, fusionConfig) //TODO could we have more than one, e.g. multiple files?
   }
 
   def load(configFile: File): SieveConfig = {

@@ -55,7 +55,7 @@ class ValidatingXMLReader[T](deserializer: File => T, schemaPath: String) {
       //Load XML Schema
       val schemaFactory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI)
       val schemaStream = getClass.getClassLoader.getResourceAsStream(schemaPath)
-      if (schemaStream == null) throw new ValidationException("XML Schema for Link Specification not found")
+      if (schemaStream == null) throw new ValidationException("XML Schema for configuration file not found")
       val schema = schemaFactory.newSchema(new StreamSource(schemaStream))
 
       //Create parser
