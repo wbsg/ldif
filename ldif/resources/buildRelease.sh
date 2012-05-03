@@ -35,6 +35,7 @@ mkdir ${ldifhadoopdir}/examples
 
 cp -r examples/life-science/ examples/music/ ${ldifdir}/examples/
 cp -r examples/music/ ${ldifhadoopdir}/examples/
+cp -r examples/lwdm2012/ ${ldifhadoopdir}/examples/
 
 mvn install
 
