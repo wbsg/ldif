@@ -29,9 +29,10 @@ import impl.{QuadQueue, FileEntityReader, FileEntityWriter, EntityQueue}
 import ldif.util.Consts
 import ldif.{EntityBuilderModule, EntityBuilderConfig}
 import ldif.local.util.StringPool
-import utils.SameAsToAlignmentFormatConverter
+import utils.SameAsAlignmentFormatConverter
 import collection.mutable.ArrayBuffer
 import java.util.Properties
+import ldif.runtime.QuadWriter
 
 /**
  * Created by IntelliJ IDEA.
@@ -50,24 +51,32 @@ object Matcher {
     val startTime = System.currentTimeMillis()
     val ont1Reader = DumpLoader.dumpIntoFileQuadQueue(args(0))
     val ont2Reader = DumpLoader.dumpIntoFileQuadQueue(args(1))
-    val linkSpec = if(args.length==4)
-      new File(args(3))
+    val outputQueue = new QuadQueue
+    if(args.length==4)
+      matchOntologies (ont1Reader, ont2Reader, outputQueue, new File(args(3)))
     else
-      getLinkSpecDir
-    val silkModule = SilkModule.load(linkSpec)
+      matchOntologies (ont1Reader, ont2Reader, outputQueue)
+    val writer = new BufferedWriter(new FileWriter(args(2)))
+    URITranslator.outputSameAsCluster(outputQueue, writer)
+    writer.flush()
+    writer.close()
+//    SameAsAlignmentFormatConverter.convertToSameAsNTriples(outputQueue, args(2))
+    println("Finished matching after " + (System.currentTimeMillis()-startTime)/1000.0 + "s")
+  }
+
+  def matchOntologies(ont1Reader: QuadReader,  ont2Reader: QuadReader, output: QuadWriter, matchSpec: File = getLinkSpecDir) {
+    val silkModule = SilkModule.load(matchSpec)
     val silkExecutor = new SilkLocalExecutor(useFileInstanceCache = true, allowLinksForSameURIs = true)
     val entityDescriptions = silkModule.tasks.toIndexedSeq.map(silkExecutor.input).flatMap{ case StaticEntityFormat(ed) => ed }
     val entityReaders1 = buildEntities(Seq(ont1Reader), entityDescriptions.zipWithIndex.filter(a => a._2 % 2 == 0).map(a=>a._1))
     val entityReaders2 = buildEntities(Seq(ont2Reader), entityDescriptions.zipWithIndex.filter(a => a._2 % 2 == 1).map(a=>a._1))
     val entityReaders = mergeReaders(entityReaders1, entityReaders2)
     StringPool.reset()
-    val outputQueue = new QuadQueue
+
     for((silkTask, readers) <- silkModule.tasks.toList zip entityReaders.grouped(2).toList)
     {
-      silkExecutor.execute(silkTask, readers, outputQueue)
+      silkExecutor.execute(silkTask, readers, output)
     }
-    SameAsToAlignmentFormatConverter.convert(outputQueue, args(2))
-    println("Finished matching after " + (System.currentTimeMillis()-startTime)/1000.0 + "s")
   }
 
   private def mergeReaders(readers1: Seq[EntityReader], readers2: Seq[EntityReader]): Seq[EntityReader] = {

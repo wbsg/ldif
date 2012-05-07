@@ -41,6 +41,7 @@ import ldif.modules.silk.local.SilkLocalExecutor
 import ldif.modules.sieve.local.{SieveLocalQualityExecutor, SieveLocalFusionExecutor}
 import ldif.modules.sieve.SieveConfig
 import util.{ImportedDumpsUtils, StringPool}
+import scala.collection.mutable.{Set => MSet}
 
 case class IntegrationJob (config : IntegrationConfig, debugMode : Boolean = false) {
 
@@ -77,6 +78,46 @@ case class IntegrationJob (config : IntegrationConfig, debugMode : Boolean = fal
     } else r2rReader
   }
 
+  private def initNewRun() {
+    //reporter = new IntegrationJobStatusMonitor
+    //JobMonitor.addPublisher(reporter)
+    IntegrationJobMonitor.value = reporter
+    val sourceNumber = config.sources.size
+
+    log.info("Integration Job started")
+    log.info("- Input < " + sourceNumber + " source(s) found " + config.sources.mkString(" "))
+    log.info("- Output > " + config.outputs.toString)
+    log.info("- Properties ")
+    for (key <- config.properties.keySet.toArray)
+      log.info("  - " + key + " : " + config.properties.getProperty(key.toString))
+
+    stopWatch.getTimeSpanInSeconds
+  }
+
+  private def validateConfiguration() {
+    // Validate configuration
+    val fail = ConfigValidator.validateConfiguration(config)
+    if (fail) {
+      log.warn("Validation phase failed")
+      throw new RuntimeException("Validation failed for integration job. Config: " + config)
+    } else {
+      log.info("Validation phase succeeded in " + stopWatch.getTimeSpanInSeconds + "s")
+    }
+  }
+
+  private def setupSourceQuadReader(terms: MSet[String]): Seq[QuadReader] = {
+
+    val dumpQuadReader = new DumpQuadReader(new MultiQuadReader(loadDumps(config.sources): _*), configParameters)
+    dumpQuadReader.reporter.setInputQuads(dumpsQuads)
+    if (terms.size == 0 || skipR2R)
+      Seq(dumpQuadReader)
+    else {
+      val copyQuadsReader = new CopyQuadsQuadReader(dumpQuadReader, terms.toSet, configParameters.passOnToSieveWriter)
+      Seq(copyQuadsReader)
+    }
+
+  }
+
   def runIntegration {
     reporter.setStartTime
     if (config.sources == null || config.sources.size == 0)
@@ -84,43 +125,15 @@ case class IntegrationJob (config : IntegrationConfig, debugMode : Boolean = fal
 
     else
       synchronized {
-        //reporter = new IntegrationJobStatusMonitor
-        //JobMonitor.addPublisher(reporter)
-        IntegrationJobMonitor.value = reporter
-        val sourceNumber = config.sources.size
+        initNewRun()
 
-        log.info("Integration Job started")
-        log.info("- Input < "+ sourceNumber +" source(s) found "+ config.sources.mkString(" "))
-        log.info("- Output > "+ config.outputs.toString)
-        log.info("- Properties ")
-        for (key <- config.properties.keySet.toArray)
-          log.info("  - "+key +" : " + config.properties.getProperty(key.toString) )
-
-        stopWatch.getTimeSpanInSeconds
-
-        // Validate configuration
-        val fail = ConfigValidator.validateConfiguration(config)
-        if(fail) {
-          log.warn("Validation phase failed")
-          sys.exit(1)
-        } else {
-          log.info("Validation phase succeeded in " + stopWatch.getTimeSpanInSeconds + "s")
-        }
+        validateConfiguration()
 
         setupConfigParameters()
         val terms = SieveConfig.getUsedProperties(config.sieveSpecDir)
 
         // Load source data sets and wrap the quad readers in a filter quad reader
-        val quadReaders = {
-          val dumpQuadReader = new DumpQuadReader(new MultiQuadReader(loadDumps(config.sources):_*), configParameters)
-          dumpQuadReader.reporter.setInputQuads(dumpsQuads)
-          if(terms.size==0 || skipR2R)
-            Seq(dumpQuadReader)
-          else {
-            val copyQuadsReader = new CopyQuadsQuadReader(dumpQuadReader, terms.toSet, configParameters.passOnToSieveWriter)
-            Seq(copyQuadsReader)
-          }
-        }
+        val quadReaders = setupSourceQuadReader(terms)
 
         // Execute mapping phase
         var r2rReader: Option[Seq[QuadReader]] = executeMappingPhase(config, quadReaders, skipR2R)
