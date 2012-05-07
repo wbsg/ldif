@@ -69,20 +69,19 @@ class DumpQuadReader(inputQuadReader: QuadReader, config: ConfigParameters) exte
   }
 
   /**
-   * Filter sameAs and provenance quads from the input AND output
+   * Filter provenance quads from the input AND output
    * quads as defined in the config.
    */
   private def filterQuad(quad: Quad): Boolean = {
     if(isProvenanceQuad(quad)) {
       config.provenanceQuadsWriter.write(quad)
       reporter.provenanceQuads.incrementAndGet()
-      return true
-    } else if(quad.predicate=="http://www.w3.org/2002/07/owl#sameAs"){
+      return true // Only filter provenance quads from the input
+    } else if(quad.predicate==Consts.SAMEAS_URI){
       if(useExternalSameAsLinks) {
         config.sameAsWriter.write(quad)
         reporter.externalSameAsQuads.incrementAndGet()
       }
-      return true
     } else if(outputAllQuads)
       config.otherQuadsWriter.write(quad)
     return false // Don't filter
