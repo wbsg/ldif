@@ -6,5 +6,5 @@
     <dataSources>DataSource</dataSources>
     <importJob>ImportJobs</importJob>
     <integrationJob>integrationJob.xml</integrationJob>
-    <dumpLocation>dumps-music-light</dumpLocation>
+    <dumpLocation>dumps</dumpLocation>
 </scheduler>
