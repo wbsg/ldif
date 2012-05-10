@@ -31,7 +31,7 @@ import java.io.File
 @RunWith(classOf[JUnitRunner])
 class IntegrationTest extends FlatSpec with ShouldMatchers {
 
-  val configFile = CommonUtils.loadFile("integration/integrationJob.xml")
+  val configFile = CommonUtils.getFileFromPath("integration/integrationJob.xml")
 
   val fixedProperties = Map(
     ("uriMintNamespace", "http://ldif/"),

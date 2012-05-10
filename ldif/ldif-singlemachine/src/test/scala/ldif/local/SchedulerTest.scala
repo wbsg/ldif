@@ -30,7 +30,7 @@ import ldif.util.{OutputValidator, CommonUtils}
 @RunWith(classOf[JUnitRunner])
 class SchedulerTest extends FlatSpec with ShouldMatchers {
 
-  val configFile = CommonUtils.loadFile("scheduler/scheduler-config.xml")
+  val configFile = CommonUtils.getFileFromPath("scheduler/scheduler-config.xml")
   val scheduler = Scheduler(SchedulerConfig.load(configFile))
 
   it should "schedule a job correctly" in {

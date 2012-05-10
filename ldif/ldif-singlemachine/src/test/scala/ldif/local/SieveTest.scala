@@ -32,7 +32,7 @@ import ldif.output.SerializingQuadWriter
 class SieveTest extends FlatSpec with ShouldMatchers {
 
   //TODO These tests can be moved into IntegrationTest
-  val configFile = CommonUtils.loadFile("sieve/integrationJob.xml")
+  val configFile = CommonUtils.getFileFromPath("sieve/integrationJob.xml")
 
   it should "sieve works correctly" in {
     val ldifOutput = runLdif(configFile)

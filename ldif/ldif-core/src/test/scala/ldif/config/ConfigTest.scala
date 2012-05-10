@@ -28,7 +28,7 @@ import ldif.output.{SerializingQuadWriter, SparqlWriter}
 @RunWith(classOf[JUnitRunner])
 class ConfigTest extends FlatSpec with ShouldMatchers {
 
-  val configFile = CommonUtils.loadFile("ldif/config/integrationJob.xml")
+  val configFile = CommonUtils.getFileFromPath("ldif/config/integrationJob.xml")
   val config = IntegrationConfig.fromFile(configFile)
 
   // Sources
@@ -36,8 +36,6 @@ class ConfigTest extends FlatSpec with ShouldMatchers {
   it should "parse Sources correctly" in {
     config.sources.head should equal ("dumps")
   }
-
-
 
   // Outputs
 
@@ -55,6 +53,4 @@ class ConfigTest extends FlatSpec with ShouldMatchers {
     writer.filepath should equal ("output.nq")
     writer.syntax.name should equal ("N-Quads")
   }
-
-
 }

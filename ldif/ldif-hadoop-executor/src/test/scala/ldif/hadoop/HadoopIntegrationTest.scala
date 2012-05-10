@@ -31,7 +31,7 @@ import ldif.output.SerializingQuadWriter
 @RunWith(classOf[JUnitRunner])
 class HadoopIntegrationTest extends FlatSpec with ShouldMatchers {
 
-  val configFile = CommonUtils.loadFile("integration/integrationJob.xml")
+  val configFile = CommonUtils.getFileFromPath("integration/integrationJob.xml")
 
   val fixedProperties = Map(
     ("uriMintNamespace", "http://ldif/"),

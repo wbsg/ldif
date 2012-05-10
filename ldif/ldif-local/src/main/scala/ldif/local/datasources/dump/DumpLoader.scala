@@ -24,7 +24,6 @@ import org.deri.any23.Any23
 import org.deri.any23.source.ByteArrayDocumentSource
 import java.io._
 import org.deri.any23.writer.NTriplesWriter
-import ldif.local.runtime.QuadReader
 import ldif.local.runtime.impl.FileQuadReader
 import ldif.util.CommonUtils
 
@@ -51,12 +50,9 @@ object DumpLoader {
       url = new URL(sourceLocation)
     } catch {
       case e:Exception => {
-        file = new File(sourceLocation)
-        if (!file.exists) {
-          file = CommonUtils.loadFile(sourceLocation)
+        file = CommonUtils.getFileFromPath(sourceLocation)
           if(!file.exists())
-            throw new Exception("File does not exist: "	+ new File(sourceLocation).getAbsolutePath)
-        }
+            throw new Exception("Unable to load the dump. File not found: "	+ sourceLocation)
       }
     }
 

@@ -4,7 +4,7 @@
             xmlns="http://www4.wiwiss.fu-berlin.de/ldif/">
     <properties>integration.properties</properties>
     <source>sources</source>
-    <sieve>sieve</sieve>
+    <sieve>sieveConfig</sieve>
     <output>
        <file>output_sieve_test.nq</file>
     </output>

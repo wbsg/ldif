@@ -31,6 +31,8 @@ object CommonUtils {
 
   private val log = LoggerFactory.getLogger(getClass.getName)
 
+  private var workingDir : String = null
+
   // convert a Map[String,String] to a Properties object
   def buildProperties(customProperties : Map[String,String]) = {
     // More details - http://www4.wiwiss.fu-berlin.de/bizer/ldif/#configurationproperties
@@ -40,13 +42,6 @@ object CommonUtils {
         properties.setProperty(key,value)
     properties
   }
-
-  // load a file
-  def loadFile(filePath : String) =  {
-    val configUrl = getClass.getClassLoader.getResource(filePath)
-    new File(configUrl.toString.stripPrefix("file:"))
-  }
-
 
   // convert a Traversable[String] to a Traversable[Quad]
   def getQuads(lines : Traversable[String]): Traversable[Quad] = {
@@ -117,7 +112,7 @@ object CommonUtils {
     else if (!isLocal(location))
       getFileFromUrl(location)
     else
-      getFilefromLocalPath(location, baseDir)
+      getFileFromPath(location, baseDir)
   }
 
   // Get a file from a given URL (as String)
@@ -146,19 +141,21 @@ object CommonUtils {
     file
   }
 
-  // Get a file from a given path
-  def getFilefromLocalPath(filepath : String, baseDir : String = null) : File = {
-    var file : File = null
+  // Get a file from a given path and base directory (opt)
+  def getFileFromPath(filepath : String, baseDir : String = workingDir) : File = {
+    // try as Resource, relative path and absolute path
+    val resource = getClass.getClassLoader.getResource(filepath)
     val relativeFile = new File(baseDir + Consts.fileSeparator  + filepath)
     val absoluteFile = new File(filepath)
-    if (relativeFile.exists || absoluteFile.exists) {
-      if (relativeFile.exists)
-        file = relativeFile
-      else file = absoluteFile
+    if (resource!=null)
+      new File(resource.toString.stripPrefix("file:"))
+    else if (relativeFile.exists)
+      relativeFile
+    else {
+      if (!absoluteFile.exists)
+        log.warn("File not found. Searched: "+ filepath +", "+ relativeFile.getCanonicalPath + ", " + absoluteFile.getCanonicalPath)
+      absoluteFile
     }
-    else
-    log.warn("\'Path not found. Searched: " + relativeFile.getCanonicalPath + ", " + absoluteFile.getCanonicalPath)
-    file
   }
 
   // Check if filepath is a local or remote path
