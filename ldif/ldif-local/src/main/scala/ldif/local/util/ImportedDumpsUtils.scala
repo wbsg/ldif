@@ -63,7 +63,7 @@ case class ImportedDumpsUtils(dumpsLocation : String) {
           return Some(quad.value.value.toDouble)
         }
       }
-      log.warn("Provenance file does not contain last update metadata: "+ provenanceFile.getCanonicalPath)
+      log.warn("The provenance file "+ provenanceFile.getCanonicalPath+" does not contain the property "+Consts.importedQuadsProp)
       None
     }
     else {
@@ -79,7 +79,7 @@ case class ImportedDumpsUtils(dumpsLocation : String) {
   /* Retrieve the number of imported quads for all dumps in dumpsDir (from provenance info) */
   def getNumberOfQuads : Double = {
     val provenanceFiles = CommonUtils.listFiles(dumpsDir, "provenance.nq")
-    provenanceFiles.map(getNumberOfQuads(_).get).sum
+    provenanceFiles.map(getNumberOfQuads(_).getOrElse(0.)).sum
   }
 
   private def getProvenanceFile(jobId : Identifier) : File = new File(dumpsDir + "/"+ jobId +".provenance.nq")
