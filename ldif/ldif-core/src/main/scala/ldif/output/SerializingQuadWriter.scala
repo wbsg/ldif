@@ -39,7 +39,12 @@ class SerializingQuadWriter(val filepath: String, val syntax: RDFSyntax) extends
     writer.write(" .\n")
   }
 
-  def finish() {writer.flush(); writer.close()}
+  def finish() {
+    if (writer!=null) {
+      writer.flush()
+      writer.close()
+    }
+  }
 }
 
 sealed trait RDFSyntax {val name: String}
