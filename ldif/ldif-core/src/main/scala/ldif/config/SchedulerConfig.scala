@@ -61,12 +61,17 @@ object SchedulerConfig
 
   def load = new ValidatingXMLReader(fromFile, schemaLocation)
 
-  def fromFile(configFile : File) = {
-    val baseDir = configFile.getParent
-    val xml = XML.loadFile(configFile)
+  def fromFile(file : File)  : SchedulerConfig =
+    fromXML(XML.loadFile(file), file.getCanonicalFile.getParent)
+
+  def fromString(xmlString : String, dir : String) =
+    fromXML(XML.loadString(xmlString), dir)
+
+  def fromXML(xml : Node, dir : String) : SchedulerConfig = {
+    CommonUtils.currentDir = dir
 
     // Read in properties
-    val propertiesFile = getFile(xml, "properties", baseDir)
+    val propertiesFile = getFile(xml, "properties")
     var properties = new Properties
     if (propertiesFile != null)
       properties = ConfigProperties.loadProperties(propertiesFile)
@@ -74,10 +79,10 @@ object SchedulerConfig
     // dumpLocation can be (1) a relative local path (from baseDir),
     // (2) an absolute local path or (3) an HDFS path,
     // We use that as relative path if exists, as absolute path otherwise
-    val dumpLocationDir = getFilePath((xml \ "dumpLocation" text), baseDir)
-    val importJobsFiles = getFiles(xml, "importJob", baseDir, Seq("xml"))
-    val integrationJobDir = getFile(xml, "integrationJob", baseDir)
-    val dataSourceFiles = getFiles(xml, "dataSources", baseDir, Seq("xml"))
+    val dumpLocationDir = CommonUtils.getFilePath((xml \ "dumpLocation" text))
+    val importJobsFiles = getFiles(xml, "importJob", Seq("xml"))
+    val integrationJobDir = getFile(xml, "integrationJob")
+    val dataSourceFiles = getFiles(xml, "dataSources", Seq("xml"))
 
     SchedulerConfig(
       importJobsFiles,
@@ -88,16 +93,9 @@ object SchedulerConfig
     )
   }
 
-  private def getFilePath(path : String, baseDir : String) : String = {
-    val relativeFile = new File(baseDir + Consts.fileSeparator + path)
-    if (relativeFile.exists)
-      relativeFile.getCanonicalPath
-    else path
-  }
-
   // Get a single file from a given xml element
-  private def getFile(xml : Node, key : String, baseDir : String, allowedExtensions : Seq[String] = Seq.empty) : File = {
-    val files = getFiles(xml, key, baseDir, allowedExtensions)
+  private def getFile(xml : Node, key : String, allowedExtensions : Seq[String] = Seq.empty) : File = {
+    val files = getFiles(xml, key, allowedExtensions)
       if (files.size > 0){
         if (files.size > 1)
           log.warn("More than one file found for "+key)
@@ -107,17 +105,17 @@ object SchedulerConfig
   }
 
   // Get files from a given xml element
-  private def getFiles(xml : Node, key : String, baseDir : String, allowedExtensions : Seq[String] = Seq.empty, forceMkdir : Boolean = false) : Traversable[File] = {
+  private def getFiles(xml : Node, key : String, allowedExtensions : Seq[String] = Seq.empty, forceMkdir : Boolean = false) : Traversable[File] = {
     var files = Traversable.empty[File]
     val nodes = (xml \\ key)
     for (node <- nodes.filter(_.text != ""))
-        files = files ++ getFiles(node.text, baseDir, allowedExtensions, forceMkdir)
+        files = files ++ getFiles(node.text, allowedExtensions, forceMkdir)
     files
   }
 
   // Get valid files from a given path (local path or url)
-  private def getFiles(location : String, baseDir : String, allowedExtensions : Seq[String], forceMkdir : Boolean) : Traversable[File] = {
-    val file = getFile(location, baseDir, forceMkdir)
+  private def getFiles(location : String, allowedExtensions : Seq[String], forceMkdir : Boolean) : Traversable[File] = {
+    val file = getFile(location, forceMkdir)
     var files = Traversable.empty[File]
     if (file!= null)  {
       if (file.isDirectory)
@@ -129,11 +127,11 @@ object SchedulerConfig
   }
 
   // Get a file from a given path (local or url)
-  private def getFile(filepath : String, baseDir : String, forceMkdir : Boolean) : File = {
-      var file = CommonUtils.getFileFromPathOrUrl(filepath, baseDir)
+  private def getFile(filepath : String, forceMkdir : Boolean) : File = {
+      var file = CommonUtils.getFileFromPathOrUrl(filepath)
       if(file == null)
         if (forceMkdir) {
-          val relativeFile = new File(baseDir + Consts.fileSeparator  + filepath)
+          val relativeFile = new File(CommonUtils.currentDir + Consts.fileSeparator  + filepath)
           if (relativeFile.mkdirs) {
             file = relativeFile
             log.info("Created new directory at: "+ relativeFile.getCanonicalPath)

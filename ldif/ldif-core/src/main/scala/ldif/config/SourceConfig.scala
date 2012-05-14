@@ -18,22 +18,16 @@
 package ldif.config
 
 import xml.Node
-import ldif.util.Consts
-import java.io.File
+import ldif.util.CommonUtils
 
 object SourceConfig {
 
-  def fromSourcesXML(xml : Node, baseDir : String = null) : Traversable[String] =
-    (xml \ "source").filter(_.text != "").map(parseSource(_, baseDir))
+  def fromSourcesXML(xml : Node) : Traversable[String] =
+    (xml \ "source").filter(_.text != "").map(parseSource(_))
 
-  def fromSourceNode(sourceNode : Node, baseDir : String = null) : Traversable[String] =
-    Seq(sourceNode).filter(_.text != "").map(parseSource(_, baseDir))
+  def fromSourceNode(sourceNode : Node) : Traversable[String] =
+    Seq(sourceNode).filter(_.text != "").map(parseSource(_))
 
-  private def parseSource(node : Node, baseDir : String) : String = {
-    val value = node.text.trim
-    val relativeFile = new File(baseDir + Consts.fileSeparator + value)
-    if (relativeFile.exists)
-      relativeFile.getCanonicalPath
-    else value
-  }
+  private def parseSource(node : Node) : String =
+    CommonUtils.getFilePath(node.text.trim)
 }

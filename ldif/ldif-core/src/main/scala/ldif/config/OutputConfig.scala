@@ -100,19 +100,21 @@ object OutputConfig {
   }
 
   private def getFileWriter(xml : Node) : Option[SerializingQuadWriter] = {
-    val outputUriOrPath = (xml text).trim//CommonUtils.getValueAsString(xml,"path").trim
-    if (outputUriOrPath == "") {
+    val path = (xml text).trim//CommonUtils.getValueAsString(xml,"path").trim
+    if (path == "") {
       log.warn("Invalid file output config. Please check http://www.assembla.com/code/ldif/git/nodes/ldif/ldif-core/src/main/resources/xsd/IntegrationJob.xsd")
       None
     }
     else {
       val outputFormat = CommonUtils.getAttributeAsString(xml,"format",Consts.FileOutputFormatDefault)
-      if (!touch(outputUriOrPath))
-        None
+
+      // Get writable path, return None otherwise
+      val outputPath = CommonUtils.getWritablePath(path).getOrElse(return None)
+
       if (outputFormat == "nquads")
-        Some(new SerializingQuadWriter(outputUriOrPath, NQUADS))
+        Some(new SerializingQuadWriter(outputPath, NQUADS))
       else if (outputFormat == "ntriples")
-        Some(new SerializingQuadWriter(outputUriOrPath, NTRIPLES))
+        Some(new SerializingQuadWriter(outputPath, NTRIPLES))
       else {
         log.warn("Output format not supported: "+ outputFormat )
         None
@@ -120,21 +122,4 @@ object OutputConfig {
     }
   }
 
-  // creates a file at the given location
-  private def touch(filepath : String) : Boolean = {
-    val file = new File(filepath).getCanonicalFile
-    if (!file.exists)
-      try  {
-        val dir = file.getParentFile
-        if(!dir.exists && !dir.mkdirs())
-          throw new Exception()
-        file.createNewFile()
-        true
-      }
-      catch {
-        case e:Exception => log.warn("Could not create " + filepath); false
-      }
-    else 
-      true
-  }
 }

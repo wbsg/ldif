@@ -704,6 +704,14 @@ object IntegrationJob {
         log.error("No valid output has been specified for the Integration Job.")
         System.exit(1)
       }
+
+      for (source <- config.sources.map(new File(_))){
+        if(!source.exists()){
+          log.error("An invalid source path has been specified for the Integration Job: "+ source)
+          System.exit(1)
+          }
+      }
+
       val integrationJob = IntegrationJob(config, debug)
       log.info("Integration job loaded from "+ configFile.getCanonicalPath)
       integrationJob
