@@ -35,6 +35,7 @@ import ldif.util._
 import java.io.File
 import javax.activation.MimetypesFileTypeMap
 import org.slf4j.LoggerFactory
+import com.sun.jersey.api.core.{ClassNamesResourceConfig, ResourceConfig}
 
 @Path("/")
 class MonitorServer {
@@ -106,7 +107,8 @@ object  MonitorServer {
   def start(uri: String) {
     if(server!=null)
       stop()
-    server = HttpServerFactory.create(uri)
+    val resourceConfig = new ClassNamesResourceConfig(classOf[MonitorServer], classOf[IntegrationJobMonitorServer])
+    server = HttpServerFactory.create(uri, resourceConfig)
     server.start()
     log.info("Status interface started at "+ uri)
   }

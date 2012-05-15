@@ -57,11 +57,25 @@ object Matcher {
     else
       matchOntologies (ont1Reader, ont2Reader, outputQueue)
     val writer = new BufferedWriter(new FileWriter(args(2)))
-    URITranslator.outputSameAsCluster(outputQueue, writer)
+    outputToAlignmentFormat(outputQueue, writer)
+//    outputURIClustersAsSameAsRDF(outputQueue, writer)
     writer.flush()
     writer.close()
-//    SameAsAlignmentFormatConverter.convertToSameAsNTriples(outputQueue, args(2))
     println("Finished matching after " + (System.currentTimeMillis()-startTime)/1000.0 + "s")
+  }
+
+
+
+  private def outputURIClustersAsSameAsRDF(matches: QuadReader, writer: BufferedWriter) {
+    URITranslator.outputSameAsCluster(matches, writer)
+  }
+
+  private def outputToAlignmentFormat(matches: QuadReader, writer: BufferedWriter) {
+    SameAsAlignmentFormatConverter.convertToAlignmentFormat(matches, writer)
+  }
+
+  private def outputToAlignmentFormatTTL(matches: QuadReader, writer: BufferedWriter) {
+    SameAsAlignmentFormatConverter.convertToAlignmentFormat(matches, writer, false)
   }
 
   def matchOntologies(ont1Reader: QuadReader,  ont2Reader: QuadReader, output: QuadWriter, matchSpec: File = getLinkSpecDir) {

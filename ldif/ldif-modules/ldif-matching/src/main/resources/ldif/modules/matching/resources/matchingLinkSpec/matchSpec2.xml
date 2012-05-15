@@ -147,7 +147,7 @@
 
             <Filter />
         </Interlink>
-        <Interlink id="AnnotationProperty">
+        <Interlink id="DatatypeProperty">
             <LinkType>owl:sameAs</LinkType>
 
             <SourceDataset dataSource="SOURCE" var="a">

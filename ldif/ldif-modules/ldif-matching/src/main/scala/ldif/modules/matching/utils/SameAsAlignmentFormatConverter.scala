@@ -33,28 +33,26 @@ import java.io.{FileInputStream, FileWriter, BufferedWriter, File}
  */
 
 object SameAsAlignmentFormatConverter {
-  def convertToTTL(input: QuadReader): (Int, String) = {
+  def convertToTTL(input: QuadReader, writer: BufferedWriter): Int = {
     var counter = 0
-    val sb = new StringBuilder
-    sb.append(generateHeaderTTL)
+    writer.append(generateHeaderTTL)
     var first = true
     for(quad<-input) {
       if(quad.predicate==Consts.SAMEAS_URI && quad.subject.value!=quad.value.value) {
         counter += 1
-        sb.append(generateCellTTL(quad.subject.value, quad.value.value, first))
+        writer.append(generateCellTTL(quad.subject.value, quad.value.value, first))
         first=false
       }
     }
 
-    sb.append(generateFooterTTL)
-    (counter, sb.toString)
+    writer.append(generateFooterTTL)
+    counter
   }
 
-  def convertToXML(input: QuadReader): (Int,String) = {
+  def convertToXML(input: QuadReader, writer: BufferedWriter): Int = {
     var counter = 0
     val entitySet = new HashSet[String]
-    val sb = new StringBuilder
-    sb.append(generateHeaderXML)
+    writer.append(generateHeaderXML)
 
     for(quad<-input) {
       val entity1 = quad.subject.value
@@ -62,15 +60,15 @@ object SameAsAlignmentFormatConverter {
       if(quad.predicate==Consts.SAMEAS_URI) {
         if(!entitySet.contains(entity1) && !entitySet.contains(entity2) && entity1!=entity2) {
           counter += 1
-          sb.append(generateCellXML(entity1, entity2))
+          writer.append(generateCellXML(entity1, entity2))
           entitySet.add(entity1)
           entitySet.add(entity2)
         }
       }
     }
 
-    sb.append(generateFooterXML)
-    (counter,sb.toString)
+    writer.append(generateFooterXML)
+    counter
   }
 
   private def generateHeaderXML: String = {
@@ -106,31 +104,24 @@ object SameAsAlignmentFormatConverter {
     sb.toString()
   }
 
-  def convertToAlignmentFormat(input: QuadReader, outputFile: String, outputXML: Boolean =true) {
-    val writer = new BufferedWriter(new FileWriter(outputFile))
-    val (count, outputString) = if(outputXML) convertToXML(input) else convertToTTL(input)
+  def convertToAlignmentFormat(input: QuadReader, output: BufferedWriter, outputXML: Boolean =true) {
+    val count = if(outputXML) convertToXML(input, output) else convertToTTL(input, output)
     println("Number of alignments found: " + count)
-    writer.append(outputString)
-    writer.flush()
-    writer.close()
   }
 
-  def convertToSameAsNTriples(input: QuadReader, outputFile: String) {
-    val writer = new BufferedWriter(new FileWriter(outputFile))
+  def convertToSameAsNTriples(matches: QuadReader, output: BufferedWriter) {
     val matchSet = new HashSet[(String, String)]
     var counter = 0
-    for(quad <- input) {
+    for(quad <- matches) {
       val subj = quad.subject.value
       val obj = quad.value.value
       if(subj!=obj && !(matchSet.contains((subj,obj)) || matchSet.contains((obj,subj)))) {
-        writer.append(quad.toNTripleFormat).append("\n")
+        output.append(quad.toNTripleFormat).append("\n")
         counter += 1
         matchSet.add((subj,obj))
       }
     }
     println("Number of alignments found: " + counter)
-    writer.flush()
-    writer.close()
   }
 
   private def generateHeaderTTL: String = {
@@ -165,17 +156,6 @@ object SameAsAlignmentFormatConverter {
     sb.append("     a :Cell\n")
     sb.append("    ]")
     sb.toString()
-  }
-
-  def main(args: Array[String]) {
-    if(args.length<2) {
-      println("Parameters: input-file output-file")
-      sys.exit(1)
-    }
-    val startTime = System.currentTimeMillis()
-    val quadReader = QuadFileLoader.loadQuadsIntoTempFileQuadQueue(new FileInputStream(args(0)))
-    convertToAlignmentFormat(quadReader, args(1))
-    println("File converted in " + (System.currentTimeMillis()-startTime)/1000.0 + "s")
   }
 }
 
