@@ -360,6 +360,18 @@ object HadoopIntegrationJob {
       System.exit(1)
     }
 
+    // this cannot be moved to ldif-core/IntegrationConfig, since it depends on Hadoop
+    for (source <- config.sources){
+      val hdfs = FileSystem.get(new Configuration)
+      val localFile = new File(source)
+      val hdfsPath = new Path(source)
+      // check both local and hdfs paths
+      if(!localFile.exists() & !hdfs.exists(hdfsPath)){
+        log.error("An invalid source path has been specified for the Integration Job: "+ source)
+        System.exit(1)
+      }
+    }
+
     val integrator = new HadoopIntegrationJob(config, debug)
     integrator.runIntegration()
   }

@@ -31,7 +31,7 @@ object CommonUtils {
 
   private val log = LoggerFactory.getLogger(getClass.getName)
 
-  private var workingDir : String = null
+  var currentDir : String = null
 
   // convert a Map[String,String] to a Properties object
   def buildProperties(customProperties : Map[String,String]) = {
@@ -106,7 +106,7 @@ object CommonUtils {
   }
 
   // Get a file from a given location (local path or url)
-  def getFileFromPathOrUrl(location : String, baseDir : String = null) : File = {
+  def getFileFromPathOrUrl(location : String, baseDir : String = currentDir) : File = {
     if (location.equals("") || location == null)
       null
     else if (!isLocal(location))
@@ -142,7 +142,7 @@ object CommonUtils {
   }
 
   // Get a file from a given path and base directory (opt)
-  def getFileFromPath(filepath : String, baseDir : String = workingDir) : File = {
+  def getFileFromPath(filepath : String, baseDir : String = currentDir, suppressWarning : Boolean = false) : File = {
     // try as Resource, relative path and absolute path
     val resource = getClass.getClassLoader.getResource(filepath)
     val relativeFile = new File(baseDir + Consts.fileSeparator  + filepath)
@@ -152,10 +152,18 @@ object CommonUtils {
     else if (relativeFile.exists)
       relativeFile
     else {
-      if (!absoluteFile.exists)
+      if (!suppressWarning & !absoluteFile.exists)
         log.warn("File not found. Searched: "+ filepath +", "+ relativeFile.getCanonicalPath + ", " + absoluteFile.getCanonicalPath)
       absoluteFile
     }
+  }
+
+  // Get an existing file path (if possible), return the value otherwise
+  def getFilePath(value : String) : String = {
+    val file = getFileFromPath(value, suppressWarning = true)
+    if (file.exists())
+      file.getCanonicalPath
+    else value   // used as HDFS path
   }
 
   // Check if filepath is a local or remote path
@@ -174,6 +182,40 @@ object CommonUtils {
     }
 
     isLocal
+  }
+
+  // Search for a writable path for the given filepath. First try the relative path, then the absolute one.
+  def getWritablePath(filepath : String, baseDir : String = currentDir) : Option[String] = {
+    val relativeFile = new File(baseDir + Consts.fileSeparator  + filepath).getCanonicalFile
+    val absoluteFile = new File(filepath).getCanonicalFile
+
+    if (baseDir!=null & isWritable(relativeFile))
+      Some(relativeFile.getCanonicalPath)
+    else if (isWritable(absoluteFile))
+      Some(absoluteFile.getCanonicalPath)
+    else {
+      log.warn("Unable to find a writable path for "+filepath+". Searched: " + relativeFile.getCanonicalPath + ", " + absoluteFile.getCanonicalPath)
+      None
+    }
+  }
+
+  // Check if the given file is writable
+  def isWritable(file : File) : Boolean = {
+    if (!file.exists) {
+      val dir = file.getParentFile
+
+      if(dir.exists || dir.mkdirs()) {
+        try {
+          file.createNewFile()
+          return true
+        }
+        catch { case e:Exception => log.debug("Unable to write to: " + file.getCanonicalPath)}
+      }
+    }
+    else if (file.canWrite) {
+      return true
+    }
+    false
   }
 
 }

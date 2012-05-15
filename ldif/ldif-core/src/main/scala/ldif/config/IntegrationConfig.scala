@@ -23,7 +23,7 @@ import org.slf4j.LoggerFactory
 import xml.{Node, XML}
 import java.util.Properties
 import java.lang.Boolean
-import ldif.util.{CommonUtils, ValidatingXMLReader, ConfigProperties, Consts}
+import ldif.util.{CommonUtils, ValidatingXMLReader, ConfigProperties}
 
 case class IntegrationConfig (sources : Traversable[String],
                               linkSpecDir : File,
@@ -71,24 +71,24 @@ object IntegrationConfig {
 
   protected val schemaLocation = "xsd/IntegrationJob.xsd"
 
-  protected var baseDir : String = null
   protected var xml : Node = null
   protected var properties : Properties = new Properties
 
   def load = new ValidatingXMLReader(fromFile, schemaLocation)
 
   def fromFile(file : File)  : IntegrationConfig =
-    fromXML(XML.loadFile(file), file.getParent)
+    fromXML(XML.loadFile(file), file.getCanonicalFile.getParent)
 
   def fromString(xmlString : String, dir : String) =
     fromXML(XML.loadString(xmlString), dir)
 
   def fromXML(node : Node, dir : String) : IntegrationConfig = {
     xml = node
-    baseDir = dir
+
+    CommonUtils.currentDir = dir
 
     // Read in properties
-    val propertiesFile = getFile("properties", baseDir)
+    val propertiesFile = getFile("properties")
     properties = new Properties
     if (propertiesFile != null)
       properties = ConfigProperties.loadProperties(propertiesFile)
@@ -106,13 +106,13 @@ object IntegrationConfig {
 
   protected def getSources = {
     if((xml \ "sources").length>0)
-      SourceConfig.fromSourcesXML((xml \ "sources").head, baseDir)
+      SourceConfig.fromSourcesXML((xml \ "sources").head)
     else
-      SourceConfig.fromSourceNode((xml \ "source").head, baseDir)
+      SourceConfig.fromSourceNode((xml \ "source").head)
   }
-  protected def getLinkSpecDir = getFile("linkSpecifications", baseDir, true)
-  protected def getMappingDir = getFile("mappings", baseDir, true)
-  protected def getSieveSpecDir = getFile("sieve", baseDir, true)
+  protected def getLinkSpecDir = getFile("linkSpecifications", true)
+  protected def getMappingDir = getFile("mappings", true)
+  protected def getSieveSpecDir = getFile("sieve", true)
   protected def getOutput = {
     if((xml \ "outputs").length>0)
       OutputConfig.fromOutputsXML((xml \ "outputs").head)
@@ -131,9 +131,9 @@ object IntegrationConfig {
   /**
    * Returns a File object if the element is defined and the value is not empty, else it returns null
    */
-  protected def getFile(key : String, baseDir : String, skipIfNotDefined : Boolean = false) : File = {
+  protected def getFile(key : String, skipIfNotDefined : Boolean = false) : File = {
     val value : String = (xml \ key text)
-    val file = CommonUtils.getFileFromPathOrUrl(value, baseDir)
+    val file = CommonUtils.getFileFromPathOrUrl(value)
     if(file == null){
       if (skipIfNotDefined && properties != null)
         properties.setProperty(key + ".skip", "true")

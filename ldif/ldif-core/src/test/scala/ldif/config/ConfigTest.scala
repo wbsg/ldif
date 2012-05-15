@@ -50,7 +50,7 @@ class ConfigTest extends FlatSpec with ShouldMatchers {
 
   it should "parse File output config correctly" in {
     val writer =  config.outputs.getByPhase(COMPLETE).head.asInstanceOf[SerializingQuadWriter]
-    writer.filepath should equal ("output.nq")
+    writer.filepath.endsWith("ldif-core/target/test-classes/ldif/config/output.nq") should equal (true)
     writer.syntax.name should equal ("N-Quads")
   }
 }
