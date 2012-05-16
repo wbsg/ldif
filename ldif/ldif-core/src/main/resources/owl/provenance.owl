@@ -103,7 +103,15 @@
         <rdfs:range rdf:resource="&xsd;string"/>
         <rdfs:domain rdf:resource="http://www4.wiwiss.fu-berlin.de/ldif/ImportJob"/>
     </owl:DatatypeProperty>
-    
+
+
+
+    <!-- http://www4.wiwiss.fu-berlin.de/ldif/numberOfQuads -->
+
+    <owl:DatatypeProperty rdf:about="http://www4.wiwiss.fu-berlin.de/ldif/numberOfQuads">
+        <rdfs:range rdf:resource="&xsd;nonNegativeInteger"/>
+        <rdfs:domain rdf:resource="http://www4.wiwiss.fu-berlin.de/ldif/ImportJob"/>
+    </owl:DatatypeProperty>
 
 
     <!-- 
@@ -148,6 +156,12 @@
             <owl:Restriction>
                 <owl:onProperty rdf:resource="http://www4.wiwiss.fu-berlin.de/ldif/hasDatasource"/>
                 <owl:minCardinality rdf:datatype="&xsd;nonNegativeInteger">1</owl:minCardinality>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www4.wiwiss.fu-berlin.de/ldif/numberOfQuads"/>
+                <owl:minCardinality rdf:datatype="&xsd;nonNegativeInteger">0</owl:minCardinality>
             </owl:Restriction>
         </rdfs:subClassOf>
     </owl:Class>

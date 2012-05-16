@@ -71,7 +71,7 @@ trait ImportJob {
     if(importedGraphsFile != null && importedGraphsFile.exists)
       importedGraphsNumber += scala.io.Source.fromFile(importedGraphsFile).getLines().size
     importedQuadsNumber += importedGraphsNumber*2 + 7 // add number of provenance quads
-    writer.write(Quad(jobBlankNode, Consts.importedQuadsProp, Node.createTypedLiteral(importedQuadsNumber.toString,Consts.xsdDouble),provenanceGraph).toLine)
+    writer.write(Quad(jobBlankNode, Consts.importedQuadsProp, Node.createTypedLiteral(importedQuadsNumber.intValue().toString,Consts.xsdNonNegativeInteger),provenanceGraph).toLine)
 
     // add graphs
     val importedGraph = Node.createUriNode(Consts.importedGraphClass)

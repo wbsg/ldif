@@ -869,7 +869,23 @@ levels to crawl, meaning the maximum distance to one of the seed URIs.
 Also optionally the maximum number of resources to crawl can be
 specified. Of each crawled resource all received triples are stored.<br>
 </p>
-<pre>&lt;importJob xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"<br>            xmlns="http://www4.wiwiss.fu-berlin.de/ldif/"&gt;<br>    &lt;internalId&gt;freebase.0&lt;/internalId&gt;<br>    &lt;dataSource&gt;Freebase&lt;/dataSource&gt;<br>    &lt;refreshSchedule&gt;onStartup&lt;/refreshSchedule&gt;<br>    <span style="font-weight: bold;">&lt;crawlImportJob&gt;</span><br>        &lt;seedURIs&gt;<br>            &lt;uri&gt;http://rdf.freebase.com/ns/en.dance-pop&lt;/uri&gt;<br>            &lt;uri&gt;http://rdf.freebase.com/ns/en.radiohead&lt;/uri&gt;<br>            &lt;uri&gt;http://rdf.freebase.com/ns/en.art_rock&lt;/uri&gt;<br>        &lt;/seedURIs&gt;<br>        &lt;predicatesToFollow&gt;<br>            &lt;uri&gt;http://rdf.freebase.com/ns/music.artist.genre&lt;/uri&gt;<br>            &lt;uri&gt;http://rdf.freebase.com/ns/music.genre.albums&lt;/uri&gt;<br>            &lt;uri&gt;http://rdf.freebase.com/ns/music.genre.artists&lt;/uri&gt;<br>            &lt;uri&gt;http://rdf.freebase.com/ns/music.album.genre&lt;/uri&gt;<br>            &lt;uri&gt;http://rdf.freebase.com/ns/music.album.artist&lt;/uri&gt;<br>            &lt;uri&gt;http://rdf.freebase.com/ns/music.artist.album&lt;/uri&gt;<br>            &lt;uri&gt;http://rdf.freebase.com/ns/influence.influence_node.influenced_by&lt;/uri&gt;<br>            &lt;uri&gt;http://rdf.freebase.com/ns/music.artist.label&lt;/uri&gt;<br>            &lt;uri&gt;http://rdf.freebase.com/ns/music.record_label.artist&lt;/uri&gt;<br>            &lt;uri&gt;http://rdf.freebase.com/ns/music.producer.releases_produced&lt;/uri&gt;<br>            &lt;uri&gt;http://rdf.freebase.com/ns/music.release.producers&lt;/uri&gt;<br>            &lt;uri&gt;http://rdf.freebase.com/ns/music.release.album&lt;/uri&gt;<br>            &lt;uri&gt;http://rdf.freebase.com/ns/music.producer.releases_produced&lt;/uri&gt;<br>        &lt;/predicatesToFollow&gt;<br>        &lt;levels&gt;5&lt;/levels&gt;<br>        &lt;resourceLimit&gt;50000&lt;/resourceLimit&gt;<br>    <span style="font-weight: bold;">&lt;/crawlImportJob&gt;</span><br>&lt;/importJob&gt;</pre>
+<pre>&lt;importJob xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns="http://www4.wiwiss.fu-berlin.de/ldif/"&gt;
+    &lt;internalId&gt;freebase.0&lt;/internalId&gt;
+    &lt;dataSource&gt;Freebase&lt;/dataSource&gt;
+    &lt;refreshSchedule&gt;onStartup&lt;/refreshSchedule&gt;
+    <span style="font-weight: bold;">&lt;crawlImportJob&gt;</span>
+        &lt;seedURIs&gt;
+            &lt;uri&gt;http://rdf.freebase.com/ns/en.art_rock&lt;/uri&gt;
+        &lt;/seedURIs&gt;
+        &lt;predicatesToFollow&gt;
+            &lt;uri&gt;http://rdf.freebase.com/ns/music.genre.albums&lt;/uri&gt;
+            &lt;uri&gt;http://rdf.freebase.com/ns/music.genre.artists&lt;/uri&gt;
+        &lt;/predicatesToFollow&gt;
+        &lt;levels&gt;5&lt;/levels&gt;
+        &lt;resourceLimit&gt;50000&lt;/resourceLimit&gt;
+    <span style="font-weight: bold;">&lt;/crawlImportJob&gt;</span>
+&lt;/importJob&gt;</pre>
 <br>
 <h4 id="provenance">Provenance Metadata</h4>
 <p>The result of each import contains provenance metadata, whose
@@ -880,12 +896,23 @@ For each imported graph, provenance information will contain:
 <ul>
   <li>import date and time,</li>
   <li>chosen import type,</li>
+  <li>number of imported quads,</li>
   <li>original location (only for Quad and Triple Import Jobs).</li>
 </ul>
 <p>A typical provenance graph for a Crawl Import Job looks like this:</p>
 <img src="img/Freebase-Provenance.png" alt="Provenance graph">
 <p>A typical provenance graph for a Quad Import Job looks like this:</p>
-<pre>&lt;http://dbpedia.org/graphA&gt; &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#type&gt; &lt;http://www4.wiwiss.fu-berlin.de/ldif/ImportedGraph&gt; &lt;http://www4.wiwiss.fu-berlin.de/ldif/provenance&gt; .<br>&lt;http://dbpedia.org/graphA&gt; &lt;http://www4.wiwiss.fu-berlin.de/ldif/hasImportJob&gt; _:dbpedia0 &lt;http://www4.wiwiss.fu-berlin.de/ldif/provenance&gt; .<br>&lt;http://dbpedia.org/graphB&gt; &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#type&gt; &lt;http://www4.wiwiss.fu-berlin.de/ldif/ImportedGraph&gt; &lt;http://www4.wiwiss.fu-berlin.de/ldif/provenance&gt; .<br>&lt;http://dbpedia.org/graphB&gt; &lt;http://www4.wiwiss.fu-berlin.de/ldif/hasImportJob&gt; _:dbpedia0 &lt;http://www4.wiwiss.fu-berlin.de/ldif/provenance&gt; .<br>_:dbpedia0 &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#type&gt; &lt;http://www4.wiwiss.fu-berlin.de/ldif/ImportJob&gt; &lt;http://www4.wiwiss.fu-berlin.de/ldif/provenance&gt; .<br>_:dbpedia0 &lt;http://www4.wiwiss.fu-berlin.de/ldif/importId&gt; "dBpedia.0" &lt;http://www4.wiwiss.fu-berlin.de/ldif/provenance&gt; .<br>_:dbpedia0 &lt;http://www4.wiwiss.fu-berlin.de/ldif/lastUpdate&gt; "2011-09-21T19:01:00-05:00"^^&lt;http://www.w3.org/2001/XMLSchema#dateTime&gt; &lt;http://www4.wiwiss.fu-berlin.de/ldif/provenance&gt; .<br>_:dbpedia0 &lt;http://www4.wiwiss.fu-berlin.de/ldif/hasDatasource&gt; "dBpedia" &lt;http://www4.wiwiss.fu-berlin.de/ldif/provenance&gt; .<br>_:dbpedia0 &lt;http://www4.wiwiss.fu-berlin.de/ldif/hasImportType&gt; "quad" &lt;http://www4.wiwiss.fu-berlin.de/ldif/provenance&gt; .<br>_:dbpedia0 &lt;http://www4.wiwiss.fu-berlin.de/ldif/hasOriginalLocation&gt; "http://mes.smw-lde-eu.s3.amazonaws.com/dBpedia_dump.nt.bz2" &lt;http://www4.wiwiss.fu-berlin.de/ldif/provenance&gt; .<br></pre>
+<pre>&lt;http://dbpedia.org/graphA&gt; &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#type&gt; &lt;http://www4.wiwiss.fu-berlin.de/ldif/ImportedGraph&gt; &lt;http://www4.wiwiss.fu-berlin.de/ldif/provenance&gt; .
+&lt;http://dbpedia.org/graphA&gt; &lt;http://www4.wiwiss.fu-berlin.de/ldif/hasImportJob&gt; _:dbpedia0 &lt;http://www4.wiwiss.fu-berlin.de/ldif/provenance&gt; .
+&lt;http://dbpedia.org/graphB&gt; &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#type&gt; &lt;http://www4.wiwiss.fu-berlin.de/ldif/ImportedGraph&gt; &lt;http://www4.wiwiss.fu-berlin.de/ldif/provenance&gt; .
+&lt;http://dbpedia.org/graphB&gt; &lt;http://www4.wiwiss.fu-berlin.de/ldif/hasImportJob&gt; _:dbpedia0 &lt;http://www4.wiwiss.fu-berlin.de/ldif/provenance&gt; .
+_:dbpedia0 &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#type&gt; &lt;http://www4.wiwiss.fu-berlin.de/ldif/ImportJob&gt; &lt;http://www4.wiwiss.fu-berlin.de/ldif/provenance&gt; .
+_:dbpedia0 &lt;http://www4.wiwiss.fu-berlin.de/ldif/importId&gt; "dBpedia.0" &lt;http://www4.wiwiss.fu-berlin.de/ldif/provenance&gt; .
+_:dbpedia0 &lt;http://www4.wiwiss.fu-berlin.de/ldif/lastUpdate&gt; "2011-09-21T19:01:00-05:00"^^&lt;http://www.w3.org/2001/XMLSchema#dateTime&gt; &lt;http://www4.wiwiss.fu-berlin.de/ldif/provenance&gt; .
+_:dbpedia0 &lt;http://www4.wiwiss.fu-berlin.de/ldif/hasDatasource&gt; "dBpedia" &lt;http://www4.wiwiss.fu-berlin.de/ldif/provenance&gt; .
+_:dbpedia0 &lt;http://www4.wiwiss.fu-berlin.de/ldif/hasImportType&gt; "quad" &lt;http://www4.wiwiss.fu-berlin.de/ldif/provenance&gt; .
+_:dbpedia0 &lt;http://www4.wiwiss.fu-berlin.de/ldif/numberOfQuads&gt; "23592"^^&lt;http://www.w3.org/2001/XMLSchema#nonNegativeInteger&gt; &lt;http://www4.wiwiss.fu-berlin.de/ldif/provenance&gt; .
+_:dbpedia0 &lt;http://www4.wiwiss.fu-berlin.de/ldif/hasOriginalLocation&gt; "http://mes.smw-lde-eu.s3.amazonaws.com/dBpedia_dump.nt.bz2" &lt;http://www4.wiwiss.fu-berlin.de/ldif/provenance&gt; .</pre>
 <h3 id="datasource">Data Source Configuration</h3>
 <p>A Data Source is configured with an XML document, whose structure is
 described by this <a href="http://www.assembla.com/code/ldif/git/nodes/ldif/ldif-core/src/main/resources/xsd/DataSource.xsd">XML
@@ -894,7 +921,7 @@ The <span style="font-family: monospace;">label</span> element should
 be a unique string in each integration use case, because it will be
 referenced by the <a href="#importjob">import jobs</a>.<br>
 </p>
-<pre>&lt;dataSource&gt;<br>    &lt;label&gt;DBpedia&lt;/label&gt;<br>    &lt;description&gt;DBpedia ist an RDF version of Wikipedia&lt;/description&gt;<br>   &lt;homepage&gt;http://dbpedia.org&lt;/homepage&gt;<br>&lt;/dataSource&gt;<br></pre>
+<pre>&lt;dataSource&gt;<br>    &lt;label&gt;DBpedia&lt;/label&gt;<br>    &lt;description&gt;DBpedia is an RDF version of Wikipedia&lt;/description&gt;<br>   &lt;homepage&gt;http://dbpedia.org&lt;/homepage&gt;<br>&lt;/dataSource&gt;<br></pre>
 <h2 id="quickstart">4. Quick start</h2>
 
 <p>This section explains you how to run the different versions of LDIF.</p>

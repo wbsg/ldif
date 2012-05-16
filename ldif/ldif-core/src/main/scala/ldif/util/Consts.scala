@@ -58,6 +58,7 @@ object Consts {
   val simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss.S")
   val xsdDateTimeFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ")
   val xsdDouble = "http://www.w3.org/2001/XMLSchema#double"
+  val xsdNonNegativeInteger = "http://www.w3.org/2001/XMLSchema#nonNegativeInteger"
 
   // Import metadata properties
   val lastUpdateProp = "http://www4.wiwiss.fu-berlin.de/ldif/lastUpdate"
