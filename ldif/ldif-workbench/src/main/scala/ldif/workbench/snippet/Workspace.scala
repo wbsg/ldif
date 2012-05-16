@@ -163,9 +163,7 @@ object Workspace {
       if (!runningIntegration) {
         runningIntegration =true
         try {
-          MonitorServer.start(Consts.DefaultStatusMonitorrURI)
           User().project.integrationModule.tasks.head.job.runIntegration
-          MonitorServer.stop()
           runningIntegration = false
           JSUtils.Message("IntegrationJob completed")
         } catch {
@@ -183,9 +181,7 @@ object Workspace {
       if (!runningScheduler)  {
         runningScheduler =true
         try {
-          MonitorServer.start(Consts.DefaultStatusMonitorrURI)
           Scheduler(User().project.config).run()
-          MonitorServer.stop()
           runningScheduler = false
           JSUtils.Message("Scheduler execution completed")
         } catch {

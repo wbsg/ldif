@@ -22,6 +22,8 @@ import _root_.net.liftweb.sitemap._
 import net.liftweb.http.{SessionVar, LiftRules}
 import ldif.workbench.model.User
 import ldif.workbench.model.file.FileUser
+import ldif.local.rest.MonitorServer
+import ldif.util.Consts
 
 /**
  * A class that's instantiated early and run.
@@ -33,6 +35,8 @@ class Boot {
   object UserManager extends SessionVar[User](new FileUser) {}
 
   def boot {
+    MonitorServer.start(Consts.DefaultStatusMonitorrURI)
+
     User.userManager = UserManager.is _
 
     // Where to search snippet
