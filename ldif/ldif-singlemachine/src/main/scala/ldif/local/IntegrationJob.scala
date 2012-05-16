@@ -480,13 +480,13 @@ case class IntegrationJob (config : IntegrationConfig, debugMode : Boolean = fal
       log.debug("\n\tMetric: %s\n\tFunction: %s\n\tEntityDescription: %s".format(task.qualitySpec.outputPropertyNames,task.qualitySpec.scoringFunctions,reader.entityDescription))
       qualityExecutor.execute(task, Seq(reader), singleScoresOutput)
     }
+    qualityExecutor.reporter.setFinishTime()
 
     //new MultiQuadReader(output, entityBuilderExecutor.getNotUsedQuads) //andrea todo
     singleScoresOutput
   }
 
   private def aggregateQuality(sieveSpecDir : File, singleScoresOutput : Seq[QuadReader], qualityModule: QualityModule) : QuadReader =     {
-
 
     // aggregate quality scores
     val entityDescriptions = qualityModule.aggregationTasks.toSeq.map(_.qualitySpec.entityDescription)
@@ -505,7 +505,7 @@ case class IntegrationJob (config : IntegrationConfig, debugMode : Boolean = fal
     // another way (perhaps not hadoop friendly)
     //qualityModule.aggregationTasks.foreach( task => qualityExecutor.aggregate(task, qualityAssessment, output) )
 
-    qualityExecutor.reporter.setFinishTime()
+    // qualityExecutor.reporter.setFinishTime()
 
     aggregatedScoresOutput
   }
@@ -746,7 +746,7 @@ object IntegrationJob {
       MonitorServer.start(statusMonitorURI)
 
     integrator.runIntegration
-    sys.exit(0)
+   // sys.exit(0)
   }
 }
 

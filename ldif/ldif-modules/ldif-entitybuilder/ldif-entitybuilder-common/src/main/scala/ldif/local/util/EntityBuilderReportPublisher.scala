@@ -35,11 +35,11 @@ class EntityBuilderReportPublisher extends JobDetailsStatusMonitor("Entity Build
   var loadedQuads = new AtomicInteger(0)
   var finishedReading = false
 
-  var entityQueuesTotal : Int = 0
+  var entityQueuesTotal : Int = -1
   var entityQueuesFilled = new AtomicInteger(0)
   var entitiesTotal = new AtomicInteger(0)
   var entitiesBuilt = new AtomicInteger(0)
-  def finishedBuilding = entityQueuesTotal>0 && entityQueuesTotal==entityQueuesFilled.intValue()
+  def finishedBuilding = entityQueuesTotal>=0 && entityQueuesTotal==entityQueuesFilled.intValue()
 
   var ebType : String = ""
 
@@ -70,7 +70,7 @@ class EntityBuilderReportPublisher extends JobDetailsStatusMonitor("Entity Build
     if(!finishedBuilding) {
       if (entitiesTotal.intValue>0)
         (entitiesBuilt.intValue*100/(entitiesTotal.intValue)).toInt + "%"
-      else if(entityQueuesTotal.intValue>0)
+      else if(entityQueuesTotal.intValue>=0)
         (entityQueuesFilled.intValue*100/(entityQueuesTotal.intValue)).toInt + "%"
       else
         "Not started yet"

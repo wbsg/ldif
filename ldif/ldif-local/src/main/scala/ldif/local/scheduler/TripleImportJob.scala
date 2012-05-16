@@ -31,11 +31,11 @@ case class TripleImportJob(dumpLocation : String, id : Identifier, refreshSchedu
 
   private val log = LoggerFactory.getLogger(getClass.getName)
   val reporter = new TripleImportJobPublisher(id)
-  JobMonitor.addPublisher(reporter)
 
   val graph = Consts.DEFAULT_IMPORTED_GRAPH_PREFIX+id
 
   override def load(out : OutputStream, estimatedNumberOfQuads : Option[Double] = None) : Boolean = {
+    JobMonitor.addPublisher(reporter)
     reporter.setStartTime()
     importedQuadsNumber = 0
 

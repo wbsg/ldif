@@ -27,10 +27,10 @@ import ldif.util.{JobMonitor, ReportPublisher, ImportJobStatusMonitor, Identifie
 case class CrawlImportJob(conf : CrawlConfig, id :  Identifier, refreshSchedule : String, dataSource : String) extends ImportJob {
 
   val reporter = new CrawlImportJobPublisher(id)
-  JobMonitor.addPublisher(reporter)
   val crawler = new CrawlLoader(conf.seedUris, conf.predicatesToFollow, conf.renameGraphs, reporter)
 
   override def load(out : OutputStream, estimatedNumberOfQuads : Option[Double] = None) : Boolean = {
+    JobMonitor.addPublisher(reporter)
     reporter.setStartTime()
     reporter.estimatedQuads = estimatedNumberOfQuads
     val limit = conf.resourceLimit

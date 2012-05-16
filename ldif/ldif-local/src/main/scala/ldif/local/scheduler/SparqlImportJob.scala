@@ -35,9 +35,9 @@ case class SparqlImportJob(conf : SparqlConfig, id :  Identifier, refreshSchedul
   private val log = LoggerFactory.getLogger(getClass.getName)
   private val graph = Consts.DEFAULT_IMPORTED_GRAPH_PREFIX+id
   val reporter = new SparqlImportJobPublisher(id)
-  JobMonitor.addPublisher(reporter)
 
   override def load(out : OutputStream, estimatedNumberOfQuads : Option[Double] = None) : Boolean = {
+    JobMonitor.addPublisher(reporter)
     reporter.setStartTime()
     reporter.estimatedQuads = estimatedNumberOfQuads
 

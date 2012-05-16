@@ -31,11 +31,11 @@ case class QuadImportJob(dumpLocation : String, id : Identifier, refreshSchedule
 
   private val log = LoggerFactory.getLogger(getClass.getName)
   val reporter = new QuadImportJobPublisher(id)
-  JobMonitor.addPublisher(reporter)
 
   def isRenameGraphEnabled = renameGraphs != ""
 
   override def load(out : OutputStream, estimatedNumberOfQuads : Option[Double] = None) : Boolean = {
+    JobMonitor.addPublisher(reporter)
     reporter.setStartTime()
     // ImportJobMonitor.value = reporter
     val writer = new ReportingOutputStreamWriter(out, reporter)
