@@ -746,7 +746,7 @@ object IntegrationJob {
       MonitorServer.start(statusMonitorURI)
 
     integrator.runIntegration
-   // sys.exit(0)
+    sys.exit(0)
   }
 }
 
