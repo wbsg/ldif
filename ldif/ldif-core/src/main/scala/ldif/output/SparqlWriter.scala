@@ -19,11 +19,12 @@
 package ldif.output
 
 import org.slf4j.LoggerFactory
-import ldif.util.Consts
 import java.io.OutputStreamWriter
 import io.Source
 import java.net._
 import ldif.runtime.{QuadWriter, Quad}
+import xml.Node
+import ldif.util.{CommonUtils, Consts}
 
 /**
  * Output writer which writes to a SPARQL/Update endpoint
@@ -152,4 +153,46 @@ case class SparqlWriter(uri: String,
     connection
   }
 
+  // Check SPARQL endpoint availability
+  def isAvailable() : Boolean = {
+    val connection = openConnection()
+    try {
+      connection.connect()
+      connection.disconnect()
+      true
+    }
+    catch {
+      case e:Exception =>
+        log.debug("Unable to connect to SPARQL endpoint: "+ uri)
+        false
+    }
+  }
+}
+
+object SparqlWriter {
+
+  private val log = LoggerFactory.getLogger(getClass.getName)
+
+  def fromXML(xml : Node, checkAvailability : Boolean = true) : Option[SparqlWriter] = {
+    val endpointURI =  CommonUtils.getValueAsString(xml,"endpointURI")
+    if (endpointURI == "") {
+      log.warn("Invalid SPARQL output config. Please check http://www.assembla.com/code/ldif/git/nodes/ldif/ldif-core/src/main/resources/xsd/IntegrationJob.xsd")
+      None
+    }
+    else {
+      val user = CommonUtils.getValueAsString(xml,"user")
+      val password = CommonUtils.getValueAsString(xml,"password")
+      val sparqlVersion = CommonUtils.getValueAsString(xml,"sparqlVersion", Consts.SparqlUpdateVersionDefault)
+      val useDirectPost = CommonUtils.getValueAsString(xml,"useDirectPost", Consts.SparqlUseDirectPostDefault).toLowerCase.equals("true")
+      val queryParameter = CommonUtils.getValueAsString(xml,"queryParameter", Consts.SparqlQueryParameterDefault)
+      val writer = SparqlWriter(endpointURI, Some(user, password), sparqlVersion, useDirectPost, queryParameter)
+
+      if(!checkAvailability || writer.isAvailable())
+        Some(writer)
+      else {
+        log.warn("Invalid SPARQL output. Unable to connect to SPARQL endpoint: "+ writer.uri)
+        None
+      }
+    }
+  }
 }

@@ -134,10 +134,10 @@ object IntegrationConfig {
   protected def getFile(key : String, skipIfNotDefined : Boolean = false) : File = {
     val value : String = (xml \ key text)
     val file = CommonUtils.getFileFromPathOrUrl(value)
-    if(file == null){
+    if(file == null || !file.exists()){
       if (skipIfNotDefined && properties != null)
         properties.setProperty(key + ".skip", "true")
-      log.warn("\'"+key+"\' is not defined in the IntegrationJob config")
+      log.warn("\'"+key+"\' is not defined (or invalid) in the IntegrationJob config")
     }
     file
   }

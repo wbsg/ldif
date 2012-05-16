@@ -20,8 +20,11 @@ package ldif.output
 
 import ldif.runtime.{Quad, QuadWriter}
 import java.io.{FileWriter, BufferedWriter}
+import org.slf4j.LoggerFactory
+import xml.Node
+import ldif.util.{Consts, CommonUtils}
 
-class SerializingQuadWriter(val filepath: String, val syntax: RDFSyntax) extends QuadWriter {
+case class SerializingQuadWriter(filepath: String, syntax: RDFSyntax) extends QuadWriter {
   var writer:BufferedWriter = null
 
   def initWriter() {
@@ -43,6 +46,36 @@ class SerializingQuadWriter(val filepath: String, val syntax: RDFSyntax) extends
     if (writer!=null) {
       writer.flush()
       writer.close()
+    }
+  }
+}
+
+object SerializingQuadWriter{
+  private val log = LoggerFactory.getLogger(getClass.getName)
+
+  def fromXML(xml : Node) : Option[SerializingQuadWriter] = {
+    val path = (xml text).trim//CommonUtils.getValueAsString(xml,"path").trim
+    if (path == "") {
+      log.warn("Invalid file output config. Please check http://www.assembla.com/code/ldif/git/nodes/ldif/ldif-core/src/main/resources/xsd/IntegrationJob.xsd")
+      None
+    }
+    else {
+      val outputFormat = CommonUtils.getAttributeAsString(xml,"format",Consts.FileOutputFormatDefault)
+
+      // Get writable path, return None otherwise
+      val outputPath = CommonUtils.getWritablePath(path).getOrElse({
+        log.warn("Invalid file output. Unable to write to: "+ path )
+        return None
+      })
+
+      if (outputFormat == "nquads")
+        Some(SerializingQuadWriter(outputPath, NQUADS))
+      else if (outputFormat == "ntriples")
+        Some(SerializingQuadWriter(outputPath, NTRIPLES))
+      else {
+        log.warn("Output format not supported: "+ outputFormat )
+        None
+      }
     }
   }
 }

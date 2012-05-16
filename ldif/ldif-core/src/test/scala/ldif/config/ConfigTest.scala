@@ -40,7 +40,16 @@ class ConfigTest extends FlatSpec with ShouldMatchers {
   // Outputs
 
   it should "parse Sparql output config correctly" in {
-    val writer =  config.outputs.getByPhase(IR).head.asInstanceOf[SparqlWriter]
+    val xml = {<sparql>
+        <endpointURI>http://host/sparql</endpointURI>
+        <queryParameter>update</queryParameter>
+        <sparqlVersion>1.1</sparqlVersion>
+        <useDirectPost>false</useDirectPost>
+        <user>usr</user>
+        <password>pwd</password>
+      </sparql>}
+    // build SparqlWriter but do not validate
+    val writer = SparqlWriter.fromXML(xml, false).get
     writer.uri should equal ("http://host/sparql")
     writer.login should equal (Some("usr","pwd"))
     writer.queryParameter should equal ("update")
@@ -48,7 +57,13 @@ class ConfigTest extends FlatSpec with ShouldMatchers {
     writer.sparqlVersion should equal ("1.1")
   }
 
-  it should "parse File output config correctly" in {
+  it should "parse File output config correctly (1)" in {
+    val writer =  config.outputs.getByPhase(IR).head.asInstanceOf[SerializingQuadWriter]
+    writer.filepath.endsWith("ldif-core/target/test-classes/ldif/config/silk-output.nt") should equal (true)
+    writer.syntax.name should equal ("N-Triples")
+  }
+
+  it should "parse File output config correctly (2)" in {
     val writer =  config.outputs.getByPhase(COMPLETE).head.asInstanceOf[SerializingQuadWriter]
     writer.filepath.endsWith("ldif-core/target/test-classes/ldif/config/output.nq") should equal (true)
     writer.syntax.name should equal ("N-Quads")

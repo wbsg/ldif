@@ -8,14 +8,9 @@
     </sources>
     <outputs>
         <output>
-            <sparql>
-                <endpointURI>http://host/sparql</endpointURI>
-                <queryParameter>update</queryParameter>
-                <sparqlVersion>1.1</sparqlVersion>
-                <useDirectPost>false</useDirectPost>
-                <user>usr</user>
-                <password>pwd</password>
-            </sparql>
+            <file format="ntriples">
+               silk-output.nt
+            </file>
             <phase>
                 silk
             </phase>

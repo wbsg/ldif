@@ -20,9 +20,8 @@ package ldif.config
 
 import ldif.output._
 import ldif.runtime.QuadWriter
-import ldif.util.{Consts, CommonUtils}
+import ldif.util.Consts
 import xml.{Elem, Node}
-import java.io.File
 import org.slf4j.LoggerFactory
 
 sealed trait IntegrationPhase {val name: String}
@@ -68,8 +67,8 @@ object OutputConfig {
 
   private def parseOutputWriter (xml : Node) : Option[QuadWriter] =
     if (xml.label == "sparql")
-      getSparqlWriter(xml)
-    else getFileWriter(xml)
+      SparqlWriter.fromXML(xml)
+    else SerializingQuadWriter.fromXML(xml)
 
   private def parseOutputPhase (xml : Option[Node]) : IntegrationPhase = {
     val phase = xml match {
@@ -82,44 +81,4 @@ object OutputConfig {
      case _ => COMPLETE
    }
   }
-
-  private def getSparqlWriter(xml : Node) : Option[SparqlWriter] = {
-    val endpointURI =  CommonUtils.getValueAsString(xml,"endpointURI")
-    if (endpointURI == "") {
-      log.warn("Invalid SPARQL output config. Please check http://www.assembla.com/code/ldif/git/nodes/ldif/ldif-core/src/main/resources/xsd/IntegrationJob.xsd")
-      None
-    }
-    else {
-      val user = CommonUtils.getValueAsString(xml,"user")
-      val password = CommonUtils.getValueAsString(xml,"password")
-      val sparqlVersion = CommonUtils.getValueAsString(xml,"sparqlVersion", Consts.SparqlUpdateVersionDefault)
-      val useDirectPost = CommonUtils.getValueAsString(xml,"useDirectPost", Consts.SparqlUseDirectPostDefault).toLowerCase.equals("true")
-      val queryParameter = CommonUtils.getValueAsString(xml,"queryParameter", Consts.SparqlQueryParameterDefault)
-      Some(SparqlWriter(endpointURI, Some(user, password), sparqlVersion, useDirectPost, queryParameter))
-    }
-  }
-
-  private def getFileWriter(xml : Node) : Option[SerializingQuadWriter] = {
-    val path = (xml text).trim//CommonUtils.getValueAsString(xml,"path").trim
-    if (path == "") {
-      log.warn("Invalid file output config. Please check http://www.assembla.com/code/ldif/git/nodes/ldif/ldif-core/src/main/resources/xsd/IntegrationJob.xsd")
-      None
-    }
-    else {
-      val outputFormat = CommonUtils.getAttributeAsString(xml,"format",Consts.FileOutputFormatDefault)
-
-      // Get writable path, return None otherwise
-      val outputPath = CommonUtils.getWritablePath(path).getOrElse(return None)
-
-      if (outputFormat == "nquads")
-        Some(new SerializingQuadWriter(outputPath, NQUADS))
-      else if (outputFormat == "ntriples")
-        Some(new SerializingQuadWriter(outputPath, NTRIPLES))
-      else {
-        log.warn("Output format not supported: "+ outputFormat )
-        None
-      }
-    }
-  }
-
 }

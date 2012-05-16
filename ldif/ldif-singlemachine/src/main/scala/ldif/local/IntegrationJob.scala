@@ -105,7 +105,7 @@ case class IntegrationJob (config : IntegrationConfig, debugMode : Boolean = fal
     }
   }
 
-  private def setupSourceQuadReader(terms: MSet[String]): Seq[QuadReader] = {
+  private def setupSourceQuadReader(terms: MSet[String] = MSet.empty[String]): Seq[QuadReader] = {
 
     val dumpQuadReader = new DumpQuadReader(new MultiQuadReader(loadDumps(config.sources): _*), configParameters)
     dumpQuadReader.reporter.setInputQuads(dumpsQuads)
@@ -130,7 +130,9 @@ case class IntegrationJob (config : IntegrationConfig, debugMode : Boolean = fal
         validateConfiguration()
 
         setupConfigParameters()
-        val terms = SieveConfig.getUsedProperties(config.sieveSpecDir)
+        val terms = if(!skipSieve)
+          SieveConfig.getUsedProperties(config.sieveSpecDir)
+        else MSet.empty[String]
 
         // Load source data sets and wrap the quad readers in a filter quad reader
         val quadReaders = setupSourceQuadReader(terms)
@@ -176,14 +178,15 @@ case class IntegrationJob (config : IntegrationConfig, debugMode : Boolean = fal
           integratedReader = executeURITranslation(allQuads, allSameAsLinks, config.properties)
         else integratedReader = new MultiQuadReader(allQuads, allSameAsLinks) // TODO: Really add allSameAsLinks here (already)?
 
-        /***  Execute sieve (quality and fusion) ***/
-        val sieveInput = Map("all"->integratedReader, "provenance"->provenanceQuadReader)//val sieveInput = Seq(integratedReader)
-        val sieveReader: QuadReader = executeSieve(config, sieveInput)
+        if (!skipSieve) {
+          /***  Execute sieve (quality and fusion) ***/
+          val sieveInput = Map("all"->integratedReader, "provenance"->provenanceQuadReader)//val sieveInput = Seq(integratedReader)
+          integratedReader = executeSieve(config, sieveInput)
+        }
 
         lastUpdate = Calendar.getInstance
 
-        //        writeOutput(config, integratedReader)
-        writeOutput(config, sieveReader)
+        writeOutput(config, integratedReader)
         reporter.setFinishTime
       }
   }
@@ -220,7 +223,6 @@ case class IntegrationJob (config : IntegrationConfig, debugMode : Boolean = fal
 
   // Setup config parameters
   def setupConfigParameters() {
-    val terms = SieveConfig.getUsedProperties(config.sieveSpecDir)
     // Quads that are not used in the integration flow, but should still be output
     val otherQuadsFile = File.createTempFile("ldif-other-quads", ".bin")
     // Quads that contain external sameAs links

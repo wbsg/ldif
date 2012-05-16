@@ -34,6 +34,8 @@ import net.liftweb.json.JsonAST.{JField, JObject, JArray, JValue}
 import ldif.local.Scheduler
 import ldif.local.scheduler.{CrawlImportJob, QuadImportJob, SparqlImportJob, TripleImportJob}
 import ldif.util.Identifier._
+import ldif.local.rest.MonitorServer
+import ldif.util.Consts
 
 /**
  * Workspace snippet.
@@ -161,8 +163,9 @@ object Workspace {
       if (!runningIntegration) {
         runningIntegration =true
         try {
-          //MonitorServer.start(Consts.DefaultStatusMonitorrURI)
+          MonitorServer.start(Consts.DefaultStatusMonitorrURI)
           User().project.integrationModule.tasks.head.job.runIntegration
+          MonitorServer.stop()
           runningIntegration = false
           JSUtils.Message("IntegrationJob completed")
         } catch {
@@ -180,8 +183,9 @@ object Workspace {
       if (!runningScheduler)  {
         runningScheduler =true
         try {
-          //MonitorServer.start(Consts.DefaultStatusMonitorrURI)
+          MonitorServer.start(Consts.DefaultStatusMonitorrURI)
           Scheduler(User().project.config).run()
+          MonitorServer.stop()
           runningScheduler = false
           JSUtils.Message("Scheduler execution completed")
         } catch {

@@ -193,6 +193,17 @@ object SparqlImportJob {
     job
   }
 
+  // Evaluate query execution time
+  def main(args : Array[String])
+  {
+    val w = new StopWatch()
+    val query = "SELECT ?gene ?uniprotId\nWHERE { ?gene a <http://ldif.wbsg.de/resource/category/Gene> . \n        ?gene <http://ldif.wbsg.de/resource/property/uniprotId> ?uniprotId .\n}"
+    val sparqlEndpoint = "http://23.23.177.232:10035/repositories/lilly_ldif"
+    QueryExecutionFactory.sparqlService(sparqlEndpoint, query).execSelect()
+    println("\nSPARQL endpoint: "+sparqlEndpoint+"\nQuery: "+query)
+    println("Exectution time: "+ w.getTimeSpanInSeconds())
+  }
+
 }
 
 case class SparqlConfig(endpointLocation : URI,  graphName : URI, sparqlPatterns : Traversable[String], tripleLimit : Long = Consts.SparqlTripleLimitDefault) {
