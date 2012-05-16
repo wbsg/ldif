@@ -176,7 +176,7 @@ object SparqlWriter {
   def fromXML(xml : Node, checkAvailability : Boolean = true) : Option[SparqlWriter] = {
     val endpointURI =  CommonUtils.getValueAsString(xml,"endpointURI")
     if (endpointURI == "") {
-      log.warn("Invalid SPARQL output config. Please check http://www.assembla.com/code/ldif/git/nodes/ldif/ldif-core/src/main/resources/xsd/IntegrationJob.xsd")
+      log.warn("Invalid SPARQL output config. Please check " + Consts.xsdIntegration)
       None
     }
     else {

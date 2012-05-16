@@ -95,4 +95,11 @@ object Consts {
 
   // Status interface
   val DefaultStatusMonitorrURI = "http://localhost:5343/"
+
+  // XSD locations
+  val xsdBase = "http://www.assembla.com/code/ldif/git/nodes/ldif/ldif-core/src/main/resources/xsd/"
+  val xsdIntegration = xsdBase + "IntegrationJob.xsd"
+  val xsdScheduler = xsdBase + "SchedulerConfig.xsd"
+  val xsdDataSource = xsdBase + "DataSource.xsd"
+  val xsdImportJob = xsdBase + "ImportJob.xsd"
 }

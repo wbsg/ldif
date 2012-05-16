@@ -56,7 +56,7 @@ object Ldif {
       catch {
         case e:ValidationException => {
           log.error("Invalid Scheduler configuration: "+e.toString +
-            "\n- More details: http://www.assembla.com/code/ldif/git/nodes/ldif/ldif-core/src/main/resources/xsd/SchedulerConfig.xsd")
+            "\n- More details: " + Consts.xsdScheduler)
           System.exit(1)
         }
       }

@@ -56,7 +56,7 @@ object SerializingQuadWriter{
   def fromXML(xml : Node) : Option[SerializingQuadWriter] = {
     val path = (xml text).trim//CommonUtils.getValueAsString(xml,"path").trim
     if (path == "") {
-      log.warn("Invalid file output config. Please check http://www.assembla.com/code/ldif/git/nodes/ldif/ldif-core/src/main/resources/xsd/IntegrationJob.xsd")
+      log.warn("Invalid file output config. Please check " + Consts.xsdIntegration)
       None
     }
     else {

@@ -698,7 +698,7 @@ object IntegrationJob {
       catch {
         case e:ValidationException => {
           log.error("Invalid Integration Job configuration: "+e.toString +
-            "\n- More details: http://www.assembla.com/code/ldif/git/nodes/ldif/ldif-core/src/main/resources/xsd/IntegrationJob.xsd")
+            "\n- More details: " + Consts.xsdIntegration)
           System.exit(1)
         }
       }
