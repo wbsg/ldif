@@ -259,7 +259,7 @@ class HadoopScheduler (val config : SchedulerConfig, debug : Boolean = false) {
       val parser = new QuadParser
       // loop and stop as the first numberOfQuads property is found
       for (quad <- lines.toTraversable.map(parser.parseLine(_))){
-        if (quad.predicate.equals(Consts.importedQuadsProp))
+        if (quad.predicate.equals(Consts.numberOfQuadsProp))
           return Some(quad.value.value.toDouble)
       }
       log.warn("Job "+job.id+" - provenance file does not contain last update metadata")

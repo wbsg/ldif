@@ -25,7 +25,7 @@ import org.scalatest.FlatSpec
 import org.scalatest.matchers.ShouldMatchers
 import scheduler._
 import ldif.config.SchedulerConfig
-import ldif.util.{OutputValidator, CommonUtils}
+import ldif.util.{Consts, OutputValidator, CommonUtils}
 
 @RunWith(classOf[JUnitRunner])
 class SchedulerTest extends FlatSpec with ShouldMatchers {
@@ -72,8 +72,8 @@ class SchedulerTest extends FlatSpec with ShouldMatchers {
       "<http://source/uriA> <http://source/mapProp> \"map\" <http://source/graph3> . ",
       "<http://source/uriB> <http://source/mapProp> \"map\" <http://source/graph4> . ",
       "<http://source/uriD> <http://source/mintProp> \"mintNotMapped\" <http://source/graph5> . ",
-      "<http://source/uriA> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://source/class> <http://source/graph6>. ",
-      "<http://source/uriB> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://source/class> <http://source/graph7> . "
+      "<http://source/uriA> <"+Consts.RDFTYPE_URI+"> <http://source/class> <http://source/graph6>. ",
+      "<http://source/uriB> <"+Consts.RDFTYPE_URI+"> <http://source/class> <http://source/graph7> . "
     ))
     OutputValidator.contains(dumpQuads, dumpCorrectQuads) should equal(true)
 
@@ -83,17 +83,17 @@ class SchedulerTest extends FlatSpec with ShouldMatchers {
     provenanceQuads.size should equal (23)
 
     val provCorrectQuads = CommonUtils.getQuads(List(
-      "_:test2Elocal <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www4.wiwiss.fu-berlin.de/ldif/ImportJob> <http://www4.wiwiss.fu-berlin.de/ldif/provenance> . ",
-      "_:test2Elocal <http://www4.wiwiss.fu-berlin.de/ldif/importId> \"test.local\" <http://www4.wiwiss.fu-berlin.de/ldif/provenance> .",
-      "_:test2Elocal <http://www4.wiwiss.fu-berlin.de/ldif/hasDatasource> \"test\" <http://www4.wiwiss.fu-berlin.de/ldif/provenance> .",
-      "_:test2Elocal <http://www4.wiwiss.fu-berlin.de/ldif/hasImportType> \"quad\" <http://www4.wiwiss.fu-berlin.de/ldif/provenance> .",
-      "_:test2Elocal <http://www4.wiwiss.fu-berlin.de/ldif/numberOfQuads> \"31.0\"^^<http://www.w3.org/2001/XMLSchema#double> <http://www4.wiwiss.fu-berlin.de/ldif/provenance> .",
-      "_:test2Elocal <http://www4.wiwiss.fu-berlin.de/ldif/hasOriginalLocation> \"scheduler/sources/source.nq\" <http://www4.wiwiss.fu-berlin.de/ldif/provenance> .",
-      "<http://source/graph3> <http://www4.wiwiss.fu-berlin.de/ldif/hasImportJob> _:test2Elocal <http://www4.wiwiss.fu-berlin.de/ldif/provenance> .",
-      "<http://source/graph3> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www4.wiwiss.fu-berlin.de/ldif/ImportedGraph> <http://www4.wiwiss.fu-berlin.de/ldif/provenance> .",
-      "<http://source/graph1> <http://www4.wiwiss.fu-berlin.de/ldif/hasImportJob> _:test2Elocal <http://www4.wiwiss.fu-berlin.de/ldif/provenance> .",
-      "<http://source/graph1> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www4.wiwiss.fu-berlin.de/ldif/ImportedGraph> <http://www4.wiwiss.fu-berlin.de/ldif/provenance> .",
-      "<http://source/graph6> <http://www4.wiwiss.fu-berlin.de/ldif/hasImportJob> _:test2Elocal <http://www4.wiwiss.fu-berlin.de/ldif/provenance> ."
+      "_:test2Elocal <"+Consts.RDFTYPE_URI+"> <"+Consts.importJobClass+"> <"+Consts.DEFAULT_PROVENANCE_GRAPH+"> . ",
+      "_:test2Elocal <"+Consts.importIdProp+"> \"test.local\" <"+Consts.DEFAULT_PROVENANCE_GRAPH+"> .",
+      "_:test2Elocal <"+Consts.hasDatasourceProp+"> \"test\" <"+Consts.DEFAULT_PROVENANCE_GRAPH+"> .",
+      "_:test2Elocal <"+Consts.hasImportTypeProp+"> \"quad\" <"+Consts.DEFAULT_PROVENANCE_GRAPH+"> .",
+      "_:test2Elocal <"+Consts.numberOfQuadsProp+"> \"31\"^^<"+Consts.xsdNonNegativeInteger+"> <"+Consts.DEFAULT_PROVENANCE_GRAPH+"> .",
+      "_:test2Elocal <"+Consts.hasOriginalLocationProp+"> \"scheduler/sources/source.nq\" <"+Consts.DEFAULT_PROVENANCE_GRAPH+"> .",
+      "<http://source/graph3> <"+Consts.hasImportJobProp+"> _:test2Elocal <"+Consts.DEFAULT_PROVENANCE_GRAPH+"> .",
+      "<http://source/graph3> <"+Consts.RDFTYPE_URI+"> <"+Consts.importedGraphClass+"> <"+Consts.DEFAULT_PROVENANCE_GRAPH+"> .",
+      "<http://source/graph1> <"+Consts.hasImportJobProp+"> _:test2Elocal <"+Consts.DEFAULT_PROVENANCE_GRAPH+"> .",
+      "<http://source/graph1> <"+Consts.RDFTYPE_URI+"> <"+Consts.importedGraphClass+"> <"+Consts.DEFAULT_PROVENANCE_GRAPH+"> .",
+      "<http://source/graph6> <"+Consts.hasImportJobProp+"> _:test2Elocal <"+Consts.DEFAULT_PROVENANCE_GRAPH+"> ."
     ))
     OutputValidator.contains(provenanceQuads, provCorrectQuads) should equal(true)
   }

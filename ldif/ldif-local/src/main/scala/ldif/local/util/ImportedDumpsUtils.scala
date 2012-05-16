@@ -59,11 +59,11 @@ case class ImportedDumpsUtils(dumpsLocation : String) {
       val parser = new QuadParser
       // loop and stop as the first numberOfQuads property is found
       for (quad <- lines.toTraversable.map(parser.parseLine(_))){
-        if (quad.predicate.equals(Consts.importedQuadsProp)){
+        if (quad.predicate.equals(Consts.numberOfQuadsProp)){
           return Some(quad.value.value.toDouble)
         }
       }
-      log.warn("The provenance file "+ provenanceFile.getCanonicalPath+" does not contain the property "+Consts.importedQuadsProp)
+      log.warn("The provenance file "+ provenanceFile.getCanonicalPath+" does not contain the property "+Consts.numberOfQuadsProp)
       None
     }
     else {
