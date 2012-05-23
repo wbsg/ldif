@@ -705,6 +705,12 @@ set at the moment and the possible values for each property:</p>
         <pre>rewriteURIs = true | false</pre>
     </li>
     <li>
+        <p><i>prefixPreference</i><br>
+            If rewriteURIs is enabled (and URI minting is disabled), then in a set of URIs that are considered to identify the same entity, these URIs are chosen to represent each set that
+            start with one of the whitespace separated URI prefixes. This list of URI prefixes is ranked, with the first URI prefix being the highest rank.
+        <pre>prefixPreference=http://dbpedia.org/resource/ http://otherprefix/</pre>
+    </li>
+    <li>
         <p><i>provenanceGraphURI</i> <br/>
             Specify the graph containing the provenance information. Quads from this graph are only written to the final
             output data set and not processed any further in the integration workflow.

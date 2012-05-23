@@ -24,7 +24,11 @@ package ldif.entity.entityComparator
  * To change this template use File | Settings | File Templates.
  */
 
+import scala.util.control.Breaks._
+
 object entityComparator {
+
+  private var prefixPreference: Seq[String] = Seq()
     /**
    * Count how many of the characters in a String are letters (of any language)
    * Used as heuristic to measure how "readable" a String is.
@@ -38,6 +42,10 @@ object entityComparator {
         nLetters = nLetters + 1
     };
     nLetters.toDouble / nChars
+  }
+
+  def setPrefixPreference(prefixPref: Seq[String]) {
+    prefixPreference = prefixPref
   }
 
   /**
@@ -58,8 +66,19 @@ object entityComparator {
   /**
    * This function is used to decide when String "left" is considered "smaller" (worse) than the String "right".
    * First they are compared based on countNonLegitChars. If they are the same there use lexicographic oder.
-   */
-  def lessThan(left: String, right: String): Boolean = {
++   * If prefixPreference is set through property "prefixPreference",
+    */
+   def lessThan(left: String, right: String): Boolean = {
+    breakable {for(prefix <- prefixPreference) {
+      val leftTrue = left.startsWith(prefix)
+      val rightTrue = right.startsWith(prefix)
+      if(!leftTrue && rightTrue)
+        return true
+      else if(leftTrue && !rightTrue)
+        return false
+      else if(leftTrue && rightTrue)
+        break
+    } }
     val leftCount = countNonLegitChars(left)
     val rightCount = countNonLegitChars(right)
     if(leftCount==rightCount)

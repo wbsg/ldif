@@ -95,8 +95,10 @@ object URITranslator {
         quadsReaderPassTwo = new FileQuadReader(copiedQuadsWriter.outputFile)
       }
     }
-    else
+    else {
+      configurePrefixPreference(configProperties)
       uriMap = generateUriMap(linkReader)
+    }
 
     rewriteURIs(quadsReaderPassTwo, uriMap)
   }
@@ -105,6 +107,15 @@ object URITranslator {
     val uriMap = generateUriMap(linkReader)
     for((from, to)<-uriMap)
       output.append("<"+from+"> <" + Consts.SAMEAS_URI + "> <" + to + "> . \n")
+  }
+
+  private def configurePrefixPreference(configProperties: Properties) {
+    val prefixString = configProperties.getProperty("prefixPreference", "").trim()
+    val prefixRanking = if(prefixString=="")
+        Seq()
+      else
+        prefixString.split("\\s+").toSeq
+    entityComparator.setPrefixPreference(prefixRanking)
   }
 
   def rewriteGlobalEntitiesWithMintedURIs(linkReader: QuadReader, mintValues: HashMap[String, String], mintingPropertiesNamespace: String): Map[String, EntityCluster] = {
