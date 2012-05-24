@@ -12,15 +12,20 @@ import java.io.{FileWriter, BufferedWriter, File}
  */
 
 object QuadUtils {
-  def dumpQuadReaderToFile(reader: QuadReader, file: File) {
+  def dumpQuadReaderToFile(reader: QuadReader, file: File, asTriples: Boolean = false) {
     val writer = new BufferedWriter(new FileWriter(file))
-    for(quad <- reader)
-      writer.append(quad.toLine)
+    for(quad <- reader) {
+      if(asTriples)
+        writer.append(quad.toNTripleFormat)
+      else
+        writer.append(quad.toNQuadFormat)
+      writer.append(" .\n")
+    }
     writer.flush()
     writer.close()
   }
 
-  def dumpQuadReaderToFile(reader: QuadReader, file: String) {
-    dumpQuadReaderToFile(reader, new File(file))
+  def dumpQuadReaderToFile(reader: QuadReader, file: String, asTriples: Boolean) {
+    dumpQuadReaderToFile(reader, new File(file), asTriples)
   }
 }

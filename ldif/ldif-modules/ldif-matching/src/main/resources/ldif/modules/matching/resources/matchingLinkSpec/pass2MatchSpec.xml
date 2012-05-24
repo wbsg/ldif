@@ -5,6 +5,8 @@
         <Prefix id="rdf" namespace="http://www.w3.org/1999/02/22-rdf-syntax-ns#" />
         <Prefix id="rdfs" namespace="http://www.w3.org/2000/01/rdf-schema#" />
         <Prefix id="owl" namespace="http://www.w3.org/2002/07/owl#" />
+        <Prefix id="owl" namespace="http://www.w3.org/2002/07/owl#" />
+        <Prefix id="oboInOwl" namespace="http://www.geneontology.org/formats/oboInOwl#" />
     </Prefixes>
 
     <Interlinks>
@@ -21,16 +23,42 @@
             </TargetDataset>
 
             <LinkageRule>
-                <!--<Aggregate type="max">-->
-                    <Compare metric="substring" threshold="0.2">
+                <Aggregate type="min">
+                    <!--<Compare metric="substring" threshold="0.2">-->
+                        <!--<TransformInput function="merge">-->
+                                <!--<Input path="?a/rdfs:label" />-->
+                                <!--<TransformInput function="stripUriPrefix">-->
+                                    <!--<Input path="?a" />-->
+                               <!--</TransformInput>-->
+                               <!--<Input path="?a/oboInOwl:hasRelatedSynonym/rdfs:label" />-->
+                               <!--<Input path="?a/oboInOwl:hasDefinition/rdfs:label" />-->
+                            <!--</TransformInput>-->
+                            <!--<TransformInput function="merge">-->
+                                <!--<Input path="?b/rdfs:label" />-->
+                                <!--<TransformInput function="stripUriPrefix">-->
+                                    <!--<Input path="?b" />-->
+                               <!--</TransformInput>-->
+                               <!--<Input path="?b/oboInOwl:hasRelatedSynonym/rdfs:label" />-->
+                               <!--<Input path="?b/oboInOwl:hasDefinition/rdfs:label" />-->
+                        <!--</TransformInput>-->
+                    <!--</Compare>-->
+                    <Compare metric="jaccard" threshold="0.8" required="true">
                         <!--<TransformInput function="tokenize">-->
-                            <Input path="?a\rdfs:subClass/rdfs:label" />
+                            <Input path="?a\rdfs:subClassOf" />
                         <!--</TransformInput>-->
                         <!--<TransformInput function="tokenize">-->
-                            <Input path="?b\rdfs:subClass/rdfs:label" />
+                            <Input path="?b\rdfs:subClassOf" />
                         <!--</TransformInput>-->
                     </Compare>
-                <!--</Aggregate>-->
+                    <Compare metric="equality" required="true">
+                        <!--<TransformInput function="tokenize">-->
+                            <Input path="?a/rdfs:subClassOf" />
+                        <!--</TransformInput>-->
+                        <!--<TransformInput function="tokenize">-->
+                            <Input path="?b/rdfs:subClassOf" />
+                        <!--</TransformInput>-->
+                    </Compare>
+                </Aggregate>
             </LinkageRule>
 
             <Filter limit="1"/>

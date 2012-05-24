@@ -50,7 +50,7 @@ object Matcher {
       sys.exit(1)
     }
     if(args.length>4)
-      println("Running two match passes.")
+      println("Running " + (args.length-3) + " match passes.")
     val startTime = System.currentTimeMillis()
     val ont1Reader = DumpLoader.dumpIntoFileQuadQueue(args(0))
     val ont2Reader = DumpLoader.dumpIntoFileQuadQueue(args(1))
@@ -58,10 +58,11 @@ object Matcher {
     // Run lexical matchers
     val firstPassMatches = runFirstPassMatcher(ont1Reader, ont2Reader, args)
     var outputQueue: CloneableQuadReader = firstPassMatches
-    if(args.length > 4) {
-      val secondPassMatches = runSecondPassMatcher(ont1Reader.cloneReader, ont2Reader.cloneReader, outputQueue.cloneReader, args)
+    for(i <- 4 until args.length) {
+      val nextPassMatches = runNextPassMatcher(ont1Reader.cloneReader, ont2Reader.cloneReader, outputQueue.cloneReader, args(i))
 //      outputQueue = new MultiQuadReader(outputQueue.cloneReader, secondPassMatches)
-        outputQueue = secondPassMatches
+        outputQueue = new MultiQuadReader(nextPassMatches, outputQueue.cloneReader)
+//        QuadUtils.dumpQuadReaderToFile(outputQueue, "test.nt", true)
     }
     val writer = new BufferedWriter(new FileWriter(args(2)))
     outputToAlignmentFormat(outputQueue.cloneReader, writer)
@@ -74,27 +75,28 @@ object Matcher {
   // This should be a high precision matcher
   private def runFirstPassMatcher(ont1Reader: CloneableQuadReader, ont2Reader: CloneableQuadReader, args: Array[String]): FileQuadReader = {
 //    val firstPassMatches = new FileQuadWriter(new File("firstPassMatches.dat"))
-//    if (args.length >= 4)
-//      matchOntologies(ont1Reader, ont2Reader, firstPassMatches, new File(args(3)))
-//    else
-//      matchOntologies(ont1Reader, ont2Reader, firstPassMatches)
-//    new FileQuadReader(firstPassMatches)
-    new FileQuadReader(new File("firstPassMatches.dat"))
+    val firstPassMatches = new FileQuadWriter()
+    if (args.length >= 4)
+      matchOntologies(ont1Reader, ont2Reader, firstPassMatches, new File(args(3)))
+    else
+      matchOntologies(ont1Reader, ont2Reader, firstPassMatches)
+    new FileQuadReader(firstPassMatches)
+//    new FileQuadReader(new File("firstPassMatches.dat"))
   }
 
   // This builds on the results of the first matcher
-  private def runSecondPassMatcher(ont1Reader: CloneableQuadReader, ont2Reader: CloneableQuadReader, firstPassMatches: CloneableQuadReader, args: Array[String]): CloneableQuadReader = {
+  private def runNextPassMatcher(ont1Reader: CloneableQuadReader, ont2Reader: CloneableQuadReader, firstPassMatches: CloneableQuadReader, matchSpec: String): CloneableQuadReader = {
     var uriMap = getTranslationMap(firstPassMatches.cloneReader)
     val ont1ReaderRewritten = URITranslator.rewriteURIs(ont1Reader, uriMap)
     uriMap = null
     val matchedEntities = getMatchedEntities(firstPassMatches.cloneReader)
     val ont1FilteredReader = new RemoveTypesQuadReader(ont1ReaderRewritten, matchedEntities)
     val ont2FilteredReader = new RemoveTypesQuadReader(ont2Reader, matchedEntities)
-    QuadUtils.dumpQuadReaderToFile(ont1FilteredReader, "mouse.nq")
-    QuadUtils.dumpQuadReaderToFile(ont2FilteredReader, "human.nq")
+//    QuadUtils.dumpQuadReaderToFile(ont1FilteredReader, "mouse.nt", asTriples = true)
+//    QuadUtils.dumpQuadReaderToFile(ont2FilteredReader, "human.nt", asTriples = true)
     val secondPassMatches = new FileQuadWriter()
 
-    matchOntologies(ont1FilteredReader, ont2FilteredReader, secondPassMatches, new File(args(4)))
+    matchOntologies(ont1FilteredReader, ont2FilteredReader, secondPassMatches, new File(matchSpec))
     new FileQuadReader(secondPassMatches)
   }
 
