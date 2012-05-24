@@ -26,7 +26,7 @@ import ldif.local.datasources.crawl.CrawlExecutor
 import ldif.datasources.crawl.{CrawlModule, CrawlConfig}
 import java.net.URI
 import ldif.entity.Node
-import ldif.local.runtime.QuadReader
+import ldif.runtime.QuadReader
 import ldif.runtime.Quad
 
 @RunWith(classOf[JUnitRunner])

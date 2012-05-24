@@ -25,11 +25,11 @@ import collection.mutable.{ArraySeq, ArrayBuffer, Set, HashSet}
 import actors.{Future, Futures}
 import runtime.impl.{QuadQueue, MultiQuadReader}
 import scala.collection.JavaConversions._
-import ldif.local.runtime.{LocalNode, EntityWriter, QuadReader, ConfigParameters}
-import ldif.runtime.Quad
+import ldif.local.runtime.{LocalNode, EntityWriter, ConfigParameters}
 import java.util.{HashSet => JHashSet}
 import ldif.util.{Consts, Uri}
 import util.{EntityBuilderReportPublisher, StringPool}
+import ldif.runtime.{QuadReader, Quad}
 
 class EntityBuilder (entityDescriptions : IndexedSeq[EntityDescription], readers : Seq[QuadReader], config: ConfigParameters, reporter : EntityBuilderReportPublisher) extends FactumBuilder with EntityBuilderTrait {
   private val log = LoggerFactory.getLogger(getClass.getName)

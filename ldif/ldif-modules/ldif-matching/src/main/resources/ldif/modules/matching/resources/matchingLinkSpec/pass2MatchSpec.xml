@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Silk xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:noNamespaceSchemaLocation="../../xsd/LinkSpecificationLanguage.xsd" >
+    <Prefixes>
+        <Prefix id="rdf" namespace="http://www.w3.org/1999/02/22-rdf-syntax-ns#" />
+        <Prefix id="rdfs" namespace="http://www.w3.org/2000/01/rdf-schema#" />
+        <Prefix id="owl" namespace="http://www.w3.org/2002/07/owl#" />
+    </Prefixes>
+
+    <Interlinks>
+
+        <Interlink id="Classes">
+            <LinkType>owl:sameAs</LinkType>
+
+            <SourceDataset dataSource="SOURCE" var="a">
+                <RestrictTo>?a rdf:type owl:Class .</RestrictTo>
+            </SourceDataset>
+
+            <TargetDataset dataSource="TARGET" var="b">
+                <RestrictTo>?b rdf:type owl:Class .</RestrictTo>
+            </TargetDataset>
+
+            <LinkageRule>
+                <!--<Aggregate type="max">-->
+                    <Compare metric="substring" threshold="0.2">
+                        <!--<TransformInput function="tokenize">-->
+                            <Input path="?a\rdfs:subClass/rdfs:label" />
+                        <!--</TransformInput>-->
+                        <!--<TransformInput function="tokenize">-->
+                            <Input path="?b\rdfs:subClass/rdfs:label" />
+                        <!--</TransformInput>-->
+                    </Compare>
+                <!--</Aggregate>-->
+            </LinkageRule>
+
+            <Filter limit="1"/>
+        </Interlink>
+        <!--<Interlink id="ObjectProperty">-->
+            <!--<LinkType>owl:sameAs</LinkType>-->
+
+            <!--<SourceDataset dataSource="SOURCE" var="a">-->
+                <!--<RestrictTo>?a rdf:type owl:ObjectProperty .</RestrictTo>-->
+            <!--</SourceDataset>-->
+
+            <!--<TargetDataset dataSource="TARGET" var="b">-->
+                <!--<RestrictTo>?b rdf:type owl:ObjectProperty .</RestrictTo>-->
+            <!--</TargetDataset>-->
+
+            <!--<LinkageRule>-->
+                <!--<Compare metric="substring" threshold="0.2">-->
+			            <!--<TransformInput function="merge">-->
+                            <!--<Input path="?a/rdfs:label" />-->
+                            <!--<TransformInput function="stripUriPrefix">-->
+                                <!--<Input path="?a" />-->
+                           <!--</TransformInput>-->
+                        <!--</TransformInput>-->
+                        <!--<TransformInput function="merge">-->
+                            <!--<Input path="?b/rdfs:label" />-->
+                            <!--<TransformInput function="stripUriPrefix">-->
+                                <!--<Input path="?b" />-->
+                           <!--</TransformInput>-->
+                        <!--</TransformInput>-->
+                <!--</Compare>-->
+            <!--</LinkageRule>-->
+
+            <!--<Filter limit="1" />-->
+        <!--</Interlink>-->
+        <!--<Interlink id="DatatypeProperty">-->
+            <!--<LinkType>owl:sameAs</LinkType>-->
+
+            <!--<SourceDataset dataSource="SOURCE" var="a">-->
+                <!--<RestrictTo>?a rdf:type owl:DatatypeProperty .</RestrictTo>-->
+            <!--</SourceDataset>-->
+
+            <!--<TargetDataset dataSource="TARGET" var="b">-->
+                <!--<RestrictTo>?b rdf:type owl:DatatypeProperty .</RestrictTo>-->
+            <!--</TargetDataset>-->
+
+            <!--<LinkageRule>-->
+                <!--<Compare metric="substring" threshold="0.2">-->
+                        <!--<TransformInput function="merge">-->
+                            <!--<Input path="?a/rdfs:label" />-->
+                            <!--<TransformInput function="stripUriPrefix">-->
+                                <!--<Input path="?a" />-->
+                           <!--</TransformInput>-->
+                        <!--</TransformInput>-->
+                        <!--<TransformInput function="merge">-->
+                            <!--<Input path="?b/rdfs:label" />-->
+                            <!--<TransformInput function="stripUriPrefix">-->
+                                <!--<Input path="?b" />-->
+                           <!--</TransformInput>-->
+                        <!--</TransformInput>-->
+                <!--</Compare>-->
+            <!--</LinkageRule>-->
+
+            <!--<Filter limit="1" />-->
+        <!--</Interlink>-->
+    </Interlinks>
+
+</Silk>

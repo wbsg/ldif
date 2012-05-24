@@ -18,14 +18,14 @@
 
 package ldif.local.runtime.impl
 
-import ldif.runtime.Quad
-import ldif.local.runtime.{QuadReader, ClonableQuadReader}
+import ldif.local.runtime.CloneableQuadReader
 import collection.mutable.ArrayBuffer
+import ldif.runtime.{QuadReader, Quad}
 
 /**
  * Creates a new reader out of many quad readers.
  */
-class MultiQuadReader(quadReaders: QuadReader*) extends ClonableQuadReader {
+class MultiQuadReader(quadReaders: QuadReader*) extends CloneableQuadReader {
   var index = 0
   var closed = (quadReaders.size == 0) // initialize closed=true if no quadReaders are passed
 
@@ -67,7 +67,7 @@ class MultiQuadReader(quadReaders: QuadReader*) extends ClonableQuadReader {
     val readers = new ArrayBuffer[QuadReader]
     for(quadReader <- quadReaders) {
       quadReader match {
-        case qr: ClonableQuadReader => readers.append(qr.cloneReader)
+        case qr: CloneableQuadReader => readers.append(qr.cloneReader)
         case qr if (!qr.hasNext) => // If reader is empty don't clone it
         case qr => throw new RuntimeException("No ClonableQuadReader implementation: " + qr.getClass)
       }

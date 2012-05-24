@@ -20,7 +20,7 @@ package ldif.local
 
 import ldif.entity.Node
 import collection.mutable.Set
-import runtime.QuadReader
+import ldif.runtime.QuadReader
 
 trait HashTable {
   def put(key : Pair[Node,String], value: Node)

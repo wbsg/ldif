@@ -18,7 +18,7 @@
 
 package ldif.local.runtime.impl
 
-import ldif.local.runtime.QuadReader
+import ldif.runtime.QuadReader
 import ldif.runtime.QuadWriter
 
 /**

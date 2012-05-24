@@ -23,6 +23,7 @@ import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner
 import ldif.local.datasources.dump.QuadFileLoader
 import java.io.{File, FileReader, BufferedReader}
+import ldif.runtime.QuadReader
 
 
 /**

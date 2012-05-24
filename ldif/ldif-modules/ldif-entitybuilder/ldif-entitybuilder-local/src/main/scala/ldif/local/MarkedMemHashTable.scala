@@ -20,9 +20,9 @@ package ldif.local
 
 import collection.mutable.{HashMap, MultiMap, Set}
 import runtime.impl.QuadQueue
-import ldif.runtime.{QuadWriter, Quad}
 import ldif.entity.Node
-import runtime.{LocalNode, QuadReader}
+import runtime.LocalNode
+import ldif.runtime.{QuadReader, QuadWriter, Quad}
 
 // Scala MultiMap adapter, including value markers
 

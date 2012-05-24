@@ -18,6 +18,8 @@
 
 package ldif.local.runtime
 
+import ldif.runtime.QuadReader
+
 /**
  * Created by IntelliJ IDEA.
  * User: andreas
@@ -26,6 +28,6 @@ package ldif.local.runtime
  * To change this template use File | Settings | File Templates.
  */
 
-trait ClonableQuadReader extends QuadReader { //TODO typo? Cloneable
-  def cloneReader: QuadReader
+trait CloneableQuadReader extends QuadReader {
+  def cloneReader: CloneableQuadReader
 }

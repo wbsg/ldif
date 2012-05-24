@@ -24,6 +24,7 @@ import java.util.Properties
 import ldif.util.FatalErrorListener
 import ldif.EntityBuilderTask
 import util.EntityBuilderReportPublisher
+import ldif.runtime.QuadReader
 
 class EntityBuilderExecutor(configParameters: ConfigParameters = ConfigParameters(new Properties)) extends Executor {
 

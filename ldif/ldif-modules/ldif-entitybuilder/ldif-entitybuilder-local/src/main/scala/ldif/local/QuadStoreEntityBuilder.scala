@@ -20,14 +20,14 @@ package ldif.local
 
 import ldif.entity.EntityDescription
 import org.slf4j.LoggerFactory
-import ldif.local.runtime.{ConfigParameters, QuadReader, EntityWriter}
-import ldif.runtime.Quad
+import ldif.local.runtime.{ConfigParameters, EntityWriter}
 import java.io._
 import java.util.zip.GZIPOutputStream
 import runtime.impl.QuadQueue
 import java.util.concurrent.atomic.AtomicInteger
 import ldif.util.{Consts, Uri}
 import util.EntityBuilderReportPublisher
+import ldif.runtime.{QuadReader, Quad}
 
 /**
  * Created by IntelliJ IDEA.

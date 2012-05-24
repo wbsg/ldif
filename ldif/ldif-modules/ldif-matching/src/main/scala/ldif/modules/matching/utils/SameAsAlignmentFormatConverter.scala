@@ -18,7 +18,7 @@
 
 package ldif.modules.matching.utils
 
-import ldif.local.runtime.QuadReader
+import ldif.runtime.QuadReader
 import ldif.local.datasources.dump.QuadFileLoader
 import ldif.util.Consts
 import collection.mutable.HashSet

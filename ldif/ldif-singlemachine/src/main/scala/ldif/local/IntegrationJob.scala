@@ -34,7 +34,6 @@ import de.fuberlin.wiwiss.r2r.{JenaModelSource, EnumeratingURIGenerator, FileOrU
 import org.slf4j.LoggerFactory
 import ldif.util._
 import ldif.modules.sieve.fusion.{FusionModule, EmptyFusionConfig, FusionConfig}
-import ldif.runtime.QuadWriter
 import ldif.modules.sieve.quality.{QualityConfig, QualityModule, EmptyQualityConfig}
 import ldif.config._
 import ldif.modules.silk.local.SilkLocalExecutor
@@ -42,6 +41,7 @@ import ldif.modules.sieve.local.{SieveLocalQualityExecutor, SieveLocalFusionExec
 import ldif.modules.sieve.SieveConfig
 import util.{ImportedDumpsUtils, StringPool}
 import scala.collection.mutable.{Set => MSet}
+import ldif.runtime.{QuadReader, QuadWriter}
 
 case class IntegrationJob (config : IntegrationConfig, debugMode : Boolean = false) {
 
@@ -211,7 +211,7 @@ case class IntegrationJob (config : IntegrationConfig, debugMode : Boolean = fal
 
   private def cloneQuadReaders(originalReaders: Seq[QuadReader]): Seq[QuadReader] = {
     originalReaders.map(qReader => qReader match {
-      case cloneable: ClonableQuadReader => {
+      case cloneable: CloneableQuadReader => {
         cloneable.cloneReader
       }
       case _ => {

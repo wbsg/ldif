@@ -27,7 +27,7 @@ import scala._
 import ldif.runtime.Quad
 import ldif.util.Consts
 import ldif.datasources.dump.QuadParser
-import ldif.local.runtime.{QuadReader, LocalNode}
+import ldif.local.runtime.LocalNode
 import ldif.local.runtime.impl.{FileQuadReader, FileQuadWriter, DummyQuadWriter}
 import java.io._
 

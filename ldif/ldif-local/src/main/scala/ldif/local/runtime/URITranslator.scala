@@ -30,12 +30,11 @@ import impl._
 import scala.collection.mutable.{Map, HashMap, HashSet, Set}
 import ldif.entity._
 import org.slf4j.LoggerFactory
-import ldif.runtime.Quad
 import java.util.Properties
 import java.io.{BufferedWriter, File}
 import ldif.entity.entityComparator.entityComparator
-import ldif.runtime.QuadWriter
 import ldif.util.{Consts, UriMintHelper}
+import ldif.runtime.{QuadReader, Quad, QuadWriter}
 
 object URITranslator {
 
@@ -51,7 +50,7 @@ object URITranslator {
     (sNew, oNew)
   }
 
-  private def rewriteURIs(quadsReader: QuadReader, uriMap: Map[String, String]): QuadReader = {
+  def rewriteURIs(quadsReader: QuadReader, uriMap: Map[String, String]): QuadReader = {
     val entityGraphChecker = new EntityGraphChecker
     val file = File.createTempFile("ldif_rewritten_output", ".dat")
     file.deleteOnExit
@@ -74,7 +73,7 @@ object URITranslator {
     }
     log.info("End URI translation: Processed " + counter + " quads")
     quadOutput.finish
-    new FileQuadReader(quadOutput.outputFile)
+    new FileQuadReader(quadOutput)
   }
 
   def translateQuads(quadsReader: QuadReader, linkReader: QuadReader, configProperties: Properties): QuadReader = {
@@ -84,8 +83,8 @@ object URITranslator {
 
     val uriMinting = configProperties.getProperty("uriMinting", "false").toLowerCase=="true"
     if(uriMinting) {
-      if (!quadsReader.isInstanceOf[ClonableQuadReader]) {
-        quadsReaderPassTwo = quadsReader.asInstanceOf[ClonableQuadReader].cloneReader
+      if (!quadsReader.isInstanceOf[CloneableQuadReader]) {
+        quadsReaderPassTwo = quadsReader.asInstanceOf[CloneableQuadReader].cloneReader
         uriMap = generateMintedUriMap(linkReader, quadsReader, configProperties)
       } else {
         val copiedQuadsWriter = new FileQuadWriter(File.createTempFile("ldif_copyquads","queue"))

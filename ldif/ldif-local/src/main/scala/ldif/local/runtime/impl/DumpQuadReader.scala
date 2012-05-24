@@ -18,8 +18,8 @@
 
 package ldif.local.runtime.impl
 
-import ldif.runtime.Quad
-import ldif.local.runtime.{ConfigParameters, QuadReader}
+import ldif.runtime.{QuadReader, Quad}
+import ldif.local.runtime.ConfigParameters
 import ldif.util._
 import ldif.local.IntegrationJobMonitor
 import ldif.local.report.DumpLoadReportPublisher

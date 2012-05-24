@@ -19,7 +19,7 @@ package ldif.local.runtime.impl
  */
 
 import ldif.runtime.Quad
-import ldif.local.runtime.ClonableQuadReader
+import ldif.local.runtime.CloneableQuadReader
 import java.io._
 import java.lang.RuntimeException
 import ldif.entity.Entity
@@ -33,7 +33,7 @@ import ldif.runtime.impl.FileObjectReader
  * To change this template use File | Settings | File Templates.
  */
 
-class FileQuadReader(inputFile: File, numberOfQuads: Int = 0) extends FileObjectReader[Quad](inputFile, NoQuadsLeft, numberOfObjects = numberOfQuads) with ClonableQuadReader {
+class FileQuadReader(inputFile: File, numberOfQuads: Int = 0) extends FileObjectReader[Quad](inputFile, NoQuadsLeft, numberOfObjects = numberOfQuads) with CloneableQuadReader {
   def cloneReader = new FileQuadReader(inputFile)
 
   /**

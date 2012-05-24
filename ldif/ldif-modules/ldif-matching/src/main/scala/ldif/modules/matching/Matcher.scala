@@ -25,14 +25,14 @@ import ldif.modules.silk.local.SilkLocalExecutor
 import ldif.entity.EntityDescription
 import ldif.local.EntityBuilderExecutor
 import ldif.local.runtime._
-import impl.{QuadQueue, FileEntityReader, FileEntityWriter, EntityQueue}
-import ldif.util.Consts
+import impl._
 import ldif.{EntityBuilderModule, EntityBuilderConfig}
 import ldif.local.util.StringPool
 import utils.SameAsAlignmentFormatConverter
-import collection.mutable.ArrayBuffer
 import java.util.Properties
-import ldif.runtime.QuadWriter
+import collection.mutable.{Map, HashMap, HashSet, ArrayBuffer}
+import ldif.util.{QuadUtils, CommonUtils, Consts}
+import ldif.runtime.{QuadReader, Quad, QuadWriter}
 
 /**
  * Created by IntelliJ IDEA.
@@ -43,25 +43,82 @@ import ldif.runtime.QuadWriter
  */
 
 object Matcher {
+
   def main(args: Array[String]) {
-    if(args.length < 3) {
-      println("Parameters: <ontology1> <ontology2> <outputFile> [linkSpec]")
+    if(args.length < 4) {
+      println("Parameters: <ontology1> <ontology2> <outputFile> <pass1linkSpec> [pass2linkSpec]")
       sys.exit(1)
     }
+    if(args.length>4)
+      println("Running two match passes.")
     val startTime = System.currentTimeMillis()
     val ont1Reader = DumpLoader.dumpIntoFileQuadQueue(args(0))
     val ont2Reader = DumpLoader.dumpIntoFileQuadQueue(args(1))
-    val outputQueue = new QuadQueue
-    if(args.length==4)
-      matchOntologies (ont1Reader, ont2Reader, outputQueue, new File(args(3)))
-    else
-      matchOntologies (ont1Reader, ont2Reader, outputQueue)
+
+    // Run lexical matchers
+    val firstPassMatches = runFirstPassMatcher(ont1Reader, ont2Reader, args)
+    var outputQueue: CloneableQuadReader = firstPassMatches
+    if(args.length > 4) {
+      val secondPassMatches = runSecondPassMatcher(ont1Reader.cloneReader, ont2Reader.cloneReader, outputQueue.cloneReader, args)
+//      outputQueue = new MultiQuadReader(outputQueue.cloneReader, secondPassMatches)
+        outputQueue = secondPassMatches
+    }
     val writer = new BufferedWriter(new FileWriter(args(2)))
-    outputToAlignmentFormat(outputQueue, writer)
+    outputToAlignmentFormat(outputQueue.cloneReader, writer)
 //    outputURIClustersAsSameAsRDF(outputQueue, writer)
     writer.flush()
     writer.close()
     println("Finished matching after " + (System.currentTimeMillis()-startTime)/1000.0 + "s")
+  }
+
+  // This should be a high precision matcher
+  private def runFirstPassMatcher(ont1Reader: CloneableQuadReader, ont2Reader: CloneableQuadReader, args: Array[String]): FileQuadReader = {
+//    val firstPassMatches = new FileQuadWriter(new File("firstPassMatches.dat"))
+//    if (args.length >= 4)
+//      matchOntologies(ont1Reader, ont2Reader, firstPassMatches, new File(args(3)))
+//    else
+//      matchOntologies(ont1Reader, ont2Reader, firstPassMatches)
+//    new FileQuadReader(firstPassMatches)
+    new FileQuadReader(new File("firstPassMatches.dat"))
+  }
+
+  // This builds on the results of the first matcher
+  private def runSecondPassMatcher(ont1Reader: CloneableQuadReader, ont2Reader: CloneableQuadReader, firstPassMatches: CloneableQuadReader, args: Array[String]): CloneableQuadReader = {
+    var uriMap = getTranslationMap(firstPassMatches.cloneReader)
+    val ont1ReaderRewritten = URITranslator.rewriteURIs(ont1Reader, uriMap)
+    uriMap = null
+    val matchedEntities = getMatchedEntities(firstPassMatches.cloneReader)
+    val ont1FilteredReader = new RemoveTypesQuadReader(ont1ReaderRewritten, matchedEntities)
+    val ont2FilteredReader = new RemoveTypesQuadReader(ont2Reader, matchedEntities)
+    QuadUtils.dumpQuadReaderToFile(ont1FilteredReader, "mouse.nq")
+    QuadUtils.dumpQuadReaderToFile(ont2FilteredReader, "human.nq")
+    val secondPassMatches = new FileQuadWriter()
+
+    matchOntologies(ont1FilteredReader, ont2FilteredReader, secondPassMatches, new File(args(4)))
+    new FileQuadReader(secondPassMatches)
+  }
+
+  private def getTranslationMap(matchReader: QuadReader): Map[String, String] = {
+    val mapper = new HashMap[String, String]
+    for(quad <- matchReader) {
+      if(quad.value.isUriNode && quad.subject.isUriNode)
+        mapper.put(quad.subject.value, quad.value.value)
+    }
+    mapper
+  }
+
+  private def getMatchedEntities(matchReader: QuadReader): Set[String] = {
+    val matchedEntities = new HashSet[String]
+    for(quad <- matchReader) {
+      val subject = quad.subject
+      val obj = quad.value
+
+      if(subject.isUriNode)
+        matchedEntities.add(subject.value)
+      if(obj.isUriNode)
+        matchedEntities.add(obj.value)
+    }
+    matchedEntities.toSet
   }
 
 
@@ -91,6 +148,7 @@ object Matcher {
     {
       silkExecutor.execute(silkTask, readers, output)
     }
+    output.finish()
   }
 
   private def mergeReaders(readers1: Seq[EntityReader], readers2: Seq[EntityReader]): Seq[EntityReader] = {
@@ -158,4 +216,42 @@ object Matcher {
   }
 
 
+}
+
+case class RemoveTypesQuadReader(reader: QuadReader, matchedEntities: Set[String]) extends QuadReader {
+  private var bufferedQuad: Quad = null
+  private var counter = 0
+
+  def size = reader.size
+
+  def read(): Quad = {
+    if(bufferedQuad==null)
+      throw new RuntimeException("Error: No more quad present in queue! Use hasNext to check for present quads.")
+    val returnQuad = bufferedQuad
+    bufferedQuad = null
+    return returnQuad
+  }
+
+  def hasNext: Boolean = {
+    if(bufferedQuad!=null)
+      return true
+
+    while(reader.hasNext) {
+      val quad = reader.read()
+      if(!filterQuad(quad)) {
+        bufferedQuad = quad
+        return true
+      }
+    }
+    return false
+  }
+
+  private def filterQuad(quad: Quad): Boolean = {
+    if(quad.predicate==Consts.rdfTypeProp && matchedEntities.contains(quad.subject.value)) {
+      counter += 1
+      return true
+    }
+    else
+      return false
+  }
 }

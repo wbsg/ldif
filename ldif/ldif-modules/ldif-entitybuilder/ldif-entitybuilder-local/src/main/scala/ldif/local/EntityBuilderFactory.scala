@@ -18,11 +18,12 @@
 
 package ldif.local
 
-import ldif.local.runtime.{ConfigParameters, QuadReader}
+import ldif.local.runtime.{ConfigParameters}
 import ldif.entity.EntityDescription
 import tdb.TDBQuadStore
 import java.io.File
 import util.EntityBuilderReportPublisher
+import ldif.runtime.QuadReader
 
 /**
  * Created by IntelliJ IDEA.

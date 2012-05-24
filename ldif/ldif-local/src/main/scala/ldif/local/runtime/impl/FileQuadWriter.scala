@@ -31,4 +31,8 @@ import ldif.runtime.impl.FileObjectWriter
  * To change this template use File | Settings | File Templates.
  */
 
-class FileQuadWriter(outputFile: File) extends FileObjectWriter[Quad](outputFile, NoQuadsLeft) with QuadWriter
+class FileQuadWriter(outputFile: File) extends FileObjectWriter[Quad](outputFile, NoQuadsLeft) with QuadWriter {
+  def this() {
+    this(File.createTempFile("ldif_fqwr", "queue"))
+  }
+}

@@ -19,7 +19,8 @@
 package ldif.local
 
 import ldif.entity.EntityDescription
-import runtime.{QuadReader, EntityWriter}
+import runtime.EntityWriter
+import ldif.runtime.QuadReader
 
 trait EntityBuilderTrait {
 

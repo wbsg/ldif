@@ -1,4 +1,6 @@
-/* 
+package ldif.runtime
+
+/*
  * LDIF
  *
  * Copyright 2011-2012 Freie Universität Berlin, MediaEvent Services GmbH & Co. KG
@@ -15,10 +17,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-package ldif.local.runtime
-
-import ldif.runtime.Quad
 
 trait QuadReader
 {
