@@ -18,9 +18,9 @@
 
 package ldif.runtime
 
-import ldif.util.NTriplesStringConverter
 import java.util.Comparator
 import ldif.entity.NodeTrait
+import ldif.util.{Consts, NTriplesStringConverter}
 
 /**
  * An RDF quad.
@@ -88,3 +88,8 @@ class BackwardComparator extends Comparator[Quad] {
       left.graph.compareTo(right.graph)
   }
 }
+
+/**
+ * Convenience class, should only be used internally!
+ */
+case class Triple(override val subject : NodeTrait, override val predicate : String, override val value : NodeTrait) extends Quad(subject, predicate, value, Consts.DEFAULT_GRAPH)

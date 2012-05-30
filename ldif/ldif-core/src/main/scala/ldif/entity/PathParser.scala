@@ -43,7 +43,7 @@ private class PathParser(prefixes : Map[String, String]) extends RegexParsers
   private def backwardOperator = "\\" ~> literal ^^ { s => BackwardOperator(Uri.parse(s, prefixes)) }
   private def filterOperator= "[" ~> (langFilter | propFilter) <~ "]"
   private def langFilter = "@lang" ~> compOperator ~ literal ^^ { case op ~ lang => LanguageFilter(op, lang) }
-  private def propFilter = literal ~ compOperator ~ literal ^^ { case prop ~ op ~ value => PropertyFilter(prop, op, value) }
+  private def propFilter = literal ~ compOperator ~ literal ^^ { case prop ~ op ~ value => PropertyFilter(Uri.parse(prop, prefixes).uri, op, value) }
 
   private def literal = """<[^>]+>|[^\\/\[\] ]+""".r
   private def compOperator = ">" | "<" | ">=" | "<=" | "=" | "!="

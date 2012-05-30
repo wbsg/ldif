@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Silk xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:noNamespaceSchemaLocation="../../xsd/LinkSpecificationLanguage.xsd" >
+    <Prefixes>
+        <Prefix id="rdf" namespace="http://www.w3.org/1999/02/22-rdf-syntax-ns#" />
+        <Prefix id="rdfs" namespace="http://www.w3.org/2000/01/rdf-schema#" />
+        <Prefix id="owl" namespace="http://www.w3.org/2002/07/owl#" />
+        <Prefix id="owl" namespace="http://www.w3.org/2002/07/owl#" />
+        <Prefix id="oboInOwl" namespace="http://www.geneontology.org/formats/oboInOwl#" />
+        <Prefix id="ldif" namespace="http://www4.wiwiss.fu-berlin.de/ldif/" />
+    </Prefixes>
+
+    <Interlinks>
+
+        <Interlink id="Classes">
+            <LinkType>owl:sameAs</LinkType>
+
+            <SourceDataset dataSource="SOURCE" var="a">
+                <RestrictTo>?a rdf:type owl:Class</RestrictTo>
+            </SourceDataset>
+
+            <TargetDataset dataSource="TARGET" var="b">
+                <RestrictTo>?b rdf:type owl:Class</RestrictTo>
+            </TargetDataset>
+
+            <LinkageRule>
+                <Aggregate type="average">
+                    <!--<Compare metric="equality" required="true">-->
+                        <!--<Input path="?a/ldif:nrOfChildren" />-->
+                        <!--<Input path="?b/ldif:nrOfChildren" />-->
+                    <!--</Compare>-->
+                    <Compare metric="equality" required="true">
+                        <Input path="?a[ldif:sizeOfSubTree != '1']/ldif:sizeOfSubTree" />
+                        <Input path="?b[ldif:sizeOfSubTree != '1']/ldif:sizeOfSubTree" />
+                    </Compare>
+                    <Compare metric="equality" required="true">
+                        <Input path="?a[ldif:sizeOfSubTree != '1']/ldif:nrOfChildren" />
+                        <Input path="?b[ldif:sizeOfSubTree != '1']/ldif:nrOfChildren" />
+                    </Compare>
+                </Aggregate>
+            </LinkageRule>
+
+            <Filter limit="1"/>
+        </Interlink>
+    </Interlinks>
+
+</Silk>

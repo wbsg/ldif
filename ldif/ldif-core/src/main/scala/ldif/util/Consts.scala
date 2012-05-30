@@ -26,16 +26,21 @@ object Consts {
   val LDIF_WEBSITE = "http://ldif.wbsg.de"
   val LDIF_HELP_HEADER = ("LDIF "+LDIF_VERSION+" \nLicensed under Apache License v2.0")
   val LDIF_HELP_FOOTER = ("\nMore information at "+LDIF_WEBSITE)
+  val LDIF_NS = "http://www4.wiwiss.fu-berlin.de/ldif/"
 
-  val DEFAULT_GRAPH = "http://www4.wiwiss.fu-berlin.de/ldif/defaultGraph"
-  val DEFAULT_PROVENANCE_GRAPH = "http://www4.wiwiss.fu-berlin.de/ldif/provenance"
-  val DEFAULT_IMPORTED_GRAPH_PREFIX = "http://www4.wiwiss.fu-berlin.de/ldif/graph#"
+  val DEFAULT_GRAPH = LDIF_NS + "defaultGraph"
+  val DEFAULT_PROVENANCE_GRAPH = LDIF_NS + "provenance"
+  val DEFAULT_IMPORTED_GRAPH_PREFIX = LDIF_NS + "graph#"
   val SAMEAS_URI = "http://www.w3.org/2002/07/owl#sameAs"
   val RDFTYPE_URI = "http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
+  val OWL_NS = "http://www.w3.org/2002/07/owl#"
+  val OWL_CLASS = OWL_NS + "Class"
+  val RDFS_NS = "http://www.w3.org/2000/01/rdf-schema#"
+  val RDFS_SUBCLASSOF = RDFS_NS + "subClassOf"
 
-  val URI_MINTING_GRAPH = "http://www4.wiwiss.fu-berlin.de/ldif/graph#uriMinting"
-  val URI_REWRITING_GRAPH = "http://www4.wiwiss.fu-berlin.de/ldif/graph#uriRewriting"
-  val SILK_OUT_GRAPH = "http://www4.wiwiss.fu-berlin.de/ldif/graph#generatedBySilk"
+  val URI_MINTING_GRAPH = LDIF_NS + "graph#uriMinting"
+  val URI_REWRITING_GRAPH = LDIF_NS + "graph#uriRewriting"
+  val SILK_OUT_GRAPH = LDIF_NS + "graph#generatedBySilk"
 
   val MAX_WAITING_TIME : Long = Long.MaxValue
 
@@ -61,16 +66,16 @@ object Consts {
   val xsdNonNegativeInteger = "http://www.w3.org/2001/XMLSchema#nonNegativeInteger"
 
   // Import metadata properties
-  val lastUpdateProp = "http://www4.wiwiss.fu-berlin.de/ldif/lastUpdate"
-  val hasImportJobProp = "http://www4.wiwiss.fu-berlin.de/ldif/hasImportJob"
-  val importIdProp = "http://www4.wiwiss.fu-berlin.de/ldif/importId"
-  val hasDatasourceProp = "http://www4.wiwiss.fu-berlin.de/ldif/hasDatasource"
-  val hasImportTypeProp = "http://www4.wiwiss.fu-berlin.de/ldif/hasImportType"
-  val hasOriginalLocationProp = "http://www4.wiwiss.fu-berlin.de/ldif/hasOriginalLocation"
-  val numberOfQuadsProp = "http://www4.wiwiss.fu-berlin.de/ldif/numberOfQuads"
+  val lastUpdateProp = LDIF_NS + "lastUpdate"
+  val hasImportJobProp = LDIF_NS + "hasImportJob"
+  val importIdProp = LDIF_NS + "importId"
+  val hasDatasourceProp = LDIF_NS + "hasDatasource"
+  val hasImportTypeProp = LDIF_NS + "hasImportType"
+  val hasOriginalLocationProp = LDIF_NS + "hasOriginalLocation"
+  val numberOfQuadsProp = LDIF_NS + "numberOfQuads"
   val rdfTypeProp = "http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
-  val importedGraphClass = "http://www4.wiwiss.fu-berlin.de/ldif/ImportedGraph"
-  val importJobClass = "http://www4.wiwiss.fu-berlin.de/ldif/ImportJob"
+  val importedGraphClass = LDIF_NS + "ImportedGraph"
+  val importJobClass = LDIF_NS + "ImportJob"
 
   val MAX_NUM_GRAPHS_IN_MEMORY = 100000
 
@@ -103,4 +108,9 @@ object Consts {
   val xsdScheduler = xsdBase + "SchedulerConfig.xsd"
   val xsdDataSource = xsdBase + "DataSource.xsd"
   val xsdImportJob = xsdBase + "ImportJob.xsd"
+
+  // Matcher properties
+  val LDIF_numberOfChildren = LDIF_NS + "nrOfChildren"
+  val LDIF_hierarchyLevel = LDIF_NS + "hierarchyLevel"
+  val LDIF_sizeOfSubTree = LDIF_NS + "sizeOfSubTree"
 }

@@ -58,7 +58,7 @@ object SameAsAlignmentFormatConverter {
       val entity1 = quad.subject.value
       val entity2 = quad.value.value
       if(quad.predicate==Consts.SAMEAS_URI) {
-        if(!entitySet.contains(entity1) && !entitySet.contains(entity2) && entity1!=entity2) {
+        if(!entitySet.contains(entity1) && !entitySet.contains(entity2) && entity1!=entity2 && !entity1.startsWith("node")) {
           counter += 1
           writer.append(generateCellXML(entity1, entity2))
           entitySet.add(entity1)

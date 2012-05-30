@@ -29,6 +29,7 @@ import ldif.local.runtime.{LocalNode, EntityWriter, ConfigParameters}
 import java.util.{HashSet => JHashSet}
 import ldif.util.{Consts, Uri}
 import util.{EntityBuilderReportPublisher, StringPool}
+import sun.reflect.generics.reflectiveObjects.NotImplementedException
 import ldif.runtime.{QuadReader, Quad}
 
 class EntityBuilder (entityDescriptions : IndexedSeq[EntityDescription], readers : Seq[QuadReader], config: ConfigParameters, reporter : EntityBuilderReportPublisher) extends FactumBuilder with EntityBuilderTrait {
@@ -271,7 +272,22 @@ class EntityBuilder (entityDescriptions : IndexedSeq[EntityDescription], readers
             }
         }
       }
-      case pf:PropertyFilter =>  //TODO support PropertyFilter
+      case pf:PropertyFilter =>  {
+        val prop = StringPool.getCanonicalVersion(pf.property.toString)
+        for(srcnode <- srcNodes) {
+          val nodesToCheck = FHT.get((srcnode, prop))
+          if(nodesToCheck!=None)
+            for(nodeToCheck <- nodesToCheck.get) {
+              pf.operator match {
+                case "=" => if(nodeToCheck.value==pf.value)
+                  nodes.add(srcnode)
+                case "!=" => if(nodeToCheck.value!=pf.value)
+                  nodes.add(srcnode)
+                case _ => throw new NotImplementedException
+              }
+            }
+        }
+      }
       case lf:LanguageFilter =>  //TODO support LanguageFilter
     }
     nodes
@@ -307,7 +323,22 @@ class EntityBuilder (entityDescriptions : IndexedSeq[EntityDescription], readers
             }
         }
       }
-      case pf:PropertyFilter =>  //TODO support PropertyFilter
+      case pf:PropertyFilter =>  {
+        val prop = StringPool.getCanonicalVersion(pf.property.toString)
+        for(srcnode <- allUriNodes) {
+          val nodesToCheck = FHT.get(srcnode, prop)
+          if(nodesToCheck!=None)
+            for(nodeToCheck <- nodesToCheck.get) {
+              pf.operator match {
+                case "=" => if(nodeToCheck.value==pf.value)
+                  nodes.add(srcnode)
+                case "!=" => if(nodeToCheck.value!=pf.value)
+                  nodes.add(srcnode)
+                case _ => throw new NotImplementedException
+              }
+            }
+        }
+      }
       case lf:LanguageFilter =>  //TODO support LanguageFilter
     }
     nodes
