@@ -68,6 +68,8 @@ object Workspace {
       injectFunction("saveDataSource", saveDataSource _ , 2) &
       injectFunction("saveImportJob", saveImportJob _ , 2) &
       injectFunction("saveIntegrationJob", saveIntegrationJob _ , 2) &
+      injectFunction("editMapping", editMapping _ , 2) &
+      injectFunction("editLinkSpec", editLinkSpec _ , 2) &
       injectFunction("runScheduler", runScheduler _ , 0) &
       injectFunction("runIntegration", runIntegration _ , 0)
   }
@@ -157,6 +159,29 @@ object Workspace {
     User().workspace.saveIntegrationJob("integrationJob", args(0), args(1))
     updateCmd
   }
+
+  // JS Command which defines the editMapping function
+  private def editMapping(args : Array[String]) : JsCmd = {
+    // args(0) : path to the mapping
+    // args(1) : mapping index (for the active project)
+
+    // TODO open R2R editor with args(0)
+
+    JSUtils.Message("R2R Editor has not been integrated yet")
+    //updateCmd
+  }
+
+  // JS Command which defines the editLinkSpec function
+  private def editLinkSpec(args : Array[String]) : JsCmd = {
+    // args(0) : the path to the linkSpec
+    // args(1) : linkSpec index (for the active project)
+
+    // TODO open Silk Workbench with args(0)
+
+    JSUtils.Message("Silk Workbench has not been integrated yet")
+    //updateCmd
+  }
+
 
   // JS Command which defines the runIntegration function
   private def runIntegration(args : Array[String]) : JsCmd = {

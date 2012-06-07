@@ -31,12 +31,9 @@
 .integrationjob-icon {
   background-image: url("../img/workspace/block.png");
 }
-
-
-
-.run-schedule-icon {
+/*.run-schedule-icon {
     background: url("../img/workspace/143.png") no-repeat !important;
-}
+}*/
 .folder-icon {
     background: url("../img/workspace/folder-horizontal-open.png") no-repeat !important;
 }
@@ -87,8 +84,23 @@
 .filetree span.source {
   background: url("../img/workspace/server.png") no-repeat !important;
 }
+.filetree span.mapping {
+    background: url("../img/workspace/041.png") no-repeat !important;
+    height: 16px;
+    display: block;
+    padding: 1px 0 1px 18px;
+}
+.filetree span.linkspec {
+    background: url("../img/workspace/041.png") no-repeat !important;
+    height: 16px;
+    display: block;
+    padding: 1px 0 1px 18px;
+}
 .filetree span.output {
-  background: url("../img/workspace/server--arrow.png") no-repeat !important;
+    background: url("../img/workspace/server--arrow.png") no-repeat !important;
+    height: 16px;
+    display: block;
+    padding: 1px 0 1px 18px;
 }
 .filetree span.scheduler {
   background: url("../img/workspace/clock-select.png") no-repeat;

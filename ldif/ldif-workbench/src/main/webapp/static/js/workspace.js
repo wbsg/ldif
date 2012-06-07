@@ -566,7 +566,7 @@ function addDataSource(jsonDataSource, projectNode, projectName, p, d) {
     var ds_actions = document.createElement("div");
     $(ds_actions).addClass('actions');
     $(ds_span).append(ds_actions);
-    addAction('ds_edit', 'Edit', "Edit data source: " + jsonDataSource.label, "editDataSource('" + projectName + "'," + p + "," + d + ")", ds_actions, projectName, true);
+    addAction('edit', 'Edit', "Edit data source: " + jsonDataSource.label, "editDataSource('" + projectName + "'," + p + "," + d + ")", ds_actions, projectName, true);
     addAction('delete', 'Remove', "Remove data source: " + jsonDataSource.label, "confirmDelete('removeDataSource','" + jsonDataSource.label + "')", ds_actions, projectName, true);
 
     addLeaf(jsonDataSource.description, ds_li, 'Description: ', 'description-icon');
@@ -592,7 +592,7 @@ function addImportJob(jsonImportJob, projectNode, projectName, p, d) {
     var ds_actions = document.createElement("div");
     $(ds_actions).addClass('actions');
     $(ds_span).append(ds_actions);
-    addAction('ds_edit', 'Edit', "Edit import job: "+ jsonImportJob.internalId, "editImportJob('" + projectName + "'," + p + "," + d + ")", ds_actions, projectName, true);
+    addAction('edit', 'Edit', "Edit import job: "+ jsonImportJob.internalId, "editImportJob('" + projectName + "'," + p + "," + d + ")", ds_actions, projectName, true);
     addAction('delete', 'Remove', "Remove import job: " + jsonImportJob.internalId, "confirmDelete('removeImportJob','" + jsonImportJob.internalId + "')", ds_actions, projectName, true);
 
     addLeaf(jsonImportJob.dataSource, ds_li, 'Data source: ', 'data-source-icon');
@@ -667,39 +667,84 @@ function addImportJob(jsonImportJob, projectNode, projectName, p, d) {
     }
 }
 
+// Display a mapping and the related actions
+function addMapping(jsonMapping, integrationNode, projectName, p, d) {
+    var ul = document.createElement("ul");
+    $(integrationNode).append(ul);
+    var li = document.createElement("li");
+    $(li).attr("id", 'mapping_' + p + '_' + d)
+    $(ul).append(li);
+
+    var span = document.createElement("span");
+    $(span).addClass('mapping')
+        .text('Mapping_' + d );
+    $(li).append(span);
+
+    var actions = document.createElement("div");
+    $(actions).addClass('actions');
+    $(span).append(actions);
+    addAction('edit', 'Edit', "Edit mapping", "editMapping('"+ jsonMapping +"'," + d + ")", actions, projectName, true);
+}
+
+// Display a linking specification and the related actions
+function addLinkSpec(jsonLinkSpec, integrationNode, projectName, p, d) {
+    var ul = document.createElement("ul");
+    $(integrationNode).append(ul);
+    var li = document.createElement("li");
+    $(li).attr("id", 'linkspec_' + p + '_' + d)
+    $(ul).append(li);
+
+    var span = document.createElement("span");
+    $(span).addClass('linkspec')
+        .text('LinkingSpecification_' + d );
+    $(li).append(span);
+
+    var actions = document.createElement("div");
+    $(actions).addClass('actions');
+    $(span).append(actions);
+    addAction('edit', 'Edit', "Edit linking specification", "editLinkSpec('"+ jsonLinkSpec +"'," + d + ")", actions, projectName, true);
+}
+
 function addIntegrationJob(jsonIntegrationJob, projectNode, projectName, p) {
-    var ds_ul = document.createElement("ul");
-    $(projectNode).append(ds_ul);
-    var ds_li = document.createElement("li");
-    $(ds_li).attr("id", 'importjob_' + projectName + '_integrationjob')
+    var ul = document.createElement("ul");
+    $(projectNode).append(ul);
+    var li = document.createElement("li");
+    $(li).attr("id", 'importjob_' + projectName + '_integrationjob')
             .addClass('closed');
-    $(ds_ul).append(ds_li);
-    var ds_span = document.createElement("span");
-    $(ds_span).addClass('integrationjob');
-    $(ds_li).append(ds_span);
+    $(ul).append(li);
+    var span = document.createElement("span");
+    $(span).addClass('integrationjob');
+    $(li).append(span);
 
-    var ds_label = document.createElement("span");
-    $(ds_label).addClass('label')
+    var label = document.createElement("span");
+    $(label).addClass('label')
             .text('Integration Job');
-    $(ds_span).append(ds_label);
+    $(span).append(label);
 
-    var ds_actions = document.createElement("div");
-    $(ds_actions).addClass('actions');
-    $(ds_span).append(ds_actions);
-    addAction('ds_edit', 'Edit', "Edit integration job", "editIntegrationJob('" + projectName + "'," + p + ")", ds_actions, projectName, true);
-    addAction('delete', 'Remove', "Remove integration job ", "confirmDelete('removeIntegrationJob','IntegrationJob')", ds_actions, projectName, true);
-    addAction('run', 'Run', "Run integration job", "runIntegration('')", ds_actions, projectName, true);
+    var actions = document.createElement("div");
+    $(actions).addClass('actions');
+    $(span).append(actions);
+    addAction('edit', 'Edit', "Edit integration job", "editIntegrationJob('" + projectName + "'," + p + ")", actions, projectName, true);
+    addAction('delete', 'Remove', "Remove integration job ", "confirmDelete('removeIntegrationJob','IntegrationJob')", actions, projectName, true);
+    addAction('run', 'Run', "Run integration job", "runIntegration('')", actions, projectName, true);
 
-    addLeaf(jsonIntegrationJob.runSchedule, ds_li, 'Run schedule: ', 'refresh-schedule-icon');
-    //### addLeaf(jsonIntegrationJob.sources, ds_li, 'Sources: ', 'folder-icon');
-    addLeaf(jsonIntegrationJob.linkSpecifications, ds_li, 'Link specifications: ', 'folder-icon');
-    addLeaf(jsonIntegrationJob.mappings, ds_li, 'Mappings: ', 'folder-icon');
-    addLeaf(jsonIntegrationJob.sieve, ds_li, 'Sieve: ', 'folder-icon');
-    addLeaf(jsonIntegrationJob.output, ds_li, 'Output: ','properties-icon');
-    //### addLeaf(jsonIntegrationJob.properties, ds_li, 'Properties: ','properties-icon');
+    addLeaf(jsonIntegrationJob.runSchedule, li, 'Run schedule: ', 'refresh-schedule-icon');
+    //### addLeaf(jsonIntegrationJob.sources, li, 'Sources: ', 'folder-icon');
+
+    // display Mappings
+    //    var mappings = jsonIntegrationJob.mappings
+    //    for (var d in mappings) {
+    //        addMapping(mappings[d], li, projectName, p, d);
+    //    }
+    addMapping(jsonIntegrationJob.mappings, li, projectName, p, 0);
+    addLinkSpec(jsonIntegrationJob.linkSpecifications, li, projectName, p, 0);
+
+    addLeaf(jsonIntegrationJob.sieve, li, 'Sieve: ', 'folder-icon');
+    addLeaf(jsonIntegrationJob.output, li, 'Output: ','properties-icon');
+    //### addLeaf(jsonIntegrationJob.properties, li, 'Properties: ','properties-icon');
 
     var conf_ul = document.createElement("ul");
-    $(ds_li).append(conf_ul);
+    $(li).append(conf_ul);
     var conf_li = document.createElement("li");
     $(conf_li).attr("id", 'config_' + projectName + '_integrationjob').addClass('closed');
     $(conf_ul).append(conf_li);
@@ -762,7 +807,7 @@ function addScheduler(jsonScheduler, projectNode, projectName, p) {
     var ds_actions = document.createElement("div");
     $(ds_actions).addClass('actions');
     $(ds_span).append(ds_actions);
-    addAction('ds_edit', 'Edit', "Edit scheduler", "editScheduler('" + projectName + "'," + p + ")", ds_actions, projectName, true);
+    addAction('edit', 'Edit', "Edit scheduler", "editScheduler('" + projectName + "'," + p + ")", ds_actions, projectName, true);
 
     addLeaf(jsonScheduler.scheduler.dataSources, ds_li, 'Data sources: ', 'folder-icon');
     addLeaf(jsonScheduler.scheduler.importJobs, ds_li, 'Import jobs: ', 'folder-icon');
@@ -786,7 +831,7 @@ function addScheduler(jsonScheduler, projectNode, projectName, p) {
     var ds_actions = document.createElement("div");
     $(ds_actions).addClass('actions');
     $(conf_span).append(ds_actions);
-    addAction('ds_edit', 'Edit', "Edit scheduler", "editScheduler('" + projectName + "'," + p + ")", ds_actions, projectName, true);
+    addAction('edit', 'Edit', "Edit scheduler", "editScheduler('" + projectName + "'," + p + ")", ds_actions, projectName, true);
     // ###  end add 
 
     addLeaf(jsonScheduler.configurationProperties.provenanceGraphURI, conf_li, 'Provenance graph URI: ', 'foo-icon');
@@ -880,8 +925,6 @@ function updateWorkspace(obj) {
                 addImportJob(importJobs[d], proj, project.name, p, d);
             }
 
-            console.log(project);
-
             // display integrationJob
             if (project.scheduler.integrationJob[0] !== undefined)
                 addIntegrationJob(project.scheduler.integrationJob[0], proj, project.name, p);
@@ -959,7 +1002,7 @@ function getIcon(type) {
         case 'schedule_job' :
             icon = "scheduler-icon";
             break;
-        case 'ds_edit' :
+        case 'edit' :
             icon = "edit-icon";
             break; 
         case 'run' :
