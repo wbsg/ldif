@@ -30,17 +30,21 @@
                         <!--<Input path="?b/ldif:nrOfChildren" />-->
                     <!--</Compare>-->
                     <Compare metric="equality" required="true">
-                        <Input path="?a[ldif:sizeOfSubTree != '1']/ldif:sizeOfSubTree" />
-                        <Input path="?b[ldif:sizeOfSubTree != '1']/ldif:sizeOfSubTree" />
+                        <Input path="?a[ldif:sizeOfSubTree != '2']/ldif:sizeOfSubTree" />
+                        <Input path="?b[ldif:sizeOfSubTree != '2']/ldif:sizeOfSubTree" />
                     </Compare>
                     <Compare metric="equality" required="true">
-                        <Input path="?a[ldif:sizeOfSubTree != '1']/ldif:nrOfChildren" />
-                        <Input path="?b[ldif:sizeOfSubTree != '1']/ldif:nrOfChildren" />
+                        <Input path="?a/ldif:nrOfChildren" />
+                        <Input path="?b/ldif:nrOfChildren" />
+                    </Compare>
+                    <Compare metric="equality" required="true">
+                        <Input path="?a/ldif:hierarchyLevel" />
+                        <Input path="?b/ldif:hierarchyLevel" />
                     </Compare>
                 </Aggregate>
             </LinkageRule>
 
-            <Filter limit="1"/>
+            <Filter limit="1" unambiguous="true"/>
         </Interlink>
     </Interlinks>
 

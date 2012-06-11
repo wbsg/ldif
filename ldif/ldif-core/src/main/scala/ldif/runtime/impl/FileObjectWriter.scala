@@ -52,5 +52,5 @@ class FileObjectWriter[T <: AnyRef](val outputFile: File, val endObject: T, val 
       objectOutput = new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream(outputFile)))
   }
 
-  def size = counter
+  def size: Int = counter
 }

@@ -1,10 +1,12 @@
 package ldif.modules.matching
 
 import collection.mutable.{ArrayBuffer, Set, HashSet, Map, HashMap}
+import collection.immutable.{Set => ISet}
 import ldif.util.Consts
 import ldif.local.runtime.CloneableQuadReader
 import ldif.entity.{NodeTrait, Node}
 import ldif.runtime.{QuadWriter, Triple, Quad, QuadReader}
+import ldif.local.runtime.impl.{FileQuadReader, FileQuadWriter}
 
 /**
  * Created by IntelliJ IDEA.
@@ -72,6 +74,78 @@ object StructuralFeatureExtractor {
       else
         return getHierarchyLevel(subClassOf.get(node).get, subClassOf, Some(maxLevel.get-1))
     }
+  }
+
+  /**
+   * Flattens RDF collections to "sets", so they can be used without recursion, e.g. with plain SPARQL
+   */
+  def flattenUnionOf(reader: CloneableQuadReader): Map[NodeTrait, Seq[NodeTrait]] = {
+    val nilNode = Node.createUriNode(Consts.RDF_NS + "nil")
+    val unionOfNodes = new HashSet[NodeTrait]
+    val rdfRestLinks = new HashMap[NodeTrait, NodeTrait]
+    val rdfFirstValues = new HashMap[NodeTrait, NodeTrait]
+    for(quad <- reader.cloneReader) {
+      quad.predicate match {
+        case Consts.OWL_UNIONOF => unionOfNodes.add(quad.subject); rdfRestLinks.put(quad.subject, quad.value)
+        case Consts.RDFFIRST => rdfFirstValues.put(quad.subject, quad.value)
+        case Consts.RDFREST => rdfRestLinks.put(quad.subject, quad.value)
+        case _ => //ignore
+      }
+    }
+    val unionOfMap = new HashMap[NodeTrait, Seq[NodeTrait]]
+    for(unionOfNode <- unionOfNodes) {
+      val members = new ArrayBuffer[NodeTrait]()
+      var currentNode = rdfRestLinks.getOrElse(unionOfNode, nilNode)
+      while(currentNode!=nilNode) {
+        members.append(rdfFirstValues.get(currentNode).get)
+        currentNode = rdfRestLinks.getOrElse(currentNode, nilNode)
+      }
+      unionOfMap.put(unionOfNode, members)
+    }
+    unionOfMap
+  }
+
+  def getCardinalityStatisticsOfProperty(property: String,  reader: CloneableQuadReader): Map[Int, Int] = {
+    val entityMap = new HashMap[NodeTrait, Set[NodeTrait]]()
+    val unionNodes = flattenUnionOf(reader)
+    for(quad <- reader.cloneReader) {
+      if(quad.predicate==property) {
+        val nodeSet = entityMap.getOrElseUpdate(quad.subject, new HashSet[NodeTrait])
+        if(quad.value.isUriNode)
+          nodeSet.add(quad.value)
+        else {
+          for(node <- unionNodes.getOrElse(quad.value, Set()))
+            nodeSet.add(node)
+        }
+      }
+    }
+    val stats = new HashMap[Int, Int]
+    for((node, values) <- entityMap) {
+      val size = values.size
+      stats.put(size, stats.getOrElse(size, 0)+1)
+    }
+    stats
+  }
+
+  def flattenUnionOfForProperties(properties: ISet[String], reader: CloneableQuadReader): CloneableQuadReader = {
+    val writer = new FileQuadWriter()
+    val unionNodes = flattenUnionOf(reader)
+    for(quad <- reader.cloneReader) {
+      if(properties.contains(quad.predicate)) {
+        val nodes = new HashSet[NodeTrait]
+        if(unionNodes.contains(quad.value))
+          for(node <- unionNodes.get(quad.value).get)
+            nodes.add(node)
+        else if(quad.value.isUriNode)
+          nodes.add(quad.value)
+        // Other blank nodes are ignored
+        for(node<-nodes)
+          writer.write(Triple(quad.subject, quad.predicate, node))
+      } else
+        writer.write(quad)
+    }
+    writer.finish()
+    new FileQuadReader(writer)
   }
 }
 

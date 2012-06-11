@@ -22,7 +22,6 @@ import ldif.local.datasources.dump.DumpLoader
 import java.io.{BufferedWriter, FileWriter, File}
 import ldif.modules.silk.SilkModule
 import ldif.modules.silk.local.SilkLocalExecutor
-import ldif.entity.EntityDescription
 import ldif.local.EntityBuilderExecutor
 import ldif.local.runtime._
 import impl._
@@ -32,7 +31,10 @@ import utils.SameAsAlignmentFormatConverter
 import java.util.Properties
 import collection.mutable.{Map, HashMap, HashSet, ArrayBuffer}
 import ldif.util.{QuadUtils, CommonUtils, Consts}
-import ldif.runtime.{QuadReader, Quad, QuadWriter}
+import ldif.runtime.{QuadReader, Quad, QuadWriter, Triple}
+import ldif.entity.{Node, EntityDescription}
+import java.util.logging.{LogManager, Level, Logger}
+import java.util.prefs.Preferences
 
 /**
  * Created by IntelliJ IDEA.
@@ -45,6 +47,8 @@ import ldif.runtime.{QuadReader, Quad, QuadWriter}
 object Matcher {
 
   def main(args: Array[String]) {
+    LogManager.getLogManager.readConfiguration()
+
     if(args.length < 4) {
       println("Parameters: <ontology1> <ontology2> <outputFile> <pass1matchSpec> [more matchSpecs .. ]")
       sys.exit(1)
@@ -52,35 +56,82 @@ object Matcher {
     if(args.length>4)
       println("Running " + (args.length-3) + " match passes.")
     val startTime = System.currentTimeMillis()
-    val ont1Reader = DumpLoader.dumpIntoFileQuadQueue(args(0))
-    val ont2Reader = DumpLoader.dumpIntoFileQuadQueue(args(1))
-    val test1 = new QuadQueue
-    val test2 = new QuadQueue
-    val hierarchy1 = StructuralFeatureExtractor.buildHierarchy(ont1Reader)
-    val hierarchy2 = StructuralFeatureExtractor.buildHierarchy(ont2Reader)
-    StructuralFeatureExtractor.extractStructuralFeatures(hierarchy1, test1)
-    StructuralFeatureExtractor.extractStructuralFeatures(hierarchy2, test2)
+    val ont1ReaderTemp = DumpLoader.dumpIntoFileQuadQueue(args(0))
+    val ont2ReaderTemp = DumpLoader.dumpIntoFileQuadQueue(args(1))
+    val structureProps = Set(Consts.RDFS_DOMAIN, Consts.RDFS_RANGE, Consts.RDFS_SUBCLASSOF)
+    val ont1Reader = StructuralFeatureExtractor.flattenUnionOfForProperties(structureProps, ont1ReaderTemp)
+    val ont2Reader = StructuralFeatureExtractor.flattenUnionOfForProperties(structureProps, ont2ReaderTemp)
+//    println("\nRDFS Domain:")
+//    println(StructuralFeatureExtractor.getCardinalityStatisticsOfProperty(Consts.RDFS_DOMAIN, ont1Reader))
+//    println(StructuralFeatureExtractor.getCardinalityStatisticsOfProperty(Consts.RDFS_DOMAIN, ont2Reader))
+//    println("\nRDFS Range:")
+//    println(StructuralFeatureExtractor.getCardinalityStatisticsOfProperty(Consts.RDFS_RANGE, ont1Reader))
+//    println(StructuralFeatureExtractor.getCardinalityStatisticsOfProperty(Consts.RDFS_RANGE, ont2Reader))
+//    println("\nRDFS subClassOf:")
+//    println(StructuralFeatureExtractor.getCardinalityStatisticsOfProperty(Consts.RDFS_SUBCLASSOF, ont1Reader))
+//    println(StructuralFeatureExtractor.getCardinalityStatisticsOfProperty(Consts.RDFS_SUBCLASSOF, ont2Reader))
+//    return
+
 //    QuadUtils.dumpQuadReaderToFile(test1, "hierarchy1.nt", true)
 //    QuadUtils.dumpQuadReaderToFile(test2, "hierarchy2.nt", true)
-    val outputQueue =  runFirstPassMatcher(test1, test2, "/home/andreas/projects/ldif/ldif/ldif-modules/ldif-matching/src/main/resources/ldif/modules/matching/resources/matchingLinkSpec/structMatch.xml")
+//    val outputQueue =  runFirstPassMatcher(test1, test2, "/home/andreas/projects/ldif/ldif/ldif-modules/ldif-matching/src/main/resources/ldif/modules/matching/resources/matchingLinkSpec/structMatch.xml")
 
 //    return
 //
-//    // Run lexical matchers
-//    val firstPassMatches = runFirstPassMatcher(ont1Reader, ont2Reader, args(3))
-//    var outputQueue: CloneableQuadReader = firstPassMatches
-//    for(i <- 4 until args.length) {
-//      val nextPassMatches = runNextPassMatcher(ont1Reader.cloneReader, ont2Reader.cloneReader, outputQueue.cloneReader, args(i))
-////      outputQueue = new MultiQuadReader(outputQueue.cloneReader, secondPassMatches)
-//        outputQueue = new MultiQuadReader(nextPassMatches, outputQueue.cloneReader)
-////        QuadUtils.dumpQuadReaderToFile(outputQueue, "test.nt", true)
-//    }
+    // Run lexical matchers
+    val firstPassMatches = runFirstPassMatcher(ont1Reader, ont2Reader, args(3))
+    Logger.getLogger("de.fuberlin.wiwiss.silk.util.task.HasStatus").setLevel(Level.OFF)
+    println("First matcher found: " + firstPassMatches.size + " matches")
+    var outputQueue: CloneableQuadReader = firstPassMatches
+    if(outputQueue.size==0) {
+      val structureOnt1 = new QuadQueue
+      val structureOnt2 = new QuadQueue
+      val hierarchy1 = StructuralFeatureExtractor.buildHierarchy(ont1Reader)
+      val hierarchy2 = StructuralFeatureExtractor.buildHierarchy(ont2Reader)
+      StructuralFeatureExtractor.extractStructuralFeatures(hierarchy1, structureOnt1)
+      StructuralFeatureExtractor.extractStructuralFeatures(hierarchy2, structureOnt2)
+      val structureMatches = runNextPassMatcher(structureOnt1, structureOnt2, outputQueue.cloneReader, "/home/andreas/projects/ldif/ldif/ldif-modules/ldif-matching/src/main/resources/ldif/modules/matching/resources/matchingLinkSpec/structMatch.xml")
+      println("Structural matcher found " + structureMatches.size + " matches")
+      outputQueue = structureMatches
+    }
+    for(i <- 4 until args.length) {
+      val nextPassMatches = if(args(i).contains("augmented")) {
+        val augmented1 = new MultiQuadReader(ont1Reader.cloneReader, augmentInstancesWithRDFSLabel(ont1Reader))
+        val augmented2 = new MultiQuadReader(ont2Reader.cloneReader, augmentInstancesWithRDFSLabel(ont2Reader))
+        runNextPassMatcher(augmented1, augmented2, outputQueue.cloneReader, args(i))
+      }
+      else
+        runNextPassMatcher(ont1Reader.cloneReader, ont2Reader.cloneReader, outputQueue.cloneReader, args(i))
+      println("\nMatcher " + (i-2) + " found: " + nextPassMatches.size + " matches.\n")
+  //      outputQueue = new MultiQuadReader(outputQueue.cloneReader, secondPassMatches)
+      outputQueue = new MultiQuadReader(nextPassMatches, outputQueue.cloneReader)
+  //        QuadUtils.dumpQuadReaderToFile(outputQueue, "test.nt", true)
+    }
     val writer = new BufferedWriter(new FileWriter(args(2)))
     outputToAlignmentFormat(outputQueue.cloneReader, writer)
 //    outputURIClustersAsSameAsRDF(outputQueue, writer)
     writer.flush()
     writer.close()
     println("Finished matching after " + (System.currentTimeMillis()-startTime)/1000.0 + "s")
+  }
+
+  private def augmentInstancesWithRDFSLabel(ont: CloneableQuadReader): QuadReader = {
+    val rdfsLabels = new QuadQueue
+    val entitySet = new HashSet[String]
+    for(quad <- ont.cloneReader) {
+      if(quad.subject.isUriNode && quad.predicate==Consts.RDFTYPE_URI && Set(Consts.OWL_DATATYPEPROPERTY, Consts.OWL_OBJECTPROPERTY, Consts.OWL_CLASS).contains(quad.value.value))
+        entitySet.add(quad.subject.value)
+    }
+    val sortedEntities = entitySet.toSeq.sortWith(_.toLowerCase < _.toLowerCase)
+    var lastPrefix = "noprefix"
+    for(entity <- sortedEntities) {
+      if(entity.toLowerCase.startsWith(lastPrefix.toLowerCase))
+        rdfsLabels.write(Triple(Node.createUriNode(entity), Consts.RDFS_LABEL, Node.createLiteral(entity.substring(lastPrefix.length()))))
+      else
+        lastPrefix = entity
+    }
+    println(rdfsLabels.size)
+    rdfsLabels
   }
 
   // This should be a high precision matcher
@@ -265,3 +316,4 @@ case class RemoveTypesQuadReader(reader: QuadReader, matchedEntities: Set[String
       return false
   }
 }
+

@@ -32,11 +32,21 @@ object Consts {
   val DEFAULT_PROVENANCE_GRAPH = LDIF_NS + "provenance"
   val DEFAULT_IMPORTED_GRAPH_PREFIX = LDIF_NS + "graph#"
   val SAMEAS_URI = "http://www.w3.org/2002/07/owl#sameAs"
-  val RDFTYPE_URI = "http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
+  val RDF_NS = "http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+  val RDFTYPE_URI = RDF_NS + "type"
+  val RDFFIRST = RDF_NS + "first"
+  val RDFREST = RDF_NS + "rest"
+
   val OWL_NS = "http://www.w3.org/2002/07/owl#"
   val OWL_CLASS = OWL_NS + "Class"
+  val OWL_OBJECTPROPERTY = OWL_NS + "ObjectProperty"
+  val OWL_DATATYPEPROPERTY = OWL_NS + "DatatypeProperty"
+  val OWL_UNIONOF = OWL_NS + "unionOf"
   val RDFS_NS = "http://www.w3.org/2000/01/rdf-schema#"
   val RDFS_SUBCLASSOF = RDFS_NS + "subClassOf"
+  val RDFS_LABEL = RDFS_NS + "label"
+  val RDFS_DOMAIN = RDFS_NS + "domain"
+  val RDFS_RANGE = RDFS_NS + "range"
 
   val URI_MINTING_GRAPH = LDIF_NS + "graph#uriMinting"
   val URI_REWRITING_GRAPH = LDIF_NS + "graph#uriRewriting"
@@ -113,4 +123,5 @@ object Consts {
   val LDIF_numberOfChildren = LDIF_NS + "nrOfChildren"
   val LDIF_hierarchyLevel = LDIF_NS + "hierarchyLevel"
   val LDIF_sizeOfSubTree = LDIF_NS + "sizeOfSubTree"
+  val LDIF_setMember = LDIF_NS + "setMember"
 }
