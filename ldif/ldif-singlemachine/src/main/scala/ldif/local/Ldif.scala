@@ -83,8 +83,8 @@ object Ldif {
 
   def printHelpAndExit() {
     log.info(Consts.LDIF_HELP_HEADER+
-      "\nUsages: ldif <schedulerConfiguration>" +
-      "\n\tldif-integrate <integrationJobConfiguration>" +
+      "\nUsages: ldif <schedulerConfig.xml>" + //schedulerConfiguration refers to scheduler.properties or schedulerConfig.xml?
+      "\n\tldif-integrate <integrationJob.xml>" + //integrationJobConfiguration refers to integration.properties or integrationJob.xml?
       Consts.LDIF_HELP_FOOTER)
     System.exit(1)
   }
