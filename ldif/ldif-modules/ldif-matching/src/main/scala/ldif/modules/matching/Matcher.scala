@@ -45,6 +45,9 @@ import java.util.prefs.Preferences
  */
 
 object Matcher {
+  val removeAlreadyMatchedConceptsFromOntologyA = true;
+  val removeAlreadyMatchedConceptsFromOntologyB = false;
+  val rewriteURIsOfMatchedConceptsInOntologyA = false;
 
   def main(args: Array[String]) {
     LogManager.getLogManager.readConfiguration()
@@ -56,11 +59,11 @@ object Matcher {
     if(args.length>4)
       println("Running " + (args.length-3) + " match passes.")
     val startTime = System.currentTimeMillis()
-    val ont1ReaderTemp = DumpLoader.dumpIntoFileQuadQueue(args(0))
-    val ont2ReaderTemp = DumpLoader.dumpIntoFileQuadQueue(args(1))
-    val structureProps = Set(Consts.RDFS_DOMAIN, Consts.RDFS_RANGE, Consts.RDFS_SUBCLASSOF)
-    val ont1Reader = StructuralFeatureExtractor.flattenUnionOfForProperties(structureProps, ont1ReaderTemp)
-    val ont2Reader = StructuralFeatureExtractor.flattenUnionOfForProperties(structureProps, ont2ReaderTemp)
+    val ont1Reader = DumpLoader.dumpIntoFileQuadQueue(args(0))
+    val ont2Reader = DumpLoader.dumpIntoFileQuadQueue(args(1))
+//    val structureProps = Set(Consts.RDFS_DOMAIN, Consts.RDFS_RANGE, Consts.RDFS_SUBCLASSOF)
+//    val ont1Reader = StructuralFeatureExtractor.flattenUnionOfForProperties(structureProps, ont1ReaderTemp)
+//    val ont2Reader = StructuralFeatureExtractor.flattenUnionOfForProperties(structureProps, ont2ReaderTemp)
 //    println("\nRDFS Domain:")
 //    println(StructuralFeatureExtractor.getCardinalityStatisticsOfProperty(Consts.RDFS_DOMAIN, ont1Reader))
 //    println(StructuralFeatureExtractor.getCardinalityStatisticsOfProperty(Consts.RDFS_DOMAIN, ont2Reader))
@@ -83,17 +86,17 @@ object Matcher {
     Logger.getLogger("de.fuberlin.wiwiss.silk.util.task.HasStatus").setLevel(Level.OFF)
     println("First matcher found: " + firstPassMatches.size + " matches")
     var outputQueue: CloneableQuadReader = firstPassMatches
-    if(outputQueue.size==0) {
-      val structureOnt1 = new QuadQueue
-      val structureOnt2 = new QuadQueue
-      val hierarchy1 = StructuralFeatureExtractor.buildHierarchy(ont1Reader)
-      val hierarchy2 = StructuralFeatureExtractor.buildHierarchy(ont2Reader)
-      StructuralFeatureExtractor.extractStructuralFeatures(hierarchy1, structureOnt1)
-      StructuralFeatureExtractor.extractStructuralFeatures(hierarchy2, structureOnt2)
-      val structureMatches = runNextPassMatcher(structureOnt1, structureOnt2, outputQueue.cloneReader, "/home/andreas/projects/ldif/ldif/ldif-modules/ldif-matching/src/main/resources/ldif/modules/matching/resources/matchingLinkSpec/structMatch.xml")
-      println("Structural matcher found " + structureMatches.size + " matches")
-      outputQueue = structureMatches
-    }
+//    if(outputQueue.size==0) {
+//      val structureOnt1 = new QuadQueue
+//      val structureOnt2 = new QuadQueue
+//      val hierarchy1 = StructuralFeatureExtractor.buildHierarchy(ont1Reader)
+//      val hierarchy2 = StructuralFeatureExtractor.buildHierarchy(ont2Reader)
+//      StructuralFeatureExtractor.extractStructuralFeatures(hierarchy1, structureOnt1)
+//      StructuralFeatureExtractor.extractStructuralFeatures(hierarchy2, structureOnt2)
+//      val structureMatches = runNextPassMatcher(structureOnt1, structureOnt2, outputQueue.cloneReader, "/home/andreas/projects/ldif/ldif/ldif-modules/ldif-matching/src/main/resources/ldif/modules/matching/resources/matchingLinkSpec/structMatch.xml")
+//      println("Structural matcher found " + structureMatches.size + " matches")
+//      outputQueue = structureMatches
+//    }
     for(i <- 4 until args.length) {
       val nextPassMatches = if(args(i).contains("augmented")) {
         val augmented1 = new MultiQuadReader(ont1Reader.cloneReader, augmentInstancesWithRDFSLabel(ont1Reader))
@@ -108,8 +111,10 @@ object Matcher {
   //        QuadUtils.dumpQuadReaderToFile(outputQueue, "test.nt", true)
     }
     val writer = new BufferedWriter(new FileWriter(args(2)))
-    outputToAlignmentFormat(outputQueue.cloneReader, writer)
+//    outputToAlignmentFormat(outputQueue.cloneReader, writer)
+//    outputToAlignmentFormatTTL(outputQueue.cloneReader, writer)
 //    outputURIClustersAsSameAsRDF(outputQueue, writer)
+    outputToSameAsLinks(outputQueue, writer)
     writer.flush()
     writer.close()
     println("Finished matching after " + (System.currentTimeMillis()-startTime)/1000.0 + "s")
@@ -146,11 +151,11 @@ object Matcher {
   // This builds on the results of the first matcher
   private def runNextPassMatcher(ont1Reader: CloneableQuadReader, ont2Reader: CloneableQuadReader, firstPassMatches: CloneableQuadReader, matchSpec: String): CloneableQuadReader = {
     var uriMap = getTranslationMap(firstPassMatches.cloneReader)
-    val ont1ReaderRewritten = URITranslator.rewriteURIs(ont1Reader, uriMap)
+    val ont1ReaderRewritten = if (rewriteURIsOfMatchedConceptsInOntologyA) URITranslator.rewriteURIs(ont1Reader, uriMap) else ont1Reader
     uriMap = null
     val matchedEntities = getMatchedEntities(firstPassMatches.cloneReader)
-    val ont1FilteredReader = new RemoveTypesQuadReader(ont1ReaderRewritten, matchedEntities)
-    val ont2FilteredReader = new RemoveTypesQuadReader(ont2Reader, matchedEntities)
+    val ont1FilteredReader = if (removeAlreadyMatchedConceptsFromOntologyA) new RemoveTypesQuadReader(ont1ReaderRewritten, matchedEntities) else ont1ReaderRewritten
+    val ont2FilteredReader = if (removeAlreadyMatchedConceptsFromOntologyB) new RemoveTypesQuadReader(ont2Reader, matchedEntities) else ont2Reader
 //    QuadUtils.dumpQuadReaderToFile(ont1FilteredReader, "mouse.nt", asTriples = true)
 //    QuadUtils.dumpQuadReaderToFile(ont2FilteredReader, "human.nt", asTriples = true)
     val secondPassMatches = new FileQuadWriter()
@@ -190,6 +195,12 @@ object Matcher {
 
   private def outputToAlignmentFormat(matches: QuadReader, writer: BufferedWriter) {
     SameAsAlignmentFormatConverter.convertToAlignmentFormat(matches, writer)
+  }
+
+  private def outputToSameAsLinks(matches: QuadReader, writer: BufferedWriter) {
+    println("Writing " + matches.size + " matches.")
+    for(quad <- matches)
+      writer.append(quad.toNTripleFormat).append(" .\n")
   }
 
   private def outputToAlignmentFormatTTL(matches: QuadReader, writer: BufferedWriter) {

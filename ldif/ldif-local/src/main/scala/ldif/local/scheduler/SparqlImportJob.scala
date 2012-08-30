@@ -23,7 +23,7 @@ import org.slf4j.LoggerFactory
 import ldif.local.runtime.LocalNode
 import com.hp.hpl.jena.rdf.model.{Model, RDFNode}
 import java.io.{Writer, OutputStream}
-import com.hp.hpl.jena.query.QueryExecutionFactory
+import com.hp.hpl.jena.query.{ResultSet, QueryExecutionFactory}
 import javax.xml.ws.http.HTTPException
 import com.hp.hpl.jena.sparql.engine.http.QueryExceptionHTTP
 import ldif.util._
@@ -51,7 +51,7 @@ case class SparqlImportJob(conf : SparqlConfig, id :  Identifier, refreshSchedul
     log.info("Loading from " + conf.endpointLocation)
     log.debug("Query: " + query)
 
-    importedGraphs += graph
+//    importedGraphs += graph
 
     val success = execQuery(query, writer)
     writer.close
@@ -78,11 +78,11 @@ case class SparqlImportJob(conf : SparqlConfig, id :  Identifier, refreshSchedul
       var retries = 1
       var retryPause = Consts.retryPause
       val retryCount = Consts.retryCount
-      var results : Model = null
+      var results : ResultSet = null
       try{
         while (results == null) {
           try {
-            results = QueryExecutionFactory.sparqlService(endpointUrl, query).execConstruct
+            results = QueryExecutionFactory.sparqlService(endpointUrl, query).execSelect()
           }
           catch {
             case e: HTTPException => {
@@ -126,15 +126,16 @@ case class SparqlImportJob(conf : SparqlConfig, id :  Identifier, refreshSchedul
       }
 
       if(results!=null){
+        val count = write(results, writer)
         if (offset == 0) {
            // set page size for the sparql endpoint
-           limit = results.size
+           limit = count
            reporter.actualLimit = limit.toInt
         }
-        offset += results.size
-        loop = (results.size == limit) && (limit != 0) && !(offset == conf.tripleLimit)
-        write(results, writer)
-        if (results.size!=0 || limit == 0)
+        offset += count
+        loop = (count == limit) && (limit != 0) && !(offset == conf.tripleLimit)
+
+        if (count!=0 || limit == 0)
           log.info(id +" - loaded "+offset+" quads")
       }
     }
@@ -144,18 +145,22 @@ case class SparqlImportJob(conf : SparqlConfig, id :  Identifier, refreshSchedul
   }
 
   /* Write SPARQL results */
-  private def write(results : Model, writer : Writer)  {
+  private def write(results : ResultSet, writer : Writer): Int =  {
     //results.write(out, "N-QUAD", graph)
-    val stmtIterator = results.listStatements
-    while (stmtIterator.hasNext){
-      val stmt = stmtIterator.next
-      val s = LocalNode.fromRDFNode(stmt.getSubject.asInstanceOf[RDFNode])
-      val p = stmt.getPredicate.getURI
-      val o = LocalNode.fromRDFNode(stmt.getObject)
-      val quad = Quad(s,p,o,graph)
+    var counter = 0
+    while(results.hasNext) {
+      counter += 1
+      val solution = results.next()
+      val s = LocalNode.fromRDFNode(solution.get("s"))
+      val p = LocalNode.fromRDFNode(solution.get("p")).value
+      val o = LocalNode.fromRDFNode(solution.get("o"))
+      val g = if (conf.isGraphDefined) conf.graphName.toString else LocalNode.fromRDFNode(solution.get("g")).value
+      importedGraphs += g
+      val quad = Quad(s,p,o,g)
       writer.write(quad.toLine)
     }
     writer.flush
+    counter
   }
 
   def toXML = {
@@ -201,22 +206,22 @@ case class SparqlConfig(endpointLocation : URI,  graphName : URI, sparqlPatterns
   def isAnyPatternDefined = sparqlPatterns.size>0
 
   def buildQuery : String = {
-    var query = "CONSTRUCT { ?s ?p ?o }\n" + "WHERE {\n"
+    var query = "SELECT ?s ?p ?o "
+    if(!isGraphDefined)
+      query += "?g "
 
-    if (isGraphDefined) {
+    query += "\n" + "WHERE {\n"
+
+    if (isGraphDefined)
       query += " GRAPH <" + graphName + "> {\n"
-    }
+    else
+      query += " GRAPH ?g {\n"
 
-    for (pattern <- sparqlPatterns.filterNot(_.trim.equals(""))) {
+
+    for (pattern <- sparqlPatterns.filterNot(_.trim.equals("")))
         query += " " + pattern + " .\n"
-    }
 
-    query += " ?s ?p ?o \n"
-
-    if (isGraphDefined) {
-      query += " }\n"
-    }
-    query += "}\n"
+    query += " ?s ?p ?o \n}}\n"
 
     query
   }
