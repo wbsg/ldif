@@ -11,8 +11,15 @@
     <sieve>sieve</sieve>
     <outputs>
         <output>
-            <file>integrated.nq</file>
+            <file>integrated_rio.nq</file>
         </output>
+        <!--output>
+            <sparql>
+                <endpointURI>http://localhost:3030/sieve/update</endpointURI>
+                <sparqlVersion>1.1</sparqlVersion>
+                <useDirectPost>true</useDirectPost>
+            </sparql>
+        </output-->
     </outputs>
     <runSchedule>onStartup</runSchedule>
 </integrationJob>

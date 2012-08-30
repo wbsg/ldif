@@ -93,6 +93,16 @@ object IntegrationConfig {
     if (propertiesFile != null)
       properties = ConfigProperties.loadProperties(propertiesFile)
 
+    fromXML(node, properties, dir)
+  }
+
+  def fromXML(node : Node, props: Properties, dir : String) : IntegrationConfig = {
+    xml = node
+
+    CommonUtils.currentDir = dir
+
+    properties = props
+
     IntegrationConfig(
       getSources,
       getLinkSpecDir,

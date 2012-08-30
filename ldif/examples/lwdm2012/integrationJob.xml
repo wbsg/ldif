@@ -10,8 +10,27 @@
     <mappings>mappings</mappings-->
     <sieve>sieve</sieve>
     <outputs>
-        <output>
+        <!--output>
             <file>integrated_cities.nq</file>
+        </output-->
+
+        <!-- Virtuoso -->
+        <!--output>
+            <sparql>
+                <endpointURI>http://host:8890/sparql/</endpointURI>
+                <queryParameter>query</queryParameter>
+                <sparqlVersion>1.0</sparqlVersion>
+                <useDirectPost>false</useDirectPost>
+            </sparql>
+        </output-->
+
+        <!-- Jena: java -jar fuseki-server.jar \-\-update \-\-loc /data/tdb-sieve /sieve -->
+        <output>
+            <sparql>
+                <endpointURI>http://localhost:3030/sieve/update</endpointURI>
+                <sparqlVersion>1.1</sparqlVersion>
+                <useDirectPost>true</useDirectPost>
+            </sparql>
         </output>
     </outputs>
     <runSchedule>onStartup</runSchedule>
