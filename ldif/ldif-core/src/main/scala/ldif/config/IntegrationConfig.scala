@@ -83,7 +83,11 @@ object IntegrationConfig {
     fromXML(XML.loadString(xmlString), dir)
 
   def fromXML(node : Node, dir : String) : IntegrationConfig = {
-        // Read in properties
+    xml = node
+
+    CommonUtils.currentDir = dir
+
+    // Read in properties
     val propertiesFile = getFile("properties")
     properties = new Properties
     if (propertiesFile != null)
