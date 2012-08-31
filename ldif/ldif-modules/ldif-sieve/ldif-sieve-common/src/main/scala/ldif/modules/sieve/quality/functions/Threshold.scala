@@ -22,13 +22,15 @@ import ldif.entity.NodeTrait
 import org.slf4j.LoggerFactory
 import ldif.modules.sieve.quality.{ScoringFunctionConjunctive, ScoringFunction}
 
-class Threshold(val ts: Int) extends ScoringFunctionConjunctive {
+class Threshold(val ts: Int, val min : Boolean = true) extends ScoringFunctionConjunctive {
   private val log = LoggerFactory.getLogger(getClass.getName)
+  val max = !min
 
   def scoreSingleValue(node: NodeTrait): Double = {
     try {
       val indicator: Int = node.value.toInt
-      if (indicator >= ts)
+      if (min && (indicator >= ts) ||
+         (max && (indicator <= ts)))
         1.0
       else
         0.0
@@ -53,13 +55,17 @@ class Threshold(val ts: Int) extends ScoringFunctionConjunctive {
 }
 
 object Threshold {
-  def fromXML(node: scala.xml.Node): ScoringFunction = {
-    try {
-      val ts = ScoringFunction.getIntConfig(node, "threshold")
-      return new Threshold(ts)
-    } catch {
-      case ioe: Exception => throw new IllegalArgumentException("Error in threshold provided.")
+    def fromXML(node: scala.xml.Node): ScoringFunction = {
+        try {
+            val ts = ScoringFunction.getIntConfig(node, "min")
+            return new Threshold(ts,true)
+        } catch {
+            case ioe: Exception => try {
+                val ts = ScoringFunction.getIntConfig(node, "max")
+                return new Threshold(ts,false)
+            } catch {
+                case ioe: Exception => throw new IllegalArgumentException("Error in threshold provided.")
+            }
+        }
     }
-    return null;
-  }
 }

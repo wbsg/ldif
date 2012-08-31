@@ -28,7 +28,7 @@ import ldif.entity.Node
 class ThresholdTest extends FlatSpec with ShouldMatchers {
 
   val imXml = <ScoringFunction class="Threshold">
-      <Param name="threshold" value="42"/>
+      <Param name="min" value="42"/>
       <Input path="?GRAPH/provenance:whatever"/>
   </ScoringFunction>
 

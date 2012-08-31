@@ -34,19 +34,8 @@ class ScoredList(val priorityList: List[String]) extends ScoringFunction {
 
   private val log = LoggerFactory.getLogger(getClass.getName)
 
-//  def getPosition(graphId: String) : Int = {
-//    priorityList.indexOf(graphId)
-//  }
-
   def getPosition(graphId: String) : Int = {
-    priorityList.filter(graphPrefix => graphId startsWith graphPrefix).headOption match {
-      case Some(g) => priorityList.indexOf(g)
-      case None => -1
-    }
-  }
-
-  override def toString() : String = {
-    "ScoredList, priority=" + priorityList
+    priorityList.indexOf(graphId)
   }
 
   /**
@@ -61,6 +50,11 @@ class ScoredList(val priorityList: List[String]) extends ScoringFunction {
             0.0
         }
   }
+
+  override def toString() : String = {
+    "ScoredList, priority=" + priorityList
+  }
+
 }
 
 object ScoredList {
