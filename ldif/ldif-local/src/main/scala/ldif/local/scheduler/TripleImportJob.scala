@@ -44,7 +44,13 @@ case class TripleImportJob(dumpLocation : String, id : Identifier, refreshSchedu
     val writer = new ReportingOutputStreamWriter(out,reporter)
 
     // get bufferReader from Url
-    val inputStream = DumpLoader.getStream(dumpLocation)
+    val inputStream =  {
+      try {
+        DumpLoader.getStream(dumpLocation)
+      } catch {
+        case e: java.net.ConnectException => return false
+      }
+    }
     //val bufferedReader = new BufferedReader(new InputStreamReader(inputStream))
 
     importedGraphs += graph

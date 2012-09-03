@@ -41,7 +41,7 @@ trait ImportJob {
   var importedQuadsNumber : Double = 0
 
   /**
-   * Start import and write results to output stream. Return the number of loaded quads, or -1 if loading fails
+   * Start import and write results to output stream. Return true on success and true and fail.
    */
   def load(out : OutputStream, estimatedNumberOfQuads : Option[Double]) : Boolean
 
