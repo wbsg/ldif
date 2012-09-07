@@ -605,7 +605,7 @@ case class IntegrationJob (config : IntegrationConfig, debugMode : Boolean = fal
     } catch {
       case e: Throwable => {
         e.printStackTrace
-        sys.exit(2)
+        throw e
       }
     }
 

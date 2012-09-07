@@ -74,6 +74,11 @@ class HadoopIntegrationJob(val config : IntegrationConfig, debug : Boolean = fal
     for (key <- config.properties.keySet.toArray)
       log.info("  - "+key +" : " + config.properties.getProperty(key.toString) )
 
+    // Which phases should be skipped
+    val skipR2R = config.properties.getProperty("mappings.skip", "false")=="true"
+    val skipSilk = config.properties.getProperty("linkSpecifications.skip", "false")=="true"
+    val skipSieve = config.properties.getProperty("sieve.skip", "false")=="true"  //TODO: make these parameters active
+
     stopWatch.getTimeSpanInSeconds()
 
     // Execute mapping phase

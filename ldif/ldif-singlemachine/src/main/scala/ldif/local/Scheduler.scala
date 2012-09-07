@@ -132,7 +132,14 @@ case class Scheduler (config : SchedulerConfig, debug : Boolean = false) {
       val tmpProvenanceFile = getTmpProvenanceFile(job)
 
       // create local dump
-      val success = job.load(new FileOutputStream(tmpDumpFile), importedDumps.getNumberOfQuads(job))
+      val success = try {
+          job.load(new FileOutputStream(tmpDumpFile), importedDumps.getNumberOfQuads(job))
+        } catch {
+          case e: Exception => log.warn("There has been an unexpected error while processing job " + job +". Cause: " + e.getMessage)
+          log.debug(e.getStackTraceString)
+          false
+        }
+
 
       if(success) {
         // create provenance metadata

@@ -32,33 +32,34 @@ import ldif.util.{CommonUtils, Consts}
 
 case class SparqlWriter(uri: String,
                         login: Option[(String, String)] = None,
-                        sparqlVersion : String = Consts.SparqlUpdateVersionDefault,
-                        useDirectPost : Boolean = Consts.SparqlUseDirectPostDefault.toBoolean,
+                        sparqlVersion: String = Consts.SparqlUpdateVersionDefault,
+                        useDirectPost: Boolean = Consts.SparqlUseDirectPostDefault.toBoolean,
                         queryParameter: String = Consts.SparqlQueryParameterDefault) extends QuadWriter {
 
   private val log = LoggerFactory.getLogger(getClass.getName)
 
   // init
   var statements = 0
-  var queryContent= new StringBuilder
-  var queryGraph : String = null
-  var quadGraph : String = null
+  var queryContent = new StringBuilder
+  var queryGraph: String = null
+  var quadGraph: String = null
 
-  override def write(quad : Quad) {
+  override def write(quad: Quad) {
 
     quadGraph = quad.graph.toString
 
     // execute query
-    if (statements == Consts.SparqlMaxStatmentsPerRequest || (quadGraph != queryGraph && statements > 0))
-    {
+    if (statements == Consts.SparqlMaxStatmentsPerRequest || (quadGraph != queryGraph && statements > 0)) {
       // TODO optimization: collect quads from same graph
-      buildAndExecuteQuery(queryContent.toString(), queryGraph)
+      val success = buildAndExecuteQuery(queryContent.toString(), queryGraph)
+      if(!success)
+        log.warn("SPARQL Update quad output failed.")
       // reset query parameters
       statements = 0
       queryContent = new StringBuilder()
     }
 
-    queryContent.append(quad.toNTripleFormat +" . ")
+    queryContent.append(quad.toNTripleFormat + " . ")
     statements += 1
     queryGraph = quadGraph
   }
@@ -76,18 +77,33 @@ case class SparqlWriter(uri: String,
    * @param graph The named graph
    */
 
-  private def buildAndExecuteQuery(content: String, graph: String = null) {
-     if (graph != null) {
-      if (sparqlVersion == "1.0") {
-        executeQuery("CREATE SILENT GRAPH <" + graph + ">")
-        executeQuery("INSERT DATA INTO <" + graph + "> { " + content + " }")
-      }
-      else {
-        executeQuery("INSERT DATA { GRAPH <" + graph + "> { " + content + " } }")
+  private def buildAndExecuteQuery(content: String, graph: String = null): Boolean = {
+    var tries = 0
+    var sleepTime = 1000
+    while(tries < 4) {
+      try {
+        val successful = if (graph != null) {
+          if (sparqlVersion == "1.0") {
+            executeQuery("CREATE SILENT GRAPH <" + graph + ">")
+            executeQuery("INSERT DATA INTO <" + graph + "> { " + content + " }")
+          }
+          else {
+            executeQuery("INSERT DATA { GRAPH <" + graph + "> { " + content + " } }")
+          }
+        }
+        else
+          executeQuery("INSERT DATA { " + content + " }")
+        if(successful)
+          return true
+        else
+          throw new RuntimeException("Update Query was not executed correctly.")
+      } catch {
+        case e: Throwable => Thread.sleep(sleepTime)
+          sleepTime *= 2
+          tries += 1
       }
     }
-    else
-      executeQuery("INSERT DATA { " + content + " }")
+    return false
   }
 
   /**
@@ -95,7 +111,7 @@ case class SparqlWriter(uri: String,
    *
    * @param query The SPARQL query to be executed
    */
-  private def executeQuery(query: String) {
+  private def executeQuery(query: String): Boolean = {
 
     log.debug("Executing query on " + uri + "\n" + query)
 
@@ -109,7 +125,7 @@ case class SparqlWriter(uri: String,
     //Check if the HTTP response code is in the range 2xx
     if (connection.getResponseCode / 100 != 2) {
       val errorStream = connection.getErrorStream
-      log.error("Error exectuing query: "+query)
+      log.warn("Error executing query: " + query)
       if (errorStream != null) {
         val errorMessage = Source.fromInputStream(errorStream).getLines.mkString("\n")
         log.warn("SPARQL/Update query on " + uri + " failed. Error Message: '" + errorMessage + "'.")
@@ -117,21 +133,23 @@ case class SparqlWriter(uri: String,
       else {
         log.warn("SPARQL/Update query on " + uri + " failed. Server response: " + connection.getResponseCode + " " + connection.getResponseMessage + ".")
       }
+      return false
     }
+    return true
   }
 
-  private def encodeQuery(content : String) : String = {
+  private def encodeQuery(content: String): String = {
     if (useDirectPost)
       content
     else
-      queryParameter+"="+URLEncoder.encode(content, "UTF-8")
+      queryParameter + "=" + URLEncoder.encode(content, "UTF-8")
   }
 
   /**
    * Opens a new HTTP connection to the endpoint.
    * This method is synchronized to avoid race conditions as the Authentication is set globally in Java.
    */
-  private def openConnection() : HttpURLConnection = synchronized {
+  private def openConnection(): HttpURLConnection = synchronized {
     //Set authentication
     for ((user, password) <- login) {
       Authenticator.setDefault(new Authenticator() {
@@ -154,7 +172,7 @@ case class SparqlWriter(uri: String,
   }
 
   // Check SPARQL endpoint availability
-  def isAvailable() : Boolean = {
+  def isAvailable(): Boolean = {
     val connection = openConnection()
     try {
       connection.connect()
@@ -162,8 +180,8 @@ case class SparqlWriter(uri: String,
       true
     }
     catch {
-      case e:Exception =>
-        log.debug("Unable to connect to SPARQL endpoint: "+ uri)
+      case e: Exception =>
+        log.debug("Unable to connect to SPARQL endpoint: " + uri)
         false
     }
   }
@@ -173,24 +191,24 @@ object SparqlWriter {
 
   private val log = LoggerFactory.getLogger(getClass.getName)
 
-  def fromXML(xml : Node, checkAvailability : Boolean = true) : Option[SparqlWriter] = {
-    val endpointURI =  CommonUtils.getValueAsString(xml,"endpointURI")
+  def fromXML(xml: Node, checkAvailability: Boolean = true): Option[SparqlWriter] = {
+    val endpointURI = CommonUtils.getValueAsString(xml, "endpointURI")
     if (endpointURI == "") {
       log.warn("Invalid SPARQL output config. Please check " + Consts.xsdIntegration)
       None
     }
     else {
-      val user = CommonUtils.getValueAsString(xml,"user")
-      val password = CommonUtils.getValueAsString(xml,"password")
-      val sparqlVersion = CommonUtils.getValueAsString(xml,"sparqlVersion", Consts.SparqlUpdateVersionDefault)
-      val useDirectPost = CommonUtils.getValueAsString(xml,"useDirectPost", Consts.SparqlUseDirectPostDefault).toLowerCase.equals("true")
-      val queryParameter = CommonUtils.getValueAsString(xml,"queryParameter", Consts.SparqlQueryParameterDefault)
+      val user = CommonUtils.getValueAsString(xml, "user")
+      val password = CommonUtils.getValueAsString(xml, "password")
+      val sparqlVersion = CommonUtils.getValueAsString(xml, "sparqlVersion", Consts.SparqlUpdateVersionDefault)
+      val useDirectPost = CommonUtils.getValueAsString(xml, "useDirectPost", Consts.SparqlUseDirectPostDefault).toLowerCase.equals("true")
+      val queryParameter = CommonUtils.getValueAsString(xml, "queryParameter", Consts.SparqlQueryParameterDefault)
       val writer = SparqlWriter(endpointURI, Some(user, password), sparqlVersion, useDirectPost, queryParameter)
 
-      if(!checkAvailability || writer.isAvailable())
+      if (!checkAvailability || writer.isAvailable())
         Some(writer)
       else {
-        log.warn("Invalid SPARQL output. Unable to connect to SPARQL endpoint: "+ writer.uri)
+        log.warn("Invalid SPARQL output. Unable to connect to SPARQL endpoint: " + writer.uri)
         None
       }
     }
