@@ -24,13 +24,13 @@ import de.fuberlin.wiwiss.silk.datasource.Source
 import de.fuberlin.wiwiss.silk.{OutputTask, FilterTask, MatchTask, LoadTask}
 import de.fuberlin.wiwiss.silk.output.Output
 import ldif.local.runtime._
-import ldif.local.util.TemporaryFileCreator
 import de.fuberlin.wiwiss.silk.entity.{Entity => SilkEntity}
 import de.fuberlin.wiwiss.silk.entity.{EntityDescription => SilkEntityDescription}
 import de.fuberlin.wiwiss.silk.util.DPair
 import de.fuberlin.wiwiss.silk.cache.{FileEntityCache, MemoryEntityCache}
 import de.fuberlin.wiwiss.silk.config.RuntimeConfig
 import ldif.runtime.QuadWriter
+import ldif.util.TemporaryFileCreator
 
 /**
  * Executes Silk on a local machine.

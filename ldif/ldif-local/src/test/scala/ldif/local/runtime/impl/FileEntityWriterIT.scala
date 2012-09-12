@@ -22,7 +22,7 @@ import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner
 import org.scalatest.FlatSpec
 import org.scalatest.matchers.ShouldMatchers
-import ldif.util.MemoryUsage
+import ldif.util.{TemporaryFileCreator, MemoryUsage}
 import ldif.entity.{EntityLocal, Node}
 import java.io.File
 
@@ -38,7 +38,7 @@ import java.io.File
 class FileEntityWriterIT extends FlatSpec with ShouldMatchers {
   it should "keep the memory foot print constant" in {
     val startUsage = MemoryUsage.getMemoryUsage()
-    val tmpFile = File.createTempFile("ldif-test", "test")
+    val tmpFile = TemporaryFileCreator.createTemporaryFile("ldif-test", "test")
     tmpFile.deleteOnExit
     val writer = new FileEntityWriter(null, tmpFile)
     for(i <- 1 to 100000) {

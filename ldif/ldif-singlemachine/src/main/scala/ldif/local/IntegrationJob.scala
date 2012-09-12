@@ -69,7 +69,7 @@ case class IntegrationJob (config : IntegrationConfig, debugMode : Boolean = fal
 
   private def updateReaderAfterR2RPhase(r2rReader: Option[scala.Seq[QuadReader]]): Option[scala.Seq[QuadReader]] = {
     if (isIntialQuadReader(r2rReader.get)) {
-      val inputQuadsFile = File.createTempFile("ldif-filtered-input", ".bin")
+      val inputQuadsFile = TemporaryFileCreator.createTemporaryFile("ldif-filtered-input", ".bin")
       inputQuadsFile.deleteOnExit()
       val fileQuadWriter = new FileQuadWriter(inputQuadsFile)
       copyQuads(r2rReader.get.head, fileQuadWriter)
@@ -223,14 +223,18 @@ case class IntegrationJob (config : IntegrationConfig, debugMode : Boolean = fal
 
   // Setup config parameters
   def setupConfigParameters() {
+    config.properties.getProperty("ldif.working.dir") match {
+      case path: String => TemporaryFileCreator.setNewTempDir(new File(path))
+      case _ =>
+    }
     // Quads that are not used in the integration flow, but should still be output
-    val otherQuadsFile = File.createTempFile("ldif-other-quads", ".bin")
+    val otherQuadsFile = TemporaryFileCreator.createTemporaryFile("ldif-other-quads", ".bin")
     // Quads that contain external sameAs links
-    val sameAsQuadsFile = File.createTempFile("ldif-sameas-quads", ".bin")
+    val sameAsQuadsFile = TemporaryFileCreator.createTemporaryFile("ldif-sameas-quads", ".bin")
     // Quads that lie in the provenance graph
-    val provenanceQuadsFile = File.createTempFile("ldif-provenance-quads", "bin")
+    val provenanceQuadsFile = TemporaryFileCreator.createTemporaryFile("ldif-provenance-quads", "bin")
     // Quads that are already in target vocabulary representation
-    val noMapNeedQuadsFile = File.createTempFile("ldif-nomapneed-quads", "bin")
+    val noMapNeedQuadsFile = TemporaryFileCreator.createTemporaryFile("ldif-nomapneed-quads", "bin")
 
     otherQuadsFile.deleteOnExit()
     sameAsQuadsFile.deleteOnExit()
@@ -246,6 +250,7 @@ case class IntegrationJob (config : IntegrationConfig, debugMode : Boolean = fal
 
     // Setup LocalNode (to pool strings etc.)
     LocalNode.reconfigure(config.properties)
+
   }
 
   private def executeMappingPhase(config: IntegrationConfig, quadReaders: Seq[QuadReader], skip: Boolean): Option[Seq[QuadReader]] = {
@@ -403,7 +408,7 @@ case class IntegrationJob (config : IntegrationConfig, debugMode : Boolean = fal
     StringPool.reset
     log.info("Time needed to load dump and build entities for mapping phase: " + stopWatch.getTimeSpanInSeconds + "s")
 
-    val outputFile = File.createTempFile("ldif-mapped-quads", ".bin")
+    val outputFile = TemporaryFileCreator.createTemporaryFile("ldif-mapped-quads", ".bin")
     outputFile.deleteOnExit
     val executor = new R2RLocalExecutor
     reporter.addPublisher(executor.reporter)
@@ -526,7 +531,7 @@ case class IntegrationJob (config : IntegrationConfig, debugMode : Boolean = fal
     //val entityDescriptions = fusionModule.tasks.toIndexedSeq.map(fusionExecutor.input).flatMap{ case StaticEntityFormat(ed) => ed }
 
     // setup sieve config parameters
-    val irrelevantQuadsFile = File.createTempFile("ldif-fusion-quads", "bin")
+    val irrelevantQuadsFile = TemporaryFileCreator.createTemporaryFile("ldif-fusion-quads", "bin")
     irrelevantQuadsFile.deleteOnExit()
     val irrelevantQuadsWriter = new FileQuadWriter(irrelevantQuadsFile)
     val fusionConfigParam =
@@ -579,7 +584,7 @@ case class IntegrationJob (config : IntegrationConfig, debugMode : Boolean = fal
     var entityWriters: Seq[EntityWriter] = null
     val entityQueues = entityDescriptions.map(new EntityQueue(_, Consts.DEFAULT_ENTITY_QUEUE_CAPACITY))
     val fileEntityQueues = for(eD <- entityDescriptions) yield {
-      val file = File.createTempFile("ldif_entities", ".dat")
+      val file = TemporaryFileCreator.createTemporaryFile("ldif_entities", ".dat")
       file.deleteOnExit
       new FileEntityWriter(eD, file, enableCompression = true)
     }

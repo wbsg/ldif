@@ -26,7 +26,7 @@ import java.io._
 import java.util.concurrent.ConcurrentHashMap
 import org.apache.commons.io.FileUtils
 import ldif.config.IntegrationConfig
-import ldif.util.{Consts, StopWatch, FatalErrorListener}
+import ldif.util.{TemporaryFileCreator, Consts, StopWatch, FatalErrorListener}
 import util.ImportedDumpsUtils
 
 case class Scheduler (config : SchedulerConfig, debug : Boolean = false) {
@@ -246,9 +246,9 @@ case class Scheduler (config : SchedulerConfig, debug : Boolean = false) {
 
   // Build local files for the import job
   private def getDumpFile(job : ImportJob) = new File(config.dumpLocationDir, job.id +".nq")
-  private def getTmpDumpFile(job : ImportJob) = File.createTempFile(job.id+"_"+Consts.simpleDateFormat.format(new Date()),".nq")
+  private def getTmpDumpFile(job : ImportJob) = TemporaryFileCreator.createTemporaryFile(job.id+"_"+Consts.simpleDateFormat.format(new Date()),".nq")
   private def getProvenanceFile(job : ImportJob) = new File(config.dumpLocationDir, job.id +".provenance.nq")
-  private def getTmpProvenanceFile(job : ImportJob) = File.createTempFile(job.id+"_provenance_"+Consts.simpleDateFormat.format(new Date()),".nq")
+  private def getTmpProvenanceFile(job : ImportJob) = TemporaryFileCreator.createTemporaryFile(job.id+"_provenance_"+Consts.simpleDateFormat.format(new Date()),".nq")
 
 
   private def loadIntegrationJob(configFile : File) : IntegrationJob = {

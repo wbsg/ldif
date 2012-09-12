@@ -123,7 +123,7 @@ object CommonUtils {
   def getFileFromUrl(url : URL) : File =  {
     val urlString = url.toString
     log.info("Loading " + urlString)
-    var file =  File.createTempFile("ldif", urlString.substring(urlString.lastIndexOf('/')+1))
+    var file =  TemporaryFileCreator.createTemporaryFile("ldif", urlString.substring(urlString.lastIndexOf('/')+1), false)
     val writer = new FileWriter(file.getCanonicalPath)
     try {
       val lines = Source.fromURL(url).getLines()

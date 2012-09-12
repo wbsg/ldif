@@ -22,6 +22,7 @@ import ldif.runtime.QuadWriter
 import java.io.File
 import ldif.runtime.Quad
 import ldif.runtime.impl.FileObjectWriter
+import ldif.util.TemporaryFileCreator
 
 /**
  * Created by IntelliJ IDEA.
@@ -33,6 +34,6 @@ import ldif.runtime.impl.FileObjectWriter
 
 class FileQuadWriter(outputFile: File) extends FileObjectWriter[Quad](outputFile, NoQuadsLeft) with QuadWriter {
   def this() {
-    this(File.createTempFile("ldif_fqwr", "queue"))
+    this(TemporaryFileCreator.createTemporaryFile("ldif_fqwr", "queue"))
   }
 }

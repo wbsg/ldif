@@ -30,7 +30,7 @@ import ldif.local.util.StringPool
 import utils.SameAsAlignmentFormatConverter
 import java.util.Properties
 import collection.mutable.{Map, HashMap, HashSet, ArrayBuffer}
-import ldif.util.{QuadUtils, CommonUtils, Consts}
+import ldif.util.{TemporaryFileCreator, QuadUtils, CommonUtils, Consts}
 import ldif.runtime.{QuadReader, Quad, QuadWriter, Triple}
 import ldif.entity.{Node, EntityDescription}
 import java.util.logging.{LogManager, Level, Logger}
@@ -257,7 +257,7 @@ object Matcher {
     var entityWriters: Seq[EntityWriter] = null
     val entityQueues = entityDescriptions.map(new EntityQueue(_, Consts.DEFAULT_ENTITY_QUEUE_CAPACITY))
     val fileEntityQueues = for(eD <- entityDescriptions) yield {
-      val file = File.createTempFile("ldif_entities", ".dat")
+      val file = TemporaryFileCreator.createTemporaryFile("ldif_entities", ".dat")
       file.deleteOnExit
       new FileEntityWriter(eD, file, enableCompression = true)
     }

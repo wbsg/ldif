@@ -30,6 +30,9 @@ import ldif.datasources.dump.QuadParser
 import ldif.local.runtime.LocalNode
 import ldif.local.runtime.impl.{FileQuadReader, FileQuadWriter, DummyQuadWriter}
 import java.io._
+import ldif.util.TemporaryFileCreator
+import ldif.util.TemporaryFileCreator
+import ldif.util.TemporaryFileCreator
 
 /**
  * Created by IntelliJ IDEA.
@@ -222,7 +225,7 @@ object QuadFileLoader {
   }
 
   def loadQuadsIntoTempFileQuadQueue(reader: BufferedReader, graph: String, dicardFaultyQuads: Boolean): FileQuadReader = {
-    val output = File.createTempFile("ldif-quadqueue", ".dat")
+    val output = TemporaryFileCreator.createTemporaryFile("ldif-quadqueue", ".dat")
     output.deleteOnExit()
     val writer = new FileQuadWriter(output)
     val loader = new QuadFileLoader(graph, dicardFaultyQuads)

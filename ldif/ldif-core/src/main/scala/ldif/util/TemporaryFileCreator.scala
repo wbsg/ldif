@@ -1,4 +1,4 @@
-/* 
+/*
  * LDIF
  *
  * Copyright 2011-2012 Freie Universität Berlin, MediaEvent Services GmbH & Co. KG
@@ -16,9 +16,9 @@
  * limitations under the License.
  */
 
-package ldif.local.util
+package ldif.util
 
-import java.io.File
+import java.io.{IOException, File}
 
 /**
  * Created by IntelliJ IDEA.
@@ -29,20 +29,35 @@ import java.io.File
  */
 
 object TemporaryFileCreator {
-  def createTemporaryFile(prefix: String, suffix: String, deleteOnExit: Boolean): File = {
-    val tempFile = File.createTempFile(prefix, suffix)
-    if(deleteOnExit)
+  var tempDir = {
+    val homeDir = System.getProperty("user.home")
+    val ldifDir = new File(homeDir, ".ldiftmp")
+    if (!ldifDir.exists())
+      ldifDir.mkdirs()
+    ldifDir
+  }
+
+  def createTemporaryFile(prefix: String, suffix: String, deleteOnExit: Boolean = true): File = {
+    val tempFile = File.createTempFile(prefix, suffix, tempDir)
+    if (deleteOnExit)
       tempFile.deleteOnExit()
     return tempFile
   }
 
-  def createTemporaryDirectory(prefix: String, suffix: String, deleteOnExit: Boolean): File = {
-    val tempFile = File.createTempFile(prefix, suffix)
-    if(deleteOnExit)
+  def createTemporaryDirectory(prefix: String, suffix: String, deleteOnExit: Boolean = true): File = {
+    val tempFile = File.createTempFile(prefix, suffix, tempDir)
+    if (deleteOnExit)
       tempFile.deleteOnExit()
     tempFile.delete()
     tempFile.mkdir()
 
     return tempFile
+  }
+
+  def setNewTempDir(directory: File) {
+    if (directory.isDirectory)
+      tempDir = directory
+    else
+      throw new IOException("File " + directory.getAbsolutePath + " is no directory.")
   }
 }

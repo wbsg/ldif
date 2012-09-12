@@ -27,6 +27,7 @@ import java.io.File
 import runtime.impl.{FileEntityReader, FileEntityWriter, EntityQueue}
 import runtime.{EntityReader, EntityWriter, ConfigParameters}
 import ldif.entity.FactumBuilder
+import ldif.util.TemporaryFileCreator
 
 /**
  * Unit Test for the Entity Builder Module Local.
@@ -64,7 +65,7 @@ class EBLocalIT extends FlatSpec with ShouldMatchers
     // Create entity queue writers
     val eqWriters =
       for(ed <- TestUtils.eds) yield {
-        val file = File.createTempFile("ldif_entities", ".dat")
+        val file = TemporaryFileCreator.createTemporaryFile("ldif_entities", ".dat")
         file.deleteOnExit
         new FileEntityWriter(ed, file)
       }

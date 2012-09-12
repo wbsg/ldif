@@ -25,7 +25,9 @@ import java.util.Date
 import xml.XML
 import java.io._
 import org.slf4j.LoggerFactory
-import ldif.util.{Publisher, ValidatingXMLReader, Consts, Identifier}
+import ldif.util._
+import scala.Some
+import ldif.runtime.Quad
 
 trait ImportJob {
   private val log = LoggerFactory.getLogger(getClass.getName)
@@ -99,7 +101,7 @@ trait ImportJob {
   protected def writeImportedGraphsToFile {
     if (importedGraphsFile == null) {
       log.warn("Imported dump for "+id+" contains more than "+ Consts.MAX_NUM_GRAPHS_IN_MEMORY +" different graphs. Provenance metadata could contain duplicates.")
-      importedGraphsFile= File.createTempFile(id+"_importedGraph_"+Consts.simpleDateFormat.format(new Date()),"")
+      importedGraphsFile= TemporaryFileCreator.createTemporaryFile(id+"_importedGraph_"+Consts.simpleDateFormat.format(new Date()),"")
     }
     // append graph names to tmp file
     val writer = new FileWriter(importedGraphsFile, true)

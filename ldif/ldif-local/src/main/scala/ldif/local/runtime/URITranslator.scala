@@ -33,7 +33,7 @@ import org.slf4j.LoggerFactory
 import java.util.Properties
 import java.io.{BufferedWriter, File}
 import ldif.entity.entityComparator.entityComparator
-import ldif.util.{Consts, UriMintHelper}
+import ldif.util.{TemporaryFileCreator, Consts, UriMintHelper}
 import ldif.runtime.{QuadReader, Quad, QuadWriter}
 
 object URITranslator {
@@ -52,7 +52,7 @@ object URITranslator {
 
   def rewriteURIs(quadsReader: QuadReader, uriMap: Map[String, String]): QuadReader = {
     val entityGraphChecker = new EntityGraphChecker
-    val file = File.createTempFile("ldif_rewritten_output", ".dat")
+    val file = TemporaryFileCreator.createTemporaryFile("ldif_rewritten_output", ".dat")
     file.deleteOnExit
     val quadOutput = new FileQuadWriter(file)
     var counter = 0
@@ -87,7 +87,7 @@ object URITranslator {
         quadsReaderPassTwo = quadsReader.asInstanceOf[CloneableQuadReader].cloneReader
         uriMap = generateMintedUriMap(linkReader, quadsReader, configProperties)
       } else {
-        val copiedQuadsWriter = new FileQuadWriter(File.createTempFile("ldif_copyquads","queue"))
+        val copiedQuadsWriter = new FileQuadWriter(TemporaryFileCreator.createTemporaryFile("ldif_copyquads","queue"))
         val copyQuadsReader = new CopyQuadReader(quadsReader, copiedQuadsWriter)
         uriMap = generateMintedUriMap(linkReader, copyQuadsReader, configProperties)
         copiedQuadsWriter.finish()
