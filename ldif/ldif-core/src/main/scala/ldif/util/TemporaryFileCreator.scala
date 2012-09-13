@@ -46,12 +46,24 @@ object TemporaryFileCreator {
 
   def createTemporaryDirectory(prefix: String, suffix: String, deleteOnExit: Boolean = true): File = {
     val tempFile = File.createTempFile(prefix, suffix, tempDir)
-    if (deleteOnExit)
-      tempFile.deleteOnExit()
     tempFile.delete()
     tempFile.mkdir()
+    if(deleteOnExit)
+      tempFile.deleteOnExit()
 
     return tempFile
+  }
+
+  def deleteDirOnExit(dir: File) {
+    dir.deleteOnExit()
+    val files = dir.listFiles
+    if (files != null) {
+      for (file <- files)
+        if (file.isDirectory())
+          deleteDirOnExit(file)
+        else
+          file.deleteOnExit()
+    }
   }
 
   def setNewTempDir(directory: File) {

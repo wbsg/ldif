@@ -31,6 +31,7 @@ import de.fuberlin.wiwiss.silk.cache.{FileEntityCache, MemoryEntityCache}
 import de.fuberlin.wiwiss.silk.config.RuntimeConfig
 import ldif.runtime.QuadWriter
 import ldif.util.TemporaryFileCreator
+import java.io.File
 
 /**
  * Executes Silk on a local machine.
@@ -61,6 +62,7 @@ class SilkLocalExecutor(useFileInstanceCache: Boolean = false, allowLinksForSame
     val config = RuntimeConfig()
     val linkSpec = task.linkSpec
     val entityDescs = linkSpec.entityDescriptions
+    var tempFiles = Seq[File]()
 
     reporter.setStartTime()
     reporter.setStatus("10%") // Building instance caches (1/5)
@@ -68,6 +70,7 @@ class SilkLocalExecutor(useFileInstanceCache: Boolean = false, allowLinksForSame
     val caches = if(useFileInstanceCache) {
       val tempSource = TemporaryFileCreator.createTemporaryDirectory("ldif_silk_s", "", true)
       val tempTarget = TemporaryFileCreator.createTemporaryDirectory("ldif_silk_t", "", true)
+      tempFiles = Seq(tempSource, tempTarget)
       DPair(
         new FileEntityCache(entityDescs.source, linkSpec.rule.index(_), tempSource, config),
         new FileEntityCache(entityDescs.target, linkSpec.rule.index(_), tempTarget, config)
@@ -100,5 +103,7 @@ class SilkLocalExecutor(useFileInstanceCache: Boolean = false, allowLinksForSame
     val linkWriter = new LdifLinkWriter(writer, allowLinksForSameURIs)
     val outputTask = new OutputTask(filteredLinks, linkSpec.linkType, Output("output", linkWriter) :: Nil)
     outputTask()
+    for(tempFile <- tempFiles)
+      TemporaryFileCreator.deleteDirOnExit(tempFile)
   }
 }
