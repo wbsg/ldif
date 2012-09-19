@@ -35,6 +35,8 @@ class MatchMap extends MapReduceBase
     if(key.get) {
       val sourcePartition = partitions.source.get
       val targetPartition = partitions.target.get
+      if(sourcePartition==null || targetPartition==null)
+        return
 
       //Iterate over all entities in the source partition
       var s = 0
