@@ -216,14 +216,14 @@ object Workspace {
           }
         }
       }
-      else JSUtils.Log("An other Scheduler is already running, please wait.")
+      else JSUtils.Log("An other Scheduler is already running, please wait. ")
   }
 
   /**
    * JS Command which updates the workspace view.
    */
   private def updateCmd: JsCmd = {
-    // update/align projects and workspace
+//    update/align projects and workspace
     //    User().workspace.projects.foreach(_.config)
     if (User().projectOpen) User().project.config
     JsRaw("var workspaceVar = " + pretty(JsonAST.render(workspaceJson)) + "; updateWorkspace(workspaceVar);").cmd

@@ -32,16 +32,17 @@ class MatchReduce extends MapReduceBase
                                 entitiySimilarities: java.util.Iterator[EntityConfidence],
                                 collector: OutputCollector[Text, EntityConfidence],
                                 reporter: Reporter) {
-    val resultsPerEntity = entitiySimilarities.toSeq
+    val threshold = linkSpec.filter.threshold.getOrElse(-1.0)
+    val resultsPerEntity = entitiySimilarities.toSeq.filter(_.similarity >= threshold).distinct
     linkSpec.filter.limit match {
       case Some(limit) => {
-        for(entitySimilarity <- resultsPerEntity.distinct.sortWith(_.similarity > _.similarity).take(limit)) {
+        for(entitySimilarity <- resultsPerEntity.sortWith(_.similarity > _.similarity).take(limit)) {
           collector.collect(sourceUri, entitySimilarity)
           reporter.getCounter("LDIF stats", "sameAs links generated").increment(1)
         }
       }
       case None => {
-        for(entitySimilarity <- resultsPerEntity.distinct) {
+        for(entitySimilarity <- resultsPerEntity) {
           collector.collect(sourceUri, entitySimilarity)
           reporter.getCounter("LDIF stats", "sameAs links generated").increment(1)
         }
