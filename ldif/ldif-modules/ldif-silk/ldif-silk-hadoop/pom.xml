@@ -4,7 +4,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
     <properties>
-        <silk.version>2.5.3</silk.version>
+        <silk.version>[2.5.3,)</silk.version>
     </properties>
 
     <parent>

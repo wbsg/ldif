@@ -46,3 +46,30 @@ object StreamMatcher {
     nGramMap.toMap
   }
 }
+
+class SubstringMatcher {
+  private val nGramMap = new mutable.HashMap[String, mutable.Set[String]]()
+  private val stripURIprefix = StripUriPrefixTransformer()
+  private val substring = SubStringDistance()
+
+  def addTargetURI(uri: String) {
+    val label = stripURIprefix.evaluate(uri)
+    for (nGram <- SubStringDistance.getNgrams(SubStringDistance.normalizeString(label.toLowerCase), 3)) {
+      val labelSet = nGramMap.getOrElseUpdate(nGram, mutable.HashSet[String]())
+      labelSet.add(uri)
+    }
+  }
+
+  def matchURI(uri: String, threshold: Double): List[(Double,String)] = {
+    val label = stripURIprefix.evaluate(uri)
+    val candidates = fetchTargetCandidates(label)
+    (for(candidate <- candidates; score=substring.evaluate(label, stripURIprefix.evaluate(candidate)) if score <= threshold)
+      yield (score, candidate)).toList.sortWith(_._1 < _._1)
+  }
+
+  private def fetchTargetCandidates(label: String): Set[String] = {
+    val candidates = for(nGram <- SubStringDistance.getNgrams(SubStringDistance.normalizeString(label.toLowerCase), 3))
+    yield nGramMap.getOrElse(nGram, mutable.Set[String]())
+    candidates.flatten.toSet
+  }
+}

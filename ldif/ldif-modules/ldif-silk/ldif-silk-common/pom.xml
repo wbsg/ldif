@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 
     <properties>
-        <silk.version>2.5.3</silk.version>
+        <silk.version>[2.5.3,)</silk.version>
     </properties>
 
   <parent>

@@ -18,6 +18,7 @@
 
 package ldif.util
 
+import math.max
 /**
  * Represents a URI.
  */
@@ -91,5 +92,11 @@ object Uri
       case None => throw new IllegalArgumentException("Unknown prefix: " + prefix)
     }
     case _ => throw new IllegalArgumentException("No prefix found in " + qualifiedName)
+  }
+
+  def getLocalPart(uri: String): String = {
+    var uriPrefixEnd = max(uri.lastIndexOf("/"), uri.lastIndexOf("#"))
+    uriPrefixEnd = max(uriPrefixEnd, uri.lastIndexOf(":"))
+     uri.substring(uriPrefixEnd + 1)
   }
 }
