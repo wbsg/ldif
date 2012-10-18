@@ -166,6 +166,11 @@ object ImportJob {
       case None =>
     }
 
+    (node \ "wikidataImportJob").headOption match {
+      case Some(job) => return WikidataImportJob.fromXML(job, id, refreshSchedule, dataSource)
+      case None =>
+    }
+
     null
   }
 

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<importJob xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://www4.wiwiss.fu-berlin.de/ldif/ ../../xsd/ImportJob.xsd"
+           xmlns="http://www4.wiwiss.fu-berlin.de/ldif/">
+    <internalId>wikidata</internalId>
+    <dataSource>Wikidata</dataSource>
+    <refreshSchedule>onStartup</refreshSchedule>
+    <wikidataImportJob>
+        <limit>200</limit>
+	    <langs>en de fr</langs>
+    </wikidataImportJob>
+</importJob>
