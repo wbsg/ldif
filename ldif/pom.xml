@@ -203,7 +203,8 @@
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
-            <version>4.5</version>
+            <version>4.8</version>
+            <scope>test</scope>
         </dependency>
 
         <dependency>
@@ -224,7 +225,7 @@
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
-            <version>1.6.4</version>
+            <version>1.4.3</version>
         </dependency>
 
         <!-- slf4j bridging libs -->
@@ -244,29 +245,29 @@
         <!--</dependency>-->
 
         <!--jcl-->
-        <dependency>
-        <groupId>org.slf4j</groupId>
-        <artifactId>jcl-over-slf4j</artifactId>
-        <version>1.6.4</version>
-        </dependency>
         <!--<dependency>-->
-            <!--<groupId>org.slf4j</groupId>-->
-            <!--<artifactId>jcl104-over-slf4j</artifactId>-->
-            <!--<version>1.4.3</version>-->
-        <!--</dependency>-->
-
-        <!-- slf4j binding (only one) -->
-        <!--log4j-->
-        <!--<dependency>-->
-            <!--<groupId>org.slf4j</groupId>-->
-            <!--<artifactId>slf4j-log4j12</artifactId>-->
-            <!--<version>1.4.3</version>-->
+        <!--<groupId>org.slf4j</groupId>-->
+        <!--<artifactId>jcl-over-slf4j</artifactId>-->
+        <!--<version>1.6.4</version>-->
         <!--</dependency>-->
         <dependency>
             <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-log4j12</artifactId>
-            <version>1.6.4</version>
+            <artifactId>jcl104-over-slf4j</artifactId>
+            <version>1.4.3</version>
         </dependency>
+
+        <!-- slf4j binding (only one) -->
+        <!--log4j-->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-log4j12</artifactId>
+            <version>1.4.3</version>
+        </dependency>
+        <!--<dependency>-->
+            <!--<groupId>org.slf4j</groupId>-->
+            <!--<artifactId>slf4j-log4j12</artifactId>-->
+            <!--<version>1.6.4</version>-->
+        <!--</dependency>-->
         <!--logback-->
         <!--<dependency>-->
         <!--<groupId>ch.qos.logback</groupId>-->

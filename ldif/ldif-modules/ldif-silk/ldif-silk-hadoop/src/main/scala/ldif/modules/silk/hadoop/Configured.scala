@@ -38,10 +38,13 @@ trait Configured extends JobConfigurable {
   
   protected var isSource: Boolean = false
 
+  protected var config: Configuration = null
+
   protected override def configure(conf: JobConf) {
     linkSpec = readLinkSpec(conf)
     entityDescs = linkSpec.entityDescriptions
     isSource = conf.get(Configured.isSourceParam).toBoolean
+    config = conf
   }
 
   private def readLinkSpec(conf: Configuration) = {

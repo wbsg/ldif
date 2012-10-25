@@ -20,7 +20,7 @@ package ldif.modules.silk.hadoop
 
 import de.fuberlin.wiwiss.silk.hadoop.impl.EntityConfidence
 import de.fuberlin.wiwiss.silk.config.LinkSpecification
-import org.apache.hadoop.io.Text
+import org.apache.hadoop.io.{WritableUtils, Text}
 import scala.collection.JavaConversions._
 import org.apache.hadoop.mapred._
 
@@ -29,11 +29,16 @@ class MatchReduce extends MapReduceBase
                   with Configured {
 
   protected override def reduce(sourceUri: Text,
-                                entitiySimilarities: java.util.Iterator[EntityConfidence],
+                                entitySimilarities: java.util.Iterator[EntityConfidence],
                                 collector: OutputCollector[Text, EntityConfidence],
                                 reporter: Reporter) {
     val threshold = linkSpec.filter.threshold.getOrElse(-1.0)
-    val resultsPerEntity = entitiySimilarities.toSeq.filter(_.similarity >= threshold).distinct
+    var allEntityConfidences = List[EntityConfidence]()
+    while(entitySimilarities.hasNext) {
+      allEntityConfidences = WritableUtils.clone(entitySimilarities.next, config) :: allEntityConfidences
+    }
+
+    val resultsPerEntity = allEntityConfidences.filter(_.similarity >= threshold).distinct
     linkSpec.filter.limit match {
       case Some(limit) => {
         for(entitySimilarity <- resultsPerEntity.sortWith(_.similarity > _.similarity).take(limit)) {
