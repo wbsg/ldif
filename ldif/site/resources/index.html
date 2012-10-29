@@ -569,28 +569,27 @@ configuration more flexible in order to make it easier to include
 additional modules that cover other data integration aspects.<br>
   </li>
 </ol>
-<h2 id="configuration">3. Configuration
-Options</h2>
+<h2 id="configuration">3. Configuration Options</h2>
 <p>This section describes how LDIF configuration files look like and
 which parameters you can modify to change the runtime behavior of LDIF.</p>
 <h3 id="scheduler">Schedule Job Configuration</h3>
 <p>A Schedule Job updates the representation of external sources in the
 local cache and it is configured with an XML document, whose structure
-is described by this <a href="http://www.assembla.com/code/ldif/git/nodes/ldif/ldif-core/src/main/resources/xsd/SchedulerConfig.xsd">XML
+is described by this <a href=" http://www.assembla.com/code/ldif/git/node/blob/master/ldif/ldif-core/src/main/resources/xsd/SchedulerConfig.xsd">XML
 Schema</a>.
 The scheduler configuration is the top configuration file that
 references all the other configuration files like the for the import
 jobs for accessing remote sources and for the integration job.<br>
 </p>
 <p>A typical configuration document looks like this:</p>
-<pre>&lt;scheduler xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"<br>           xmlns="http://www4.wiwiss.fu-berlin.de/ldif/"&gt;<br>    &lt;properties&gt;scheduler.properties&lt;/properties&gt;<br>    &lt;dataSources&gt;datasources&lt;/dataSources&gt;<br>    &lt;importJobs&gt;importJobs&lt;/importJobs&gt;<br>    &lt;integrationJobs&gt;integration-config.xml&lt;/integrationJob&gt;<br>    &lt;dumpLocation&gt;dumps&lt;/dumpLocation&gt;<br>&lt;/scheduler&gt;<br></pre>
+<pre>&lt;scheduler xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"<br>           xmlns="http://www4.wiwiss.fu-berlin.de/ldif/"&gt;<br>    &lt;properties&gt;scheduler.properties&lt;/properties&gt;<br>    &lt;dataSources&gt;datasources&lt;/dataSources&gt;<br>    &lt;importJob&gt;importJobs&lt;/importJob&gt;<br>    &lt;integrationJob&gt;integration-config.xml&lt;/integrationJob&gt;<br>    &lt;dumpLocation&gt;dumps&lt;/dumpLocation&gt;<br>&lt;/scheduler&gt;<br></pre>
 <p>It has the following elements:</p>
 <ul>
     <li><i>properties</i> - the path to a Java properties file for
         configuration parameters, <a href="#configprops">see below</a> for
         more details; </li>
     <li><i>dataSources</i> - a directory containing the <a href="#datasource">Data Sources</a> configurations;</li>
-    <li><i>importJobs</i> - a directory containing the <a href="#importjob">Import Jobs</a> configurations;</li>
+    <li><i>importJobs</i> or <i>importJob</i> - each <i>importJob</i> specifies a path (to a file or a directory) where the <a href="#importjob">Import Jobs</a> configurations are defined;</li>
     <li><i>integrationJob</i> - a document containing the <a href="#integrationjob">Integration Job</a> configurations;</li>
     <li><i>dumpLocation</i> - a directory where the local dumps should be
         cached<br>
@@ -634,7 +633,7 @@ Default: <span style="font-family: monospace;">false</span></p>
 <h3><a name="integrationjob"></a>Integration Job Configuration<br>
 </h3>
 <p>An Integration Job is configured with an XML document, whose
-structure is described by this <a href="http://www.assembla.com/code/ldif/git/nodes/ldif/ldif-core/src/main/resources/xsd/IntegrationJob.xsd">XML
+structure is described by this <a href=" http://www.assembla.com/code/ldif/git/node/blob/master/ldif/ldif-core/src/main/resources/xsd/IntegrationJob.xsd">XML
 Schema</a>.
 <br>
 The current structure is very simple because the integration flow
@@ -821,7 +820,7 @@ set at the moment and the possible values for each property:</p>
 <h3><a name="importjob"></a>Import Job Configuration<br>
 </h3>
 <p>An Import Job is configured with an XML document, whose structure is
-described by this <a href="http://www.assembla.com/code/ldif/git/nodes/ldif/ldif-core/src/main/resources/xsd/ImportJob.xsd">XML
+described by this <a href=" https://www.assembla.com/code/ldif/git/node/blob/masterldif/ldif-core/src/main/resources/xsd/ImportJob.xsd">XML
 Schema</a>.<br>
 </p>
 <p>It has the following elements:</p>
@@ -899,7 +898,7 @@ specified. Of each crawled resource all received triples are stored.<br>
 <br>
 <h4 id="provenance">Provenance Metadata</h4>
 <p>The result of each import contains provenance metadata, whose
-structure is described by this <a href="http://www.assembla.com/code/ldif/git/nodes/ldif/ldif-core/src/main/resources/owl/provenance.owl">ontology</a>.
+structure is described by this <a href=" http://www.assembla.com/code/ldif/git/node/blob/master/ldif/ldif-core/src/main/resources/owl/provenance.owl">ontology</a>.
 <br>
 For each imported graph, provenance information will contain:
 </p>
@@ -925,7 +924,7 @@ _:dbpedia0 &lt;http://www4.wiwiss.fu-berlin.de/ldif/numberOfQuads&gt; "23592"^^&
 _:dbpedia0 &lt;http://www4.wiwiss.fu-berlin.de/ldif/hasOriginalLocation&gt; "http://mes.smw-lde-eu.s3.amazonaws.com/dBpedia_dump.nt.bz2" &lt;http://www4.wiwiss.fu-berlin.de/ldif/provenance&gt; .</pre>
 <h3 id="datasource">Data Source Configuration</h3>
 <p>A Data Source is configured with an XML document, whose structure is
-described by this <a href="http://www.assembla.com/code/ldif/git/nodes/ldif/ldif-core/src/main/resources/xsd/DataSource.xsd">XML
+described by this <a href=" http://www.assembla.com/code/ldif/git/node/blob/master/ldif/ldif-core/src/main/resources/xsd/DataSource.xsd">XML
 Schema</a>. It contains human readable information about a data source.
 The <span style="font-family: monospace;">label</span> element should
 be a unique string in each integration use case, because it will be
@@ -1009,7 +1008,7 @@ the latest LDIF release</li>
 
 <p>Learn more about Hadoop configuration by looking at our <a href="http://www.assembla.com/spaces/ldif/wiki/Benchmark">Benchmark</a> and <a href="http://www.assembla.com/spaces/ldif/wiki/Hadoop_troubleshooting">Troubleshooting</a> wiki pages.</p>
 
-<p>In order to have a cleaner console output, consider replacing the Hadoop default logging configuration (<tt>[HADOOP-HOME]/conf/log4j.properties</tt>) with our customized <a href ="http://www.assembla.com/code/ldif/git/nodes/ldif/resources/hadoop_log4j.properties">log4j.properties</a> file.</p>
+<p>In order to have a cleaner console output, consider replacing the Hadoop default logging configuration (<tt>[HADOOP-HOME]/conf/log4j.properties</tt>) with our customized <a href =" http://www.assembla.com/code/ldif/git/node/blob/master/ldif/resources/hadoop_log4j.properties">log4j.properties</a> file.</p>
 
 <p>Here is a list of Hadoop configuration parameters that can be useful to tune when running LDIF with big datasets:</p>
 
@@ -1094,25 +1093,25 @@ are interested in.</p>
 The following import job configuration files are used for the different
 sources:<br>
 <ul>
-  <li>DBpedia <a href="http://www.assembla.com/code/ldif/git/nodes/ldif/examples/music/full/ImportJobs/DBpediaDumpImport.xml">Dump-Properties</a>,
-    <a href="http://www.assembla.com/code/ldif/git/nodes/ldif/examples/music/full/ImportJobs/DBpediaDumpImport_Types.xml">Dump-Types</a>
+  <li>DBpedia <a href=" http://www.assembla.com/code/ldif/git/node/blob/master/ldif/examples/music/full/ImportJobs/DBpediaDumpImport.xml">Dump-Properties</a>,
+    <a href=" http://www.assembla.com/code/ldif/git/node/blob/master/ldif/examples/music/full/ImportJobs/DBpediaDumpImport_Types.xml">Dump-Types</a>
   </li>
-  <li>Freebase <a href="http://www.assembla.com/code/ldif/git/nodes/ldif/examples/music/full/ImportJobs/FreebaseCrawlImport.xml">Crawl</a>
+  <li>Freebase <a href=" http://www.assembla.com/code/ldif/git/node/blob/master/ldif/examples/music/full/ImportJobs/FreebaseCrawlImport.xml">Crawl</a>
   </li>
-  <li>MusicBrainz <a href="http://www.assembla.com/code/ldif/git/nodes/ldif/examples/music/full/ImportJobs/MusicBrainzSPARQLImport_MusicArtist.xml">Sparql-MusicArtist</a>,
-    <a href="http://www.assembla.com/code/ldif/git/nodes/ldif/examples/music/full/ImportJobs/MusicBrainzSPARQLImport_Label.xml">Sparql-Label</a>,
-    <a href="http://www.assembla.com/code/ldif/git/nodes/ldif/examples/music/full/ImportJobs/MusicBrainzSPARQLImport_Record.xml">Sparql-Record</a>
+  <li>MusicBrainz <a href=" http://www.assembla.com/code/ldif/git/node/blob/master/ldif/examples/music/full/ImportJobs/MusicBrainzSPARQLImport_MusicArtist.xml">Sparql-MusicArtist</a>,
+    <a href=" http://www.assembla.com/code/ldif/git/node/blob/master/ldif/examples/music/full/ImportJobs/MusicBrainzSPARQLImport_Label.xml">Sparql-Label</a>,
+    <a href=" http://www.assembla.com/code/ldif/git/node/blob/master/ldif/examples/music/full/ImportJobs/MusicBrainzSPARQLImport_Record.xml">Sparql-Record</a>
   </li>
-  <li>BBC Music <a href="http://www.assembla.com/code/ldif/git/nodes/ldif/examples/music/full/ImportJobs/BBCSPARQLImportMusicArtist.xml">Sparql-MusicArtist</a>
-, <a href="http://www.assembla.com/code/ldif/git/nodes/ldif/examples/music/full/ImportJobs/BBCSPARQLImportRecord.xml">Sparql-Record</a>,
-    <a href="http://www.assembla.com/code/ldif/git/nodes/ldif/examples/music/full/ImportJobs/BBCSPARQLImportBirth.xml">Sparql-Birth</a>,
-    <a href="http://www.assembla.com/code/ldif/git/nodes/ldif/examples/music/full/ImportJobs/BBCSPARQLImportDeath.xml">Sparql-Death</a>
+  <li>BBC Music <a href=" http://www.assembla.com/code/ldif/git/node/blob/master/ldif/examples/music/full/ImportJobs/BBCSPARQLImportMusicArtist.xml">Sparql-MusicArtist</a>
+, <a href=" http://www.assembla.com/code/ldif/git/node/blob/master/ldif/examples/music/full/ImportJobs/BBCSPARQLImportRecord.xml">Sparql-Record</a>,
+    <a href=" http://www.assembla.com/code/ldif/git/node/blob/master/ldif/examples/music/full/ImportJobs/BBCSPARQLImportBirth.xml">Sparql-Birth</a>,
+    <a href=" http://www.assembla.com/code/ldif/git/node/blob/master/ldif/examples/music/full/ImportJobs/BBCSPARQLImportDeath.xml">Sparql-Death</a>
   </li>
 </ul>
 <p>The following mapping file provides for translating the source data
 sets into our target vocabulary:</p>
 <ul>
-  <li>R2R mapping file: <a href="http://www.assembla.com/code/ldif/git/nodes/ldif/examples/music/full/mappings/mappings.ttl">mappings.ttl</a></li>
+  <li>R2R mapping file: <a href=" http://www.assembla.com/code/ldif/git/node/blob/master/ldif/examples/music/full/mappings/mappings.ttl">mappings.ttl</a></li>
 </ul>
 <p>The target vocabulary is a mix of existing ontologies like FOAF,
 Music
@@ -1121,7 +1120,7 @@ Ontology, Dublin Core, DBpedia etc. </p>
 music artists, labels and albums that are described in multiple data
 sets:</p>
 <ul>
-  <li>Silk link specification: <a href="http://www.assembla.com/code/ldif/git/nodes/ldif/examples/music/full/linkspecs/musicLinkSpec.xml">musicLinkSpec.xml</a>
+  <li>Silk link specification: <a href=" http://www.assembla.com/code/ldif/git/node/blob/master/ldif/examples/music/full/linkspecs/musicLinkSpec.xml">musicLinkSpec.xml</a>
   </li>
 </ul>
 <p> Music artist and record instances are integrated from all the
@@ -1167,7 +1166,7 @@ extending <a href="http://www.wiwiss.fu-berlin.de/en/institute/pwo/bizer/researc
 Media Wiki+ with a Linked Data Integration Framework</a>. <br>
 <br>
 In this example, the following data sources are translated into a
-common <a href="resources/Wiki.owl">Wiki ontology</a>:</p>
+common <a href=" http://www.assembla.com/code/ldif/git/node/blob/master/ldif/site/resources/resources/Wiki.owl">Wiki ontology</a>:</p>
 <ul>
   <li><a href="http://mouse.brain-map.org/">Allen Mouse Brain Atlas</a>
 is a growing collection of online public resources integrating
@@ -1190,15 +1189,15 @@ of the LDIF release.<br>
 <p>The following mapping file provides for translating the vocabularies
 used by the source data sets into the Wiki ontology. </p>
 <ul>
-  <li>R2R mapping file: <a href="http://www.assembla.com/code/ldif/git/nodes/ldif/examples/life-science/mappings/ALL-to-Wiki.r2r.ttl">ALL-toWiki.r2r.ttl</a>
+  <li>R2R mapping file: <a href=" http://www.assembla.com/code/ldif/git/node/blob/master/ldif/examples/life-science/mappings/ALL-to-Wiki.r2r.ttl">ALL-toWiki.r2r.ttl</a>
     <span style="text-decoration: underline;"></span></li>
 </ul>
 <p>The following Silk identity resolution heuristics are used to find
 genes and other expressions that are described in multiple data sets.</p>
 <ul>
-  <li><a href="http://www.assembla.com/code/ldif/git/nodes/ldif/examples/life-science/linkSpecs/genes.xml">genes.xml</a>,</li>
-  <li><a href="http://www.assembla.com/code/ldif/git/nodes/ldif/examples/life-science/linkSpecs/diseases.xml">diseases.xml</a>,</li>
-  <li><a href="http://www.assembla.com/code/ldif/git/nodes/ldif/examples/life-science/linkSpecs/pathways.xml">pathways.xml</a></li>
+  <li><a href=" http://www.assembla.com/code/ldif/git/node/blob/master/ldif/examples/life-science/linkSpecs/genes.xml">genes.xml</a>,</li>
+  <li><a href=" http://www.assembla.com/code/ldif/git/node/blob/master/ldif/examples/life-science/linkSpecs/diseases.xml">diseases.xml</a>,</li>
+  <li><a href=" http://www.assembla.com/code/ldif/git/node/blob/master/ldif/examples/life-science/linkSpecs/pathways.xml">pathways.xml</a></li>
 </ul>
 <p>To run the example, please download LDIF and use the following LDIF
 configuration. The configuration options are explained in the Section <a href="#configuration">Configuration</a> below. <br>
