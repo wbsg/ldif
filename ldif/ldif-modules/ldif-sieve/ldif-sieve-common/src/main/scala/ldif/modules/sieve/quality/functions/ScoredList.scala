@@ -17,8 +17,8 @@ package ldif.modules.sieve.quality.functions
  */
 
 import org.slf4j.LoggerFactory
+import ldif.entity.NodeTrait
 import ldif.modules.sieve.quality.ScoringFunction
-import ldif.entity.{Entity, NodeTrait}
 
 /**
  * Scoring function that assigns real-valued, uniformly distributed scores to a list of graphs.
@@ -55,15 +55,23 @@ class ScoredList(val priorityList: List[String]) extends ScoringFunction {
     "ScoredList, priority=" + priorityList
   }
 
+  override def equals(obj:Any) = {
+    obj match {
+      case sl: ScoredList => priorityList == sl.priorityList
+      case _ => false
+    }
+  }
 }
 
 object ScoredList {
   def fromXML(node: scala.xml.Node) : ScoringFunction = {
-    val paramStr : String = (node \ "Param" \ "@value").text
-    val params : List[String] = paramStr.split(" ").toList
-    if (params.length < 1) {
-      throw new IllegalArgumentException("No list of values given as preference")
+    try {
+      val priorityList = ScoringFunction.getStringConfig(node, "list")
+      val params : List[String] = priorityList.split(" ").toList
+      if (params.length < 1) {
+        throw new IllegalArgumentException("No list of values given as preference")
+      }
+      new ScoredList(params)
     }
-    new ScoredList(params)
   }
 }

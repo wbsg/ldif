@@ -2,6 +2,7 @@
 <http://dbpedia.org/resource/Ubatuba> <http://dbpedia.org/ontology/areaTotal> "7.12E8"^^<http://www.w3.org/2001/XMLSchema#double> <http://en.wikipedia.org/wiki/Ubatuba>.
 <http://dbpedia.org/resource/Ubatuba> <http://dbpedia.org/ontology/areaTotal> "3.3669845434368E8"^^<http://www.w3.org/2001/XMLSchema#double> <http://en.wikipedia.org/wiki/Ubatuba>.
 <http://dbpedia.org/resource/Ubatuba> <http://dbpedia.org/ontology/foundingDate> "1637-10-28"^^<http://www.w3.org/2001/XMLSchema#date> <http://en.wikipedia.org/wiki/Ubatuba>.
+<http://dbpedia.org/resource/Ubatuba> <http://dbpedia.org/ontology/foundingDate> "1637-10-27"^^<http://www.w3.org/2001/XMLSchema#date> <http://pt.wikipedia.org/wiki/Ubatuba>.
 <http://dbpedia.org/resource/Ubatuba> <http://dbpedia.org/ontology/populationTotal> "81246"^^<http://www.w3.org/2001/XMLSchema#nonNegativeInteger> <http://en.wikipedia.org/wiki/Ubatuba>.
 # from pt.dbpedia.org.nq
 <http://dbpedia.org/resource/Ubatuba> <http://dbpedia.org/ontology/areaTotal> "7.12116E11"^^<http://www.w3.org/2001/XMLSchema#double> <http://pt.wikipedia.org/wiki/Ubatuba>.

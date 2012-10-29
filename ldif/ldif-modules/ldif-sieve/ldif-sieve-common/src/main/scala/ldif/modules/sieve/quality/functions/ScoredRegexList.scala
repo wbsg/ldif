@@ -17,6 +17,7 @@ package ldif.modules.sieve.quality.functions
  */
 
 import org.slf4j.LoggerFactory
+import ldif.modules.sieve.quality.ScoringFunction
 
 /**
  * Scoring function that assigns real-valued, uniformly distributed scores to a list of graphs.
@@ -40,7 +41,18 @@ class ScoredRegexList(priorityList: List[String]) extends ScoredList(priorityLis
 
 }
 
-
+object ScoredRegexList {
+  def fromXML(node: scala.xml.Node) : ScoringFunction = {
+    try {
+      val priorityList = ScoringFunction.getStringConfig(node, "list")
+      val params : List[String] = priorityList.split(" ").toList
+      if (params.length < 1) {
+        throw new IllegalArgumentException("No list of values given as preference")
+      }
+      new ScoredRegexList(params)
+    }
+  }
+}
 
 
 

@@ -22,7 +22,7 @@
 
 
         <AssessmentMetric id="sieve:reputation">
-            <ScoringFunction class="ScoredList">
+            <ScoringFunction class="ScoredPrefixList">
                 <Param name="list" value="http://pt.wikipedia.org http://en.wikipedia.org http://es.wikipedia.org http://fr.wikipedia.org http://de.wikipedia.org"/>
             </ScoringFunction>
         </AssessmentMetric>
