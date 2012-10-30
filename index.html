@@ -1,71 +1,1414 @@
-<!DOCTYPE html>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
-  <head>
-    <meta charset='utf-8'>
-    <meta http-equiv="X-UA-Compatible" content="chrome=1">
-    <link href='https://fonts.googleapis.com/css?family=Chivo:900' rel='stylesheet' type='text/css'>
-    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen" />
-    <link rel="stylesheet" type="text/css" href="stylesheets/pygment_trac.css" media="screen" />
-    <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print" />
-    <!--[if lt IE 9]>
-    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
-    <![endif]-->
-    <title>Ldif-test by cbeckr</title>
+<head>
+  <title>LDIF – Linked Data Integration Framework</title>
+ 
+  <style>
+body { background: white; color: black; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; line-height: 1.4em; padding: 3em 12em 3em 12em; margin: 0; }
+:link, :visited { color: #00c; }
+a:link img { border: none; }
+a:visited img { border: none; }
+h1, h2, h3, h4 { background: white; color: #800; }
+h1 { font: 170% sans-serif; margin: 0; }
+h2 { clear: both; font: 140% sans-serif; margin: 1.5em 0 -0.5em 0; }
+h3 { font: 120% sans-serif; margin: 1.5em 0 -0.5em 0; }
+h4 { font: 100% sans-serif; margin: 0.9em 0 -0.6em 0; }
+h5 { font: italic 100% sans-serif; margin: 0.7em 0 -0.8em 0;}
+pre { background: #fff6bb; font-family: monospace; line-height: 1.2em; padding: 1em 2em; }
+dt { font-weight: bold; margin-top: 0; margin-bottom: 0; }
+dd { margin-top: 0; margin-bottom: 0; }
+code, tt { font-family: monospace; }
+ul.toc { list-style-type: none; }
+ol.toc li a { text-decoration: none; }
+.note { color: red; }
+.todo { background-color: yellow;}
+#header { border-bottom: 1px solid #ccc; }
+#logo { float: right; margin-bottom: 10px; }
+#authors { clear: right; float: right; font-size: 80%; text-align: right; }
+#logo, #authors { min-width: 250px; }
+#content { margin: 2em auto 0 0; text-align: justify }
+#footer { border-top: 1px solid #ccc; color: #aaa; margin: 2em 0 0; }
+#top-container { height: 150px; width: 750px; padding: 20px; }
+#purpose { font-size: 110%; letter-spacing: 0.05em; word-spacing: 0.15em; width: 700px; margin: 0 auto 40px auto; }
+#boxcontainer { width: 850px; margin-left: auto; margin-right: auto; }
+.box { border: 1px solid #D3D3D3; height: 75px; text-align: center; float: left; margin-right: 20px; padding-top:5px; }
+.box:hover { background: none repeat scroll 0 0 #FCFDFF; box-shadow: 0 0 9px 1px #DFEFFF; }
+.box a:link, .box a:visited, .box a:hover, .box a:active { color: #1C5489; display: block; font-size: 110%; margin-left: 5px; min-height: 55px; padding: 9px 5px 5px 5px; text-decoration: none; }		
+.box a:hover, .box a:active { color: #16426B !important; cursor: pointer; text-decoration: none !important; }
+.box a span { display: block; margin-left: 40px; text-align: left; }
+.box a span small { color: #888; font-size: 70%; }
+
+#downloadbox { width: 420px; padding-left: 10px;  color: #888; }
+#downloadbox a { display:inline; }
+#downloadbox span { margin-top: 20px; display:block; }
+#downloadbox small { display:block; font-size: 70%; }
+#quickstartbox, #supportbox { width: 175px; }
+#quickstartbox a span, #supportbox a span { padding: 15px 5px; }
+
+#downloadbox { background: url("images/arrow_down_32.png") no-repeat scroll 10px 25px transparent; }
+#quickstartbox a { background: url("images/clock_32.png") no-repeat scroll 5px 20px transparent; }
+#supportbox a { background: url("images/comment_32.png") no-repeat scroll 5px 20px transparent; }
+
+@media Print {
+* { font-size: 92%; }
+body { padding: 0; line-height: 1.2em; }
+#content { margin: 0; width: 100%; }
+}
+@media Aural {
+h1 { stress: 20; richness: 90; }
+h2 { stress: 20; richness: 90; }
+h3 { stress: 20; richness: 90; }
+.hide { speak: none; }
+dt { pause-before: 20%; }
+pre { speak-punctuation: code; }
+}
+.Stil1 {color: #FF0000}
+table {border-collapse: collapse; margin-bottom: .75em; border-top: 1px solid #D4DCE8; border-bottom: 1px solid #D4DCE8}
+table th {text-align: left; background: #EAF3FA; padding: .5em .9em; height: 21px; font-weight: bold; font-size: 1em; color: #333}
+table th a {text-decoration: none !important}
+table td {vertical-align: top; text-align: left; padding: .5em 1em; border-bottom: 1px solid #eee}
+table tr.even {background-color: #fff}
+table tr.odd {background-color: #f6f6f6}
+
+#wbsg_navbar {
+    background-color: #dedede;
+    color: #7d7d7d;
+    font-size: 80%;
+    left: 0;
+    margin: 0;
+    padding: 0;
+    position: absolute;
+    text-align: right;
+    top: 0;
+    width: 100%;
+    background-color: #DEDEDE;
+    font-family: arial,helvetica,sans-serif;
+
+    /* Safari 5.1, Chrome 10+ */
+    background: -webkit-linear-gradient(top, #ffffff, #dedede);
+
+    /* Firefox 3.6+ */
+    background: -moz-linear-gradient(top, #ffffff, #dedede);
+
+    /* IE */
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffffff', endColorstr='#dedede');
+
+    /* IE 10 */
+    background: -ms-linear-gradient(top, #ffffff, #dedede);
+
+    /* Opera 11.10+ */
+    background: -o-linear-gradient(top, #ffffff, #dedede);
+
+    text-shadow: 0px 1px 0px #ffffff;
+}
+
+#wbsg_navbar a {
+    color: #4e4e4e;
+    text-decoration: none;
+}
+
+#wbsg_navbar a:hover {
+    color: #1d1d1d;
+}
+
+#wbsg_navbar_intro {
+    line-height: 25px;
+    width: 100%;
+    border-bottom: 1px solid #BCBCBC;
+}
+
+#wbsg_navbar_projects {
+    float: right;
+}
+
+#wbsg_navbar_projects a {
+    display: block;
+    float: left;
+    line-height: 25px;
+    padding: 0 0.5em;
+    border-left: 1px solid #d2d2d2;
+    border-bottom: 1px solid #BCBCBC;
+}
+
+#wbsg_navbar_projects a:hover {
+    background: #eaeaea;
+
+    /* Safari 5.1, Chrome 10+ */
+    background: -webkit-linear-gradient(top, #ffffff, #eaeaea);
+
+    /* Firefox 3.6+ */
+    background: -moz-linear-gradient(top, #ffffff, #eaeaea);
+
+    /* IE */
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffffff', endColorstr='#eaeaea');
+
+    /* IE 10 */
+    background: -ms-linear-gradient(top, #ffffff, #eaeaea);
+
+    /* Opera 11.10+ */
+    background: -o-linear-gradient(top, #ffffff, #eaeaea);
+}
+
+.wbsg_navbar_active_project {
+    font-weight: bold;
+    color: #373737 !important;
+    border-bottom: 1px solid #ffffff !important;
+
+    background: #ffffff !important;
+
+    /* Safari 5.1, Chrome 10+ */
+    background: -webkit-linear-gradient(top, #f2f2f2, #ffffff) !important;
+
+    /* Firefox 3.6+ */
+    background: -moz-linear-gradient(top, #f2f2f2, #ffffff) !important;
+
+    /* IE */
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#f2f2f2', endColorstr='#ffffff') !important;
+
+    /* IE 10 */
+    background: -ms-linear-gradient(top, #f2f2f2, #ffffff) !important;
+
+    /* Opera 11.10+ */
+    background: -o-linear-gradient(top, #f2f2f2, #ffffff) !important;
+}
+  </style>
+  
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
   </head>
 
   <body>
-    <div id="container">
-      <div class="inner">
 
-        <header>
-          <h1>Ldif-test</h1>
-          <h2></h2>
-        </header>
+  <div id="wbsg_navbar">
+  	<div id="wbsg_navbar_projects">
+  	<a href="http://dbpedia.org" title="DBpedia is a community effort to extract structured information from Wikipedia and to make this information available on the Web" >DBpedia</a>
+  	<a href="http://spotlight.dbpedia.org/" title="DBpedia Spotlight is a tool for annotating DBpedia entities in text.">DBpedia Spotlight</a>
+	<a href="http://d2rq.org/d2r-server" title="D2R Server is a tool for publishing the content of relational databases on the Semantic Web" >D2R Server</a>
+	<a href="http://www4.wiwiss.fu-berlin.de/bizer/r2r/" title="R2R Framework &ndash; Translating RDF data from the Web to a target vocabulary" >R2R</a>
+	<a href="http://www4.wiwiss.fu-berlin.de/bizer/silk/" title="The Silk framework is a tool for discovering relationships between data items within different Linked Data sources" >Silk</a>
+	<a href="http://sieve.wbsg.de/" title="Sieve is a tool for assessing data quality and performing data fusion." >Sieve</a>
+	<a href="http://ldif.wbsg.de/" title="LDIF &ndash; Linked Data Integration Framework translates heterogeneous Linked Data from the Web into a clean, local target representation while keeping track of data provenance" class="wbsg_navbar_active_project">LDIF</a>
+	<a href="http://www4.wiwiss.fu-berlin.de/bizer/ng4j/" title="The Named Graphs API for Jena (NG4J) is an extension to the Jena Semantic Web framework for parsing, manipulating and serializing sets of Named Graphs" >NG4J</a>
+	<a href="http://marbles.sf.net/" title="Marbles is a server-side application that formats Semantic Web content for XHTML clients using Fresnel lenses and formats" >Marbles</a>
+  	<a href="http://www4.wiwiss.fu-berlin.de/bizer/wiqa/" title="The WIQA - Information Quality Assessment Framework is a set of software components that empowers information consumers to employ a wide range of different information quality assessment policies to filter information from the Web" >WIQA</a>
+  	<a href="http://www4.wiwiss.fu-berlin.de/pubby/" title="Pubby &ndash; A Linked Data Frontend for SPARQL Endpoints can be used to add Linked Data interfaces to SPARQL endpoints" >Pubby</a>
+  	<a href="http://sites.wiwiss.fu-berlin.de/suhl/bizer/rdfapi/index.html" title="RAP &ndash; RDF API for PHP is a software package for parsing, querying, manipulating, serializing and serving RDF models" >RAP</a>
+  	</div>
+  	<div id="wbsg_navbar_intro">Open Source projects by the <a href="http://wbsg.de">Web-based Systems Group</a>:&nbsp;&nbsp;</div>
+  </div>
 
-        <section id="downloads" class="clearfix">
-          <a href="https://github.com/cbeckr/ldif-test/zipball/master" id="download-zip" class="button"><span>Download .zip</span></a>
-          <a href="https://github.com/cbeckr/ldif-test/tarball/master" id="download-tar-gz" class="button"><span>Download .tar.gz</span></a>
-          <a href="https://github.com/cbeckr/ldif-test" id="view-on-github" class="button"><span>View on GitHub</span></a>
-        </section>
+<!-- End WBSG navbar -->
 
-        <hr>
+<div id="logo" align="right">
+	<a href="http://wbsg.de"><img src="images/fu-logo.gif" alt="Freie Universität Berlin Logo" border="0"></a><br>
+	<a href="http://mes-semantics.com"><img src="images/mes-semantics.png" alt="mes|semantics"></a>
+</div>
 
-        <section id="main_content">
-          <h3>Welcome to GitHub Pages.</h3>
+<div id="header">
+	<h1 style="font-size: 250%;">LDIF – Linked Data Integration Framework </h1>
+</div>
+<div id="tagline">A framework for building Linked Data applications</div>
 
-<p>This automatic page generator is the easiest way to create beautiful pages for all of your projects. Author your page content here using GitHub Flavored Markdown, select a template crafted by a designer, and publish. After your page is generated, you can check out the new branch:</p>
+<div id="authors"><a href="http://www.wiwiss.fu-berlin.de/en/institute/pwo/bizer/team/SchultzAndreas.html">Andreas Schultz</a><br>
+<a href="mailto:a.matteini@mes-semantics.com">Andrea Matteini</a><br>
+<a href="http://www.wiwiss.fu-berlin.de/en/institute/pwo/bizer/team/IseleRobert.html">Robert Isele</a><br>
+<a href="http://www.wiwiss.fu-berlin.de/en/institute/pwo/bizer/team/MendesPablo.html">Pablo N. Mendes</a><br>
+<a href="http://www.wiwiss.fu-berlin.de/en/institute/pwo/bizer/team/BizerChristian.html">Chris Bizer</a><br>
+<a href="mailto:c.becker@mes-semantics.com">Christian Becker</a><br>
+</div>
 
-<pre><code>$ cd your_repo_root/repo_name
-$ git fetch origin
-$ git checkout gh-pages
-</code></pre>
+<div id="content">
+<div id="top-container">
+<div id="purpose">LDIF translates heterogeneous Linked Data from the
+Web into a clean, local target representation while keeping track of
+data
+provenance.</div>
+<div id="boxcontainer">
+<div id="downloadbox" class="box">
+    <span><a href="http://ldif.wbsg.de/releases/ldif-0.5.zip" title="Download LDIF Single Machine version">LDIF Single machine</a> |
+    <a href="http://ldif.wbsg.de/releases/ldif-hadoop-0.5.zip" title="Download LDIF Hadoop version">LDIF Hadoop</a></span>
+<small>v0.5, released 2012-03-28</small>
+</div>
+<div id="quickstartbox" class="box"> <a href="#quickstart"><span>Quick
+Start</span></a> </div>
+<div id="supportbox" class="box"> <a href="#feedback"><span>Get Support</span></a>
+</div>
+</div>
+</div>
+<h2 id="news">News</h2>
+<ul>
+  <li>
+      <strong>06/05/2012: Presentation:</strong> LDIF has been presented at the <a href="http://semtechbizsf2012.semanticweb.com/">Semantic Technology and Business Conference (SemTech2012)</a> in San Francisco.
+      See slides of the talk: <a href="http://www.wiwiss.fu-berlin.de/en/institute/pwo/bizer/research/publications/Becker-etal-LDIF-SemTechSanFrancisco.pdf">How to Integrate Linked Data into your Application</a>.
+  </li>
+  <li>
+    <strong>03/28/2012: Version 0.5 released.</strong>
+      This release provides a <a href="#qualityfusion">data quality assessment and fusion</a> module for cleansing data according to
+      user-provided quality assessment policies and conflict resolution methods.
+  <li>
+	<strong>02/06/2012: Presentation:</strong> LDIF is presented at <a href="http://semtechbizberlin2012.semanticweb.com/">SEMTECHBIZ Berlin 2012</a> (<a href="http://www.wiwiss.fu-berlin.de/en/institute/pwo/bizer/research/publications/BeckerMatteini-LDIF-SemTechBerlin2012-Talk.pdf">Slides</a>).
+  </li>
+  <li>
+     <strong>01/13/2012: Interview:</strong> <a href="http://semanticweb.com">semanticweb.com</a> speaks with Christian Becker on how <a href="http://semanticweb.com/easing-the-job-of-working-with-linked-data_b25940">LDIF eases the job of working with Linked Data</a>.
+   </li>
+  <li>
+      <strong>01/10/2012: Version 0.4 Scale-out released.</strong>  Up till now, LDIF stored data
+purely in-memory which restricted the amount of data that could be
+processed. Version 0.4 provides two alternative implementations of the LDIF
+runtime environment which allow LDIF to scale to large data sets: 1. The new
+triple store backed implementation scales to larger data sets on a single
+machine with lower memory consumption at the expense of processing time. 2.
+The new Hadoop-based implementation provides for processing very large data
+sets on a Hadoop cluster, for instance within Amazon EC2. A comparison of the
+performance of all three implementations of the runtime environment is found
+on the <a href="http://www.assembla.com/spaces/ldif/wiki/Benchmark">LDIF benchmark page</a>.</li>
+  <li><strong>11/03/2011: Version 0.3.1 released.</strong> Minor
+release: updated the music use case, optimized Entity Builder memory
+usage. </li>
+  <li><strong>10/06/2011: Version 0.3 released.</strong> The
+third
+LDIF release provides data access modules for gathering data from the
+Web via file download, crawling or accessing SPARQL endpoints. Web data
+is cached locally for further processing. A scheduler provides
+for launching data import and
+integration jobs as well as for regularly updating the local cache with
+data from remote sources. We also added a second use case that shows
+how LDIF is used to gather and integrate data from several
+music-related data sources.<br>
+  </li>
+  <li><strong>8/25/2011: Version 0.2 released.</strong> The second
+LDIF release provides improved performance (faster data loading,
+parallelization of the data translation), smaller memory footprint, a
+new N-Triples output module, new performance evaluation results for use
+cases up to 100 million triples.<br>
+  </li>
+  <li><strong>6/29/2011: Version 0.1 released.</strong> This alpha
+version provides for translating data that is represented using
+different source vocabularies into a single target vocabulary and for
+replacing different URIs that refer to the same real-world entity with
+a single target URI.</li>
+</ul>
+<h2 id="contents">Contents</h2>
+<ol class="toc">
+  <li><a href="#about">About LDIF</a></li>
+  <li><a href="#components">LDIF components</a></li>
+  <li><a href="#configuration">Configuration options</a></li>
+  <li><a href="#quickstart">Quick start</a></li>
+  <ul>
+    <li><a href="#inmemoryquickstart">Single machine / In-memory</a></li>
+    <li><a href="#rdfstorequickstart">Single machine / RDF Store</a></li>
+    <li><a href="#hadoopquickstart">Cluster / Hadoop</a></li>
+  </ul>
+  <li><a href="#examples">Examples</a><br>
+  </li>
+  <ul>
+    <li><a href="#example1">Using LDIF to integrate Data from the Music
+Domain</a></li>
+    <li><a href="#example2">Using LDIF to integrate Life Science Data </a></li>
+  </ul>
+  <li><a href="#performance">Performance Evaluation</a> </li>
+  <li><a href="#development">Source code and development</a></li>
+  <li><a href="#history">Version history</a></li>
+  <li><a href="#feedback">Support and Feedback</a></li>
+  <li><a href="#references">References</a></li>
+  <li><a href="#acknowledgments">Acknowledgments</a></li>
+</ol>
+<h2 id="about">1. About LDIF<br>
+</h2>
+<p>The <a href="http://linkeddatabook.com/editions/1.0/index.html#htoc23">Web of
+Linked Data</a>
+grows rapidly and contains data from a wide range of different domains,
+including life science data, geographic data, government data, library
+and media data, as well as cross-domain data sets such as DBpedia or
+Freebase. <a href="http://linkeddatabook.com/editions/1.0/index.html#htoc75">Linked
+Data applications</a> that want to consume data from this global data
+space face the challenges that:</p>
+<ol>
+  <li>Data sources use a wide range of different RDF vocabularies to represent data about the same type of entity; </li>
+  <li>The same real-world entity, for instance a person or a place, is identified with different URIs within different data sources; </li>
+  <li>Data about the same real-world entity coming from different sources may contain conflicting value. For example the single value attribute <i>population</i>
+      for a specific country can have multiple, different values after merging data from different sources.</li>
+</ol>
+<p>This usage of different vocabularies as well as the usage of URI
+aliases makes it very cumbersome for an application
+developer to write <a href="http://www.w3.org/TR/rdf-sparql-query/">SPARQL</a>
+queries against Web data which originates from multiple sources. In
+order to ease using Web data in the application context, it is thus
+advisable to translate data to a single target vocabulary (<a href="http://linkeddatabook.com/editions/1.0/index.html#htoc86">vocabulary
+mapping</a>) and to replace URI aliases with a single target URI on the
+client
+side (<a href="http://linkeddatabook.com/editions/1.0/index.html#htoc87">identity
+resolution</a>), before starting to ask SPARQL queries against the
+data. </p>
+<p>Up-till-now, there have not been any integrated tools that help
+application developers with these tasks. With LDIF, we try to fill this
+gap and provide an open-source Linked Data Integration Framework
+that can be used by Linked Data applications to translate Web data and
+normalize URI while keeping track of data provenance.
+</p>
+<p>The LDIF integration pipeline consists of the following steps:
+</p>
+<ol>
+  <li><b>Collect Data</b>: Import modules locally replicate data sets
+via file download, crawling or SPARQL.</li>
+  <li><b>Map to Schema</b>: An expressive mapping language allows for
+translating data from
+the various vocabularies that are used on the Web into a consistent,
+local target vocabulary.</li>
+  <li><b>Resolve Identities</b>: An identity resolution component
+discovers URI aliases in the input data and replaces them with a
+single target URI based on user-provided matching heuristics.</li>
+  <li><b>Quality Assessment and Data Fusion</b>:
+      A data cleansing component filters data according to different quality assessment policies and
+      provides for fusing data according to different conflict resolution methods.</li>
+  <li><b>Output</b>: LDIF outputs the integrated data and that can be written to file or to a QuadStore.
+For provenance tracking, LDIF employs the Named Graphs data model.</li>
+</ol>
+<p>The figure below shows the schematic <a href="http://linkeddatabook.com/editions/1.0/index.html#htoc84">architecture
+of Linked Data applications</a>
+that
+implement the crawling/data warehousing pattern. The figure highlights
+the steps of the data integration process that are currently
+supported by LDIF.</p>
+<p style="text-align: left; margin-left: 120px;"><img alt="Example-architecture of an integration aware Linked Data application" src="images/linkeddataapp.png"></p>
+<h2 id="components">2. LDIF Components</h2>
+<p>The LDIF Framework consists of a Scheduler, Data Import and an Integration component with a set of
+pluggable modules. These modules are organized as data input, data transformation and data output.
+</p>
+<img alt="LDIF components" src="images/LDIFcomponents.png">
+<p>Currently, we have implemented the following modules: </p>
 
-<p>If you're using the GitHub for Mac, simply sync your repository and you'll see the new branch.</p>
 
-<h3>Designer Templates</h3>
+<h3>Scheduler</h3>
+<p>
+The Scheduler is used for triggering pending data import jobs or integration jobs. It is configured with an XML document (see <a href="#scheduler">Configuration</a>) and offers several ways to express when and how often a certain job should be executed. This component is useful when you want to load external data or run the integration periodically, otherwise you could just run the integration component. Since LDIF version 0.5 there is a REST based status monitor that informs about the progress of the scheduled jobs.
+</p>
 
-<p>We've crafted some handsome templates for you to use. Go ahead and continue to layouts to browse through them. You can easily go back to edit your page before publishing. After publishing your page, you can revisit the page generator and switch to another theme. Your Page content will be preserved if it remained markdown format.</p>
 
-<h3>Rather Drive Stick?</h3>
+<h3>Data Import</h3>
+<p>LDIF provides access modules for replicating data sets locally via
+file download, crawling or SPARQL. These different types of <a href="#importjob">import jobs</a> generate <a href="#provenance">provenance
+metadata</a>,
+which is tracked throughout the integration process. Import jobs are
+managed by a scheduler that can be
+configured to refresh (<span style="font-style: italic;">hourly</span>,
+<span style="font-style: italic;">daily</span> etc.) the local cache
+for each source. </p>
+<h4>Triple/Quad Dump Import</h4>
+<p>In order to get a local replication of data sets from the Web of Data the simplest way is to download a file containing
+the data set. The triple/quad dump import does exactly this, with the difference that LDIF generates a provenance graph
+for a triple dump import, whereas it takes the given graphs from a quad dump import as provenance graphs.
+Formats that are currently supported are RDF/XML, N-Triples, N-Quads and Turtle.</p>
+<h4>Crawler Import</h4>
+<p>
+Data sets that can only be accessed via dereferencable URIs are a good
+candidate for a crawler. In LDIF we thus integrated <a href="http://code.google.com/p/ldspider/">LDSpider</a> for crawl
+import jobs. The configuration files for crawl import jobs are
+specified in the <a href="#configuration">configuration</a> section.
+Each crawled URI is put into a seperate named graph for provenance
+tracking.</p>
+<h4>SPARQL Import</h4>
+<p>Data sources that can be accessed via SPARQL are replicated by
+LDIF's
+SPARQL access module. The relevant data to be queried can be further
+specified in the configuration file for a SPARQL import job. Data from
+each SPARQL import job gets tracked by its own named graph.</p>
 
-<p>If you prefer to not use the automatic generator, push a branch named <code>gh-pages</code> to your repository to create a page manually. In addition to supporting regular HTML content, GitHub Pages support Jekyll, a simple, blog aware static site generator written by our own Tom Preston-Werner. Jekyll makes it easy to create site-wide headers and footers without having to copy them across every page. It also offers intelligent blog support and other advanced templating features.</p>
 
-<h3>Authors and Contributors</h3>
+<h3>Integration Runtime Environment</h3>
 
-<p>You can <a href="https://github.com/blog/821" class="user-mention">@mention</a> a GitHub username to generate a link to their profile. The resulting <code>&lt;a&gt;</code> element will link to the contributor's GitHub Profile. For example: In 2007, Chris Wanstrath (<a href="https://github.com/defunkt" class="user-mention">@defunkt</a>), PJ Hyett (<a href="https://github.com/pjhyett" class="user-mention">@pjhyett</a>), and Tom Preston-Werner (<a href="https://github.com/mojombo" class="user-mention">@mojombo</a>) founded GitHub.</p>
+<p>The integration component manages the data
+flow between the various stages/modules, the caching of the intermediate
+results and the execution of the different modules for each stage.</p>
 
-<h3>Support or Contact</h3>
+<h4>Data Input</h4>
 
-<p>Having trouble with Pages? Check out the documentation at <a href="http://help.github.com/pages">http://help.github.com/pages</a> or contact <a href="mailto:support@github.com">support@github.com</a> and we’ll help you sort it out.</p>
-        </section>
+<p>The integration component expects input data to be represented as Named Graphs and be stored
+in <a href="http://sw.deri.org/2008/07/n-quads/">N-Quads format</a>
+accessible locally - the Web access modules convert any imported data
+into N-Quads format. </p>
 
-        <footer>
-          Ldif-test is maintained by <a href="https://github.com/cbeckr">cbeckr</a><br>
-          This page was generated by <a href="http://pages.github.com">GitHub Pages</a>. Tactile theme by <a href="http://twitter.com/jasonlong">Jason Long</a>.
-        </footer>
 
-        
-      </div>
-    </div>
-  </body>
+
+<h4>Transformation</h4>
+<p>LDIF provides the following transformation modules:</p>
+
+<h5>Data Translation</h5>
+<p>LDIF employs the <a href="http://www4.wiwiss.fu-berlin.de/bizer/r2r/">R2R Framework</a>
+to translate Web data that is represented using terms from different
+vocabularies into a single target vocabulary. Vocabulary mappings are
+expressed using the <a href="http://www4.wiwiss.fu-berlin.de/bizer/r2r/spec/">R2R Mapping
+Language</a>.
+The language provides for simple transformations as well as for more
+complex structural transformations and property value transformations
+such as normalizing different units of measurement or complex string
+manipulations. The syntax of the
+R2R Mapping Language is very similar to the query language SPARQL,
+which eases the learning curve. The expressivity of the language
+enabled us to deal with all requirements that we have encountered so
+far when translating Linked Data from the Web into a target
+representation (evaluation in [<a href="#references">2</a>]). Simple
+class/property-renaming mappings which often form the majority in an
+integration use case can also be expressed in OWL/RDFS (e.g <span style="font-family: monospace;">ns1:class rdfs:subClassOf ns2:clazz</span>).<span style="text-decoration: underline;"></span>
+<br/>An overview and examples for mappings are given on the <a href="http://www4.wiwiss.fu-berlin.de/bizer/r2r/">R2R website</a>.
+The <a href="http://www4.wiwiss.fu-berlin.de/bizer/r2r/spec/">specification and user manual</a> is provided as a separate document.<br>
+</p>
+
+<h5>Identity Resolution</h5>
+<p>
+LDIF employs the <a href="http://www4.wiwiss.fu-berlin.de/bizer/silk/">Silk
+Link Discovery Framework</a>
+to find different URIs that are used within different data sources to
+identify the same real-world entity. For each set of duplicates which
+have been identified by Silk, LDIF replaces all URI aliases with a
+single target URI within the output data. In addition, it adds
+owl:sameAs links pointing at the original URIs, which makes it possible
+for applications to refer back to the data sources on the Web. If the
+LDIF input data already contains owl:sameAs links, the referenced
+URIs are normalized accordingly (optional, see <a href="#configuration">configuration</a>).
+Silk is a
+flexible identity
+resolution framework that allows the user to specify identity
+resolution heuristics which combine different types of matchers using
+the declarative <a href="http://www4.wiwiss.fu-berlin.de/bizer/silk/spec/">Silk - Link
+Specification Language</a>.
+<br>An overview and examples can be found on the <a href="http://www4.wiwiss.fu-berlin.de/bizer/silk/">Silk website</a>.<br>
+</p>
+
+<h5 id="qualityfusion">Data Quality Assessment and Fusion</h5>
+<p>LDIF employs <a href="http://sieve.wbsg.de">Sieve</a> to provide data quality evaluation and cleansing. The procedure consists of two separate steps.
+First, the Data Quality Assessment module assigns each Named Graph within the processed data one or several quality scores based on user-configurable
+quality assessment policies. These policies combine a assessment function with the definition of the quality-related meta-information which
+should be used in the assessment process.
+Then the Data Fusion module takes the quality scores as input and resolves data conflicts based on the
+assessment scores. The applied fusion functions can be configured on property level.
+Sieve provides a basic set of quality assessment functions and fusion functions as well as an open interface for the implementation of additional
+domain-specific functions. <br/>
+An overview and examples can be found on the <a href="http://sieve.wbsg.de">Sieve website</a>.</p>
+
+<h4>Data Output</h4>
+<p>LDIF final and intermediate results can be written to file or to a QuadStore.</p>
+
+<h5>File Output</h5>
+<p>Two file output formats are currently supported by LDIF: </p>
+<ul><li>N-Quads - dumps the data into a single N-Quads file, this file contains the translated versions of all graphs from the input graph set as well as the content
+of the provenance graph and sameAs-links;    </li>
+<li> N-Triples - dumps the data into a single N-Triples file, since there exists no connection to the provenance data anymore after outputting it as N-Triples,
+the provenance data is discarded instead of being output. </li>
+</ul>
+<h5>QuadStore Output</h5>
+<p>Data is written to a QuadStore as SPARQL/Update stream. Here is a list of the <a href="http://www.assembla.com/spaces/ldif/wiki/Quadstore_Compatibility">supported stores</a>.</p>
+
+<h4>Runtime Environments </h4>
+
+<p>The Runtime Environment for the integration component manages the data
+flow between the various stages/modules and the caching of the intermediate
+results.
+ </p>
+<p> In order to parallelize the data processing, the data is
+partitioned into entities prior to supplying it to a transformation
+module. An entity represents a Web resource together with all data that
+is required by a transformation module to process this resource.
+Entities consist of one or more graph paths and include a graph
+URI for each node. Each transformation module specifies which paths
+should be included into the entities it processes. Splitting the work into fine-granular entities, allows LDIF to parallelize
+the work.
+</p>
+
+<p>LDIF provides three implementations of the Runtime Environment:  1. the
+in-memory version, 2. the RDF store version and 3. the Hadoop version.
+Depending of the size of your data set and the available computing
+resources, you can choose the runtime environment that best fits your use
+case.
+</p>
+
+<h5>Single machine / In-memory</h5>
+<p>  The in-memory implementation keeps
+all intermediate results in
+memory.
+    It is fast but its scalability is limited by the amount of
+available memory. For instance, integrating 25 million triples required 5 GB
+memory within one of our <a href="benchmark.html">experiments</a>. Parallelization is achieved by
+distributing the work (entities) to multiple threads.
+
+</p>
+
+<h5>Single machine / RDF Store</h5>
+
+<p>
+This implementation of the runtime environment uses an  <a href="http://openjena.org/TDB/">Jena TDB RDF store</a> to
+store intermediate results. The communication between the RDF store and the
+runtime environment is realized in the form of SPARQL queries. This runtime
+environment allows you to process data sets that don't fit into memory
+anymore. The downside is that the RDF Store implementation is slower as the
+In-memory implementation.
+</p>
+<h5>Cluster / Hadoop</h5>
+<p>
+This implementation of the runtime environment allows you to parallelize
+the work onto multiple machines using Hadoop.
+Each phase in the integration flow has been ported to be executable on a Hadoop cluster.
+Some initial performance figures comparing the run times of the in-memory, quad store and Hadoop version against different data set sizes are provided in the <a href="http://www.assembla.com/spaces/ldif/wiki/Benchmark">Benchmark Wiki</a>.
+</p>
+
+
+<h3 id="nextSteps">Next steps for LDIF</h3>
+<p>Over the next months, we plan to extend LDIF along the
+following lines:<br>
+</p>
+<ol>
+  <li><strong>Flexible integration workflow</strong>. Currently the
+integration flow is static and can only be influenced by predefined
+configuration parameters. We plan to make the workflow and its
+configuration more flexible in order to make it easier to include
+additional modules that cover other data integration aspects.<br>
+  </li>
+</ol>
+<h2 id="configuration">3. Configuration Options</h2>
+<p>This section describes how LDIF configuration files look like and
+which parameters you can modify to change the runtime behavior of LDIF.</p>
+<h3 id="scheduler">Schedule Job Configuration</h3>
+<p>A Schedule Job updates the representation of external sources in the
+local cache and it is configured with an XML document, whose structure
+is described by this <a href=" http://www.assembla.com/code/ldif/git/node/blob/master/ldif/ldif-core/src/main/resources/xsd/SchedulerConfig.xsd">XML
+Schema</a>.
+The scheduler configuration is the top configuration file that
+references all the other configuration files like the for the import
+jobs for accessing remote sources and for the integration job.<br>
+</p>
+<p>A typical configuration document looks like this:</p>
+<pre>&lt;scheduler xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"<br>           xmlns="http://www4.wiwiss.fu-berlin.de/ldif/"&gt;<br>    &lt;properties&gt;scheduler.properties&lt;/properties&gt;<br>    &lt;dataSources&gt;datasources&lt;/dataSources&gt;<br>    &lt;importJob&gt;importJobs&lt;/importJob&gt;<br>    &lt;integrationJob&gt;integration-config.xml&lt;/integrationJob&gt;<br>    &lt;dumpLocation&gt;dumps&lt;/dumpLocation&gt;<br>&lt;/scheduler&gt;<br></pre>
+<p>It has the following elements:</p>
+<ul>
+    <li><i>properties</i> - the path to a Java properties file for
+        configuration parameters, <a href="#configprops">see below</a> for
+        more details; </li>
+    <li><i>dataSources</i> - a directory containing the <a href="#datasource">Data Sources</a> configurations;</li>
+    <li><i>importJobs</i> or <i>importJob</i> - each <i>importJob</i> specifies a path (to a file or a directory) where the <a href="#importjob">Import Jobs</a> configurations are defined;</li>
+    <li><i>integrationJob</i> - a document containing the <a href="#integrationjob">Integration Job</a> configurations;</li>
+    <li><i>dumpLocation</i> - a directory where the local dumps should be
+        cached<br>
+    </li>
+</ul>
+<p>Both relative and absolute paths are supported.</p>
+<h4 id="configprops">Configuration Properties</h4>
+<p>In the Schedule Job configuration file you can specify a (Java)
+properties file to further tweak certain parameters concerning the
+workflow. Here is a list with all properties that can be set at the
+moment and the possible values for each property:</p>
+<ul>
+  <li>
+    <p><i>provenanceGraphURI</i> <br>
+Specify the graph
+where the provenance information is stored. Default graph name: <span style="font-family: monospace;">http://www4.wiwiss.fu-berlin.de/ldif/provenance</span></p>
+    <pre>provenanceGraphURI = http://www4.wiwiss.fu-berlin.de/ldif/provenance</pre>
+  </li>
+</ul>
+<ul>
+  <li>
+    <p><i id="onetimeexec">oneTimeExecution</i> <br>
+If <span style="font-family: monospace;">true</span> the scheduler
+executes all the Jobs at most once. Import Jobs are evaluated first and
+then (as all of these have finished) the integration job starts.
+Default: <span style="font-family: monospace;">false</span></p>
+    <pre>oneTimeExecution = true | false</pre>
+  </li>
+    <li>
+        <p><i>runStatusMonitor</i><br/>
+            Specify if the status monitor should be run when starting LDIF (via ldif.local.Ldif main). Default: <span style="font-family: monospace;">true</span></p>
+        <pre>runStatusMonitor = true | false</pre>
+    </li>
+    <li>
+        <p><i>statusMonitorURI</i><br/>
+            Specify the root URI of the status monitor. Default: <span style="font-family: monospace;">http://localhost:5343/</span></p>
+        <pre>statusMonitorURI = http://localhost:5343/</pre>
+    </li>
+</ul>
+
+<h3><a name="integrationjob"></a>Integration Job Configuration<br>
+</h3>
+<p>An Integration Job is configured with an XML document, whose
+structure is described by this <a href=" http://www.assembla.com/code/ldif/git/node/blob/master/ldif/ldif-core/src/main/resources/xsd/IntegrationJob.xsd">XML
+Schema</a>.
+<br>
+The current structure is very simple because the integration flow
+is static at the moment - something that will change in future
+releases. The config file specifies amongst other things how often the
+whole integration workflow should be executed. It should be noted that
+when an integration job starts, it only works on fully imported data.
+Data of import jobs that did not finish before the integration starts
+is ignored - the only exception is if the <a href="#onetimexec"><span style="font-family: monospace;">oneTimeExecution</span></a>
+configuration property is set to true; then the integration waits for
+all import jobs to finish.<br>
+</p>
+<p>A typical configuration document looks like this:</p>
+<pre>&lt;integrationJob xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xmlns="http://www4.wiwiss.fu-berlin.de/ldif/"&gt;
+    &lt;properties&gt;test.properties&lt;/properties&gt;
+    &lt;sources&gt;
+        &lt;source&gt;dumps&lt;/source&gt;
+    &lt;/sources&gt;
+    &lt;linkSpecifications&gt;linkSpecs&lt;/linkSpecifications&gt;
+    &lt;mappings&gt;mappings&lt;/mappings&gt;
+    &lt;sieve&gt;sieve&lt;/sieve&gt;
+    &lt;outputs&gt;
+        &lt;output&gt;
+            &lt;file format="nquads"&gt;output.nq&lt;/file&gt;&nbsp;&lt;!-- format attribute is optional, default is nquads -->
+        &lt;/output&gt;
+    &lt;/outputs&gt;
+    &lt;runSchedule&gt;daily&lt;/runSchedule&gt;
+&lt;/integrationJob&gt;<br></pre>
+<p>It has the following elements:</p>
+<ul>
+    <li><i>properties</i> - the path to a Java properties file for
+        configuration parameters, <a href="#configurationproperties">see below</a>
+        for more details; </li>
+    <li><i>sources</i> or one <i>source</i> element - each <i>source</i> specifies a path (to a file or a directory) in the local or distributed file system,
+        all files must be in <a href="http://sw.deri.org/2008/07/n-quads/">N-Quads</a> format and may
+        be compressed (.gz, .zip or .bz2);<br>
+    </li>
+    <li><i>linkSpecifications</i> - a directory containing the <a href="http://www.assembla.com/wiki/show/silk/Link_Specification_Language">Silk
+        link specifications</a>;</li>
+    <li><i>mappings</i> - a directory containing the <a href="http://www4.wiwiss.fu-berlin.de/bizer/r2r/spec/index.html#mappings">R2R
+        mappings</a>;</li>
+    <li><i>sieve</i> - a directory containing the configuration for data <a href="http://sieve.wbsg.de/#qualityassessmentconfig">quality assessment</a> and <a href="http://sieve.wbsg.de/#fusionconfig">fusion</a>;</li>
+    <li><i>outputs</i> or one <i>output</i> element - each <i>output</i> specifies a destination where data are written to, both <i>file</i> (N-Quads or N-Triples) and <a href="http://www.assembla.com/wiki/show/ldif/QuadStore_Compatibility">SPARQL/Update</a> outputs are supported;</li>
+    <li><i>runSchedule</i> - how often the integration is expected to be
+        run. Valid values are: <span style="font-family: monospace;">onStartup</span>,<span style="font-family: monospace;"> always</span>,<span style="font-family: monospace;"> hourly</span>,<span style="font-family: monospace;"> daily</span>,<span style="font-family: monospace;"> weekly</span>,<span style="font-family: monospace;"> monthly</span>,<span style="font-family: monospace;"> yearly </span>and <span style="font-family: monospace;">never</span>. <span class="Apple-style-span" style="border-collapse: separate; color: rgb(0, 0, 0); font-family: 'Times New Roman'; font-style: normal; font-variant: normal; font-weight: normal; letter-spacing: normal; line-height: normal; orphans: 2; text-indent: 0px; text-transform: none; white-space: normal; widows: 2; word-spacing: 0px; font-size: medium;"><span class="Apple-style-span" style="border-collapse: collapse; font-family: Arial,Helvetica,'Liberation Sans',FreeSans,sans-serif; font-size: 12px; line-height: 18px; text-align: left;"></span></span></li>
+</ul>
+<p> Both relative and absolute paths are supported.
+In this case there is a root directory with the config file and the
+test.properties file in it.
+Furthermore the following directories would be nested in the root
+directory: linkSpecs, sources and mappings.
+Data sets have to be in a local directory.</p>
+<h4><a name="configurationproperties"></a>Configuration Properties for
+the Integration Job<br>
+</h4>
+<p>In the Integration Job configuration file you can specify a (Java)
+properties file to further tweak certain parameters concerning the
+integration workflow. Here is a list with all properties that can be
+set at the moment and the possible values for each property:</p>
+<ul>
+    <li>
+        <p><i>output</i><br/>
+            Specify if all input quads from the input should be included in the output file or only the quads that were
+            mapped/translated by LDIF. Default: <span style="font-family: monospace;">mapped-only</span></p>
+        <pre>output = all | mapped-only</pre>
+    </li>
+    <li>
+        <p><i>rewriteURIs</i><br>
+            Specify if URI aliases in the input data should be rewritten to a single target URI in the output data.
+            Default: <span style="font-family: monospace;">true</span></p>
+        <pre>rewriteURIs = true | false</pre>
+    </li>
+    <li>
+        <p><i>prefixPreference</i><br>
+            If rewriteURIs is enabled (and URI minting is disabled), then in a set of URIs that are considered to identify the same entity, these URIs are chosen to represent each set that
+            start with one of the whitespace separated URI prefixes. This list of URI prefixes is ranked, with the first URI prefix being the highest rank.
+        <pre>prefixPreference=http://dbpedia.org/resource/ http://otherprefix/</pre>
+    </li>
+    <li>
+        <p><i>provenanceGraphURI</i> <br/>
+            Specify the graph containing the provenance information. Quads from this graph are only written to the final
+            output data set and not processed any further in the integration workflow.
+            Default graph name: <span style="font-family: monospace;">http://www4.wiwiss.fu-berlin.de/ldif/provenance</span></p>
+        <pre>provenanceGraphURI = http://www4.wiwiss.fu-berlin.de/ldif/provenance</pre>
+    </li>
+    <li>
+        <p><i>validateSources</i><br/>
+            Source data sets, R2R mappings and Silk link specifications are all
+            validated before starting with the actual integration. Since the syntax
+            validation of the sources (N-Triples / N-Quads files) takes some time
+            (about 15s/GB), if you already know that they are correct, it is
+            possible to disable this step by setting the property to false.
+            Default: <span style="font-family: monospace;">true</span></p>
+        <pre>validateSources = true | false</pre>
+    </li>
+    <li>
+        <p><i>discardFaultyQuads</i><br/>
+            If LDIF finds a (syntax) error - like spaces in URIs - in the source data, it does not progress with the
+            integration to give you the opportunity to fix these errors first.
+            However, sometimes you just don't care that some quads are faulty and
+            want them to be ignored instead, so that the overall integration can
+            still proceed. Set this property to <span style="font-family: monospace;">true</span> in order to ignore syntax
+            errors in the source data sets. Default: <span style="font-family: monospace;">false</span></p>
+        <pre>discardFaultyQuads = false | true</pre>
+    </li>
+    <li>
+        <p><i>useExternalSameAsLinks</i><br/>
+            Besides discovering equal entities in the identity resolution phase, LDIF also offers the
+            opportunity to input these relationships in form of owl:sameAs links.
+            The NT/N-Quads file with these sameAs-links has to be placed in the
+            source directory with the other data sets. If you don’t want to use
+            sameAs-links from the input data, set this property to false. Default: <span style="font-family: monospace;">true</span></p>
+        <pre>useExternalSameAsLinks = true | false</pre>
+    </li>
+    <li><i>entityBuilderType</i><br/>
+        Specify the type of the entity builder component used for the local
+        execution profile of LDIF. This choice heavily influences the
+        performance and memory foot print. For large data sets and/or low
+        memory machines it is a good idea to set this to <span style="font-family: monospace;">quad-store</span> because the
+        in-memory version of LDIF is very memory intensive. Default: <span style="font-family: monospace;">in-memory</span>
+        <pre>entityBuilderType = in-memory | quad-store</pre>
+    </li>
+    <li><i>quadStoreType</i><br/>
+        Specify the concrete store that should be used as backend for the quad
+        store version, see configuration property <i>entityBuilderType</i>. Right now there
+        is only one store, Jena TDB, that is supported by LDIF, so this
+        property doesn't need to be set explicitly. Default: <span style="font-family: monospace;">tdb</span>
+        <pre>quadStoreType = tdb</pre>
+    </li>
+    <li><i>databaseLocation</i><br/>
+        This property allows to set the location of the data base on the local
+        file system. This value is used by the quad store system to configure
+        its database location. Default: The temporary directory of the
+        operating system<span style="font-family: monospace;"></span>
+        <pre>databaseLocation = Path-To-Database-Dir<br></pre>
+    </li>
+    <li>
+        <i>uriMinting</i><br/>
+            Specify if output resources should be given an URI within the target
+            namespace. URI minting. Default: <span style="font-family: monospace;">false</span></p>
+        <pre>uriMinting = true | false</pre>
+    </li>
+    <li>
+        <p><i>uriMintNamespace</i><br/>
+            Specify the namespace into which the URIs of all output resources are
+            translated, if URI minting is enabled. Default: <span style="font-family: monospace;">http://www4.wiwiss.fu-berlin.de/ldif/resource/</span></p>
+        <pre>uriMintNamespace = http://www4.wiwiss.fu-berlin.de/ldif/resource/</pre>
+    </li>
+    <li>
+        <p><i>uriMintLabelPredicate</i><br/>
+            The value of this property is a space separated list of property URIs, which will be used to expand the
+            name space URI specified with <i>uriMintNamespace.</i> For each entity
+            one value of the specified URIs is used to act as the local part of the
+            minted URI. If there are many values to pick from, the max value
+            (lexicographic order) is taken. If no value could be found for any of
+            the properties, the URI of the entity is not minted. Note that there is
+            no way to prevent name clashes at the moment. </p>
+        <pre>uriMintLabelPredicate = http://www.w3.org/2000/01/rdf-schema#label http://www4.wiwiss.fu-berlin.de/ldif/property-example/id</pre>
+    </li>
+    <li>
+        <p><i>uriMintLanguageRestriction</i><br/>
+            If set this parameter restricts the values that are considered for URI minting to specific language literals/tags.
+            The value of this parameter is a whitespace separated list of language tags. Default: <span style="font-family: monospace;">not set</span></p>
+        <pre>uriMintLanguageRestriction = en fr es</pre>
+    </li>
+    <li>
+        <p><i>outputQualityScores</i><br/>
+            Specify if the data quality scores quads (generated by the Data Quality Assessment module) should be also included in the output. Default: <span style="font-family: monospace;">false</span></p>
+        <pre>outputQualityScores = true | false</pre>
+    </li>
+    <li>
+        <p><i>qualityFromProvenanceOnly</i><br/>
+            Specify if only the content of the provenance graph should be used in the data quality evaluation. Default: <span style="font-family: monospace;">false</span></p>
+        <pre>qualityFromProvenanceOnly = true | false</pre>
+    </li>
+    <li>
+        <p><i>outputProvenance</i><br/>
+            Specify if the provenance data should be output. Default: <span style="font-family: monospace;">true</span></p>
+        <pre>outputProvenance = true | false</pre>
+    </li>
+</ul>
+
+<h3><a name="importjob"></a>Import Job Configuration<br>
+</h3>
+<p>An Import Job is configured with an XML document, whose structure is
+described by this <a href=" https://www.assembla.com/code/ldif/git/node/blob/masterldif/ldif-core/src/main/resources/xsd/ImportJob.xsd">XML
+Schema</a>.<br>
+</p>
+<p>It has the following elements:</p>
+<ul>
+  <li><i>internalId</i> - A unique ID, which will be used internally to
+track the import job and its files like data and provenance;<br>
+  </li>
+  <li><i>dataSource </i>- A reference to a <a href="#datasource">data
+source</a> to state from which source this job imports data;<br>
+  </li>
+  <li><span style="font-style: italic;">one kind of importJob</span> -
+There has to be exactly one import job element, which can be either <span style="font-family: monospace;">quadImportJob</span>, <span style="font-family: monospace;">tripleImportJob</span>, <span style="font-family: monospace;">crawlImportJob</span> or <span style="font-family: monospace;">sparqlImportJob</span>;</li>
+  <li><i>refreshSchedule</i> - how often the integration is expected to
+be run. Valid values are: <span style="font-family: monospace;">onStartup</span>,<span style="font-family: monospace;"> always</span>,<span style="font-family: monospace;"> hourly</span>,<span style="font-family: monospace;"> daily</span>,<span style="font-family: monospace;"> weekly</span>,<span style="font-family: monospace;"> monthly</span>,<span style="font-family: monospace;"> yearly </span>and <span style="font-family: monospace;">never</span>.</li>
+</ul>
+<p>LDIF supports four different mechanisms to import external data: </p>
+<ul>
+  <li><i>Quad Import Job</i> – import N-Quads dumps</li>
+  <li><i>Triple Import Job</i> – import RDF/XML, N-Triples or Turtle dumps</li>
+  <li><i>Crawl Import Job</i> – import by dereferencing URIs as RDF
+data, using the LDSpider Web Crawling Framework</li>
+  <li><i>SPARQL Import Job</i> – import by querying a SPARQL endpoint</li>
+</ul>
+<h4>Quad Import</h4>
+<p>A typical config file for a Quad Import Job looks like this: </p>
+<pre>&lt;importJob xmlns="http://www4.wiwiss.fu-berlin.de/bizer/ldif"&gt;<br>    &lt;internalId&gt;dBpedia.0&lt;/internalId&gt;<br>    &lt;dataSource&gt;dBpedia&lt;/dataSource&gt;<br>    &lt;refreshSchedule&gt;daily&lt;/refreshSchedule&gt;<br>    <span style="font-weight: bold;">&lt;quadImportJob&gt;</span><br>      &lt;dumpLocation&gt;http://dbpedia.org/dump.nq&lt;/dumpLocation&gt;<br>    <span style="font-weight: bold;">&lt;/quadImportJob&gt;</span><br>&lt;/importJob&gt;<br></pre>
+<h4>Triple Import<br>
+</h4>
+<p>In a triple import you use the <span style="font-family: monospace;">tripleImportJob</span>
+element instead of the <span style="font-family: monospace;">quadImportJob</span>
+element: </p>
+<pre>&lt;importJob xmlns="http://www4.wiwiss.fu-berlin.de/bizer/ldif"&gt;<br>    &lt;internalId&gt;dBpedia.0&lt;/internalId&gt;<br>    &lt;dataSource&gt;dBpedia&lt;/dataSource&gt;<br>    &lt;refreshSchedule&gt;daily&lt;/refreshSchedule&gt;<br>    <span style="font-weight: bold;">&lt;tripleImportJob&gt;</span><br>      &lt;dumpLocation&gt;http://dbpedia.org/dump.nt&lt;/dumpLocation&gt;<br>    <span style="font-weight: bold;">&lt;/tripleImportJob&gt;</span><br>&lt;/importJob&gt;</pre>
+<h4>SPARQL Import<br>
+</h4>
+<p>In a SPARQL import job the <span style="font-family: monospace;">sparqlImportJob
+</span>element
+specifies the endpoint that will be queried for data and a restriction
+pattern - note that angle brackets of URIs have to be escaped using <span style="font-family: monospace;">&amp;lt;</span> and <span style="font-family: monospace;">&amp;gt;</span>. This restriction
+pattern is joined with the pattern <span style="font-family: monospace;">?s ?p ?o</span>,
+which is also the only pattern in the Construct part of the generated
+SPARQL Construct query. This means that all the triples of
+the entities matching the restriction in the <span style="font-family: monospace;">pattern</span> element are collected.
+It is also possible to specify a graph with the <span style="font-family: monospace;">graphName</span> element and to
+restrict the number of imported triples with the <span style="font-family: monospace;">tripleLimit</span> element. All but
+the <span style="font-family: monospace;">endpointLocation</span> is
+optional.<span class="Apple-style-span" style="border-collapse: separate; color: rgb(0, 0, 0); font-family: 'Times New Roman'; font-style: normal; font-variant: normal; font-weight: normal; letter-spacing: normal; line-height: normal; orphans: 2; text-indent: 0px; text-transform: none; white-space: normal; widows: 2; word-spacing: 0px; font-size: medium;"><span class="Apple-style-span" style="border-collapse: collapse; font-family: Arial,Helvetica,'Liberation Sans',FreeSans,sans-serif; font-size: 12px; line-height: 18px; text-align: left;"></span></span>
+</p>
+<pre>&lt;importJob xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"<br>            xmlns="http://www4.wiwiss.fu-berlin.de/ldif/"&gt;<br>    &lt;internalId&gt;musicbrainz.3&lt;/internalId&gt;<br>    &lt;dataSource&gt;MusicBrainz_Talis&lt;/dataSource&gt;<br>    &lt;refreshSchedule&gt;monthly&lt;/refreshSchedule&gt;<br>    <span style="font-weight: bold;">&lt;sparqlImportJob&gt;</span><br>        &lt;endpointLocation&gt;http://api.talis.com/stores/musicbrainz/services/sparql&lt;/endpointLocation&gt;<br>        &lt;tripleLimit&gt;100000&lt;/tripleLimit&gt;<br>        &lt;sparqlPatterns&gt;<br>            &lt;pattern&gt;?s a &amp;lt;http://purl.org/ontology/mo/MusicArtist&amp;gt;&lt;/pattern&gt;<br>        &lt;/sparqlPatterns&gt;<br>    <span style="font-weight: bold;">&lt;/sparqlImportJob&gt;</span><br>&lt;/importJob&gt;<br></pre>
+<h4>Crawler Import<br>
+</h4>
+<p>A crawl import job is configured by specifying one or more seed URIs
+as starting points of the crawl, predicates that the crawler should
+follow to discover new resources and optionally the maximum number of
+levels to crawl, meaning the maximum distance to one of the seed URIs.
+Also optionally the maximum number of resources to crawl can be
+specified. Of each crawled resource all received triples are stored.<br>
+</p>
+<pre>&lt;importJob xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns="http://www4.wiwiss.fu-berlin.de/ldif/"&gt;
+    &lt;internalId&gt;freebase.0&lt;/internalId&gt;
+    &lt;dataSource&gt;Freebase&lt;/dataSource&gt;
+    &lt;refreshSchedule&gt;onStartup&lt;/refreshSchedule&gt;
+    <span style="font-weight: bold;">&lt;crawlImportJob&gt;</span>
+        &lt;seedURIs&gt;
+            &lt;uri&gt;http://rdf.freebase.com/ns/en.art_rock&lt;/uri&gt;
+        &lt;/seedURIs&gt;
+        &lt;predicatesToFollow&gt;
+            &lt;uri&gt;http://rdf.freebase.com/ns/music.genre.albums&lt;/uri&gt;
+            &lt;uri&gt;http://rdf.freebase.com/ns/music.genre.artists&lt;/uri&gt;
+        &lt;/predicatesToFollow&gt;
+        &lt;levels&gt;5&lt;/levels&gt;
+        &lt;resourceLimit&gt;50000&lt;/resourceLimit&gt;
+    <span style="font-weight: bold;">&lt;/crawlImportJob&gt;</span>
+&lt;/importJob&gt;</pre>
+<br>
+<h4 id="provenance">Provenance Metadata</h4>
+<p>The result of each import contains provenance metadata, whose
+structure is described by this <a href=" http://www.assembla.com/code/ldif/git/node/blob/master/ldif/ldif-core/src/main/resources/owl/provenance.owl">ontology</a>.
+<br>
+For each imported graph, provenance information will contain:
+</p>
+<ul>
+  <li>import date and time,</li>
+  <li>chosen import type,</li>
+  <li>number of imported quads,</li>
+  <li>original location (only for Quad and Triple Import Jobs).</li>
+</ul>
+<p>A typical provenance graph for a Crawl Import Job looks like this:</p>
+<img src="images/Freebase-Provenance.png" alt="Provenance graph">
+<p>A typical provenance graph for a Quad Import Job looks like this:</p>
+<pre>&lt;http://dbpedia.org/graphA&gt; &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#type&gt; &lt;http://www4.wiwiss.fu-berlin.de/ldif/ImportedGraph&gt; &lt;http://www4.wiwiss.fu-berlin.de/ldif/provenance&gt; .
+&lt;http://dbpedia.org/graphA&gt; &lt;http://www4.wiwiss.fu-berlin.de/ldif/hasImportJob&gt; _:dbpedia0 &lt;http://www4.wiwiss.fu-berlin.de/ldif/provenance&gt; .
+&lt;http://dbpedia.org/graphB&gt; &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#type&gt; &lt;http://www4.wiwiss.fu-berlin.de/ldif/ImportedGraph&gt; &lt;http://www4.wiwiss.fu-berlin.de/ldif/provenance&gt; .
+&lt;http://dbpedia.org/graphB&gt; &lt;http://www4.wiwiss.fu-berlin.de/ldif/hasImportJob&gt; _:dbpedia0 &lt;http://www4.wiwiss.fu-berlin.de/ldif/provenance&gt; .
+_:dbpedia0 &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#type&gt; &lt;http://www4.wiwiss.fu-berlin.de/ldif/ImportJob&gt; &lt;http://www4.wiwiss.fu-berlin.de/ldif/provenance&gt; .
+_:dbpedia0 &lt;http://www4.wiwiss.fu-berlin.de/ldif/importId&gt; "dBpedia.0" &lt;http://www4.wiwiss.fu-berlin.de/ldif/provenance&gt; .
+_:dbpedia0 &lt;http://www4.wiwiss.fu-berlin.de/ldif/lastUpdate&gt; "2011-09-21T19:01:00-05:00"^^&lt;http://www.w3.org/2001/XMLSchema#dateTime&gt; &lt;http://www4.wiwiss.fu-berlin.de/ldif/provenance&gt; .
+_:dbpedia0 &lt;http://www4.wiwiss.fu-berlin.de/ldif/hasDatasource&gt; "dBpedia" &lt;http://www4.wiwiss.fu-berlin.de/ldif/provenance&gt; .
+_:dbpedia0 &lt;http://www4.wiwiss.fu-berlin.de/ldif/hasImportType&gt; "quad" &lt;http://www4.wiwiss.fu-berlin.de/ldif/provenance&gt; .
+_:dbpedia0 &lt;http://www4.wiwiss.fu-berlin.de/ldif/numberOfQuads&gt; "23592"^^&lt;http://www.w3.org/2001/XMLSchema#nonNegativeInteger&gt; &lt;http://www4.wiwiss.fu-berlin.de/ldif/provenance&gt; .
+_:dbpedia0 &lt;http://www4.wiwiss.fu-berlin.de/ldif/hasOriginalLocation&gt; "http://mes.smw-lde-eu.s3.amazonaws.com/dBpedia_dump.nt.bz2" &lt;http://www4.wiwiss.fu-berlin.de/ldif/provenance&gt; .</pre>
+<h3 id="datasource">Data Source Configuration</h3>
+<p>A Data Source is configured with an XML document, whose structure is
+described by this <a href=" http://www.assembla.com/code/ldif/git/node/blob/master/ldif/ldif-core/src/main/resources/xsd/DataSource.xsd">XML
+Schema</a>. It contains human readable information about a data source.
+The <span style="font-family: monospace;">label</span> element should
+be a unique string in each integration use case, because it will be
+referenced by the <a href="#importjob">import jobs</a>.<br>
+</p>
+<pre>&lt;dataSource&gt;<br>    &lt;label&gt;DBpedia&lt;/label&gt;<br>    &lt;description&gt;DBpedia is an RDF version of Wikipedia&lt;/description&gt;<br>   &lt;homepage&gt;http://dbpedia.org&lt;/homepage&gt;<br>&lt;/dataSource&gt;<br></pre>
+<h2 id="quickstart">4. Quick start</h2>
+
+<p>This section explains you how to run the different versions of LDIF.</p>
+
+<h3 id="inmemoryquickstart">Single machine / In-memory</h3>
+<p>To see LDIF in action, please follow these steps:</p>
+<ul>
+  <li><a href="http://www4.wiwiss.fu-berlin.de/bizer/ldif/releases/ldif-0.5.zip">download</a>
+the latest release</li>
+  <li>unpack the archive and change into the extracted directory <tt>ldif-0.5</tt></li>
+  <li>run LDIF on the <a href="#example1">Music example</a></li>
+  <ul>
+    <li>under Linux / Mac OS type:</li>
+    <pre>bin/ldif examples/music/light/schedulerConfig.xml</pre>
+    <li>under Windows type:</li>
+    <pre>bin\ldif.bat examples\music\light\schedulerConfig.xml</pre>
+  </ul>
+</ul>
+<p>The example will run in about 3 minutes. Integration results will be
+written into <tt>integrated_music_light.nq</tt> in the working
+directory, containing both integrated data and <a href="#provenance">provenance metadata</a>. <br>
+Learn more about LDIF configuration by looking at the <a href="#scheduler">Schedule Job Configuration</a> (<tt>examples/music/light/schedulerConfig.xml</tt>)
+and the <a href="#integrationjob">Integration Job
+Configuration</a> (<tt>examples/music/light/integrationJob.xml</tt>) </p>
+
+<h3 id="rdfstorequickstart">Single machine / RDF Store<br>
+</h3>
+<p>To see LDIF running with a quad store (TDB) as backend, please follow these steps:</p>
+
+<ul>
+<li><a href="http://ldif.wbsg.de/releases/ldif-0.5.zip">download</a>
+the latest release</li><li>unpack the archive and change into the extracted directory <tt>ldif-0.5</tt></li><li>run LDIF on the <a href="#example1">Music example</a></li><ul><li>under Linux / Mac OS type:</li><pre>bin/ldif examples/music/light/schedulerConfigTDB.xml</pre>
+    </li>  <li>Windows: This should work under Windows with Cygwin, but has not been tested, yet. (TDB relies on the <a href="http://manpages.ubuntu.com/manpages/hardy/en/man1/sort.1.html">sort</a> program for bulk loading)<br>
+</li></ul>
+</ul>
+
+The configuration properties that need to be used are <code>quadStoreType</code> and <code>databaseLocation</code> (see the <a href="#configurationproperties">Configuration section</a> from more details).
+
+<p>The example will run in about 3 minutes. Integration results will be
+written into <tt>integrated_music_light.nq</tt> in the working
+directory, containing both integrated data and <a href="#provenance">provenance metadata</a>. <br>
+Learn more about LDIF configuration by looking at the <a href="#scheduler">Schedule Job Configuration</a> (<tt>examples/music/light/schedulerConfig.xml</tt>)
+and the <a href="#integrationjob">Integration Job
+Configuration</a> (<tt>examples/music/light/integrationJob.xml</tt>) </p>
+
+
+<h3 id="hadoopquickstart">Cluster / Hadoop</h3>
+<p>To see LDIF running on a Hadoop cluster, please follow these steps:</p>
+<ul>
+  <li>set up and configure a Hadoop (0.20.2) <a href="http://hadoop.apache.org/common/docs/current/cluster_setup.html">cluster</a> </li>
+   <li>ssh to a cluster node</li>
+  <ul><li><a href="http://ldif.wbsg.de/releases/ldif-hadoop-0.5.zip">download</a>
+the latest LDIF release</li>
+  <li>unpack the archive and change into the extracted directory <tt>ldif-hadoop-0.5</tt></li>
+  <li>run LDIF on the <a href="#example1">Music example</a></li>
+    <pre>hadoop jar lib/ldif-hadoop-0.5.jar scheduler examples/music/light/schedulerConfig.xml</pre>
+  </ul>
+</ul>
+
+<p>This will import the data sets as defined by the LDIF import jobs and copies them afterwards to the Hadoop file system. Integration results will be written into the <tt>/user/hduser/integrated_music_light.nq</tt> directory in the Hadoop distributed file system (HDFS).</li> You can check the content of this directory using the following command: <tt>hadoop dfs -ls /user/hduser/integrated_music_light.nq</tt></p>
+
+<p>Please note that most of the run time for this small use case is dominated by the Hadoop overhead.</p>
+
+<p>Besides running the scheduler as in the example above, single phases are also supported to run in isolation. There exist following possibilities:</p>
+<ul>
+    <li>run integration job only:</a>
+      <pre>hadoop jar lib/ldif-hadoop-*.jar integrate &lt;integrationJobConfigFile&gt;</pre></li>
+    <li>run R2R only:</a>
+      <pre>hadoop jar lib/ldif-hadoop-*.jar r2r &lt;local path to mappings&gt; &lt;input path&gt; &lt;output path&gt;</pre></li>
+    <li>run Silk only:</a>
+      <pre>hadoop jar lib/ldif-hadoop-*.jar silk &lt;local path to link spec.&gt; &lt;input path&gt; &lt;output path&gt;</pre></li>
+</ul>
+
+<p>Where <i>input path</i> is the (HDFS) path to the source data sets directory and <i>output path</i> is the location where on the (HDFS) file system the result should be written to.</p>
+
+<p>Learn more about Hadoop configuration by looking at our <a href="http://www.assembla.com/spaces/ldif/wiki/Benchmark">Benchmark</a> and <a href="http://www.assembla.com/spaces/ldif/wiki/Hadoop_troubleshooting">Troubleshooting</a> wiki pages.</p>
+
+<p>In order to have a cleaner console output, consider replacing the Hadoop default logging configuration (<tt>[HADOOP-HOME]/conf/log4j.properties</tt>) with our customized <a href =" http://www.assembla.com/code/ldif/git/node/blob/master/ldif/resources/hadoop_log4j.properties">log4j.properties</a> file.</p>
+
+<p>Here is a list of Hadoop configuration parameters that can be useful to tune when running LDIF with big datasets:</p>
+
+<table>
+    <tbody>
+    <tr>
+        <th> Parameter</th>
+        <th> Description</th>
+        <th> Recommended value</th>
+    </tr>
+    <tr class="odd">
+        <td>mapred.job.reuse.jvm.num.tasks</td>
+        <td>Reuse of a JVM across multiple tasks of the same job</td>
+        <td>-1</td>
+    </tr>
+
+    <tr class="even">
+        <td>mapred.min.split.size</td>
+        <td>The minimum size chunk that map input should be split into</td>
+        <td>268435456</td>
+    </tr>
+
+
+    <tr class="odd">
+        <td>mapred.map.child.java.opts</td>
+        <td>Specify the heap-size for the child jvms</td>
+        <td>-Xmx1G</td>
+    </tr>
+
+     <tr class="even">
+        <td>mapred.output.compress</td>
+        <td>Enable output compression</td>
+        <td>true</td>
+    </tr>
+        <tr class="odd">
+        <td>mapred.output.compression.type</td>
+        <td>How the compression is applied</td>
+        <td>BLOCK</td>
+    </tr>
+
+        <tr class="even">
+        <td>mapred.output.compression.code</td>
+        <td>The compression codec class that is used for compression/decompression</td>
+        <td>org.apache.hadoop.io.compress.GzipCodec</td>
+    </tr>
+
+    </tbody>
+</table>
+
+<h2 id="examples">5. Examples</h2>
+<br>
+This section presents two LDIF usage examples.<br>
+<ol>
+  <li>The <a href="#example1">Music example</a> shows how different
+music-related data
+sources are accessed using the LDIF Web data access components and
+integrated afterwards using the LDIF data translation and identity
+resolution modules.</li>
+  <li>The <a href="#example2">Life Science example</a> shows how LDIF
+is used to integrate several local RDF dumps of life science data sets.<br>
+  </li>
+</ol>
+<h3 id="example1">5.1 Using LDIF to integrate Data from the Music Domain</h3>
+<p>This example shows how LDIF is applied to integrate data describing
+musical artists, music albums, labels and genres from the following
+remote sources:</p>
+<ul>
+  <li><a href="http://dbpedia.org/">DBpedia</a></li>
+  <li><a href="http://rdf.freebase.com/">Freebase</a></li>
+  <li><a href="http://musicbrainz.dataincubator.org/">MusicBrainz</a>
+(at Talis)</li>
+  <li><a href="http://www.bbc.co.uk/music/artist/">BBC Music</a></li>
+</ul>
+<h4>Configurations</h4>
+<p>Each source is accessed via the appropriate access module. The
+DBpedia data set is downloaded, Freebase is crawled because of lack of
+other
+access possibilities, MusicBrainz and BBC Music are both accessed via
+SPARQL because no download of the data set is available and crawling is
+in general inferior, because you might not gather all the instances you
+are interested in.</p>
+The following import job configuration files are used for the different
+sources:<br>
+<ul>
+  <li>DBpedia <a href=" http://www.assembla.com/code/ldif/git/node/blob/master/ldif/examples/music/full/ImportJobs/DBpediaDumpImport.xml">Dump-Properties</a>,
+    <a href=" http://www.assembla.com/code/ldif/git/node/blob/master/ldif/examples/music/full/ImportJobs/DBpediaDumpImport_Types.xml">Dump-Types</a>
+  </li>
+  <li>Freebase <a href=" http://www.assembla.com/code/ldif/git/node/blob/master/ldif/examples/music/full/ImportJobs/FreebaseCrawlImport.xml">Crawl</a>
+  </li>
+  <li>MusicBrainz <a href=" http://www.assembla.com/code/ldif/git/node/blob/master/ldif/examples/music/full/ImportJobs/MusicBrainzSPARQLImport_MusicArtist.xml">Sparql-MusicArtist</a>,
+    <a href=" http://www.assembla.com/code/ldif/git/node/blob/master/ldif/examples/music/full/ImportJobs/MusicBrainzSPARQLImport_Label.xml">Sparql-Label</a>,
+    <a href=" http://www.assembla.com/code/ldif/git/node/blob/master/ldif/examples/music/full/ImportJobs/MusicBrainzSPARQLImport_Record.xml">Sparql-Record</a>
+  </li>
+  <li>BBC Music <a href=" http://www.assembla.com/code/ldif/git/node/blob/master/ldif/examples/music/full/ImportJobs/BBCSPARQLImportMusicArtist.xml">Sparql-MusicArtist</a>
+, <a href=" http://www.assembla.com/code/ldif/git/node/blob/master/ldif/examples/music/full/ImportJobs/BBCSPARQLImportRecord.xml">Sparql-Record</a>,
+    <a href=" http://www.assembla.com/code/ldif/git/node/blob/master/ldif/examples/music/full/ImportJobs/BBCSPARQLImportBirth.xml">Sparql-Birth</a>,
+    <a href=" http://www.assembla.com/code/ldif/git/node/blob/master/ldif/examples/music/full/ImportJobs/BBCSPARQLImportDeath.xml">Sparql-Death</a>
+  </li>
+</ul>
+<p>The following mapping file provides for translating the source data
+sets into our target vocabulary:</p>
+<ul>
+  <li>R2R mapping file: <a href=" http://www.assembla.com/code/ldif/git/node/blob/master/ldif/examples/music/full/mappings/mappings.ttl">mappings.ttl</a></li>
+</ul>
+<p>The target vocabulary is a mix of existing ontologies like FOAF,
+Music
+Ontology, Dublin Core, DBpedia etc. </p>
+<p>The following Silk identity resolution heuristics are used to find
+music artists, labels and albums that are described in multiple data
+sets:</p>
+<ul>
+  <li>Silk link specification: <a href=" http://www.assembla.com/code/ldif/git/node/blob/master/ldif/examples/music/full/linkspecs/musicLinkSpec.xml">musicLinkSpec.xml</a>
+  </li>
+</ul>
+<p> Music artist and record instances are integrated from all the
+sources. <br>
+Labels and genres are integrated only from fewer sources since not all
+of them provide this information.
+For example MusicBrainz does <a href="http://musicbrainz.org/doc/General_FAQ#Why_does_MusicBrainz_not_support_genre_information.3F">not
+support</a> genre information.</p>
+<h4>Execution instructions</h4>
+<p>In order to run the example, please download LDIF and run the
+following commands:</p>
+<ul>
+  <li>change into the LDIF root directory;</li>
+  <li>under Linux / Mac OS type:</li>
+  <pre>bin/ldif examples/music/full/schedulerConfig.xml</pre>
+  <li>under Windows type:</li>
+  <pre>bin\ldif.bat examples\music\full\schedulerConfig.xml</pre>
+</ul>
+<p>Please note that the execution of the import jobs can take about
+3 hours, mainly due to crawling, which is relatively slow compared
+to other access methods.</p>
+<p> It is also available a <i>light</i> version of the use case, which
+runs in less than 5 minutes:</p>
+<ul>
+  <li>change into the LDIF root directory;</li>
+  <li>under Linux / Mac OS type:</li>
+  <pre>bin/ldif examples/music/light/schedulerConfig.xml</pre>
+  <li>under Windows type:</li>
+  <pre>bin\ldif.bat examples\music\light\schedulerConfig.xml</pre>
+</ul>
+<h4>Output</h4>
+<p>
+The following graph shows a portion of the LDIF output describing Bob
+Marley:
+</p>
+<img src="images/Bob-Marley-graphs.png" alt="LDIF output for music use case">
+<h3 id="example2">5.2 Using LDIF to integrate Life Science Data</h3>
+<p>This example shows how LDIF is applied to integrate data originating
+from five Life Science sources. </p>
+<p>The example is taken from a joint project with <a href="http://www.vulcan.com">Vulcan Inc</a>.
+and <a href="http://www.ontoprise.de">ontoprise GmbH</a> about
+extending <a href="http://www.wiwiss.fu-berlin.de/en/institute/pwo/bizer/research/publications/BeckerBizerErdmannGreaves-SMW-LDE-Poster-ISWC2010.pdf">Semantic
+Media Wiki+ with a Linked Data Integration Framework</a>. <br>
+<br>
+In this example, the following data sources are translated into a
+common <a href=" http://www.assembla.com/code/ldif/git/node/blob/master/ldif/site/resources/resources/Wiki.owl">Wiki ontology</a>:</p>
+<ul>
+  <li><a href="http://mouse.brain-map.org/">Allen Mouse Brain Atlas</a>
+is a growing collection of online public resources integrating
+extensive gene expression and neuroanatomical data. </li>
+  <li><a href="http://www.genome.jp/kegg/genes.html">KEGG GENES</a>, a
+collection of gene catalogs for all complete genomes generated from
+publicly available resources, mostly NCBI RefSeq</li>
+  <li><a href="http://www.genome.jp/kegg/pathway.html">KEGG Pathway</a>,
+a collection of pathway maps representing knowledge on the molecular
+interaction and reaction networks</li>
+  <li><a href="http://pharmgkb.org/">PharmGKB</a>, which provides data
+on gene information, disease and drug pathways, and SNP variants</li>
+  <li><a href="http://www.uniprot.org/">Uniprot</a>, which provides
+information on protein sequence and function </li>
+</ul>
+<h4>Configurations</h4>
+<p>A subset of these datasets can be found in the sub-directory <span style="font-family: monospace;">examples/life-science/sources</span>
+of the LDIF release.<br>
+</p>
+<p>The following mapping file provides for translating the vocabularies
+used by the source data sets into the Wiki ontology. </p>
+<ul>
+  <li>R2R mapping file: <a href=" http://www.assembla.com/code/ldif/git/node/blob/master/ldif/examples/life-science/mappings/ALL-to-Wiki.r2r.ttl">ALL-toWiki.r2r.ttl</a>
+    <span style="text-decoration: underline;"></span></li>
+</ul>
+<p>The following Silk identity resolution heuristics are used to find
+genes and other expressions that are described in multiple data sets.</p>
+<ul>
+  <li><a href=" http://www.assembla.com/code/ldif/git/node/blob/master/ldif/examples/life-science/linkSpecs/genes.xml">genes.xml</a>,</li>
+  <li><a href=" http://www.assembla.com/code/ldif/git/node/blob/master/ldif/examples/life-science/linkSpecs/diseases.xml">diseases.xml</a>,</li>
+  <li><a href=" http://www.assembla.com/code/ldif/git/node/blob/master/ldif/examples/life-science/linkSpecs/pathways.xml">pathways.xml</a></li>
+</ul>
+<p>To run the example, please download LDIF and use the following LDIF
+configuration. The configuration options are explained in the Section <a href="#configuration">Configuration</a> below. <br>
+</p>
+<ul>
+  <pre>&lt;integrationJob&gt;
+    &lt;properties&gt;life-science.properties&lt;/properties&gt;
+    &lt;sources&gt;
+        &lt;source&gt;sources&lt;/source&gt;
+    &lt;/sources&gt;
+    &lt;linkSpecifications&gt;linkSpecs&lt;/linkSpecifications&gt;
+    &lt;mappings&gt;mappings&lt;/mappings&gt;
+    &lt;outputs&gt;
+        &lt;output&gt;
+            &lt;file&gt;output.nq&lt;/file&gt;
+        &lt;/output&gt;
+    &lt;/outputs&gt;
+&lt;/integrationJob&gt;</pre>
+</ul>
+<h4>Execution instructions</h4>
+<ul>
+  <li>Change into the LDIF root directory.</li>
+  <li>under Linux / Mac OS type:</li>
+  <ul>
+    <pre>bin/ldif-integrate examples/life-science/integration-config.xml</pre>
+  </ul>
+  <li>under Windows type:</li>
+  <ul>
+    <pre>bin\ldif-integrate.bat examples\life-science\integration-config.xml</pre>
+  </ul>
+</ul>
+<h4>Examples of data translation </h4>
+<p>In the following, we explain the data translation that is performed
+for the example of one entity that is described in two input data sets:</p>
+<ul>
+  <li><strong>Example <span style="font-style: italic;">input</span> </strong>(reduced
+to two source data sets, represented using the <a href="http://www4.wiwiss.fu-berlin.de/bizer/TriG/">TriG Syntax</a>):<br>
+  </li>
+</ul>
+<pre style="margin-left: 40px;">01:  @prefix aba-voc: &lt;http://brain-map.org/gene/0.1#&gt; .<br>02:  @prefix rdfs: &lt;http://www.w3.org/2000/01/rdf-schema#&gt; .<br>03:  @prefix uniprot: &lt;http://purl.uniprot.org/core/&gt; . <br>04: &nbsp;<br>05:  &lt;file:///aba_mouse_20101010_1000.nq&gt; {<br>06:    &lt;http://brain-map.org/mouse/brain/Oprk1.xml&gt; aba-voc:entrezgeneid "<span style="font-weight: bold;">18387</span>" ;<br>07:      aba-voc:gene-aliases _:Ab12290 .<br>08:   _:Ab12290 &lt;http://brain-map.org/gene/0.1#aliassymbol&gt; "<span style="font-weight: bold;">Oprk1</span>" .<br>09:  }<br>10:<br>11:  &lt;file:///datasets/uniprot-organism-human-reviewed-complete_1000.nq&gt; {<br>12:    &lt;http://purl.uniprot.org/uniprot/P61981&gt; rdfs:seeAlso &lt;http://purl.uniprot.org/geneid/<span style="font-weight: bold;">18387</span>&gt; .<br>13:    &lt;http://purl.uniprot.org/geneid/<span style="font-weight: bold;">18387</span>&gt; uniprot:database "GeneID" .<br>14:    &lt;http://purl.uniprot.org/uniprot/P61981&gt; uniprot:encodedBy &lt;file:///storage/datasets/uniprot-organism-human-reviewed-complete.rdf#_503237333438003B&gt; .<br>15:  }<br></pre>
+<ul>
+  <li><strong>Example <span style="font-style: italic;">output</span> :</strong><br>
+  </li>
+</ul>
+<pre style="margin-left: 40px;">01: @prefix smwprop: &lt;http://mywiki/resource/property/&gt; .<br>02: @prefix xsd: &lt;http://www.w3.org/2001/XMLSchema#&gt; .<br>03: <br>04: &lt;file:///aba_mouse_20101010_1000.nq&gt; {<br>05:  &nbsp;&lt;http://brain-map.org/mouse/brain/Oprk1.xml&gt; smwprop:EntrezGeneId "<span style="font-weight: bold;">18387</span>"^^xsd:int .<br>06:  &nbsp;&lt;http://brain-map.org/mouse/brain/Oprk1.xml&gt; smwprop:GeneSymbol "<span style="font-weight: bold;">Oprk1</span>"^^xsd:string .<br>07: }<br>08: <br>09: &lt;file:///datasets/uniprot-organism-human-reviewed-complete_1000.nq&gt; {<br>10:   &lt;http://brain-map.org/mouse/brain/Oprk1.xml&gt; smwprop:EntrezGeneId "<span style="font-weight: bold;">18387</span>"^^xsd:int .<br>11:   &lt;http://brain-map.org/mouse/brain/Oprk1.xml&gt; <span style="font-family: monospace;">owl:sameAs </span><span style="font-family: monospace;">&lt;file:///storage/datasets/uniprot-organism-human-reviewed-complete.rdf#_503237333438003B&gt; .</span><br>12: }<br></pre>
+<p>The example input and output needs some explanation:</p>
+<ul>
+  <li>There are two source graphs, each containing data from a
+different source: ABA (input: line 5 to 9) and Uniprot (input: line 11
+to 15).</li>
+</ul>
+<p>Identity resolution: </p>
+<ul>
+  <li>Both graphs contain data about the same entity:</li>
+  <ul>
+    <li>In the ABA data set the entity is identified using the URI <span style="font-family: monospace;">&lt;http://brain-map.org/mouse/brain/Oprk1.xml&gt;
+      </span>(input: line 6)</li>
+    <li>In the Uniprot data set the entity is identified using the URI <span style="font-family: monospace;"></span><br>
+      <span style="font-family: monospace;">&lt;file:///storage/datasets/uniprot-organism-human-reviewed-complete.rdf#_503237333438003B&gt;</span>
+(input: line 14)</li>
+  </ul>
+  <li>Since the Silk identity resolution heuristic concludes that both
+URIs identify the same entity, the both URIs are replaced in the output
+with a single URI (in this case the ABA one, output: lines 5, 6 and 10).</li>
+  <li>The rewritten URI is linked by <span style="font-family: monospace;">owl:sameAs</span> to the original URI
+(output: line 11).<br>
+  </li>
+</ul>
+<p>Data Translation: </p>
+<ul>
+  <li>In the target vocabulary Entrez Gene IDs should be
+represented using the smwprop:EntrezGeneId property. Property values
+should be represented as xsd:Integers. </li>
+  <li>Thus, the
+aba-voc:entrezgeneid triple in the first graph (line 6) is translated
+into a smwprop:EntrezGeneId triple in the output data (line 5) and a
+datatype URI is added to the literal. </li>
+  <li>The
+smwprop:GeneSymbol triple in line 6 of the output is generated by a
+structural transformation out of the two triples in lines 7 and 8 of
+the input data. </li>
+  <li>In the Uniprot case the <span style="font-family: monospace;">smwprop:EntrezGeneId</span>
+value was extracted from the URI string <span style="font-family: monospace;">&lt;http://purl.uniprot.org/geneid/18387&gt;
+    </span><span style="font-family: sans-serif;">(input: line 12)</span><span style="font-family: monospace;"><span style="font-family: sans-serif;">.
+    </span></span></li>
+  <li>The quad with the property <span style="font-family: monospace;">smwprop:EntrezGeneId</span>
+on line 10 in the output was produced by a complex mapping that had to
+consider all three quads of the input (lines 12-14).<br>
+  </li>
+</ul>
+<p>Data Fusion: </p>
+<ul>
+  <li>The specification for Sieve defines that only one value for the property <span style="font-family: monospace;">smwprop:EntrezGeneId</span> should be picked. As fusion function we picked <i>KeepFirst</i>, which just chooses the first value it sees for each entity. This means that only one of the quads in the output lines 5 and 10 would show up in the target data set, which in this case would result in the same value.</li>
+</ul>
+<h2 id="performance">6. Performance Evaluation</h2>
+<p>We regularly carry out performance evaluations. For more
+details and the latest results please visit our <a href="http://www.assembla.com/spaces/ldif/wiki/Benchmark">Benchmark results</a> page.</p>
+<h2 id="development">7. Source
+Code and Development</h2>
+<p>The latest source code is available from the <a href="http://www.assembla.com/spaces/ldif/wiki">LDIF development page</a>
+on Assembla.com.</p>
+<p>The framework can be used under the terms of the <a href="http://www.apache.org/licenses/LICENSE-2.0">Apache Software
+License</a>.
+</p>
+<h2 id="history">8. Version history </h2>
+<p>
+</p>
+<table>
+  <tbody>
+    <tr>
+      <th> Version</th>
+      <th> Release log</th>
+      <th> Date</th>
+    </tr>
+    <tr class="even">
+        <td> 0.5</td>
+        <td>
+            Data Quality Assessment and Fusion module<br/>
+            REST based status monitor<br/>
+            Output module: QuadStore and intermediate results output are now supported <br/>
+            Data Access Module: RDF/XML and Turtle formats are now supported <br/>
+            More flexible Integration workflow: single phases can now be executed or skipped <br/>
+        </td>
+        <td> 03/28/2012</td>
+    </tr>
+    <tr class="odd">
+      <td> 0.4</td>
+      <td>Added two new implementations of the runtime environment:<br/>
+1. The triple store backed implementation scales to larger data sets on a
+single machine <br/>
+2. The Hadoop-based implementation allows you to run LDIF on clusters with
+multiple machines <br/>
+      </td>
+      <td> 01/10/2012</td>
+    </tr>
+    <tr class="even">
+      <td> 0.3</td>
+      <td>Access module support (data set dump, SPARQL, crawling)<br>
+Scheduler for running import and integration tasks automatically<br>
+Configuration file XML schemas for validation<br>
+URI minting<br>
+Second use case from the music domain<br>
+      </td>
+      <td> 10/06/2011</td>
+    </tr>
+    <tr class="odd">
+      <td> 0.2</td>
+      <td> R2R data translation tasks are now executed in parallel <br>
+Perform source syntax validation before loading data (optional) <br>
+Support for external sameAs links <br>
+RDF/N-Triples data output module <br>
+Support for bzip2 source compression <br>
+Improved loading performance <br>
+Memory usage improvements: caching factum rows and string interning
+only for relevant data </td>
+      <td> 8/25/2011</td>
+    </tr>
+    <tr class="even">
+      <td> 0.1</td>
+      <td> Intial release of LDIF</td>
+      <td> 6/29/2011</td>
+    </tr>
+  </tbody>
+</table>
+<h2 id="feedback">9. Support and Feedback </h2>
+<p>For questions and feedback please use the <a href="http://groups.google.com/group/ldif?hl=en">LDIF Google Group</a>.
+</p>
+<h2 id="references">10. References</h2>
+
+<ol>
+    <li>Christian Becker: How to integrate Linked Data into your application ( <a href="http://www.wiwiss.fu-berlin.de/en/institute/pwo/bizer/research/publications/Becker-etal-LDIF-SemTechSanFrancisco.pdf">Slides</a> ). Semantic Technology & Business Conference, San Francisco, June 2012.</li>
+    <li>Andreas Schultz, Andrea Matteini, Robert Isele, Pablo Mendes, Christian Bizer, Christian Becker: <a href="http://www.wiwiss.fu-berlin.de/en/institute/pwo/bizer/research/publications/Schultz-et-al-LDIF-WWW2012-DevTrack.pdf">LDIF - A Framework for Large-Scale Linked Data Integration</a>. 21st International World Wide Web Conference (WWW2012), Developers Track. Lyon, France, April 2012.</li>
+
+<pre>@inproceedings{www12schultz,
+       booktitle = {21st International World Wide Web Conference (WWW2012), Developers Track},
+           month = {April},
+           title = {{LDIF - A Framework for Large-Scale Linked Data Integration}},
+          author = {Schultz, Andreas and Matteini, Andrea and Isele, Robert and Mendes, Pablo N. and Bizer, Christian and Becker, Christian} 
+            year = {2012},
+           pages = {to appear}
+}
+    </pre>
+    <li>Pablo N. Mendes, Hannes Mühleisen, Christian Bizer: <a href="http://www.wiwiss.fu-berlin.de/en/institute/pwo/bizer/research/publications/Mendes-Muehleisen-Bizer-Sieve-LWDM2012.pdf">Sieve: Linked Data Quality Assessment and Fusion</a>. 2nd International Workshop on Linked Web Data Management (LWDM 2012) at the 15th International Conference on Extending Database Technology (EDBT 2012), Berlin, March 2012.</li>
+	<li>Christian Becker, Andrea Matteini: LDIF - Linked Data Integration Framework ( <a href="http://www.wiwiss.fu-berlin.de/en/institute/pwo/bizer/research/publications/BeckerMatteini-LDIF-SemTechBerlin2012-Talk.pdf">Slides</a> ). SemTechBiz 2012, Berlin, February 2012.</li>
+  <li>Andreas Schultz, Andrea Matteini, Robert Isele, Christian Bizer,
+Christian Becker: <a href="http://www.wiwiss.fu-berlin.de/en/institute/pwo/bizer/research/publications/Schultz-etal-Cold2011-LDIF-Paper.pdf">LDIF
+- Linked Data Integration Framework</a>. 2nd International Workshop on
+Consuming Linked Data, Bonn, Germany, October 2011.</li>
+<li>William
+	Smith, Christian Becker and Andreas Schultz: Neurowiki: How we
+	integrated large datasets into SMW with R2R and Silk / LDIF ( Slides <a href="http://semantic-mediawiki.org/w/images/a/ac/SMWCon_2011_Neurowiki_Presentation.pdf">part
+	1</a>, <a href="http://semantic-mediawiki.org/w/images/b/b7/SMWCon_2011_Neurowiki_Becker_Schultz.pdf">part
+	2</a> ). SMWCon Fall 2011, Berlin, September 2011.</li>
+  <li>Tom Heath, Christian Bizer: <a href="http://www.morganclaypool.com/doi/abs/10.2200/S00334ED1V01Y201102WBE001">Linked
+Data: Evolving the Web into a Global Data Space</a>. Synthesis
+Lectures on the Semantic Web: Theory and Technology, Morgan &amp;
+Claypool Publishers, ISBN <a href="http://www.amazon.com/Linked-Data-Synthesis-Lectures-Engineering/dp/1608454304/ref=sr_1_1?ie=UTF8&amp;s=books&amp;qid=1297846088&amp;sr=8-1">978160845431</a>,
+2011 ( <a href="http://linkeddatabook.com/">Free HTML version</a> ).</li>
+  <li>Christian Bizer, Andreas Schultz: <a href="http://www.wiwiss.fu-berlin.de/en/institute/pwo/bizer/research/publications/BizerSchultz-COLD-R2R-Paper.pdf">The
+R2R Framework: Publishing and Discovering Mappings on the Web</a> ( <a href="http://www.wiwiss.fu-berlin.de/en/institute/pwo/bizer/research/publications/BizerSchultz-COLD-R2R-Talk.pdf">Slides</a>
+). 1st International Workshop on Consuming Linked Data (COLD
+2010), Shanghai, November 2010. </li>
+  <li>Robert Isele, Anja Jentzsch, Christian Bizer: <a href="http://www.wiwiss.fu-berlin.de/en/institute/pwo/bizer/research/publications/IseleJentzschBizer-Silk-Cold2010.pdf">Silk
+Server - Adding missing Links while consuming Linked Data</a> ( <a href="http://www.wiwiss.fu-berlin.de/en/institute/pwo/bizer/research/publications/IseleJentzschBizer-Silk-Cold2010-Talk.pdf">Slides</a>
+). 1st International Workshop on Consuming Linked Data (COLD
+2010), Shanghai, November 2010.</li>
+  <li>Julius Volz, Christian Bizer, Martin Gaedke, Georgi Kobilarov: <a href="http://www.wiwiss.fu-berlin.de/en/institute/pwo/bizer/research/publications/VolzBizerGaedkeKobilarov-ISWC2009-Silk.pdf">Discovering
+and Maintaining Links on the Web of Data</a> ( <a href="http://www.wiwiss.fu-berlin.de/en/institute/pwo/bizer/research/publications/VolzBizerGaedkeKobilarov-ISWC2009-Silk-Talk.pdf">Slides</a>
+). International Semantic Web Conference (ISWC2009),
+Westfields, USA, October 2009. </li>
+</ol>
+<h2 id="acknowledgments">11. Acknowledgments </h2>
+<p>This work was supported in part by Vulcan Inc. as part of its <a href="http://www.projecthalo.com">Project Halo</a> and by the EU FP7
+project <a href="http://lod2.eu">LOD2 - Creating Knowledge out of
+Interlinked Data</a> (Grant No. 257943). </p>
+<p>WooFunction icon set licensed under <a href="http://www.gnu.org/licenses/gpl.html">GNU General Public License</a>.</p>
+</div>
+
+</body>
 </html>
