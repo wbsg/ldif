@@ -4,7 +4,7 @@
   <title>LDIF – Linked Data Integration Framework</title>
  
   <style>
-body { background: white; color: black; font-family: sans-serif; line-height: 1.4em; padding: 3em 12em 3em 12em; margin: 0; }
+body { background: white; color: black; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; line-height: 1.4em; padding: 3em 12em 3em 12em; margin: 0; }
 :link, :visited { color: #00c; }
 a:link img { border: none; }
 a:visited img { border: none; }

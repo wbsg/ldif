@@ -1,0 +1,415 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html><head><title>LDIF - Benchmark Results</title>
+
+
+
+    
+    <style>
+        body { background: white; color: black; font-family: sans-serif; line-height: 1.4em; padding: 2.5em 3em; margin: 0; }
+        :link { color: #00c; }
+        :visited { color: #609; }
+        a:link img { border: none; }
+        a:visited img { border: none; }
+        h1, h2, h3 { background: white; color: #800; }
+        h1 { font: 170% sans-serif; margin: 0; }
+        h2 { clear: both; font: 140% sans-serif; margin: 1.5em 0 -0.5em 0; padding-top: 1.5em; border-top: 1px solid #ccc;}
+        h3 { font: 115% sans-serif; margin: 1.5em 0 -0.5em 0; }
+        h4 { font: bold 100% sans-serif; }
+        h5 { font: italic 100% sans-serif; }
+        h6 { font: small-caps 100% sans-serif; }
+        .hide { display: none; }
+        pre { background: #fff6bb; font-family: monospace; line-height: 1.2em; padding: 1em 2em; }
+        dt { font-weight: bold; margin-top: 0; margin-bottom: 0; }
+        dd { margin-top: 0; margin-bottom: 0; }
+        code, tt { font-family: monospace; }
+        ol.toclist li a { text-decoration: none; }
+        .note { color: red; }
+        #header { border-bottom: 1px solid #ccc; }
+        #logo { float: right; }
+        #authors { clear: right; float: right; font-size: 80%; text-align: right;}
+        #toc {  float: left; }
+        #content { clear: both; margin: 2em auto 0 0; text-align: justify }
+        #download h2, #demo h2 { font-size: 125%; margin: 1.5em 0 -0.2em 0; }
+        #download small, #demo small { color: #888; font-size: 80%; }
+        #footer { border-top: 1px solid #ccc; color: #aaa; margin: 2em 0 0; }
+        @media Print {
+            * { font-size: 92%; }
+            body { padding: 0; line-height: 1.2em; }
+            #content { margin: 0; width: 100%; }
+        }
+        @media Aural {
+            h1 { stress: 20; richness: 90; }
+            h2 { stress: 20; richness: 90; }
+            h3 { stress: 20; richness: 90; }
+            .hide { speak: none; }
+            dt { pause-before: 20%; }
+            pre { speak-punctuation: code; }
+        }
+        .Stil1 {color: #FF0000}
+        table {border-collapse: collapse; margin-bottom: .75em; border-top: 1px solid #D4DCE8; border-bottom: 1px solid #D4DCE8}
+        table th {text-align: right; background: #EAF3FA; padding: .5em .9em; height: 21px; font-weight: bold; font-size: 1em; color: #333}
+        table th a {text-decoration: none !important}
+        table td {vertical-align: top; text-align: right; padding: .5em 1em; border-bottom: 1px solid #eee}
+        table tr.even {background-color: #fff}
+        table tr.odd {background-color: #f6f6f6}
+    </style>
+
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"></head>
+
+<body>
+
+<div id="logo" align="right"><a href="http://wbsg.de">
+    <img src="images/fu-logo.gif" alt="Freie Universität Berlin Logo" border="0"></a><br/>
+    <a href="http://mes-semantics.com">
+        <img src="images/mes-semantics.png" alt="mes|semantics"></a>
+</div>
+
+<div id="header">
+    <h1 style="font-size: 250%;">LDIF - Benchmark Results<br></h1>
+</div>
+
+<div id="authors">
+    <a href="http://www.wiwiss.fu-berlin.de/en/institute/pwo/bizer/team/SchultzAndreas.html">Andreas Schultz</a><br>
+    <a href="mailto:a.matteini@mes-semantics.com">Andrea Matteini</a><br>
+    <a href="http://www.wiwiss.fu-berlin.de/en/institute/pwo/bizer/team/IseleRobert.html">Robert Isele</a><br>
+    <a href="http://www.wiwiss.fu-berlin.de/en/institute/pwo/bizer/team/BizerChristian.html">Chris Bizer</a><br>
+    <a href="mailto:c.becker@mes-semantics.com">Christian Becker</a><br>
+</div>
+
+<div id="toc">
+<h2 id="contents">Contents</h2>
+<ul class="toclist">
+    <li><a href="#intro">Introduction</a></li>
+    <li><a href="#machine">Benchmark Machine</a></li>
+    <li><a href="#procedure">Test Procedure</a></li>
+    <li><a href="#useCaseA">Use Case A</a></li>
+    <ul>
+    <li><a href="#datasetsA">Datasets</a></li>
+    <li><a href="#mappingsA">Mappings</a></li>
+    <li><a href="#linkspecsA">Link Specififcation</a></li>
+    <li><a href="#resultsA">Results</a></li>
+    </ul>
+    <li><a href="#useCaseB">Use Case B</a></li>
+    <ul>
+    <li><a href="#datasetsB">Datasets</a></li>
+    <li><a href="#mappingsB">Mappings</a></li>
+    <li><a href="#linkspecsB">Link Specififcation</a></li>
+    <li><a href="#resultsB">Results</a></li>
+    </ul>
+
+</ul>
+</div>
+
+<h2 id="intro"><a name="intro"></a>Introduction<br></h2>
+<p> This page presents a performance evaluation for <a href="http://ldif.wbsg.de">LDIF</a> using life science use cases.</p>
+
+<p>The following data sources have been used to evaluate the performance of LDIF:</p>
+<ul>
+  <li><a href="http://mouse.brain-map.org/">Allen Mouse Brain Atlas</a>  is a growing
+      collection of online public resources integrating extensive gene
+      expression and neuroanatomical data. </li>
+  <li><a href="http://www.genome.jp/kegg/genes.html">KEGG GENES</a>,
+        a collection of gene catalogs for all complete genomes generated from
+        publicly available resources</li>
+  <li><a href="http://www.genome.jp/kegg/pathway.html">KEGG Pathway</a>,
+            a collection of pathway maps representing knowledge on the molecular
+          interaction and reaction networks</li>
+  <li><a href="http://pharmgkb.org/">PharmGKB</a>, which provides
+          data on gene information, disease and drug pathways, and SNP variants</li>
+  <li><a href="http://www.uniprot.org/">Uniprot</a>, a dataset containing protein sequence, genes and function</li>
+  </ul>
+
+
+<h2><a name="machine"></a>Benchmark Machine<br></h2>
+<p>We used a machine with the following specification for the benchmark experiments:</p>
+
+<h3>Hardware:</h3>
+<ul>
+  <li>Processors: Intel i7 950, 3.07GHz (quadcore)</li>
+  <li>Memory: 24GB</li>
+  <li>Hard Disks: 2 × 1.8TB (7,200 rpm) SATA2</li>
+</ul>
+
+<h3>Software:</h3>
+<ul>
+  <li>Operating System: Ubuntu 11.04 64-bit, Kernel: 2.6.38-10</li>
+  <li>Java version: 1.6.0_22</li>
+</ul>
+
+<h2><a name="procedure"></a>Test Procedure<br></h2>
+<p>We applied the following test procedure to each test:</p>
+<ol>
+	<li>Clear Operating System caches
+        <pre> echo 2 &gt; /proc/sys/vm/drop_caches </pre></li>
+	<li>Run test
+        <pre> java -server -Xmx20G -jar ldif-0.1-single-machine.jar </pre></li>
+</ol>
+
+
+
+<h2 id="useCaseA"> Use case A</h2>
+ <p> In this use case, we evaluated
+the performance of LDIF applied to integrate data originating from the
+five life science sources described above and translate those into a
+common <a href="resources/Wiki.owl">target vocabulary</a>.</p>
+
+<h3><a name="datasetsA"></a> Datasets</h3>
+<p>In order to measure the performance at different scale we used
+several samples of the input data which differ in the amount of
+resources (1, 10 and 100 thousand) for each data source.<br>
+For this use case we extracted only data of human (Homo sapiens, hsa) and mouse (Mus musculus, mmu) species. </p>
+<p>Details about the benchmark datasets are summarized in the following table:   </p>
+<table>
+    <tbody><tr>
+        <td><br>
+</td>
+        <th> 1 K</th>
+        <th> 10 K</th>
+        <th> 100 K</th>
+    </tr>
+    <tr>
+        <th>Number of input quads</th>
+        <td> 1,090,078 </td>
+        <td> 7,632,762 </td>
+        <td> 23,927,642 </td>
+    </tr>
+    <tr>
+        <th>Overall file size</th>
+        <td> 195 MB</td>
+        <td> 1.4 GB </td>
+        <td> 4.7 GB </td>
+    </tr>
+     <tr>
+        <th>Download link</th>
+        <td> <a href="http://ldif.wbsg.de/resources/usecases/1k.zip">1k.zip</a> </td>
+        <td> <a href="http://ldif.wbsg.de/resources/usecases/10k.zip">10k.zip</a> </td>
+        <td> <a href="http://ldif.wbsg.de/resources/usecases/100k.zip">100k.zip</a> </td>
+    </tr>
+</tbody></table>
+
+<h3><a name="mappingsA"></a> Mappings</h3>
+ <p>We defined <a href="http://www.assembla.com/code/ldif/git/nodes/ldif/ldif-singlemachine/src/main/resources/ldif/local/example/test2/mappings/ALL-to-Wiki.r2r.ttl?rev=176428845b9594e28a2f0362916de23cc821502c">R2R mappings</a> for translating vocabularies used by the source datasets into the target vocabulary.</p>
+
+<h3><a name="linkspecsA"></a>Link Specifications</h3>
+ <p>The following
+Silk identity resolution heuristics are used to find genes and other
+expressions that are described in multiple datasets.</p>
+<ul>
+      <li><a href="http://www.assembla.com/code/ldif/git/nodes/ldif/ldif-singlemachine/src/main/resources/ldif/local/example/test2/linkSpecs/ABA-to-Wiki.silk.xml?rev=176428845b9594e28a2f0362916de23cc821502c">ABA-to-Wiki.silk.xml</a>, </li>
+      <li><a href="http://www.assembla.com/code/ldif/git/nodes/ldif/ldif-singlemachine/src/main/resources/ldif/local/example/test2/linkSpecs/KEGG-GENES-to-Wiki.silk.xml?rev=176428845b9594e28a2f0362916de23cc821502c">KEGG-GENES-to-Wiki.silk.xml</a>, </li>
+      <li><a href="http://www.assembla.com/code/ldif/git/nodes/ldif/ldif-singlemachine/src/main/resources/ldif/local/example/test2/linkSpecs/KEGG-Pathway-to-Wiki.silk.xml?rev=176428845b9594e28a2f0362916de23cc821502c">KEGG-Pathway-to-Wiki.silk.xml</a>, </li>
+      <li><a href="http://www.assembla.com/code/ldif/git/nodes/ldif/ldif-singlemachine/src/main/resources/ldif/local/example/test2/linkSpecs/PharmGKB-to-Wiki.silk.xml?rev=176428845b9594e28a2f0362916de23cc821502c">PharmGKB-to-Wiki.silk.xml</a>, </li>
+      <li><a href="http://www.assembla.com/code/ldif/git/nodes/ldif/ldif-singlemachine/src/main/resources/ldif/local/example/test2/linkSpecs/Uniprot-to-Wiki.silk.xml?rev=176428845b9594e28a2f0362916de23cc821502c">Uniprot-to-Wiki.silk.xml</a></li>
+    </ul>
+
+<h3><a name="resultsA"></a>Results<br></h3>
+
+<p>The following table summarizes the LDIF run times for the different dataset sizes.
+    The overall run time is split according to the different processing steps of the integration process. </p>
+ <table>
+    <tbody><tr>
+        <td><br>
+</td>
+        <th> 1 K</th>
+        <th> 10 K</th>
+        <th> 100 K</th>
+    </tr>
+    <tr>
+        <th>Load and build entities for R2R</th>
+        <td> 5.2 sec</td>
+        <td> 47.4 sec</td>
+        <td> 111.7 sec</td>
+    </tr>
+    <tr>
+        <th>R2R data translation</th>
+        <td> 3.4 sec</td>
+        <td> 12.9 sec</td>
+        <td> 92.4 sec</td>
+    </tr>
+    <tr>
+        <th>Build entities for Silk</th>
+        <td> 1.2 sec</td>
+        <td> 6.9 sec</td>
+        <td> 45.0 sec</td>
+    </tr>
+    <tr>
+        <th>Silk Identity Resolution</th>
+        <td> 7.0 sec</td>
+        <td> 45.5 sec</td>
+        <td> 293.7 sec</td>
+    </tr>
+    <tr>
+        <th>Final URI rewriting</th>
+        <td> 0.4 sec</td>
+        <td> 1.9 sec</td>
+        <td> 12.4 sec</td>
+    </tr>
+    <tr class="odd">
+        <th>Overall execution time</th>
+        <td> 20.5 sec</td>
+        <td> 124.3 sec</td>
+        <td> 9.9 min</td>
+    </tr>
+</tbody></table>
+
+
+<h2 id="useCaseB"> Use case B</h2>
+
+<p>In this use case, we evaluated the performance of LDIF integrating two larger life science datasets and translate those into a
+common <a href="resources/Wiki.owl">target vocabulary</a>.</p>
+
+<h3><a name="datasetsB"></a>Datasets<br></h3>
+
+<p> For this use case we used only KEGG GENES and UniProt datasets.
+There is a huge difference in dataset size between the two datasets.
+Converted to N-Triples the complete KEGG GENES dump is about 28GB in
+size whereas the UniProt dataset contains over 400GB worth of data.
+Because of this size mismatch we extracted only data of five different
+species from UniProt: bos taurus (cattle), canis familiaris (dog),
+danio rerio (zebrafish), drosophila melanogaster (fruitfly) and sus
+scrofa (pig).</p>
+
+<p>For the test, we generated subsets of both data sources amounting
+together to 25 million, 50 million and 100 million RDF triples. </p>
+
+<p>Details about the benchmark datasets are summarized in the following
+table. It provides statistics about the data integration process for
+each dataset. The original number of input triples decreases in the
+process as LDIF discards input triples which are irrelevant for the
+defined mappings, and therefore can not be translated into the target
+vocabulary. The number decreases again after the actual translation, as
+the input data uses more verbose vocabularies and as multiple triples
+from the input data are thus combined into single triples in the target
+vocabulary. The size of the final dataset is the number of quads after
+the mapping phase plus any provided provenance data.</p>
+
+<table>
+    <tbody><tr>
+        <td><br>
+</td>
+        <th> 25 M</th>
+        <th> 50 M</th>
+        <th> 100 M</th>
+    </tr>
+    <tr>
+        <th>Number of input quads</th>
+        <td> 25,000,000 </td>
+        <td> 50,000,000 </td>
+        <td> 100,000,000 </td>
+    </tr>
+    <tr>
+        <th>Number of quads after irrelevance filter</th>
+        <td> 13,576,394</td>
+        <td> 25,397,310</td>
+        <td> 44,249,757</td>
+    </tr>
+    <tr>
+        <th>Number of quads after mapping</th>
+        <td> 4,419,410</td>
+        <td> 11,398,236</td>
+        <td> 24,972,112</td>
+    </tr>
+    <tr>
+        <th>Number of pairs of equivalent entities resolved</th>
+        <td> 24,782</td>
+        <td> 113,245</td>
+        <td> 213,062</td>
+    </tr>
+    <tr>
+        <th>Overall file size</th>
+        <td> 5.6 GB</td>
+        <td> 12 GB</td>
+        <td> 23 GB</td>
+    </tr>
+     <tr>
+        <th>Download link</th>
+        <td> <a href="http://www5.wiwiss.fu-berlin.de/ldif/resources/usecases/25m.zip">25M.zip</a> </td>
+        <td> <a href="http://www5.wiwiss.fu-berlin.de/ldif/resources/usecases/50m.zip">50M.zip</a> </td>
+        <td> <a href="http://www5.wiwiss.fu-berlin.de/ldif/resources/usecases/100m.zip">100M.zip</a> </td>
+    </tr>
+</tbody></table>
+
+
+<h3><a name="mappingsB"></a>Mappings<br></h3>
+
+<p>We defined <a href="resources/mappings.ttl"> R2R mappings</a> for translating genes, diseases and pathways from KEGG GENES and genes from UniProt
+    into a proprietary target vocabulary. Some more sophisticated mappings from the use case translate complex structural<br>
+patterns and perform value transformations (e.g. extracting an integer
+value from a URI. The prevalent value transformations are extracting
+strings with a regular expression and modifying the target data types. <br>
+</p>
+
+Here are some examples of the mappings we used for:
+<ul>
+<li> mapping a KEGG Gene 'gene' into a target vocabulary 'Gene'
+<pre><code> mp:Gene<br>   a r2r:ClassMapping;<br>   r2r:prefixDefinitions<br>        "category: &lt;http://mywiki/resource/category/&gt; .<br>         property: &lt;http://mywiki/resource/property/&gt; .<br>         pathway:  &lt;http://wiking.vulcan.com/neurobase/kegg_pathway/resource/vocab/&gt; .<br>         genes:    &lt;http://wiking.vulcan.com/neurobase/kegg_genes/resource/vocab/&gt; .<br>         xsd:      &lt;http://www.w3.org/2001/XMLSchema#&gt; .";<br>   r2r:sourcePattern "?SUBJ a genes:gene";<br>   r2r:targetPattern "?SUBJ a category:Gene";<br>   .</code>
+</pre>
+</li>
+<li> mapping a KEGG Gene 'externalLink' property into a target vocabulary 'UniprotId' property
+<pre><code> mp:GeneLinkUniProt<br>   a r2r:PropertyMapping;<br>   r2r:mappingRef mp:Gene;<br>   r2r:sourcePattern  "?SUBJ genes:externalLink ?x";<br>   r2r:transformation "?id = regexToList('UniProt:(.+)', ?x)";<br>   r2r:targetPattern  "?SUBJ property:UniprotId ?'id'^^xsd:string";<br>   . </code>
+</pre>
+</li>
+</ul>
+
+
+<h3><a name="linkspecsB"></a>Link Specifications<br></h3>
+<p>We defined the following <a href="resources/linkSpecs.xml">Link Specification</a> for the identity resolution phase:</p>
+<pre><code>&lt;Silk&gt;<br>	&lt;Prefixes&gt;<br>		&lt;Prefix id="rdf" namespace="http://www.w3.org/1999/02/22-rdf-syntax-ns#" /&gt;<br>		&lt;Prefix id="rdfs" namespace="http://www.w3.org/2000/01/rdf-schema#" /&gt;<br>		&lt;Prefix id="owl" namespace="http://www.w3.org/2002/07/owl#" /&gt;<br>		&lt;Prefix id="property" namespace="http://mywiki/resource/property/" /&gt;<br>		&lt;Prefix id="category" namespace="http://mywiki/resource/category/" /&gt;<br>	&lt;/Prefixes&gt;<br><br>	&lt;DataSources&gt;<br>		&lt;DataSource id="Source" type="sparqlEndpoint" &gt;<br>			&lt;Param name="endpointURI" value="http://localhost:2020/sparql/read" /&gt;<br>		&lt;/DataSource&gt;<br>		&lt;DataSource id="Target" type="sparqlEndpoint" &gt;<br>			&lt;Param name="endpointURI" value="http://localhost:2020/sparql/read" /&gt;<br>		&lt;/DataSource&gt;<br>	&lt;/DataSources&gt;<br><br>	&lt;Interlinks&gt;<br>		&lt;Interlink id="link"&gt;<br>			&lt;LinkType&gt;owl:sameAs&lt;/LinkType&gt;<br><br>			&lt;SourceDataset dataSource="Source" var="a"&gt;<br>				&lt;RestrictTo&gt;<br>					{ ?a rdf:type category:Gene }<br>					UNION { ?a rdf:type category:Disease }<br>					UNION { ?a rdf:type category:Pathway }<br>				&lt;/RestrictTo&gt;<br>			&lt;/SourceDataset&gt;<br><br>			&lt;TargetDataset dataSource="Target" var="b"&gt;<br>				&lt;RestrictTo&gt;<br>					{ ?b rdf:type category:Gene }<br>					UNION { ?b rdf:type category:Disease }<br>					UNION { ?b rdf:type category:Pathway }<br>				&lt;/RestrictTo&gt;<br>			&lt;/TargetDataset&gt;<br><br>			&lt;LinkageRule&gt;<br>			&lt;Aggregate type="max"&gt;<br>					&lt;Compare metric="equality"&gt;<br>						&lt;Input path="?a/property:UniprotId" /&gt;<br>						&lt;Input path="?b/property:UniprotId" /&gt;<br>					&lt;/Compare&gt;<br>					&lt;Compare metric="equality"&gt;<br>						&lt;Input path="?a/property:EntrezGeneId" /&gt;<br>						&lt;Input path="?b/property:EntrezGeneId" /&gt;<br>					&lt;/Compare&gt;<br>					&lt;Compare metric="equality"&gt;<br>						&lt;Input path="?a/property:MgiMarkerAccessionId" /&gt;<br>						&lt;Input path="?b/property:MgiMarkerAccessionId" /&gt;<br>					&lt;/Compare&gt;<br>					&lt;Compare metric="equality"&gt;<br>						&lt;Input path="?a/property:KeggDiseaseId" /&gt;<br>						&lt;Input path="?b/property:KeggDiseaseId" /&gt;<br>					&lt;/Compare&gt;<br>					&lt;Compare metric="equality"&gt;<br>						&lt;Input path="?a/property:KeggPathwayId" /&gt;<br>						&lt;Input path="?b/property:KeggPathwayId" /&gt;<br>					&lt;/Compare&gt;<br>			&lt;/Aggregate&gt;<br>			&lt;/LinkageRule&gt;<br><br>			&lt;Filter threshold="1.0" /&gt;<br><br>		&lt;/Interlink&gt;<br><br>	&lt;/Interlinks&gt;<br>&lt;/Silk&gt;</code>
+</pre>
+
+
+
+
+<h3><a name="resultsB"></a>Results<br></h3>
+
+<p>The following table summarizes the LDIF run times for the different dataset sizes.
+    The overall run time is split according to the different processing steps of the integration process. </p>
+
+<table>
+    <tbody><tr>
+        <td><br>
+</td>
+        <th> 25 M</th>
+        <th> 50 M</th>
+        <th> 100 M</th>
+    </tr>
+    <tr>
+        <th>Load and build entites for R2R</th>
+        <td> 128.1 sec</td>
+        <td> 297.2 sec</td>
+        <td> 1059.7 sec</td>
+    </tr>
+    <tr>
+        <th>R2R data translation</th>
+        <td> 169.9 sec</td>
+        <td> 515.0 sec</td>
+        <td> 1109.2 sec</td>
+    </tr>
+    <tr>
+        <th>Build entities for Silk</th>
+        <td> 15.3 sec</td>
+        <td> 36.8 sec</td>
+        <td> 107.4 sec</td>
+    </tr>
+    <tr>
+        <th>Silk Identity Resolution</th>
+        <td> 103.0 sec</td>
+        <td> 568.5 sec</td>
+        <td> 2954.9 sec</td>
+    </tr>
+    <tr>
+        <th>Final URI rewriting</th>
+        <td> 8.1 sec</td>
+        <td> 27.0 sec</td>
+        <td> 65.0 sec</td>
+    </tr>
+    <tr class="odd">
+        <th>Overall execution time</th>
+        <td> 7.0 min</td>
+        <td> 24.0 min</td>
+        <td> 88.3 min</td>
+    </tr>
+</tbody></table> 
+
+
+</body></html>
