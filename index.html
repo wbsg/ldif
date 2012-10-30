@@ -840,7 +840,10 @@ data, using the LDSpider Web Crawling Framework</li>
 </ul>
 <h4>Quad Import</h4>
 <p>A typical config file for a Quad Import Job looks like this: </p>
-<pre>&lt;importJob xmlns="http://www4.wiwiss.fu-berlin.de/bizer/ldif"&gt;<br>    &lt;internalId&gt;dBpedia.0&lt;/internalId&gt;<br>    &lt;dataSource&gt;dBpedia&lt;/dataSource&gt;<br>    &lt;refreshSchedule&gt;daily&lt;/refreshSchedule&gt;<br>    <span style="font-weight: bold;">&lt;quadImportJob&gt;</span><br>      &lt;dumpLocation&gt;http://dbpedia.org/dump.nq&lt;/dumpLocation&gt;<br>    <span style="font-weight: bold;">&lt;/quadImportJob&gt;</span><br>&lt;/importJob&gt;<br></pre>
+<pre>
+&lt;importJob xmlns="http://www4.wiwiss.fu-berlin.de/bizer/ldif"&gt;<br>    &lt;internalId&gt;dBpedia.0&lt;/internalId&gt;<br>    &lt;dataSource&gt;dBpedia&lt;/dataSource&gt;<br>    &lt;refreshSchedule&gt;daily&lt;/refreshSchedule&gt;<br>    <span style="font-weight: bold;">&lt;quadImportJob&gt;</span><br>      &lt;dumpLocation&gt;http://dbpedia.org/dump.nq&lt;/dumpLocation&gt;<br>    <span style="font-weight: bold;">&lt;/quadImportJob&gt;</span><br>&lt;/importJob&gt;
+</pre>
+Optionally, the <tt>renameGraphs</tt> parameter allows to specify a regular expression that will be used to rename the imported graph names, by removing the matching values.</li>
 <h4>Triple Import<br>
 </h4>
 <p>In a triple import you use the <span style="font-family: monospace;">tripleImportJob</span>
@@ -865,12 +868,16 @@ optional.<span class="Apple-style-span" style="border-collapse: separate; color:
 <pre>&lt;importJob xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"<br>            xmlns="http://www4.wiwiss.fu-berlin.de/ldif/"&gt;<br>    &lt;internalId&gt;musicbrainz.3&lt;/internalId&gt;<br>    &lt;dataSource&gt;MusicBrainz_Talis&lt;/dataSource&gt;<br>    &lt;refreshSchedule&gt;monthly&lt;/refreshSchedule&gt;<br>    <span style="font-weight: bold;">&lt;sparqlImportJob&gt;</span><br>        &lt;endpointLocation&gt;http://api.talis.com/stores/musicbrainz/services/sparql&lt;/endpointLocation&gt;<br>        &lt;tripleLimit&gt;100000&lt;/tripleLimit&gt;<br>        &lt;sparqlPatterns&gt;<br>            &lt;pattern&gt;?s a &amp;lt;http://purl.org/ontology/mo/MusicArtist&amp;gt;&lt;/pattern&gt;<br>        &lt;/sparqlPatterns&gt;<br>    <span style="font-weight: bold;">&lt;/sparqlImportJob&gt;</span><br>&lt;/importJob&gt;<br></pre>
 <h4>Crawler Import<br>
 </h4>
-<p>A crawl import job is configured by specifying one or more seed URIs
-as starting points of the crawl, predicates that the crawler should
-follow to discover new resources and optionally the maximum number of
-levels to crawl, meaning the maximum distance to one of the seed URIs.
-Also optionally the maximum number of resources to crawl can be
-specified. Of each crawled resource all received triples are stored.<br>
+<p>
+    A crawl import job is configured by specifying one or more seed URIs as starting points of the crawl.
+    Other optional parameters are:
+    <ul>
+        <li><tt>predicatesToFollow</tt> - the predicates that the crawler should follow to discover new resources;</li>
+        <li><tt>levels</tt> - the maximum number of levels to crawl, meaning the maximum distance to one of the seed URIs;</li>
+        <li><tt>resourceLimit</tt> - the maximum number of resources to crawl can be specified;</li>
+        <li><tt>renameGraphs</tt> - a regular expression that will be used to rename the imported graph names, by removing the matching values.</li>
+    </ul>
+    Of each crawled resource all received triples are stored.
 </p>
 <pre>&lt;importJob xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xmlns="http://www4.wiwiss.fu-berlin.de/ldif/"&gt;
@@ -889,12 +896,12 @@ specified. Of each crawled resource all received triples are stored.<br>
         &lt;resourceLimit&gt;50000&lt;/resourceLimit&gt;
     <span style="font-weight: bold;">&lt;/crawlImportJob&gt;</span>
 &lt;/importJob&gt;</pre>
-<br>
+<br/>
 <h4 id="provenance">Provenance Metadata</h4>
-<p>The result of each import contains provenance metadata, whose
-structure is described by this <a href=" http://www.assembla.com/code/ldif/git/node/blob/master/ldif/ldif-core/src/main/resources/owl/provenance.owl">ontology</a>.
-<br>
-For each imported graph, provenance information will contain:
+<p>
+    The result of each import contains provenance metadata, whose structure is described by this <a href=" http://www.assembla.com/code/ldif/git/node/blob/master/ldif/ldif-core/src/main/resources/owl/provenance.owl">ontology</a>.
+    <br/>
+    For each imported graph, provenance information will contain:
 </p>
 <ul>
   <li>import date and time,</li>
@@ -932,7 +939,7 @@ referenced by the <a href="#importjob">import jobs</a>.<br>
 <h3 id="inmemoryquickstart">Single machine / In-memory</h3>
 <p>To see LDIF in action, please follow these steps:</p>
 <ul>
-  <li><a href="http://www4.wiwiss.fu-berlin.de/bizer/ldif/releases/ldif-0.5.zip">download</a>
+  <li><a href="http://ldif.wbsg.de/ldif-0.5.zip">download</a>
 the latest release</li>
   <li>unpack the archive and change into the extracted directory <tt>ldif-0.5</tt></li>
   <li>run LDIF on the <a href="#example1">Music example</a></li>
@@ -943,43 +950,49 @@ the latest release</li>
     <pre>bin\ldif.bat examples\music\light\schedulerConfig.xml</pre>
   </ul>
 </ul>
-<p>The example will run in about 3 minutes. Integration results will be
-written into <tt>integrated_music_light.nq</tt> in the working
-directory, containing both integrated data and <a href="#provenance">provenance metadata</a>. <br>
-Learn more about LDIF configuration by looking at the <a href="#scheduler">Schedule Job Configuration</a> (<tt>examples/music/light/schedulerConfig.xml</tt>)
-and the <a href="#integrationjob">Integration Job
-Configuration</a> (<tt>examples/music/light/integrationJob.xml</tt>) </p>
+
+<p>
+    The example will run in about 3 minutes. In the meanwhile, you can check the progress of the scheduled jobs through the status monitor interface, available at <a href="http://localhost:5343">http://localhost:5343</a>.
+    <br/>
+    Integration results will be written into <tt>integrated_music_light.nq</tt> in the working directory, containing both integrated data and <a href="#provenance">provenance metadata</a>.
+    <br/>
+    Learn more about LDIF configuration by looking at the <a href="#scheduler">Schedule Job Configuration</a> (<tt>examples/music/light/schedulerConfig.xml</tt>) and the <a href="#integrationjob">Integration Job Configuration</a> (<tt>examples/music/light/integrationJob.xml</tt>)
+</p>
 
 <h3 id="rdfstorequickstart">Single machine / RDF Store<br>
 </h3>
 <p>To see LDIF running with a quad store (TDB) as backend, please follow these steps:</p>
 
 <ul>
-<li><a href="http://ldif.wbsg.de/releases/ldif-0.5.zip">download</a>
-the latest release</li><li>unpack the archive and change into the extracted directory <tt>ldif-0.5</tt></li><li>run LDIF on the <a href="#example1">Music example</a></li><ul><li>under Linux / Mac OS type:</li><pre>bin/ldif examples/music/light/schedulerConfigTDB.xml</pre>
-    </li>  <li>Windows: This should work under Windows with Cygwin, but has not been tested, yet. (TDB relies on the <a href="http://manpages.ubuntu.com/manpages/hardy/en/man1/sort.1.html">sort</a> program for bulk loading)<br>
-</li></ul>
+    <li><a href="http://ldif.wbsg.de/releases/ldif-0.5.zip">download</a> the latest release</li>
+    <li>unpack the archive and change into the extracted directory <tt>ldif-0.5</tt></li>
+    <li>run LDIF on the <a href="#example1">Music example</a></li>
+    <ul>
+        <li>under Linux / Mac OS type:</li>
+        <pre>bin/ldif examples/music/light/schedulerConfigTDB.xml</pre>
+        <li>Windows: This should work under Windows with Cygwin, but has not been tested, yet. (TDB relies on the <a href="http://manpages.ubuntu.com/manpages/hardy/en/man1/sort.1.html">sort</a> program for bulk loading)
+    </ul>
 </ul>
 
-The configuration properties that need to be used are <code>quadStoreType</code> and <code>databaseLocation</code> (see the <a href="#configurationproperties">Configuration section</a> from more details).
-
-<p>The example will run in about 3 minutes. Integration results will be
-written into <tt>integrated_music_light.nq</tt> in the working
-directory, containing both integrated data and <a href="#provenance">provenance metadata</a>. <br>
-Learn more about LDIF configuration by looking at the <a href="#scheduler">Schedule Job Configuration</a> (<tt>examples/music/light/schedulerConfig.xml</tt>)
-and the <a href="#integrationjob">Integration Job
-Configuration</a> (<tt>examples/music/light/integrationJob.xml</tt>) </p>
+<p>
+    The configuration properties that need to be used are <code>quadStoreType</code> and <code>databaseLocation</code> (see the <a href="#configurationproperties">Configuration section</a> from more details).
+    <br/>
+    The example will run in about 3 minutes. In the meanwhile, you can check the progress of the scheduled jobs through the status monitor interface, available at <a href="http://localhost:5343">http://localhost:5343</a>.
+    <br/>
+    Integration results will be written into <tt>integrated_music_light.nq</tt> in the working directory, containing both integrated data and <a href="#provenance">provenance metadata</a>.
+    <br/>
+    Learn more about LDIF configuration by looking at the <a href="#scheduler">Schedule Job Configuration</a> (<tt>examples/music/light/schedulerConfig.xml</tt>) and the <a href="#integrationjob">Integration Job Configuration</a> (<tt>examples/music/light/integrationJob.xml</tt>)
+</p>
 
 
 <h3 id="hadoopquickstart">Cluster / Hadoop</h3>
 <p>To see LDIF running on a Hadoop cluster, please follow these steps:</p>
 <ul>
   <li>set up and configure a Hadoop (0.20.2) <a href="http://hadoop.apache.org/common/docs/current/cluster_setup.html">cluster</a> </li>
-   <li>ssh to a cluster node</li>
-  <ul><li><a href="http://ldif.wbsg.de/releases/ldif-hadoop-0.5.zip">download</a>
-the latest LDIF release</li>
-  <li>unpack the archive and change into the extracted directory <tt>ldif-hadoop-0.5</tt></li>
-  <li>run LDIF on the <a href="#example1">Music example</a></li>
+  <li>ssh to a cluster node</li>
+  <ul><li><a href="http://ldif.wbsg.de/releases/ldif-hadoop-0.5.zip">download</a> the latest LDIF release</li>
+    <li>unpack the archive and change into the extracted directory <tt>ldif-hadoop-0.5</tt></li>
+    <li>run LDIF on the <a href="#example1">Music example</a></li>
     <pre>hadoop jar lib/ldif-hadoop-0.5.jar scheduler examples/music/light/schedulerConfig.xml</pre>
   </ul>
 </ul>
