@@ -42,19 +42,27 @@ trait StatusMonitor {
     sb.append(title)
     sb.append("</title>")
     sb.append(addParams(params))
-    sb.append(addStyle)
+    sb.append(addStyle())
     sb.append("</head><body>\n")
-    sb.toString
+    sb.toString()
   }
 
   def addParams(params: Map[String, String]): String = {
     val sb = new StringBuilder
-      sb.append("<meta http-equiv=\"refresh\" content=\"")
+    sb.append("<script src=\"//ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js\"></script>" +
+      "<script  type=\"text/javascript\"> " +
+      "function refreshPage() {" +
+      "   $.ajax({" +
+      "      success: function (data) { window.location.reload(); }," +
+      "   });" +
+      "}\n" +
+      " $(document).ready(function() {" +
+      "   setTimeout(\"refreshPage();\",")
     if(params.get("refresh").get!="0")
-      sb.append(params.get("refresh").get)
-    else sb.append(1)  // by default refresh every second
-    sb.append("\">")
-    sb.toString
+         sb.append(params.get("refresh").get.toInt*1000)
+    else sb.append(1000)  // by default refresh every second
+    sb.append(" ); }); </script>")
+    sb.toString()
   }
 
   def addStyle() : String = {

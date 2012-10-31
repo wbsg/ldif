@@ -63,7 +63,7 @@ object Ldif {
       }
       val scheduler = Scheduler(config, debug)
 
-      val runStatusMonitor = config.properties.getProperty("runStatusMonitor", "true").toLowerCase=="true"
+      val runStatusMonitor = config.properties.getProperty("runStatusMonitor", Consts.DefaultRunStatusMonitor).toLowerCase=="true"
       val statusMonitorURI = config.properties.getProperty("statusMonitorURI", Consts.DefaultStatusMonitorrURI)
 
       // Start REST HTTP Server
@@ -77,7 +77,7 @@ object Ldif {
         sys.exit(1)
       }
 
-      scheduler.run(true)
+      scheduler.run(true, runStatusMonitor)
     }
   }
 

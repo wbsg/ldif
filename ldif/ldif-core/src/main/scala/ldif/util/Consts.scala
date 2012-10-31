@@ -111,6 +111,7 @@ object Consts {
 
   // Status interface
   val DefaultStatusMonitorrURI = "http://localhost:5343/"
+  val DefaultRunStatusMonitor = "true"
 
   // XSD locations
   val xsdBase = "http://www.assembla.com/code/ldif/git/nodes/ldif/ldif-core/src/main/resources/xsd/"

@@ -44,7 +44,7 @@ case class Scheduler (config : SchedulerConfig, debug : Boolean = false) {
   private val importedDumps = ImportedDumpsUtils(config.dumpLocationDir)
 
   /* Evaluate and run the jobs */
-  def run(stopExecution : Boolean = false) {
+  def run(stopExecution : Boolean = false, runStatusMonitor : Boolean) {
     if (runOnce) {
       // Evaluate jobs at most once. Evaluate import first, then integrate.
       evaluateImportJobs
@@ -54,8 +54,13 @@ case class Scheduler (config : SchedulerConfig, debug : Boolean = false) {
         Thread.sleep(1000)
       }
       evaluateIntegrationJob(false)
-      if(stopExecution)
+      if(stopExecution)    {
+        if (runStatusMonitor) {
+          println("Press any key to exit")
+          System.in.read()
+        }
         sys.exit(0)
+      }
     }
     else {
       // Run as server, evaluate jobs every 10 sec

@@ -35,7 +35,7 @@ import ldif.util._
 import java.io.File
 import javax.activation.MimetypesFileTypeMap
 import org.slf4j.LoggerFactory
-import com.sun.jersey.api.core.{ClassNamesResourceConfig, ResourceConfig}
+import com.sun.jersey.api.core.ClassNamesResourceConfig
 
 @Path("/")
 class MonitorServer {
