@@ -583,7 +583,7 @@ jobs for accessing remote sources and for the integration job.<br>
 <p>It has the following elements:</p>
 <ul>
     <li><i>properties</i> - the path to a Java properties file for
-        configuration parameters, <a href="#configprops">see below</a> for
+        configuration parameters, <a href="#schedulerProperties">see below</a> for
         more details; </li>
     <li><i>dataSources</i> - a directory containing the <a href="#datasource">Data Sources</a> configurations;</li>
     <li><i>importJobs</i> or <i>importJob</i> - each <i>importJob</i> specifies a path (to a file or a directory) where the <a href="#importjob">Import Jobs</a> configurations are defined;</li>
@@ -593,55 +593,52 @@ jobs for accessing remote sources and for the integration job.<br>
     </li>
 </ul>
 <p>Both relative and absolute paths are supported.</p>
-<h4 id="configprops">Configuration Properties</h4>
-<p>In the Schedule Job configuration file you can specify a (Java)
-properties file to further tweak certain parameters concerning the
-workflow. Here is a list with all properties that can be set at the
-moment and the possible values for each property:</p>
-<ul>
-  <li>
-    <p><i>provenanceGraphURI</i> <br>
-Specify the graph
-where the provenance information is stored. Default graph name: <span style="font-family: monospace;">http://www4.wiwiss.fu-berlin.de/ldif/provenance</span></p>
-    <pre>provenanceGraphURI = http://www4.wiwiss.fu-berlin.de/ldif/provenance</pre>
-  </li>
-</ul>
-<ul>
-  <li>
-    <p><i id="onetimeexec">oneTimeExecution</i> <br>
-If <span style="font-family: monospace;">true</span> the scheduler
-executes all the Jobs at most once. Import Jobs are evaluated first and
-then (as all of these have finished) the integration job starts.
-Default: <span style="font-family: monospace;">false</span></p>
-    <pre>oneTimeExecution = true | false</pre>
-  </li>
-    <li>
-        <p><i>runStatusMonitor</i><br/>
-            Specify if the status monitor should be run when starting LDIF (via ldif.local.Ldif main). Default: <span style="font-family: monospace;">true</span></p>
-        <pre>runStatusMonitor = true | false</pre>
-    </li>
-    <li>
-        <p><i>statusMonitorURI</i><br/>
-            Specify the root URI of the status monitor. Default: <span style="font-family: monospace;">http://localhost:5343/</span></p>
-        <pre>statusMonitorURI = http://localhost:5343/</pre>
-    </li>
-</ul>
 
-<h3><a name="integrationjob"></a>Integration Job Configuration<br>
-</h3>
-<p>An Integration Job is configured with an XML document, whose
-structure is described by this <a href=" http://www.assembla.com/code/ldif/git/node/blob/master/ldif/ldif-core/src/main/resources/xsd/IntegrationJob.xsd">XML
-Schema</a>.
-<br>
-The current structure is very simple because the integration flow
-is static at the moment - something that will change in future
-releases. The config file specifies amongst other things how often the
-whole integration workflow should be executed. It should be noted that
-when an integration job starts, it only works on fully imported data.
-Data of import jobs that did not finish before the integration starts
-is ignored - the only exception is if the <a href="#onetimexec"><span style="font-family: monospace;">oneTimeExecution</span></a>
-configuration property is set to true; then the integration waits for
-all import jobs to finish.<br>
+<h4 id="schedulerProperties">Configuration Properties for the Scheduler Job</h4>
+<p>
+    In the Schedule Job configuration file you can specify a (Java) properties file to further tweak certain parameters concerning the workflow.
+    Here is a list of the currently supported properties and their default values:
+</p>
+
+<table>
+    <tr>
+        <th width="15%">Field</th>
+        <th width="65%">Description</th>
+        <th width="20%">Default value</th>
+    </tr>
+    <tr>
+        <td><tt>provenanceGraphURI</tt></td>
+        <td>Specify the graph where the provenance information is stored. </td>
+        <td><tt>http://www4.wiwiss.fu-berlin.de/ldif/provenance</tt></td>
+    </tr>
+    <tr>
+        <td><tt id="onetimeexec">oneTimeExecution</tt></td>
+        <td>
+            If <tt>true</tt> the scheduler executes all the Jobs at most once.
+            Import Jobs are evaluated first and then (as all of these have finished) the integration job starts.
+        </td>
+        <td><tt>false</tt></td>
+    </tr>
+    <tr>
+        <td><tt>runStatusMonitor</tt></td>
+        <td>Specify if the status monitor should be run when starting LDIF (via ldif.local.Ldif main).</td>
+        <td><tt>true</tt></td>
+    </tr>
+    <tr>
+        <td><tt>statusMonitorURI</tt></td>
+        <td>Specify the root URI of the status monitor.</td>
+        <td><tt>http://localhost:5343</tt></td>
+    </tr>
+</table>
+
+
+<h3 id="integrationjob"></a>Integration Job Configuration</h3>
+<p>
+    An Integration Job is configured with an XML document, whose structure is described by this <a href=" http://www.assembla.com/code/ldif/git/node/blob/master/ldif/ldif-core/src/main/resources/xsd/IntegrationJob.xsd">XML Schema</a>.
+    The current structure is very simple because the integration flow is static at the moment, but that will change in future releases.
+    <br/>
+    The config file specifies amongst other things how often the whole integration workflow should be executed. It should be noted that when an integration job starts, it only works on fully imported data.
+    Data of import jobs that did not finish before the integration starts is ignored - the only exception is if the <a href="#onetimexec"><tt>oneTimeExecution</tt></a> configuration property is set to true; then the integration waits for all import jobs to finish.
 </p>
 <p>A typical configuration document looks like this:</p>
 <pre>&lt;integrationJob xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -663,7 +660,7 @@ all import jobs to finish.<br>
 <p>It has the following elements:</p>
 <ul>
     <li><i>properties</i> - the path to a Java properties file for
-        configuration parameters, <a href="#configurationproperties">see below</a>
+        configuration parameters, <a href="#integrationProperties">see below</a>
         for more details; </li>
     <li><i>sources</i> or one <i>source</i> element - each <i>source</i> specifies a path (to a file or a directory) in the local or distributed file system,
         all files must be in <a href="http://sw.deri.org/2008/07/n-quads/">N-Quads</a> format and may
@@ -675,192 +672,230 @@ all import jobs to finish.<br>
         mappings</a>;</li>
     <li><i>sieve</i> - a directory containing the configuration for data <a href="http://sieve.wbsg.de/#qualityassessmentconfig">quality assessment</a> and <a href="http://sieve.wbsg.de/#fusionconfig">fusion</a>;</li>
     <li><i>outputs</i> or one <i>output</i> element - each <i>output</i> specifies a destination where data are written to, both <i>file</i> (N-Quads or N-Triples) and <a href="http://www.assembla.com/wiki/show/ldif/QuadStore_Compatibility">SPARQL/Update</a> outputs are supported;</li>
-    <li><i>runSchedule</i> - how often the integration is expected to be
-        run. Valid values are: <span style="font-family: monospace;">onStartup</span>,<span style="font-family: monospace;"> always</span>,<span style="font-family: monospace;"> hourly</span>,<span style="font-family: monospace;"> daily</span>,<span style="font-family: monospace;"> weekly</span>,<span style="font-family: monospace;"> monthly</span>,<span style="font-family: monospace;"> yearly </span>and <span style="font-family: monospace;">never</span>. <span class="Apple-style-span" style="border-collapse: separate; color: rgb(0, 0, 0); font-family: 'Times New Roman'; font-style: normal; font-variant: normal; font-weight: normal; letter-spacing: normal; line-height: normal; orphans: 2; text-indent: 0px; text-transform: none; white-space: normal; widows: 2; word-spacing: 0px; font-size: medium;"><span class="Apple-style-span" style="border-collapse: collapse; font-family: Arial,Helvetica,'Liberation Sans',FreeSans,sans-serif; font-size: 12px; line-height: 18px; text-align: left;"></span></span></li>
+    <li><i>runSchedule</i> - how often the integration is expected to be run. Valid values are: <tt>onStartup</tt>, <tt>always</tt>, <tt>hourly</tt>, <tt>daily</tt>, <tt> weekly</tt>, <tt> monthly</tt>, <tt>yearly</tt>, <tt>never</tt>.</li>
 </ul>
-<p> Both relative and absolute paths are supported.
-In this case there is a root directory with the config file and the
-test.properties file in it.
-Furthermore the following directories would be nested in the root
-directory: linkSpecs, sources and mappings.
-Data sets have to be in a local directory.</p>
-<h4><a name="configurationproperties"></a>Configuration Properties for
-the Integration Job<br>
-</h4>
-<p>In the Integration Job configuration file you can specify a (Java)
-properties file to further tweak certain parameters concerning the
-integration workflow. Here is a list with all properties that can be
-set at the moment and the possible values for each property:</p>
+<p>
+    Both relative and absolute paths are supported.
+    In this case there is a root directory with the config file and the test.properties file in it.
+    Furthermore the following directories would be nested in the root directory: linkSpecs, sources and mappings.
+    Data sets have to be in a local directory.
+</p>
+
+
+<h4 id="integrationProperties">Configuration Properties for the Integration Job</h4>
+<p>
+    In the Integration Job configuration file you can specify a (Java) properties file to further tweak certain parameters concerning the integration workflow.
+    Here is a list of the currently supported properties and their default values:
+</p>
 <div id="configProperties">
+    <table>
+        <tr>
+            <th width="15%">Field</th>
+            <th width="65%">Description</th>
+            <th width="20%">Default value</th>
+        </tr>
+        <tr>
+            <td><tt>ldif.working.dir</tt></td>
+            <td>Specify the directory where LDIF will store the temporary files.</td>
+            <td><tt>[USER-DIR]/.ldiftmp</tt></td>
+        </tr>
+        <tr>
+            <td><tt>output</tt></td>
+            <td>Specify if all input quads from the input should be included in the output file or only the quads that were mapped/translated by LDIF.</td>
+            <td>
+                <tt>mapped-only</tt>
+                <br/>
+                allowed: <tt>mapped-only</tt> | <tt>all</tt> | <tt>fused-only</tt>
+            </td>
+        </tr>
+        <tr>
+            <td><tt>rewriteURIs</tt></td>
+            <td>Specify if URI aliases in the input data should be rewritten to a single target URI in the output data.</td>
+            <td><tt>true</tt></td>
+        </tr>
+        <tr>
+            <td><tt>prefixPreference</tt></td>
+            <td>
+                If rewriteURIs is enabled (and URI minting is disabled), then in a set of URIs that are considered to identify the same entity, these URIs are chosen to represent each set that
+                start with one of the whitespace separated URI prefixes.
+                This list of URI prefixes is ranked, with the first URI prefix being the highest rank.
+            </td>
+            <td>
+                <i>Not set</i>
+                <br/>
+                e.g. <tt>http://dbpedia.org/resource/ http://otherprefix/ </tt>
+            </td>
+        </tr>
+        <tr>
+            <td><tt>provenanceGraphURI</tt></td>
+            <td>
+                Specify the graph containing the provenance information.
+                Quads from this graph are only written to the final output data set and not processed any further in the integration workflow.
+            </td>
+            <td><tt>http://www4.wiwiss.fu-berlin.de/ldif/provenance</tt></td>
+        </tr>
+        <tr>
+            <td><tt>validateSources</tt></td>
+            <td>
+                Source data sets, R2R mappings and Silk link specifications are all validated before starting with the actual integration.
+                <br/>
+                Since the syntax validation of the sources (N-Triples / N-Quads files) takes some time (about 15s/GB), if you already know that they are correct, it is possible to disable this step by setting the property to <tt>false</tt>.
+            </td>
+            <td><tt>true</tt></td>
+        </tr>
+        <tr>
+            <td><tt>discardFaultyQuads</tt></td>
+            <td>
+                If LDIF finds a (syntax) error - like spaces in URIs - in the source data, it does not progress with the integration to give you the opportunity to fix these errors first.
+                However, sometimes you just don't care that some quads are faulty and want them to be ignored instead, so that the overall integration can still proceed.
+                <br/>
+                Set this property to <tt>true</tt> in order to ignore syntax errors in the source data sets.
+            </td>
+            <td><tt>false</tt></td>
+        </tr>
+        <tr>
+            <td><tt>useExternalSameAsLinks</tt></td>
+            <td>
+                Besides discovering equal entities in the identity resolution phase, LDIF also offers the opportunity to input these relationships in form of owl:sameAs links.
+                The NT/N-Quads file with these sameAs-links has to be placed in the source directory with the other data sets.
+                <br/>
+                If you don’t want to use sameAs-links from the input data, set this property to <tt>false</tt>.
+            </td>
+            <td><tt>true</tt></td>
+        </tr>
+        <tr>
+            <td><tt>entityBuilderType</tt></td>
+            <td>
+                Specify the type of the entity builder component used for the local execution profile of LDIF.
+                This choice heavily influences the performance and memory foot print.
+                <br/>
+                For large data sets and/or low memory machines it is a good idea to set this to <tt>quad-store</tt> because the in-memory version of LDIF is very memory intensive.
+            </td>
+            <td>
+                <tt>in-memory</tt>
+                <br/>
+                allowed: <tt>in-memory</tt> | <tt>quad-store</tt>
+            </td>
+        </tr>
+        <tr>
+            <td><tt>quadStoreType</tt></td>
+            <td>
+                Specify the concrete store that should be used as backend for the quad store version, see configuration property <i>entityBuilderType</i>.
+                <br/>
+                Right now there is only one store, Jena TDB, that is supported by LDIF, so this property doesn't need to be set explicitly.
+            </td>
+            <td><tt>tdb</tt></td>
+        </tr>
+        <tr>
+            <td><tt>databaseLocation</tt></td>
+            <td>
+                This property allows to set the location of the data base on the local file system.
+                This value is used by the quad store system to configure its database location.
+            </td>
+            <td>
+                <i>The temporary directory of the operating system</i>
+                <br/>
+                e.g. <tt>/tmp</tt>
+            </td>
+        </tr>
 
-        <i>ldif.working.dir</i><br/>
-        <p>Specify the directory where LDIF will store the temporary files. Default: ".ldiftmp" in user's home directory</p>
-        <pre>ldif.working.dir = /data/ldif-temp</pre>
+        <tr>
+            <td><tt>uriMinting</tt></td>
+            <td>Specify if output resources should be given an URI within the target namespace. </td>
+            <td><tt>false</tt></td>
+        </tr>
 
-        <i>output</i><br/>
-            <p>Specify if all input quads from the input should be included in the output file or only the quads that were
-            mapped/translated by LDIF. Default: <span style="font-family: monospace;">mapped-only</span></p>
-        <pre>output = all | mapped-only</pre>
+        <tr>
+            <td><tt>uriMintNamespace</tt></td>
+            <td>Specify the namespace into which the URIs of all output resources are translated, if URI minting is enabled.</td>
+            <td><tt>http://www4.wiwiss.fu-berlin.de/ldif/resource/</tt></td>
+        </tr>
 
-        <i>rewriteURIs</i><br>
-            <p>Specify if URI aliases in the input data should be rewritten to a single target URI in the output data.
-            Default: <span style="font-family: monospace;">true</span></p>
-        <pre>rewriteURIs = true | false</pre>
+        <tr>
+            <td><tt>uriMintLabelPredicate</tt></td>
+            <td>
+                The value of this property is a space separated list of property URIs, which will be used to expand the namespace URI specified with <i>uriMintNamespace.</i>
+                For each entity one value of the specified URIs is used to act as the local part of the minted URI.
+                <br/>
+                If there are many values to pick from, the max value (lexicographic order) is taken.
+                If no value could be found for any of the properties, the URI of the entity is not minted.
+                <br/>
+                Note that there is no way to prevent name clashes at the moment.
+            </td>
+            <td><i>Not set</i> <br/>e.g. <tt>http://www.w3.org/2000/01/rdf-schema#label </tt></td>
+        </tr>
 
-        <i>prefixPreference</i><br>
-    <p>If rewriteURIs is enabled (and URI minting is disabled), then in a set of URIs that are considered to identify the same entity, these URIs are chosen to represent each set that
-            start with one of the whitespace separated URI prefixes. This list of URI prefixes is ranked, with the first URI prefix being the highest rank.
-        <pre>prefixPreference=http://dbpedia.org/resource/ http://otherprefix/</pre>
+        <tr>
+            <td><tt>uriMintLanguageRestriction</tt></td>
+            <td>
+                If set this parameter restricts the values that are considered for URI minting to specific language literals/tags.
+                The value of this parameter is a whitespace separated list of language tags.
+            </td>
+            <td><i>Not set</i> <br/>e.g. <tt>en fr es</tt> </td>
+        </tr>
 
-        <i>provenanceGraphURI</i> <br/>
-    <p>Specify the graph containing the provenance information. Quads from this graph are only written to the final
-            output data set and not processed any further in the integration workflow.
-            Default graph name: <span style="font-family: monospace;">http://www4.wiwiss.fu-berlin.de/ldif/provenance</span></p>
-        <pre>provenanceGraphURI = http://www4.wiwiss.fu-berlin.de/ldif/provenance</pre>
+        <tr>
+            <td><tt>outputQualityScores</tt></td>
+            <td>Specify if the data quality scores quads (generated by the Data Quality Assessment module) should be also included in the output.</td>
+            <td><tt>false</tt></td>
+        </tr>
 
-        <i>validateSources</i><br/>
-    <p>Source data sets, R2R mappings and Silk link specifications are all
-            validated before starting with the actual integration. Since the syntax
-            validation of the sources (N-Triples / N-Quads files) takes some time
-            (about 15s/GB), if you already know that they are correct, it is
-            possible to disable this step by setting the property to false.
-            Default: <span style="font-family: monospace;">true</span></p>
-        <pre>validateSources = true | false</pre>
+        <tr>
+            <td><tt>qualityFromProvenanceOnly</tt></td>
+            <td>Specify if only the content of the provenance graph should be used in the data quality evaluation. </td>
+            <td><tt>false</tt></td>
+        </tr>
 
-        <i>discardFaultyQuads</i><br/>
-    <p>If LDIF finds a (syntax) error - like spaces in URIs - in the source data, it does not progress with the
-            integration to give you the opportunity to fix these errors first.
-            However, sometimes you just don't care that some quads are faulty and
-            want them to be ignored instead, so that the overall integration can
-            still proceed. Set this property to <span style="font-family: monospace;">true</span> in order to ignore syntax
-            errors in the source data sets. Default: <span style="font-family: monospace;">false</span></p>
-        <pre>discardFaultyQuads = false | true</pre>
-
-        <i>useExternalSameAsLinks</i><br/>
-    <p>Besides discovering equal entities in the identity resolution phase, LDIF also offers the
-            opportunity to input these relationships in form of owl:sameAs links.
-            The NT/N-Quads file with these sameAs-links has to be placed in the
-            source directory with the other data sets. If you don’t want to use
-            sameAs-links from the input data, set this property to false. Default: <span style="font-family: monospace;">true</span></p>
-        <pre>useExternalSameAsLinks = true | false</pre>
-
-        <i>entityBuilderType</i><br/>
-    <p>Specify the type of the entity builder component used for the local
-        execution profile of LDIF. This choice heavily influences the
-        performance and memory foot print. For large data sets and/or low
-        memory machines it is a good idea to set this to <span style="font-family: monospace;">quad-store</span> because the
-        in-memory version of LDIF is very memory intensive. Default: <span style="font-family: monospace;">in-memory</span></p>
-        <pre>entityBuilderType = in-memory | quad-store</pre>
-
-        <i>quadStoreType</i><br/>
-    <p>Specify the concrete store that should be used as backend for the quad
-        store version, see configuration property <i>entityBuilderType</i>. Right now there
-        is only one store, Jena TDB, that is supported by LDIF, so this
-        property doesn't need to be set explicitly. Default: <span style="font-family: monospace;">tdb</span></p>
-        <pre>quadStoreType = tdb</pre>
-
-        <p></p><i>databaseLocation</i><br/>
-    <p>This property allows to set the location of the data base on the local
-        file system. This value is used by the quad store system to configure
-        its database location. Default: The temporary directory of the
-        operating system<span style="font-family: monospace;"></span></p>
-        <pre>databaseLocation = Path-To-Database-Dir<br></pre>
-
-        <i>uriMinting</i><br/>
-    <p>Specify if output resources should be given an URI within the target
-            namespace. URI minting. Default: <span style="font-family: monospace;">false</span></p>
-        <pre>uriMinting = true | false</pre>
-
-        <i>uriMintNamespace</i><br/>
-    <p>Specify the namespace into which the URIs of all output resources are
-            translated, if URI minting is enabled. Default: <span style="font-family: monospace;">http://www4.wiwiss.fu-berlin.de/ldif/resource/</span></p>
-        <pre>uriMintNamespace = http://www4.wiwiss.fu-berlin.de/ldif/resource/</pre>
-
-        <i>uriMintLabelPredicate</i><br/>
-    <p>The value of this property is a space separated list of property URIs, which will be used to expand the
-            name space URI specified with <i>uriMintNamespace.</i> For each entity
-            one value of the specified URIs is used to act as the local part of the
-            minted URI. If there are many values to pick from, the max value
-            (lexicographic order) is taken. If no value could be found for any of
-            the properties, the URI of the entity is not minted. Note that there is
-            no way to prevent name clashes at the moment. </p>
-        <pre>uriMintLabelPredicate = http://www.w3.org/2000/01/rdf-schema#label http://www4.wiwiss.fu-berlin.de/ldif/property-example/id</pre>
-
-        <i>uriMintLanguageRestriction</i><br/>
-    <p>If set this parameter restricts the values that are considered for URI minting to specific language literals/tags.
-            The value of this parameter is a whitespace separated list of language tags. Default: <span style="font-family: monospace;">not set</span></p>
-        <pre>uriMintLanguageRestriction = en fr es</pre>
-
-        <i>outputQualityScores</i><br/>
-    <p>Specify if the data quality scores quads (generated by the Data Quality Assessment module) should be also included in the output. Default: <span style="font-family: monospace;">false</span></p>
-        <pre>outputQualityScores = true | false</pre>
-
-        <i>qualityFromProvenanceOnly</i><br/>
-    <p>Specify if only the content of the provenance graph should be used in the data quality evaluation. Default: <span style="font-family: monospace;">false</span></p>
-        <pre>qualityFromProvenanceOnly = true | false</pre>
-
-        <i>outputProvenance</i><br/>
-    <p>Specify if the provenance data should be output. Default: <span style="font-family: monospace;">true</span></p>
-        <pre>outputProvenance = true | false</pre>
+        <tr>
+            <td><tt>outputProvenance</tt></td>
+            <td>Specify if the provenance data should be output.</td>
+            <td><tt>true</tt></td>
+        </tr>
+    </table>
 </div>
 
-<h3><a name="importjob"></a>Import Job Configuration<br>
-</h3>
-<p>An Import Job is configured with an XML document, whose structure is
-described by this <a href=" https://www.assembla.com/code/ldif/git/node/blob/masterldif/ldif-core/src/main/resources/xsd/ImportJob.xsd">XML
-Schema</a>.<br>
-</p>
+
+<h3 id="importjob">Import Job Configuration</h3>
+<p>An Import Job is configured with an XML document, whose structure is described by this <a href=" https://www.assembla.com/code/ldif/git/node/blob/masterldif/ldif-core/src/main/resources/xsd/ImportJob.xsd">XML Schema</a>.</p>
+
 <p>It has the following elements:</p>
 <ul>
-  <li><i>internalId</i> - A unique ID, which will be used internally to
-track the import job and its files like data and provenance;<br>
-  </li>
-  <li><i>dataSource </i>- A reference to a <a href="#datasource">data
-source</a> to state from which source this job imports data;<br>
-  </li>
-  <li><span style="font-style: italic;">one kind of importJob</span> -
-There has to be exactly one import job element, which can be either <span style="font-family: monospace;">quadImportJob</span>, <span style="font-family: monospace;">tripleImportJob</span>, <span style="font-family: monospace;">crawlImportJob</span> or <span style="font-family: monospace;">sparqlImportJob</span>;</li>
-  <li><i>refreshSchedule</i> - how often the integration is expected to
-be run. Valid values are: <span style="font-family: monospace;">onStartup</span>,<span style="font-family: monospace;"> always</span>,<span style="font-family: monospace;"> hourly</span>,<span style="font-family: monospace;"> daily</span>,<span style="font-family: monospace;"> weekly</span>,<span style="font-family: monospace;"> monthly</span>,<span style="font-family: monospace;"> yearly </span>and <span style="font-family: monospace;">never</span>.</li>
+  <li> <i>internalId</i> - A unique ID, which will be used internally to track the import job and its files like data and provenance; </li>
+  <li> <i>dataSource </i>- A reference to a <a href="#datasource">datasource</a> to state from which source this job imports data;  </li>
+  <li> <i>one kind of importJob</i> - There has to be exactly one import job element, which can be either <tt>quadImportJob</tt>, <tt>tripleImportJob</tt>, <tt>crawlImportJob</tt> or <tt>sparqlImportJob</tt>;</li>
+  <li> <i>refreshSchedule</i> - how often the integration is expected to be run. Valid values are: <tt>onStartup</tt>,<tt> always</tt>,<tt> hourly</tt>,<tt> daily</tt>,<tt> weekly</tt>,<tt> monthly</tt>,<tt> yearly </tt>and <tt>never</tt>.</li>
 </ul>
+
 <p>LDIF supports four different mechanisms to import external data: </p>
 <ul>
   <li><i>Quad Import Job</i> – import N-Quads dumps</li>
   <li><i>Triple Import Job</i> – import RDF/XML, N-Triples or Turtle dumps</li>
-  <li><i>Crawl Import Job</i> – import by dereferencing URIs as RDF
-data, using the LDSpider Web Crawling Framework</li>
+  <li><i>Crawl Import Job</i> – import by dereferencing URIs as RDF data, using the LDSpider Web Crawling Framework</li>
   <li><i>SPARQL Import Job</i> – import by querying a SPARQL endpoint</li>
 </ul>
-<h4>Quad Import</h4>
+
+<h4 id="quadImportJob">Quad Import</h4>
 <p>A typical config file for a Quad Import Job looks like this: </p>
-<pre>
-&lt;importJob xmlns="http://www4.wiwiss.fu-berlin.de/bizer/ldif"&gt;<br>    &lt;internalId&gt;dBpedia.0&lt;/internalId&gt;<br>    &lt;dataSource&gt;dBpedia&lt;/dataSource&gt;<br>    &lt;refreshSchedule&gt;daily&lt;/refreshSchedule&gt;<br>    <span style="font-weight: bold;">&lt;quadImportJob&gt;</span><br>      &lt;dumpLocation&gt;http://dbpedia.org/dump.nq&lt;/dumpLocation&gt;<br>    <span style="font-weight: bold;">&lt;/quadImportJob&gt;</span><br>&lt;/importJob&gt;
-</pre>
-Optionally, the <tt>renameGraphs</tt> parameter allows to specify a regular expression that will be used to rename the imported graph names, by removing the matching values.</li>
-<h4>Triple Import<br>
-</h4>
-<p>In a triple import you use the <span style="font-family: monospace;">tripleImportJob</span>
-element instead of the <span style="font-family: monospace;">quadImportJob</span>
-element: </p>
+<pre>&lt;importJob xmlns="http://www4.wiwiss.fu-berlin.de/bizer/ldif"&gt;<br>    &lt;internalId&gt;dBpedia.0&lt;/internalId&gt;<br>    &lt;dataSource&gt;dBpedia&lt;/dataSource&gt;<br>    &lt;refreshSchedule&gt;daily&lt;/refreshSchedule&gt;<br>    <span style="font-weight: bold;">&lt;quadImportJob&gt;</span><br>      &lt;dumpLocation&gt;http://dbpedia.org/dump.nq&lt;/dumpLocation&gt;<br>    <span style="font-weight: bold;">&lt;/quadImportJob&gt;</span><br>&lt;/importJob&gt;</pre>
+Optionally, the <tt>renameGraphs</tt> parameter allows to specify a regular expression that will be used to rename the imported graph names, by removing the matching values.
+
+<h4 id="tripleImportJob">Triple Import</h4>
+<p>In a triple import you use the <tt>tripleImportJob</tt> element instead of the <tt>quadImportJob</tt> element: </p>
 <pre>&lt;importJob xmlns="http://www4.wiwiss.fu-berlin.de/bizer/ldif"&gt;<br>    &lt;internalId&gt;dBpedia.0&lt;/internalId&gt;<br>    &lt;dataSource&gt;dBpedia&lt;/dataSource&gt;<br>    &lt;refreshSchedule&gt;daily&lt;/refreshSchedule&gt;<br>    <span style="font-weight: bold;">&lt;tripleImportJob&gt;</span><br>      &lt;dumpLocation&gt;http://dbpedia.org/dump.nt&lt;/dumpLocation&gt;<br>    <span style="font-weight: bold;">&lt;/tripleImportJob&gt;</span><br>&lt;/importJob&gt;</pre>
-<h4>SPARQL Import<br>
-</h4>
-<p>In a SPARQL import job the <span style="font-family: monospace;">sparqlImportJob
-</span>element
-specifies the endpoint that will be queried for data and a restriction
-pattern - note that angle brackets of URIs have to be escaped using <span style="font-family: monospace;">&amp;lt;</span> and <span style="font-family: monospace;">&amp;gt;</span>. This restriction
-pattern is joined with the pattern <span style="font-family: monospace;">?s ?p ?o</span>,
-which is also the only pattern in the Construct part of the generated
-SPARQL Construct query. This means that all the triples of
-the entities matching the restriction in the <span style="font-family: monospace;">pattern</span> element are collected.
-It is also possible to specify a graph with the <span style="font-family: monospace;">graphName</span> element and to
-restrict the number of imported triples with the <span style="font-family: monospace;">tripleLimit</span> element. All but
-the <span style="font-family: monospace;">endpointLocation</span> is
-optional.<span class="Apple-style-span" style="border-collapse: separate; color: rgb(0, 0, 0); font-family: 'Times New Roman'; font-style: normal; font-variant: normal; font-weight: normal; letter-spacing: normal; line-height: normal; orphans: 2; text-indent: 0px; text-transform: none; white-space: normal; widows: 2; word-spacing: 0px; font-size: medium;"><span class="Apple-style-span" style="border-collapse: collapse; font-family: Arial,Helvetica,'Liberation Sans',FreeSans,sans-serif; font-size: 12px; line-height: 18px; text-align: left;"></span></span>
+
+<h4 id="sparqlImportJob">SPARQL Import</h4>
+<p>
+    In a SPARQL import job the <tt>sparqlImportJob</tt>element specifies the endpoint that will be queried for data and a restriction pattern, note that angle brackets of URIs have to be escaped using <tt>&amp;lt;</tt> and <tt>&amp;gt;</tt>.
+    This restriction pattern is joined with the pattern <tt>?s ?p ?o</tt>, which is also the only pattern in the Construct part of the generated SPARQL Construct query. This means that all the triples of the entities matching the restriction in the <tt>pattern</tt> element are collected.
+    <br/>
+    It is also possible to specify a graph with the <tt>graphName</tt> element and to restrict the number of imported triples with the <tt>tripleLimit</tt> element.
+    <br/>
+    All but the <tt>endpointLocation</tt> are optionals.
 </p>
-<pre>&lt;importJob xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"<br>            xmlns="http://www4.wiwiss.fu-berlin.de/ldif/"&gt;<br>    &lt;internalId&gt;musicbrainz.3&lt;/internalId&gt;<br>    &lt;dataSource&gt;MusicBrainz_Talis&lt;/dataSource&gt;<br>    &lt;refreshSchedule&gt;monthly&lt;/refreshSchedule&gt;<br>    <span style="font-weight: bold;">&lt;sparqlImportJob&gt;</span><br>        &lt;endpointLocation&gt;http://api.talis.com/stores/musicbrainz/services/sparql&lt;/endpointLocation&gt;<br>        &lt;tripleLimit&gt;100000&lt;/tripleLimit&gt;<br>        &lt;sparqlPatterns&gt;<br>            &lt;pattern&gt;?s a &amp;lt;http://purl.org/ontology/mo/MusicArtist&amp;gt;&lt;/pattern&gt;<br>        &lt;/sparqlPatterns&gt;<br>    <span style="font-weight: bold;">&lt;/sparqlImportJob&gt;</span><br>&lt;/importJob&gt;<br></pre>
-<h4>Crawler Import<br>
-</h4>
+<pre>&lt;importJob xmlns="http://www4.wiwiss.fu-berlin.de/bizer/ldif"&gt;<br>    &lt;internalId&gt;musicbrainz.3&lt;/internalId&gt;<br>    &lt;dataSource&gt;MusicBrainz_Talis&lt;/dataSource&gt;<br>    &lt;refreshSchedule&gt;monthly&lt;/refreshSchedule&gt;<br>    <span style="font-weight: bold;">&lt;sparqlImportJob&gt;</span><br>        &lt;endpointLocation&gt;http://api.talis.com/stores/musicbrainz/services/sparql&lt;/endpointLocation&gt;<br>        &lt;tripleLimit&gt;100000&lt;/tripleLimit&gt;<br>        &lt;sparqlPatterns&gt;<br>            &lt;pattern&gt;?s a &amp;lt;http://purl.org/ontology/mo/MusicArtist&amp;gt;&lt;/pattern&gt;<br>        &lt;/sparqlPatterns&gt;<br>    <span style="font-weight: bold;">&lt;/sparqlImportJob&gt;</span><br>&lt;/importJob&gt;</pre>
+
+
+<h4 id="crawlerImportJob">Crawler Import</h4>
 <p>
     A crawl import job is configured by specifying one or more seed URIs as starting points of the crawl.
     Other optional parameters are:
@@ -872,8 +907,7 @@ optional.<span class="Apple-style-span" style="border-collapse: separate; color:
     </ul>
     Of each crawled resource all received triples are stored.
 </p>
-<pre>&lt;importJob xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xmlns="http://www4.wiwiss.fu-berlin.de/ldif/"&gt;
+<pre>&lt;importJob xmlns="http://www4.wiwiss.fu-berlin.de/bizer/ldif"&gt;
     &lt;internalId&gt;freebase.0&lt;/internalId&gt;
     &lt;dataSource&gt;Freebase&lt;/dataSource&gt;
     &lt;refreshSchedule&gt;onStartup&lt;/refreshSchedule&gt;
@@ -890,6 +924,7 @@ optional.<span class="Apple-style-span" style="border-collapse: separate; color:
     <span style="font-weight: bold;">&lt;/crawlImportJob&gt;</span>
 &lt;/importJob&gt;</pre>
 <br/>
+
 <h4 id="provenance">Provenance Metadata</h4>
 <p>
     The result of each import contains provenance metadata, whose structure is described by this <a href=" http://www.assembla.com/code/ldif/git/node/blob/master/ldif/ldif-core/src/main/resources/owl/provenance.owl">ontology</a>.
@@ -916,18 +951,20 @@ _:dbpedia0 &lt;http://www4.wiwiss.fu-berlin.de/ldif/hasDatasource&gt; "dBpedia" 
 _:dbpedia0 &lt;http://www4.wiwiss.fu-berlin.de/ldif/hasImportType&gt; "quad" &lt;http://www4.wiwiss.fu-berlin.de/ldif/provenance&gt; .
 _:dbpedia0 &lt;http://www4.wiwiss.fu-berlin.de/ldif/numberOfQuads&gt; "23592"^^&lt;http://www.w3.org/2001/XMLSchema#nonNegativeInteger&gt; &lt;http://www4.wiwiss.fu-berlin.de/ldif/provenance&gt; .
 _:dbpedia0 &lt;http://www4.wiwiss.fu-berlin.de/ldif/hasOriginalLocation&gt; "http://mes.smw-lde-eu.s3.amazonaws.com/dBpedia_dump.nt.bz2" &lt;http://www4.wiwiss.fu-berlin.de/ldif/provenance&gt; .</pre>
-<h3 id="datasource">Data Source Configuration</h3>
-<p>A Data Source is configured with an XML document, whose structure is
-described by this <a href=" http://www.assembla.com/code/ldif/git/node/blob/master/ldif/ldif-core/src/main/resources/xsd/DataSource.xsd">XML
-Schema</a>. It contains human readable information about a data source.
-The <span style="font-family: monospace;">label</span> element should
-be a unique string in each integration use case, because it will be
-referenced by the <a href="#importjob">import jobs</a>.<br>
-</p>
-<pre>&lt;dataSource&gt;<br>    &lt;label&gt;DBpedia&lt;/label&gt;<br>    &lt;description&gt;DBpedia is an RDF version of Wikipedia&lt;/description&gt;<br>   &lt;homepage&gt;http://dbpedia.org&lt;/homepage&gt;<br>&lt;/dataSource&gt;<br></pre>
-<h2 id="quickstart">4. Quick start</h2>
 
+
+<h3 id="datasource">Data Source Configuration</h3>
+<p>
+    A Data Source is configured with an XML document, whose structure is described by this <a href=" http://www.assembla.com/code/ldif/git/node/blob/master/ldif/ldif-core/src/main/resources/xsd/DataSource.xsd">XML Schema</a>.
+    It contains human readable information about a data source.
+    The <tt>label</tt> element should be a unique string in each integration use case, because it will be referenced by the <a href="#importjob">import jobs</a>.
+</p>
+<pre>&lt;dataSource&gt;<br>    &lt;label&gt;DBpedia&lt;/label&gt;<br>    &lt;description&gt;DBpedia is an RDF version of Wikipedia&lt;/description&gt;<br>   &lt;homepage&gt;http://dbpedia.org&lt;/homepage&gt;<br>&lt;/dataSource&gt;</pre>
+
+
+<h2 id="quickstart">4. Quick start</h2>
 <p>This section explains you how to run the different versions of LDIF.</p>
+
 
 <h3 id="inmemoryquickstart">Single machine / In-memory</h3>
 <p>To see LDIF in action, please follow these steps:</p>
@@ -970,7 +1007,7 @@ the latest release</li>
 </ul>
 
 <p>
-    The configuration properties that need to be used are <code>quadStoreType</code> and <code>databaseLocation</code> (see the <a href="#configurationproperties">Configuration section</a> from more details).
+    The configuration properties that need to be used are <code>quadStoreType</code> and <code>databaseLocation</code> (see the <a href="#integrationProperties">Configuration section</a> from more details).
     <br/>
     The example will run in about 3 minutes. In the meanwhile, you can check the progress of the scheduled jobs through the status monitor interface, available at <a href="http://localhost:5343">http://localhost:5343</a>.
     <br/>
@@ -1185,11 +1222,11 @@ on gene information, disease and drug pathways, and SNP variants</li>
 information on protein sequence and function </li>
 </ul>
 <h4>Configurations</h4>
-<p>A subset of these datasets can be found in the sub-directory <span style="font-family: monospace;">examples/life-science/sources</span>
-of the LDIF release.<br>
+<p>
+    A subset of these datasets can be found in the sub-directory <tt>examples/life-science/sources</tt> of the LDIF release.
+    <br/>
+    The following mapping file provides for translating the vocabularies used by the source data sets into the Wiki ontology.
 </p>
-<p>The following mapping file provides for translating the vocabularies
-used by the source data sets into the Wiki ontology. </p>
 <ul>
   <li>R2R mapping file: <a href=" http://www.assembla.com/code/ldif/git/node/blob/master/ldif/examples/life-science/mappings/ALL-to-Wiki.r2r.ttl">ALL-toWiki.r2r.ttl</a>
     <span style="text-decoration: underline;"></span></li>
