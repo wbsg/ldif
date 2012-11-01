@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"  ?>
-<Sieve xmlns="http://www4.wiwiss.fu-berlin.de/ldif/">
+<Sieve xmlns="http://ldif.wbsg.de/">
     <Prefixes>
         <Prefix id="gn" namespace="http://www.geonames.org/ontology#"/>
         <Prefix id="foaf" namespace="http://xmlns.com/foaf/0.1/"/>
@@ -9,7 +9,7 @@
         <Prefix id="smwprop" namespace="http://mywiki/resource/property/"/>
         <Prefix id="smwcat" namespace="http://mywiki/resource/category/"/>
         <Prefix id="wiki" namespace="http://www.example.com/smw#"/>
-        <Prefix id="ldif" namespace="http://www4.wiwiss.fu-berlin.de/ldif/"/>
+        <Prefix id="ldif" namespace="http://ldif.wbsg.de/"/>
         <Prefix id="xsd" namespace="http://www.w3.org/2001/XMLSchema#"/>
         <Prefix id="rdf" namespace="http://www.w3.org/1999/02/22-rdf-syntax-ns#"/>
         <Prefix id="rdfs" namespace="http://www.w3.org/2000/01/rdf-schema#"/>

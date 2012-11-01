@@ -35,7 +35,7 @@ object CommonUtils {
 
   // convert a Map[String,String] to a Properties object
   def buildProperties(customProperties : Map[String,String]) = {
-    // More details - http://www4.wiwiss.fu-berlin.de/bizer/ldif/#configurationproperties
+    // More details - http://ldif.wbsg.de/#integrationProperties
     val properties = new Properties()
     if (customProperties.size > 0)
       for((key,value) <- customProperties)

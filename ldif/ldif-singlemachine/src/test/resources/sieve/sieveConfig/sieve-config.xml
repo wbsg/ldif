@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"  ?>
-<Sieve xmlns="http://www4.wiwiss.fu-berlin.de/ldif/">
+<Sieve xmlns="http://ldif.wbsg.de/">
     <Prefixes>
-        <Prefix id="ldif" namespace="http://www4.wiwiss.fu-berlin.de/ldif/"/>
+        <Prefix id="ldif" namespace="http://ldif.wbsg.de/"/>
         <Prefix id="sieve" namespace="http://sieve.wbsg.de/vocab/"/>
         <Prefix id="dbpedia-owl" namespace="http://dbpedia.org/ontology/"/>
         <Prefix id="dbpedia" namespace="http://dbpedia.org/resource/"/>

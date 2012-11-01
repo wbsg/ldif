@@ -111,16 +111,16 @@ var workspaceVar = {
         "configurationProperties":{
             "output":"all",
             "rewriteURIs":"true",
-            "provenanceGraphURI":"http://www4.wiwiss.fu-berlin.de/ldif/provenance",
+            "provenanceGraphURI":"http://ldif.wbsg.de/provenance",
             "validateSources":"true",
             "discardFaultyQuads":"false",
             "useExternalSameAsLinks ":"true",
             "outputFormat":"nt",
             "uriMinting":"true",
-            "uriMintNamespace":"http://www4.wiwiss.fu-berlin.de/ldif/resource/",
+            "uriMintNamespace":"http://ldif.wbsg.de/resource/",
             "uriMintLabelPredicate":[
                 { "uri":"http://www.w3.org/2000/01/rdf-schema#label" },
-                { "uri":"http://www4.wiwiss.fu-berlin.de/ldif/property-example/id" }
+                { "uri":"http://ldif.wbsg.de/property-example/id" }
             ]
         }
       },
@@ -131,7 +131,7 @@ var workspaceVar = {
         "integrationJob":"integration-config.xml",
         "dumpLocation":"dumps",
         "configurationProperties":{
-            "provenanceGraphURI":"http://www4.wiwiss.fu-berlin.de/ldif/provenance",
+            "provenanceGraphURI":"http://ldif.wbsg.de/provenance",
             "oneTimeExecution":"true"
         }
       }

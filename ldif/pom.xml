@@ -32,7 +32,7 @@
         <module>ldif-hadoop</module>
         <module>ldif-modules</module>
         <module>ldif-singlemachine</module>
-        <module>ldif-workbench</module>
+        <!--module>ldif-workbench</module-->
         <module>ldif-hadoop-executor</module>
     </modules>
 

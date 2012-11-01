@@ -10,7 +10,7 @@
 @prefix dc: <http://purl.org/dc/elements/1.1/> .
 @prefix foaf: <http://xmlns.com/foaf/0.1/> .
 @prefix bio: <http://rdf.freebase.com/ns/> .
-@prefix mp: <http://www4.wiwiss.fu-berlin.de/ldif/mappings/musicusecase/> .
+@prefix mp: <http://ldif.wbsg.de/mappings/musicusecase/> .
 
 #######################
 ### Simple mappings ###

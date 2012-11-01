@@ -1,9 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
-           xmlns:ldif="http://www4.wiwiss.fu-berlin.de/ldif/"
-           xmlns="http://www4.wiwiss.fu-berlin.de/ldif/"
+           xmlns:ldif="http://ldif.wbsg.de/"
+           xmlns="http://ldif.wbsg.de/"
            elementFormDefault="qualified"
-           targetNamespace="http://www4.wiwiss.fu-berlin.de/ldif/">
+           targetNamespace="http://ldif.wbsg.de/">
 
       <xs:simpleType name="labelType">
         <xs:restriction base="xs:normalizedString" >

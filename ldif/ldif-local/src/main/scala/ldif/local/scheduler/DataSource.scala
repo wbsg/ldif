@@ -25,8 +25,8 @@ import xml.{XML, Node}
 case class DataSource(label : String, description : String = null) {
   def toXML = {
     <dataSource xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-                xsi:schemaLocation="http://www4.wiwiss.fu-berlin.de/ldif/ ../../xsd/DataSource.xsd"
-                xmlns="http://www4.wiwiss.fu-berlin.de/ldif/">
+                xsi:schemaLocation="http://ldif.wbsg.de/ ../../xsd/DataSource.xsd"
+                xmlns="http://ldif.wbsg.de/">
       <label>{label}</label>
       <description>{description}</description>
     </dataSource>

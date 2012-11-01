@@ -45,13 +45,13 @@ class HadoopIntegrationTest extends FlatSpec with ShouldMatchers {
     ldifOutput.size should equal (9)
     
     val correctQuads = CommonUtils.getQuads(List(
-      "<http://source/uriB> <http://www.w3.org/2002/07/owl#sameAs> <http://source/uriC> <http://www4.wiwiss.fu-berlin.de/ldif/graph#uriRewriting> .  ",
+      "<http://source/uriB> <http://www.w3.org/2002/07/owl#sameAs> <http://source/uriC> <http://ldif.wbsg.de/graph#uriRewriting> .  ",
       "<http://source/uriC> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://ldif/class> <http://source/graph7> . ",
-      "<http://source/uriA> <http://www.w3.org/2002/07/owl#sameAs> <http://source/uriC> <http://www4.wiwiss.fu-berlin.de/ldif/graph#uriRewriting> . ",
+      "<http://source/uriA> <http://www.w3.org/2002/07/owl#sameAs> <http://source/uriC> <http://ldif.wbsg.de/graph#uriRewriting> . ",
       "<http://source/uriC> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://ldif/class> <http://source/graph6> . ",
-      "<http://source/uriB> <http://www.w3.org/2002/07/owl#sameAs> <http://source/uriA> <http://www4.wiwiss.fu-berlin.de/ldif/graph#generatedBySilk> . ",
+      "<http://source/uriB> <http://www.w3.org/2002/07/owl#sameAs> <http://source/uriA> <http://ldif.wbsg.de/graph#generatedBySilk> . ",
       "<http://source/uriC> <http://ldif/mapProp> \"map\" <http://source/graph4> . ",
-      "<http://source/uriA> <http://www.w3.org/2002/07/owl#sameAs> <http://source/uriB> <http://www4.wiwiss.fu-berlin.de/ldif/graph#generatedBySilk> . ",
+      "<http://source/uriA> <http://www.w3.org/2002/07/owl#sameAs> <http://source/uriB> <http://ldif.wbsg.de/graph#generatedBySilk> . ",
       "<http://source/uriC> <http://ldif/mapProp> \"map\" <http://source/graph3> . ",
       "<http://source/uriA> <http://www.w3.org/2002/07/owl#sameAs> <http://source/uriC> <http://source/graph1> ."
     ))
@@ -72,7 +72,7 @@ class HadoopIntegrationTest extends FlatSpec with ShouldMatchers {
 
     val correctQuads = CommonUtils.getQuads(List(
       "<http://ldif/mint> <http://ldif/mapProp> \"map\" <http://source/graph4> .",
-      "<http://source/uriB> <http://www.w3.org/2002/07/owl#sameAs> <http://ldif/mint> <http://www4.wiwiss.fu-berlin.de/ldif/graph#uriMinting> ."
+      "<http://source/uriB> <http://www.w3.org/2002/07/owl#sameAs> <http://ldif/mint> <http://ldif.wbsg.de/graph#uriMinting> ."
     ))
     OutputValidator.contains(ldifOutput, correctQuads) should equal(true)
 

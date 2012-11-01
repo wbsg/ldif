@@ -45,8 +45,8 @@ case class IntegrationConfig (sources : Traversable[String],
   //TODO implement outputConfig.toXML
   def toXML : xml.Node = {
     <integrationJob xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-                     xsi:schemaLocation="http://www4.wiwiss.fu-berlin.de/ldif/ ../../xsd/IntegrationJob.xsd"
-                     xmlns="http://www4.wiwiss.fu-berlin.de/ldif/">
+                     xsi:schemaLocation="http://ldif.wbsg.de/ ../../xsd/IntegrationJob.xsd"
+                     xmlns="http://ldif.wbsg.de/">
       {if (isAnySourceDefined){
         <sources>
           {for (source <- sources) yield { <source>{source}</source> } }

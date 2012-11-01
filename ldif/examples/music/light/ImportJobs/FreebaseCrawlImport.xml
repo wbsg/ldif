@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <importJob xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-           xsi:schemaLocation="http://www4.wiwiss.fu-berlin.de/ldif/ ../../xsd/ImportJob.xsd"
-           xmlns="http://www4.wiwiss.fu-berlin.de/ldif/">
+           xsi:schemaLocation="http://ldif.wbsg.de/ ../../xsd/ImportJob.xsd"
+           xmlns="http://ldif.wbsg.de/">
     <internalId>freebase.0</internalId>
     <dataSource>Freebase</dataSource>
     <refreshSchedule>onStartup</refreshSchedule>

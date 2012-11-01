@@ -118,7 +118,7 @@ object DumpLoader {
   private def convertFormat(inputStream : InputStream, lang : String) = {
     if (lang != ContentTypes.langNQuad && lang != ContentTypes.langNTriple)    {
       val runner = new Any23
-      val source = new ByteArrayDocumentSource(inputStream, "http://www4.wiwiss.fu-berlin.de/ldif/", ContentTypes.getContentTypeFromLang(lang))
+      val source = new ByteArrayDocumentSource(inputStream, "http://ldif.wbsg.de/", ContentTypes.getContentTypeFromLang(lang))
       val out = new ByteArrayOutputStream()
       val handler = new NTriplesWriter(out)
       runner.extract(source, handler)

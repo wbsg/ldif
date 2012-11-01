@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <integrationJob xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-                xmlns="http://www4.wiwiss.fu-berlin.de/ldif/">
+                xmlns="http://ldif.wbsg.de/">
     <properties>integration.properties</properties>
     <sources>
         <source>dumps</source>

@@ -7,7 +7,7 @@
         <Prefix id="owl" namespace="http://www.w3.org/2002/07/owl#" />
         <Prefix id="owl" namespace="http://www.w3.org/2002/07/owl#" />
         <Prefix id="oboInOwl" namespace="http://www.geneontology.org/formats/oboInOwl#" />
-        <Prefix id="ldif" namespace="http://www4.wiwiss.fu-berlin.de/ldif/" />
+        <Prefix id="ldif" namespace="http://ldif.wbsg.de/" />
     </Prefixes>
 
     <Interlinks>

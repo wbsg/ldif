@@ -23,6 +23,6 @@ import ldif.module.ModuleConfig
  * Sieve Quality Assessment Module Configuration.
  */
 case class QualityModuleConfig(qualityConfig : QualityConfig) extends ModuleConfig {
-  val qualityMetadataGraph = "http://www4.wiwiss.fu-berlin.de/ldif/provenance"
+  val qualityMetadataGraph = "http://ldif.wbsg.de/provenance"
 
 }
