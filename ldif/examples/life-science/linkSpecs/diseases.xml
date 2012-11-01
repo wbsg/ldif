@@ -1,55 +1,55 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <Silk>
-	<Prefixes>
-		<Prefix id="rdf" namespace="http://www.w3.org/1999/02/22-rdf-syntax-ns#" />
-		<Prefix id="rdfs" namespace="http://www.w3.org/2000/01/rdf-schema#" />
-		<Prefix id="owl" namespace="http://www.w3.org/2002/07/owl#" />
-		<Prefix id="genes" namespace="http://wiking.vulcan.com/neurobase/kegg_genes/resource/vocab/" />
-		<Prefix id="smwprop" namespace="http://mywiki/resource/property/" />
-		<Prefix id="smwcat" namespace="http://mywiki/resource/category/" />
-		<Prefix id="wiki" namespace="http://www.example.com/smw#" />
-	</Prefixes>
+    <Prefixes>
+        <Prefix id="rdf" namespace="http://www.w3.org/1999/02/22-rdf-syntax-ns#" />
+        <Prefix id="rdfs" namespace="http://www.w3.org/2000/01/rdf-schema#" />
+        <Prefix id="owl" namespace="http://www.w3.org/2002/07/owl#" />
+        <Prefix id="genes" namespace="http://wiking.vulcan.com/neurobase/kegg_genes/resource/vocab/" />
+        <Prefix id="smwprop" namespace="http://mywiki/resource/property/" />
+        <Prefix id="smwcat" namespace="http://mywiki/resource/category/" />
+        <Prefix id="wiki" namespace="http://www.example.com/smw#" />
+    </Prefixes>
 
-	<DataSources>
-		<DataSource id="Wiki" type="sparqlEndpoint">
-			<Param name="endpointURI" value="http://localhost:2020/sparql/read" />
-		</DataSource>
+    <DataSources>
+        <DataSource id="Wiki" type="sparqlEndpoint">
+            <Param name="endpointURI" value="http://localhost:2020/sparql/read" />
+        </DataSource>
 
-		<DataSource id="KEGG_GENES" type="sparqlEndpoint">
-			<Param name="endpointURI" value="http://localhost:2020/sparql/read" />
-			<Param name="graph" value="REPLACED_BY_ENGINE" />
-		</DataSource>
-	</DataSources>
+        <DataSource id="KEGG_GENES" type="sparqlEndpoint">
+            <Param name="endpointURI" value="http://localhost:2020/sparql/read" />
+            <Param name="graph" value="REPLACED_BY_ENGINE" />
+        </DataSource>
+    </DataSources>
 
-	<Interlinks>
-		<Interlink id="genes">
-			<LinkType>owl:sameAs</LinkType>
+    <Interlinks>
+        <Interlink id="genes">
+            <LinkType>owl:sameAs</LinkType>
 
-			<!-- a dummy dataset, the real dataset is defined at runtime -->
-			<SourceDataset dataSource="KEGG_GENES" var="a">
-				<RestrictTo>?a rdf:type smwcat:Disease</RestrictTo>
-			</SourceDataset>
+            <!-- a dummy dataset, the real dataset is defined at runtime -->
+            <SourceDataset dataSource="KEGG_GENES" var="a">
+                <RestrictTo>?a rdf:type smwcat:Disease</RestrictTo>
+            </SourceDataset>
 
-			<TargetDataset dataSource="Wiki" var="b">
-				<RestrictTo>?b rdf:type smwcat:Disease</RestrictTo>
-			</TargetDataset>
+            <TargetDataset dataSource="Wiki" var="b">
+                <RestrictTo>?b rdf:type smwcat:Disease</RestrictTo>
+            </TargetDataset>
 
-			<LinkageRule>
-			<Aggregate type="max">
-        <Compare metric="equality">
-          <Input path="?a/smwprop:KeggDiseaseId" />
-          <Input path="?b/smwprop:KeggDiseaseId" />
-        </Compare>
-        <Compare metric="equality">
-          <Input path="?a/smwprop:PharmGKBId" />
-          <Input path="?b/smwprop:PharmGKBId" />
-        </Compare>
-			</Aggregate>
-			</LinkageRule>
+            <LinkageRule>
+                <Aggregate type="max">
+                    <Compare metric="equality">
+                        <Input path="?a/smwprop:KeggDiseaseId" />
+                        <Input path="?b/smwprop:KeggDiseaseId" />
+                    </Compare>
+                    <Compare metric="equality">
+                        <Input path="?a/smwprop:PharmGKBId" />
+                        <Input path="?b/smwprop:PharmGKBId" />
+                    </Compare>
+                </Aggregate>
+            </LinkageRule>
 
-			<Filter threshold="1.0" />
+            <Filter threshold="1.0" />
 
-		</Interlink>
+        </Interlink>
 
-	</Interlinks>
+    </Interlinks>
 </Silk>

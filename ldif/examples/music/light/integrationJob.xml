@@ -10,8 +10,8 @@
     <mappings>mappings</mappings>
     <sieve>sieve</sieve>
     <output>
-       <file>integrated_music_light.nq</file>
-       <!--phase>silk</phase-->
+        <file>integrated_music_light.nq</file>
+        <!--phase>silk</phase-->
     </output>
     <runSchedule>onStartup</runSchedule>
 </integrationJob>

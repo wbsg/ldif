@@ -2,10 +2,10 @@
 <scheduler xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
            xsi:schemaLocation="http://www4.wiwiss.fu-berlin.de/ldif/ ../xsd/SchedulerConfig.xsd"
            xmlns="http://www4.wiwiss.fu-berlin.de/ldif/">
-  <properties>life-science.properties</properties>
-  <dataSources>dataSources</dataSources>
-  <importJob>importJobs</importJob>
-  <integrationJob>integration-config.xml</integrationJob>
-  <dumpLocation>dumps-life-science</dumpLocation>
+    <properties>life-science.properties</properties>
+    <dataSources>dataSources</dataSources>
+    <importJob>importJobs</importJob>
+    <integrationJob>integration-config.xml</integrationJob>
+    <dumpLocation>dumps-life-science</dumpLocation>
 </scheduler>
 

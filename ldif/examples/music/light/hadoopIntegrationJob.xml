@@ -2,16 +2,14 @@
 <integrationJob xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
            xsi:schemaLocation="http://www4.wiwiss.fu-berlin.de/ldif/ ../xsd/IntegrationJob.xsd"
             xmlns="http://www4.wiwiss.fu-berlin.de/ldif/">
-    <properties>integration.properties</properties>
+    <properties>http://s3-us-west-2.amazonaws.com/ldif-emr/music-light-s3/integration.properties</properties>
     <sources>
-        <source>examples/music/light/dumps</source>
+        <source>dumps-music-light</source>
     </sources>
-    <linkSpecifications>linkspecs</linkSpecifications>
-    <mappings>mappings</mappings>
-    <outputs>
-        <output>
-            <file>integrated_music_light</file>
-        </output>
-    </outputs>
+    <linkSpecifications>http://s3-us-west-2.amazonaws.com/ldif-emr/music-light-s3/linkspecs/musicLinkSpec.xml</linkSpecifications>
+    <mappings>http://s3-us-west-2.amazonaws.com/ldif-emr/music-light-s3/mappings/mappings.ttl</mappings>
+    <output>
+        <file>/home/hadoop/integrated_music_light</file>
+    </output>
     <runSchedule>onStartup</runSchedule>
 </integrationJob>

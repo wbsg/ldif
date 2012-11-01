@@ -7,6 +7,6 @@
     <refreshSchedule>onStartup</refreshSchedule>
     <wikidataImportJob>
         <limit>200</limit>
-	    <langs>en de fr</langs>
+        <langs>en de fr</langs>
     </wikidataImportJob>
 </importJob>
