@@ -7,5 +7,5 @@ object WikidataConsts {
   val wikidataP = "http://wikidata/property/"
   // Add item ID to this prefix
   val wikidataItemPrefix = "http://wikidata.org/wiki/"
-  val wikidataEndpoint = "http://wikidata-test-repo.wikimedia.de/w/api.php"
+  val wikidataEndpoint = "http://wikidata.org/w/api.php"
 }

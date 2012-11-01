@@ -25,7 +25,7 @@ class WikidataImportJob(val wikidataConfig: WikidataImportConfig, val id: Identi
   val reporter = new WikidataImportJobPublisher(id)
 
   /**
-   * Start import and write results to output stream. Return true on success and true and fail.
+   * Start import and write results to output stream. Return true on success and false on fail.
    */
   def load(out: OutputStream, estimatedNumberOfQuads: Option[Double]) = {
     JobMonitor.addPublisher(reporter)
