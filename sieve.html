@@ -294,8 +294,8 @@ is described by this <a href="http://www.assembla.com/code/ldif/git/nodes/ldif/l
 
 <h3 id=qualityinput>Input</h3>
   <p>
-  In its most basic form, the input for the quality assessment task is the <a href="http://www4.wiwiss.fu-berlin.de/bizer/ldif/#provenance">LDIF provenance metadata</a>.
-  When LDIF imports a new data source, it generates <code>ldif:ImportedGraph</code> descriptions for all graphs in the input (see <a href="http://www4.wiwiss.fu-berlin.de/bizer/ldif/#importjob">Data Import</a> for module-specific details).
+  In its most basic form, the input for the quality assessment task is the <a href="http://ldif.wbsg.de/#provenance">LDIF provenance metadata</a>.
+  When LDIF imports a new data source, it generates <code>ldif:ImportedGraph</code> descriptions for all graphs in the input (see <a href="http://ldif.wbsg.de/#importjob">Data Import</a> for module-specific details).
   Sieve will (by default) mash that with any other graph metadata provided as input, and feed that through the scoring functions defined in the configuration.
   This allows the configuration to use automatically computed metadata by LDIF, as well as metadata from the original source, or from other third-parties.
   Examples of such third-party metadata include ratings, prominence statistics, etc.
@@ -379,7 +379,7 @@ object ScoringFunction {
 
 
 <h3 id=qualityoutput>Output</h3>
-<p>The quality-describing metadata computed by this step can be output and stored as an extension to the <a href="http://www4.wiwiss.fu-berlin.de/bizer/ldif/#provenance">LDIF Provenance Graph</a>.
+<p>The quality-describing metadata computed by this step can be output and stored as an extension to the <a href="http://ldif.wbsg.de/#provenance">LDIF Provenance Graph</a>.
    In this case, all non-zero scores are written out as quads, for each graph evaluated in LDIF. Metrics with score=0.0 are omitted, as in Sieve a missing quality assessment is equivalent to a zero score.
    If you wish to omit all quality scores from the final output (e.g. to reduce output size), you can set the configuration property <code>outputQualityScores=false</code> in <a href="http://ldif.wbsg.de/#configuration" target="ldif">integration.properties</a>.
    Regardless, the quality scores will always be passed on to the fusion module, if a Fusion configuration exists.
@@ -515,7 +515,7 @@ The directory <code>sieve</code> contains configuration for quality assessment a
 We will assign higher reputation to data coming from the English Wikipedia (because it is the largest and most viewed), followed by the Portuguese (because it's the most relevant for the use case), Spanish, French and German (in subjective order of language similarity to Portuguese).
 Recency will be measured by looking at the <code>lastUpdated</code> property, which was extracted from Wikipedia Dumps.
 <pre>
-&lt;Sieve xmlns="http://www4.wiwiss.fu-berlin.de/ldif/"&gt;
+&lt;Sieve xmlns="http://ldif.wbsg.de/"&gt;
     &lt;Prefixes&gt;
         &lt;Prefix id="dbpedia-owl" namespace="http://dbpedia.org/ontology/"/&gt;
         &lt;Prefix id="dbpedia" namespace="http://dbpedia.org/resource/"/&gt;
@@ -577,16 +577,16 @@ Some example data for fused properties:
 <p>
 If you choose to output quality scores, then you should also notice many triples assigned to your graph URIs, like this:
 <pre>
-&lt;http://es.wikipedia.org/wiki/Rio_de_Janeiro&gt; &lt;http://sieve.wbsg.de/vocab/reputation&gt; "0.4010"^^&lt;http://www.w3.org/2001/XMLSchema#double&gt; &lt;http://www4.wiwiss.fu-berlin.de/ldif/provenance&gt; .
-&lt;http://pt.wikipedia.org/wiki/Rio_de_Janeiro&gt; &lt;http://sieve.wbsg.de/vocab/reputation&gt; "1.0000"^^&lt;http://www.w3.org/2001/XMLSchema#double&gt; &lt;http://www4.wiwiss.fu-berlin.de/ldif/provenance&gt; .
-&lt;http://fr.wikipedia.org/wiki/Rio_de_Janeiro&gt; &lt;http://sieve.wbsg.de/vocab/reputation&gt; "0.2010"^^&lt;http://www.w3.org/2001/XMLSchema#double&gt; &lt;http://www4.wiwiss.fu-berlin.de/ldif/provenance&gt; .
-&lt;http://de.wikipedia.org/wiki/Rio_de_Janeiro&gt; &lt;http://sieve.wbsg.de/vocab/reputation&gt; "0.0010"^^&lt;http://www.w3.org/2001/XMLSchema#double&gt; &lt;http://www4.wiwiss.fu-berlin.de/ldif/provenance&gt; .
-&lt;http://en.wikipedia.org/wiki/Rio_de_Janeiro&gt; &lt;http://sieve.wbsg.de/vocab/reputation&gt; "0.6010"^^&lt;http://www.w3.org/2001/XMLSchema#double&gt; &lt;http://www4.wiwiss.fu-berlin.de/ldif/provenance&gt; .
-&lt;http://de.wikipedia.org/wiki/Rio_de_Janeiro&gt; &lt;http://sieve.wbsg.de/vocab/recency&gt; "0.9956"^^&lt;http://www.w3.org/2001/XMLSchema#double&gt; &lt;http://www4.wiwiss.fu-berlin.de/ldif/provenance&gt; .
-&lt;http://en.wikipedia.org/wiki/Rio_de_Janeiro&gt; &lt;http://sieve.wbsg.de/vocab/recency&gt; "0.9955"^^&lt;http://www.w3.org/2001/XMLSchema#double&gt; &lt;http://www4.wiwiss.fu-berlin.de/ldif/provenance&gt; .
-&lt;http://es.wikipedia.org/wiki/Rio_de_Janeiro&gt; &lt;http://sieve.wbsg.de/vocab/recency&gt; "0.9648"^^&lt;http://www.w3.org/2001/XMLSchema#double&gt; &lt;http://www4.wiwiss.fu-berlin.de/ldif/provenance&gt; .
-&lt;http://fr.wikipedia.org/wiki/Rio_de_Janeiro&gt; &lt;http://sieve.wbsg.de/vocab/recency&gt; "0.9956"^^&lt;http://www.w3.org/2001/XMLSchema#double&gt; &lt;http://www4.wiwiss.fu-berlin.de/ldif/provenance&gt; .
-&lt;http://pt.wikipedia.org/wiki/Rio_de_Janeiro&gt; &lt;http://sieve.wbsg.de/vocab/recency&gt; "0.9953"^^&lt;http://www.w3.org/2001/XMLSchema#double&gt; &lt;http://www4.wiwiss.fu-berlin.de/ldif/provenance&gt; .
+&lt;http://es.wikipedia.org/wiki/Rio_de_Janeiro&gt; &lt;http://sieve.wbsg.de/vocab/reputation&gt; "0.4010"^^&lt;http://www.w3.org/2001/XMLSchema#double&gt; &lt;http://ldif.wbsg.de/provenance&gt; .
+&lt;http://pt.wikipedia.org/wiki/Rio_de_Janeiro&gt; &lt;http://sieve.wbsg.de/vocab/reputation&gt; "1.0000"^^&lt;http://www.w3.org/2001/XMLSchema#double&gt; &lt;http://ldif.wbsg.de/provenance&gt; .
+&lt;http://fr.wikipedia.org/wiki/Rio_de_Janeiro&gt; &lt;http://sieve.wbsg.de/vocab/reputation&gt; "0.2010"^^&lt;http://www.w3.org/2001/XMLSchema#double&gt; &lt;http://ldif.wbsg.de/provenance&gt; .
+&lt;http://de.wikipedia.org/wiki/Rio_de_Janeiro&gt; &lt;http://sieve.wbsg.de/vocab/reputation&gt; "0.0010"^^&lt;http://www.w3.org/2001/XMLSchema#double&gt; &lt;http://ldif.wbsg.de/provenance&gt; .
+&lt;http://en.wikipedia.org/wiki/Rio_de_Janeiro&gt; &lt;http://sieve.wbsg.de/vocab/reputation&gt; "0.6010"^^&lt;http://www.w3.org/2001/XMLSchema#double&gt; &lt;http://ldif.wbsg.de/provenance&gt; .
+&lt;http://de.wikipedia.org/wiki/Rio_de_Janeiro&gt; &lt;http://sieve.wbsg.de/vocab/recency&gt; "0.9956"^^&lt;http://www.w3.org/2001/XMLSchema#double&gt; &lt;http://ldif.wbsg.de/provenance&gt; .
+&lt;http://en.wikipedia.org/wiki/Rio_de_Janeiro&gt; &lt;http://sieve.wbsg.de/vocab/recency&gt; "0.9955"^^&lt;http://www.w3.org/2001/XMLSchema#double&gt; &lt;http://ldif.wbsg.de/provenance&gt; .
+&lt;http://es.wikipedia.org/wiki/Rio_de_Janeiro&gt; &lt;http://sieve.wbsg.de/vocab/recency&gt; "0.9648"^^&lt;http://www.w3.org/2001/XMLSchema#double&gt; &lt;http://ldif.wbsg.de/provenance&gt; .
+&lt;http://fr.wikipedia.org/wiki/Rio_de_Janeiro&gt; &lt;http://sieve.wbsg.de/vocab/recency&gt; "0.9956"^^&lt;http://www.w3.org/2001/XMLSchema#double&gt; &lt;http://ldif.wbsg.de/provenance&gt; .
+&lt;http://pt.wikipedia.org/wiki/Rio_de_Janeiro&gt; &lt;http://sieve.wbsg.de/vocab/recency&gt; "0.9953"^^&lt;http://www.w3.org/2001/XMLSchema#double&gt; &lt;http://ldif.wbsg.de/provenance&gt; .
 </pre>
 </p>
 

@@ -560,7 +560,15 @@ which parameters you can modify to change the runtime behavior of LDIF.</p>
 </p>
 
 <p> A typical configuration document looks like this: </p>
-<pre>&lt;scheduler xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"<br>           xmlns="http://www4.wiwiss.fu-berlin.de/ldif/"&gt;<br>    &lt;properties&gt;scheduler.properties&lt;/properties&gt;<br>    &lt;dataSources&gt;datasources&lt;/dataSources&gt;<br>    &lt;importJob&gt;importJobs&lt;/importJob&gt;<br>    &lt;integrationJob&gt;integration-config.xml&lt;/integrationJob&gt;<br>    &lt;dumpLocation&gt;dumps&lt;/dumpLocation&gt;<br>&lt;/scheduler&gt;<br></pre>
+<pre>&lt;scheduler xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://ldif.wbsg.de/ ../xsd/SchedulerConfig.xsd"
+           xmlns="http://ldif.wbsg.de/"&gt;
+    &lt;properties&gt;scheduler.properties&lt;/properties&gt;
+    &lt;dataSources&gt;datasources&lt;/dataSources&gt;
+    &lt;importJob&gt;importJobs&lt;/importJob&gt;
+    &lt;integrationJob&gt;integration-config.xml&lt;/integrationJob&gt;
+    &lt;dumpLocation&gt;dumps&lt;/dumpLocation&gt;
+&lt;/scheduler&gt;</pre>
 
 <p>It has the following elements:</p>
 <ul>
@@ -593,7 +601,7 @@ which parameters you can modify to change the runtime behavior of LDIF.</p>
     <tr class="even">
         <td><tt>provenanceGraphURI</tt></td>
         <td>Specify the graph where the provenance information is stored. </td>
-        <td><tt>http://www4.wiwiss.fu-berlin.de/ldif/provenance</tt></td>
+        <td><tt>http://ldif.wbsg.de/provenance</tt></td>
     </tr>
 
     <tr class="odd">
@@ -630,7 +638,8 @@ which parameters you can modify to change the runtime behavior of LDIF.</p>
 
 <p>A typical configuration document looks like this:</p>
 <pre>&lt;integrationJob xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-             xmlns="http://www4.wiwiss.fu-berlin.de/ldif/"&gt;
+                xsi:schemaLocation="http://ldif.wbsg.de/ ../xsd/IntegrationConfig.xsd"
+                xmlns="http://ldif.wbsg.de/"&gt;
     &lt;properties&gt;test.properties&lt;/properties&gt;
     &lt;sources&gt;
         &lt;source&gt;dumps&lt;/source&gt;
@@ -726,7 +735,7 @@ which parameters you can modify to change the runtime behavior of LDIF.</p>
                 Specify the graph containing the provenance information.
                 Quads from this graph are only written to the final output data set and not processed any further in the integration workflow.
             </td>
-            <td><tt>http://www4.wiwiss.fu-berlin.de/ldif/provenance</tt></td>
+            <td><tt>http://ldif.wbsg.de/provenance</tt></td>
         </tr>
 
         <tr class="odd">
@@ -754,7 +763,7 @@ which parameters you can modify to change the runtime behavior of LDIF.</p>
             <td><tt>useExternalSameAsLinks</tt></td>
             <td>
                 Besides discovering equal entities in the identity resolution phase, LDIF also offers the opportunity to input these relationships in form of <tt>owl:sameAs</tt> links.
-                The NT/N-Quads file with these <tt>owl:sameAs</tt> links has to be placed in the source directory with the other data sets.
+                The files containing these <tt>owl:sameAs</tt> links has to be placed in the source directory with the other data sets.
                 <br/>
                 If you don’t want to use <tt>owl:sameAs</tt> links from the input data, set this property to <tt>false</tt>.
             </td>
@@ -808,7 +817,7 @@ which parameters you can modify to change the runtime behavior of LDIF.</p>
         <tr class="even">
             <td><tt>uriMintNamespace</tt></td>
             <td>Specify the namespace into which the URIs of all output resources are translated, if URI minting is enabled.</td>
-            <td><tt>http://www4.wiwiss.fu-berlin.de/ldif/resource/</tt></td>
+            <td><tt>http://ldif.wbsg.de/resource/</tt></td>
         </tr>
 
         <tr class="odd">
@@ -876,12 +885,23 @@ which parameters you can modify to change the runtime behavior of LDIF.</p>
 
 <h4 id="quadImportJob">Quad Import</h4>
 <p>A typical config file for a Quad Import Job looks like this: </p>
-<pre>&lt;importJob xmlns="http://www4.wiwiss.fu-berlin.de/bizer/ldif"&gt;<br>    &lt;internalId&gt;dBpedia.0&lt;/internalId&gt;<br>    &lt;dataSource&gt;dBpedia&lt;/dataSource&gt;<br>    &lt;refreshSchedule&gt;daily&lt;/refreshSchedule&gt;<br>    <span style="font-weight: bold;">&lt;quadImportJob&gt;</span><br>      &lt;dumpLocation&gt;http://dbpedia.org/dump.nq&lt;/dumpLocation&gt;<br>    <span style="font-weight: bold;">&lt;/quadImportJob&gt;</span><br>&lt;/importJob&gt;</pre>
+<pre>&lt;importJob xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://ldif.wbsg.de/ ../../xsd/ImportJob.xsd"
+           xmlns="http://ldif.wbsg.de/"&gt;
+    &lt;internalId&gt;dBpedia.0&lt;/internalId&gt;
+    &lt;dataSource&gt;dBpedia&lt;/dataSource&gt;
+    &lt;refreshSchedule&gt;daily&lt;/refreshSchedule&gt;
+    <span style="font-weight: bold;">&lt;quadImportJob&gt;</span>
+        &lt;dumpLocation&gt;http://dbpedia.org/dump.nq&lt;/dumpLocation&gt;
+    <span style="font-weight: bold;">&lt;/quadImportJob&gt;</span>
+&lt;/importJob&gt;</pre>
 Optionally, the <tt>renameGraphs</tt> parameter allows to specify a regular expression that will be used to rename the imported graph names, by removing the matching values.
 
 <h4 id="tripleImportJob">Triple Import</h4>
 <p>In a triple import you use the <tt>tripleImportJob</tt> element instead of the <tt>quadImportJob</tt> element: </p>
-<pre>&lt;importJob xmlns="http://www4.wiwiss.fu-berlin.de/bizer/ldif"&gt;<br>    &lt;internalId&gt;dBpedia.0&lt;/internalId&gt;<br>    &lt;dataSource&gt;dBpedia&lt;/dataSource&gt;<br>    &lt;refreshSchedule&gt;daily&lt;/refreshSchedule&gt;<br>    <span style="font-weight: bold;">&lt;tripleImportJob&gt;</span><br>      &lt;dumpLocation&gt;http://dbpedia.org/dump.nt&lt;/dumpLocation&gt;<br>    <span style="font-weight: bold;">&lt;/tripleImportJob&gt;</span><br>&lt;/importJob&gt;</pre>
+<pre>&lt;importJob xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://ldif.wbsg.de/ ../../xsd/ImportJob.xsd"
+           xmlns="http://ldif.wbsg.de/"&gt;<br/>    &lt;internalId&gt;dBpedia.0&lt;/internalId&gt;<br>    &lt;dataSource&gt;dBpedia&lt;/dataSource&gt;<br>    &lt;refreshSchedule&gt;daily&lt;/refreshSchedule&gt;<br>    <span style="font-weight: bold;">&lt;tripleImportJob&gt;</span><br>      &lt;dumpLocation&gt;http://dbpedia.org/dump.nt&lt;/dumpLocation&gt;<br>    <span style="font-weight: bold;">&lt;/tripleImportJob&gt;</span><br>&lt;/importJob&gt;</pre>
 
 <h4 id="sparqlImportJob">SPARQL Import</h4>
 <p>
@@ -893,7 +913,9 @@ Optionally, the <tt>renameGraphs</tt> parameter allows to specify a regular expr
     <br/>
     All but the <tt>endpointLocation</tt> are optionals.
 </p>
-<pre>&lt;importJob xmlns="http://www4.wiwiss.fu-berlin.de/bizer/ldif"&gt;<br>    &lt;internalId&gt;musicbrainz.3&lt;/internalId&gt;<br>    &lt;dataSource&gt;MusicBrainz_Talis&lt;/dataSource&gt;<br>    &lt;refreshSchedule&gt;monthly&lt;/refreshSchedule&gt;<br>    <span style="font-weight: bold;">&lt;sparqlImportJob&gt;</span><br>        &lt;endpointLocation&gt;http://api.talis.com/stores/musicbrainz/services/sparql&lt;/endpointLocation&gt;<br>        &lt;tripleLimit&gt;100000&lt;/tripleLimit&gt;<br>        &lt;sparqlPatterns&gt;<br>            &lt;pattern&gt;?s a &amp;lt;http://purl.org/ontology/mo/MusicArtist&amp;gt;&lt;/pattern&gt;<br>        &lt;/sparqlPatterns&gt;<br>    <span style="font-weight: bold;">&lt;/sparqlImportJob&gt;</span><br>&lt;/importJob&gt;</pre>
+<pre>&lt;importJob xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://ldif.wbsg.de/ ../../xsd/ImportJob.xsd"
+           xmlns="http://ldif.wbsg.de/"&gt;<br/>    &lt;internalId&gt;musicbrainz.3&lt;/internalId&gt;<br>    &lt;dataSource&gt;MusicBrainz_Talis&lt;/dataSource&gt;<br>    &lt;refreshSchedule&gt;monthly&lt;/refreshSchedule&gt;<br>    <span style="font-weight: bold;">&lt;sparqlImportJob&gt;</span><br>        &lt;endpointLocation&gt;http://api.talis.com/stores/musicbrainz/services/sparql&lt;/endpointLocation&gt;<br>        &lt;tripleLimit&gt;100000&lt;/tripleLimit&gt;<br>        &lt;sparqlPatterns&gt;<br>            &lt;pattern&gt;?s a &amp;lt;http://purl.org/ontology/mo/MusicArtist&amp;gt;&lt;/pattern&gt;<br>        &lt;/sparqlPatterns&gt;<br>    <span style="font-weight: bold;">&lt;/sparqlImportJob&gt;</span><br>&lt;/importJob&gt;</pre>
 
 
 <h4 id="crawlerImportJob">Crawler Import</h4>
@@ -908,7 +930,9 @@ Optionally, the <tt>renameGraphs</tt> parameter allows to specify a regular expr
     </ul>
     Of each crawled resource all received triples are stored.
 </p>
-<pre>&lt;importJob xmlns="http://www4.wiwiss.fu-berlin.de/bizer/ldif"&gt;
+<pre>&lt;importJob xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://ldif.wbsg.de/ ../../xsd/ImportJob.xsd"
+           xmlns="http://ldif.wbsg.de/"&gt;
     &lt;internalId&gt;freebase.0&lt;/internalId&gt;
     &lt;dataSource&gt;Freebase&lt;/dataSource&gt;
     &lt;refreshSchedule&gt;onStartup&lt;/refreshSchedule&gt;
@@ -941,17 +965,17 @@ Optionally, the <tt>renameGraphs</tt> parameter allows to specify a regular expr
 <p>A typical provenance graph for a Crawl Import Job looks like this:</p>
 <img src="images/Freebase-Provenance.png" alt="Provenance graph">
 <p>A typical provenance graph for a Quad Import Job looks like this:</p>
-<pre>&lt;http://dbpedia.org/graphA&gt; &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#type&gt; &lt;http://www4.wiwiss.fu-berlin.de/ldif/ImportedGraph&gt; &lt;http://www4.wiwiss.fu-berlin.de/ldif/provenance&gt; .
-&lt;http://dbpedia.org/graphA&gt; &lt;http://www4.wiwiss.fu-berlin.de/ldif/hasImportJob&gt; _:dbpedia0 &lt;http://www4.wiwiss.fu-berlin.de/ldif/provenance&gt; .
-&lt;http://dbpedia.org/graphB&gt; &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#type&gt; &lt;http://www4.wiwiss.fu-berlin.de/ldif/ImportedGraph&gt; &lt;http://www4.wiwiss.fu-berlin.de/ldif/provenance&gt; .
-&lt;http://dbpedia.org/graphB&gt; &lt;http://www4.wiwiss.fu-berlin.de/ldif/hasImportJob&gt; _:dbpedia0 &lt;http://www4.wiwiss.fu-berlin.de/ldif/provenance&gt; .
-_:dbpedia0 &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#type&gt; &lt;http://www4.wiwiss.fu-berlin.de/ldif/ImportJob&gt; &lt;http://www4.wiwiss.fu-berlin.de/ldif/provenance&gt; .
-_:dbpedia0 &lt;http://www4.wiwiss.fu-berlin.de/ldif/importId&gt; "dBpedia.0" &lt;http://www4.wiwiss.fu-berlin.de/ldif/provenance&gt; .
-_:dbpedia0 &lt;http://www4.wiwiss.fu-berlin.de/ldif/lastUpdate&gt; "2011-09-21T19:01:00-05:00"^^&lt;http://www.w3.org/2001/XMLSchema#dateTime&gt; &lt;http://www4.wiwiss.fu-berlin.de/ldif/provenance&gt; .
-_:dbpedia0 &lt;http://www4.wiwiss.fu-berlin.de/ldif/hasDatasource&gt; "dBpedia" &lt;http://www4.wiwiss.fu-berlin.de/ldif/provenance&gt; .
-_:dbpedia0 &lt;http://www4.wiwiss.fu-berlin.de/ldif/hasImportType&gt; "quad" &lt;http://www4.wiwiss.fu-berlin.de/ldif/provenance&gt; .
-_:dbpedia0 &lt;http://www4.wiwiss.fu-berlin.de/ldif/numberOfQuads&gt; "23592"^^&lt;http://www.w3.org/2001/XMLSchema#nonNegativeInteger&gt; &lt;http://www4.wiwiss.fu-berlin.de/ldif/provenance&gt; .
-_:dbpedia0 &lt;http://www4.wiwiss.fu-berlin.de/ldif/hasOriginalLocation&gt; "http://mes.smw-lde-eu.s3.amazonaws.com/dBpedia_dump.nt.bz2" &lt;http://www4.wiwiss.fu-berlin.de/ldif/provenance&gt; .</pre>
+<pre>&lt;http://dbpedia.org/graphA&gt; &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#type&gt; &lt;http://ldif.wbsg.de/ImportedGraph&gt; &lt;http://ldif.wbsg.de/provenance&gt; .
+&lt;http://dbpedia.org/graphA&gt; &lt;http://ldif.wbsg.de/hasImportJob&gt; _:dbpedia0 &lt;http://ldif.wbsg.de/provenance&gt; .
+&lt;http://dbpedia.org/graphB&gt; &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#type&gt; &lt;http://ldif.wbsg.de/ImportedGraph&gt; &lt;http://ldif.wbsg.de/provenance&gt; .
+&lt;http://dbpedia.org/graphB&gt; &lt;http://ldif.wbsg.de/hasImportJob&gt; _:dbpedia0 &lt;http://ldif.wbsg.de/provenance&gt; .
+_:dbpedia0 &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#type&gt; &lt;http://ldif.wbsg.de/ImportJob&gt; &lt;http://ldif.wbsg.de/provenance&gt; .
+_:dbpedia0 &lt;http://ldif.wbsg.de/importId&gt; "dBpedia.0" &lt;http://ldif.wbsg.de/provenance&gt; .
+_:dbpedia0 &lt;http://ldif.wbsg.de/lastUpdate&gt; "2011-09-21T19:01:00-05:00"^^&lt;http://www.w3.org/2001/XMLSchema#dateTime&gt; &lt;http://ldif.wbsg.de/provenance&gt; .
+_:dbpedia0 &lt;http://ldif.wbsg.de/hasDatasource&gt; "dBpedia" &lt;http://ldif.wbsg.de/provenance&gt; .
+_:dbpedia0 &lt;http://ldif.wbsg.de/hasImportType&gt; "quad" &lt;http://ldif.wbsg.de/provenance&gt; .
+_:dbpedia0 &lt;http://ldif.wbsg.de/numberOfQuads&gt; "23592"^^&lt;http://www.w3.org/2001/XMLSchema#nonNegativeInteger&gt; &lt;http://ldif.wbsg.de/provenance&gt; .
+_:dbpedia0 &lt;http://ldif.wbsg.de/hasOriginalLocation&gt; "http://mes.smw-lde-eu.s3.amazonaws.com/dBpedia_dump.nt.bz2" &lt;http://ldif.wbsg.de/provenance&gt; .</pre>
 
 
 <h3 id="datasource">Data Source Configuration</h3>
@@ -960,7 +984,9 @@ _:dbpedia0 &lt;http://www4.wiwiss.fu-berlin.de/ldif/hasOriginalLocation&gt; "htt
     It contains human readable information about a data source.
     The <tt>label</tt> element should be a unique string in each integration use case, because it will be referenced by the <a href="#importjob">import jobs</a>.
 </p>
-<pre>&lt;dataSource&gt;<br>    &lt;label&gt;DBpedia&lt;/label&gt;<br>    &lt;description&gt;DBpedia is an RDF version of Wikipedia&lt;/description&gt;<br>   &lt;homepage&gt;http://dbpedia.org&lt;/homepage&gt;<br>&lt;/dataSource&gt;</pre>
+<pre>&lt;dataSource xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://ldif.wbsg.de/ ../../xsd/DataSource.xsd"
+           xmlns="http://ldif.wbsg.de/"&gt;<br/>    &lt;label&gt;DBpedia&lt;/label&gt;<br>    &lt;description&gt;DBpedia is an RDF version of Wikipedia&lt;/description&gt;<br>   &lt;homepage&gt;http://dbpedia.org&lt;/homepage&gt;<br>&lt;/dataSource&gt;</pre>
 
 
 <h2 id="quickstart">4. Quick start</h2>
@@ -1232,7 +1258,9 @@ genes and other expressions that are described in multiple data sets.</p>
 configuration. The configuration options are explained in the Section <a href="#configuration">Configuration</a> below. <br>
 </p>
 <ul>
-  <pre>&lt;integrationJob&gt;
+<pre>&lt;integrationJob xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                xsi:schemaLocation="http://ldif.wbsg.de/ ../xsd/IntegrationConfig.xsd"
+                xmlns="http://ldif.wbsg.de/"&gt;
     &lt;properties&gt;life-science.properties&lt;/properties&gt;
     &lt;sources&gt;
         &lt;source&gt;sources&lt;/source&gt;
