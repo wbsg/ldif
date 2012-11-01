@@ -17,7 +17,7 @@
     <packaging>pom</packaging>
     <version>0.5</version>
     <name>LDIF</name>
-    <url>http://www4.wiwiss.fu-berlin.de/bizer/ldif/</url>
+    <url>http://ldif.wbsg.de/</url>
 
     <licenses>
         <license>
