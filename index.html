@@ -6,7 +6,7 @@
   <style>
 body { background: white; color: black; font-family: sans-serif; line-height: 1.4em; padding: 3em 12em 3em 12em; margin: 0; }
 :link, :visited { color: #00c; }
-a:link img { border: none; }
+a:link img { border: none;  }
 a:visited img { border: none; }
 h1, h2, h3, h4 { background: white; color: #800; }
 h1 { font: 170% sans-serif; margin: 0; }
@@ -221,75 +221,76 @@ table tr.odd {background-color: #f6f6f6}
 
 <div id="content">
 <div id="top-container">
-<div id="purpose">LDIF translates heterogeneous Linked Data from the
-Web into a clean, local target representation while keeping track of
-data
-provenance.</div>
+<div id="purpose">LDIF translates heterogeneous Linked Data from the Web into a clean, local target representation while keeping track of data provenance.</div>
+
+
 <div id="boxcontainer">
-<div id="downloadbox" class="box">
-    <span><a href="http://ldif.wbsg.de/releases/ldif-0.5.zip" title="Download LDIF Single Machine version">LDIF Single machine</a> |
-    <a href="http://ldif.wbsg.de/releases/ldif-hadoop-0.5.zip" title="Download LDIF Hadoop version">LDIF Hadoop</a></span>
-<small>v0.5, released 2012-03-28</small>
+    <div id="downloadbox" class="box">
+        <span><a href="http://ldif.wbsg.de/releases/ldif-0.5.zip" title="Download LDIF Single Machine version">LDIF Single machine</a> |
+        <a href="http://ldif.wbsg.de/releases/ldif-hadoop-0.5.zip" title="Download LDIF Hadoop version">LDIF Hadoop</a></span>
+        <small>v0.5, released 2012-03-28</small>
+    </div>
+    <div id="quickstartbox" class="box"> <a href="#quickstart"><span>Quick Start</span></a> </div>
+    <div id="supportbox" class="box"> <a href="#feedback"><span>Get Support</span></a> </div>
+    </div>
 </div>
-<div id="quickstartbox" class="box"> <a href="#quickstart"><span>Quick
-Start</span></a> </div>
-<div id="supportbox" class="box"> <a href="#feedback"><span>Get Support</span></a>
-</div>
-</div>
-</div>
+
+
 <h2 id="news">News</h2>
 <ul>
-  <li>
-      <strong>06/05/2012: Presentation:</strong> LDIF has been presented at the <a href="http://semtechbizsf2012.semanticweb.com/">Semantic Technology and Business Conference (SemTech2012)</a> in San Francisco.
-      See slides of the talk: <a href="http://www.wiwiss.fu-berlin.de/en/institute/pwo/bizer/research/publications/Becker-etal-LDIF-SemTechSanFrancisco.pdf">How to Integrate Linked Data into your Application</a>.
-  </li>
-  <li>
-    <strong>03/28/2012: Version 0.5 released.</strong>
-      This release provides a <a href="#qualityfusion">data quality assessment and fusion</a> module for cleansing data according to
-      user-provided quality assessment policies and conflict resolution methods.
-  <li>
-	<strong>02/06/2012: Presentation:</strong> LDIF is presented at <a href="http://semtechbizberlin2012.semanticweb.com/">SEMTECHBIZ Berlin 2012</a> (<a href="http://www.wiwiss.fu-berlin.de/en/institute/pwo/bizer/research/publications/BeckerMatteini-LDIF-SemTechBerlin2012-Talk.pdf">Slides</a>).
-  </li>
-  <li>
-     <strong>01/13/2012: Interview:</strong> <a href="http://semanticweb.com">semanticweb.com</a> speaks with Christian Becker on how <a href="http://semanticweb.com/easing-the-job-of-working-with-linked-data_b25940">LDIF eases the job of working with Linked Data</a>.
-   </li>
-  <li>
-      <strong>01/10/2012: Version 0.4 Scale-out released.</strong>  Up till now, LDIF stored data
-purely in-memory which restricted the amount of data that could be
-processed. Version 0.4 provides two alternative implementations of the LDIF
-runtime environment which allow LDIF to scale to large data sets: 1. The new
-triple store backed implementation scales to larger data sets on a single
-machine with lower memory consumption at the expense of processing time. 2.
-The new Hadoop-based implementation provides for processing very large data
-sets on a Hadoop cluster, for instance within Amazon EC2. A comparison of the
-performance of all three implementations of the runtime environment is found
-on the <a href="http://www.assembla.com/spaces/ldif/wiki/Benchmark">LDIF benchmark page</a>.</li>
-  <li><strong>11/03/2011: Version 0.3.1 released.</strong> Minor
-release: updated the music use case, optimized Entity Builder memory
-usage. </li>
-  <li><strong>10/06/2011: Version 0.3 released.</strong> The
-third
-LDIF release provides data access modules for gathering data from the
-Web via file download, crawling or accessing SPARQL endpoints. Web data
-is cached locally for further processing. A scheduler provides
-for launching data import and
-integration jobs as well as for regularly updating the local cache with
-data from remote sources. We also added a second use case that shows
-how LDIF is used to gather and integrate data from several
-music-related data sources.<br>
-  </li>
-  <li><strong>8/25/2011: Version 0.2 released.</strong> The second
-LDIF release provides improved performance (faster data loading,
-parallelization of the data translation), smaller memory footprint, a
-new N-Triples output module, new performance evaluation results for use
-cases up to 100 million triples.<br>
-  </li>
-  <li><strong>6/29/2011: Version 0.1 released.</strong> This alpha
-version provides for translating data that is represented using
-different source vocabularies into a single target vocabulary and for
-replacing different URIs that refer to the same real-world entity with
-a single target URI.</li>
+    <li>
+        <strong>06/05/2012: Presentation:</strong>
+        LDIF has been presented at the <a href="http://semtechbizsf2012.semanticweb.com/">Semantic Technology and Business Conference (SemTech2012)</a> in San Francisco.
+        See slides of the talk: <a href="http://www.wiwiss.fu-berlin.de/en/institute/pwo/bizer/research/publications/Becker-etal-LDIF-SemTechSanFrancisco.pdf">How to Integrate Linked Data into your Application</a>.
+    </li>
+
+    <li>
+        <strong>03/28/2012: Version 0.5 released.</strong>
+        This release provides a <a href="#qualityfusion">data quality assessment and fusion</a> module for cleansing data according to user-provided quality assessment policies and conflict resolution methods.
+    </li>
+
+    <li>
+	    <strong>02/06/2012: Presentation:</strong>
+        LDIF is presented at <a href="http://semtechbizberlin2012.semanticweb.com/">SEMTECHBIZ Berlin 2012</a> (<a href="http://www.wiwiss.fu-berlin.de/en/institute/pwo/bizer/research/publications/BeckerMatteini-LDIF-SemTechBerlin2012-Talk.pdf">Slides</a>).
+    </li>
+
+    <li>
+        <strong>01/13/2012: Interview:</strong> <a href="http://semanticweb.com">semanticweb.com</a> speaks with Christian Becker on how <a href="http://semanticweb.com/easing-the-job-of-working-with-linked-data_b25940">LDIF eases the job of working with Linked Data</a>.
+    </li>
+
+    <li>
+        <strong>01/10/2012: Version 0.4 Scale-out released.</strong>
+        Up till now, LDIF stored data purely in-memory which restricted the amount of data that could be processed.
+        Version 0.4 provides two alternative implementations of the LDIF runtime environment which allow LDIF to scale to large data sets:
+        (1) The new triple store backed implementation scales to larger data sets on a single machine with lower memory consumption at the expense of processing time;
+        (2) The new Hadoop-based implementation provides for processing very large data sets on a Hadoop cluster, for instance within Amazon EC2.
+        A comparison of the performance of all three implementations of the runtime environment is found on the <a href="http://www.assembla.com/spaces/ldif/wiki/Benchmark">LDIF benchmark page</a>.
+    </li>
+
+    <li>
+        <strong>11/03/2011: Version 0.3.1 released.</strong>
+        Minor release: updated the music use case, optimized Entity Builder memory usage.
+    </li>
+
+    <li>
+        <strong>10/06/2011: Version 0.3 released.</strong>
+        The third LDIF release provides data access modules for gathering data from the Web via file download, crawling or accessing SPARQL endpoints.
+        Web data is cached locally for further processing.
+        A scheduler provides for launching data import and integration jobs as well as for regularly updating the local cache with data from remote sources.
+        We also added a second use case that shows how LDIF is used to gather and integrate data from several music-related data sources.
+    </li>
+
+    <li>
+        <strong>8/25/2011: Version 0.2 released.</strong>
+        The second LDIF release provides improved performance (faster data loading, parallelization of the data translation), smaller memory footprint, a new N-Triples output module, new performance evaluation results for use cases up to 100 million triples.
+    </li>
+    <li>
+        <strong>6/29/2011: Version 0.1 released.</strong>
+        This alpha version provides for translating data that is represented using different source vocabularies into a single target vocabulary and for replacing different URIs that refer to the same real-world entity with a single target URI.
+    </li>
 </ul>
+
+
 <h2 id="contents">Contents</h2>
 <ol class="toc">
   <li><a href="#about">About LDIF</a></li>
@@ -315,64 +316,47 @@ Domain</a></li>
   <li><a href="#references">References</a></li>
   <li><a href="#acknowledgments">Acknowledgments</a></li>
 </ol>
+
+
+
 <h2 id="about">1. About LDIF<br>
 </h2>
-<p>The <a href="http://linkeddatabook.com/editions/1.0/index.html#htoc23">Web of
-Linked Data</a>
-grows rapidly and contains data from a wide range of different domains,
-including life science data, geographic data, government data, library
-and media data, as well as cross-domain data sets such as DBpedia or
-Freebase. <a href="http://linkeddatabook.com/editions/1.0/index.html#htoc75">Linked
-Data applications</a> that want to consume data from this global data
-space face the challenges that:</p>
+<p>
+    The <a href="http://linkeddatabook.com/editions/1.0/index.html#htoc23">Web of Linked Data</a> grows rapidly and contains data from a wide range of different domains,
+    including life science data, geographic data, government data, library and media data, as well as cross-domain data sets such as DBpedia or Freebase.
+    <a href="http://linkeddatabook.com/editions/1.0/index.html#htoc75">Linked Data applications</a> that want to consume data from this global data space face the challenges that:
+</p>
 <ol>
   <li>Data sources use a wide range of different RDF vocabularies to represent data about the same type of entity; </li>
   <li>The same real-world entity, for instance a person or a place, is identified with different URIs within different data sources; </li>
   <li>Data about the same real-world entity coming from different sources may contain conflicting value. For example the single value attribute <i>population</i>
       for a specific country can have multiple, different values after merging data from different sources.</li>
 </ol>
-<p>This usage of different vocabularies as well as the usage of URI
-aliases makes it very cumbersome for an application
-developer to write <a href="http://www.w3.org/TR/rdf-sparql-query/">SPARQL</a>
-queries against Web data which originates from multiple sources. In
-order to ease using Web data in the application context, it is thus
-advisable to translate data to a single target vocabulary (<a href="http://linkeddatabook.com/editions/1.0/index.html#htoc86">vocabulary
-mapping</a>) and to replace URI aliases with a single target URI on the
-client
-side (<a href="http://linkeddatabook.com/editions/1.0/index.html#htoc87">identity
-resolution</a>), before starting to ask SPARQL queries against the
-data. </p>
-<p>Up-till-now, there have not been any integrated tools that help
-application developers with these tasks. With LDIF, we try to fill this
-gap and provide an open-source Linked Data Integration Framework
-that can be used by Linked Data applications to translate Web data and
-normalize URI while keeping track of data provenance.
+<p>
+    This usage of different vocabularies as well as the usage of URI aliases makes it very cumbersome for an application developer to write <a href="http://www.w3.org/TR/rdf-sparql-query/">SPARQL</a> queries against Web data which originates from multiple sources.
+    In order to ease using Web data in the application context, it is thus advisable to translate data to a single target vocabulary (<a href="http://linkeddatabook.com/editions/1.0/index.html#htoc86">vocabulary mapping</a>) and to replace URI aliases with a single target URI on the client side (<a href="http://linkeddatabook.com/editions/1.0/index.html#htoc87">identity resolution</a>), before starting to ask SPARQL queries against the data.
 </p>
-<p>The LDIF integration pipeline consists of the following steps:
+<p>
+    Up-till-now, there have not been any integrated tools that help application developers with these tasks. With LDIF, we try to fill this gap and provide an open-source Linked Data Integration Framework that can be used by Linked Data applications to translate Web data and normalize URI while keeping track of data provenance.
+</p>
+<p>
+    The LDIF integration pipeline consists of the following steps:
 </p>
 <ol>
-  <li><b>Collect Data</b>: Import modules locally replicate data sets
-via file download, crawling or SPARQL.</li>
-  <li><b>Map to Schema</b>: An expressive mapping language allows for
-translating data from
-the various vocabularies that are used on the Web into a consistent,
-local target vocabulary.</li>
-  <li><b>Resolve Identities</b>: An identity resolution component
-discovers URI aliases in the input data and replaces them with a
-single target URI based on user-provided matching heuristics.</li>
-  <li><b>Quality Assessment and Data Fusion</b>:
-      A data cleansing component filters data according to different quality assessment policies and
-      provides for fusing data according to different conflict resolution methods.</li>
-  <li><b>Output</b>: LDIF outputs the integrated data and that can be written to file or to a QuadStore.
-For provenance tracking, LDIF employs the Named Graphs data model.</li>
+  <li><b>Collect Data</b>: Import modules locally replicate data sets via file download, crawling or SPARQL.</li>
+  <li><b>Map to Schema</b>: An expressive mapping language allows for translating data from the various vocabularies that are used on the Web into a consistent, local target vocabulary.</li>
+  <li><b>Resolve Identities</b>: An identity resolution component discovers URI aliases in the input data and replaces them with a single target URI based on user-provided matching heuristics.</li>
+  <li><b>Quality Assessment and Data Fusion</b>: A data cleansing component filters data according to different quality assessment policies and provides for fusing data according to different conflict resolution methods.</li>
+  <li><b>Output</b>: LDIF outputs the integrated data and that can be written to file or to a QuadStore. For provenance tracking, LDIF employs the Named Graphs data model.</li>
 </ol>
-<p>The figure below shows the schematic <a href="http://linkeddatabook.com/editions/1.0/index.html#htoc84">architecture
-of Linked Data applications</a>
-that
-implement the crawling/data warehousing pattern. The figure highlights
-the steps of the data integration process that are currently
-supported by LDIF.</p>
-<p style="text-align: left; margin-left: 120px;"><img alt="Example-architecture of an integration aware Linked Data application" src="images/linkeddataapp.png"></p>
+
+<p>
+    The figure below shows the schematic <a href="http://linkeddatabook.com/editions/1.0/index.html#htoc84">architecture of Linked Data applications</a> that implement the crawling/data warehousing pattern.
+    The figure highlights the steps of the data integration process that are currently supported by LDIF.
+</p>
+<img alt="Example-architecture of an integration aware Linked Data application" src="images/linkeddataapp.png">
+
+
 <h2 id="components">2. LDIF Components</h2>
 <p>The LDIF Framework consists of a Scheduler, Data Import and an Integration component with a set of
 pluggable modules. These modules are organized as data input, data transformation and data output.
@@ -381,9 +365,9 @@ pluggable modules. These modules are organized as data input, data transformatio
 <p>Currently, we have implemented the following modules: </p>
 
 
-<h3>Scheduler</h3>
+<h3 id="scheduler">Scheduler</h3>
 <p>
-The Scheduler is used for triggering pending data import jobs or integration jobs. It is configured with an XML document (see <a href="#scheduler">Configuration</a>) and offers several ways to express when and how often a certain job should be executed. This component is useful when you want to load external data or run the integration periodically, otherwise you could just run the integration component. Since LDIF version 0.5 there is a REST based status monitor that informs about the progress of the scheduled jobs.
+    The Scheduler is used for triggering pending data import jobs or integration jobs. It is configured with an XML document (see <a href="#scheduler">Configuration</a>) and offers several ways to express when and how often a certain job should be executed. This component is useful when you want to load external data or run the integration periodically, otherwise you could just run the integration component. Since LDIF version 0.5 there is a REST based status monitor that informs about the progress of the scheduled jobs.
 </p>
 
 
@@ -494,7 +478,7 @@ An overview and examples can be found on the <a href="http://sieve.wbsg.de">Siev
 <h5>File Output</h5>
 <p>Two file output formats are currently supported by LDIF: </p>
 <ul><li>N-Quads - dumps the data into a single N-Quads file, this file contains the translated versions of all graphs from the input graph set as well as the content
-of the provenance graph and sameAs-links;    </li>
+of the provenance graph and <tt>owl:sameAs</tt> links;    </li>
 <li> N-Triples - dumps the data into a single N-Triples file, since there exists no connection to the provenance data anymore after outputting it as N-Triples,
 the provenance data is discarded instead of being output. </li>
 </ul>
@@ -569,17 +553,15 @@ additional modules that cover other data integration aspects.<br>
 <h2 id="configuration">3. Configuration Options</h2>
 <p>This section describes how LDIF configuration files look like and
 which parameters you can modify to change the runtime behavior of LDIF.</p>
-<h3 id="scheduler">Schedule Job Configuration</h3>
-<p>A Schedule Job updates the representation of external sources in the
-local cache and it is configured with an XML document, whose structure
-is described by this <a href=" http://www.assembla.com/code/ldif/git/node/blob/master/ldif/ldif-core/src/main/resources/xsd/SchedulerConfig.xsd">XML
-Schema</a>.
-The scheduler configuration is the top configuration file that
-references all the other configuration files like the for the import
-jobs for accessing remote sources and for the integration job.<br>
+<h3 id="schedulerjob">Schedule Job Configuration</h3>
+<p>
+    A Schedule Job updates the representation of external sources in the local cache and it is configured with an XML document, whose structure is described by this <a href=" http://www.assembla.com/code/ldif/git/node/blob/master/ldif/ldif-core/src/main/resources/xsd/SchedulerConfig.xsd">XML Schema</a>.
+    The scheduler configuration is the top configuration file that references all the other configuration files like the for the import jobs for accessing remote sources and for the integration job.s
 </p>
-<p>A typical configuration document looks like this:</p>
+
+<p> A typical configuration document looks like this: </p>
 <pre>&lt;scheduler xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"<br>           xmlns="http://www4.wiwiss.fu-berlin.de/ldif/"&gt;<br>    &lt;properties&gt;scheduler.properties&lt;/properties&gt;<br>    &lt;dataSources&gt;datasources&lt;/dataSources&gt;<br>    &lt;importJob&gt;importJobs&lt;/importJob&gt;<br>    &lt;integrationJob&gt;integration-config.xml&lt;/integrationJob&gt;<br>    &lt;dumpLocation&gt;dumps&lt;/dumpLocation&gt;<br>&lt;/scheduler&gt;<br></pre>
+
 <p>It has the following elements:</p>
 <ul>
     <li><i>properties</i> - the path to a Java properties file for
@@ -594,6 +576,7 @@ jobs for accessing remote sources and for the integration job.<br>
 </ul>
 <p>Both relative and absolute paths are supported.</p>
 
+
 <h4 id="schedulerProperties">Configuration Properties for the Scheduler Job</h4>
 <p>
     In the Schedule Job configuration file you can specify a (Java) properties file to further tweak certain parameters concerning the workflow.
@@ -606,12 +589,14 @@ jobs for accessing remote sources and for the integration job.<br>
         <th width="65%">Description</th>
         <th width="20%">Default value</th>
     </tr>
-    <tr>
+
+    <tr class="even">
         <td><tt>provenanceGraphURI</tt></td>
         <td>Specify the graph where the provenance information is stored. </td>
         <td><tt>http://www4.wiwiss.fu-berlin.de/ldif/provenance</tt></td>
     </tr>
-    <tr>
+
+    <tr class="odd">
         <td><tt id="onetimeexec">oneTimeExecution</tt></td>
         <td>
             If <tt>true</tt> the scheduler executes all the Jobs at most once.
@@ -619,12 +604,14 @@ jobs for accessing remote sources and for the integration job.<br>
         </td>
         <td><tt>false</tt></td>
     </tr>
-    <tr>
+
+    <tr class="even">
         <td><tt>runStatusMonitor</tt></td>
-        <td>Specify if the status monitor should be run when starting LDIF (via ldif.local.Ldif main).</td>
+        <td>Specify if the status monitor should be run when starting LDIF (via <tt>ldif.local.Ldif</tt> main).</td>
         <td><tt>true</tt></td>
     </tr>
-    <tr>
+
+    <tr class="odd">
         <td><tt>statusMonitorURI</tt></td>
         <td>Specify the root URI of the status monitor.</td>
         <td><tt>http://localhost:5343</tt></td>
@@ -638,8 +625,9 @@ jobs for accessing remote sources and for the integration job.<br>
     The current structure is very simple because the integration flow is static at the moment, but that will change in future releases.
     <br/>
     The config file specifies amongst other things how often the whole integration workflow should be executed. It should be noted that when an integration job starts, it only works on fully imported data.
-    Data of import jobs that did not finish before the integration starts is ignored - the only exception is if the <a href="#onetimexec"><tt>oneTimeExecution</tt></a> configuration property is set to true; then the integration waits for all import jobs to finish.
+    Data of import jobs that did not finish before the integration starts is ignored - the only exception is if the <a href="#onetimexec"><tt>oneTimeExecution</tt></a> configuration property is set to <tt>true</tt>; then the integration waits for all import jobs to finish.
 </p>
+
 <p>A typical configuration document looks like this:</p>
 <pre>&lt;integrationJob xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
              xmlns="http://www4.wiwiss.fu-berlin.de/ldif/"&gt;
@@ -656,7 +644,8 @@ jobs for accessing remote sources and for the integration job.<br>
         &lt;/output&gt;
     &lt;/outputs&gt;
     &lt;runSchedule&gt;daily&lt;/runSchedule&gt;
-&lt;/integrationJob&gt;<br></pre>
+&lt;/integrationJob&gt;</pre>
+
 <p>It has the following elements:</p>
 <ul>
     <li><i>properties</i> - the path to a Java properties file for
@@ -694,12 +683,14 @@ jobs for accessing remote sources and for the integration job.<br>
             <th width="65%">Description</th>
             <th width="20%">Default value</th>
         </tr>
-        <tr>
+
+        <tr class="even">
             <td><tt>ldif.working.dir</tt></td>
             <td>Specify the directory where LDIF will store the temporary files.</td>
             <td><tt>[USER-DIR]/.ldiftmp</tt></td>
         </tr>
-        <tr>
+
+        <tr class="odd">
             <td><tt>output</tt></td>
             <td>Specify if all input quads from the input should be included in the output file or only the quads that were mapped/translated by LDIF.</td>
             <td>
@@ -708,15 +699,17 @@ jobs for accessing remote sources and for the integration job.<br>
                 allowed: <tt>mapped-only</tt> | <tt>all</tt> | <tt>fused-only</tt>
             </td>
         </tr>
-        <tr>
+
+        <tr class="even">
             <td><tt>rewriteURIs</tt></td>
             <td>Specify if URI aliases in the input data should be rewritten to a single target URI in the output data.</td>
             <td><tt>true</tt></td>
         </tr>
-        <tr>
+
+        <tr class="odd">
             <td><tt>prefixPreference</tt></td>
             <td>
-                If rewriteURIs is enabled (and URI minting is disabled), then in a set of URIs that are considered to identify the same entity, these URIs are chosen to represent each set that
+                If <tt>rewriteURIs</tt> is enabled (and URI minting is disabled), then in a set of URIs that are considered to identify the same entity, these URIs are chosen to represent each set that
                 start with one of the whitespace separated URI prefixes.
                 This list of URI prefixes is ranked, with the first URI prefix being the highest rank.
             </td>
@@ -726,7 +719,8 @@ jobs for accessing remote sources and for the integration job.<br>
                 e.g. <tt>http://dbpedia.org/resource/ http://otherprefix/ </tt>
             </td>
         </tr>
-        <tr>
+
+        <tr class="even">
             <td><tt>provenanceGraphURI</tt></td>
             <td>
                 Specify the graph containing the provenance information.
@@ -734,7 +728,8 @@ jobs for accessing remote sources and for the integration job.<br>
             </td>
             <td><tt>http://www4.wiwiss.fu-berlin.de/ldif/provenance</tt></td>
         </tr>
-        <tr>
+
+        <tr class="odd">
             <td><tt>validateSources</tt></td>
             <td>
                 Source data sets, R2R mappings and Silk link specifications are all validated before starting with the actual integration.
@@ -743,27 +738,30 @@ jobs for accessing remote sources and for the integration job.<br>
             </td>
             <td><tt>true</tt></td>
         </tr>
-        <tr>
+
+        <tr class="even">
             <td><tt>discardFaultyQuads</tt></td>
             <td>
-                If LDIF finds a (syntax) error - like spaces in URIs - in the source data, it does not progress with the integration to give you the opportunity to fix these errors first.
+                If LDIF finds a syntax error (like spaces in URIs) in the source data, it does not progress with the integration to give you the opportunity to fix these errors first.
                 However, sometimes you just don't care that some quads are faulty and want them to be ignored instead, so that the overall integration can still proceed.
                 <br/>
                 Set this property to <tt>true</tt> in order to ignore syntax errors in the source data sets.
             </td>
             <td><tt>false</tt></td>
         </tr>
-        <tr>
+
+        <tr class="odd">
             <td><tt>useExternalSameAsLinks</tt></td>
             <td>
-                Besides discovering equal entities in the identity resolution phase, LDIF also offers the opportunity to input these relationships in form of owl:sameAs links.
-                The NT/N-Quads file with these sameAs-links has to be placed in the source directory with the other data sets.
+                Besides discovering equal entities in the identity resolution phase, LDIF also offers the opportunity to input these relationships in form of <tt>owl:sameAs</tt> links.
+                The NT/N-Quads file with these <tt>owl:sameAs</tt> links has to be placed in the source directory with the other data sets.
                 <br/>
-                If you don’t want to use sameAs-links from the input data, set this property to <tt>false</tt>.
+                If you don’t want to use <tt>owl:sameAs</tt> links from the input data, set this property to <tt>false</tt>.
             </td>
             <td><tt>true</tt></td>
         </tr>
-        <tr>
+
+        <tr class="even">
             <td><tt>entityBuilderType</tt></td>
             <td>
                 Specify the type of the entity builder component used for the local execution profile of LDIF.
@@ -777,16 +775,18 @@ jobs for accessing remote sources and for the integration job.<br>
                 allowed: <tt>in-memory</tt> | <tt>quad-store</tt>
             </td>
         </tr>
-        <tr>
+
+        <tr class="odd">
             <td><tt>quadStoreType</tt></td>
             <td>
-                Specify the concrete store that should be used as backend for the quad store version, see configuration property <i>entityBuilderType</i>.
+                Specify the concrete store that should be used as backend for the quad store version, see configuration property <tt>entityBuilderType</tt>.
                 <br/>
                 Right now there is only one store, Jena TDB, that is supported by LDIF, so this property doesn't need to be set explicitly.
             </td>
             <td><tt>tdb</tt></td>
         </tr>
-        <tr>
+
+        <tr class="even">
             <td><tt>databaseLocation</tt></td>
             <td>
                 This property allows to set the location of the data base on the local file system.
@@ -799,22 +799,22 @@ jobs for accessing remote sources and for the integration job.<br>
             </td>
         </tr>
 
-        <tr>
+        <tr class="odd">
             <td><tt>uriMinting</tt></td>
             <td>Specify if output resources should be given an URI within the target namespace. </td>
             <td><tt>false</tt></td>
         </tr>
 
-        <tr>
+        <tr class="even">
             <td><tt>uriMintNamespace</tt></td>
             <td>Specify the namespace into which the URIs of all output resources are translated, if URI minting is enabled.</td>
             <td><tt>http://www4.wiwiss.fu-berlin.de/ldif/resource/</tt></td>
         </tr>
 
-        <tr>
+        <tr class="odd">
             <td><tt>uriMintLabelPredicate</tt></td>
             <td>
-                The value of this property is a space separated list of property URIs, which will be used to expand the namespace URI specified with <i>uriMintNamespace.</i>
+                The value of this property is a space separated list of property URIs, which will be used to expand the namespace URI specified with <tt>uriMintNamespace.</tt>
                 For each entity one value of the specified URIs is used to act as the local part of the minted URI.
                 <br/>
                 If there are many values to pick from, the max value (lexicographic order) is taken.
@@ -825,7 +825,7 @@ jobs for accessing remote sources and for the integration job.<br>
             <td><i>Not set</i> <br/>e.g. <tt>http://www.w3.org/2000/01/rdf-schema#label </tt></td>
         </tr>
 
-        <tr>
+        <tr class="even">
             <td><tt>uriMintLanguageRestriction</tt></td>
             <td>
                 If set this parameter restricts the values that are considered for URI minting to specific language literals/tags.
@@ -834,19 +834,19 @@ jobs for accessing remote sources and for the integration job.<br>
             <td><i>Not set</i> <br/>e.g. <tt>en fr es</tt> </td>
         </tr>
 
-        <tr>
+        <tr class="odd">
             <td><tt>outputQualityScores</tt></td>
-            <td>Specify if the data quality scores quads (generated by the Data Quality Assessment module) should be also included in the output.</td>
+            <td>Specify if the data quality scores quads (generated by the <a href="sieve.html#qualityassessment">Data Quality Assessment</a> module) should be also included in the output.</td>
             <td><tt>false</tt></td>
         </tr>
 
-        <tr>
+        <tr class="even">
             <td><tt>qualityFromProvenanceOnly</tt></td>
             <td>Specify if only the content of the provenance graph should be used in the data quality evaluation. </td>
             <td><tt>false</tt></td>
         </tr>
 
-        <tr>
+        <tr class="odd">
             <td><tt>outputProvenance</tt></td>
             <td>Specify if the provenance data should be output.</td>
             <td><tt>true</tt></td>
@@ -886,7 +886,8 @@ Optionally, the <tt>renameGraphs</tt> parameter allows to specify a regular expr
 <h4 id="sparqlImportJob">SPARQL Import</h4>
 <p>
     In a SPARQL import job the <tt>sparqlImportJob</tt>element specifies the endpoint that will be queried for data and a restriction pattern, note that angle brackets of URIs have to be escaped using <tt>&amp;lt;</tt> and <tt>&amp;gt;</tt>.
-    This restriction pattern is joined with the pattern <tt>?s ?p ?o</tt>, which is also the only pattern in the Construct part of the generated SPARQL Construct query. This means that all the triples of the entities matching the restriction in the <tt>pattern</tt> element are collected.
+    This restriction pattern is joined with the pattern <tt>?s ?p ?o</tt>, which is also the only pattern in the Construct part of the generated SPARQL Construct query.
+    This means that all the triples of the entities matching the restriction in the <tt>pattern</tt> element are collected.
     <br/>
     It is also possible to specify a graph with the <tt>graphName</tt> element and to restrict the number of imported triples with the <tt>tripleLimit</tt> element.
     <br/>
@@ -1097,23 +1098,16 @@ the latest release</li>
     </tbody>
 </table>
 
+
 <h2 id="examples">5. Examples</h2>
-<br>
-This section presents two LDIF usage examples.<br>
+<p>This section presents two LDIF usage examples.</p>
 <ol>
-  <li>The <a href="#example1">Music example</a> shows how different
-music-related data
-sources are accessed using the LDIF Web data access components and
-integrated afterwards using the LDIF data translation and identity
-resolution modules.</li>
-  <li>The <a href="#example2">Life Science example</a> shows how LDIF
-is used to integrate several local RDF dumps of life science data sets.<br>
-  </li>
+  <li>The <a href="#example1">Music example</a> shows how different music-related data sources are accessed using the LDIF Web data access components and integrated afterwards using the LDIF data translation and identity resolution modules.</li>
+  <li>The <a href="#example2">Life Science example</a> shows how LDIF is used to integrate several local RDF dumps of life science data sets.  </li>
 </ol>
+
 <h3 id="example1">5.1 Using LDIF to integrate Data from the Music Domain</h3>
-<p>This example shows how LDIF is applied to integrate data describing
-musical artists, music albums, labels and genres from the following
-remote sources:</p>
+<p> This example shows how LDIF is applied to integrate data describing musical artists, music albums, labels and genres from the following remote sources: </p>
 <ul>
   <li><a href="http://dbpedia.org/">DBpedia</a></li>
   <li><a href="http://rdf.freebase.com/">Freebase</a></li>
@@ -1121,56 +1115,59 @@ remote sources:</p>
 (at Talis)</li>
   <li><a href="http://www.bbc.co.uk/music/artist/">BBC Music</a></li>
 </ul>
+
 <h4>Configurations</h4>
-<p>Each source is accessed via the appropriate access module. The
-DBpedia data set is downloaded, Freebase is crawled because of lack of
-other
-access possibilities, MusicBrainz and BBC Music are both accessed via
-SPARQL because no download of the data set is available and crawling is
-in general inferior, because you might not gather all the instances you
-are interested in.</p>
-The following import job configuration files are used for the different
-sources:<br>
+<p>
+    Each source is accessed via the appropriate access module.
+    The DBpedia data set is downloaded, Freebase is crawled because of lack of other access possibilities, MusicBrainz and BBC Music are both accessed via SPARQL because no download of the data set is available and crawling is in general inferior,
+    because you might not gather all the instances you are interested in.
+</p>
+
+<p> The following import job configuration files are used for the different sources: </p>
 <ul>
-  <li>DBpedia <a href=" http://www.assembla.com/code/ldif/git/node/blob/master/ldif/examples/music/full/ImportJobs/DBpediaDumpImport.xml">Dump-Properties</a>,
-    <a href=" http://www.assembla.com/code/ldif/git/node/blob/master/ldif/examples/music/full/ImportJobs/DBpediaDumpImport_Types.xml">Dump-Types</a>
+  <li>
+      DBpedia
+        <a href=" http://www.assembla.com/code/ldif/git/node/blob/master/ldif/examples/music/full/ImportJobs/DBpediaDumpImport.xml">Dump-Properties</a>,
+        <a href=" http://www.assembla.com/code/ldif/git/node/blob/master/ldif/examples/music/full/ImportJobs/DBpediaDumpImport_Types.xml">Dump-Types</a>
   </li>
-  <li>Freebase <a href=" http://www.assembla.com/code/ldif/git/node/blob/master/ldif/examples/music/full/ImportJobs/FreebaseCrawlImport.xml">Crawl</a>
+  <li>
+      Freebase
+        <a href=" http://www.assembla.com/code/ldif/git/node/blob/master/ldif/examples/music/full/ImportJobs/FreebaseCrawlImport.xml">Crawl</a>
   </li>
-  <li>MusicBrainz <a href=" http://www.assembla.com/code/ldif/git/node/blob/master/ldif/examples/music/full/ImportJobs/MusicBrainzSPARQLImport_MusicArtist.xml">Sparql-MusicArtist</a>,
-    <a href=" http://www.assembla.com/code/ldif/git/node/blob/master/ldif/examples/music/full/ImportJobs/MusicBrainzSPARQLImport_Label.xml">Sparql-Label</a>,
-    <a href=" http://www.assembla.com/code/ldif/git/node/blob/master/ldif/examples/music/full/ImportJobs/MusicBrainzSPARQLImport_Record.xml">Sparql-Record</a>
+  <li>
+      MusicBrainz
+        <a href=" http://www.assembla.com/code/ldif/git/node/blob/master/ldif/examples/music/full/ImportJobs/MusicBrainzSPARQLImport_MusicArtist.xml">Sparql-MusicArtist</a>,
+        <a href=" http://www.assembla.com/code/ldif/git/node/blob/master/ldif/examples/music/full/ImportJobs/MusicBrainzSPARQLImport_Label.xml">Sparql-Label</a>,
+        <a href=" http://www.assembla.com/code/ldif/git/node/blob/master/ldif/examples/music/full/ImportJobs/MusicBrainzSPARQLImport_Record.xml">Sparql-Record</a>
   </li>
-  <li>BBC Music <a href=" http://www.assembla.com/code/ldif/git/node/blob/master/ldif/examples/music/full/ImportJobs/BBCSPARQLImportMusicArtist.xml">Sparql-MusicArtist</a>
-, <a href=" http://www.assembla.com/code/ldif/git/node/blob/master/ldif/examples/music/full/ImportJobs/BBCSPARQLImportRecord.xml">Sparql-Record</a>,
-    <a href=" http://www.assembla.com/code/ldif/git/node/blob/master/ldif/examples/music/full/ImportJobs/BBCSPARQLImportBirth.xml">Sparql-Birth</a>,
-    <a href=" http://www.assembla.com/code/ldif/git/node/blob/master/ldif/examples/music/full/ImportJobs/BBCSPARQLImportDeath.xml">Sparql-Death</a>
+  <li>
+      BBC Music
+        <a href=" http://www.assembla.com/code/ldif/git/node/blob/master/ldif/examples/music/full/ImportJobs/BBCSPARQLImportMusicArtist.xml">Sparql-MusicArtist</a>,
+        <a href=" http://www.assembla.com/code/ldif/git/node/blob/master/ldif/examples/music/full/ImportJobs/BBCSPARQLImportRecord.xml">Sparql-Record</a>,
+        <a href=" http://www.assembla.com/code/ldif/git/node/blob/master/ldif/examples/music/full/ImportJobs/BBCSPARQLImportBirth.xml">Sparql-Birth</a>,
+        <a href=" http://www.assembla.com/code/ldif/git/node/blob/master/ldif/examples/music/full/ImportJobs/BBCSPARQLImportDeath.xml">Sparql-Death</a>
   </li>
 </ul>
-<p>The following mapping file provides for translating the source data
-sets into our target vocabulary:</p>
+
+<p>The following mapping file provides for translating the source data sets into our target vocabulary:</p>
 <ul>
   <li>R2R mapping file: <a href=" http://www.assembla.com/code/ldif/git/node/blob/master/ldif/examples/music/full/mappings/mappings.ttl">mappings.ttl</a></li>
 </ul>
-<p>The target vocabulary is a mix of existing ontologies like FOAF,
-Music
-Ontology, Dublin Core, DBpedia etc. </p>
-<p>The following Silk identity resolution heuristics are used to find
-music artists, labels and albums that are described in multiple data
-sets:</p>
+<p>The target vocabulary is a mix of existing ontologies like FOAF, Music Ontology, Dublin Core, DBpedia etc. </p>
+<p>The following Silk identity resolution heuristics are used to find music artists, labels and albums that are described in multiple data sets:</p>
 <ul>
   <li>Silk link specification: <a href=" http://www.assembla.com/code/ldif/git/node/blob/master/ldif/examples/music/full/linkspecs/musicLinkSpec.xml">musicLinkSpec.xml</a>
   </li>
 </ul>
-<p> Music artist and record instances are integrated from all the
-sources. <br>
-Labels and genres are integrated only from fewer sources since not all
-of them provide this information.
-For example MusicBrainz does <a href="http://musicbrainz.org/doc/General_FAQ#Why_does_MusicBrainz_not_support_genre_information.3F">not
-support</a> genre information.</p>
+<p>
+    Music artist and record instances are integrated from all the sources.
+    <br/>
+    Labels and genres are integrated only from fewer sources since not all of them provide this information.
+    For example MusicBrainz does <a href="http://musicbrainz.org/doc/General_FAQ#Why_does_MusicBrainz_not_support_genre_information.3F">not support</a> genre information.
+</p>
+
 <h4>Execution instructions</h4>
-<p>In order to run the example, please download LDIF and run the
-following commands:</p>
+<p> In order to run the example, please download LDIF and run the following commands:</p>
 <ul>
   <li>change into the LDIF root directory;</li>
   <li>under Linux / Mac OS type:</li>
@@ -1178,11 +1175,8 @@ following commands:</p>
   <li>under Windows type:</li>
   <pre>bin\ldif.bat examples\music\full\schedulerConfig.xml</pre>
 </ul>
-<p>Please note that the execution of the import jobs can take about
-3 hours, mainly due to crawling, which is relatively slow compared
-to other access methods.</p>
-<p> It is also available a <i>light</i> version of the use case, which
-runs in less than 5 minutes:</p>
+<p> Please note that the execution of the import jobs can take about 3 hours, mainly due to crawling, which is relatively slow compared to other access methods.</p>
+<p> It is also available a <i>light</i> version of the use case, which runs in less than 5 minutes:</p>
 <ul>
   <li>change into the LDIF root directory;</li>
   <li>under Linux / Mac OS type:</li>
@@ -1190,37 +1184,33 @@ runs in less than 5 minutes:</p>
   <li>under Windows type:</li>
   <pre>bin\ldif.bat examples\music\light\schedulerConfig.xml</pre>
 </ul>
+
 <h4>Output</h4>
-<p>
-The following graph shows a portion of the LDIF output describing Bob
-Marley:
-</p>
+<p>The following graph shows a portion of the LDIF output describing Bob Marley:</p>
 <img src="images/Bob-Marley-graphs.png" alt="LDIF output for music use case">
+
+
 <h3 id="example2">5.2 Using LDIF to integrate Life Science Data</h3>
-<p>This example shows how LDIF is applied to integrate data originating
-from five Life Science sources. </p>
-<p>The example is taken from a joint project with <a href="http://www.vulcan.com">Vulcan Inc</a>.
-and <a href="http://www.ontoprise.de">ontoprise GmbH</a> about
-extending <a href="http://www.wiwiss.fu-berlin.de/en/institute/pwo/bizer/research/publications/BeckerBizerErdmannGreaves-SMW-LDE-Poster-ISWC2010.pdf">Semantic
-Media Wiki+ with a Linked Data Integration Framework</a>. <br>
-<br>
-In this example, the following data sources are translated into a
-common <a href=" http://www.assembla.com/code/ldif/git/node/blob/master/ldif/site/resources/resources/Wiki.owl">Wiki ontology</a>:</p>
+<p>
+    This example shows how LDIF is applied to integrate data originating from five Life Science sources.
+</p>
+<p>
+    The example is taken from a joint project with <a href="http://www.vulcan.com">Vulcan Inc</a>. and <a href="http://www.ontoprise.de">ontoprise GmbH</a>
+    about extending <a href="http://www.wiwiss.fu-berlin.de/en/institute/pwo/bizer/research/publications/BeckerBizerErdmannGreaves-SMW-LDE-Poster-ISWC2010.pdf">Semantic Media Wiki+ with a Linked Data Integration Framework</a>.
+</p>
+<p>
+    In this example, the following data sources are translated into a common <a href=" http://www.assembla.com/code/ldif/git/node/blob/master/ldif/site/resources/resources/Wiki.owl">Wiki ontology</a>:
+</p>
 <ul>
-  <li><a href="http://mouse.brain-map.org/">Allen Mouse Brain Atlas</a>
-is a growing collection of online public resources integrating
-extensive gene expression and neuroanatomical data. </li>
-  <li><a href="http://www.genome.jp/kegg/genes.html">KEGG GENES</a>, a
-collection of gene catalogs for all complete genomes generated from
-publicly available resources, mostly NCBI RefSeq</li>
-  <li><a href="http://www.genome.jp/kegg/pathway.html">KEGG Pathway</a>,
-a collection of pathway maps representing knowledge on the molecular
-interaction and reaction networks</li>
-  <li><a href="http://pharmgkb.org/">PharmGKB</a>, which provides data
-on gene information, disease and drug pathways, and SNP variants</li>
-  <li><a href="http://www.uniprot.org/">Uniprot</a>, which provides
-information on protein sequence and function </li>
+  <li><a href="http://mouse.brain-map.org/">Allen Mouse Brain Atlas</a> is a growing collection of online public resources integrating extensive gene expression and neuroanatomical data; </li>
+  <li><a href="http://www.genome.jp/kegg/genes.html">KEGG GENES</a>, a collection of gene catalogs for all complete genomes generated from publicly available resources, mostly NCBI RefSeq; </li>
+  <li><a href="http://www.genome.jp/kegg/pathway.html">KEGG Pathway</a>, a collection of pathway maps representing knowledge on the molecular interaction and reaction networks; </li>
+  <li><a href="http://pharmgkb.org/">PharmGKB</a>, which provides data on gene information, disease and drug pathways, and SNP variants; </li>
+  <li><a href="http://www.uniprot.org/">Uniprot</a>, which provides information on protein sequence and function. </li>
 </ul>
+
+
+
 <h4>Configurations</h4>
 <p>
     A subset of these datasets can be found in the sub-directory <tt>examples/life-science/sources</tt> of the LDIF release.
@@ -1268,91 +1258,129 @@ configuration. The configuration options are explained in the Section <a href="#
     <pre>bin\ldif-integrate.bat examples\life-science\integration-config.xml</pre>
   </ul>
 </ul>
+
+
 <h4>Examples of data translation </h4>
-<p>In the following, we explain the data translation that is performed
-for the example of one entity that is described in two input data sets:</p>
+<p>In the following, we explain the data translation that is performed for the example of one entity that is described in two input data sets:</p>
 <ul>
-  <li><strong>Example <span style="font-style: italic;">input</span> </strong>(reduced
-to two source data sets, represented using the <a href="http://www4.wiwiss.fu-berlin.de/bizer/TriG/">TriG Syntax</a>):<br>
+  <li><b>Example <i>input</i> </b>(reduced to two source data sets, represented using the <a href="http://www4.wiwiss.fu-berlin.de/bizer/TriG/">TriG Syntax</a>):
+      <pre>
+01:  @prefix aba-voc: &lt;http://brain-map.org/gene/0.1#&gt; .
+02:  @prefix rdfs: &lt;http://www.w3.org/2000/01/rdf-schema#&gt; .
+03:  @prefix uniprot: &lt;http://purl.uniprot.org/core/&gt; .
+04:
+05:  &lt;file:///aba_mouse_20101010_1000.nq&gt; {
+06:    &lt;http://brain-map.org/mouse/brain/Oprk1.xml&gt; aba-voc:entrezgeneid "<span style="font-weight: bold;">18387</span>" ;
+07:      aba-voc:gene-aliases _:Ab12290 .  08:   _:Ab12290 &lt;http://brain-map.org/gene/0.1#aliassymbol&gt; "<span style="font-weight: bold;">Oprk1</span>" .
+09:  }
+10:
+11:  &lt;file:///datasets/uniprot-organism-human-reviewed-complete_1000.nq&gt; {
+12:    &lt;http://purl.uniprot.org/uniprot/P61981&gt; rdfs:seeAlso &lt;http://purl.uniprot.org/geneid/<span style="font-weight: bold;">18387</span>&gt; .
+13:    &lt;http://purl.uniprot.org/geneid/<span style="font-weight: bold;">18387</span>&gt; uniprot:database "GeneID" .
+14:    &lt;http://purl.uniprot.org/uniprot/P61981&gt; uniprot:encodedBy &lt;file:///storage/datasets/uniprot-organism-human-reviewed-complete.rdf#_503237333438003B&gt; .
+15:  }</pre>
+
+  </li>
+  <li>
+      <b>Example <i>output</i> :</b>
+      <pre>
+01: @prefix smwprop: &lt;http://mywiki/resource/property/&gt; .
+02: @prefix xsd: &lt;http://www.w3.org/2001/XMLSchema#&gt; .
+03:
+04: &lt;file:///aba_mouse_20101010_1000.nq&gt; {
+05:  &nbsp;&lt;http://brain-map.org/mouse/brain/Oprk1.xml&gt; smwprop:EntrezGeneId "<span style="font-weight: bold;">18387</span>"^^xsd:int .
+06:  &nbsp;&lt;http://brain-map.org/mouse/brain/Oprk1.xml&gt; smwprop:GeneSymbol "<span style="font-weight: bold;">Oprk1</span>"^^xsd:string .
+07: }
+08:
+09: &lt;file:///datasets/uniprot-organism-human-reviewed-complete_1000.nq&gt; {
+10:   &lt;http://brain-map.org/mouse/brain/Oprk1.xml&gt; smwprop:EntrezGeneId "<span style="font-weight: bold;">18387</span>"^^xsd:int .
+11:   &lt;http://brain-map.org/mouse/brain/Oprk1.xml&gt; <span style="font-family: monospace;">owl:sameAs </span><span style="font-family: monospace;">&lt;file:///storage/datasets/uniprot-organism-human-reviewed-complete.rdf#_503237333438003B&gt; .</span>
+12: }</pre>
   </li>
 </ul>
-<pre style="margin-left: 40px;">01:  @prefix aba-voc: &lt;http://brain-map.org/gene/0.1#&gt; .<br>02:  @prefix rdfs: &lt;http://www.w3.org/2000/01/rdf-schema#&gt; .<br>03:  @prefix uniprot: &lt;http://purl.uniprot.org/core/&gt; . <br>04: &nbsp;<br>05:  &lt;file:///aba_mouse_20101010_1000.nq&gt; {<br>06:    &lt;http://brain-map.org/mouse/brain/Oprk1.xml&gt; aba-voc:entrezgeneid "<span style="font-weight: bold;">18387</span>" ;<br>07:      aba-voc:gene-aliases _:Ab12290 .<br>08:   _:Ab12290 &lt;http://brain-map.org/gene/0.1#aliassymbol&gt; "<span style="font-weight: bold;">Oprk1</span>" .<br>09:  }<br>10:<br>11:  &lt;file:///datasets/uniprot-organism-human-reviewed-complete_1000.nq&gt; {<br>12:    &lt;http://purl.uniprot.org/uniprot/P61981&gt; rdfs:seeAlso &lt;http://purl.uniprot.org/geneid/<span style="font-weight: bold;">18387</span>&gt; .<br>13:    &lt;http://purl.uniprot.org/geneid/<span style="font-weight: bold;">18387</span>&gt; uniprot:database "GeneID" .<br>14:    &lt;http://purl.uniprot.org/uniprot/P61981&gt; uniprot:encodedBy &lt;file:///storage/datasets/uniprot-organism-human-reviewed-complete.rdf#_503237333438003B&gt; .<br>15:  }<br></pre>
-<ul>
-  <li><strong>Example <span style="font-style: italic;">output</span> :</strong><br>
-  </li>
-</ul>
-<pre style="margin-left: 40px;">01: @prefix smwprop: &lt;http://mywiki/resource/property/&gt; .<br>02: @prefix xsd: &lt;http://www.w3.org/2001/XMLSchema#&gt; .<br>03: <br>04: &lt;file:///aba_mouse_20101010_1000.nq&gt; {<br>05:  &nbsp;&lt;http://brain-map.org/mouse/brain/Oprk1.xml&gt; smwprop:EntrezGeneId "<span style="font-weight: bold;">18387</span>"^^xsd:int .<br>06:  &nbsp;&lt;http://brain-map.org/mouse/brain/Oprk1.xml&gt; smwprop:GeneSymbol "<span style="font-weight: bold;">Oprk1</span>"^^xsd:string .<br>07: }<br>08: <br>09: &lt;file:///datasets/uniprot-organism-human-reviewed-complete_1000.nq&gt; {<br>10:   &lt;http://brain-map.org/mouse/brain/Oprk1.xml&gt; smwprop:EntrezGeneId "<span style="font-weight: bold;">18387</span>"^^xsd:int .<br>11:   &lt;http://brain-map.org/mouse/brain/Oprk1.xml&gt; <span style="font-family: monospace;">owl:sameAs </span><span style="font-family: monospace;">&lt;file:///storage/datasets/uniprot-organism-human-reviewed-complete.rdf#_503237333438003B&gt; .</span><br>12: }<br></pre>
+
+
 <p>The example input and output needs some explanation:</p>
 <ul>
-  <li>There are two source graphs, each containing data from a
-different source: ABA (input: line 5 to 9) and Uniprot (input: line 11
-to 15).</li>
+  <li>
+      There are two source graphs, each containing data from a different source: ABA (input: line 5 to 9) and Uniprot (input: line 11 to 15).
+  </li>
 </ul>
+
 <p>Identity resolution: </p>
 <ul>
-  <li>Both graphs contain data about the same entity:</li>
-  <ul>
-    <li>In the ABA data set the entity is identified using the URI <span style="font-family: monospace;">&lt;http://brain-map.org/mouse/brain/Oprk1.xml&gt;
-      </span>(input: line 6)</li>
-    <li>In the Uniprot data set the entity is identified using the URI <span style="font-family: monospace;"></span><br>
-      <span style="font-family: monospace;">&lt;file:///storage/datasets/uniprot-organism-human-reviewed-complete.rdf#_503237333438003B&gt;</span>
-(input: line 14)</li>
-  </ul>
-  <li>Since the Silk identity resolution heuristic concludes that both
-URIs identify the same entity, the both URIs are replaced in the output
-with a single URI (in this case the ABA one, output: lines 5, 6 and 10).</li>
-  <li>The rewritten URI is linked by <span style="font-family: monospace;">owl:sameAs</span> to the original URI
-(output: line 11).<br>
+  <li>
+      Both graphs contain data about the same entity:
+      <ul>
+        <li>
+            In the ABA data set the entity is identified using the URI <tt>&lt;http://brain-map.org/mouse/brain/Oprk1.xml&gt;</tt>(input: line 6)
+        </li>
+        <li>
+            In the Uniprot data set the entity is identified using the URI <tt>&lt;file:///storage/datasets/uniprot-organism-human-reviewed-complete.rdf#_503237333438003B&gt;</tt> (input: line 14)
+        </li>
+      </ul>
+  </li>
+  <li>
+      Since the Silk identity resolution heuristic concludes that both URIs identify the same entity, the both URIs are replaced in the output with a single URI (in this case the ABA one, output: lines 5, 6 and 10).
+  </li>
+  <li>
+      The rewritten URI is linked by <tt>owl:sameAs</tt> to the original URI (output: line 11).
   </li>
 </ul>
+
 <p>Data Translation: </p>
 <ul>
-  <li>In the target vocabulary Entrez Gene IDs should be
-represented using the smwprop:EntrezGeneId property. Property values
-should be represented as xsd:Integers. </li>
-  <li>Thus, the
-aba-voc:entrezgeneid triple in the first graph (line 6) is translated
-into a smwprop:EntrezGeneId triple in the output data (line 5) and a
-datatype URI is added to the literal. </li>
-  <li>The
-smwprop:GeneSymbol triple in line 6 of the output is generated by a
-structural transformation out of the two triples in lines 7 and 8 of
-the input data. </li>
-  <li>In the Uniprot case the <span style="font-family: monospace;">smwprop:EntrezGeneId</span>
-value was extracted from the URI string <span style="font-family: monospace;">&lt;http://purl.uniprot.org/geneid/18387&gt;
-    </span><span style="font-family: sans-serif;">(input: line 12)</span><span style="font-family: monospace;"><span style="font-family: sans-serif;">.
-    </span></span></li>
-  <li>The quad with the property <span style="font-family: monospace;">smwprop:EntrezGeneId</span>
-on line 10 in the output was produced by a complex mapping that had to
-consider all three quads of the input (lines 12-14).<br>
+  <li>
+      In the target vocabulary Entrez Gene IDs should be represented using the <tt>smwprop:EntrezGeneId</tt> property.
+      Property values should be represented as <tt>xsd:Integers</tt>.
+  </li>
+  <li>
+      Thus, the <tt>aba-voc:entrezgeneid</tt> triple in the first graph (line 6) is translated into a <tt>smwprop:EntrezGeneId</tt> triple in the output data (line 5) and a datatype URI is added to the literal.
+  </li>
+  <li>
+      The <tt>smwprop:GeneSymbol</tt> triple in line 6 of the output is generated by a structural transformation out of the two triples in lines 7 and 8 of the input data.
+  </li>
+  <li>
+      In the Uniprot case the <tt>smwprop:EntrezGeneId</tt> value was extracted from the URI string <tt>&lt;http://purl.uniprot.org/geneid/18387&gt;</tt> (input: line 12)
+  </li>
+  <li>
+      The quad with the property <tt>smwprop:EntrezGeneId</tt> on line 10 in the output was produced by a complex mapping that had to consider all three quads of the input (lines 12-14).<br>
   </li>
 </ul>
+
 <p>Data Fusion: </p>
 <ul>
-  <li>The specification for Sieve defines that only one value for the property <span style="font-family: monospace;">smwprop:EntrezGeneId</span> should be picked. As fusion function we picked <i>KeepFirst</i>, which just chooses the first value it sees for each entity. This means that only one of the quads in the output lines 5 and 10 would show up in the target data set, which in this case would result in the same value.</li>
+  <li>
+      The specification for Sieve defines that only one value for the property <tt>smwprop:EntrezGeneId</tt> should be picked.
+      As fusion function we picked <i>KeepFirst</i>, which just chooses the first value it sees for each entity.
+      This means that only one of the quads in the output lines 5 and 10 would show up in the target data set, which in this case would result in the same value.
+  </li>
 </ul>
+
+
+
 <h2 id="performance">6. Performance Evaluation</h2>
-<p>We regularly carry out performance evaluations. For more
-details and the latest results please visit our <a href="http://www.assembla.com/spaces/ldif/wiki/Benchmark">Benchmark results</a> page.</p>
-<h2 id="development">7. Source
-Code and Development</h2>
-<p>The latest source code is available from the <a href="http://www.assembla.com/spaces/ldif/wiki">LDIF development page</a>
-on Assembla.com.</p>
-<p>The framework can be used under the terms of the <a href="http://www.apache.org/licenses/LICENSE-2.0">Apache Software
-License</a>.
-</p>
+<p>We regularly carry out performance evaluations. For more details and the latest results please visit our <a href="http://www.assembla.com/spaces/ldif/wiki/Benchmark">Benchmark results</a> page.</p>
+
+
+
+<h2 id="development">7. Source Code and Development</h2>
+<p>The latest source code is available from the <a href="http://www.assembla.com/spaces/ldif/wiki">LDIF development page</a> on Assembla.com.</p>
+<p>The framework can be used under the terms of the <a href="http://www.apache.org/licenses/LICENSE-2.0">Apache Software License</a>. </p>
+
+
+
 <h2 id="history">8. Version history </h2>
-<p>
-</p>
+<br/>
 <table>
   <tbody>
     <tr>
-      <th> Version</th>
-      <th> Release log</th>
-      <th> Date</th>
+        <th> Version</th>
+        <th> Release log</th>
+        <th> Date</th>
     </tr>
     <tr class="even">
-        <td> 0.5</td>
+        <td> 0.5 </td>
         <td>
             Data Quality Assessment and Fusion module<br/>
             REST based status monitor<br/>
@@ -1360,55 +1388,71 @@ License</a>.
             Data Access Module: RDF/XML and Turtle formats are now supported <br/>
             More flexible Integration workflow: single phases can now be executed or skipped <br/>
         </td>
-        <td> 03/28/2012</td>
+        <td> 03/28/2012 </td>
     </tr>
     <tr class="odd">
-      <td> 0.4</td>
-      <td>Added two new implementations of the runtime environment:<br/>
-1. The triple store backed implementation scales to larger data sets on a
-single machine <br/>
-2. The Hadoop-based implementation allows you to run LDIF on clusters with
-multiple machines <br/>
-      </td>
-      <td> 01/10/2012</td>
+        <td> 0.4 </td>
+        <td>
+            Added two new implementations of the runtime environment:<br/>
+            1. The triple store backed implementation scales to larger data sets on a single machine <br/>
+            2. The Hadoop-based implementation allows you to run LDIF on clusters with multiple machines <br/>
+        </td>
+        <td> 01/10/2012 </td>
     </tr>
     <tr class="even">
-      <td> 0.3</td>
-      <td>Access module support (data set dump, SPARQL, crawling)<br>
-Scheduler for running import and integration tasks automatically<br>
-Configuration file XML schemas for validation<br>
-URI minting<br>
-Second use case from the music domain<br>
-      </td>
-      <td> 10/06/2011</td>
+        <td> 0.3 </td>
+        <td>
+            Access module support (data set dump, SPARQL, crawling)<br>
+            Scheduler for running import and integration tasks automatically<br>
+            Configuration file XML schemas for validation<br>
+            URI minting<br>
+            Second use case from the music domain<br>
+        </td>
+        <td> 10/06/2011 </td>
     </tr>
     <tr class="odd">
-      <td> 0.2</td>
-      <td> R2R data translation tasks are now executed in parallel <br>
-Perform source syntax validation before loading data (optional) <br>
-Support for external sameAs links <br>
-RDF/N-Triples data output module <br>
-Support for bzip2 source compression <br>
-Improved loading performance <br>
-Memory usage improvements: caching factum rows and string interning
-only for relevant data </td>
-      <td> 8/25/2011</td>
+        <td> 0.2 </td>
+        <td>
+            R2R data translation tasks are now executed in parallel <br>
+            Perform source syntax validation before loading data (optional) <br>
+            Support for external <tt>owl:sameAs</tt> links <br>
+            RDF/N-Triples data output module <br>
+            Support for bzip2 source compression <br>
+            Improved loading performance <br>
+            Memory usage improvements: caching factum rows and string interning only for relevant data
+        </td>
+      <td> 8/25/2011 </td>
     </tr>
     <tr class="even">
-      <td> 0.1</td>
-      <td> Intial release of LDIF</td>
-      <td> 6/29/2011</td>
+        <td> 0.1 </td>
+        <td>
+            Intial release of LDIF
+        </td>
+        <td> 6/29/2011 </td>
     </tr>
   </tbody>
 </table>
-<h2 id="feedback">9. Support and Feedback </h2>
-<p>For questions and feedback please use the <a href="http://groups.google.com/group/ldif?hl=en">LDIF Google Group</a>.
-</p>
-<h2 id="references">10. References</h2>
 
+
+
+<h2 id="feedback">9. Support and Feedback </h2>
+<p>For questions and feedback please use the <a href="http://groups.google.com/group/ldif?hl=en">LDIF Google Group</a>.</p>
+
+
+
+<h2 id="references">10. References</h2>
 <ol>
-    <li>Christian Becker: How to integrate Linked Data into your application ( <a href="http://www.wiwiss.fu-berlin.de/en/institute/pwo/bizer/research/publications/Becker-etal-LDIF-SemTechSanFrancisco.pdf">Slides</a> ). Semantic Technology & Business Conference, San Francisco, June 2012.</li>
-    <li>Andreas Schultz, Andrea Matteini, Robert Isele, Pablo Mendes, Christian Bizer, Christian Becker: <a href="http://www.wiwiss.fu-berlin.de/en/institute/pwo/bizer/research/publications/Schultz-et-al-LDIF-WWW2012-DevTrack.pdf">LDIF - A Framework for Large-Scale Linked Data Integration</a>. 21st International World Wide Web Conference (WWW2012), Developers Track. Lyon, France, April 2012.</li>
+    <li>
+        Christian Becker:
+        How to integrate Linked Data into your application ( <a href="http://www.wiwiss.fu-berlin.de/en/institute/pwo/bizer/research/publications/Becker-etal-LDIF-SemTechSanFrancisco.pdf">Slides</a> ).
+        Semantic Technology & Business Conference, San Francisco, June 2012.
+    </li>
+
+    <li>
+        Andreas Schultz, Andrea Matteini, Robert Isele, Pablo Mendes, Christian Bizer, Christian Becker:
+        <a href="http://www.wiwiss.fu-berlin.de/en/institute/pwo/bizer/research/publications/Schultz-et-al-LDIF-WWW2012-DevTrack.pdf">LDIF - A Framework for Large-Scale Linked Data Integration</a>.
+        21st International World Wide Web Conference (WWW2012), Developers Track. Lyon, France, April 2012.
+    </li>
 
 <pre>@inproceedings{www12schultz,
        booktitle = {21st International World Wide Web Conference (WWW2012), Developers Track},
@@ -1417,42 +1461,63 @@ only for relevant data </td>
           author = {Schultz, Andreas and Matteini, Andrea and Isele, Robert and Mendes, Pablo N. and Bizer, Christian and Becker, Christian} 
             year = {2012},
            pages = {to appear}
-}
-    </pre>
-    <li>Pablo N. Mendes, Hannes Mühleisen, Christian Bizer: <a href="http://www.wiwiss.fu-berlin.de/en/institute/pwo/bizer/research/publications/Mendes-Muehleisen-Bizer-Sieve-LWDM2012.pdf">Sieve: Linked Data Quality Assessment and Fusion</a>. 2nd International Workshop on Linked Web Data Management (LWDM 2012) at the 15th International Conference on Extending Database Technology (EDBT 2012), Berlin, March 2012.</li>
-	<li>Christian Becker, Andrea Matteini: LDIF - Linked Data Integration Framework ( <a href="http://www.wiwiss.fu-berlin.de/en/institute/pwo/bizer/research/publications/BeckerMatteini-LDIF-SemTechBerlin2012-Talk.pdf">Slides</a> ). SemTechBiz 2012, Berlin, February 2012.</li>
-  <li>Andreas Schultz, Andrea Matteini, Robert Isele, Christian Bizer,
-Christian Becker: <a href="http://www.wiwiss.fu-berlin.de/en/institute/pwo/bizer/research/publications/Schultz-etal-Cold2011-LDIF-Paper.pdf">LDIF
-- Linked Data Integration Framework</a>. 2nd International Workshop on
-Consuming Linked Data, Bonn, Germany, October 2011.</li>
-<li>William
-	Smith, Christian Becker and Andreas Schultz: Neurowiki: How we
-	integrated large datasets into SMW with R2R and Silk / LDIF ( Slides <a href="http://semantic-mediawiki.org/w/images/a/ac/SMWCon_2011_Neurowiki_Presentation.pdf">part
-	1</a>, <a href="http://semantic-mediawiki.org/w/images/b/b7/SMWCon_2011_Neurowiki_Becker_Schultz.pdf">part
-	2</a> ). SMWCon Fall 2011, Berlin, September 2011.</li>
-  <li>Tom Heath, Christian Bizer: <a href="http://www.morganclaypool.com/doi/abs/10.2200/S00334ED1V01Y201102WBE001">Linked
-Data: Evolving the Web into a Global Data Space</a>. Synthesis
-Lectures on the Semantic Web: Theory and Technology, Morgan &amp;
-Claypool Publishers, ISBN <a href="http://www.amazon.com/Linked-Data-Synthesis-Lectures-Engineering/dp/1608454304/ref=sr_1_1?ie=UTF8&amp;s=books&amp;qid=1297846088&amp;sr=8-1">978160845431</a>,
-2011 ( <a href="http://linkeddatabook.com/">Free HTML version</a> ).</li>
-  <li>Christian Bizer, Andreas Schultz: <a href="http://www.wiwiss.fu-berlin.de/en/institute/pwo/bizer/research/publications/BizerSchultz-COLD-R2R-Paper.pdf">The
-R2R Framework: Publishing and Discovering Mappings on the Web</a> ( <a href="http://www.wiwiss.fu-berlin.de/en/institute/pwo/bizer/research/publications/BizerSchultz-COLD-R2R-Talk.pdf">Slides</a>
-). 1st International Workshop on Consuming Linked Data (COLD
-2010), Shanghai, November 2010. </li>
-  <li>Robert Isele, Anja Jentzsch, Christian Bizer: <a href="http://www.wiwiss.fu-berlin.de/en/institute/pwo/bizer/research/publications/IseleJentzschBizer-Silk-Cold2010.pdf">Silk
-Server - Adding missing Links while consuming Linked Data</a> ( <a href="http://www.wiwiss.fu-berlin.de/en/institute/pwo/bizer/research/publications/IseleJentzschBizer-Silk-Cold2010-Talk.pdf">Slides</a>
-). 1st International Workshop on Consuming Linked Data (COLD
-2010), Shanghai, November 2010.</li>
-  <li>Julius Volz, Christian Bizer, Martin Gaedke, Georgi Kobilarov: <a href="http://www.wiwiss.fu-berlin.de/en/institute/pwo/bizer/research/publications/VolzBizerGaedkeKobilarov-ISWC2009-Silk.pdf">Discovering
-and Maintaining Links on the Web of Data</a> ( <a href="http://www.wiwiss.fu-berlin.de/en/institute/pwo/bizer/research/publications/VolzBizerGaedkeKobilarov-ISWC2009-Silk-Talk.pdf">Slides</a>
-). International Semantic Web Conference (ISWC2009),
-Westfields, USA, October 2009. </li>
+}   </pre>
+
+    <li>
+        Pablo N. Mendes, Hannes Mühleisen, Christian Bizer:
+        <a href="http://www.wiwiss.fu-berlin.de/en/institute/pwo/bizer/research/publications/Mendes-Muehleisen-Bizer-Sieve-LWDM2012.pdf">Sieve: Linked Data Quality Assessment and Fusion</a>.
+        2nd International Workshop on Linked Web Data Management (LWDM 2012) at the 15th International Conference on Extending Database Technology (EDBT 2012), Berlin, March 2012.
+    </li>
+
+	<li>
+        Christian Becker, Andrea Matteini:
+        LDIF - Linked Data Integration Framework ( <a href="http://www.wiwiss.fu-berlin.de/en/institute/pwo/bizer/research/publications/BeckerMatteini-LDIF-SemTechBerlin2012-Talk.pdf">Slides</a> ).
+        SemTechBiz 2012, Berlin, February 2012.
+    </li>
+
+    <li>
+        Andreas Schultz, Andrea Matteini, Robert Isele, Christian Bizer, Christian Becker:
+        <a href="http://www.wiwiss.fu-berlin.de/en/institute/pwo/bizer/research/publications/Schultz-etal-Cold2011-LDIF-Paper.pdf">LDIF - Linked Data Integration Framework</a>.
+        2nd International Workshop on Consuming Linked Data, Bonn, Germany, October 2011.
+    </li>
+
+    <li>
+        William Smith, Christian Becker and Andreas Schultz:
+        Neurowiki: How we integrated large datasets into SMW with R2R and Silk / LDIF ( Slides <a href="http://semantic-mediawiki.org/w/images/a/ac/SMWCon_2011_Neurowiki_Presentation.pdf">part 1</a>, <a href="http://semantic-mediawiki.org/w/images/b/b7/SMWCon_2011_Neurowiki_Becker_Schultz.pdf">part	2</a> ).
+        SMWCon Fall 2011, Berlin, September 2011.
+    </li>
+
+    <li>
+        Tom Heath, Christian Bizer:
+        <a href="http://www.morganclaypool.com/doi/abs/10.2200/S00334ED1V01Y201102WBE001">Linked Data: Evolving the Web into a Global Data Space</a>.
+        Synthesis Lectures on the Semantic Web: Theory and Technology, Morgan &amp; Claypool Publishers, ISBN <a href="http://www.amazon.com/Linked-Data-Synthesis-Lectures-Engineering/dp/1608454304/ref=sr_1_1?ie=UTF8&amp;s=books&amp;qid=1297846088&amp;sr=8-1">978160845431</a>, 2011 ( <a href="http://linkeddatabook.com/">Free HTML version</a> ).
+    </li>
+
+    <li>
+        Christian Bizer, Andreas Schultz:
+        <a href="http://www.wiwiss.fu-berlin.de/en/institute/pwo/bizer/research/publications/BizerSchultz-COLD-R2R-Paper.pdf">The R2R Framework: Publishing and Discovering Mappings on the Web</a> ( <a href="http://www.wiwiss.fu-berlin.de/en/institute/pwo/bizer/research/publications/BizerSchultz-COLD-R2R-Talk.pdf">Slides</a>).
+        1st International Workshop on Consuming Linked Data (COLD 2010), Shanghai, November 2010.
+    </li>
+
+    <li>Robert Isele, Anja Jentzsch, Christian Bizer:
+        <a href="http://www.wiwiss.fu-berlin.de/en/institute/pwo/bizer/research/publications/IseleJentzschBizer-Silk-Cold2010.pdf">Silk Server - Adding missing Links while consuming Linked Data</a> ( <a href="http://www.wiwiss.fu-berlin.de/en/institute/pwo/bizer/research/publications/IseleJentzschBizer-Silk-Cold2010-Talk.pdf">Slides</a>).
+        1st International Workshop on Consuming Linked Data (COLD 2010), Shanghai, November 2010.
+    </li>
+
+    <li>
+        Julius Volz, Christian Bizer, Martin Gaedke, Georgi Kobilarov:
+        <a href="http://www.wiwiss.fu-berlin.de/en/institute/pwo/bizer/research/publications/VolzBizerGaedkeKobilarov-ISWC2009-Silk.pdf">Discovering and Maintaining Links on the Web of Data</a> ( <a href="http://www.wiwiss.fu-berlin.de/en/institute/pwo/bizer/research/publications/VolzBizerGaedkeKobilarov-ISWC2009-Silk-Talk.pdf">Slides</a>).
+        International Semantic Web Conference (ISWC2009), Westfields, USA, October 2009.
+    </li>
 </ol>
+
+
 <h2 id="acknowledgments">11. Acknowledgments </h2>
-<p>This work was supported in part by Vulcan Inc. as part of its <a href="http://www.projecthalo.com">Project Halo</a> and by the EU FP7
-project <a href="http://lod2.eu">LOD2 - Creating Knowledge out of
-Interlinked Data</a> (Grant No. 257943). </p>
-<p>WooFunction icon set licensed under <a href="http://www.gnu.org/licenses/gpl.html">GNU General Public License</a>.</p>
+<p>
+    This work was supported in part by Vulcan Inc. as part of its <a href="http://www.projecthalo.com">Project Halo</a> and by the EU FP7 project <a href="http://lod2.eu">LOD2 - Creating Knowledge out of Interlinked Data</a> (Grant No. 257943).
+</p>
+<p> We would like to thank Rutvik Sheth (UBS) and colleagues for their extensive feedback.</p>
+<p> WooFunction icon set licensed under <a href="http://www.gnu.org/licenses/gpl.html">GNU General Public License</a>. </p>
 </div>
 
 </body>
