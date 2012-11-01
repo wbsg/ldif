@@ -22,7 +22,7 @@
 
 
         <AssessmentMetric id="sieve:reputation">
-            <ScoringFunction class="ScoredList">
+            <ScoringFunction class="ScoredPrefixList">
                 <Param name="list" value="http://pt.wikipedia.org http://en.wikipedia.org http://es.wikipedia.org http://fr.wikipedia.org http://de.wikipedia.org"/>
             </ScoringFunction>
         </AssessmentMetric>
@@ -40,7 +40,7 @@
 
     <Fusion name="Fusion strategy for DBpedia City Entities"
             description="The idea is to use values from multiple DBpedia languages to improve the quality of data about cities.">
-        <Class name="dbpedia-owl:City">
+        <Class name="dbpedia-owl:Settlement">
             <Property name="dbpedia-owl:areaTotal">
                 <FusionFunction class="KeepFirst" metric="sieve:recency"/>
             </Property>

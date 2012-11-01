@@ -18,9 +18,9 @@
 
 package ldif.modules.sieve.quality
 
-import functions.{Threshold, IntervalMembership, TimeCloseness, ScoredList}
+import functions._
 import xml.Node
-import ldif.entity.{Entity, NodeTrait}
+import ldif.entity.NodeTrait
 
 /**
  * Constructor of implementing classes should accept applicable Param and EnvironmentVariable values.
@@ -46,10 +46,12 @@ trait ScoringFunctionConjunctive extends ScoringFunction {
 
 object ScoringFunction {
   def create(className: String, config: Node): ScoringFunction = className.toLowerCase match {
-    case "scoredlist" => return ScoredList.fromXML(config)
-    case "timecloseness" => return TimeCloseness.fromXML(config)
-    case "interval" => return IntervalMembership.fromXML(config)
-    case "threshold" => return Threshold.fromXML(config)
+    case "scoredlist" => ScoredList.fromXML(config)
+    case "scoredregexlist" => ScoredRegexList.fromXML(config)
+    case "scoredprefixlist" => ScoredPrefixList.fromXML(config)
+    case "timecloseness" => TimeCloseness.fromXML(config)
+    case "interval" => IntervalMembership.fromXML(config)
+    case "threshold" => Threshold.fromXML(config)
 
     // NOTICE: add case statements for new scoring functions here
     case whatever => throw new IllegalArgumentException("Unable to construct scoring function for class name " + className)
@@ -64,6 +66,10 @@ object ScoringFunction {
 
   def getIntConfig(e: Node, key: String): Int = {
     getStringConfig(e, key).toInt
+  }
+
+  def getBooleanConfig(e: Node, key: String): Boolean = {
+    getStringConfig(e, key).toBoolean
   }
 }
 

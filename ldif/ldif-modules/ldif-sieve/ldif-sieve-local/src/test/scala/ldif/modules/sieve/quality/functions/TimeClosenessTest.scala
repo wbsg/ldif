@@ -85,10 +85,10 @@ class TimeClosenessTest extends FlatSpec with ShouldMatchers {
 
   it should "parse date" in {
     //val parser = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss Z")
-    val parser =  ISODateTimeFormat.dateTimeNoMillis();
+    val parser =  ISODateTimeFormat.dateTimeNoMillis()
     val startDate = parser.parseDateTime("2012-02-19T16:55:17Z")
     val endDate = parser.parseDateTime("2012-02-20T16:55:17Z")
-    val d = Days.daysBetween(startDate, endDate).getDays;
+    val d = Days.daysBetween(startDate, endDate).getDays
     (d) should equal (1.0)
   }
 

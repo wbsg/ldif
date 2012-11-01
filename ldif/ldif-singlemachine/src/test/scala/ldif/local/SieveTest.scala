@@ -60,7 +60,8 @@ class SieveTest extends FlatSpec with ShouldMatchers {
     OutputValidator.contains(ldifOutput, correctQuads) should equal(true)
 
     val incorrectQuads = CommonUtils.getQuads(List(
-      "<http://dbpedia.org/resource/Ubatuba> <http://dbpedia.org/ontology/areaTotal> \"7.12116E11\"^^<http://www.w3.org/2001/XMLSchema#double> <http://pt.wikipedia.org/wiki/Ubatuba>. "
+      "<http://dbpedia.org/resource/Ubatuba> <http://dbpedia.org/ontology/areaTotal> \"7.12116E11\"^^<http://www.w3.org/2001/XMLSchema#double> <http://pt.wikipedia.org/wiki/Ubatuba>.",
+      "<http://dbpedia.org/resource/Ubatuba> <http://dbpedia.org/ontology/foundingDate> \"1637-10-27\"^^<http://www.w3.org/2001/XMLSchema#date> <http://de.wikipedia.org/wiki/Ubatuba>."
     ))
     OutputValidator.containsNot(ldifOutput, incorrectQuads) should equal(true)
 

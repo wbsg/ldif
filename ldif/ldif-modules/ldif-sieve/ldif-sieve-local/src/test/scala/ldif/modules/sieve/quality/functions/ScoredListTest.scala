@@ -1,3 +1,5 @@
+package ldif.modules.sieve.quality.functions
+
 /*
  * LDIF
  *
@@ -16,8 +18,6 @@
  * limitations under the License.
  */
 
-package ldif.modules.sieve.quality.functions
-
 import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner
 import org.scalatest.FlatSpec
@@ -25,31 +25,29 @@ import org.scalatest.matchers.ShouldMatchers
 import ldif.entity.Node
 
 @RunWith(classOf[JUnitRunner])
-class ThresholdTest extends FlatSpec with ShouldMatchers {
+class ScoredListTest extends FlatSpec with ShouldMatchers {
 
-  val imXml = <ScoringFunction class="Threshold">
-      <Param name="min" value="42"/>
-      <Input path="?GRAPH/provenance:whatever"/>
+  val slXml = <ScoringFunction class="ScoredList">
+      <Param name="list" value="graphId1 graphId2 graphId3 graphId4"/>
   </ScoringFunction>
 
-  val tsFunc = new Threshold(42)
-  val subject = Node.fromString("<subject>")
-  val above = new Node("52", "http://www.w3.org/2001/XMLSchema#int", Node.TypedLiteral, "graphId")
-  val below = new Node("2", "http://www.w3.org/2001/XMLSchema#int", Node.TypedLiteral, "graphId")
-  val bogusValue = new Node("foo", "http://www.w3.org/2001/XMLSchema#bar", Node.TypedLiteral, "graphId")
-
+  val slFunc = new ScoredList(List("graphId1", "graphId2", "graphId3", "graphId4"))
+  val graph1 = Node.fromString("<graphId1>")
+  val graph2 = Node.fromString("<graphId2>")
+  val graph3 = Node.fromString("<graphId3>")
+  val graph4 = Node.fromString("<graphId4>")
+  val graph5 = Node.fromString("<otherGraphId>")
 
   it should "return the correct implementation given XML" in {
-    (Threshold.fromXML(imXml)) should equal(tsFunc)
+    (ScoredList.fromXML(slXml)) should equal(slFunc)
   }
 
   it should "correctly score input values" in {
-    (tsFunc.score(subject, Traversable(IndexedSeq(above))) should equal(1.0))
-    (tsFunc.score(subject, Traversable(IndexedSeq(below))) should equal(0.0))
-  }
-
-  it should "survive an invalid input" in {
-    (tsFunc.score(subject, Traversable(IndexedSeq(bogusValue)))) should equal(0.0)
+    (slFunc.score(graph1, null) should equal(1.0))
+    (slFunc.score(graph2, null) should equal(0.75))
+    (slFunc.score(graph3, null) should equal(0.5))
+    (slFunc.score(graph4, null) should equal(0.25))
+    (slFunc.score(graph5, null) should equal(0))
   }
 
 }

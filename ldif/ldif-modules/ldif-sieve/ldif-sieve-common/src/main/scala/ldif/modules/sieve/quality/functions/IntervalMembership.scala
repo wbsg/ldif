@@ -66,7 +66,7 @@ object IntervalMembership {
     } catch {
       case ioe: Exception => throw new IllegalArgumentException("Error in interval provided.")
     }
-    return null;
+    return null
   }
 
 }
