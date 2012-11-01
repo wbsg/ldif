@@ -11,6 +11,7 @@ import ldif.entity.Node
 import ldif.runtime.{Quad, Triple}
 import java.io._
 import org.apache.commons.httpclient.URI
+import org.slf4j.LoggerFactory
 
 /**
  * Created with IntelliJ IDEA.
@@ -98,7 +99,7 @@ case class ItemIDList(allpages: List[ItemID])
 
 case class ItemID(pageid: Long, ns: Int, title: String)
 
-case class ItemList(entities: Map[String, WikidataItem])
+case class ItemList(items: Map[String, WikidataItem])
 
 case class WikidataItem(id: Option[String], `type`: Option[String], pageid: Option[Long], title: Option[String], labels: Option[Map[String, Label]])
 
@@ -116,7 +117,7 @@ class WikidataAccess(endpoint: String, itemLimit: Option[Long] = None) {
 
   def foreach(f: Pair[String, WikidataItem] => Unit) {
     var current: Option[(String, WikidataItem)] = next
-    while(current!=None && (itemLimit==None) || count < itemLimit.get){
+    while(current!=None && ((itemLimit==None) || count < itemLimit.get)){
       while(current!=None && current.get._2.title==None)
         current = next
       current.map(f(_))
@@ -158,9 +159,14 @@ class WikidataAccess(endpoint: String, itemLimit: Option[Long] = None) {
     getNextItemIds() match {
       case None => return None
       case Some(itemIds) =>
-        val query = "action=wbgetentities&format=json&ids=" + itemIds.mkString("%7C")
+        val query = "action=wbgetitems&format=json&ids=" + itemIds.mkString("%7C")
         val json = getJSON(query)
-        Some(json.extract[ItemList].entities.toList)
+        try {
+          Some(json.extract[ItemList].items.toList)
+        } catch {
+          case e: net.liftweb.json.MappingException => WikidataAccess.log.warn("No items returned for query: " + query)
+          None
+        }
     }
   }
 
@@ -186,8 +192,9 @@ class WikidataAccess(endpoint: String, itemLimit: Option[Long] = None) {
 }
 
 object WikidataAccess {
+  private val log = LoggerFactory.getLogger(getClass.getName)
   def main(args: Array[String]) {
-    val wikidata = new WikidataAccess("http://wikidata-test-repo.wikimedia.de/w/api.php")//, Some(30))
+    val wikidata = new WikidataAccess("http://wikidata.org/w/api.php",  Some(30))
     printToFile(new File("wikidata.nq"))(p => {
       for(item <- wikidata)
         item match {
