@@ -649,7 +649,8 @@ which parameters you can modify to change the runtime behavior of LDIF.</p>
     &lt;sieve&gt;sieve&lt;/sieve&gt;
     &lt;outputs&gt;
         &lt;output&gt;
-            &lt;file format="nquads"&gt;output.nq&lt;/file&gt;&nbsp;&lt;!-- format attribute is optional, default is nquads -->
+            &lt;file format="nquads"&gt;output.nq&lt;/file&gt;   &lt;!-- format attribute is optional, default is nquads -->
+            &lt;phase&gt;complete&lt;/phase&gt;                  &lt;!-- phase element is optional, default is complete -->
         &lt;/output&gt;
     &lt;/outputs&gt;
     &lt;runSchedule&gt;daily&lt;/runSchedule&gt;
@@ -669,12 +670,13 @@ which parameters you can modify to change the runtime behavior of LDIF.</p>
     <li><i>mappings</i> - a directory containing the <a href="http://www4.wiwiss.fu-berlin.de/bizer/r2r/spec/index.html#mappings">R2R
         mappings</a>;</li>
     <li><i>sieve</i> - a directory containing the configuration for data <a href="http://sieve.wbsg.de/#qualityassessmentconfig">quality assessment</a> and <a href="http://sieve.wbsg.de/#fusionconfig">fusion</a>;</li>
-    <li><i>outputs</i> or one <i>output</i> element - each <i>output</i> specifies a destination where data are written to, both <i>file</i> (N-Quads or N-Triples) and <a href="http://www.assembla.com/wiki/show/ldif/QuadStore_Compatibility">SPARQL/Update</a> outputs are supported;</li>
-    <li><i>runSchedule</i> - how often the integration is expected to be run. Valid values are: <tt>onStartup</tt>, <tt>always</tt>, <tt>hourly</tt>, <tt>daily</tt>, <tt> weekly</tt>, <tt> monthly</tt>, <tt>yearly</tt>, <tt>never</tt>.</li>
+    <li><i>outputs</i> or one <i>output</i> element - each <i>output</i> specifies a destination where data are written to, both <i>file</i> (N-Quads or N-Triples) and <a href="http://www.assembla.com/wiki/show/ldif/QuadStore_Compatibility">SPARQL/Update</a> outputs are supported. 
+    The optional element <tt>phase</tt> can be used to specify which data (phase results) should be written in each destination, valid values are: <tt>r2r</tt>, <tt>silk</tt> and <tt>complete</tt>;</li>
+    <li><i>runSchedule</i> - how often the integration is expected to be run. Valid values are: <tt>onStartup</tt>, <tt>always</tt>, <tt>hourly</tt>, <tt>daily</tt>, <tt> weekly</tt>, <tt> monthly</tt>, <tt>yearly</tt> and <tt>never</tt>.</li>
 </ul>
 <p>
     Both relative and absolute paths are supported.
-    In this case there is a root directory with the config file and the test.properties file in it.
+    In this case there is a root directory with the config file and the <tt>test.properties</tt> file in it.
     Furthermore the following directories would be nested in the root directory: linkSpecs, sources and mappings.
     Data sets have to be in a local directory.
 </p>
@@ -865,7 +867,7 @@ which parameters you can modify to change the runtime behavior of LDIF.</p>
 
 
 <h3 id="importjob">Import Job Configuration</h3>
-<p>An Import Job is configured with an XML document, whose structure is described by this <a href=" https://www.assembla.com/code/ldif/git/node/blob/masterldif/ldif-core/src/main/resources/xsd/ImportJob.xsd">XML Schema</a>.</p>
+<p>An Import Job is configured with an XML document, whose structure is described by this <a href=" https://www.assembla.com/code/ldif/git/node/blob/master/ldif/ldif-core/src/main/resources/xsd/ImportJob.xsd">XML Schema</a>.</p>
 
 <p>It has the following elements:</p>
 <ul>
@@ -1086,39 +1088,39 @@ the latest release</li>
         <th> Recommended value</th>
     </tr>
     <tr class="odd">
-        <td>mapred.job.reuse.jvm.num.tasks</td>
+        <td><tt>mapred.job.reuse.jvm.num.tasks</tt></td>
         <td>Reuse of a JVM across multiple tasks of the same job</td>
-        <td>-1</td>
+        <td><tt>-1</tt></td>
     </tr>
 
     <tr class="even">
-        <td>mapred.min.split.size</td>
+        <td><tt>mapred.min.split.size</tt></td>
         <td>The minimum size chunk that map input should be split into</td>
-        <td>268435456</td>
+        <td><tt>268435456</tt></td>
     </tr>
 
 
     <tr class="odd">
-        <td>mapred.map.child.java.opts</td>
+        <td><tt>mapred.map.child.java.opts</tt></td>
         <td>Specify the heap-size for the child jvms</td>
-        <td>-Xmx1G</td>
+        <td><tt>-Xmx1G</tt></td>
     </tr>
 
      <tr class="even">
-        <td>mapred.output.compress</td>
+        <td><tt>mapred.output.compress</tt></td>
         <td>Enable output compression</td>
-        <td>true</td>
+        <td><tt>true</tt></td>
     </tr>
         <tr class="odd">
-        <td>mapred.output.compression.type</td>
+        <td><tt>mapred.output.compression.type</tt></td>
         <td>How the compression is applied</td>
-        <td>BLOCK</td>
+        <td><tt>BLOCK</tt></td>
     </tr>
 
         <tr class="even">
-        <td>mapred.output.compression.code</td>
+        <td><tt>mapred.output.compression.code</tt></td>
         <td>The compression codec class that is used for compression/decompression</td>
-        <td>org.apache.hadoop.io.compress.GzipCodec</td>
+        <td><tt>org.apache.hadoop.io.compress.GzipCodec</tt></td>
     </tr>
 
     </tbody>
