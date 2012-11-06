@@ -272,7 +272,7 @@ table tr.odd {background-color: #f6f6f6}
         Version 0.4 provides two alternative implementations of the LDIF runtime environment which allow LDIF to scale to large data sets:
         (1) The new triple store backed implementation scales to larger data sets on a single machine with lower memory consumption at the expense of processing time;
         (2) The new Hadoop-based implementation provides for processing very large data sets on a Hadoop cluster, for instance within Amazon EC2.
-        A comparison of the performance of all three implementations of the runtime environment is found on the <a href="http://www.assembla.com/spaces/ldif/wiki/Benchmark">LDIF benchmark page</a>.
+        A comparison of the performance of all three implementations of the runtime environment is found on the <a href="benchmark.html">LDIF benchmark page</a>.
     </li>
 
     <li>
@@ -491,7 +491,7 @@ of the provenance graph and <tt>owl:sameAs</tt> links;    </li>
 the provenance data is discarded instead of being output. </li>
 </ul>
 <h5>QuadStore Output</h5>
-<p>Data is written to a QuadStore as SPARQL/Update stream. Here is a list of the <a href="http://www.assembla.com/spaces/ldif/wiki/Quadstore_Compatibility">supported stores</a>.</p>
+<p>Data is written to a QuadStore as SPARQL/Update stream. Here is a list of the <a href="https://github.com/wbsg/ldif/wiki/Quadstore-Compatibility">supported stores</a>.</p>
 
 <h4>Runtime Environments </h4>
 
@@ -539,10 +539,9 @@ In-memory implementation.
 </p>
 <h5>Cluster / Hadoop</h5>
 <p>
-This implementation of the runtime environment allows you to parallelize
-the work onto multiple machines using Hadoop.
+This implementation of the runtime environment allows you to parallelize the work onto multiple machines using Hadoop.
 Each phase in the integration flow has been ported to be executable on a Hadoop cluster.
-Some initial performance figures comparing the run times of the in-memory, quad store and Hadoop version against different data set sizes are provided in the <a href="http://www.assembla.com/spaces/ldif/wiki/Benchmark">Benchmark Wiki</a>.
+Some initial performance figures comparing the run times of the in-memory, quad store and Hadoop version against different data set sizes are provided in the <a href="benchmark.html">Benchmark Wiki</a>.
 </p>
 
 
@@ -678,7 +677,7 @@ which parameters you can modify to change the runtime behavior of LDIF.</p>
     <li><i>mappings</i> - a directory containing the <a href="http://www4.wiwiss.fu-berlin.de/bizer/r2r/spec/index.html#mappings">R2R
         mappings</a>;</li>
     <li><i>sieve</i> - a directory containing the configuration for data <a href="http://sieve.wbsg.de/#qualityassessmentconfig">quality assessment</a> and <a href="http://sieve.wbsg.de/#fusionconfig">fusion</a>;</li>
-    <li><i>outputs</i> or one <i>output</i> element - each <i>output</i> specifies a destination where data are written to, both <i>file</i> (N-Quads or N-Triples) and <a href="http://www.assembla.com/wiki/show/ldif/QuadStore_Compatibility">SPARQL/Update</a> outputs are supported. 
+    <li><i>outputs</i> or one <i>output</i> element - each <i>output</i> specifies a destination where data are written to, both <i>file</i> (N-Quads or N-Triples) and <a href="https://github.com/wbsg/ldif/wiki/Quadstore-Compatibility">SPARQL/Update</a> outputs are supported.
     The optional element <tt>phase</tt> can be used to specify which data (phase results) should be written in each destination, valid values are: <tt>r2r</tt>, <tt>silk</tt> and <tt>complete</tt>;</li>
     <li><i>runSchedule</i> - how often the integration is expected to be run. Valid values are: <tt>onStartup</tt>, <tt>always</tt>, <tt>hourly</tt>, <tt>daily</tt>, <tt> weekly</tt>, <tt> monthly</tt>, <tt>yearly</tt> and <tt>never</tt>.</li>
 </ul>
@@ -1082,7 +1081,7 @@ the latest release</li>
 
 <p>Where <i>input path</i> is the (HDFS) path to the source data sets directory and <i>output path</i> is the location where on the (HDFS) file system the result should be written to.</p>
 
-<p>Learn more about Hadoop configuration by looking at our <a href="http://www.assembla.com/spaces/ldif/wiki/Benchmark">Benchmark</a> and <a href="http://www.assembla.com/spaces/ldif/wiki/Hadoop_troubleshooting">Troubleshooting</a> wiki pages.</p>
+<p>Learn more about Hadoop configuration by looking at our <a href="benchmark.html">Benchmark</a> and <a href="https://github.com/wbsg/ldif/wiki/Hadoop-troubleshooting">Troubleshooting</a> wiki pages.</p>
 
 <p>In order to have a cleaner console output, consider replacing the Hadoop default logging configuration (<tt>[HADOOP-HOME]/conf/log4j.properties</tt>) with our customized <a href =" http://www.assembla.com/code/ldif/git/node/blob/master/ldif/resources/hadoop_log4j.properties">log4j.properties</a> file.</p>
 
@@ -1398,7 +1397,7 @@ configuration. The configuration options are explained in the Section <a href="#
 
 
 <h2 id="performance">6. Performance Evaluation</h2>
-<p>We regularly carry out performance evaluations. For more details and the latest results please visit our <a href="http://www.assembla.com/spaces/ldif/wiki/Benchmark">Benchmark results</a> page.</p>
+<p>We regularly carry out performance evaluations. For more details and the latest results please visit our <a href="benchmark.html">Benchmark results</a> page.</p>
 
 
 
