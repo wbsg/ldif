@@ -1,0 +1,79 @@
+<?xml version="1.0"?>
+<?xml-stylesheet type="text/xsl" href="configuration.xsl"?>
+
+<!-- Put site-specific property overrides in this file. -->
+
+<configuration>
+<property>
+  <name>mapred.job.tracker</name>
+  <value>master:54311</value>
+  <description>The host and port that the MapReduce job tracker runs
+  at.  If "local", then jobs are run in-process as a single map
+  and reduce task.
+  </description>
+</property>
+
+<!-- map/output compression parameters -->
+<property>
+  <name>mapred.output.compress</name>
+  <value>true</value>
+</property>
+<property>
+  <name>mapred.output.compression.type</name>
+  <value>BLOCK</value>
+</property>
+<property>
+  <name>mapred.output.compression.codec</name>
+  <value>com.hadoop.compression.lzo.LzoCodec</value>
+</property>
+<property>
+  <name>mapred.map.output.compression.codec</name>
+  <value>com.hadoop.compression.lzo.LzoCodec</value>
+</property>
+<property>
+  <name>mapred.compress.map.output</name>
+  <value>true</value>
+</property>
+
+
+<!-- Reuse of a JVM across multiple tasks of the same job -->
+<property>
+  <name>mapred.job.reuse.jvm.num.tasks</name>
+  <value>10</value>
+</property>
+
+<!-- Number of maps/reduces spawned simultaneously on a TaskTracker. Default value is 2 -->
+<property>
+  <name>mapred.tasktracker.map.tasks.maximum</name>
+  <value>4</value>
+</property>
+<property>
+  <name>mapred.tasktracker.reduce.tasks.maximum</name>
+  <value>2</value>
+</property>
+
+<property>
+  <name>mapred.reduce.tasks</name>
+  <value>40</value>
+</property>
+
+<!-- Heap-size for child jvms --> 
+<property>
+  <name>mapred.map.child.java.opts</name>
+  <value>-Xmx512G</value>
+</property>
+
+<property>
+  <name>mapred.reduce.child.java.opts</name>
+  <value>-Xmx1G</value>
+</property>
+
+<!-- Reduce tuning -->
+
+<property>
+  <name>mapred.reduce.parallel.copies</name>
+  <value>20</value>
+</property>
+
+
+</configuration>

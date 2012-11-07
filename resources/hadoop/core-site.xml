@@ -1,0 +1,51 @@
+<?xml version="1.0"?>
+<?xml-stylesheet type="text/xsl" href="configuration.xsl"?>
+
+<!-- Put site-specific property overrides in this file. -->
+
+<configuration>
+<property>
+  <name>hadoop.tmp.dir</name>
+  <value>/app/hadoop/tmp</value>
+  <description>A base for other temporary directories.</description>
+</property>
+
+<property>
+  <name>fs.default.name</name>
+  <value>hdfs://master:54310</value>
+  <description>The name of the default file system.  A URI whose
+  scheme and authority determine the FileSystem implementation.  The
+  uri's scheme determines the config property (fs.SCHEME.impl) naming
+  the FileSystem implementation class.  The uri's authority is used to
+  determine the host, port, etc. for a filesystem.</description>
+</property>
+
+<!-- Compression specific parameters -->
+  <property>
+    <name>io.compression.codecs</name>
+    <value>org.apache.hadoop.io.compress.GzipCodec,org.apache.hadoop.io.compress.DefaultCodec,com.hadoop.compression.lzo.LzoCodec,com.hadoop.compression.lzo.LzopCodec,org.apache.hadoop.io.compress.BZip2Codec</value>
+  </property>
+
+  <property>
+    <name>io.compression.codec.lzo.class</name>
+    <value>com.hadoop.compression.lzo.LzopCodec</value>
+  </property>
+
+<!-- Parameters that optimize merging, shuffling and sorting. -->
+  <property>
+    <name>fs.inmemory.size.mb</name>
+    <value>200</value>
+  </property>
+  <property>
+    <name>io.sort.mb</name>
+    <value>200</value>
+  </property>
+  <property>
+    <name>io.sort.factor</name>
+    <value>50</value>
+  </property>
+  <property>
+    <name>mapred.job.shuffle.input.buffer.percent</name>
+    <value>0.5</value>
+  </property>
+</configuration>
