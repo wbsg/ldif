@@ -1,30 +1,29 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-	<modelVersion>4.0.0</modelVersion>
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
 
     <parent>
-      <groupId>ldif</groupId>
-      <artifactId>ldif-entitybuilder</artifactId>
-      <version>0.5</version>
+        <groupId>ldif</groupId>
+        <artifactId>ldif-entitybuilder</artifactId>
+        <version>0.6</version>
     </parent>
 
-	<artifactId>ldif-entitybuilder-local</artifactId>
-	<packaging>jar</packaging>
-	<version>0.5</version>
-	<name>LDIF EntityBuilder Module Local</name>
+    <artifactId>ldif-entitybuilder-local</artifactId>
+    <packaging>jar</packaging>
+    <version>0.6</version>
+    <name>LDIF EntityBuilder Module Local</name>
 
-  	<dependencies>
-	    <dependency>
-          <groupId>ldif</groupId>
-          <artifactId>ldif-entitybuilder-common</artifactId>
-          <version>0.5</version>
+    <dependencies>
+        <dependency>
+            <groupId>ldif</groupId>
+            <artifactId>ldif-entitybuilder-common</artifactId>
+            <version>0.6</version>
         </dependency>
         <dependency>
-          <groupId>ldif</groupId>
-          <artifactId>ldif-local</artifactId>
-          <version>0.5</version>
+            <groupId>ldif</groupId>
+            <artifactId>ldif-local</artifactId>
+            <version>0.6</version>
         </dependency>
-
-	</dependencies>
+    </dependencies>
 
 </project>
