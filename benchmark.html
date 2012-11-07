@@ -186,7 +186,7 @@
             <td> 4,419,410</td>
             <td> 24,972,112</td>
             <td> - </td>
-            <td> - </td>
+            <td> 32,211,677 </td>
             <td> 98,380,001 </td>
         </tr>
         <tr>
@@ -194,15 +194,15 @@
             <td> 24,782</td>
             <td> 213,062</td>
             <td> - </td>
-            <td> - </td>
+            <td> 1,084,808 </td>
             <td> 6,321,750 </td>
         </tr>
         <tr>
             <th>Overall file size</th>
             <td> 5.6 GB</td>
             <td> 23 GB</td>
-            <td> - </td>
-            <td> - </td>
+            <td> 35 GB </td>
+            <td> 67 GB </td>
             <td> - </td>
         </tr>
          <tr>
@@ -334,7 +334,11 @@ Here are some examples of the mappings we used for:
 <p>
     We used LDIF version 0.5 both for the in-memory, TDB and Hadoop tests.
 </p>
-For each single machine test, we applied the following procedure:
+
+
+<h3>Single machine tests</h3>
+<p>
+    For each single machine test, we applied the following procedure:
 </p>
 <ol>
     <li>Clear Operating System caches
@@ -345,9 +349,19 @@ For each single machine test, we applied the following procedure:
     </li>
 </ol>
 
+
+<h3>Hadoop tests</h3>
 <p>
-    Details about the Hadoop cluster configurations are available at <a href="https://github.com/wbsg/ldif/wiki/Hadoop-configuration">this page</a>.
+    For each distributed test, we applied the following procedure:
 </p>
+<ol>
+    <li>Launch a master instance w/ EBS containing input data attached</li>
+    <li>Launch slave instances</li>
+    <li>Init the cluster (connect via SSH, clear all temporary data, format HDFS, run <tt>start-all</tt>)</li>
+    <li>Upload input data into HDFS (from EBS)</li>
+    <li>Run integration</li>
+</ol>
+Details about the Hadoop cluster configurations are available at <a href="https://github.com/wbsg/ldif/wiki/Hadoop-configuration">this page</a>.
 
 
 
@@ -564,6 +578,56 @@ For each single machine test, we applied the following procedure:
         <td>148 min </td>
     </tr>
 </table>
+
+
+<img src="images/charts/300M_ec2.png" />
+
+<table class="results">
+    <tr>
+        <th>Phase </th>
+        <th>Hadoop EC2 8-slaves </th>
+        <th>Hadoop EC2 16-slaves </th>
+        <th>Hadoop EC2 32-slaves </th>
+    </tr>
+    <tr>
+        <td> Load and build entities for R2R </td>
+        <td>7933 s </td>
+        <td>4647 s </td>
+        <td>2382 s </td>
+    </tr>
+    <tr>
+        <td> R2R data translation </td>
+        <td>297 s </td>
+        <td>173 s </td>
+        <td>114 s </td>
+    </tr>
+    <tr>
+        <td> Build entities for Silk  </td>
+        <td>646 s </td>
+        <td>421 s </td>
+        <td>324 s </td>
+    </tr>
+    <tr>
+        <td> Silk identity resolution  </td>
+        <td>1546  s </td>
+        <td>932 s </td>
+        <td> 580 s </td>
+    </tr>
+    <tr>
+        <td> URIs rewriting </td>
+        <td>2174 s </td>
+        <td>1430 s </td>
+        <td>1085 s </td>
+    </tr>
+    <tr>
+        <td> Overall execution  </td>
+        <td>209 min </td>
+        <td>126 min </td>
+        <td>75 min </td>
+    </tr>
+</table>
+
+
 
 
 
