@@ -75,6 +75,38 @@
                     </systemPropertyVariables>
                 </configuration>
             </plugin>
+             <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <!-- version 2.0 requires maven 3-->
+                <version>1.6</version>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                        <configuration>
+                            <!--<minimizeJar>true</minimizeJar>-->
+                            <filters>
+                                <!-- Excludes -->
+                                <filter>
+                                    <artifact>org.scala-lang:scala-compiler</artifact>
+                                    <excludes>
+                                        <exclude>**</exclude>
+                                    </excludes>
+                                </filter>
+                            </filters>
+                            <finalName>ldif-single-${version}-jar-with-dependencies</finalName>
+                            <archive>
+                                <manifest>
+                                    <mainClass>ldif.local.Ldif</mainClass>
+                                </manifest>
+                            </archive>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
     </build>
 
@@ -84,6 +116,20 @@
       <groupId>ldif</groupId>
       <artifactId>ldif-local</artifactId>
       <version>0.6</version>
+		<exclusions>
+			<exclusion>
+				<artifactId>pdfbox</artifactId>
+				<groupId>org.apache.pdfbox</groupId>
+			</exclusion>
+			<exclusion>
+                <artifactId>poi</artifactId>
+                <groupId>org.apache.poi</groupId>
+            </exclusion>
+			<exclusion>
+				<artifactId>poi-ooxml</artifactId>
+				<groupId>org.apache.poi</groupId>
+			</exclusion>
+		</exclusions>
     </dependency>
 
     <dependency>
