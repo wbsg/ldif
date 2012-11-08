@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<scheduler xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://ldif.wbsg.de/ ../xsd/SchedulerConfig.xsd"
+           xmlns="http://ldif.wbsg.de/">
+    <properties>scheduler.properties</properties>
+    <dataSources>DataSource</dataSources>
+    <importJob>ImportJobs</importJob>
+    <integrationJob>integrationJob.xml</integrationJob>
+    <dumpLocation>dumps</dumpLocation>
+</scheduler>

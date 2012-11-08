@@ -1,0 +1,2 @@
+This example is currently not working: the required artifact org.scala-lang:scala-compiler is not included in the final package.
+To run the example, please use use the package original-ldif*.jar or edit the shade plugin configuration in the pom.xml.

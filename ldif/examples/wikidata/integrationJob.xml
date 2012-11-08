@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<integrationJob xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                xsi:schemaLocation="http://ldif.wbsg.de/ ../xsd/IntegrationJob.xsd"
+                xmlns="http://ldif.wbsg.de/">
+    <!--<properties>integration.properties</properties>-->
+    <sources>
+        <source>dumps</source>
+    </sources>
+    <!--linkSpecifications>linkspecs</linkSpecifications>-->
+    <!--<mappings>mappings</mappings-->
+    <!--<sieve>sieve</sieve>-->
+    <outputs>
+        <output>
+            <file>integrated.nq</file>
+        </output>
+    </outputs>
+    <runSchedule>onStartup</runSchedule>
+</integrationJob>
