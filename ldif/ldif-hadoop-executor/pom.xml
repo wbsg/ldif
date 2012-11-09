@@ -91,9 +91,9 @@
                                 <!-- Excludes -->
                                 <filter>
                                     <artifact>org.scala-lang:scala-compiler</artifact>
-                                    <excludes>
-                                        <exclude>**</exclude>
-                                    </excludes>
+				    <includes>
+                                        <include>scala/tools/nsc/util/**</include>
+                                    </includes>
                                 </filter>
                             </filters>
                             <finalName>ldif-hadoop-exe-${version}-jar-with-dependencies</finalName>
