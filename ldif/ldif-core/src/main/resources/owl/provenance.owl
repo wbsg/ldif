@@ -9,13 +9,13 @@
 ]>
 
 
-<rdf:RDF xmlns="http://ldif.wbsg.de/"
-     xml:base="http://ldif.wbsg.de/"
+<rdf:RDF xmlns="http://www4.wiwiss.fu-berlin.de/ldif/"
+     xml:base="http://www4.wiwiss.fu-berlin.de/ldif/"
      xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
      xmlns:owl="http://www.w3.org/2002/07/owl#"
      xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
      xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
-    <owl:Ontology rdf:about="http://ldif.wbsg.de/"/>
+    <owl:Ontology rdf:about="http://www4.wiwiss.fu-berlin.de/ldif/"/>
     
 
 
@@ -41,11 +41,11 @@
     
 
 
-    <!-- http://ldif.wbsg.de/hasImportJob -->
+    <!-- http://www4.wiwiss.fu-berlin.de/ldif/hasImportJob -->
 
-    <owl:ObjectProperty rdf:about="http://ldif.wbsg.de/hasImportJob">
-        <rdfs:range rdf:resource="http://ldif.wbsg.de/ImportJob"/>
-        <rdfs:domain rdf:resource="http://ldif.wbsg.de/ImportedGraph"/>
+    <owl:ObjectProperty rdf:about="http://www4.wiwiss.fu-berlin.de/ldif/hasImportJob">
+        <rdfs:range rdf:resource="http://www4.wiwiss.fu-berlin.de/ldif/ImportJob"/>
+        <rdfs:domain rdf:resource="http://www4.wiwiss.fu-berlin.de/ldif/ImportedGraph"/>
     </owl:ObjectProperty>
     
 
@@ -61,56 +61,56 @@
     
 
 
-    <!-- http://ldif.wbsg.de/hasImportType -->
+    <!-- http://www4.wiwiss.fu-berlin.de/ldif/hasImportType -->
 
-    <owl:DatatypeProperty rdf:about="http://ldif.wbsg.de/hasImportType">
+    <owl:DatatypeProperty rdf:about="http://www4.wiwiss.fu-berlin.de/ldif/hasImportType">
         <rdfs:range rdf:resource="&xsd;string"/>
-        <rdfs:domain rdf:resource="http://ldif.wbsg.de/ImportJob"/>
+        <rdfs:domain rdf:resource="http://www4.wiwiss.fu-berlin.de/ldif/ImportJob"/>
     </owl:DatatypeProperty>
     
 
 
-    <!-- http://ldif.wbsg.de/hasOriginalLocation -->
+    <!-- http://www4.wiwiss.fu-berlin.de/ldif/hasOriginalLocation -->
 
-    <owl:DatatypeProperty rdf:about="http://ldif.wbsg.de/hasOriginalLocation">
+    <owl:DatatypeProperty rdf:about="http://www4.wiwiss.fu-berlin.de/ldif/hasOriginalLocation">
         <rdfs:range rdf:resource="&xsd;string"/>
-        <rdfs:domain rdf:resource="http://ldif.wbsg.de/ImportJob"/>
+        <rdfs:domain rdf:resource="http://www4.wiwiss.fu-berlin.de/ldif/ImportJob"/>
     </owl:DatatypeProperty>
     
 
 
-    <!-- http://ldif.wbsg.de/importId -->
+    <!-- http://www4.wiwiss.fu-berlin.de/ldif/importId -->
 
-    <owl:DatatypeProperty rdf:about="http://ldif.wbsg.de/importId">
+    <owl:DatatypeProperty rdf:about="http://www4.wiwiss.fu-berlin.de/ldif/importId">
         <rdfs:range rdf:resource="&xsd;string"/>
-        <rdfs:domain rdf:resource="http://ldif.wbsg.de/ImportJob"/>
+        <rdfs:domain rdf:resource="http://www4.wiwiss.fu-berlin.de/ldif/ImportJob"/>
     </owl:DatatypeProperty>
     
 
 
-    <!-- http://ldif.wbsg.de/lastUpdate -->
+    <!-- http://www4.wiwiss.fu-berlin.de/ldif/lastUpdate -->
 
-    <owl:DatatypeProperty rdf:about="http://ldif.wbsg.de/lastUpdate">
+    <owl:DatatypeProperty rdf:about="http://www4.wiwiss.fu-berlin.de/ldif/lastUpdate">
         <rdfs:range rdf:resource="&xsd;dateTime"/>
-        <rdfs:domain rdf:resource="http://ldif.wbsg.de/ImportJob"/>
+        <rdfs:domain rdf:resource="http://www4.wiwiss.fu-berlin.de/ldif/ImportJob"/>
     </owl:DatatypeProperty>
     
 
 
-    <!-- http://ldif.wbsg.de/hasDatasource -->
+    <!-- http://www4.wiwiss.fu-berlin.de/ldif/hasDatasource -->
 
-    <owl:DatatypeProperty rdf:about="http://ldif.wbsg.de/hasDatasource">
+    <owl:DatatypeProperty rdf:about="http://www4.wiwiss.fu-berlin.de/ldif/hasDatasource">
         <rdfs:range rdf:resource="&xsd;string"/>
-        <rdfs:domain rdf:resource="http://ldif.wbsg.de/ImportJob"/>
+        <rdfs:domain rdf:resource="http://www4.wiwiss.fu-berlin.de/ldif/ImportJob"/>
     </owl:DatatypeProperty>
 
 
 
-    <!-- http://ldif.wbsg.de/numberOfQuads -->
+    <!-- http://www4.wiwiss.fu-berlin.de/ldif/numberOfQuads -->
 
-    <owl:DatatypeProperty rdf:about="http://ldif.wbsg.de/numberOfQuads">
+    <owl:DatatypeProperty rdf:about="http://www4.wiwiss.fu-berlin.de/ldif/numberOfQuads">
         <rdfs:range rdf:resource="&xsd;nonNegativeInteger"/>
-        <rdfs:domain rdf:resource="http://ldif.wbsg.de/ImportJob"/>
+        <rdfs:domain rdf:resource="http://www4.wiwiss.fu-berlin.de/ldif/ImportJob"/>
     </owl:DatatypeProperty>
 
 
@@ -125,42 +125,42 @@
     
 
 
-    <!-- http://ldif.wbsg.de/ImportJob -->
+    <!-- http://www4.wiwiss.fu-berlin.de/ldif/ImportJob -->
 
-    <owl:Class rdf:about="http://ldif.wbsg.de/ImportJob">
+    <owl:Class rdf:about="http://www4.wiwiss.fu-berlin.de/ldif/ImportJob">
         <rdfs:subClassOf>
             <owl:Restriction>
-                <owl:onProperty rdf:resource="http://ldif.wbsg.de/hasImportType"/>
+                <owl:onProperty rdf:resource="http://www4.wiwiss.fu-berlin.de/ldif/hasImportType"/>
                 <owl:minCardinality rdf:datatype="&xsd;nonNegativeInteger">1</owl:minCardinality>
             </owl:Restriction>
         </rdfs:subClassOf>
         <rdfs:subClassOf>
             <owl:Restriction>
-                <owl:onProperty rdf:resource="http://ldif.wbsg.de/hasOriginalLocation"/>
+                <owl:onProperty rdf:resource="http://www4.wiwiss.fu-berlin.de/ldif/hasOriginalLocation"/>
                 <owl:minCardinality rdf:datatype="&xsd;nonNegativeInteger">0</owl:minCardinality>
             </owl:Restriction>
         </rdfs:subClassOf>
         <rdfs:subClassOf>
             <owl:Restriction>
-                <owl:onProperty rdf:resource="http://ldif.wbsg.de/importId"/>
+                <owl:onProperty rdf:resource="http://www4.wiwiss.fu-berlin.de/ldif/importId"/>
                 <owl:minCardinality rdf:datatype="&xsd;nonNegativeInteger">1</owl:minCardinality>
             </owl:Restriction>
         </rdfs:subClassOf>
         <rdfs:subClassOf>
             <owl:Restriction>
-                <owl:onProperty rdf:resource="http://ldif.wbsg.de/lastUpdate"/>
+                <owl:onProperty rdf:resource="http://www4.wiwiss.fu-berlin.de/ldif/lastUpdate"/>
                 <owl:minCardinality rdf:datatype="&xsd;nonNegativeInteger">1</owl:minCardinality>
             </owl:Restriction>
         </rdfs:subClassOf>
         <rdfs:subClassOf>
             <owl:Restriction>
-                <owl:onProperty rdf:resource="http://ldif.wbsg.de/hasDatasource"/>
+                <owl:onProperty rdf:resource="http://www4.wiwiss.fu-berlin.de/ldif/hasDatasource"/>
                 <owl:minCardinality rdf:datatype="&xsd;nonNegativeInteger">1</owl:minCardinality>
             </owl:Restriction>
         </rdfs:subClassOf>
         <rdfs:subClassOf>
             <owl:Restriction>
-                <owl:onProperty rdf:resource="http://ldif.wbsg.de/numberOfQuads"/>
+                <owl:onProperty rdf:resource="http://www4.wiwiss.fu-berlin.de/ldif/numberOfQuads"/>
                 <owl:minCardinality rdf:datatype="&xsd;nonNegativeInteger">0</owl:minCardinality>
             </owl:Restriction>
         </rdfs:subClassOf>
@@ -168,12 +168,12 @@
     
 
 
-    <!-- http://ldif.wbsg.de/ImportedGraph -->
+    <!-- http://www4.wiwiss.fu-berlin.de/ldif/ImportedGraph -->
 
-    <owl:Class rdf:about="http://ldif.wbsg.de/ImportedGraph">
+    <owl:Class rdf:about="http://www4.wiwiss.fu-berlin.de/ldif/ImportedGraph">
         <rdfs:subClassOf>
             <owl:Restriction>
-                <owl:onProperty rdf:resource="http://ldif.wbsg.de/hasImportJob"/>
+                <owl:onProperty rdf:resource="http://www4.wiwiss.fu-berlin.de/ldif/hasImportJob"/>
                 <owl:minCardinality rdf:datatype="&xsd;nonNegativeInteger">1</owl:minCardinality>
             </owl:Restriction>
         </rdfs:subClassOf>

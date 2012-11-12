@@ -9,10 +9,10 @@
 <http://dbpedia.org/resource/Ubatuba> <http://dbpedia.org/ontology/populationTotal> "78870"^^<http://www.w3.org/2001/XMLSchema#nonNegativeInteger> <http://pt.wikipedia.org/wiki/Ubatuba>.
 <http://dbpedia.org/resource/Ubatuba> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://dbpedia.org/ontology/City> <http://pt.wikipedia.org/wiki/Ubatuba>.
 # from provenance.dbpedia.org.nq
-<http://en.wikipedia.org/wiki/Ubatuba> <http://ldif.wbsg.de/lastUpdate> "2011-07-26T18:49:34Z"^^<http://www.w3.org/2001/XMLSchema#dateTime> <http://ldif.wbsg.de/provenance>.
-<http://pt.wikipedia.org/wiki/Ubatuba> <http://ldif.wbsg.de/lastUpdate> "2010-07-26T18:52:08Z"^^<http://www.w3.org/2001/XMLSchema#dateTime> <http://ldif.wbsg.de/provenance>.
-<http://en.wikipedia.org/wiki/Ubatuba> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://ldif.wbsg.de/ImportedGraph> <http://ldif.wbsg.de/provenance>.
-<http://pt.wikipedia.org/wiki/Ubatuba> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://ldif.wbsg.de/ImportedGraph> <http://ldif.wbsg.de/provenance>.
+<http://en.wikipedia.org/wiki/Ubatuba> <http://www4.wiwiss.fu-berlin.de/ldif/lastUpdate> "2011-07-26T18:49:34Z"^^<http://www.w3.org/2001/XMLSchema#dateTime> <http://www4.wiwiss.fu-berlin.de/ldif/provenance>.
+<http://pt.wikipedia.org/wiki/Ubatuba> <http://www4.wiwiss.fu-berlin.de/ldif/lastUpdate> "2010-07-26T18:52:08Z"^^<http://www.w3.org/2001/XMLSchema#dateTime> <http://www4.wiwiss.fu-berlin.de/ldif/provenance>.
+<http://en.wikipedia.org/wiki/Ubatuba> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www4.wiwiss.fu-berlin.de/ldif/ImportedGraph> <http://www4.wiwiss.fu-berlin.de/ldif/provenance>.
+<http://pt.wikipedia.org/wiki/Ubatuba> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www4.wiwiss.fu-berlin.de/ldif/ImportedGraph> <http://www4.wiwiss.fu-berlin.de/ldif/provenance>.
 # Other
 <http://dbpedia.org/resource/Recife> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://dbpedia.org/ontology/City> <http://pt.wikipedia.org/wiki/Recife>.
 <http://dbpedia.org/resource/Brazil> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://dbpedia.org/ontology/Country> <http://pt.wikipedia.org/wiki/Brazil>.

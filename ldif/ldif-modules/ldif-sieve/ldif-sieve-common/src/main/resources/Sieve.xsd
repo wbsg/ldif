@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
-           xmlns="http://ldif.wbsg.de/"
+           xmlns="http://www4.wiwiss.fu-berlin.de/ldif/"
            elementFormDefault="qualified"
-           targetNamespace="http://ldif.wbsg.de/">
+           targetNamespace="http://www4.wiwiss.fu-berlin.de/ldif/">
 
     <!-- root element, the three sub-nodes can appear in any order, but all have to appear nonetheless -->
     <xs:element name="Sieve">

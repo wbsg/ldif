@@ -115,8 +115,8 @@ trait ImportJob {
 
   def toXML(core : xml.Node): xml.Node = {
     <importJob xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-            xsi:schemaLocation="http://ldif.wbsg.de/ ../../xsd/ImportJob.xsd"
-            xmlns="http://ldif.wbsg.de/">
+            xsi:schemaLocation="http://www4.wiwiss.fu-berlin.de/ldif/ ../../xsd/ImportJob.xsd"
+            xmlns="http://www4.wiwiss.fu-berlin.de/ldif/">
       <internalId>{id}</internalId>
       <dataSource>{dataSource}</dataSource>
       <refreshSchedule>{refreshSchedule}</refreshSchedule>

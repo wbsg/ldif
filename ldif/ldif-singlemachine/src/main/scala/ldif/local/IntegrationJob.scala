@@ -397,7 +397,7 @@ case class IntegrationJob (config : IntegrationConfig, debugMode : Boolean = fal
    */
   private def mapQuads(integrationConfig: IntegrationConfig, readers: Seq[QuadReader]) : Option[Seq[QuadReader]] = {
     val mappingSource = new FileOrURISource(integrationConfig.mappingDir)
-    val uriGenerator = new EnumeratingURIGenerator("http://ldif.wbsg.de/imported", BigInteger.ONE)
+    val uriGenerator = new EnumeratingURIGenerator("http://www4.wiwiss.fu-berlin.de/ldif/imported", BigInteger.ONE)
     val importedMappingModel = Repository.importMappingDataFromSource(mappingSource, uriGenerator)
     val repository = new Repository(new JenaModelSource(importedMappingModel))
     val r2rConfig = new R2RConfig(repository)

@@ -36,7 +36,7 @@ object QualityEntityDescription {
    */
   def fromXML(scoringFunction : scala.xml.Node)(implicit prefixes : Prefixes = Prefixes.empty) = {
     val paths = ((scoringFunction \ "ScoringFunction" \ "Input" ).map(parsePath(_)(prefixes)))
-    val restriction = Restriction.fromXML(<Restriction><Condition path="?a/rdf:type"><Uri>http://ldif.wbsg.de/ImportedGraph</Uri></Condition></Restriction>)
+    val restriction = Restriction.fromXML(<Restriction><Condition path="?a/rdf:type"><Uri>http://www4.wiwiss.fu-berlin.de/ldif/ImportedGraph</Uri></Condition></Restriction>)
     new EntityDescription(restriction,IndexedSeq(paths.toIndexedSeq))
   }
 

@@ -119,14 +119,14 @@ object Sieve {
       exit()
     }
 
-    val importJobXml = <importJob xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://ldif.wbsg.de/">
+    val importJobXml = <importJob xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www4.wiwiss.fu-berlin.de/ldif/">
       <internalId>userInput</internalId>
       <dataSource>CommandLineProvided</dataSource>
       <refreshSchedule>monthly</refreshSchedule>
       { sparqlParse(input,query) }
     </importJob>
 
-    val schedulerConfigXml = <scheduler xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://ldif.wbsg.de/ ../xsd/SchedulerConfig.xsd" xmlns="http://ldif.wbsg.de/">
+    val schedulerConfigXml = <scheduler xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www4.wiwiss.fu-berlin.de/ldif/ ../xsd/SchedulerConfig.xsd" xmlns="http://www4.wiwiss.fu-berlin.de/ldif/">
       <properties>{new File(tmpDir,"scheduler.properties").getAbsolutePath}</properties>
       <dataSources>DataSource</dataSources>
       <importJob>{new File(tmpDir,"importJob.xml").getAbsolutePath}</importJob>
@@ -135,7 +135,7 @@ object Sieve {
     </scheduler>
 
     val integrationJobXml =
-      <integrationJob xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://ldif.wbsg.de/ ../xsd/IntegrationJob.xsd" xmlns="http://ldif.wbsg.de/">
+      <integrationJob xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www4.wiwiss.fu-berlin.de/ldif/ ../xsd/IntegrationJob.xsd" xmlns="http://www4.wiwiss.fu-berlin.de/ldif/">
         <properties>{new File(tmpDir,"integration.properties").getAbsolutePath}</properties>
         <sources>
           <source>{new File(dumps).getAbsolutePath}</source>

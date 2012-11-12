@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"  ?>
-<Sieve xmlns="http://ldif.wbsg.de/">
+<Sieve xmlns="http://www4.wiwiss.fu-berlin.de/ldif/">
     <Prefixes>
-        <Prefix id="ldif" namespace="http://ldif.wbsg.de/"/>
+        <Prefix id="ldif" namespace="http://www4.wiwiss.fu-berlin.de/ldif/"/>
         <Prefix id="sieve" namespace="http://sieve.wbsg.de/vocab/"/>
         <Prefix id="dbpedia-owl" namespace="http://dbpedia.org/ontology/"/>
         <Prefix id="dbpedia" namespace="http://dbpedia.org/resource/"/>
@@ -12,7 +12,7 @@
     <QualityAssessment>
         <AssessmentMetric id="sieve:reputation">
             <ScoringFunction class="ScoredList">
-                <Param name="list" value="http://ldif.wbsg.de/graph#dbpedia.3 http://ldif.wbsg.de/graph#dbpedia.2 http://ldif.wbsg.de/graph#dbpedia.1 http://rdf.freebase.com/rdf/en/bob_marley http://ldif.wbsg.de/graph#musicbrainz.3 http://ldif.wbsg.de/graph#bbc.2"/>
+                <Param name="list" value="http://www4.wiwiss.fu-berlin.de/ldif/graph#dbpedia.3 http://www4.wiwiss.fu-berlin.de/ldif/graph#dbpedia.2 http://www4.wiwiss.fu-berlin.de/ldif/graph#dbpedia.1 http://rdf.freebase.com/rdf/en/bob_marley http://www4.wiwiss.fu-berlin.de/ldif/graph#musicbrainz.3 http://www4.wiwiss.fu-berlin.de/ldif/graph#bbc.2"/>
             </ScoringFunction>
         </AssessmentMetric>
     </QualityAssessment>

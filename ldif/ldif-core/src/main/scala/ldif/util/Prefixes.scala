@@ -90,7 +90,7 @@ object Prefixes
     "rdf" -> "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
     "rdfs" -> "http://www.w3.org/2000/01/rdf-schema#",
     "owl" -> "http://www.w3.org/2002/07/owl#",
-    "ldif" -> "http://ldif.wbsg.de/",      //added here as it will be used by all applications. no point in making user define in xml file
+    "ldif" -> "http://www4.wiwiss.fu-berlin.de/ldif/",      //added here as it will be used by all applications. no point in making user define in xml file
     "sieve" -> "http://sieve.wbsg.de/vocab/"     //added here as it will be used by all applications. no point in making user define in xml file
   ))
 

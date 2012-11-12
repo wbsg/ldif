@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
-           xmlns:ldif="http://ldif.wbsg.de/"
+           xmlns:ldif="http://www4.wiwiss.fu-berlin.de/ldif/"
            elementFormDefault="qualified"
-           targetNamespace="http://ldif.wbsg.de/" >
+           targetNamespace="http://www4.wiwiss.fu-berlin.de/ldif/" >
 
   <xs:simpleType name="refreshScheduleType">
     <xs:restriction base="xs:normalizedString">

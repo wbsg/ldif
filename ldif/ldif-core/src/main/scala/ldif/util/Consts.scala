@@ -26,7 +26,7 @@ object Consts {
   val LDIF_WEBSITE = "http://ldif.wbsg.de"
   val LDIF_HELP_HEADER = ("LDIF "+LDIF_VERSION+" \nLicensed under Apache License v2.0")
   val LDIF_HELP_FOOTER = ("\nMore information at "+LDIF_WEBSITE)
-  val LDIF_NS = "http://ldif.wbsg.de/"
+  val LDIF_NS = "http://www4.wiwiss.fu-berlin.de/ldif/"
 
   val DEFAULT_GRAPH = LDIF_NS + "defaultGraph"
   val DEFAULT_PROVENANCE_GRAPH = LDIF_NS + "provenance"

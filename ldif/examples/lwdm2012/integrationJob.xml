@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <integrationJob xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-                xsi:schemaLocation="http://ldif.wbsg.de/ ../xsd/IntegrationJob.xsd"
-                xmlns="http://ldif.wbsg.de/">
+                xsi:schemaLocation="http://www4.wiwiss.fu-berlin.de/ldif/ ../xsd/IntegrationJob.xsd"
+                xmlns="http://www4.wiwiss.fu-berlin.de/ldif/">
     <properties>integration.properties</properties>
     <sources>
         <source>dumps</source>

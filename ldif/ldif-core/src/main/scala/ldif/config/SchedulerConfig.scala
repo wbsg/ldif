@@ -33,8 +33,8 @@ case class SchedulerConfig (importJobsFiles : Traversable[File], integrationJob 
 
   def toXML : xml.Node = {
     <scheduler xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-                     xsi:schemaLocation="http://ldif.wbsg.de/ ../../xsd/SchedulerConfig.xsd"
-                     xmlns="http://ldif.wbsg.de/">
+                     xsi:schemaLocation="http://www4.wiwiss.fu-berlin.de/ldif/ ../../xsd/SchedulerConfig.xsd"
+                     xmlns="http://www4.wiwiss.fu-berlin.de/ldif/">
       {if (isAnyDataSourceDefined){
           <dataSources>
             {for (dataSource <- dataSourcesFiles) yield { <dataSource>{dataSource.getCanonicalPath}</dataSource> } }

@@ -61,7 +61,7 @@ object R2R {
 
   private def getLdifMappings(mappingsPath: String): IndexedSeq[LDIFMapping] = {
     val mappingSource = new FileOrURISource(new File(mappingsPath))
-    val uriGenerator = new EnumeratingURIGenerator("http://ldif.wbsg.de/imported", BigInteger.ONE);
+    val uriGenerator = new EnumeratingURIGenerator("http://www4.wiwiss.fu-berlin.de/ldif/imported", BigInteger.ONE);
     val importedMappingModel = Repository.importMappingDataFromSource(mappingSource, uriGenerator)
     val repository = new Repository(new JenaModelSource(importedMappingModel))
     return (for(mapping <- repository.getMappings.values()) yield LDIFMapping(mapping)).toIndexedSeq
