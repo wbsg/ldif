@@ -1306,33 +1306,34 @@ configuration. The configuration options are explained in the Section <a href="#
 02:  @prefix rdfs: &lt;http://www.w3.org/2000/01/rdf-schema#&gt; .
 03:  @prefix uniprot: &lt;http://purl.uniprot.org/core/&gt; .
 04:
-05:  &lt;file:///aba_mouse_20101010_1000.nq&gt; {
+05:  &lt;http://ldif.wbsg.de/graph/aba&gt; {
 06:    &lt;http://brain-map.org/mouse/brain/Oprk1.xml&gt; aba-voc:entrezgeneid "<span style="font-weight: bold;">18387</span>" ;
-07:      aba-voc:gene-aliases _:Ab12290 .  08:   _:Ab12290 &lt;http://brain-map.org/gene/0.1#aliassymbol&gt; "<span style="font-weight: bold;">Oprk1</span>" .
+07:       aba-voc:gene-aliases _:Ab12290 .  
+08:       _:Ab12290 &lt;aba-voc:aliassymbol&gt; "<span style="font-weight: bold;">Oprk1</span>" .
 09:  }
 10:
-11:  &lt;file:///datasets/uniprot-organism-human-reviewed-complete_1000.nq&gt; {
+11:  &lt;http://ldif.wbsg.de/graph/uniprot&gt; {
 12:    &lt;http://purl.uniprot.org/uniprot/P61981&gt; rdfs:seeAlso &lt;http://purl.uniprot.org/geneid/<span style="font-weight: bold;">18387</span>&gt; .
 13:    &lt;http://purl.uniprot.org/geneid/<span style="font-weight: bold;">18387</span>&gt; uniprot:database "GeneID" .
-14:    &lt;http://purl.uniprot.org/uniprot/P61981&gt; uniprot:encodedBy &lt;file:///storage/datasets/uniprot-organism-human-reviewed-complete.rdf#_503237333438003B&gt; .
+14:    &lt;http://purl.uniprot.org/uniprot/P61981&gt; uniprot:encodedBy &lt;http://ldif.wbsg.de/graph/uniprotuniprot-organism-human-reviewed-complete.rdf#_503237333438003B&gt; .
 15:  }</pre>
 
   </li>
   <li>
       <b>Example <i>output</i> :</b>
       <pre>
-01: @prefix smwprop: &lt;http://mywiki/resource/property/&gt; .
-02: @prefix xsd: &lt;http://www.w3.org/2001/XMLSchema#&gt; .
-03:
-04: &lt;file:///aba_mouse_20101010_1000.nq&gt; {
-05:  &nbsp;&lt;http://brain-map.org/mouse/brain/Oprk1.xml&gt; smwprop:EntrezGeneId "<span style="font-weight: bold;">18387</span>"^^xsd:int .
-06:  &nbsp;&lt;http://brain-map.org/mouse/brain/Oprk1.xml&gt; smwprop:GeneSymbol "<span style="font-weight: bold;">Oprk1</span>"^^xsd:string .
-07: }
+01:  @prefix smwprop: &lt;http://mywiki/resource/property/&gt; .
+02:  @prefix xsd: &lt;http://www.w3.org/2001/XMLSchema#&gt; .
+03: 
+04:  &lt;http://ldif.wbsg.de/graph/aba&gt; {
+05:    &nbsp;&lt;http://brain-map.org/mouse/brain/Oprk1.xml&gt; smwprop:EntrezGeneId "<span style="font-weight: bold;">18387</span>"^^xsd:int .
+06:    &nbsp;&lt;http://brain-map.org/mouse/brain/Oprk1.xml&gt; smwprop:GeneSymbol "<span style="font-weight: bold;">Oprk1</span>"^^xsd:string .
+07:  }
 08:
-09: &lt;file:///datasets/uniprot-organism-human-reviewed-complete_1000.nq&gt; {
-10:   &lt;http://brain-map.org/mouse/brain/Oprk1.xml&gt; smwprop:EntrezGeneId "<span style="font-weight: bold;">18387</span>"^^xsd:int .
-11:   &lt;http://brain-map.org/mouse/brain/Oprk1.xml&gt; <span style="font-family: monospace;">owl:sameAs </span><span style="font-family: monospace;">&lt;file:///storage/datasets/uniprot-organism-human-reviewed-complete.rdf#_503237333438003B&gt; .</span>
-12: }</pre>
+09:  &lt;http://ldif.wbsg.de/graph/uniprot&gt; {
+10:    &lt;http://brain-map.org/mouse/brain/Oprk1.xml&gt; smwprop:EntrezGeneId "<span style="font-weight: bold;">18387</span>"^^xsd:int .
+11:    &lt;http://brain-map.org/mouse/brain/Oprk1.xml&gt; <span style="font-family: monospace;">owl:sameAs </span><span style="font-family: monospace;">&lt;file:///storage/datasets/uniprot-organism-human-reviewed-complete.rdf#_503237333438003B&gt; .</span>
+12:  }</pre>
   </li>
 </ul>
 
