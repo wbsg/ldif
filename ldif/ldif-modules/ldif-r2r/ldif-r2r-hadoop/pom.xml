@@ -5,25 +5,25 @@
     <parent>
         <artifactId>ldif-r2r</artifactId>
         <groupId>ldif</groupId>
-        <version>0.6</version>
+        <version>0.5.1</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>ldif-r2r-hadoop</artifactId>
     <packaging>jar</packaging>
-	<version>0.6</version>
+	<version>0.5.1</version>
 	<name>LDIF R2R Module - Hadoop</name>
 
     <dependencies>
         <dependency>
           <groupId>ldif</groupId>
           <artifactId>ldif-hadoop</artifactId>
-          <version>0.6</version>
+          <version>0.5.1</version>
         </dependency>
         <dependency>
             <groupId>ldif</groupId>
             <artifactId>ldif-r2r-common</artifactId>
-            <version>0.6</version>
+            <version>0.5.1</version>
         </dependency>
     </dependencies>
 </project>

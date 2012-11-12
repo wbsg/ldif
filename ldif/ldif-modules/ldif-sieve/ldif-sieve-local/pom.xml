@@ -5,24 +5,24 @@
   <parent>
     <groupId>ldif</groupId>
     <artifactId>ldif-sieve</artifactId>
-    <version>0.6</version>
+    <version>0.5.1</version>
   </parent>
 
 	<artifactId>ldif-sieve-local</artifactId>
 	<packaging>jar</packaging>
-	<version>0.6</version>
+	<version>0.5.1</version>
 	<name>LDIF Sieve Module - Local</name>
 
   <dependencies>
     <dependency>
       <groupId>ldif</groupId>
       <artifactId>ldif-local</artifactId>
-      <version>0.6</version>
+      <version>0.5.1</version>
     </dependency>
     <dependency>
       <groupId>ldif</groupId>
       <artifactId>ldif-sieve-common</artifactId>
-      <version>0.6</version>
+      <version>0.5.1</version>
     </dependency>
   </dependencies>
 
