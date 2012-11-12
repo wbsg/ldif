@@ -6,6 +6,6 @@
     <dataSource>Uniprot</dataSource>
     <refreshSchedule>weekly</refreshSchedule>
     <quadImportJob>
-        <dumpLocation>examples/life-science/sources/uniprot-organism-human-reviewed-complete_1000.nq</dumpLocation>
+        <dumpLocation>examples/life-science/sources/uniprot.nq</dumpLocation>
     </quadImportJob>
 </importJob>

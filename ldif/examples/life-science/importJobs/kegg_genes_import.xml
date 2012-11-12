@@ -6,6 +6,6 @@
     <dataSource>KeggGenes</dataSource>
     <refreshSchedule>onStartup</refreshSchedule>
     <quadImportJob>
-        <dumpLocation>examples/life-science/sources/kegg_genes_20101227_1000.nq</dumpLocation>
+        <dumpLocation>examples/life-science/sources/kegg_genes.nq</dumpLocation>
     </quadImportJob>
 </importJob>
