@@ -23,7 +23,7 @@ import org.slf4j.LoggerFactory
 import java.io.File
 import xml.{Node, XML}
 import java.util.Properties
-import ldif.util.{CommonUtils, Consts, ConfigProperties, ValidatingXMLReader}
+import ldif.util.{ConfigProperties, CommonUtils, ValidatingXMLReaderWithBool, Consts}
 
 case class SchedulerConfig (importJobsFiles : Traversable[File], integrationJob : File, dataSourcesFiles : Traversable[File], dumpLocationDir : String, properties : Properties)  {
 
@@ -59,15 +59,15 @@ object SchedulerConfig
 
   def empty = SchedulerConfig(null, null, null, null, new Properties)
 
-  def load = new ValidatingXMLReader(fromFile, schemaLocation)
+  def load = new ValidatingXMLReaderWithBool(fromFile, schemaLocation)
 
-  def fromFile(file : File)  : SchedulerConfig =
-    fromXML(XML.loadFile(file), file.getCanonicalFile.getParent)
+  def fromFile(file : File, useHdfsPaths : Boolean = false)  : SchedulerConfig =
+    fromXML(XML.loadFile(file), file.getCanonicalFile.getParent, useHdfsPaths)
 
   def fromString(xmlString : String, dir : String) =
     fromXML(XML.loadString(xmlString), dir)
 
-  def fromXML(xml : Node, dir : String) : SchedulerConfig = {
+  def fromXML(xml : Node, dir : String, useHdfsPaths : Boolean = false) : SchedulerConfig = {
     CommonUtils.currentDir = dir
 
     // Read in properties
@@ -78,8 +78,14 @@ object SchedulerConfig
 
     // dumpLocation can be (1) a relative local path (from baseDir),
     // (2) an absolute local path or (3) an HDFS path,
-    // We use that as relative path if exists, as absolute path otherwise
-    val dumpLocationDir = CommonUtils.getFilePath((xml \ "dumpLocation" text))
+    val dumpLocation = (xml \ "dumpLocation" text)
+    val dumpLocationDir = if (useHdfsPaths)
+      dumpLocation
+    else
+      CommonUtils.getDirPath(dumpLocation).getOrElse({
+        log.error("Error in the Scheduler configuraion: dumpLocation is not writable")
+        sys.exit(1)
+      })
     val importJobsFiles = getFiles(xml, "importJob", Seq("xml"))
     val integrationJobDir = getFile(xml, "integrationJob")
     val dataSourceFiles = getFiles(xml, "dataSources", Seq("xml"))

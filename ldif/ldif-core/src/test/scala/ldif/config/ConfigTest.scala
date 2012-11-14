@@ -34,7 +34,7 @@ class ConfigTest extends FlatSpec with ShouldMatchers {
   // Sources
 
   it should "parse Sources correctly" in {
-    config.sources.head should equal ("dumps")
+    config.sources.head should endWith ("ldif-core/dumps")
   }
 
   // Outputs
