@@ -79,13 +79,14 @@ object SchedulerConfig
     // dumpLocation can be (1) a relative local path (from baseDir),
     // (2) an absolute local path or (3) an HDFS path,
     val dumpLocation = (xml \ "dumpLocation" text)
-    val dumpLocationDir = if (useHdfsPaths)
-      dumpLocation
-    else
-      CommonUtils.getDirPath(dumpLocation).getOrElse({
-        log.error("Error in the Scheduler configuraion: dumpLocation is not writable")
-        sys.exit(1)
-      })
+    val dumpLocationDir =
+      if (useHdfsPaths)
+        dumpLocation
+      else
+        CommonUtils.getDirPath(dumpLocation).getOrElse({
+          log.error("Error in the Scheduler configuraion: dumpLocation is not writable")
+          sys.exit(1)
+        })
     val importJobsFiles = getFiles(xml, "importJob", Seq("xml"))
     val integrationJobDir = getFile(xml, "integrationJob")
     val dataSourceFiles = getFiles(xml, "dataSources", Seq("xml"))

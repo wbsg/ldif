@@ -169,7 +169,7 @@ object CommonUtils {
   // Get a path to a directory from the given value, create a new
   def getDirPath(value : String) : Option[String] = {
     val file = new File(currentDir + Consts.fileSeparator  + value)
-    if (file.mkdirs())
+    if ((file.exists() && isWritable(file)) || file.mkdirs())
       Some(file.getCanonicalPath)
     else {
       log.error("Directory doen't exist or not writable: "+file.getCanonicalPath)
