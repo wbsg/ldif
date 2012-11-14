@@ -234,9 +234,9 @@ table tr.odd {background-color: #f6f6f6}
 
 <div id="boxcontainer">
     <div id="downloadbox" class="box">
-        <span><a href="https://github.com/downloads/wbsg/ldif/ldif-0.5.zip" title="Download LDIF Single Machine version">LDIF Single machine</a> |
-        <a href="https://github.com/downloads/wbsg/ldif/ldif-hadoop-0.5.zip" title="Download LDIF Hadoop version">LDIF Hadoop</a></span>
-        <small>v0.5, released 2012-03-28</small>
+        <span><a href="https://github.com/downloads/wbsg/ldif/ldif-0.5.1.zip" title="Download LDIF Single Machine version">LDIF Single machine</a> |
+        <a href="https://github.com/downloads/wbsg/ldif/ldif-hadoop-0.5.1.zip" title="Download LDIF Hadoop version">LDIF Hadoop</a></span>
+        <small>v0.5.1, released 2012-11-14</small>
     </div>
     <div id="quickstartbox" class="box"> <a href="#quickstart"><span>Quick Start</span></a> </div>
     <div id="supportbox" class="box"> <a href="#feedback"><span>Get Support</span></a> </div>
@@ -246,6 +246,11 @@ table tr.odd {background-color: #f6f6f6}
 
 <h2 id="news">News</h2>
 <ul>
+    <li>
+        <strong>11/13/2012: Version 0.5.1 released.</strong>
+        This release includes various minor improvements and bugfixes. New features includes the possibility to output results of each single phase and some additional <a href="#configProperties">configuration parameters</a>.
+    </li>
+
     <li>
         <strong>06/05/2012: Presentation:</strong>
         LDIF has been presented at the <a href="http://semtechbizsf2012.semanticweb.com/">Semantic Technology and Business Conference (SemTech2012)</a> in San Francisco.
@@ -1005,9 +1010,9 @@ _:dbpedia0 &lt;http://www4.wiwiss.fu-berlin.de/ldif/hasOriginalLocation&gt; "htt
 <h3 id="inmemoryquickstart">Single machine / In-memory</h3>
 <p>To see LDIF in action, please follow these steps:</p>
 <ul>
-  <li><a href="https://github.com/downloads/wbsg/ldif/ldif-0.5.zip">download</a>
+  <li><a href="https://github.com/downloads/wbsg/ldif/ldif-0.5.1.zip">download</a>
 the latest release</li>
-  <li>unpack the archive and change into the extracted directory <tt>ldif-0.5</tt></li>
+  <li>unpack the archive and change into the extracted directory <tt>ldif-0.5.1</tt></li>
   <li>run LDIF on the <a href="#example1">Music example</a></li>
   <ul>
     <li>under Linux / Mac OS type:</li>
@@ -1032,8 +1037,8 @@ the latest release</li>
 <p>To see LDIF running with a quad store (TDB) as backend, please follow these steps:</p>
 
 <ul>
-    <li><a href="https://github.com/downloads/wbsg/ldif/ldif-0.5.zip">download</a> the latest release</li>
-    <li>unpack the archive and change into the extracted directory <tt>ldif-0.5</tt></li>
+    <li><a href="https://github.com/downloads/wbsg/ldif/ldif-0.5.1.zip">download</a> the latest release</li>
+    <li>unpack the archive and change into the extracted directory <tt>ldif-0.5.1</tt></li>
     <li>run LDIF on the <a href="#example1">Music example</a></li>
     <ul>
         <li>under Linux / Mac OS type:</li>
@@ -1058,10 +1063,10 @@ the latest release</li>
 <ul>
   <li>set up and configure a Hadoop (0.20.2) <a href="http://hadoop.apache.org/common/docs/current/cluster_setup.html">cluster</a> </li>
   <li>ssh to a cluster node</li>
-  <ul><li><a href="https://github.com/downloads/wbsg/ldif/ldif-hadoop-0.5.zip">download</a> the latest LDIF release</li>
-    <li>unpack the archive and change into the extracted directory <tt>ldif-hadoop-0.5</tt></li>
+  <ul><li><a href="https://github.com/downloads/wbsg/ldif/ldif-hadoop-0.5.1.zip">download</a> the latest LDIF release</li>
+    <li>unpack the archive and change into the extracted directory <tt>ldif-hadoop-0.5.1</tt></li>
     <li>run LDIF on the <a href="#example1">Music example</a></li>
-    <pre>hadoop jar lib/ldif-hadoop-0.5.jar scheduler examples/music/light/schedulerConfig.xml</pre>
+    <pre>hadoop jar lib/ldif-hadoop-0.5.1.jar scheduler examples/music/light/schedulerConfig.xml</pre>
   </ul>
 </ul>
 
