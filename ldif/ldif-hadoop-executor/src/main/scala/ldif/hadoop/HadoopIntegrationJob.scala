@@ -62,8 +62,17 @@ class HadoopIntegrationJob(val config : IntegrationConfig, debug : Boolean = fal
   // Contains provenance quads
   private val provenanceQuadsDir = clean("provenanceQuads")
 
-  def runIntegration() {
+  // Which phases should be skipped
+  val skipR2R = config.properties.getProperty("mappings.skip", "false")=="true"
+  val skipSilk = config.properties.getProperty("linkSpecifications.skip", "false")=="true"
+  val skipSieve = config.properties.getProperty("sieve.skip", "false")=="true"  //TODO: make these parameters active
 
+  def runIntegration() {
+    var pathsToCleanUp = List[Path](new Path("hadoop_tmp"))
+    if(skipR2R || skipSilk) {
+      log.warn("Cannot skip R2R or Silk phase. Use ldif.hadoop.MainClassDispatcher to run individual phases.")
+      return;
+    }
     val sourcesPaths = config.sources.map(new Path(_))
 
     log.info("Hadoop Integration Job started")
@@ -73,11 +82,6 @@ class HadoopIntegrationJob(val config : IntegrationConfig, debug : Boolean = fal
     log.info("- Properties ")
     for (key <- config.properties.keySet.toArray)
       log.info("  - "+key +" : " + config.properties.getProperty(key.toString) )
-
-    // Which phases should be skipped
-    val skipR2R = config.properties.getProperty("mappings.skip", "false")=="true"
-    val skipSilk = config.properties.getProperty("linkSpecifications.skip", "false")=="true"
-    val skipSieve = config.properties.getProperty("sieve.skip", "false")=="true"  //TODO: make these parameters active
 
     stopWatch.getTimeSpanInSeconds()
 
@@ -99,10 +103,11 @@ class HadoopIntegrationJob(val config : IntegrationConfig, debug : Boolean = fal
     else sameAsLinks = getAllLinks(silkOutput)
 
     var outputPath = r2rOutput
-
+    pathsToCleanUp = new Path(r2rOutput) :: pathsToCleanUp
     // Execute URI Translation (if enabled)
     if(rewriteUris) {
       outputPath = translateUris(outputPath, sameAsLinks)
+      pathsToCleanUp = new Path(outputPath)::pathsToCleanUp
       log.info("Time needed to translate URIs: " + stopWatch.getTimeSpanInSeconds + "s")
     }
 
@@ -111,6 +116,7 @@ class HadoopIntegrationJob(val config : IntegrationConfig, debug : Boolean = fal
       // TODO collect minting-properties quads in the previous HEB-phase2 (both r2r and silk)
       //      and use (only) those quads as input for the URI minting job
       outputPath = mintUris(outputPath)
+      pathsToCleanUp = new Path(outputPath) :: pathsToCleanUp
       log.info("Time needed to mint URIs: " + stopWatch.getTimeSpanInSeconds + "s")
     }
 
@@ -122,8 +128,15 @@ class HadoopIntegrationJob(val config : IntegrationConfig, debug : Boolean = fal
 
     // write final output
     writeOutput(config, outputPath)
+    if(!debug)
+      cleanup(pathsToCleanUp)
 
     lastUpdate = Calendar.getInstance
+  }
+
+  private def cleanup(paths: Seq[Path]) {
+    for(path <- paths)
+      clean(path)
   }
 
   /**

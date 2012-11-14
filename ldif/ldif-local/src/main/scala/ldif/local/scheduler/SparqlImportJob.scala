@@ -92,7 +92,7 @@ case class SparqlImportJob(conf : SparqlConfig, id :  Identifier, refreshSchedul
                 return false
               }
 
-              log.warn("Error executing query - retrying in " + retryPause + " ms. (" + retries + "/" + retryCount + ")\n"+query+" \non "+endpointUrl+" \n"+e.getCause)
+              log.warn("Error executing query - retrying in " + retryPause + " ms. (" + retries + "/" + retryCount + ")\n"+query+" \non "+endpointUrl+(if(e.getCause!=null) " \n"+e.getCause else ""))
               retries += 1
               if (retries > retryCount) {
                 return false
