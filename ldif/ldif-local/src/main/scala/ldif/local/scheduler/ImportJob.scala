@@ -40,7 +40,7 @@ trait ImportJob {
   // Used to tmp store the list of the imported graphs, if there are too many graphs
   var importedGraphsFile : File = null
   // The number of imported quads
-  var importedQuadsNumber : Double = 0
+  var importedQuadsNumber : Long = 0
 
   /**
    * Start import and write results to output stream. Return true on success and true and fail.

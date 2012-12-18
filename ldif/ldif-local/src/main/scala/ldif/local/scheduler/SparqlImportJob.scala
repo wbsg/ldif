@@ -140,7 +140,7 @@ case class SparqlImportJob(conf : SparqlConfig, id :  Identifier, refreshSchedul
       }
     }
 
-    importedQuadsNumber = offset.toDouble
+    importedQuadsNumber = offset
     true
   }
 

@@ -26,6 +26,7 @@ import org.slf4j.LoggerFactory
 import ldif.runtime.Quad
 import ldif.datasources.dump.parser.ParseException
 import ldif.util._
+import java.nio.charset.MalformedInputException
 
 case class QuadImportJob(dumpLocation : String, id : Identifier, refreshSchedule : String, dataSource : String, renameGraphs : String = "") extends ImportJob {
 
@@ -42,12 +43,24 @@ case class QuadImportJob(dumpLocation : String, id : Identifier, refreshSchedule
 
     // get bufferReader from Url
     val inputStream = DumpLoader.getStream(dumpLocation)
-    val parser = new QuadParser
-    val lines = scala.io.Source.fromInputStream(inputStream).getLines
-    var invalidQuads = 0
-    for (line <- lines.toTraversable){
-      var quad : Quad = null
-      try {
+		val parser = new QuadParser
+		val lines = scala.io.Source.fromInputStream(inputStream)("UTF-8").getLines()
+		var invalidQuads = 0
+
+		// Catch dump encoding issues (only UTF-8 is supported)
+		val traversableLines =
+			try {
+				lines.toTraversable
+			} catch {
+				case e : MalformedInputException => {
+					log.warn("An invalid character encoding has been detected for the dump "+dumpLocation+". Please use UTF-8.")
+					Traversable.empty[String]
+				}
+			}
+
+		for (line <- traversableLines){
+			var quad : Quad = null
+			try {
         quad = parser.parseLine(line)
       }
       catch {

@@ -35,7 +35,7 @@ case class CrawlImportJob(conf : CrawlConfig, id :  Identifier, refreshSchedule 
     reporter.estimatedQuads = estimatedNumberOfQuads
     val limit = conf.resourceLimit
     val result = crawler.crawl(out, conf.levels, limit)
-    importedQuadsNumber = result._1.toDouble
+    importedQuadsNumber = result._1.toLong
     importedGraphs = result._2
     reporter.setFinishTime()
     true
