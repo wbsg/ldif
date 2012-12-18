@@ -48,6 +48,8 @@ object Consts {
   val RDFS_DOMAIN = RDFS_NS + "domain"
   val RDFS_RANGE = RDFS_NS + "range"
 
+  val sievePrefix = "http://sieve.wbsg.de/vocab/"
+
   val URI_MINTING_GRAPH = LDIF_NS + "graph#uriMinting"
   val URI_REWRITING_GRAPH = LDIF_NS + "graph#uriRewriting"
   val SILK_OUT_GRAPH = LDIF_NS + "graph#generatedBySilk"
@@ -72,8 +74,18 @@ object Consts {
 
   val simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss.S")
   val xsdDateTimeFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ")
-  val xsdDouble = "http://www.w3.org/2001/XMLSchema#double"
-  val xsdNonNegativeInteger = "http://www.w3.org/2001/XMLSchema#nonNegativeInteger"
+
+  // XMLS Schema datatypes - http://www.w3.org/TR/xmlschema-2/#built-in-datatypes
+  val XSD = "http://www.w3.org/2001/XMLSchema#"
+  val xsdString = XSD + "string"
+  val xsdDatetime = XSD + "datetime"
+  val xsdDouble = XSD + "double"
+  val xsdFloat = XSD + "float"
+  val xsdInteger = XSD + "integer"
+  val xsdNonNegativeInteger = XSD + "nonNegativeInteger"
+  val xsdNonPositveInteger = XSD + "nonPositiveInteger"
+  val xsdLong = XSD + "long"
+  val xsdShort = XSD + "short"
 
   // Import metadata properties
   val lastUpdateProp = LDIF_NS + "lastUpdate"

@@ -16,7 +16,7 @@
 
 package ldif.modules.sieve.fusion
 
-import functions.{KeepAllValuesWithHighestScore, PassItOn, KeepFirst}
+import functions._
 import ldif.entity.NodeTrait
 import ldif.modules.sieve.quality.QualityAssessmentProvider
 import xml.Node
@@ -79,6 +79,9 @@ object FusionFunction {
     className.toLowerCase match {
       case "keepfirst" => KeepFirst.fromXML(config)(prefixes)
       case "keepallvalueswithhighestscore" => KeepAllValuesWithHighestScore.fromXML(config)(prefixes)
+      case "voting" => Voting.fromXML(config)(prefixes)
+      case "weightedvoting" => WeightedVoting.fromXML(config)(prefixes)
+      case "average" => Average.fromXML(config)(prefixes)
       case "passiton" => PassItOn.fromXML(config)(prefixes)
 
       // NOTICE: add case statements for new scoring functions here

@@ -18,11 +18,12 @@ package ldif.modules.sieve.quality
 
 
 import ldif.module.ModuleConfig
+import ldif.util.Consts
 
 /**
  * Sieve Quality Assessment Module Configuration.
  */
 case class QualityModuleConfig(qualityConfig : QualityConfig) extends ModuleConfig {
-  val qualityMetadataGraph = "http://www4.wiwiss.fu-berlin.de/ldif/provenance"
+  val qualityMetadataGraph = Consts.DEFAULT_PROVENANCE_GRAPH
 
 }
