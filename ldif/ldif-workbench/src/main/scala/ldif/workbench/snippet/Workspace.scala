@@ -206,7 +206,7 @@ object Workspace {
       if (!runningScheduler)  {
         runningScheduler =true
         try {
-          Scheduler(User().project.config).run()
+          Scheduler(User().project.config).run(runStatusMonitor = true)
           runningScheduler = false
           JSUtils.Message("Scheduler execution completed")
         } catch {

@@ -27,7 +27,7 @@ import ldif.util.{Consts, Prefixes}
 /**
  * Tests the Average fusion function
  */
-@RunWith(classOf[JUnitRunner])
+//@RunWith(classOf[JUnitRunner])
 class AverageTest extends FlatSpec with ShouldMatchers {
 
 	val fusionXml = <FusionFunction class="Average"/>
@@ -74,7 +74,7 @@ class AverageTest extends FlatSpec with ShouldMatchers {
 
 	it should "correctly pick the average value (invalid)" in {
 		val fused = averageFusionObj.fuse(patternsInvalid, null)
-		fused.size should equal(0)
+		fused.head.size should equal(0)
 	}
 
 	// Test with both invalid and valid values
