@@ -75,7 +75,7 @@ object Consts {
   val simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss.S")
   val xsdDateTimeFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ")
 
-  // XMLS Schema datatypes - http://www.w3.org/TR/xmlschema-2/#built-in-datatypes
+	// XML Schema datatypes - http://www.w3.org/TR/xmlschema-2/#built-in-datatypes
   val XSD = "http://www.w3.org/2001/XMLSchema#"
   val xsdString = XSD + "string"
   val xsdDatetime = XSD + "datetime"
