@@ -1,6 +1,6 @@
 #!/bin/bash
 
-git clone git://git.assembla.com/ldif.git
+git clone git@github.com:wbsg/ldif.git
 cd ldif/ldif
 export version=`grep '<ldif.version>' pom.xml | cut -d'>' -f 2 |cut -d'<' -f 1`
 
