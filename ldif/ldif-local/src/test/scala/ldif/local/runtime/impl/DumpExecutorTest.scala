@@ -28,15 +28,15 @@ import ldif.datasources.dump.{DumpModule, DumpConfig}
 @RunWith(classOf[JUnitRunner])
 class DumpExecutorTest extends FlatSpec with ShouldMatchers {
 
-  val sourceUrl = "http://www.assembla.com/code/ldif/git/node/blob/ldif/ldif-singlemachine/src/test/resources/ldif/local/resources/sources/aba.nq.bz2"
+  val sourceUrl = "https://raw.github.com/wbsg/ldif/master/ldif/ldif-singlemachine/src/test/resources/integration/sources/source.nq"
 
   val executor = new DumpExecutor
   val qq = new QuadQueue
 
-     /* Disabled - remote test */
-//  it should "load remote (bzip2 compress) file correctly" in {
+  /* Disabled - remote test */
+//  it should "load remote file correctly" in {
 //    executor.execute(task,null,qq)
-//    qq.size should equal (1235)
+//    qq.size should equal (8)
 //  }
 
   private lazy val task = {

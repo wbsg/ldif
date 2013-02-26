@@ -100,7 +100,7 @@ class SchedulerTest extends FlatSpec with ShouldMatchers {
 
   lazy val importJobRemote = {
     /* Disabled - remote test */
-    val url = "http://www.assembla.com/code/ldif/git/node/blob/ldif/ldif-singlemachine/src/test/resources/integration/sources/source.nq"
+    val url = "https://raw.github.com/wbsg/ldif/master/ldif/ldif-singlemachine/src/test/resources/integration/sources/source.nq"
     QuadImportJob(url,"test.remote","never","test")
   }
 

@@ -34,7 +34,7 @@
             <div class="description ui-state-highlight ui-corner-all">
                 <div class="info">
                     A Data Source is configured with an XML document, whose structure is described by this
-                    <a href="http://www.assembla.com/code/ldif/git/nodes/ldif/ldif-core/src/main/resources/xsd/DataSource.xsd">XML Schema</a>.
+                    <a href="https://github.com/wbsg/ldif/blob/master/ldif/ldif-core/src/main/resources/xsd/DataSource.xsd">XML Schema</a>.
                     It contains human readable information about a data source. The label element should be a unique string in each integration use case, because it will be referenced by the import jobs.
                 </div>
                 <a class="help-icon" target="_blank" href="http://ldif.wbsg.de/"></a>
@@ -77,7 +77,7 @@
             <div class="description ui-state-highlight ui-corner-all">
                 <div class="info">
                 An Import Job is configured with an XML document, whose structure is described by this
-                <a href="http://www.assembla.com/code/ldif/git/nodes/ldif/ldif-core/src/main/resources/xsd/ImportJob.xsd" target="_blank">XML Schema</a>.
+                <a href="https://github.com/wbsg/ldif/blob/master/ldif/ldif-core/src/main/resources/xsd/ImportJob.xsd" target="_blank">XML Schema</a>.
                 </div>
                 <a class="help-icon" target="_blank" href="http://ldif.wbsg.de"></a>
             </div>
@@ -198,7 +198,7 @@
             <div class="description ui-state-highlight ui-corner-all">
                 <div class="info">
                     An Integration Job is configured with an XML document, whose structure is described by this
-                    <a href="http://www.assembla.com/code/ldif/git/nodes/ldif/ldif-core/src/main/resources/xsd/IntegrationJob.xsd" target="_blank">XML Schema</a>.
+                    <a href="https://github.com/wbsg/ldif/blob/master/ldif/ldif-core/src/main/resources/xsd/IntegrationJob.xsd" target="_blank">XML Schema</a>.
                     It should be noted that when an integration job starts, it only works on fully imported data. Data of import jobs that did not finish before the integration starts is ignored - the only exception is if the
                     oneTimeExecution configuration property is set to true; then the integration waits for all import jobs to finish.
 
@@ -330,7 +330,7 @@
             <div class="description ui-state-highlight ui-corner-all">
                 <div class="info">
                     A Schedule Job updates the representation of external sources in the local cache and it is configured with an XML document, whose structure is described by this
-                    <a href="http://www.assembla.com/code/ldif/git/nodes/ldif/ldif-core/src/main/resources/xsd/SchedulerConfig.xsd" target="_blank">XML Schema</a>
+                    <a href="https://github.com/wbsg/ldif/blob/master/ldif/ldif-core/src/main/resources/xsd/SchedulerConfig.xsd" target="_blank">XML Schema</a>
                     . The scheduler configuration is the top configuration file that references all the other configuration files like the for the import jobs for accessing remote sources and for the integration job.
 
                 </div>

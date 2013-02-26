@@ -6,7 +6,7 @@
     <refreshSchedule>never</refreshSchedule>
     <quadImportJob>
         <dumpLocation>
-            http://www.assembla.com/code/ldif/git/node/blob/ldif/ldif-singlemachine/src/test/resources/integration/sources/source.nq
+            https://raw.github.com/wbsg/ldif/master/ldif/ldif-singlemachine/src/test/resources/integration/sources/source.nq
         </dumpLocation>
     </quadImportJob>
 </importJob>

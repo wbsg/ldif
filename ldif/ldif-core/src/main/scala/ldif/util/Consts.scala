@@ -75,7 +75,7 @@ object Consts {
   val simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss.S")
   val xsdDateTimeFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ")
 
-	// XML Schema datatypes - http://www.w3.org/TR/xmlschema-2/#built-in-datatypes
+  // XML Schema datatypes - http://www.w3.org/TR/xmlschema-2/#built-in-datatypes
   val XSD = "http://www.w3.org/2001/XMLSchema#"
   val xsdString = XSD + "string"
   val xsdDatetime = XSD + "datetime"
@@ -126,7 +126,7 @@ object Consts {
   val DefaultRunStatusMonitor = "true"
 
   // XSD locations
-  val xsdBase = "http://www.assembla.com/code/ldif/git/nodes/ldif/ldif-core/src/main/resources/xsd/"
+  val xsdBase = "https://github.com/wbsg/ldif/blob/master/ldif/ldif-core/src/main/resources/xsd"
   val xsdIntegration = xsdBase + "IntegrationJob.xsd"
   val xsdScheduler = xsdBase + "SchedulerConfig.xsd"
   val xsdDataSource = xsdBase + "DataSource.xsd"
