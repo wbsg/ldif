@@ -4,7 +4,7 @@ import functions.PassItOn
 import ldif.util.Prefixes
 
 /*
-* Copyright 2011-2012 Freie Universität Berlin, MediaEvent Services GmbH & Co. KG
+* Copyright 2011-2013 Freie Universität Berlin, MediaEvent Services GmbH & Co. KG
 *
 * Licensed under the Apache License, Version 2.0 (the "License");
 * you may not use this file except in compliance with the License.
