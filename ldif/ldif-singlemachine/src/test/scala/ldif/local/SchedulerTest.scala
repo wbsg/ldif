@@ -108,15 +108,15 @@ class SchedulerTest extends FlatSpec with ShouldMatchers {
 
 		val dumpCorrectQuads = CommonUtils.getQuads(List(
 			// Schema
-			"<http://www4.wiwiss.fu-berlin.de/ldif/test_local_csv/firstName> <http://www.w3.org/2000/01/rdf-schema#label> \"first name\" <http://www4.wiwiss.fu-berlin.de/ldif/graph#test_local_csv> .",
-			"<http://www4.wiwiss.fu-berlin.de/ldif/test_local_csv/firstName> <http://vocab.sindice.net/csv/columnPosition> \"0\"^^<http://www.w3.org/2001/XMLSchema#integer> <http://www4.wiwiss.fu-berlin.de/ldif/graph#test_local_csv> .",
-			"<http://www4.wiwiss.fu-berlin.de/ldif/test_local_csv/lastName> <http://www.w3.org/2000/01/rdf-schema#label> \"last name\" <http://www4.wiwiss.fu-berlin.de/ldif/graph#test_local_csv> .",
-			"<http://www4.wiwiss.fu-berlin.de/ldif/test_local_csv/lastName> <http://vocab.sindice.net/csv/columnPosition> \"1\"^^<http://www.w3.org/2001/XMLSchema#integer> <http://www4.wiwiss.fu-berlin.de/ldif/graph#test_local_csv> .",
+			"<http://www4.wiwiss.fu-berlin.de/ldif/test_local_csv/FirstName> <http://www.w3.org/2000/01/rdf-schema#label> \"first name\" <http://www4.wiwiss.fu-berlin.de/ldif/graph#test_local_csv> .",
+			"<http://www4.wiwiss.fu-berlin.de/ldif/test_local_csv/FirstName> <http://vocab.sindice.net/csv/columnPosition> \"0\"^^<http://www.w3.org/2001/XMLSchema#integer> <http://www4.wiwiss.fu-berlin.de/ldif/graph#test_local_csv> .",
+			"<http://www4.wiwiss.fu-berlin.de/ldif/test_local_csv/LastName> <http://www.w3.org/2000/01/rdf-schema#label> \"last name\" <http://www4.wiwiss.fu-berlin.de/ldif/graph#test_local_csv> .",
+			"<http://www4.wiwiss.fu-berlin.de/ldif/test_local_csv/LastName> <http://vocab.sindice.net/csv/columnPosition> \"1\"^^<http://www.w3.org/2001/XMLSchema#integer> <http://www4.wiwiss.fu-berlin.de/ldif/graph#test_local_csv> .",
 			"<http://xmlns.com/foaf/0.1/homepage> <http://vocab.sindice.net/csv/columnPosition> \"2\"^^<http://www.w3.org/2001/XMLSchema#integer> <http://www4.wiwiss.fu-berlin.de/ldif/graph#test_local_csv> .",
 			// Data
 			"<http://www4.wiwiss.fu-berlin.de/ldif/test_local_csv/row/0> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://vocab.sindice.net/csv/Row> <http://www4.wiwiss.fu-berlin.de/ldif/graph#test_local_csv> .",
-			"<http://www4.wiwiss.fu-berlin.de/ldif/test_local_csv/row/0> <http://www4.wiwiss.fu-berlin.de/ldif/test_local_csv/firstName> \"Charlie\"^^<http://www.w3.org/2001/XMLSchema#string> <http://www4.wiwiss.fu-berlin.de/ldif/graph#test_local_csv> .",
-			"<http://www4.wiwiss.fu-berlin.de/ldif/test_local_csv/row/0> <http://www4.wiwiss.fu-berlin.de/ldif/test_local_csv/lastName> \"Brown\"^^<http://www.w3.org/2001/XMLSchema#string> <http://www4.wiwiss.fu-berlin.de/ldif/graph#test_local_csv> .",
+			"<http://www4.wiwiss.fu-berlin.de/ldif/test_local_csv/row/0> <http://www4.wiwiss.fu-berlin.de/ldif/test_local_csv/FirstName> \"Charlie\"^^<http://www.w3.org/2001/XMLSchema#string> <http://www4.wiwiss.fu-berlin.de/ldif/graph#test_local_csv> .",
+			"<http://www4.wiwiss.fu-berlin.de/ldif/test_local_csv/row/0> <http://www4.wiwiss.fu-berlin.de/ldif/test_local_csv/LastName> \"Brown\"^^<http://www.w3.org/2001/XMLSchema#string> <http://www4.wiwiss.fu-berlin.de/ldif/graph#test_local_csv> .",
 			"<http://www4.wiwiss.fu-berlin.de/ldif/test_local_csv/row/0> <http://xmlns.com/foaf/0.1/homepage> <http://www.peanuts.com/characters/charlie-brown> <http://www4.wiwiss.fu-berlin.de/ldif/graph#test_local_csv> .",
 			// Metadata
 			"<http://www4.wiwiss.fu-berlin.de/ldif/test_local_csv/> <http://vocab.sindice.net/csv/row> <http://www4.wiwiss.fu-berlin.de/ldif/test_local_csv/row/0> <http://www4.wiwiss.fu-berlin.de/ldif/graph#test_local_csv> .",

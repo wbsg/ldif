@@ -20,14 +20,14 @@ package ldif.local.datasources.dump
 
 import java.net.URL
 import org.slf4j.LoggerFactory
-import org.deri.any23.Any23
-import org.deri.any23.source.ByteArrayDocumentSource
 import java.io._
-import org.deri.any23.writer.NTriplesWriter
 import ldif.local.runtime.impl.FileQuadReader
 import java.util.Properties
-import org.deri.any23.extractor.ExtractionParameters
 import ldif.util.{Consts, CommonUtils}
+import org.apache.any23.Any23
+import org.apache.any23.source.ByteArrayDocumentSource
+import org.apache.any23.extractor.ExtractionParameters
+import org.apache.any23.writer.NTriplesWriter
 
 
 /**
@@ -72,7 +72,7 @@ object DumpLoader {
       lang = ContentTypes.getLangFromExtension(url.getFile)
 
     if (lang == null) {
-      throw new Exception("Unable to determine language for "+ sourceLocation	+ " based on file extension")
+      throw new Exception("Unable to determine language for "+ sourceLocation + " based on file extension")
     }
 
     if (file != null)
@@ -80,7 +80,7 @@ object DumpLoader {
     else if (url != null)
       getUrlStream(url, lang, parameters)
     else
-      throw new Exception("Protocol \"" + url.getProtocol	+ "\" is not supported.")
+      throw new Exception("Protocol \"" + url.getProtocol + "\" is not supported.")
   }
 
   def getFileStream(file : File, lang : String = ContentTypes.langNQuad, parameters : Properties = new Properties) = {
@@ -131,9 +131,9 @@ object DumpLoader {
 
 		// Set extraction values according to the given parameters
 		// - see http://any23.apache.org/configuration.html
-		var extractionParameters : ExtractionParameters = ExtractionParameters.getDefault();
-		extractionParameters.setFlag("any23.extraction.metadata.timesize", false);
-		extractionParameters.setProperty("any23.extraction.csv.field", parameters.getProperty("csvFieldSeparator", Consts.DEFAULT_CSV_FIELD_SEPERATOR));
+		val extractionParameters : ExtractionParameters = ExtractionParameters.newDefault()
+		extractionParameters.setFlag("any23.extraction.metadata.timesize", false)
+		extractionParameters.setProperty("any23.extraction.csv.field", parameters.getProperty("csvFieldSeparator", Consts.DEFAULT_CSV_FIELD_SEPERATOR))
 		var documentUri = Consts.LDIF_NS
 		val jobId = parameters.getProperty("jobId", null)
 		if (jobId != null) {
@@ -145,6 +145,7 @@ object DumpLoader {
 		val out = new ByteArrayOutputStream()
 		val handler = new NTriplesWriter(out)
 		runner.extract(extractionParameters, source, handler)
+		handler.close()
 		new ByteArrayInputStream(out.toByteArray)
 	}
 

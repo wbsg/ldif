@@ -4,5 +4,5 @@
            xmlns="http://www4.wiwiss.fu-berlin.de/ldif/">
   <importJob>importJobs</importJob>
   <integrationJob>../integration/integrationJob.xml</integrationJob>
-  <dumpLocation>../integration/dumps/</dumpLocation>
+  <dumpLocation>dumps</dumpLocation>
 </scheduler>

@@ -19,19 +19,6 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
 
-    <repositories>
-        <!-- Specific repository for Any23 dependencies without a dedicated repository. -->
-        <repository>
-            <id>any23-repository-external</id>
-            <url>http://any23.googlecode.com/svn/repo-ext</url>
-        </repository>
-        <!-- The Any23 modules repository. -->
-        <repository>
-            <id>any23-repository</id>
-            <url>http://any23.googlecode.com/svn/repo</url>
-        </repository>
-    </repositories>
-
   <dependencies>
 
     <dependency>
@@ -74,9 +61,9 @@
 
       <!--any23-->
       <dependency>
-          <groupId>org.deri.any23</groupId>
-          <artifactId>any23-core</artifactId>
-          <version>0.6.1</version>
+          <groupId>org.apache.any23</groupId>
+          <artifactId>apache-any23-core</artifactId>
+          <version>0.7.0-incubating</version>
       </dependency>
 
     <!-- voldermort dependecies -->
