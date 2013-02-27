@@ -18,7 +18,6 @@
 
 package ldif.local.scheduler
 
-import ldif.runtime.Quad
 import ldif.entity.Node
 import collection.mutable.{HashSet, Set}
 import java.util.Date
@@ -168,6 +167,11 @@ object ImportJob {
 
     (node \ "wikidataImportJob").headOption match {
       case Some(job) => return WikidataImportJob.fromXML(job, id, refreshSchedule, dataSource)
+      case None =>
+    }
+
+    (node \ "csvImportJob").headOption match {
+      case Some(job) => return CsvImportJob.fromXML(job, id, refreshSchedule, dataSource)
       case None =>
     }
 

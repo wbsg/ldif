@@ -25,19 +25,24 @@ import org.deri.any23.source.ByteArrayDocumentSource
 import java.io._
 import org.deri.any23.writer.NTriplesWriter
 import ldif.local.runtime.impl.FileQuadReader
-import ldif.util.CommonUtils
+import java.util.Properties
+import org.deri.any23.extractor.ExtractionParameters
+import ldif.util.{Consts, CommonUtils}
 
 
 /**
  * Streams data from a given file path or URL
- * Accepts N-TRIPLE, N3 and RDF/XML serializations and gzip, bz2 and zip compression.
+ * Accepts N-TRIPLE, N3 and RDF/XML serializations, CSV format and gzip, bz2 and zip compression.
  **/
 
 @throws(classOf[Exception])
 object DumpLoader {
   private val log = LoggerFactory.getLogger(getClass.getName)
 
-  def getStream(sourceLocation : String) = {
+	/**
+	 * @return BufferedInputStream
+	 */
+  def getStream(sourceLocation : String, parameters : Properties = new Properties) = {
     if (sourceLocation == null) {
       throw new Exception("Invalid data location" )
     }
@@ -51,8 +56,9 @@ object DumpLoader {
     } catch {
       case e:Exception => {
         file = CommonUtils.getFileFromPath(sourceLocation)
-          if(!file.exists())
-            throw new Exception("Unable to load the dump. File not found: "	+ sourceLocation)
+          if(!file.exists()) {
+            throw new Exception("Unable to load the dump. File not found: " + sourceLocation)
+          }
       }
     }
 
@@ -70,14 +76,14 @@ object DumpLoader {
     }
 
     if (file != null)
-      getFileStream(file, lang)
+      getFileStream(file, lang, parameters)
     else if (url != null)
-      getUrlStream(url, lang)
+      getUrlStream(url, lang, parameters)
     else
       throw new Exception("Protocol \"" + url.getProtocol	+ "\" is not supported.")
   }
 
-  def getFileStream(file : File, lang : String = ContentTypes.langNQuad) = {
+  def getFileStream(file : File, lang : String = ContentTypes.langNQuad, parameters : Properties = new Properties) = {
 
     log.info("Loading from " + file.getCanonicalPath)
     var inputStream:InputStream = null
@@ -90,12 +96,12 @@ object DumpLoader {
       }
     }
 
-    inputStream = convertFormat(inputStream, lang)
+    inputStream = convertFormat(inputStream, lang, parameters)
 
     new BufferedInputStream(inputStream)
   }
 
-  private def getUrlStream(url : URL, lang : String) = {
+  private def getUrlStream(url : URL, lang : String, parameters : Properties) = {
 
     log.info("Loading from " + url.toString)
     var inputStream:InputStream = null
@@ -109,23 +115,39 @@ object DumpLoader {
       }
     }
 
-    inputStream = convertFormat(inputStream, lang)
+    inputStream = convertFormat(inputStream, lang, parameters)
 
     new BufferedInputStream(inputStream)
   }
 
-  // Convert input format to N-Triple
-  private def convertFormat(inputStream : InputStream, lang : String) = {
-    if (lang != ContentTypes.langNQuad && lang != ContentTypes.langNTriple)    {
-      val runner = new Any23
-      val source = new ByteArrayDocumentSource(inputStream, "http://www4.wiwiss.fu-berlin.de/ldif/", ContentTypes.getContentTypeFromLang(lang))
-      val out = new ByteArrayOutputStream()
-      val handler = new NTriplesWriter(out)
-      runner.extract(source, handler)
-      new ByteArrayInputStream(out.toByteArray)
-    }
-    else inputStream
-  }
+	private def convertFormat(inputStream : InputStream, lang : String, parameters : Properties) = lang match {
+		case ContentTypes.langNTriple => inputStream
+		case ContentTypes.langNQuad => inputStream
+		case _ => toNTriples(inputStream, lang, parameters)
+	}
+
+	// Convert input format to N-Triples
+	private def toNTriples(inputStream : InputStream, lang : String,  parameters : Properties) =  {
+
+		// Set extraction values according to the given parameters
+		// - see http://any23.apache.org/configuration.html
+		var extractionParameters : ExtractionParameters = ExtractionParameters.getDefault();
+		extractionParameters.setFlag("any23.extraction.metadata.timesize", false);
+		extractionParameters.setProperty("any23.extraction.csv.field", parameters.getProperty("csvFieldSeparator", Consts.DEFAULT_CSV_FIELD_SEPERATOR));
+		var documentUri = Consts.LDIF_NS
+		val jobId = parameters.getProperty("jobId", null)
+		if (jobId != null) {
+			documentUri += jobId + "/"
+		}
+
+		val runner = new Any23
+		val source = new ByteArrayDocumentSource(inputStream, documentUri, ContentTypes.getContentTypeFromLang(lang))
+		val out = new ByteArrayOutputStream()
+		val handler = new NTriplesWriter(out)
+		runner.extract(extractionParameters, source, handler)
+		new ByteArrayInputStream(out.toByteArray)
+	}
+
 
   def dumpIntoFileQuadQueue(sourceLocation: String): FileQuadReader = {
     val stream = getStream(sourceLocation)

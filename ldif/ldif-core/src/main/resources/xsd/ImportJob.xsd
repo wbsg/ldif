@@ -59,7 +59,7 @@
             </xs:sequence>
           </xs:complexType>
         </xs:element>
-	    <xs:element name="levels" type="xs:unsignedShort" minOccurs="0" />
+        <xs:element name="levels" type="xs:unsignedShort" minOccurs="0" />
         <xs:element name="resourceLimit" type="xs:unsignedInt" minOccurs="0" />
         <xs:element name="renameGraphs" type="xs:string" minOccurs="0" />
       </xs:all>
@@ -93,6 +93,15 @@
               <xs:element name="limit" type="xs:positiveInteger" minOccurs="0" default="30"/>
               <xs:element name="langs" type="xs:string" minOccurs="0" />
           </xs:all>
+      </xs:complexType>
+  </xs:element>
+
+  <xs:element name="csvImportJob" substitutionGroup="ldif:job">
+      <xs:complexType>
+           <xs:sequence>
+              <xs:element name="dumpLocation" type="xs:string" />
+              <xs:element name="fieldSeparator" type="xs:string" minOccurs="0" />
+          </xs:sequence>
       </xs:complexType>
   </xs:element>
 

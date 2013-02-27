@@ -1,13 +1,12 @@
-<importJob  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+source.csv<importJob  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
            xsi:schemaLocation="http://www4.wiwiss.fu-berlin.de/ldif/ ../xsd/ImportJob.xsd"
            xmlns="http://www4.wiwiss.fu-berlin.de/ldif/">
-    <internalId>test_local</internalId>
+    <internalId>test_local_csv</internalId>
     <dataSource>test</dataSource>
     <refreshSchedule>always</refreshSchedule>
-    <quadImportJob>
+    <csvImportJob>
         <dumpLocation>
-            scheduler/sources/source.nq
+            scheduler/sources/source.csv
         </dumpLocation>
-        <renameGraphs>#.+</renameGraphs>
-    </quadImportJob>
+    </csvImportJob>
 </importJob>

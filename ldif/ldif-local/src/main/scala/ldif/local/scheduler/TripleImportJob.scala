@@ -52,7 +52,6 @@ case class TripleImportJob(dumpLocation : String, id : Identifier, refreshSchedu
         case e: java.net.ConnectException => return false
       }
     }
-    //val bufferedReader = new BufferedReader(new InputStreamReader(inputStream))
 
     importedGraphs += graph
 

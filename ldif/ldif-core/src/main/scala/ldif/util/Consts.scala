@@ -137,4 +137,7 @@ object Consts {
   val LDIF_hierarchyLevel = LDIF_NS + "hierarchyLevel"
   val LDIF_sizeOfSubTree = LDIF_NS + "sizeOfSubTree"
   val LDIF_setMember = LDIF_NS + "setMember"
+
+  // CSV import parameters
+  val DEFAULT_CSV_FIELD_SEPERATOR = ","
 }
