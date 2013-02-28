@@ -1,13 +1,12 @@
 <importJob  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
            xsi:schemaLocation="http://www4.wiwiss.fu-berlin.de/ldif/ ../xsd/ImportJob.xsd"
            xmlns="http://www4.wiwiss.fu-berlin.de/ldif/">
-    <internalId>test_local</internalId>
+    <internalId>test_rdfa</internalId>
     <dataSource>test</dataSource>
     <refreshSchedule>always</refreshSchedule>
-    <quadImportJob>
+    <rdfaImportJob>
         <dumpLocation>
-            scheduler/sources/source.nq
+            scheduler/sources/source-rdfa.html
         </dumpLocation>
-        <renameGraphs>#.+</renameGraphs>
-    </quadImportJob>
+    </rdfaImportJob>
 </importJob>

@@ -1,12 +1,12 @@
 <importJob  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
            xsi:schemaLocation="http://www4.wiwiss.fu-berlin.de/ldif/ ../xsd/ImportJob.xsd"
            xmlns="http://www4.wiwiss.fu-berlin.de/ldif/">
-    <internalId>test_nquad_remote</internalId>
+    <internalId>test_csv</internalId>
     <dataSource>test</dataSource>
-    <refreshSchedule>never</refreshSchedule>
-    <quadImportJob>
+    <refreshSchedule>always</refreshSchedule>
+    <csvImportJob>
         <dumpLocation>
-            https://raw.github.com/wbsg/ldif/master/ldif/ldif-singlemachine/src/test/resources/integration/sources/source.nq
+            scheduler/sources/source.csv
         </dumpLocation>
-    </quadImportJob>
+    </csvImportJob>
 </importJob>

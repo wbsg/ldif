@@ -42,6 +42,14 @@
     </xs:complexType>
   </xs:element>
 
+  <xs:element name="rdfaImportJob" substitutionGroup="ldif:job">
+    <xs:complexType>
+       <xs:sequence>
+        <xs:element name="dumpLocation" type="xs:string" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
   <xs:element name="crawlImportJob" substitutionGroup="ldif:job">
     <xs:complexType>
       <xs:all>

@@ -1,0 +1,8 @@
+_:test5Fcsv <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www4.wiwiss.fu-berlin.de/ldif/ImportJob> <http://www4.wiwiss.fu-berlin.de/ldif/provenance> .
+_:test5Fcsv <http://www4.wiwiss.fu-berlin.de/ldif/importId> "test_csv" <http://www4.wiwiss.fu-berlin.de/ldif/provenance> .
+_:test5Fcsv <http://www4.wiwiss.fu-berlin.de/ldif/hasDatasource> "test" <http://www4.wiwiss.fu-berlin.de/ldif/provenance> .
+_:test5Fcsv <http://www4.wiwiss.fu-berlin.de/ldif/hasImportType> "csv" <http://www4.wiwiss.fu-berlin.de/ldif/provenance> .
+_:test5Fcsv <http://www4.wiwiss.fu-berlin.de/ldif/hasOriginalLocation> "scheduler/sources/source.csv" <http://www4.wiwiss.fu-berlin.de/ldif/provenance> .
+_:test5Fcsv <http://www4.wiwiss.fu-berlin.de/ldif/numberOfQuads> "22"^^<http://www.w3.org/2001/XMLSchema#nonNegativeInteger> <http://www4.wiwiss.fu-berlin.de/ldif/provenance> .
+<http://www4.wiwiss.fu-berlin.de/ldif/graph#test_csv> <http://www4.wiwiss.fu-berlin.de/ldif/hasImportJob> _:test5Fcsv <http://www4.wiwiss.fu-berlin.de/ldif/provenance> .
+<http://www4.wiwiss.fu-berlin.de/ldif/graph#test_csv> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www4.wiwiss.fu-berlin.de/ldif/ImportedGraph> <http://www4.wiwiss.fu-berlin.de/ldif/provenance> .

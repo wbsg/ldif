@@ -54,6 +54,11 @@ object CommonUtils {
     getQuads(scala.io.Source.fromFile(file).getLines.toTraversable)
   }
 
+  // create a Traversable[Quad] from a file path
+  def getQuadsFromPath(filepath : String) : Traversable[Quad] = {
+    getQuads(getFileFromPath(filepath))
+  }
+
   def getValueAsString(xml : Node, key : String, default : String = "") = {
     var value : String = (xml \ key text)
     if (value == "" || value == null)

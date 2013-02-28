@@ -1,0 +1,5 @@
+<http://www4.wiwiss.fu-berlin.de/ldif/test_rdfa/> <http://purl.org/dc/terms/title> "Peanuts web page (RDFa)"@en <http://www4.wiwiss.fu-berlin.de/ldif/graph#test_rdfa> .
+<http://www4.wiwiss.fu-berlin.de/ldif/test_rdfa/0> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://xmlns.com/foaf/0.1/Person> <http://www4.wiwiss.fu-berlin.de/ldif/graph#test_rdfa> .
+<http://www4.wiwiss.fu-berlin.de/ldif/test_rdfa/0> <http://xmlns.com/foaf/0.1/givenName> "Charlie"^^<http://www.w3.org/2001/XMLSchema#string> <http://www4.wiwiss.fu-berlin.de/ldif/graph#test_rdfa> .
+<http://www4.wiwiss.fu-berlin.de/ldif/test_rdfa/0> <http://xmlns.com/foaf/0.1/familyName> "Brown"^^<http://www.w3.org/2001/XMLSchema#string> <http://www4.wiwiss.fu-berlin.de/ldif/graph#test_rdfa> .
+<http://www4.wiwiss.fu-berlin.de/ldif/test_rdfa/0> <http://xmlns.com/foaf/0.1/homepage> <http://www.peanuts.com/characters/charlie-brown> <http://www4.wiwiss.fu-berlin.de/ldif/graph#test_rdfa> .
