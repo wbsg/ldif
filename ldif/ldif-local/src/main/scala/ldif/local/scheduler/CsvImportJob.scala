@@ -33,7 +33,7 @@ import java.util.Properties
 case class CsvImportJob(dumpLocation : String, id : Identifier, refreshSchedule : String, dataSource : String, fieldSeparator : String = Consts.DEFAULT_CSV_FIELD_SEPERATOR) extends ImportJob {
 
 	private val log = LoggerFactory.getLogger(getClass.getName)
-	val reporter = new TripleImportJobPublisher(id)
+	val reporter = new CsvImportJobPublisher(id)
 
 	val graph = Consts.DEFAULT_IMPORTED_GRAPH_PREFIX+id
 

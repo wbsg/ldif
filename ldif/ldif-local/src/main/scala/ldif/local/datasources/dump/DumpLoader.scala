@@ -66,21 +66,22 @@ object DumpLoader {
       file = new File(url.getFile)
     }
 
-    if (file != null)
+    if (file != null) {
       lang = ContentTypes.getLangFromExtension(file.getName)
-    else if (url != null)
+    } else if (url != null) {
       lang = ContentTypes.getLangFromExtension(url.getFile)
-
+    }
     if (lang == null) {
       throw new Exception("Unable to determine language for "+ sourceLocation + " based on file extension")
     }
 
-    if (file != null)
+    if (file != null) {
       getFileStream(file, lang, parameters)
-    else if (url != null)
+    } else if (url != null) {
       getUrlStream(url, lang, parameters)
-    else
+    } else {
       throw new Exception("Protocol \"" + url.getProtocol + "\" is not supported.")
+    }
   }
 
   def getFileStream(file : File, lang : String = ContentTypes.langNQuad, parameters : Properties = new Properties) = {

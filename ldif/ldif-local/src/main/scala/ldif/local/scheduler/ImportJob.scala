@@ -175,6 +175,11 @@ object ImportJob {
       case None =>
     }
 
+    (node \ "rdfaImportJob").headOption match {
+      case Some(job) => return RDFaImportJob.fromXML(job, id, refreshSchedule, dataSource)
+      case None =>
+    }
+
     null
   }
 

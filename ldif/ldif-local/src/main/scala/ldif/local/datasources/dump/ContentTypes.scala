@@ -29,6 +29,7 @@ object ContentTypes {
 	/* Note: This is provided redundantly so that it qualifies as a constant expression */
 	val CONTENTTYPES_RDF = "application/rdf+xml,text/rdf+xml,text/xml,application/xml,text/n3,application/n3,text/rdf+n3,text/turtle,application/x-turtle,application/turtle,text/plain"
 	val CONTENTTYPES_CSV = Seq("text/csv")
+  val CONTENTTYPES_HTML = Seq("text/html")
 
 
 	// from com.hp.hpl.jena.util.FileUtils
@@ -40,6 +41,7 @@ object ContentTypes {
 	val langTurtle = "TURTLE"
 	// additional formats
 	val langCSV = "CSV"
+	val langHTML = "HTML"
 
 	val HTTP_ACCEPT_CONTENT_TYPES =  "text/plain;q=1," +  /* N-TRIPLE */
 		"text/n3;q=0.9,application/n3;q=0.9,text/rdf+n3;q=0.9,"+  /* N3 */
@@ -130,6 +132,8 @@ object ContentTypes {
 			result = langTurtle
 		} else if (Pattern.matches(".*\\.csv(\\..*)?", urlOrPath)) {
 			result = langCSV
+		} else if (Pattern.matches(".*\\.html(\\..*)?", urlOrPath)) {
+			result = langHTML
 		}
 		result
 	}
@@ -147,6 +151,8 @@ object ContentTypes {
 			CONTENTTYPES_RDFTTL.head
 		} else if (lang == langCSV) {
 			CONTENTTYPES_CSV.head
+        } else if (lang == langHTML) {
+			CONTENTTYPES_HTML.head
 		} else "text/plain"
 	}
 
