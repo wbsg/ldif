@@ -122,10 +122,6 @@
 				<groupId>org.apache.pdfbox</groupId>
 			</exclusion>
 			<exclusion>
-                <artifactId>poi</artifactId>
-                <groupId>org.apache.poi</groupId>
-            </exclusion>
-			<exclusion>
 				<artifactId>poi-ooxml</artifactId>
 				<groupId>org.apache.poi</groupId>
 			</exclusion>
