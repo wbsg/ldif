@@ -13,8 +13,8 @@ To see LDIF in action, please follow these steps:
 
         bin/ldif examples/music/light/schedulerConfig.xml    
 
-4. Monitor the progress of the scheduled jobs through the status interface, at [http://localhost:5343](http://localhost:5343).
-5. Integration results will be written in the working directory, into `integrated_music_light.nq`.
+4. Monitor the progress of the scheduled jobs through the status interface, at [http://localhost:5343](http://localhost:5343)
+5. Integration results will be written in the working directory, into `integrated_music_light.nq`
 
 
 #### Learn More
