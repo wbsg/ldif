@@ -1,4 +1,4 @@
-LDIF - Linked Data Integration Framework
+LDIF
 ====
 
 LDIF translates heterogeneous Linked Data from the Web into a clean, local target representation while keeping track of data provenance.
@@ -8,13 +8,13 @@ LDIF translates heterogeneous Linked Data from the Web into a clean, local targe
 To see LDIF in action, please follow these steps:
 
 1. [Download](https://dl.mes-semantics.com/ldif/ldif-0.5.1.zip) the latest release
-2. Unzippack the archive and change into the extracted directory ldif-0.5.1
+2. Unzip the archive and change into the extracted directory `ldif-0.5.1`
 3. Run LDIF on the Music example
 
         bin/ldif examples/music/light/schedulerConfig.xml    
 
-4. While the example is running (it will take few minutes), check the progress of the scheduled jobs through the status monitor interface, available at [http://localhost:5343](http://localhost:5343).
-5. Integration results will be written into integrated_music_light.nq in the working directory
+4. Monitor the progress of the scheduled jobs through the status interface, at [http://localhost:5343](http://localhost:5343).
+5. Integration results will be written in the working directory, into `integrated_music_light.nq`.
 
 
 #### Learn More
