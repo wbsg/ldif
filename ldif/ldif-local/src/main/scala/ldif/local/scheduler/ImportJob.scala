@@ -165,11 +165,6 @@ object ImportJob {
       case None =>
     }
 
-    (node \ "wikidataImportJob").headOption match {
-      case Some(job) => return WikidataImportJob.fromXML(job, id, refreshSchedule, dataSource)
-      case None =>
-    }
-
     (node \ "csvImportJob").headOption match {
       case Some(job) => return CsvImportJob.fromXML(job, id, refreshSchedule, dataSource)
       case None =>
@@ -177,6 +172,16 @@ object ImportJob {
 
     (node \ "rdfaImportJob").headOption match {
       case Some(job) => return RDFaImportJob.fromXML(job, id, refreshSchedule, dataSource)
+      case None =>
+    }
+
+    (node \ "xlsxImportJob").headOption match {
+      case Some(job) => return XlsxImportJob.fromXML(job, id, refreshSchedule, dataSource)
+      case None =>
+    }
+
+    (node \ "wikidataImportJob").headOption match {
+      case Some(job) => return WikidataImportJob.fromXML(job, id, refreshSchedule, dataSource)
       case None =>
     }
 

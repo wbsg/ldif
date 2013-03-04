@@ -143,13 +143,19 @@
             <artifactId>ldif-r2r-hadoop</artifactId>
             <version>0.5.1</version>
             <exclusions>
+                <!-- Required by apache-any23-office-scraper, used by XSLXImportJob
                 <exclusion>
-                    <artifactId>poi-ooxml</artifactId>
                     <groupId>org.apache.poi</groupId>
+                    <artifactId>poi</artifactId>
                 </exclusion>
                 <exclusion>
-                    <artifactId>pdfbox</artifactId>
+                    <groupId>org.apache.poi</groupId>
+                    <artifactId>poi-ooxml</artifactId>
+                </exclusion>
+                 -->
+                <exclusion>
                     <groupId>org.apache.pdfbox</groupId>
+                    <artifactId>pdfbox</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>

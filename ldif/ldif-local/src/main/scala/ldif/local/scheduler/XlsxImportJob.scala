@@ -30,14 +30,14 @@ import ldif.datasources.dump.parser.ParseException
 import io.Codec._
 import java.util.Properties
 
-case class RDFaImportJob(dumpLocation : String, id : Identifier, refreshSchedule : String, dataSource : String) extends ImportJob {
+case class XlsxImportJob(dumpLocation : String, id : Identifier, refreshSchedule : String, dataSource : String) extends ImportJob {
 
   private val log = LoggerFactory.getLogger(getClass.getName)
-  val reporter = new RDFaImportJobPublisher(id)
+  val reporter = new XlsxImportJobPublisher(id)
 
   val graph = Consts.DEFAULT_IMPORTED_GRAPH_PREFIX+id
 
-  override def getType = "html-rdfa"
+  override def getType = "xlsx"
   override def getOriginalLocation = dumpLocation
 
   /**
@@ -116,31 +116,31 @@ case class RDFaImportJob(dumpLocation : String, id : Identifier, refreshSchedule
 
   override def toXML = {
     val xml = {
-      <rdfaImportJob>
+      <xlsxImportJob>
         <dumpLocation>{dumpLocation}</dumpLocation>
-      </rdfaImportJob>
+      </xlsxImportJob>
     }
     toXML(xml)
   }
 }
 
-object RDFaImportJob {
+object XlsxImportJob {
 
   /**
-   * Creates a RDFaImportJob from an XML definition
+   * Creates a XlsxImportJob from an XML definition
    * @param node Node
    * @param id Identifier
    * @param refreshSchedule String
    * @param dataSource String
-   * @return RDFaImportJob
+   * @return XlsxImportJob
    */
   def fromXML (node : Node, id : Identifier, refreshSchedule : String, dataSource : String) : ImportJob = {
     val dumpLocation : String = (node \ "dumpLocation") text
-    val job = new RDFaImportJob(dumpLocation.trim, id, refreshSchedule, dataSource)
+    val job = new XlsxImportJob(dumpLocation.trim, id, refreshSchedule, dataSource)
     job
   }
 }
 
-class RDFaImportJobPublisher (id : Identifier) extends ImportJobStatusMonitor(id) with ReportPublisher {
-  override def getPublisherName = super.getPublisherName + " (html-rdfa)"
+class XlsxImportJobPublisher (id : Identifier) extends ImportJobStatusMonitor(id) with ReportPublisher {
+  override def getPublisherName = super.getPublisherName + " (xlsx)"
 }

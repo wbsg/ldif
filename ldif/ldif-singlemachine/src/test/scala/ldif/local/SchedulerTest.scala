@@ -25,10 +25,6 @@ import org.scalatest.matchers.ShouldMatchers
 import scheduler._
 import ldif.config.SchedulerConfig
 import ldif.util.{Identifier, OutputValidator, CommonUtils}
-import org.apache.any23.extractor.{ExtractionContext, ExtractionParameters}
-import org.apache.any23.rdf.RDFUtils
-import org.apache.any23.plugin.officescraper.ExcelExtractor
-import java.io.InputStream
 
 @RunWith(classOf[JUnitRunner])
 class SchedulerTest extends FlatSpec with ShouldMatchers {
@@ -40,10 +36,7 @@ class SchedulerTest extends FlatSpec with ShouldMatchers {
 
   it should "schedule a job correctly" in {
     val importJobs = scheduler.getImportJobs
-    if(importJobs.head.id=="test_nquad")
-      scheduler.checkUpdate(scheduler.getImportJobs.head) should equal (true)
-    else
-      scheduler.checkUpdate(scheduler.getImportJobs.tail.head) should equal (true)
+    scheduler.checkUpdate(scheduler.getImportJobs.tail.head) should equal (true)
   }
 
   it should "parse a job configuration correctly" in {
@@ -83,6 +76,16 @@ class SchedulerTest extends FlatSpec with ShouldMatchers {
     OutputValidator.contains(provenanceQuads, provenanceQuadsCorrect) should equal(true)
   }
 
+  it should "load XLSX data and provenance correctly" in {
+    val (dumpQuads, dumpQuadsCorrect, provenanceQuads, provenanceQuadsCorrect) = getQuads("test_xlsx")
+    dumpQuads.size should equal (88)
+    OutputValidator.contains(dumpQuads, dumpQuadsCorrect) should equal(true)
+    provenanceQuads.size should equal (9)
+    OutputValidator.contains(provenanceQuads, provenanceQuadsCorrect) should equal(true)
+  }
+
+  // Helpers
+
   def getQuads(jobId : Identifier) = {
     (CommonUtils.getQuadsFromPath(dumpDir + "/" + jobId + ".nq"),
       CommonUtils.getQuadsFromPath(correctDumpDir + "/" + jobId + ".nq"),
@@ -112,8 +115,13 @@ class SchedulerTest extends FlatSpec with ShouldMatchers {
     RDFaImportJob(url,"test_rdfa","always","test")
   }
 
+  lazy val importJobLocalXlsx = {
+    val url = "scheduler/sources/source.xlsx"
+    XlsxImportJob(url,"test_xlsx","always","test")
+  }
+
   lazy val correctImportJobs = {
-    List(importJobRemote, importJobLocalNq, importJobLocalCsv, importJobLocalRdfa).sortBy(_.id.toString)
+    List(importJobRemote, importJobLocalNq, importJobLocalCsv, importJobLocalRdfa, importJobLocalXlsx).sortBy(_.id.toString)
   }
 
 }
