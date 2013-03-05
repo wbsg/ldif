@@ -51,8 +51,6 @@ case class SparqlImportJob(conf : SparqlConfig, id :  Identifier, refreshSchedul
     log.info("Loading from " + conf.endpointLocation)
     log.debug("Query: " + query)
 
-//    importedGraphs += graph
-
     val success = execQuery(query, writer)
     writer.close
     reporter.setFinishTime()
@@ -71,8 +69,9 @@ case class SparqlImportJob(conf : SparqlConfig, id :  Identifier, refreshSchedul
 
     while (loop) {
       var query = baseQuery
-      if (offset > 0)
+      if (offset > 0) {
         query += " OFFSET " + offset + " LIMIT " + math.min(limit, conf.tripleLimit - offset)
+      }
       else query +=  " LIMIT " + math.min(limit, conf.tripleLimit)
 
       var retries = 1
@@ -135,8 +134,9 @@ case class SparqlImportJob(conf : SparqlConfig, id :  Identifier, refreshSchedul
         offset += count
         loop = (count == limit) && (limit != 0) && !(offset == conf.tripleLimit)
 
-        if (count!=0 || limit == 0)
+        if (count!=0 || limit == 0) {
           log.info(id +" - loaded "+offset+" quads")
+        }
       }
     }
 
@@ -188,10 +188,11 @@ object SparqlImportJob {
 
     val tripleLimitString =  ((node \ "tripleLimit") text)
     var tripleLimit = Long.MaxValue
-    if(tripleLimitString.length > 0)
+    if(tripleLimitString.length > 0) {
       tripleLimit = tripleLimitString.toLong
+    }
 
-    val sparqlPatterns = (node \ "sparqlPatterns" \ "pattern").map(x => x text).toTraversable
+    val sparqlPatterns = (node \ "sparqlPatterns" \ "pattern").map(x => x.text).toTraversable
 
     val sparqlConfig = SparqlConfig(endpointLocation, graphName, sparqlPatterns, tripleLimit)
     val job = new SparqlImportJob(sparqlConfig, id, refreshSchedule, dataSource)
@@ -207,22 +208,23 @@ case class SparqlConfig(endpointLocation : URI,  graphName : URI, sparqlPatterns
 
   def buildQuery : String = {
     var query = "SELECT ?s ?p ?o "
-    if(!isGraphDefined)
+    if(!isGraphDefined) {
       query += "?g "
+    }
 
     query += "\n" + "WHERE {\n"
 
-    if (isGraphDefined)
+    if (isGraphDefined) {
       query += " GRAPH <" + graphName + "> {\n"
-    else
+    } else {
       query += " GRAPH ?g {\n"
+    }
 
-
-    for (pattern <- sparqlPatterns.filterNot(_.trim.equals("")))
-        query += " " + pattern + " .\n"
+    for (pattern <- sparqlPatterns.filterNot(_.trim.equals(""))) {
+      query += " " + pattern + " .\n"
+    }
 
     query += " ?s ?p ?o \n}}\n"
-
     query
   }
 
@@ -230,15 +232,15 @@ case class SparqlConfig(endpointLocation : URI,  graphName : URI, sparqlPatterns
 
 class SparqlImportJobPublisher (id : Identifier) extends ImportJobStatusMonitor(id) with ReportPublisher {
 
-  //var limit : Int = 0
   var actualLimit : Int = 0
 
   override def getPublisherName = super.getPublisherName + " (sparql)"
 
   override def getReport : Report = {
     var customReportItems = Seq.empty[ReportItem]
-    if(actualLimit>0)
-      customReportItems = customReportItems :+ ReportItem.get("Query limit",actualLimit)
+    if(actualLimit > 0) {
+      customReportItems = customReportItems :+ ReportItem.get("Query limit", actualLimit)
+    }
     super.getReport(customReportItems)
   }
 
