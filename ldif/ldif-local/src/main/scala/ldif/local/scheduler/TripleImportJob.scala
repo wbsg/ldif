@@ -44,7 +44,7 @@ case class TripleImportJob(dumpLocation : String, id : Identifier, refreshSchedu
 
     val writer = new ReportingOutputStreamWriter(out,reporter)
 
-    // get bufferReader from Url
+    // Try to get an InputStream from given dump location
     val inputStream =  {
       try {
         DumpLoader.getStream(dumpLocation)

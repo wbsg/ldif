@@ -38,29 +38,38 @@ case class QuadImportJob(dumpLocation : String, id : Identifier, refreshSchedule
   override def load(out : OutputStream, estimatedNumberOfQuads : Option[Double] = None) : Boolean = {
     JobMonitor.addPublisher(reporter)
     reporter.setStartTime()
-    // ImportJobMonitor.value = reporter
+
+    reporter.estimatedQuads = estimatedNumberOfQuads
+
     val writer = new ReportingOutputStreamWriter(out, reporter)
 
-    // get bufferReader from Url
-    val inputStream = DumpLoader.getStream(dumpLocation)
-		val parser = new QuadParser
-		val lines = scala.io.Source.fromInputStream(inputStream)("UTF-8").getLines()
-		var invalidQuads = 0
+    // Try to get an InputStream from given dump location
+    val inputStream =  {
+      try {
+        DumpLoader.getStream(dumpLocation)
+      } catch {
+        case e: java.net.ConnectException => return false
+      }
+    }
 
-		// Catch dump encoding issues (only UTF-8 is supported)
-		val traversableLines =
-			try {
-				lines.toTraversable
-			} catch {
-				case e : MalformedInputException => {
-					log.warn("An invalid character encoding has been detected for the dump "+dumpLocation+". Please use UTF-8.")
-					Traversable.empty[String]
-				}
-			}
+    val parser = new QuadParser
+    val lines = scala.io.Source.fromInputStream(inputStream)("UTF-8").getLines()
+    var invalidQuads = 0
 
-		for (line <- traversableLines){
-			var quad : Quad = null
-			try {
+    // Catch dump encoding issues (only UTF-8 is supported)
+    val traversableLines =
+      try {
+        lines.toTraversable
+      } catch {
+        case e : MalformedInputException => {
+          log.warn("An invalid character encoding has been detected for the dump "+dumpLocation+". Please use UTF-8.")
+          Traversable.empty[String]
+        }
+      }
+
+    for (line <- traversableLines){
+      var quad : Quad = null
+      try {
         quad = parser.parseLine(line)
       }
       catch {

@@ -25,7 +25,6 @@ import java.util.GregorianCalendar
  * User: andreas
  * Date: 2/21/12
  * Time: 3:53 PM
- * To change this template use File | Settings | File Templates.
  */
 
 /**

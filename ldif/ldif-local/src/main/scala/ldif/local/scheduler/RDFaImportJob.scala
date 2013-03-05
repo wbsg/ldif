@@ -54,7 +54,7 @@ case class RDFaImportJob(dumpLocation : String, id : Identifier, refreshSchedule
 
     val writer = new ReportingOutputStreamWriter(out,reporter)
 
-    // Get bufferReader from Url
+    // Try to get an InputStream from given dump location
     val inputStream =  {
       try {
         // The job id is used to assign a unique URI to the imported resources

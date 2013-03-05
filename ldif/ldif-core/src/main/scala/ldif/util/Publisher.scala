@@ -27,7 +27,6 @@ import java.util.concurrent.TimeUnit
  * User: andreas
  * Date: 3/5/12
  * Time: 2:44 PM
- * To change this template use File | Settings | File Templates.
  */
 
 /**
@@ -57,7 +56,9 @@ trait Publisher {
     dateFormat.format(calendar.getTime)
   }
 
-  def setFailed = status = Some("Failed")
+  def setFailed() {
+    status = Some("Failed")
+  }
 
   def setSkipped() {
     status = Some("Skipped")
@@ -101,7 +102,7 @@ trait Publisher {
         sb.append("%02d".format(hh)+":")
       sb.append("%02d".format(mm)+":"+"%02d".format(ss))
       //sb.append(" < "+msec)
-      sb.toString
+      sb.toString()
     }
     else "00:00"
   }

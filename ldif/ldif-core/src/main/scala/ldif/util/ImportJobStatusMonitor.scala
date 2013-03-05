@@ -49,8 +49,9 @@ class ImportJobStatusMonitor(jobId : Identifier) extends JobDetailsStatusMonitor
       reportItems.append(getDurationTimeReportItem)
     }
     reportItems.append(ReportItem.get("Loaded Quads", getStatusAsString, importedQuads))
-    if (invalidQuads.get > 0)
+    if (invalidQuads.get > 0) {
       reportItems.append(ReportItem.get("Invalid Quads", invalidQuads))
+    }
 
     reportItems.append(ReportItem.get("Estimated number of Quads",getEstimatedQuadsAsString))
 
@@ -62,11 +63,14 @@ class ImportJobStatusMonitor(jobId : Identifier) extends JobDetailsStatusMonitor
   private def getProgress : String =
     if(estimatedQuads!=None && !finished) {
       val progress = (importedQuads.intValue*100/(estimatedQuads.get*1.05)).toInt  // add a 5% margin to the estimation
-      if (progress > 99)  // and not finished
+      if (progress > 99)  { // and not finished
         "Loading quads more than expected..."
-      else progress +"%"
+      } else {
+        progress +"%"
+      }
+    } else {
+      "Loading..."
     }
-    else "Loading..."
 
-  override def getStatus : Option[String] =  status.orElse(Some(getProgress))
+  override def getStatus : Option[String] = status.orElse(Some(getProgress))
 }
