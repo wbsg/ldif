@@ -49,8 +49,10 @@ class SchedulerTest extends FlatSpec with ShouldMatchers {
 
   // Run local import jobs
   scheduler.evaluateImportJobs
-  // Wait for the import jobs to be completed
-  Thread.sleep(1000)
+  while (!scheduler.allJobsCompleted) {
+    // wait for jobs to be completed
+    Thread.sleep(1000)
+  }
 
   it should "load a N-Quads dump and provenance correctly" in {
     val (dumpQuads, dumpQuadsCorrect, provenanceQuads, provenanceQuadsCorrect) = getQuads("test_nquad")
