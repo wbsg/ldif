@@ -18,36 +18,33 @@
 
 package ldif.util
 
-import collection.mutable.{ArrayBuffer, HashMap}
-
 /**
  * Created by IntelliJ IDEA.
  * User: andreas
  * Date: 2/21/12
  * Time: 4:21 PM
- * To change this template use File | Settings | File Templates.
  */
 
 trait ReportRegister extends Register[ReportPublisher] {
   
   def getRunningJobs : IndexedSeq[ReportPublisher] = {
-    getPublisherWithStatus()
+    getPublisherWithStatus
       .filterNot(_.getStatus.get.equals("Done"))
       .filterNot(_.getStatus.get.equals("Skipped"))
       .filterNot(_.getStatus.get.equals("Failed"))
   }
 
   def getCompleteJobs : IndexedSeq[ReportPublisher] = {
-    getPublisherWithStatus()
+    getPublisherWithStatus
       .filter(_.getStatus.get.equals("Done"))
   }
 
   def getFailedJobs : IndexedSeq[ReportPublisher] = {
-    getPublisherWithStatus()
+    getPublisherWithStatus
       .filter(_.getStatus.get.equals("Failed"))
   }
 
-  def getPublisherWithStatus() : IndexedSeq[ReportPublisher] = {
+  def getPublisherWithStatus : IndexedSeq[ReportPublisher] = {
     getPublishers().filterNot(_.getStatus==None)
   }
 

@@ -25,7 +25,7 @@ class JobDetailsStatusMonitor(jobId: String) extends Publisher with StatusMonito
   def getHtml(params: Map[String, String]) = {
     val sb = new StringBuilder
     sb.append(addHeader(jobId+" Job Report", params))
-    sb.append("<h1>Status Report for "+jobId+ " Job</h1>\n")
+    sb.append("<h1>Status report for job: "+jobId+ "</h1>\n")
     sb.append("<h3>"+getPublisherName+"</h2>\n")
     sb.append("<table border=\"1\" cellpadding=\"3\" cellspacing=\"0\">")
     sb.append("<tr><th>Report item</th><th>Status</th><th>Value</th></tr>")
@@ -43,14 +43,14 @@ class JobDetailsStatusMonitor(jobId: String) extends Publisher with StatusMonito
 
   def getText = {
     val sb = new StringBuilder
-    sb.append("Status Report for "+jobId+ " Job: \n\n")
+    sb.append("Status report for job: "+jobId+ " \n\n")
     sb.append(getPublisherName).append(":\n")
     for(reportItem <- getReport.items) {
       sb.append("    Item: ").append(reportItem.name).append("\n    Status: ")
         .append(reportItem.status).append("\n    Progress: ")
         .append(reportItem.value).append("\n")
     }
-    sb.toString
+    sb.toString()
   }
 
   override def getStatus : Option[String] = status

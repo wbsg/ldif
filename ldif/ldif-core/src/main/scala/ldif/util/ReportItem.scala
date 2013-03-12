@@ -1,5 +1,3 @@
-package ldif.util
-
 /*
  * LDIF
  *
@@ -18,9 +16,9 @@ package ldif.util
  * limitations under the License.
  */
 
-case class ReportItem(name: String,  status: String, value: String) {
+package ldif.util
 
-}
+case class ReportItem(name: String,  status: String, value: String) {}
 
 object ReportItem {
   def get(name : String,  value : Any) : ReportItem = get(name, "", value)

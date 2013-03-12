@@ -21,7 +21,6 @@ package ldif.local.scheduler
 import java.net.URI
 import org.slf4j.LoggerFactory
 import ldif.local.runtime.LocalNode
-import com.hp.hpl.jena.rdf.model.{Model, RDFNode}
 import java.io.{Writer, OutputStream}
 import com.hp.hpl.jena.query.{ResultSet, QueryExecutionFactory}
 import javax.xml.ws.http.HTTPException
@@ -36,6 +35,8 @@ case class SparqlImportJob(conf : SparqlConfig, id :  Identifier, refreshSchedul
   private val graph = Consts.DEFAULT_IMPORTED_GRAPH_PREFIX+id
   val reporter = new SparqlImportJobPublisher(id)
 
+  var statusMsg = ""
+
   override def load(out : OutputStream, estimatedNumberOfQuads : Option[Double] = None) : Boolean = {
     JobMonitor.addPublisher(reporter)
     reporter.setStartTime()
@@ -43,17 +44,28 @@ case class SparqlImportJob(conf : SparqlConfig, id :  Identifier, refreshSchedul
 
     val writer = new ReportingOutputStreamWriter(out, reporter)
 
+    var success = false
+
     if (conf.endpointLocation == null) {
-      log.warn("Import failed for job "+ id +" - SPARQL endpoint location not defined")
+      statusMsg = "Import failed for job "+ id +" - SPARQL endpoint location not defined"
+    } else {
+      val query = conf.buildQuery
+      log.info("Loading from " + conf.endpointLocation)
+      log.debug("Query: " + query)
+      success = execQuery(query, writer)
     }
 
-    val query = conf.buildQuery
-    log.info("Loading from " + conf.endpointLocation)
-    log.debug("Query: " + query)
+    writer.close()
 
-    val success = execQuery(query, writer)
-    writer.close
-    reporter.setFinishTime()
+    if (!success) {
+      if (!statusMsg.isEmpty){
+        log.warn(statusMsg)
+        reporter.setStatusMsg(statusMsg)
+      }
+    } else {
+      reporter.setFinishTime()
+    }
+
     success
   }
 
@@ -71,8 +83,9 @@ case class SparqlImportJob(conf : SparqlConfig, id :  Identifier, refreshSchedul
       var query = baseQuery
       if (offset > 0) {
         query += " OFFSET " + offset + " LIMIT " + math.min(limit, conf.tripleLimit - offset)
+      } else {
+        query +=  " LIMIT " + math.min(limit, conf.tripleLimit)
       }
-      else query +=  " LIMIT " + math.min(limit, conf.tripleLimit)
 
       var retries = 1
       var retryPause = Consts.retryPause
@@ -87,13 +100,14 @@ case class SparqlImportJob(conf : SparqlConfig, id :  Identifier, refreshSchedul
             case e: HTTPException => {
               // stop on client side errors
               if(e.getStatusCode < 500 && e.getStatusCode >= 400) {
-                log.warn("Error executing query: " + query + ". Error Code: " + e.getStatusCode + " (" + e.getMessage + ")")
+                statusMsg = "Error executing query: " + query + ". Error Code: " + e.getStatusCode + " (" + e.getMessage + ")"
                 return false
               }
 
               log.warn("Error executing query - retrying in " + retryPause + " ms. (" + retries + "/" + retryCount + ")\n"+query+" \non "+endpointUrl+(if(e.getCause!=null) " \n"+e.getCause else ""))
               retries += 1
               if (retries > retryCount) {
+                statusMsg = e.getMessage
                 return false
               }
               Thread.sleep(retryPause)
@@ -102,12 +116,13 @@ case class SparqlImportJob(conf : SparqlConfig, id :  Identifier, refreshSchedul
             case e: QueryExceptionHTTP => {
               // stop on client side errors
               if(e.getResponseCode < 500 && e.getResponseCode >= 400) {
-                log.warn("Error executing query: " + query + ". Error Code: " + e.getResponseCode + "(" + e.getResponseMessage + ")")
+                statusMsg = "Error executing query: " + query + ". Error Code: " + e.getResponseCode + "(" + e.getResponseMessage + ")"
                 return false
               }
-              log.warn("Error executing query - retrying in " + retryPause + " ms. (" + retries + "/" + retryCount + ")\n"+query+" \non "+endpointUrl+" \n"+e.getResponseMessage)
+              log.warn("Error executing query - retrying in " + retryPause + " ms. (" + retries + "/" + retryCount + ")\n"+query+" \non "+endpointUrl+" \n"+e.getMessage)
               retries += 1
               if (retries > retryCount) {
+                statusMsg = e.getMessage
                 return false
               }
               Thread.sleep(retryPause)
@@ -159,7 +174,7 @@ case class SparqlImportJob(conf : SparqlConfig, id :  Identifier, refreshSchedul
       val quad = Quad(s,p,o,g)
       writer.write(quad.toLine)
     }
-    writer.flush
+    writer.flush()
     counter
   }
 

@@ -136,18 +136,22 @@ case class Scheduler (config : SchedulerConfig, debug : Boolean = false) {
       val tmpDumpFile = getTmpDumpFile(job)
       val tmpProvenanceFile = getTmpProvenanceFile(job)
 
-      // create local dump
+      // Load dump locally
       val success = try {
-          job.load(new FileOutputStream(tmpDumpFile), importedDumps.getNumberOfQuads(job))
-        } catch {
-          case e: Exception => log.warn("There has been an unexpected error while processing job " + job +". Cause: " + e.getMessage)
+        job.load(new FileOutputStream(tmpDumpFile), importedDumps.getNumberOfQuads(job))
+      } catch {
+        case e: Exception => {
+          // Handle exceptions which are not catch by the loaders
+          // TODO Move all exception handling to ImportJob classes
+          job.reporter.setStatusMsg(e.getMessage)
+          log.warn("There has been an unexpected error while processing job " + job +". Cause: " + e.getMessage)
           log.debug(e.getStackTraceString)
           false
         }
+      }
 
-
-      if(success) {
-        // create provenance metadata
+      if(success){
+        // Create provenance metadata
         val provenanceGraph = config.properties.getProperty("provenanceGraphURI", Consts.DEFAULT_PROVENANCE_GRAPH)
         job.generateProvenanceInfo(new OutputStreamWriter(new FileOutputStream(tmpProvenanceFile)), provenanceGraph)
 
@@ -159,21 +163,19 @@ case class Scheduler (config : SchedulerConfig, debug : Boolean = false) {
         val waitingInterval = 1
 
         while(loop) {
-          // if the integration job is not running
+          // Loop until the integration job is not running
           if (!runningIntegrationJobs) {
-            // replace old dumps with the new ones
+            // Replace old dumps with the new ones
             moveFile(tmpDumpFile, getDumpFile(job))
             moveFile(tmpProvenanceFile, getProvenanceFile(job))
             log.info("Updated local dumps for job "+ job.id)
-
             runningImportJobs.replace(job.id, false)
             loop = false
-          }
-          else {
-            // wait for integration job to be completed, but not more than the job refreshSchedule
+          } else {
+            // Wait for integration job to be completed, but not more than the job refreshSchedule
             maxWaitingTime -= waitingInterval
             if (maxWaitingTime < 0) {
-              // waited too long, dump is outdates
+              // Waited for too long, the dump is now outdated
               log.info("The dump loaded for job "+ job.id +" expired, a new import is required. \n"+ tmpDumpFile.getCanonicalPath)
               if (!debug) {
                 FileUtils.deleteQuietly(tmpDumpFile)
@@ -185,7 +187,7 @@ case class Scheduler (config : SchedulerConfig, debug : Boolean = false) {
             Thread.sleep(waitingInterval * 1000)
           }
         }
-      }
+    }
       else {
         job.reporter.setFailed()
         if (!debug) {
@@ -200,8 +202,9 @@ case class Scheduler (config : SchedulerConfig, debug : Boolean = false) {
 
   private def initRunningJobsMap = {
     val map = new ConcurrentHashMap[String, Boolean](importJobs.size)
-    for(job <- importJobs)
+    for(job <- importJobs) {
       map.putIfAbsent(job.id, false)
+    }
     map
   }
 
@@ -215,18 +218,16 @@ case class Scheduler (config : SchedulerConfig, debug : Boolean = false) {
     checkUpdate(job.refreshSchedule, importedDumps.getLastUpdate(job))
   }
 
-
   private def checkUpdate(schedule : String, lastUpdate : Calendar) : Boolean = {
     if (schedule == "onStartup") {
-      if (startup)
+      if (startup) {
         true
-      else
+      } else {
         false
-    }
-    else if (schedule == "never") {
+      }
+    } else if (schedule == "never") {
       false
-    }
-    else {
+    } else {
       val changeFreqHours = Consts.changeFreqToHours.get(schedule)
       // Get last update run
       val nextUpdate = Calendar.getInstance
@@ -240,9 +241,9 @@ case class Scheduler (config : SchedulerConfig, debug : Boolean = false) {
           nextUpdate.add(Calendar.HOUR, changeFreqHours.get)
           Calendar.getInstance.after(nextUpdate)
         }
-      }
-      else
+      } else {
         false
+      }
     }
   }
 
@@ -255,20 +256,19 @@ case class Scheduler (config : SchedulerConfig, debug : Boolean = false) {
   private def getProvenanceFile(job : ImportJob) = new File(config.dumpLocationDir, job.id +".provenance.nq")
   private def getTmpProvenanceFile(job : ImportJob) = TemporaryFileCreator.createTemporaryFile(job.id+"_provenance_"+Consts.simpleDateFormat.format(new Date()),".nq")
 
-
   private def loadIntegrationJob(configFile : File) : IntegrationJob = {
     if(configFile != null)  {
       var integrationConfig = IntegrationConfig.load(configFile)
       // use dumpLocation as source directory for the integration job
       integrationConfig = integrationConfig.copy(sources = Traversable(config.dumpLocationDir))
       // if properties are not defined for the integration job, then use scheduler properties
-      if (integrationConfig.properties.size == 0)
+      if (integrationConfig.properties.size == 0) {
         integrationConfig = integrationConfig.copy(properties = config.properties)
+      }
       val integrationJob = IntegrationJob(integrationConfig, debug)
       log.info("Integration job loaded from "+ configFile.getCanonicalPath)
       integrationJob
-    }
-    else {
+    } else {
       log.warn("Integration job configuration file not found")
       null
     }
@@ -284,8 +284,7 @@ case class Scheduler (config : SchedulerConfig, debug : Boolean = false) {
       } catch {
         case ex:IOException => log.error("IO error occurs moving a file: \n" +source.getCanonicalPath+ " -> " +dest.getCanonicalPath)
       }
-    }
-    else {
+    } else {
       // if debugMode, keep tmp file
       try {
         FileUtils.copyFile(source, dest)
@@ -316,6 +315,7 @@ case class Scheduler (config : SchedulerConfig, debug : Boolean = false) {
   }
 
   def getImportJobs = importJobs
+
   def getIntegrationJob = integrationJob
 
   def toXML : xml.Node = config.toXML

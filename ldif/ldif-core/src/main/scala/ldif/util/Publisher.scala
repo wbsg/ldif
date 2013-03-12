@@ -37,6 +37,7 @@ trait Publisher {
   protected[this] var finishTime = new GregorianCalendar()
   protected[this] var finished = false
   protected[this] var status : Option[String] = None
+  protected[this] var statusMsg : Option[String] = None
 
   /**
    * The name of the publisher (should be globally unique)
@@ -48,7 +49,7 @@ trait Publisher {
   def setFinishTime() {
     finishTime = new GregorianCalendar()
     finished = true
-    status = Some("Done")
+    setStatus("Done")
   }
 
   def formatDateTime(calendar: Calendar) : String = {
@@ -56,12 +57,17 @@ trait Publisher {
     dateFormat.format(calendar.getTime)
   }
 
+  def setFailed(statusMsg : String) {
+    setFailed()
+    setStatusMsg(statusMsg)
+  }
+
   def setFailed() {
-    status = Some("Failed")
+    setStatus("Failed")
   }
 
   def setSkipped() {
-    status = Some("Skipped")
+    setStatus("Skipped")
   }
 
   def isFinished = finished
@@ -118,4 +124,18 @@ trait Publisher {
   }
 
   def setStatus(status : String) {this.status = Some(status)}
+
+  def getStatusMsg : Option[String] = statusMsg
+
+  def getStatusMsgAsString = getStatusMsg match {
+    case Some(s) => s
+    case None => ""
+  }
+
+  def setStatusMsg (msg : String) {
+    if (statusMsg != null) {
+      // Strip all html tags
+      this.statusMsg = Some(msg.replaceAll("""<(.|\n)+?>""", ""))
+    }
+  }
 }

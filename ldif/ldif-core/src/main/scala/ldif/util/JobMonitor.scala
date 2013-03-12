@@ -27,17 +27,17 @@ class JobMonitor extends StatusMonitor with ReportRegister {
 
     val sb = new StringBuilder
     sb.append(addHeader("LDIF Job Report", params))
-    sb.append("<h1>Status Report for LDIF Jobs</h1>\n")
+    sb.append("<h1>Status report for LDIF jobs</h1>\n")
 
     //Running tasks
-    sb.append(buildTable(runningJobs, "Running Jobs"))
+    sb.append(buildTable(runningJobs, "Running jobs"))
 
     //Completed tasks
-    sb.append(buildTable(completedJobs, "Completed Jobs", true))
+    sb.append(buildTable(completedJobs, "Completed jobs", true))
 
     //Failed tasks
     if (failedJobs.size>0)
-      sb.append(buildTable(failedJobs, "Failed Jobs"))
+      sb.append(buildTable(failedJobs, "Failed jobs"))
 
     sb.append("</body></html>")
     sb.toString()
@@ -49,11 +49,11 @@ class JobMonitor extends StatusMonitor with ReportRegister {
     val sb = new StringBuilder
     sb.append("<table  border=\"1\" >")
     if(caption!=null) sb.append("<caption>"+caption+"</caption>")
-    sb.append("<tr><th>Job Name</th><th>Status</th>")
+    sb.append("<tr><th>Job name</th><th>Status</th>")
     if(complete)
       sb.append("<th>Duration</th>")
-    else sb.append ("<th>Start Time</th>")
-    sb.append("<th>Job Infos</th></tr>")
+    else sb.append ("<th>Start time</th>")
+    sb.append("<th>Job infos</th></tr>")
     for(publisher <- jobs) {
       sb.append("<tr>")
         .append(buildCell(publisher.getPublisherName))

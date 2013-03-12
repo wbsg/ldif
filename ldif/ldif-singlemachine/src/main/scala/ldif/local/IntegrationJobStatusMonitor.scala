@@ -25,7 +25,6 @@ import ldif.util._
  * User: andreas
  * Date: 3/5/12
  * Time: 6:26 PM
- * To change this template use File | Settings | File Templates.
  */
 
 class IntegrationJobStatusMonitor extends Publisher with StatusMonitor with ReportRegister {
@@ -71,7 +70,7 @@ class IntegrationJobStatusMonitor extends Publisher with StatusMonitor with Repo
           .append(reportItem.value).append("\n")
       }
     }
-    sb.toString
+    sb.toString()
   }
 
   override def getStatus : Option[String] = status

@@ -1,8 +1,3 @@
-package ldif.util
-
-import java.util.concurrent.atomic.AtomicInteger
-import collection.mutable.ArrayBuffer
-
 /*
  * LDIF
  *
@@ -20,6 +15,11 @@ import collection.mutable.ArrayBuffer
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
+package ldif.util
+
+import java.util.concurrent.atomic.AtomicInteger
+import collection.mutable.ArrayBuffer
 
 class ImportJobStatusMonitor(jobId : Identifier) extends JobDetailsStatusMonitor(jobId) {
 
@@ -48,12 +48,15 @@ class ImportJobStatusMonitor(jobId : Identifier) extends JobDetailsStatusMonitor
       reportItems.append(getFinishTimeReportItem)
       reportItems.append(getDurationTimeReportItem)
     }
-    reportItems.append(ReportItem.get("Loaded Quads", getStatusAsString, importedQuads))
+    reportItems.append(ReportItem.get("Loaded quads", getStatusAsString, importedQuads))
     if (invalidQuads.get > 0) {
-      reportItems.append(ReportItem.get("Invalid Quads", invalidQuads))
+      reportItems.append(ReportItem.get("Invalid quads", invalidQuads))
+    }
+    if (statusMsg != None) {
+      reportItems.append(ReportItem.get("Status details", getStatusMsgAsString))
     }
 
-    reportItems.append(ReportItem.get("Estimated number of Quads",getEstimatedQuadsAsString))
+    reportItems.append(ReportItem.get("Estimated number of quads",getEstimatedQuadsAsString))
 
     customReportItems.map(reportItems.append(_))
 
@@ -61,12 +64,12 @@ class ImportJobStatusMonitor(jobId : Identifier) extends JobDetailsStatusMonitor
   }
 
   private def getProgress : String =
-    if(estimatedQuads!=None && !finished) {
+    if(estimatedQuads != None && !finished) {
       val progress = (importedQuads.intValue*100/(estimatedQuads.get*1.05)).toInt  // add a 5% margin to the estimation
       if (progress > 99)  { // and not finished
         "Loading quads more than expected..."
       } else {
-        progress +"%"
+        progress + "%"
       }
     } else {
       "Loading..."

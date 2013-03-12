@@ -23,7 +23,6 @@ package ldif.util
  * User: andreas
  * Date: 2/21/12
  * Time: 12:20 PM
- * To change this template use File | Settings | File Templates.
  */
 
 /**
@@ -83,7 +82,7 @@ trait StatusMonitor {
     .append(".meter {\n\twidth: 200px;\n\theight: 10px;  /* Can be anything */\n\tposition: relative;\n\tbackground: #555;\n\t-moz-border-radius: 7px;\n\t-webkit-border-radius: 7px;\n\tborder-radius: 10px;\n\tpadding: 2px;\n\t-webkit-box-shadow: inset 0 -1px 1px rgba(255,255,255,0.3);\n\t-moz-box-shadow   : inset 0 -1px 1px rgba(255,255,255,0.3);\n\tbox-shadow        : inset 0 -1px 1px rgba(255,255,255,0.3);\n}")
     .append(".meter > span {\n\tdisplay: block;\n\theight: 100%;\n\t   -webkit-border-top-right-radius: 8px;\n\t-webkit-border-bottom-right-radius: 8px;\n\t       -moz-border-radius-topright: 8px;\n\t    -moz-border-radius-bottomright: 8px;\n\t           border-top-right-radius: 8px;\n\t        border-bottom-right-radius: 8px;\n\t    -webkit-border-top-left-radius: 20px;\n\t -webkit-border-bottom-left-radius: 20px;\n\t        -moz-border-radius-topleft: 20px;\n\t     -moz-border-radius-bottomleft: 20px;\n\t            border-top-left-radius: 20px;\n\t         border-bottom-left-radius: 20px;\n\tbackground-color: rgb(43,194,83);\n\tbackground-image: -webkit-gradient(\n\t  linear,\n\t  left bottom,\n\t  left top,\n\t  color-stop(0, rgb(43,194,83)),\n\t  color-stop(1, rgb(84,240,84))\n\t );\n\tbackground-image: -webkit-linear-gradient(\n\t  center bottom,\n\t  rgb(43,194,83) 37%,\n\t  rgb(84,240,84) 69%\n\t );\n\tbackground-image: -moz-linear-gradient(\n\t  center bottom,\n\t  rgb(43,194,83) 37%,\n\t  rgb(84,240,84) 69%\n\t );\n\tbackground-image: -ms-linear-gradient(\n\t  center bottom,\n\t  rgb(43,194,83) 37%,\n\t  rgb(84,240,84) 69%\n\t );\n\tbackground-image: -o-linear-gradient(\n\t  center bottom,\n\t  rgb(43,194,83) 37%,\n\t  rgb(84,240,84) 69%\n\t );\n\t-webkit-box-shadow:\n\t  inset 0 2px 9px  rgba(255,255,255,0.3),\n\t  inset 0 -2px 6px rgba(0,0,0,0.4);\n\t-moz-box-shadow:\n\t  inset 0 2px 9px  rgba(255,255,255,0.3),\n\t  inset 0 -2px 6px rgba(0,0,0,0.4);\n\tposition: relative;\n\toverflow: hidden;\n}")
     sb.append("</style>")
-  sb.toString
+  sb.toString()
   }
 
   def buildCell(text : String) = "<td>"+text+"</td>"

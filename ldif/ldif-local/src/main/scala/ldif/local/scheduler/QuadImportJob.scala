@@ -18,88 +18,49 @@
 
 package ldif.local.scheduler
 
-import ldif.local.datasources.dump.DumpLoader
 import xml.Node
-import ldif.datasources.dump.QuadParser
 import java.io.OutputStream
-import org.slf4j.LoggerFactory
 import ldif.runtime.Quad
-import ldif.datasources.dump.parser.ParseException
 import ldif.util._
-import java.nio.charset.MalformedInputException
 
-case class QuadImportJob(dumpLocation : String, id : Identifier, refreshSchedule : String, dataSource : String, renameGraphs : String = "") extends ImportJob {
+case class QuadImportJob(dumpLocation : String, id : Identifier, refreshSchedule : String, dataSource : String, renameGraphs : String = "") extends DumpImportJob(dumpLocation) {
 
-  private val log = LoggerFactory.getLogger(getClass.getName)
   val reporter = new QuadImportJobPublisher(id)
+
+  override def getType = "quad"
 
   def isRenameGraphEnabled = renameGraphs != ""
 
   override def load(out : OutputStream, estimatedNumberOfQuads : Option[Double] = None) : Boolean = {
-    JobMonitor.addPublisher(reporter)
-    reporter.setStartTime()
+    loadDump(out, estimatedNumberOfQuads, processQuad = processQuad)
+  }
 
-    reporter.estimatedQuads = estimatedNumberOfQuads
+  /**
+   * Function to be applied to each single quad, while loading the dump.
+   * Since this applies to each loaded quad, it's here important to use less memory as possible.
+   */
+  def processQuad (quad : Quad) : Quad = {
+    var renamedGraph : String = null
 
-    val writer = new ReportingOutputStreamWriter(out, reporter)
-
-    // Try to get an InputStream from given dump location
-    val inputStream =  {
-      try {
-        DumpLoader.getStream(dumpLocation)
-      } catch {
-        case e: java.net.ConnectException => return false
-      }
+    // Add graph to imported graph list
+    if (isRenameGraphEnabled) {
+      renamedGraph = renameGraph(quad.graph)
+      importedGraphs += renamedGraph
+    } else {
+      importedGraphs += quad.graph
     }
 
-    val parser = new QuadParser
-    val lines = scala.io.Source.fromInputStream(inputStream)("UTF-8").getLines()
-    var invalidQuads = 0
-
-    // Catch dump encoding issues (only UTF-8 is supported)
-    val traversableLines =
-      try {
-        lines.toTraversable
-      } catch {
-        case e : MalformedInputException => {
-          log.warn("An invalid character encoding has been detected for the dump "+dumpLocation+". Please use UTF-8.")
-          Traversable.empty[String]
-        }
-      }
-
-    for (line <- traversableLines){
-      var quad : Quad = null
-      try {
-        quad = parser.parseLine(line)
-      }
-      catch {
-        case e:ParseException => {
-          // skip invalid quads
-          invalidQuads  += 1
-          reporter.invalidQuads.incrementAndGet()
-          log.debug("Invalid quad found: "+line)
-        }
-      }
-      if (quad != null) {
-        importedQuadsNumber += 1
-        if (isRenameGraphEnabled)
-          quad = quad.copy(graph = renameGraph(quad.graph))
-        importedGraphs += quad.graph
-        writer.write(quad.toNQuadFormat+" . \n")
-        if (importedGraphs.size >= Consts.MAX_NUM_GRAPHS_IN_MEMORY)
-          writeImportedGraphsToFile
-      }
+    // Evaluate dumping imported graph list to file
+    if (importedGraphs.size >= Consts.MAX_NUM_GRAPHS_IN_MEMORY) {
+      writeImportedGraphsToFile
     }
 
-    if (invalidQuads>0)
-      log.warn("Invalid quads ("+invalidQuads+") found and skipped in "+ dumpLocation)
-
-    log.debug(importedQuadsNumber + " valid quads loaded from "+id+" ("+dumpLocation+")" )
-
-    writer.flush
-    writer.close
-    reporter.setFinishTime()
-    true
+    // Return correct quad
+    if (isRenameGraphEnabled) {
+      quad.copy(graph = renamedGraph)
+    } else {
+      quad
+    }
   }
 
   /* Rename graph according to a given regex */
@@ -111,9 +72,6 @@ case class QuadImportJob(dumpLocation : String, id : Identifier, refreshSchedule
     from.replaceAll(renameGraphs, to)
   }
 
-  override def getType = "quad"
-  override def getOriginalLocation = dumpLocation
-
   def toXML = {
     val xml = {
       <quadImportJob>
@@ -123,6 +81,8 @@ case class QuadImportJob(dumpLocation : String, id : Identifier, refreshSchedule
     }
     toXML(xml)
   }
+
+  def getReporter = reporter
 }
 
 object QuadImportJob{
@@ -135,6 +95,6 @@ object QuadImportJob{
   }
 }
 
-class QuadImportJobPublisher (id : Identifier) extends ImportJobStatusMonitor(id) with ReportPublisher {
+class QuadImportJobPublisher (id : Identifier) extends DumpImportJobPublisher(id) {
   override def getPublisherName = super.getPublisherName + " (quad)"
 }

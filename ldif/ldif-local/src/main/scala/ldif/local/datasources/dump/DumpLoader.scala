@@ -31,7 +31,6 @@ import org.apache.any23.writer.NTriplesWriter
 import org.apache.any23.plugin.officescraper.ExcelExtractor
 import org.apache.any23.rdf.RDFUtils
 
-
 /**
  * Streams data from a given file path or URL
  * Accepts N-TRIPLE, N3 and RDF/XML serializations, CSV format and gzip, bz2 and zip compression.
@@ -93,8 +92,7 @@ object DumpLoader {
       inputStream = new DecompressingStream(file).getStream
     } catch {
       case e:FileNotFoundException => {
-        log.warn(file.getCanonicalPath + " vanished: " + e.getMessage)
-        throw e
+        throw new Exception(file.getCanonicalPath + " vanished: " + e.getMessage)
       }
     }
 
@@ -112,8 +110,7 @@ object DumpLoader {
       inputStream = new DecompressingStream(url).getStream
     } catch {
       case e:Exception => {
-        log.warn(url + " did not provide any data")
-        throw e
+        throw new Exception(url + " did not provide any data")
       }
     }
 
