@@ -32,8 +32,9 @@ import org.xml.sax.SAXParseException
 
 case class SparqlImportJob(conf : SparqlConfig, id :  Identifier, refreshSchedule : String, dataSource : String) extends ImportJob{
   private val log = LoggerFactory.getLogger(getClass.getName)
-  private val graph = Consts.DEFAULT_IMPORTED_GRAPH_PREFIX+id
   val reporter = new SparqlImportJobPublisher(id)
+
+  def isTripleLimitEnabled = conf.tripleLimit != Long.MaxValue
 
   var statusMsg = ""
 
@@ -41,6 +42,10 @@ case class SparqlImportJob(conf : SparqlConfig, id :  Identifier, refreshSchedul
     JobMonitor.addPublisher(reporter)
     reporter.setStartTime()
     reporter.estimatedQuads = estimatedNumberOfQuads
+
+    if (isTripleLimitEnabled) {
+      reporter.queryLimit = conf.tripleLimit.toInt
+    }
 
     val writer = new ReportingOutputStreamWriter(out, reporter)
 
@@ -144,7 +149,6 @@ case class SparqlImportJob(conf : SparqlConfig, id :  Identifier, refreshSchedul
         if (offset == 0) {
            // set page size for the sparql endpoint
            limit = count
-           reporter.actualLimit = limit.toInt
         }
         offset += count
         loop = (count == limit) && (limit != 0) && !(offset == conf.tripleLimit)
@@ -247,14 +251,14 @@ case class SparqlConfig(endpointLocation : URI,  graphName : URI, sparqlPatterns
 
 class SparqlImportJobPublisher (id : Identifier) extends ImportJobStatusMonitor(id) with ReportPublisher {
 
-  var actualLimit : Int = 0
+  var queryLimit : Int = 0
 
   override def getPublisherName = super.getPublisherName + " (sparql)"
 
   override def getReport : Report = {
     var customReportItems = Seq.empty[ReportItem]
-    if(actualLimit > 0) {
-      customReportItems = customReportItems :+ ReportItem.get("Query limit", actualLimit)
+    if(queryLimit > 0) {
+      customReportItems = customReportItems :+ ReportItem.get("Query limit", queryLimit)
     }
     super.getReport(customReportItems)
   }
