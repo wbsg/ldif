@@ -1,4 +1,3 @@
-
 /*
  * LDIF
  *
@@ -16,6 +15,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package ldif.local.report
 
 import java.util.concurrent.atomic.AtomicInteger
@@ -33,33 +33,40 @@ class DumpLoadReportPublisher(val useSameAs: Boolean) extends JobDetailsStatusMo
     reportItems.append(createLoadedQuadsReportItem)
     reportItems.append(createSameAsReportItem)
     reportItems.append(createProvenanceReportItem)
-    if (dumpsQuads > 0)
-    reportItems.append(ReportItem.get("Quads contained in the dumps",dumpsQuads.toInt))
+    if (dumpsQuads > 0) {
+      reportItems.append(ReportItem.get("Quads contained in the dumps", dumpsQuads.toInt))
+    }
     super.getReport(reportItems)
   }
 
   private def createSameAsReportItem: ReportItem = {
-    if (useSameAs)
-      ReportItem("Nr. of sameAs links extracted", "store", externalSameAsQuads + " quads")
-    else
-      ReportItem("Nr. of sameAs links extracted", "ignore", "-")
+    if (useSameAs) {
+      ReportItem.get("Nr. of sameAs links extracted", "store", externalSameAsQuads)
+    } else {
+      ReportItem.get("Nr. of sameAs links extracted", "ignore", "-")
+    }
   }
 
-  private def createProvenanceReportItem: ReportItem =
-    ReportItem("Nr. of provenance quads extracted", "store", provenanceQuads + " quads")
+  private def createProvenanceReportItem: ReportItem = {
+    ReportItem.get("Nr. of provenance quads extracted", "store", provenanceQuads)
+  }
 
-  private def createLoadedQuadsReportItem: ReportItem =
-    ReportItem("Nr. of quads loaded", getStatusAsString, loadedQuads + " quads")
+  private def createLoadedQuadsReportItem: ReportItem = {
+    ReportItem.get("Nr. of quads loaded", getStatusAsString, loadedQuads)
+  }
 
-  private def getProgress : String =
-  if(dumpsQuads!=0 && !finished) {
+  private def getProgress : String = {
+    if(dumpsQuads!=0 && !finished) {
       val progress = (loadedQuads.intValue*100/(dumpsQuads)).toInt
       progress +"%"
+    } else {
+      "Loading..."
     }
-    else "Loading..."
+  }
 
-  override def getStatus : Option[String] =  status.orElse(Some(getProgress))
+  override def getStatus : Option[String] = status.orElse(Some(getProgress))
 
   def setInputQuads(n : Double) {dumpsQuads = n}
+
   def getInputQuads = dumpsQuads
 }

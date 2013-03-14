@@ -70,7 +70,7 @@ class SchedulerTest extends FlatSpec with ShouldMatchers {
     OutputValidator.contains(provenanceQuads, provenanceQuadsCorrect) should equal(true)
   }
 
-  it should "load RDFa data and provenance correctly" in {
+  it should "load a RDFa data and provenance correctly" in {
     val (dumpQuads, dumpQuadsCorrect, provenanceQuads, provenanceQuadsCorrect) = getQuads("test_rdfa")
     dumpQuads.size should equal (5)
     OutputValidator.contains(dumpQuads, dumpQuadsCorrect) should equal(true)
@@ -78,7 +78,7 @@ class SchedulerTest extends FlatSpec with ShouldMatchers {
     OutputValidator.contains(provenanceQuads, provenanceQuadsCorrect) should equal(true)
   }
 
-  it should "load XLSX data and provenance correctly" in {
+  it should "load a XLSX data and provenance correctly" in {
     val (dumpQuads, dumpQuadsCorrect, provenanceQuads, provenanceQuadsCorrect) = getQuads("test_xlsx")
     dumpQuads.size should equal (88)
     OutputValidator.contains(dumpQuads, dumpQuadsCorrect) should equal(true)
