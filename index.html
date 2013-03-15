@@ -2,186 +2,361 @@
 <html>
 <head>
   <title>LDIF – Linked Data Integration Framework</title>
- 
-  <style>
-body { background: white; color: black; font-family: sans-serif; line-height: 1.4em; padding: 3em 12em 3em 12em; margin: 0; }
-:link, :visited { color: #00c; }
-a:link img { border: none;  }
-a:visited img { border: none; }
-/* img - centered */
-#content img {
-    margin-left: auto;
-    margin-right: auto;
-    display:block;
-    border: none;
-    padding: 0;
-}
-h1, h2, h3, h4 { background: white; color: #800; }
-h1 { font: 170% sans-serif; margin: 0; }
-h2 { clear: both; font: 140% sans-serif; margin: 2.5em 0 -0.5em 0; }
-h3 { font: 120% sans-serif; margin: 1.5em 0 -0.5em 0; }
-h4 { font: 100% sans-serif; margin: 0.9em 0 -0.6em 0; }
-h5 { font: italic 100% sans-serif; margin: 0.7em 0 -0.8em 0;}
-pre { background: #fff6bb; font-family: monospace; line-height: 1.2em; padding: 1em 2em; }
-#configProperties {margin-left: 1em;}
-#configProperties p { margin-top:0px; margin-bottom:0px; padding: 0.5em 1.5em;}
-#configProperties pre { background: #fff6bb; font-family: monospace; line-height: 1.2em; padding: 1em 2em; margin-top:0px; margin-bottom:0px;}
-dt { font-weight: bold; margin-top: 0; margin-bottom: 0; }
-dd { margin-top: 0; margin-bottom: 0; }
-code, tt { font-family: monospace; }
-ul.toc { list-style-type: none; }
-ol.toc li a { text-decoration: none; }
-.note { color: red; }
-.todo { background-color: yellow;}
-#header { border-bottom: 1px solid #ccc; }
-#logo { float: right; margin-bottom: 10px; }
-#authors { clear: right; float: right; font-size: 80%; text-align: right; }
-#logo, #authors { min-width: 250px; }
-#content { margin: 2em auto 0 0; text-align: justify }
-#footer { border-top: 1px solid #ccc; color: #aaa; margin: 2em 0 0; }
-#top-container { height: 150px; width: 750px; padding: 20px; }
-#purpose { font-size: 110%; letter-spacing: 0.05em; word-spacing: 0.15em; width: 700px; margin: 0 auto 40px auto; }
-#boxcontainer { width: 850px; margin-left: auto; margin-right: auto; }
-.box { border: 1px solid #D3D3D3; height: 75px; text-align: center; float: left; margin-right: 20px; padding-top:5px; }
-.box:hover { background: none repeat scroll 0 0 #FCFDFF; box-shadow: 0 0 9px 1px #DFEFFF; }
-.box a:link, .box a:visited, .box a:hover, .box a:active { color: #1C5489; display: block; font-size: 110%; margin-left: 5px; min-height: 55px; padding: 9px 5px 5px 5px; text-decoration: none; }		
-.box a:hover, .box a:active { color: #16426B !important; cursor: pointer; text-decoration: none !important; }
-.box a span { display: block; margin-left: 40px; text-align: left; }
-.box a span small { color: #888; font-size: 70%; }
+  
+  <style type="text/css">
+    body {
+      background: white;
+      color: black;
+      font-family: sans-serif;
+      line-height: 1.4em;
+      padding: 3em 12em 3em 12em;
+      margin: 0;
+      }
 
-#downloadbox { width: 420px; padding-left: 10px;  color: #888; }
-#downloadbox a { display:inline; }
-#downloadbox span { margin-top: 20px; display:block; }
-#downloadbox small { display:block; font-size: 70%; }
-#quickstartbox, #supportbox { width: 175px; }
-#quickstartbox a span, #supportbox a span { padding: 15px 5px; }
+    :link, :visited {
+      color: #00c;
+      }
 
-#downloadbox { background: url("images/arrow_down_32.png") no-repeat scroll 10px 25px transparent; }
-#quickstartbox a { background: url("images/clock_32.png") no-repeat scroll 5px 20px transparent; }
-#supportbox a { background: url("images/comment_32.png") no-repeat scroll 5px 20px transparent; }
+    a:link img, :visited img {
+      border: none;
+      }
 
-@media Print {
-* { font-size: 92%; }
-body { padding: 0; line-height: 1.2em; }
-#content { margin: 0; width: 100%; }
-}
-@media Aural {
-h1 { stress: 20; richness: 90; }
-h2 { stress: 20; richness: 90; }
-h3 { stress: 20; richness: 90; }
-.hide { speak: none; }
-dt { pause-before: 20%; }
-pre { speak-punctuation: code; }
-}
-.Stil1 {color: #FF0000}
-table {border-collapse: collapse; margin-bottom: .75em; border-top: 1px solid #D4DCE8; border-bottom: 1px solid #D4DCE8}
-table th {text-align: left; background: #EAF3FA; padding: .5em .9em; height: 21px; font-weight: bold; font-size: 1em; color: #333}
-table th a {text-decoration: none !important}
-table td {vertical-align: top; text-align: left; padding: .5em 1em; border-bottom: 1px solid #eee}
-table tr.even {background-color: #fff}
-table tr.odd {background-color: #f6f6f6}
+    /* img - centered */
+    #content img {
+      margin-left: auto;
+      margin-right: auto;
+      display:block;
+      border: none;
+      padding: 0;
+      }
 
-#wbsg_navbar {
-    background-color: #dedede;
-    color: #7d7d7d;
-    font-size: 80%;
-    left: 0;
-    margin: 0;
-    padding: 0;
-    position: absolute;
-    text-align: right;
-    top: 0;
-    width: 100%;
-    background-color: #DEDEDE;
-    font-family: arial,helvetica,sans-serif;
+    h1, h2, h3, h4 {
+      background: white;
+      color: #800;
+      }
 
-    /* Safari 5.1, Chrome 10+ */
-    background: -webkit-linear-gradient(top, #ffffff, #dedede);
+    h1 {
+      font: 170% sans-serif;
+      margin: 0;
+      }
 
-    /* Firefox 3.6+ */
-    background: -moz-linear-gradient(top, #ffffff, #dedede);
+    h2 {
+      clear: both;
+      font: 140% sans-serif;
+      margin: 2.5em 0 -0.5em 0;
+      }
 
-    /* IE */
-    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffffff', endColorstr='#dedede');
+    h3 {
+      font: 120% sans-serif;
+      margin: 1.5em 0 -0.5em 0;
+      }
 
-    /* IE 10 */
-    background: -ms-linear-gradient(top, #ffffff, #dedede);
+    h4 {
+      font: 100% sans-serif;
+      margin: 0.9em 0 -0.6em 0;
+      }
 
-    /* Opera 11.10+ */
-    background: -o-linear-gradient(top, #ffffff, #dedede);
+    h5 {
+      font: italic 100% sans-serif;
+      margin: 0.7em 0 -0.8em 0;
+      }
 
-    text-shadow: 0px 1px 0px #ffffff;
-}
+    pre {
+      background: #fff6bb;
+      font-family: monospace;
+      line-height: 1.2em;
+      padding: 1em 2em;
+      }
 
-#wbsg_navbar a {
-    color: #4e4e4e;
-    text-decoration: none;
-}
+    /* Properties */
 
-#wbsg_navbar a:hover {
-    color: #1d1d1d;
-}
+    #configProperties {
+      margin-left: 1em;
+      }
 
-#wbsg_navbar_intro {
-    line-height: 25px;
-    width: 100%;
-    border-bottom: 1px solid #BCBCBC;
-}
+    #configProperties p {
+      margin-top:0px;
+      margin-bottom:0px;
+      padding: 0.5em 1.5em;
+      }
 
-#wbsg_navbar_projects {
-    float: right;
-}
+    #configProperties pre {
+      background: #fff6bb;
+      font-family: monospace;
+      line-height: 1.2em;
+      padding: 1em 2em;
+      margin-top:0px;
+      margin-bottom:0px;
+      }
 
-#wbsg_navbar_projects a {
-    display: block;
-    float: left;
-    line-height: 25px;
-    padding: 0 0.5em;
-    border-left: 1px solid #d2d2d2;
-    border-bottom: 1px solid #BCBCBC;
-}
+    dt {
+      font-weight: bold;
+      margin-top: 0;
+      margin-bottom: 0;
+      }
 
-#wbsg_navbar_projects a:hover {
-    background: #eaeaea;
+    dd {
+      margin-top: 0;
+      margin-bottom: 0;
+      }
 
-    /* Safari 5.1, Chrome 10+ */
-    background: -webkit-linear-gradient(top, #ffffff, #eaeaea);
+    code, tt {
+      font-family: monospace;
+      }
 
-    /* Firefox 3.6+ */
-    background: -moz-linear-gradient(top, #ffffff, #eaeaea);
+    ul.toc {
+      list-style-type: none;
+      }
 
-    /* IE */
-    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffffff', endColorstr='#eaeaea');
+    ol.toc li a {
+      text-decoration: none;
+      }
 
-    /* IE 10 */
-    background: -ms-linear-gradient(top, #ffffff, #eaeaea);
+    /* Header */
 
-    /* Opera 11.10+ */
-    background: -o-linear-gradient(top, #ffffff, #eaeaea);
-}
+    #header {
+      border-bottom: 1px solid #ccc;
+      }
 
-.wbsg_navbar_active_project {
-    font-weight: bold;
-    color: #373737 !important;
-    border-bottom: 1px solid #ffffff !important;
+    #logo {
+      float: right;
+      margin-bottom: 10px;
+      min-width: 250px;
+    }
 
-    background: #ffffff !important;
+    #authors {
+      clear: right;
+      float: right;
+      font-size: 80%;
+      text-align: right;
+      min-width: 250px;
+      }
 
-    /* Safari 5.1, Chrome 10+ */
-    background: -webkit-linear-gradient(top, #f2f2f2, #ffffff) !important;
+    #content {
+      margin: 2em auto 0 0;
+      text-align: justify;
+    }
 
-    /* Firefox 3.6+ */
-    background: -moz-linear-gradient(top, #f2f2f2, #ffffff) !important;
+    #footer {
+      border-top: 1px solid #ccc;
+      color: #aaa;
+      margin: 2em 0 0;
+      }
 
-    /* IE */
-    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#f2f2f2', endColorstr='#ffffff') !important;
+    #top-container {
+      height: 150px;
+      width: 750px;
+      padding: 20px;
+      }
 
-    /* IE 10 */
-    background: -ms-linear-gradient(top, #f2f2f2, #ffffff) !important;
+    #purpose {
+      font-size: 110%;
+      letter-spacing: 0.05em;
+      word-spacing: 0.15em;
+      width: 700px;
+      margin: 0 auto 40px auto;
+      }
 
-    /* Opera 11.10+ */
-    background: -o-linear-gradient(top, #f2f2f2, #ffffff) !important;
-}
+    /* Shortcut boxes */
+
+    #boxcontainer {
+      width: 850px;
+      margin-left: auto;
+      margin-right: auto;
+      }
+
+    .box {
+      border: 1px solid #D3D3D3;
+      height: 75px;
+      text-align: center;
+      float: left;
+      margin-right: 20px;
+      padding-top:5px;
+    }
+
+    .box:hover {
+      background: none repeat scroll 0 0 #FCFDFF;
+      box-shadow: 0 0 9px 1px #DFEFFF;
+      }
+
+    .box a:link, .box a:visited, .box a:hover, .box a:active {
+      color: #1C5489;
+      display: block;
+      font-size: 110%;
+      margin-left: 5px;
+      min-height: 55px;
+      padding: 9px 5px 5px 5px;
+      text-decoration: none;
+      }
+
+    .box a:hover, .box a:active {
+      color: #16426B !important;
+      cursor: pointer;
+      text-decoration: none !important;
+      }
+
+    .box a span {
+      display: block;
+      margin-left: 40px;
+      text-align: left;
+      }
+
+    .box a span small {
+      color: #888;
+      font-size: 70%;
+      }
+
+    #downloadbox { width: 420px; padding-left: 10px;  color: #888; }
+    #downloadbox a { display:inline; }
+    #downloadbox span { margin-top: 20px; display:block; }
+    #downloadbox small { display:block; font-size: 70%; }
+    #downloadbox { background: url("images/arrow_down_32.png") no-repeat scroll 10px 25px transparent; }
+
+    #quickstartbox, #supportbox { width: 175px; }
+    #quickstartbox a span, #supportbox a span { padding: 15px 5px; }
+    #quickstartbox a { background: url("images/clock_32.png") no-repeat scroll 5px 20px transparent; }
+
+    #supportbox a { background: url("images/comment_32.png") no-repeat scroll 5px 20px transparent; }
+
+    /* Table */
+
+    table {
+      border-collapse: collapse;
+      margin-bottom: .75em;
+      border-top: 1px solid #D4DCE8;
+      border-bottom: 1px solid #D4DCE8;
+      }
+
+    table th {
+      text-align: left;
+      background: #EAF3FA;
+      padding: .5em .9em;
+      height: 21px;
+      font-weight: bold;
+      font-size: 1em;
+      color: #333
+    }
+
+    table th a {
+      text-decoration: none !important;
+    }
+
+    table td {
+      vertical-align: top;
+      text-align: left;
+      padding: .5em 1em;
+      border-bottom: 1px solid #eee;
+      }
+
+    table tr.even {
+      background-color: #fff;
+      }
+
+    table tr.odd {
+      background-color: #f6f6f6;
+      }
+
+    /* Top navigation bar */
+
+    #wbsg_navbar {
+      background-color: #dedede;
+      color: #7d7d7d;
+      font-size: 80%;
+      left: 0;
+      margin: 0;
+      padding: 0;
+      position: absolute;
+      text-align: right;
+      top: 0;
+      width: 100%;
+      background-color: #DEDEDE;
+      font-family: arial,helvetica,sans-serif;
+      /* Safari 5.1, Chrome 10+ */
+      background: -webkit-linear-gradient(top, #ffffff, #dedede);
+      /* Firefox 3.6+ */
+      background: -moz-linear-gradient(top, #ffffff, #dedede);
+      /* IE */
+      filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffffff', endColorstr='#dedede');
+      /* IE 10 */
+      background: -ms-linear-gradient(top, #ffffff, #dedede);
+      /* Opera 11.10+ */
+      background: -o-linear-gradient(top, #ffffff, #dedede);
+      text-shadow: 0px 1px 0px #ffffff;
+      }
+
+    #wbsg_navbar a {
+      color: #4e4e4e;
+      text-decoration: none;
+      }
+
+    #wbsg_navbar a:hover {
+      color: #1d1d1d;
+      }
+
+    #wbsg_navbar_intro {
+      line-height: 25px;
+      width: 100%;
+      border-bottom: 1px solid #BCBCBC;
+      }
+
+    #wbsg_navbar_projects {
+      float: right;
+      }
+
+    #wbsg_navbar_projects a {
+      display: block;
+      float: left;
+      line-height: 25px;
+      padding: 0 0.5em;
+      border-left: 1px solid #d2d2d2;
+      border-bottom: 1px solid #BCBCBC;
+      }
+
+    #wbsg_navbar_projects a:hover {
+      background: #eaeaea;
+      /* Safari 5.1, Chrome 10+ */
+      background: -webkit-linear-gradient(top, #ffffff, #eaeaea);
+      /* Firefox 3.6+ */
+      background: -moz-linear-gradient(top, #ffffff, #eaeaea);
+      /* IE */
+      filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffffff', endColorstr='#eaeaea');
+      /* IE 10 */
+      background: -ms-linear-gradient(top, #ffffff, #eaeaea);
+      /* Opera 11.10+ */
+      background: -o-linear-gradient(top, #ffffff, #eaeaea);
+      }
+
+    .wbsg_navbar_active_project {
+      font-weight: bold;
+      color: #373737 !important;
+      border-bottom: 1px solid #ffffff !important;
+      background: #ffffff !important;
+      /* Safari 5.1, Chrome 10+ */
+      background: -webkit-linear-gradient(top, #f2f2f2, #ffffff) !important;
+      /* Firefox 3.6+ */
+      background: -moz-linear-gradient(top, #f2f2f2, #ffffff) !important;
+      /* IE */
+      filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#f2f2f2', endColorstr='#ffffff') !important;
+      /* IE 10 */
+      background: -ms-linear-gradient(top, #f2f2f2, #ffffff) !important;
+      /* Opera 11.10+ */
+      background: -o-linear-gradient(top, #f2f2f2, #ffffff) !important;
+      }
+
+    /* Media */
+
+    @media Print {
+      * {font-size: 92%;}
+      body {padding: 0; line-height: 1.2em;}
+      #content {margin: 0; width: 100%;}
+    }
+
+    @media Aural {
+      h1, h2, h3 {stress: 20; richness: 90;}
+      .hide {speak: none;}
+      dt {pause-before: 20%;}
+      pre {speak-punctuation: code;}
+    }
   </style>
   
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
@@ -346,9 +521,8 @@ table tr.odd {background-color: #f6f6f6}
   <li><a href="#examples">Examples</a><br>
   </li>
   <ul>
-    <li><a href="#example1">Using LDIF to integrate Data from the Music
-Domain</a></li>
-    <li><a href="#example2">Using LDIF to integrate Life Science Data </a></li>
+    <li><a href="#example1">Using LDIF to integrate Data from the Music Domain</a></li>
+    <li><a href="#example2">Using LDIF to integrate Life Science Data</a></li>
   </ul>
   <li><a href="#performance">Performance Evaluation</a> </li>
   <li><a href="#development">Source code and development</a></li>
@@ -667,7 +841,7 @@ which parameters you can modify to change the runtime behavior of LDIF.</p>
 </table>
 
 
-<h3 id="integrationjob"></a>Integration Job Configuration</h3>
+<h3 id="integrationjob">Integration Job Configuration</h3>
 <p>
     An Integration Job is configured with an XML document, whose structure is described by this <a href="https://github.com/wbsg/ldif/blob/master/ldif/ldif-core/src/main/resources/xsd/IntegrationJob.xsd">XML Schema</a>.
     The current structure is very simple because the integration flow is static at the moment, but that will change in future releases.
@@ -1060,8 +1234,7 @@ the latest release</li>
     Learn more about LDIF configuration by looking at the <a href="#scheduler">Schedule Job Configuration</a> (<tt>examples/music/light/schedulerConfig.xml</tt>) and the <a href="#integrationjob">Integration Job Configuration</a> (<tt>examples/music/light/integrationJob.xml</tt>)
 </p>
 
-<h3 id="rdfstorequickstart">Single machine / RDF Store<br>
-</h3>
+<h3 id="rdfstorequickstart">Single machine / RDF Store</h3>
 <p>To see LDIF running with a quad store (TDB) as backend, please follow these steps:</p>
 
 <ul>
@@ -1104,11 +1277,11 @@ the latest release</li>
 
 <p>Besides running the scheduler as in the example above, single phases are also supported to run in isolation. There exist following possibilities:</p>
 <ul>
-    <li>run integration job only:</a>
+    <li>run integration job only:
       <pre>hadoop jar lib/ldif-hadoop-*.jar integrate &lt;integrationJobConfigFile&gt;</pre></li>
-    <li>run R2R only:</a>
+    <li>run R2R only:
       <pre>hadoop jar lib/ldif-hadoop-*.jar r2r &lt;local path to mappings&gt; &lt;input path&gt; &lt;output path&gt;</pre></li>
-    <li>run Silk only:</a>
+    <li>run Silk only:
       <pre>hadoop jar lib/ldif-hadoop-*.jar silk &lt;local path to link spec.&gt; &lt;input path&gt; &lt;output path&gt;</pre></li>
 </ul>
 
