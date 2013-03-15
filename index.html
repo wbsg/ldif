@@ -185,6 +185,19 @@ table tr.odd {background-color: #f6f6f6}
   </style>
   
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+  <script type="text/javascript">
+	  var _gaq = _gaq || [];
+	  _gaq.push(['_setAccount', 'UA-36110461-1']);
+	  _gaq.push(['_trackPageview']);
+
+	  (function() {
+		var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+		ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+		var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+	  })();
+  </script>
+  
   </head>
 
   <body>
@@ -234,8 +247,8 @@ table tr.odd {background-color: #f6f6f6}
 
 <div id="boxcontainer">
     <div id="downloadbox" class="box">
-        <span><a href="https://dl.mes-semantics.com/ldif/ldif-0.5.1.zip" title="Download LDIF Single Machine version"  onclick="_gaq.push(['_trackEvent', 'Downloads', 'Single', '0.5.1'])">LDIF Single machine</a> |
-        <a href="https://dl.mes-semantics.com/ldif/ldif-hadoop-0.5.1.zip" title="Download LDIF Hadoop version" onclick="_gaq.push(['_trackEvent', 'Downloads', 'Hadoop', '0.5.1'])">LDIF Hadoop</a></span>
+        <span><a href="https://dl.mes-semantics.com/ldif/ldif-0.5.1.zip" title="Download LDIF Single Machine version" onclick="_gaq.push(['_trackEvent', 'Downloads', 'Single', '0.5.1 [dlBox]']);">LDIF Single machine</a> |
+        <a href="https://dl.mes-semantics.com/ldif/ldif-hadoop-0.5.1.zip" title="Download LDIF Hadoop version" onclick="_gaq.push(['_trackEvent', 'Downloads', 'Hadoop', '0.5.1 [dlBox]']);">LDIF Hadoop</a></span>
         <small>v0.5.1, released 2012-11-13</small>
     </div>
     <div id="quickstartbox" class="box"> <a href="#quickstart"><span>Quick Start</span></a> </div>
@@ -1013,7 +1026,7 @@ _:dbpedia0 &lt;http://www4.wiwiss.fu-berlin.de/ldif/hasOriginalLocation&gt; "htt
 <h3 id="inmemoryquickstart">Single machine / In-memory</h3>
 <p>To see LDIF in action, please follow these steps:</p>
 <ul>
-  <li><a href="https://dl.mes-semantics.com/ldif/ldif-0.5.1.zip" onclick="_gaq.push(['_trackEvent', 'Downloads', 'Single', '0.5.1 [quickStart]'])">download</a>
+  <li><a href="https://dl.mes-semantics.com/ldif/ldif-0.5.1.zip" onclick="_gaq.push(['_trackEvent', 'Downloads', 'Single', '0.5.1 [quickStart]']);">download</a>
 the latest release</li>
   <li>unpack the archive and change into the extracted directory <tt>ldif-0.5.1</tt></li>
   <li>run LDIF on the <a href="#example1">Music example</a></li>
@@ -1040,7 +1053,7 @@ the latest release</li>
 <p>To see LDIF running with a quad store (TDB) as backend, please follow these steps:</p>
 
 <ul>
-    <li><a href="https://dl.mes-semantics.com/ldif/ldif-0.5.1.zip"  onclick="_gaq.push(['_trackEvent', 'Downloads', 'Single', '0.5.1 [quickStart]'])">download</a> the latest release</li>
+    <li><a href="https://dl.mes-semantics.com/ldif/ldif-0.5.1.zip"  onclick="_gaq.push(['_trackEvent', 'Downloads', 'Single', '0.5.1 [quickStart]']);">download</a> the latest release</li>
     <li>unpack the archive and change into the extracted directory <tt>ldif-0.5.1</tt></li>
     <li>run LDIF on the <a href="#example1">Music example</a></li>
     <ul>
@@ -1066,7 +1079,7 @@ the latest release</li>
 <ul>
   <li>set up and configure a Hadoop (0.20.2) <a href="http://hadoop.apache.org/common/docs/current/cluster_setup.html">cluster</a> </li>
   <li>ssh to a cluster node</li>
-  <ul><li><a href="https://dl.mes-semantics.com/ldif/ldif-hadoop-0.5.1.zip"  onclick="_gaq.push(['_trackEvent', 'Downloads', 'Hadoop', '0.5.1 [quickStart]'])">download</a> the latest LDIF release</li>
+  <ul><li><a href="https://dl.mes-semantics.com/ldif/ldif-hadoop-0.5.1.zip"  onclick="_gaq.push(['_trackEvent', 'Downloads', 'Hadoop', '0.5.1 [quickStart]']);">download</a> the latest LDIF release</li>
     <li>unpack the archive and change into the extracted directory <tt>ldif-hadoop-0.5.1</tt></li>
     <li>run LDIF on the <a href="#example1">Music example</a></li>
     <pre>hadoop jar lib/ldif-hadoop-0.5.1.jar scheduler examples/music/light/schedulerConfig.xml</pre>
@@ -1564,18 +1577,5 @@ Commercial support for LDIF is available through <a href="http://mes-semantics.c
 <p> We would like to thank Rutvik Sheth (UBS) and colleagues for their extensive feedback.</p>
 <p> WooFunction icon set licensed under <a href="http://www.gnu.org/licenses/gpl.html">GNU General Public License</a>. </p>
 </div>
-<script type="text/javascript">
-
-  var _gaq = _gaq || [];
-  _gaq.push(['_setAccount', 'UA-36110461-1']);
-  _gaq.push(['_trackPageview']);
-
-  (function() {
-    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-  })();
-
-</script>
 </body>
 </html>
