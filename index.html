@@ -512,18 +512,19 @@
   <li><a href="#about">About LDIF</a></li>
   <li><a href="#components">LDIF components</a></li>
   <li><a href="#configuration">Configuration options</a></li>
-  <li><a href="#quickstart">Quick start</a></li>
-  <ul>
-    <li><a href="#inmemoryquickstart">Single machine / In-memory</a></li>
-    <li><a href="#rdfstorequickstart">Single machine / RDF Store</a></li>
-    <li><a href="#hadoopquickstart">Cluster / Hadoop</a></li>
-  </ul>
-  <li><a href="#examples">Examples</a><br>
+  <li><a href="#quickstart">Quick start</a>
+    <ul>
+      <li><a href="#inmemoryquickstart">Single machine / In-memory</a></li>
+      <li><a href="#rdfstorequickstart">Single machine / RDF Store</a></li>
+      <li><a href="#hadoopquickstart">Cluster / Hadoop</a></li>
+    </ul>
   </li>
-  <ul>
-    <li><a href="#example1">Using LDIF to integrate Data from the Music Domain</a></li>
-    <li><a href="#example2">Using LDIF to integrate Life Science Data</a></li>
-  </ul>
+  <li><a href="#examples">Examples</a><br>
+    <ul>
+      <li><a href="#example1">Using LDIF to integrate Data from the Music Domain</a></li>
+      <li><a href="#example2">Using LDIF to integrate Life Science Data</a></li>
+    </ul>
+  </li>
   <li><a href="#performance">Performance Evaluation</a> </li>
   <li><a href="#development">Source code and development</a></li>
   <li><a href="#history">Version history</a></li>
@@ -1137,7 +1138,7 @@ Optionally, the <tt>renameGraphs</tt> parameter allows to specify a regular expr
 <h4 id="crawlerImportJob">Crawler Import</h4>
 <p>
     A crawl import job is configured by specifying one or more seed URIs as starting points of the crawl.
-    Other optional parameters are:
+    Other optional parameters are: </p>
     <ul>
         <li><tt>predicatesToFollow</tt> - the predicates that the crawler should follow to discover new resources;</li>
         <li><tt>levels</tt> - the maximum number of levels to crawl, meaning the maximum distance to one of the seed URIs;</li>
@@ -1145,7 +1146,7 @@ Optionally, the <tt>renameGraphs</tt> parameter allows to specify a regular expr
         <li><tt>renameGraphs</tt> - a regular expression that will be used to rename the imported graph names, by removing the matching values.</li>
     </ul>
     Of each crawled resource all received triples are stored.
-</p>
+
 <pre>&lt;importJob xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
            xsi:schemaLocation="http://www4.wiwiss.fu-berlin.de/ldif/ ../../xsd/ImportJob.xsd"
            xmlns="http://www4.wiwiss.fu-berlin.de/ldif/"&gt;
@@ -1215,13 +1216,14 @@ _:dbpedia0 &lt;http://www4.wiwiss.fu-berlin.de/ldif/hasOriginalLocation&gt; "htt
   <li><a href="http://dl.mes-semantics.com/ldif/ldif-0.5.1.zip" onclick="trackOutboundLink(this, 'Downloads', 'Single'); return false;">download</a>
 the latest release</li>
   <li>unpack the archive and change into the extracted directory <tt>ldif-0.5.1</tt></li>
-  <li>run LDIF on the <a href="#example1">Music example</a></li>
-  <ul>
-    <li>under Linux / Mac OS type:</li>
-    <pre>bin/ldif examples/music/light/schedulerConfig.xml</pre>
-    <li>under Windows type:</li>
-    <pre>bin\ldif.bat examples\music\light\schedulerConfig.xml</pre>
-  </ul>
+  <li>run LDIF on the <a href="#example1">Music example</a>
+    <ul>
+      <li>under Linux / Mac OS type:
+        <pre>bin/ldif examples/music/light/schedulerConfig.xml</pre></li>
+      <li>under Windows type:
+        <pre>bin\ldif.bat examples\music\light\schedulerConfig.xml</pre></li>
+    </ul>
+  </li>
 </ul>
 
 <p>
@@ -1240,12 +1242,13 @@ the latest release</li>
 <ul>
     <li><a href="http://dl.mes-semantics.com/ldif/ldif-0.5.1.zip"  onclick="trackOutboundLink(this, 'Downloads', 'Single'); return false;">download</a> the latest release</li>
     <li>unpack the archive and change into the extracted directory <tt>ldif-0.5.1</tt></li>
-    <li>run LDIF on the <a href="#example1">Music example</a></li>
-    <ul>
-        <li>under Linux / Mac OS type:</li>
-        <pre>bin/ldif examples/music/light/schedulerConfigTDB.xml</pre>
+    <li>run LDIF on the <a href="#example1">Music example</a>
+      <ul>
+        <li>under Linux / Mac OS type:
+          <pre>bin/ldif examples/music/light/schedulerConfigTDB.xml</pre></li>
         <li>Windows: This should work under Windows with Cygwin, but has not been tested, yet. (TDB relies on the <a href="http://manpages.ubuntu.com/manpages/hardy/en/man1/sort.1.html">sort</a> program for bulk loading)
-    </ul>
+      </ul>
+    </li>
 </ul>
 
 <p>
@@ -1263,15 +1266,19 @@ the latest release</li>
 <p>To see LDIF running on a Hadoop cluster, please follow these steps:</p>
 <ul>
   <li>set up and configure a Hadoop (0.20.2) <a href="http://hadoop.apache.org/common/docs/current/cluster_setup.html">cluster</a> </li>
-  <li>ssh to a cluster node</li>
-  <ul><li><a href="http://dl.mes-semantics.com/ldif/ldif-hadoop-0.5.1.zip"  onclick="trackOutboundLink(this, 'Downloads', 'Hadoop'); return false;">download</a> the latest LDIF release</li>
-    <li>unpack the archive and change into the extracted directory <tt>ldif-hadoop-0.5.1</tt></li>
-    <li>run LDIF on the <a href="#example1">Music example</a></li>
-    <pre>hadoop jar lib/ldif-hadoop-0.5.1.jar scheduler examples/music/light/schedulerConfig.xml</pre>
-  </ul>
+  <li>ssh to a cluster node
+    <ul>
+      <li><a href="http://dl.mes-semantics.com/ldif/ldif-hadoop-0.5.1.zip"  onclick="trackOutboundLink(this, 'Downloads', 'Hadoop'); return false;">download</a> the latest LDIF release</li>
+      <li>unpack the archive and change into the extracted directory <tt>ldif-hadoop-0.5.1</tt></li>
+      <li>run LDIF on the <a href="#example1">Music example</a>
+        <pre>hadoop jar lib/ldif-hadoop-0.5.1.jar scheduler examples/music/light/schedulerConfig.xml</pre></li>
+    </ul>
+  </li>
 </ul>
 
-<p>This will import the data sets as defined by the LDIF import jobs and copies them afterwards to the Hadoop file system. Integration results will be written into the <tt>/user/hduser/integrated_music_light.nq</tt> directory in the Hadoop distributed file system (HDFS).</li> You can check the content of this directory using the following command: <tt>hadoop dfs -ls /user/hduser/integrated_music_light.nq</tt></p>
+<p>This will import the data sets as defined by the LDIF import jobs and copies them afterwards to the Hadoop file system.
+    Integration results will be written into the <tt>/user/hduser/integrated_music_light.nq</tt> directory in the Hadoop distributed file system (HDFS).
+    You can check the content of this directory using the following command: <tt>hadoop dfs -ls /user/hduser/integrated_music_light.nq</tt></p>
 
 <p>Please note that most of the run time for this small use case is dominated by the Hadoop overhead.</p>
 
@@ -1352,8 +1359,7 @@ the latest release</li>
 <ul>
   <li><a href="http://dbpedia.org/">DBpedia</a></li>
   <li><a href="http://rdf.freebase.com/">Freebase</a></li>
-  <li><a href="http://musicbrainz.dataincubator.org/">MusicBrainz</a>
-(at Talis)</li>
+  <li><a href="http://musicbrainz.dataincubator.org/">MusicBrainz</a> (at Talis)</li>
   <li><a href="http://www.bbc.co.uk/music/artist/">BBC Music</a></li>
 </ul>
 
@@ -1364,7 +1370,7 @@ the latest release</li>
     because you might not gather all the instances you are interested in.
 </p>
 
-<p> The following import job configuration files are used for the different sources: </p>
+<p>The following import job configuration files are used for the different sources: </p>
 <ul>
   <li>
       DBpedia
@@ -1397,8 +1403,7 @@ the latest release</li>
 <p>The target vocabulary is a mix of existing ontologies like FOAF, Music Ontology, Dublin Core, DBpedia etc. </p>
 <p>The following Silk identity resolution heuristics are used to find music artists, labels and albums that are described in multiple data sets:</p>
 <ul>
-  <li>Silk link specification: <a href="https://github.com/wbsg/ldif/blob/master/ldif/examples/music/full/linkspecs/musicLinkSpec.xml">musicLinkSpec.xml</a>
-  </li>
+  <li>Silk link specification: <a href="https://github.com/wbsg/ldif/blob/master/ldif/examples/music/full/linkspecs/musicLinkSpec.xml">musicLinkSpec.xml</a></li>
 </ul>
 <p>
     Music artist and record instances are integrated from all the sources.
@@ -1411,19 +1416,19 @@ the latest release</li>
 <p> In order to run the example, please download LDIF and run the following commands:</p>
 <ul>
   <li>change into the LDIF root directory;</li>
-  <li>under Linux / Mac OS type:</li>
-  <pre>bin/ldif examples/music/full/schedulerConfig.xml</pre>
-  <li>under Windows type:</li>
-  <pre>bin\ldif.bat examples\music\full\schedulerConfig.xml</pre>
+  <li>under Linux / Mac OS type:
+    <pre>bin/ldif examples/music/full/schedulerConfig.xml</pre></li>
+  <li>under Windows type:
+    <pre>bin\ldif.bat examples\music\full\schedulerConfig.xml</pre></li>
 </ul>
 <p> Please note that the execution of the import jobs can take about 3 hours, mainly due to crawling, which is relatively slow compared to other access methods.</p>
 <p> It is also available a <i>light</i> version of the use case, which runs in less than 5 minutes:</p>
 <ul>
   <li>change into the LDIF root directory;</li>
-  <li>under Linux / Mac OS type:</li>
-  <pre>bin/ldif examples/music/light/schedulerConfig.xml</pre>
-  <li>under Windows type:</li>
-  <pre>bin\ldif.bat examples\music\light\schedulerConfig.xml</pre>
+  <li>under Linux / Mac OS type:
+    <pre>bin/ldif examples/music/light/schedulerConfig.xml</pre></li>
+  <li>under Windows type:
+    <pre>bin\ldif.bat examples\music\light\schedulerConfig.xml</pre></li>
 </ul>
 
 <h4>Output</h4>
@@ -1472,7 +1477,6 @@ genes and other expressions that are described in multiple data sets.</p>
 <p>To run the example, please download LDIF and use the following LDIF
 configuration. The configuration options are explained in the Section <a href="#configuration">Configuration</a> below. <br>
 </p>
-<ul>
 <pre>&lt;integrationJob xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                 xsi:schemaLocation="http://www4.wiwiss.fu-berlin.de/ldif/ ../xsd/IntegrationConfig.xsd"
                 xmlns="http://www4.wiwiss.fu-berlin.de/ldif/"&gt;
@@ -1488,22 +1492,17 @@ configuration. The configuration options are explained in the Section <a href="#
         &lt;/output&gt;
     &lt;/outputs&gt;
 &lt;/integrationJob&gt;</pre>
-</ul>
 <h4>Execution instructions</h4>
 <ul>
   <li>Change into the LDIF root directory.</li>
-  <li>under Linux / Mac OS type:</li>
-  <ul>
-    <pre>bin/ldif-integrate examples/life-science/integration-config.xml</pre>
-  </ul>
-  <li>under Windows type:</li>
-  <ul>
-    <pre>bin\ldif-integrate.bat examples\life-science\integration-config.xml</pre>
-  </ul>
+  <li>under Linux / Mac OS type:
+    <pre>bin/ldif-integrate examples/life-science/integration-config.xml</pre></li>
+  <li>under Windows type:
+    <pre>bin\ldif-integrate.bat examples\life-science\integration-config.xml</pre></li>
 </ul>
 
 
-<h4>Examples of data translation </h4>
+<h4>Examples of data translation</h4>
 <p>In the following, we explain the data translation that is performed for the example of one entity that is described in two input data sets:</p>
 <ul>
   <li><b>Example <i>input</i> </b>(reduced to two source data sets, represented using the <a href="http://www4.wiwiss.fu-berlin.de/bizer/TriG/">TriG Syntax</a>):
@@ -1695,16 +1694,16 @@ Commercial support for LDIF is available through <a href="http://mes-semantics.c
         Andreas Schultz, Andrea Matteini, Robert Isele, Pablo Mendes, Christian Bizer, Christian Becker:
         <a href="http://mes-semantics.com/wp-content/uploads/2012/09/Schultz-et-al-LDIF-WWW2012-DevTrack.pdf">LDIF - A Framework for Large-Scale Linked Data Integration</a>.
         21st International World Wide Web Conference (WWW2012), Developers Track. Lyon, France, April 2012.
-    </li>
 
-<pre>@inproceedings{www12schultz,
+      <pre>@inproceedings{www12schultz,
        booktitle = {21st International World Wide Web Conference (WWW2012), Developers Track},
            month = {April},
            title = {{LDIF - A Framework for Large-Scale Linked Data Integration}},
           author = {Schultz, Andreas and Matteini, Andrea and Isele, Robert and Mendes, Pablo N. and Bizer, Christian and Becker, Christian} 
             year = {2012},
            pages = {to appear}
-}   </pre>
+}     </pre>
+    </li>
 
     <li>
         Pablo N. Mendes, Hannes Mühleisen, Christian Bizer:
@@ -1756,11 +1755,9 @@ Commercial support for LDIF is available through <a href="http://mes-semantics.c
 
 
 <h2 id="acknowledgments">11. Acknowledgments </h2>
-<p>
-    This work was supported in part by Vulcan Inc. as part of its <a href="http://www.projecthalo.com">Project Halo</a> and by the EU FP7 project <a href="http://lod2.eu">LOD2 - Creating Knowledge out of Interlinked Data</a> (Grant No. 257943).
-</p>
-<p> We would like to thank Rutvik Sheth (UBS) and colleagues for their extensive feedback.</p>
-<p> WooFunction icon set licensed under <a href="http://www.gnu.org/licenses/gpl.html">GNU General Public License</a>. </p>
+<p>This work was supported in part by Vulcan Inc. as part of its <a href="http://www.projecthalo.com">Project Halo</a> and by the EU FP7 project <a href="http://lod2.eu">LOD2 - Creating Knowledge out of Interlinked Data</a> (Grant No. 257943).</p>
+<p>We would like to thank Rutvik Sheth (UBS) and colleagues for their extensive feedback.</p>
+<p>WooFunction icon set licensed under <a href="http://www.gnu.org/licenses/gpl.html">GNU General Public License</a>. </p>
 </div>
 </body>
 </html>
