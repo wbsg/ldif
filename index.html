@@ -2,364 +2,10 @@
 <html>
 <head>
   <title>LDIF – Linked Data Integration Framework</title>
-  
-  <style type="text/css">
-    body {
-      background: white;
-      color: black;
-      font-family: sans-serif;
-      line-height: 1.4em;
-      padding: 3em 12em 3em 12em;
-      margin: 0;
-      }
 
-    :link, :visited {
-      color: #00c;
-      }
-
-    a:link img, :visited img {
-      border: none;
-      }
-
-    /* img - centered */
-    #content img {
-      margin-left: auto;
-      margin-right: auto;
-      display:block;
-      border: none;
-      padding: 0;
-      }
-
-    h1, h2, h3, h4 {
-      background: white;
-      color: #800;
-      }
-
-    h1 {
-      font: 170% sans-serif;
-      margin: 0;
-      }
-
-    h2 {
-      clear: both;
-      font: 140% sans-serif;
-      margin: 2.5em 0 -0.5em 0;
-      }
-
-    h3 {
-      font: 120% sans-serif;
-      margin: 1.5em 0 -0.5em 0;
-      }
-
-    h4 {
-      font: 100% sans-serif;
-      margin: 0.9em 0 -0.6em 0;
-      }
-
-    h5 {
-      font: italic 100% sans-serif;
-      margin: 0.7em 0 -0.8em 0;
-      }
-
-    pre {
-      background: #fff6bb;
-      font-family: monospace;
-      line-height: 1.2em;
-      padding: 1em 2em;
-      }
-
-    /* Properties */
-
-    #configProperties {
-      margin-left: 1em;
-      }
-
-    #configProperties p {
-      margin-top:0px;
-      margin-bottom:0px;
-      padding: 0.5em 1.5em;
-      }
-
-    #configProperties pre {
-      background: #fff6bb;
-      font-family: monospace;
-      line-height: 1.2em;
-      padding: 1em 2em;
-      margin-top:0px;
-      margin-bottom:0px;
-      }
-
-    dt {
-      font-weight: bold;
-      margin-top: 0;
-      margin-bottom: 0;
-      }
-
-    dd {
-      margin-top: 0;
-      margin-bottom: 0;
-      }
-
-    code, tt {
-      font-family: monospace;
-      }
-
-    ul.toc {
-      list-style-type: none;
-      }
-
-    ol.toc li a {
-      text-decoration: none;
-      }
-
-    /* Header */
-
-    #header {
-      border-bottom: 1px solid #ccc;
-      }
-
-    #logo {
-      float: right;
-      margin-bottom: 10px;
-      min-width: 250px;
-    }
-
-    #authors {
-      clear: right;
-      float: right;
-      font-size: 80%;
-      text-align: right;
-      min-width: 250px;
-      }
-
-    #content {
-      margin: 2em auto 0 0;
-      text-align: justify;
-    }
-
-    #footer {
-      border-top: 1px solid #ccc;
-      color: #aaa;
-      margin: 2em 0 0;
-      }
-
-    #top-container {
-      height: 150px;
-      width: 750px;
-      padding: 20px;
-      }
-
-    #purpose {
-      font-size: 110%;
-      letter-spacing: 0.05em;
-      word-spacing: 0.15em;
-      width: 700px;
-      margin: 0 auto 40px auto;
-      }
-
-    /* Shortcut boxes */
-
-    #boxcontainer {
-      width: 850px;
-      margin-left: auto;
-      margin-right: auto;
-      }
-
-    .box {
-      border: 1px solid #D3D3D3;
-      height: 75px;
-      text-align: center;
-      float: left;
-      margin-right: 20px;
-      padding-top:5px;
-    }
-
-    .box:hover {
-      background: none repeat scroll 0 0 #FCFDFF;
-      box-shadow: 0 0 9px 1px #DFEFFF;
-      }
-
-    .box a:link, .box a:visited, .box a:hover, .box a:active {
-      color: #1C5489;
-      display: block;
-      font-size: 110%;
-      margin-left: 5px;
-      min-height: 55px;
-      padding: 9px 5px 5px 5px;
-      text-decoration: none;
-      }
-
-    .box a:hover, .box a:active {
-      color: #16426B !important;
-      cursor: pointer;
-      text-decoration: none !important;
-      }
-
-    .box a span {
-      display: block;
-      margin-left: 40px;
-      text-align: left;
-      }
-
-    .box a span small {
-      color: #888;
-      font-size: 70%;
-      }
-
-    #downloadbox { width: 420px; padding-left: 10px;  color: #888; }
-    #downloadbox a { display:inline; }
-    #downloadbox span { margin-top: 20px; display:block; }
-    #downloadbox small { display:block; font-size: 70%; }
-    #downloadbox { background: url("images/arrow_down_32.png") no-repeat scroll 10px 25px transparent; }
-
-    #quickstartbox, #supportbox { width: 175px; }
-    #quickstartbox a span, #supportbox a span { padding: 15px 5px; }
-    #quickstartbox a { background: url("images/clock_32.png") no-repeat scroll 5px 20px transparent; }
-
-    #supportbox a { background: url("images/comment_32.png") no-repeat scroll 5px 20px transparent; }
-
-    /* Table */
-
-    table {
-      border-collapse: collapse;
-      margin-bottom: .75em;
-      border-top: 1px solid #D4DCE8;
-      border-bottom: 1px solid #D4DCE8;
-      }
-
-    table th {
-      text-align: left;
-      background: #EAF3FA;
-      padding: .5em .9em;
-      height: 21px;
-      font-weight: bold;
-      font-size: 1em;
-      color: #333
-    }
-
-    table th a {
-      text-decoration: none !important;
-    }
-
-    table td {
-      vertical-align: top;
-      text-align: left;
-      padding: .5em 1em;
-      border-bottom: 1px solid #eee;
-      }
-
-    table tr.even {
-      background-color: #fff;
-      }
-
-    table tr.odd {
-      background-color: #f6f6f6;
-      }
-
-    /* Top navigation bar */
-
-    #wbsg_navbar {
-      background-color: #dedede;
-      color: #7d7d7d;
-      font-size: 80%;
-      left: 0;
-      margin: 0;
-      padding: 0;
-      position: absolute;
-      text-align: right;
-      top: 0;
-      width: 100%;
-      background-color: #DEDEDE;
-      font-family: arial,helvetica,sans-serif;
-      /* Safari 5.1, Chrome 10+ */
-      background: -webkit-linear-gradient(top, #ffffff, #dedede);
-      /* Firefox 3.6+ */
-      background: -moz-linear-gradient(top, #ffffff, #dedede);
-      /* IE */
-      filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffffff', endColorstr='#dedede');
-      /* IE 10 */
-      background: -ms-linear-gradient(top, #ffffff, #dedede);
-      /* Opera 11.10+ */
-      background: -o-linear-gradient(top, #ffffff, #dedede);
-      text-shadow: 0px 1px 0px #ffffff;
-      }
-
-    #wbsg_navbar a {
-      color: #4e4e4e;
-      text-decoration: none;
-      }
-
-    #wbsg_navbar a:hover {
-      color: #1d1d1d;
-      }
-
-    #wbsg_navbar_intro {
-      line-height: 25px;
-      width: 100%;
-      border-bottom: 1px solid #BCBCBC;
-      }
-
-    #wbsg_navbar_projects {
-      float: right;
-      }
-
-    #wbsg_navbar_projects a {
-      display: block;
-      float: left;
-      line-height: 25px;
-      padding: 0 0.5em;
-      border-left: 1px solid #d2d2d2;
-      border-bottom: 1px solid #BCBCBC;
-      }
-
-    #wbsg_navbar_projects a:hover {
-      background: #eaeaea;
-      /* Safari 5.1, Chrome 10+ */
-      background: -webkit-linear-gradient(top, #ffffff, #eaeaea);
-      /* Firefox 3.6+ */
-      background: -moz-linear-gradient(top, #ffffff, #eaeaea);
-      /* IE */
-      filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffffff', endColorstr='#eaeaea');
-      /* IE 10 */
-      background: -ms-linear-gradient(top, #ffffff, #eaeaea);
-      /* Opera 11.10+ */
-      background: -o-linear-gradient(top, #ffffff, #eaeaea);
-      }
-
-    .wbsg_navbar_active_project {
-      font-weight: bold;
-      color: #373737 !important;
-      border-bottom: 1px solid #ffffff !important;
-      background: #ffffff !important;
-      /* Safari 5.1, Chrome 10+ */
-      background: -webkit-linear-gradient(top, #f2f2f2, #ffffff) !important;
-      /* Firefox 3.6+ */
-      background: -moz-linear-gradient(top, #f2f2f2, #ffffff) !important;
-      /* IE */
-      filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#f2f2f2', endColorstr='#ffffff') !important;
-      /* IE 10 */
-      background: -ms-linear-gradient(top, #f2f2f2, #ffffff) !important;
-      /* Opera 11.10+ */
-      background: -o-linear-gradient(top, #f2f2f2, #ffffff) !important;
-      }
-
-    /* Media */
-
-    @media Print {
-      * {font-size: 92%;}
-      body {padding: 0; line-height: 1.2em;}
-      #content {margin: 0; width: 100%;}
-    }
-
-    @media Aural {
-      h1, h2, h3 {stress: 20; richness: 90;}
-      .hide {speak: none;}
-      dt {pause-before: 20%;}
-      pre {speak-punctuation: code;}
-    }
-  </style>
-  
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+  <link rel="stylesheet" href="stylesheets/style.css" type="text/css" />
 
   <script type="text/javascript">
 	// Google Analytics scripts
@@ -385,9 +31,9 @@
 	}
   </script>
   
-  </head>
+</head>
 
-  <body>
+<body>
 
   <div id="wbsg_navbar">
   	<div id="wbsg_navbar_projects">
@@ -410,27 +56,27 @@
 <!-- End WBSG navbar -->
 
 <div id="logo" align="right">
-	<a href="http://wbsg.de"><img src="images/fu-logo.gif" alt="Freie Universität Berlin Logo"></a><br>
-	<a href="http://mes-semantics.com"><img src="images/mes-semantics.png" alt="mes|semantics"></a>
+    <a href="http://wbsg.de"><img src="images/fu-logo.gif" alt="Freie Universität Berlin Logo"></a><br>
+    <a href="http://mes-semantics.com"><img src="images/mes-semantics.png" alt="mes|semantics"></a>
 </div>
 
 <div id="header">
-	<h1 style="font-size: 250%;">LDIF – Linked Data Integration Framework </h1>
+    <h1 style="font-size: 250%;">LDIF – Linked Data Integration Framework</h1>
 </div>
 <div id="tagline">A framework for building Linked Data applications</div>
 
-<div id="authors"><a href="http://www.wiwiss.fu-berlin.de/en/institute/pwo/bizer/team/SchultzAndreas.html">Andreas Schultz</a><br>
-<a href="mailto:a.matteini@mes-semantics.com">Andrea Matteini</a><br>
-<a href="http://www.wiwiss.fu-berlin.de/en/institute/pwo/bizer/team/IseleRobert.html">Robert Isele</a><br>
-<a href="http://www.wiwiss.fu-berlin.de/en/institute/pwo/bizer/team/MendesPablo.html">Pablo N. Mendes</a><br>
-<a href="http://www.wiwiss.fu-berlin.de/en/institute/pwo/bizer/team/BizerChristian.html">Chris Bizer</a><br>
-<a href="mailto:c.becker@mes-semantics.com">Christian Becker</a><br>
+<div id="authors">
+    <a href="http://www.wiwiss.fu-berlin.de/en/institute/pwo/bizer/team/SchultzAndreas.html">Andreas Schultz</a><br>
+    <a href="mailto:a.matteini@mes-semantics.com">Andrea Matteini</a><br>
+    <a href="http://www.wiwiss.fu-berlin.de/en/institute/pwo/bizer/team/IseleRobert.html">Robert Isele</a><br>
+    <a href="http://www.wiwiss.fu-berlin.de/en/institute/pwo/bizer/team/MendesPablo.html">Pablo N. Mendes</a><br>
+    <a href="http://www.wiwiss.fu-berlin.de/en/institute/pwo/bizer/team/BizerChristian.html">Chris Bizer</a><br>
+    <a href="mailto:c.becker@mes-semantics.com">Christian Becker</a><br>
 </div>
 
 <div id="content">
 <div id="top-container">
 <div id="purpose">LDIF translates heterogeneous Linked Data from the Web into a clean, local target representation while keeping track of data provenance.</div>
-
 
 <div id="boxcontainer">
     <div id="downloadbox" class="box">
@@ -444,14 +90,17 @@
 </div>
 
 
+<div id="body-container">
+
 <h2 id="news">News</h2>
+<div>
 <ul>
 	<li>
 		<strong>02/21/2013:</strong> LDIF moved to <a href="https://github.com/wbsg/ldif">GitHub</a>.
 	</li>
     <li>
         <strong>11/13/2012: Version 0.5.1 released.</strong>
-        This release includes various minor improvements and bugfixes. New features includes the possibility to output results of each single phase and some additional <a href="#configProperties">configuration parameters</a>.
+        This release includes various minor improvements and bugfixes. New features includes the possibility to output results of each single phase and some additional <a href="#integrationProperties">configuration parameters</a>.
     </li>
 
     <li>
@@ -466,7 +115,7 @@
     </li>
 
     <li>
-	    <strong>02/06/2012: Presentation:</strong>
+        <strong>02/06/2012: Presentation:</strong>
         LDIF is presented at <a href="http://semtechbizberlin2012.semanticweb.com/">SEMTECHBIZ Berlin 2012</a> (<a href="http://mes-semantics.com/wp-content/uploads/2012/09/BeckerMatteini-LDIF-SemTechBerlin2012-Talk.pdf">Slides</a>).
     </li>
 
@@ -505,38 +154,40 @@
         This alpha version provides for translating data that is represented using different source vocabularies into a single target vocabulary and for replacing different URIs that refer to the same real-world entity with a single target URI.
     </li>
 </ul>
+</div>
 
 
 <h2 id="contents">Contents</h2>
-<ol class="toc">
-  <li><a href="#about">About LDIF</a></li>
-  <li><a href="#components">LDIF components</a></li>
-  <li><a href="#configuration">Configuration options</a></li>
-  <li><a href="#quickstart">Quick start</a>
-    <ul>
-      <li><a href="#inmemoryquickstart">Single machine / In-memory</a></li>
-      <li><a href="#rdfstorequickstart">Single machine / RDF Store</a></li>
-      <li><a href="#hadoopquickstart">Cluster / Hadoop</a></li>
-    </ul>
-  </li>
-  <li><a href="#examples">Examples</a><br>
-    <ul>
-      <li><a href="#example1">Using LDIF to integrate Data from the Music Domain</a></li>
-      <li><a href="#example2">Using LDIF to integrate Life Science Data</a></li>
-    </ul>
-  </li>
-  <li><a href="#performance">Performance Evaluation</a> </li>
-  <li><a href="#development">Source code and development</a></li>
-  <li><a href="#history">Version history</a></li>
-  <li><a href="#feedback">Support and Feedback</a></li>
-  <li><a href="#references">References</a></li>
-  <li><a href="#acknowledgments">Acknowledgments</a></li>
-</ol>
+<div>
+    <ol class="toc">
+      <li><a href="#about">About LDIF</a></li>
+      <li><a href="#components">LDIF components</a></li>
+      <li><a href="#configuration">Configuration options</a></li>
+      <li><a href="#quickstart">Quick start</a>
+        <ul>
+          <li><a href="#inmemoryquickstart">Single machine / In-memory</a></li>
+          <li><a href="#rdfstorequickstart">Single machine / RDF Store</a></li>
+          <li><a href="#hadoopquickstart">Cluster / Hadoop</a></li>
+        </ul>
+      </li>
+      <li><a href="#examples">Examples</a><br>
+        <ul>
+          <li><a href="#example1">Using LDIF to integrate Data from the Music Domain</a></li>
+          <li><a href="#example2">Using LDIF to integrate Life Science Data</a></li>
+        </ul>
+      </li>
+      <li><a href="#performance">Performance Evaluation</a> </li>
+      <li><a href="#development">Source code and development</a></li>
+      <li><a href="#history">Version history</a></li>
+      <li><a href="#feedback">Support and Feedback</a></li>
+      <li><a href="#references">References</a></li>
+      <li><a href="#acknowledgments">Acknowledgments</a></li>
+    </ol>
+</div>
 
 
-
-<h2 id="about">1. About LDIF<br>
-</h2>
+<h2 id="about">1. About LDIF</h2>
+<div>
 <p>
     The <a href="http://linkeddatabook.com/editions/1.0/index.html#htoc23">Web of Linked Data</a> grows rapidly and contains data from a wide range of different domains,
     including life science data, geographic data, government data, library and media data, as well as cross-domain data sets such as DBpedia or Freebase.
@@ -571,9 +222,11 @@
     The figure highlights the steps of the data integration process that are currently supported by LDIF.
 </p>
 <img alt="Example-architecture of an integration aware Linked Data application" src="images/linkeddataapp.png">
+</div>
 
 
-<h2 id="components">2. LDIF Components</h2>
+<h2 id="components">2. Components</h2>
+<div>
 <p>The LDIF Framework consists of a Scheduler, Data Import and an Integration component with a set of
 pluggable modules. These modules are organized as data input, data transformation and data output.
 </p>
@@ -582,20 +235,20 @@ pluggable modules. These modules are organized as data input, data transformatio
 
 
 <h3 id="scheduler">Scheduler</h3>
+<div>
 <p>
     The Scheduler is used for triggering pending data import jobs or integration jobs. It is configured with an XML document (see <a href="#scheduler">Configuration</a>) and offers several ways to express when and how often a certain job should be executed. This component is useful when you want to load external data or run the integration periodically, otherwise you could just run the integration component. Since LDIF version 0.5 there is a REST based status monitor that informs about the progress of the scheduled jobs.
 </p>
+</div>
 
 
 <h3>Data Import</h3>
-<p>LDIF provides access modules for replicating data sets locally via
-file download, crawling or SPARQL. These different types of <a href="#importjob">import jobs</a> generate <a href="#provenance">provenance
-metadata</a>,
-which is tracked throughout the integration process. Import jobs are
-managed by a scheduler that can be
-configured to refresh (<span style="font-style: italic;">hourly</span>,
-<span style="font-style: italic;">daily</span> etc.) the local cache
-for each source. </p>
+<div>
+<p>
+    LDIF provides access modules for replicating data sets locally via file download, crawling or SPARQL.
+    These different types of <a href="#importjob">import jobs</a> generate <a href="#provenance">provenance metadata</a>, which is tracked throughout the integration process.
+    Import jobs are managed by a scheduler that can be configured to refresh (<i>hourly</i>, <i>daily</i> etc.) the local cache for each source.</p>
+
 <h4>Triple/Quad Dump Import</h4>
 <p>In order to get a local replication of data sets from the Web of Data the simplest way is to download a file containing
 the data set. The triple/quad dump import does exactly this, with the difference that LDIF generates a provenance graph
@@ -610,169 +263,122 @@ specified in the <a href="#configuration">configuration</a> section.
 Each crawled URI is put into a seperate named graph for provenance
 tracking.</p>
 <h4>SPARQL Import</h4>
-<p>Data sources that can be accessed via SPARQL are replicated by
-LDIF's
-SPARQL access module. The relevant data to be queried can be further
-specified in the configuration file for a SPARQL import job. Data from
-each SPARQL import job gets tracked by its own named graph.</p>
-
+<p>
+    Data sources that can be accessed via SPARQL are replicated by LDIF's SPARQL access module.
+    The relevant data to be queried can be further specified in the configuration file for a SPARQL import job.
+    Data from each SPARQL import job gets tracked by its own named graph.</p>
+</div>
 
 <h3>Integration Runtime Environment</h3>
-
-<p>The integration component manages the data
-flow between the various stages/modules, the caching of the intermediate
-results and the execution of the different modules for each stage.</p>
+<div>
+<p>
+    The integration component manages the data flow between the various stages/modules, the caching of the intermediate results and the execution of the different modules for each stage.</p>
 
 <h4>Data Input</h4>
-
-<p>The integration component expects input data to be represented as Named Graphs and be stored
-in <a href="http://sw.deri.org/2008/07/n-quads/">N-Quads format</a>
-accessible locally - the Web access modules convert any imported data
-into N-Quads format. </p>
-
-
+<p> The integration component expects input data to be represented as Named Graphs and be stored in <a href="http://sw.deri.org/2008/07/n-quads/">N-Quads format</a> accessible
+    locally - the Web access modules convert any imported data into N-Quads format. </p>
 
 <h4>Transformation</h4>
-<p>LDIF provides the following transformation modules:</p>
+<p> LDIF provides the following transformation modules:</p>
 
 <h5>Data Translation</h5>
-<p>LDIF employs the <a href="http://www4.wiwiss.fu-berlin.de/bizer/r2r/">R2R Framework</a>
-to translate Web data that is represented using terms from different
-vocabularies into a single target vocabulary. Vocabulary mappings are
-expressed using the <a href="http://www4.wiwiss.fu-berlin.de/bizer/r2r/spec/">R2R Mapping
-Language</a>.
-The language provides for simple transformations as well as for more
-complex structural transformations and property value transformations
-such as normalizing different units of measurement or complex string
-manipulations. The syntax of the
-R2R Mapping Language is very similar to the query language SPARQL,
-which eases the learning curve. The expressivity of the language
-enabled us to deal with all requirements that we have encountered so
-far when translating Linked Data from the Web into a target
-representation (evaluation in [<a href="#references">2</a>]). Simple
-class/property-renaming mappings which often form the majority in an
-integration use case can also be expressed in OWL/RDFS (e.g <span style="font-family: monospace;">ns1:class rdfs:subClassOf ns2:clazz</span>).<span style="text-decoration: underline;"></span>
-<br/>An overview and examples for mappings are given on the <a href="http://www4.wiwiss.fu-berlin.de/bizer/r2r/">R2R website</a>.
-The <a href="http://www4.wiwiss.fu-berlin.de/bizer/r2r/spec/">specification and user manual</a> is provided as a separate document.<br>
-</p>
+<p> LDIF employs the <a href="http://www4.wiwiss.fu-berlin.de/bizer/r2r/">R2R Framework</a> to translate Web data that is represented using terms from different vocabularies into a single target vocabulary.
+    Vocabulary mappings are expressed using the <a href="http://www4.wiwiss.fu-berlin.de/bizer/r2r/spec/">R2R Mapping Language</a>.
+    The language provides for simple transformations as well as for more complex structural transformations and property value transformations such as normalizing different units of measurement or complex string manipulations.
+    The syntax of the R2R Mapping Language is very similar to the query language SPARQL,which eases the learning curve.
+    The expressivity of the language enabled us to deal with all requirements that we have encountered so far when translating Linked Data from the Web into a target representation (evaluation in [<a href="#references">2</a>]).
+    Simple class/property-renaming mappings which often form the majority in an integration use case can also be expressed in OWL/RDFS (e.g <tt>ns1:class rdfs:subClassOf ns2:clazz</tt>).
+    <br/>
+    An overview and examples for mappings are given on the <a href="http://www4.wiwiss.fu-berlin.de/bizer/r2r/">R2R website</a>.
+    The <a href="http://www4.wiwiss.fu-berlin.de/bizer/r2r/spec/">specification and user manual</a> is provided as a separate document.<br></p>
 
 <h5>Identity Resolution</h5>
-<p>
-LDIF employs the <a href="http://www4.wiwiss.fu-berlin.de/bizer/silk/">Silk
-Link Discovery Framework</a>
-to find different URIs that are used within different data sources to
-identify the same real-world entity. For each set of duplicates which
-have been identified by Silk, LDIF replaces all URI aliases with a
-single target URI within the output data. In addition, it adds
-owl:sameAs links pointing at the original URIs, which makes it possible
-for applications to refer back to the data sources on the Web. If the
-LDIF input data already contains owl:sameAs links, the referenced
-URIs are normalized accordingly (optional, see <a href="#configuration">configuration</a>).
-Silk is a
-flexible identity
-resolution framework that allows the user to specify identity
-resolution heuristics which combine different types of matchers using
-the declarative <a href="http://www4.wiwiss.fu-berlin.de/bizer/silk/spec/">Silk - Link
-Specification Language</a>.
-<br>An overview and examples can be found on the <a href="http://www4.wiwiss.fu-berlin.de/bizer/silk/">Silk website</a>.<br>
-</p>
+<p> LDIF employs the <a href="http://www4.wiwiss.fu-berlin.de/bizer/silk/">Silk Link Discovery Framework</a> to find different URIs that are used within different data sources to identify the same real-world entity.
+    For each set of duplicates which have been identified by Silk, LDIF replaces all URI aliases with a single target URI within the output data.
+    In addition, it adds owl:sameAs links pointing at the original URIs, which makes it possible for applications to refer back to the data sources on the Web.
+    If the LDIF input data already contains owl:sameAs links, the referenced URIs are normalized accordingly (optional, see <a href="#configuration">configuration</a>).
+    Silk is a flexible identity resolution framework that allows the user to specify identity resolution heuristics which combine different types of matchers using the declarative <a href="http://www4.wiwiss.fu-berlin.de/bizer/silk/spec/">Silk - Link Specification Language</a>.
+    <br>
+    An overview and examples can be found on the <a href="http://www4.wiwiss.fu-berlin.de/bizer/silk/">Silk website</a>.<br></p>
 
 <h5 id="qualityfusion">Data Quality Assessment and Fusion</h5>
-<p>LDIF employs <a href="http://sieve.wbsg.de">Sieve</a> to provide data quality evaluation and cleansing. The procedure consists of two separate steps.
-First, the Data Quality Assessment module assigns each Named Graph within the processed data one or several quality scores based on user-configurable
-quality assessment policies. These policies combine a assessment function with the definition of the quality-related meta-information which
-should be used in the assessment process.
-Then the Data Fusion module takes the quality scores as input and resolves data conflicts based on the
-assessment scores. The applied fusion functions can be configured on property level.
-Sieve provides a basic set of quality assessment functions and fusion functions as well as an open interface for the implementation of additional
-domain-specific functions. <br/>
-An overview and examples can be found on the <a href="http://sieve.wbsg.de">Sieve website</a>.</p>
+<p> LDIF employs <a href="http://sieve.wbsg.de">Sieve</a> to provide data quality evaluation and cleansing.
+    The procedure consists of two separate steps.
+    First, the Data Quality Assessment module assigns each Named Graph within the processed data one or several quality scores based on user-configurable quality assessment policies.
+    These policies combine a assessment function with the definition of the quality-related meta-information which should be used in the assessment process.
+    Then the Data Fusion module takes the quality scores as input and resolves data conflicts based on the assessment scores.
+    The applied fusion functions can be configured on property level.
+    Sieve provides a basic set of quality assessment functions and fusion functions as well as an open interface for the implementation of additional domain-specific functions.
+    <br/>
+    An overview and examples can be found on the <a href="http://sieve.wbsg.de">Sieve website</a>.</p>
 
 <h4>Data Output</h4>
 <p>LDIF final and intermediate results can be written to file or to a QuadStore.</p>
 
 <h5>File Output</h5>
 <p>Two file output formats are currently supported by LDIF: </p>
-<ul><li>N-Quads - dumps the data into a single N-Quads file, this file contains the translated versions of all graphs from the input graph set as well as the content
-of the provenance graph and <tt>owl:sameAs</tt> links;    </li>
-<li> N-Triples - dumps the data into a single N-Triples file, since there exists no connection to the provenance data anymore after outputting it as N-Triples,
-the provenance data is discarded instead of being output. </li>
+<ul>
+    <li>N-Quads - dumps the data into a single N-Quads file, this file contains the translated versions of all graphs from the input graph set as well as the content of the provenance graph and <tt>owl:sameAs</tt> links;</li>
+    <li> N-Triples - dumps the data into a single N-Triples file, since there exists no connection to the provenance data anymore after outputting it as N-Triples, the provenance data is discarded instead of being output.</li>
 </ul>
+
 <h5>QuadStore Output</h5>
 <p>Data is written to a QuadStore as SPARQL/Update stream. Here is a list of the <a href="https://github.com/wbsg/ldif/wiki/Quadstore-Compatibility">supported stores</a>.</p>
 
 <h4>Runtime Environments </h4>
 
-<p>The Runtime Environment for the integration component manages the data
-flow between the various stages/modules and the caching of the intermediate
-results.
- </p>
-<p> In order to parallelize the data processing, the data is
-partitioned into entities prior to supplying it to a transformation
-module. An entity represents a Web resource together with all data that
-is required by a transformation module to process this resource.
-Entities consist of one or more graph paths and include a graph
-URI for each node. Each transformation module specifies which paths
-should be included into the entities it processes. Splitting the work into fine-granular entities, allows LDIF to parallelize
-the work.
+<p>The Runtime Environment for the integration component manages the data flow between the various stages/modules and the caching of the intermediate results.</p>
+
+<p> In order to parallelize the data processing, the data is partitioned into entities prior to supplying it to a transformation module.
+    An entity represents a Web resource together with all data that is required by a transformation module to process this resource.
+    Entities consist of one or more graph paths and include a graph URI for each node.
+    Each transformation module specifies which paths should be included into the entities it processes.
+    Splitting the work into fine-granular entities, allows LDIF to parallelize the work.
 </p>
 
-<p>LDIF provides three implementations of the Runtime Environment:  1. the
-in-memory version, 2. the RDF store version and 3. the Hadoop version.
-Depending of the size of your data set and the available computing
-resources, you can choose the runtime environment that best fits your use
-case.
-</p>
+<p> LDIF provides three implementations of the Runtime Environment:
+    1. the in-memory version, 2. the RDF store version and 3. the Hadoop version.
+    Depending of the size of your data set and the available computing resources, you can choose the runtime environment that best fits your use case.</p>
 
 <h5>Single machine / In-memory</h5>
-<p>  The in-memory implementation keeps
-all intermediate results in
-memory.
-    It is fast but its scalability is limited by the amount of
-available memory. For instance, integrating 25 million triples required 5 GB
-memory within one of our <a href="benchmark.html">experiments</a>. Parallelization is achieved by
-distributing the work (entities) to multiple threads.
-
-</p>
+<p> The in-memory implementation keeps all intermediate results in memory.
+    It is fast but its scalability is limited by the amount of available memory.
+    For instance, integrating 25 million triples required 5 GB memory within one of our <a href="benchmark.html">experiments</a>.
+    Parallelization is achieved by distributing the work (entities) to multiple threads.</p>
 
 <h5>Single machine / RDF Store</h5>
+<p> This implementation of the runtime environment uses an  <a href="http://openjena.org/TDB/">Jena TDB RDF store</a> to store intermediate results.
+    The communication between the RDF store and the runtime environment is realized in the form of SPARQL queries.
+    This runtime environment allows you to process data sets that don't fit into memory anymore.
+    The downside is that the RDF Store implementation is slower as the In-memory implementation.</p>
 
-<p>
-This implementation of the runtime environment uses an  <a href="http://openjena.org/TDB/">Jena TDB RDF store</a> to
-store intermediate results. The communication between the RDF store and the
-runtime environment is realized in the form of SPARQL queries. This runtime
-environment allows you to process data sets that don't fit into memory
-anymore. The downside is that the RDF Store implementation is slower as the
-In-memory implementation.
-</p>
 <h5>Cluster / Hadoop</h5>
-<p>
-This implementation of the runtime environment allows you to parallelize the work onto multiple machines using Hadoop.
-Each phase in the integration flow has been ported to be executable on a Hadoop cluster.
-Some initial performance figures comparing the run times of the in-memory, quad store and Hadoop version against different data set sizes are provided in the <a href="benchmark.html">Benchmark Wiki</a>.
-</p>
-
+<p> This implementation of the runtime environment allows you to parallelize the work onto multiple machines using Hadoop.
+    Each phase in the integration flow has been ported to be executable on a Hadoop cluster.
+    Some initial performance figures comparing the run times of the in-memory, quad store and Hadoop version against different data set sizes are provided in the <a href="benchmark.html">Benchmark Wiki</a>.</p>
+</div>
 
 <h3 id="nextSteps">Next steps for LDIF</h3>
+<div>
 <p>Over the next months, we plan to extend LDIF along the
 following lines:<br>
 </p>
 <ol>
-  <li><strong>Flexible integration workflow</strong>. Currently the
-integration flow is static and can only be influenced by predefined
-configuration parameters. We plan to make the workflow and its
-configuration more flexible in order to make it easier to include
-additional modules that cover other data integration aspects.<br>
-  </li>
+  <li><strong>Flexible integration workflow</strong>. Currently the integration flow is static and can only be influenced by predefined configuration parameters.
+      We plan to make the workflow and its configuration more flexible in order to make it easier to include additional modules that cover other data integration aspects. </li>
 </ol>
+</div>
+</div>
+
+
 <h2 id="configuration">3. Configuration Options</h2>
+<div>
 <p>This section describes how LDIF configuration files look like and
 which parameters you can modify to change the runtime behavior of LDIF.</p>
 <h3 id="schedulerjob">Schedule Job Configuration</h3>
-<p>
-    A Schedule Job updates the representation of external sources in the local cache and it is configured with an XML document, whose structure is described by this <a href="https://github.com/wbsg/ldif/blob/master/ldif/ldif-core/src/main/resources/xsd/SchedulerConfig.xsd">XML Schema</a>.
-    The scheduler configuration is the top configuration file that references all the other configuration files like the for the import jobs for accessing remote sources and for the integration job.s
-</p>
+<div>
+<p> A Schedule Job updates the representation of external sources in the local cache and it is configured with an XML document, whose structure is described by this <a href="https://github.com/wbsg/ldif/blob/master/ldif/ldif-core/src/main/resources/xsd/SchedulerConfig.xsd">XML Schema</a>.
+    The scheduler configuration is the top configuration file that references all the other configuration files like the for the import jobs for accessing remote sources and for the integration job.</p>
 
 <p> A typical configuration document looks like this: </p>
 <pre>&lt;scheduler xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -840,9 +446,10 @@ which parameters you can modify to change the runtime behavior of LDIF.</p>
         <td><tt>http://localhost:5343</tt></td>
     </tr>
 </table>
-
+</div>
 
 <h3 id="integrationjob">Integration Job Configuration</h3>
+<div>
 <p>
     An Integration Job is configured with an XML document, whose structure is described by this <a href="https://github.com/wbsg/ldif/blob/master/ldif/ldif-core/src/main/resources/xsd/IntegrationJob.xsd">XML Schema</a>.
     The current structure is very simple because the integration flow is static at the moment, but that will change in future releases.
@@ -902,7 +509,6 @@ which parameters you can modify to change the runtime behavior of LDIF.</p>
     In the Integration Job configuration file you can specify a (Java) properties file to further tweak certain parameters concerning the integration workflow.
     Here is a list of the currently supported properties and their default values:
 </p>
-<div id="configProperties">
     <table>
         <tr>
             <th width="15%">Field</th>
@@ -1080,11 +686,10 @@ which parameters you can modify to change the runtime behavior of LDIF.</p>
     </table>
 </div>
 
-
 <h3 id="importjob">Import Job Configuration</h3>
-<p>An Import Job is configured with an XML document, whose structure is described by this <a href="https://github.com/wbsg/ldif/blob/master/ldif/ldif-core/src/main/resources/xsd/ImportJob.xsd">XML Schema</a>.</p>
-
-<p>It has the following elements:</p>
+<div>
+<p> An Import Job is configured with an XML document, whose structure is described by this <a href="https://github.com/wbsg/ldif/blob/master/ldif/ldif-core/src/main/resources/xsd/ImportJob.xsd">XML Schema</a>.
+    It has the following elements:</p>
 <ul>
   <li> <i>internalId</i> - A unique ID, which will be used internally to track the import job and its files like data and provenance; </li>
   <li> <i>dataSource </i>- A reference to a <a href="#datasource">datasource</a> to state from which source this job imports data;  </li>
@@ -1182,20 +787,27 @@ Optionally, the <tt>renameGraphs</tt> parameter allows to specify a regular expr
 <p>A typical provenance graph for a Crawl Import Job looks like this:</p>
 <img src="images/Freebase-Provenance.png" alt="Provenance graph">
 <p>A typical provenance graph for a Quad Import Job looks like this:</p>
-<pre>&lt;http://dbpedia.org/graphA&gt; &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#type&gt; &lt;http://www4.wiwiss.fu-berlin.de/ldif/ImportedGraph&gt; &lt;http://www4.wiwiss.fu-berlin.de/ldif/provenance&gt; .
-&lt;http://dbpedia.org/graphA&gt; &lt;http://www4.wiwiss.fu-berlin.de/ldif/hasImportJob&gt; _:dbpedia0 &lt;http://www4.wiwiss.fu-berlin.de/ldif/provenance&gt; .
-&lt;http://dbpedia.org/graphB&gt; &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#type&gt; &lt;http://www4.wiwiss.fu-berlin.de/ldif/ImportedGraph&gt; &lt;http://www4.wiwiss.fu-berlin.de/ldif/provenance&gt; .
-&lt;http://dbpedia.org/graphB&gt; &lt;http://www4.wiwiss.fu-berlin.de/ldif/hasImportJob&gt; _:dbpedia0 &lt;http://www4.wiwiss.fu-berlin.de/ldif/provenance&gt; .
-_:dbpedia0 &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#type&gt; &lt;http://www4.wiwiss.fu-berlin.de/ldif/ImportJob&gt; &lt;http://www4.wiwiss.fu-berlin.de/ldif/provenance&gt; .
-_:dbpedia0 &lt;http://www4.wiwiss.fu-berlin.de/ldif/importId&gt; "dBpedia.0" &lt;http://www4.wiwiss.fu-berlin.de/ldif/provenance&gt; .
-_:dbpedia0 &lt;http://www4.wiwiss.fu-berlin.de/ldif/lastUpdate&gt; "2011-09-21T19:01:00-05:00"^^&lt;http://www.w3.org/2001/XMLSchema#dateTime&gt; &lt;http://www4.wiwiss.fu-berlin.de/ldif/provenance&gt; .
-_:dbpedia0 &lt;http://www4.wiwiss.fu-berlin.de/ldif/hasDatasource&gt; "dBpedia" &lt;http://www4.wiwiss.fu-berlin.de/ldif/provenance&gt; .
-_:dbpedia0 &lt;http://www4.wiwiss.fu-berlin.de/ldif/hasImportType&gt; "quad" &lt;http://www4.wiwiss.fu-berlin.de/ldif/provenance&gt; .
-_:dbpedia0 &lt;http://www4.wiwiss.fu-berlin.de/ldif/numberOfQuads&gt; "23592"^^&lt;http://www.w3.org/2001/XMLSchema#nonNegativeInteger&gt; &lt;http://www4.wiwiss.fu-berlin.de/ldif/provenance&gt; .
-_:dbpedia0 &lt;http://www4.wiwiss.fu-berlin.de/ldif/hasOriginalLocation&gt; "http://mes.smw-lde-eu.s3.amazonaws.com/dBpedia_dump.nt.bz2" &lt;http://www4.wiwiss.fu-berlin.de/ldif/provenance&gt; .</pre>
+<pre>
+# Using prefixes:
+#  ldif: &lt;http://www4.wiwiss.fu-berlin.de/ldif/&gt;
+#  rdf:  &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#&gt;
+#  xsd:  &lt;http://www.w3.org/2001/XMLSchema#&gt;
 
+&lt;http://dbpedia.org/graphA&gt; rdf:type ldif:ImportedGraph ldif:provenance .
+&lt;http://dbpedia.org/graphA&gt; ldif:hasImportJob _:dbpedia0 ldif:provenance .
+&lt;http://dbpedia.org/graphB&gt; rdf:type ldif:ImportedGraph ldif:provenance .
+&lt;http://dbpedia.org/graphB&gt; ldif:hasImportJob _:dbpedia0 ldif:provenance .
+_:dbpedia0 rdf;type ldif:ImportJob ldif:provenance .
+_:dbpedia0 ldif:importId "dBpedia.0" ldif:provenance .
+_:dbpedia0 ldif:lastUpdate "2011-09-21T19:01:00-05:00"^^xsd:dateTime ldif:provenance .
+_:dbpedia0 ldif:hasDatasource "dBpedia" ldif:provenance .
+_:dbpedia0 ldif:hasImportType "quad" ldif:provenance .
+_:dbpedia0 ldif:numberOfQuads; "23592"^^xsd:nonNegativeInteger ldif:provenance .
+_:dbpedia0 ldif:hasOriginalLocation "http://example.org/dbpedia_dump.nq" ldif:provenance .</pre>
+</div>
 
 <h3 id="datasource">Data Source Configuration</h3>
+<div>
 <p>
     A Data Source is configured with an XML document, whose structure is described by this <a href="https://github.com/wbsg/ldif/blob/master/ldif/ldif-core/src/main/resources/xsd/DataSource.xsd">XML Schema</a>.
     It contains human readable information about a data source.
@@ -1205,12 +817,16 @@ _:dbpedia0 &lt;http://www4.wiwiss.fu-berlin.de/ldif/hasOriginalLocation&gt; "htt
            xsi:schemaLocation="http://www4.wiwiss.fu-berlin.de/ldif/ ../../xsd/DataSource.xsd"
            xmlns="http://www4.wiwiss.fu-berlin.de/ldif/"&gt;<br/>    &lt;label&gt;DBpedia&lt;/label&gt;<br>    &lt;description&gt;DBpedia is an RDF version of Wikipedia&lt;/description&gt;<br>   &lt;homepage&gt;http://dbpedia.org&lt;/homepage&gt;<br>&lt;/dataSource&gt;</pre>
 
+</div>
+</div>
+
 
 <h2 id="quickstart">4. Quick start</h2>
+<div>
 <p>This section explains you how to run the different versions of LDIF.</p>
 
-
 <h3 id="inmemoryquickstart">Single machine / In-memory</h3>
+<div>
 <p>To see LDIF in action, please follow these steps:</p>
 <ul>
   <li><a href="http://dl.mes-semantics.com/ldif/ldif-0.5.1.zip" onclick="trackOutboundLink(this, 'Downloads', 'Single'); return false;">download</a>
@@ -1228,15 +844,17 @@ the latest release</li>
 
 <p>
     The example will run in about 3 minutes. In the meanwhile, you can check the progress of the scheduled jobs through the status monitor interface, available at <a href="http://localhost:5343">http://localhost:5343</a>.
-    <br/>
+    <br/><br/>
     <img src="images/statusInterface.png" width="650" height="494" alt="Status monitor interface" />
     <br/> 
     Integration results will be written into <tt>integrated_music_light.nq</tt> in the working directory, containing both integrated data and <a href="#provenance">provenance metadata</a>.
     <br/>
     Learn more about LDIF configuration by looking at the <a href="#scheduler">Schedule Job Configuration</a> (<tt>examples/music/light/schedulerConfig.xml</tt>) and the <a href="#integrationjob">Integration Job Configuration</a> (<tt>examples/music/light/integrationJob.xml</tt>)
 </p>
+</div>
 
 <h3 id="rdfstorequickstart">Single machine / RDF Store</h3>
+<div>
 <p>To see LDIF running with a quad store (TDB) as backend, please follow these steps:</p>
 
 <ul>
@@ -1260,9 +878,10 @@ the latest release</li>
     <br/>
     Learn more about LDIF configuration by looking at the <a href="#scheduler">Schedule Job Configuration</a> (<tt>examples/music/light/schedulerConfig.xml</tt>) and the <a href="#integrationjob">Integration Job Configuration</a> (<tt>examples/music/light/integrationJob.xml</tt>)
 </p>
-
+</div>
 
 <h3 id="hadoopquickstart">Cluster / Hadoop</h3>
+<div>
 <p>To see LDIF running on a Hadoop cluster, please follow these steps:</p>
 <ul>
   <li>set up and configure a Hadoop (0.20.2) <a href="http://hadoop.apache.org/common/docs/current/cluster_setup.html">cluster</a> </li>
@@ -1345,16 +964,20 @@ the latest release</li>
 
     </tbody>
 </table>
+</div>
+</div>
 
 
 <h2 id="examples">5. Examples</h2>
+<div>
 <p>This section presents two LDIF usage examples.</p>
-<ol>
+<ul>
   <li>The <a href="#example1">Music example</a> shows how different music-related data sources are accessed using the LDIF Web data access components and integrated afterwards using the LDIF data translation and identity resolution modules.</li>
   <li>The <a href="#example2">Life Science example</a> shows how LDIF is used to integrate several local RDF dumps of life science data sets.  </li>
-</ol>
+</ul>
 
-<h3 id="example1">5.1 Using LDIF to integrate Data from the Music Domain</h3>
+<h3 id="example1">Using LDIF to integrate Data from the Music Domain</h3>
+<div>
 <p> This example shows how LDIF is applied to integrate data describing musical artists, music albums, labels and genres from the following remote sources: </p>
 <ul>
   <li><a href="http://dbpedia.org/">DBpedia</a></li>
@@ -1434,9 +1057,10 @@ the latest release</li>
 <h4>Output</h4>
 <p>The following graph shows a portion of the LDIF output describing Bob Marley:</p>
 <img src="images/Bob-Marley-graphs.png" alt="LDIF output for music use case">
+</div>
 
-
-<h3 id="example2">5.2 Using LDIF to integrate Life Science Data</h3>
+<h3 id="example2">Using LDIF to integrate Life Science Data</h3>
+<div>
 <p>
     This example shows how LDIF is applied to integrate data originating from five Life Science sources.
 </p>
@@ -1464,8 +1088,7 @@ the latest release</li>
     The following mapping file provides for translating the vocabularies used by the source data sets into the Wiki ontology.
 </p>
 <ul>
-  <li>R2R mapping file: <a href="https://github.com/wbsg/ldif/blob/master/ldif/examples/life-science/mappings/ALL-to-Wiki.r2r.ttl">ALL-toWiki.r2r.ttl</a>
-    <span style="text-decoration: underline;"></span></li>
+  <li>R2R mapping file: <a href="https://github.com/wbsg/ldif/blob/master/ldif/examples/life-science/mappings/ALL-to-Wiki.r2r.ttl">ALL-toWiki.r2r.ttl</a></li>
 </ul>
 <p>The following Silk identity resolution heuristics are used to find
 genes and other expressions that are described in multiple data sets.</p>
@@ -1520,7 +1143,8 @@ configuration. The configuration options are explained in the Section <a href="#
 11:  &lt;http://ldif.wbsg.de/graph/uniprot&gt; {
 12:    &lt;http://purl.uniprot.org/uniprot/P61981&gt; rdfs:seeAlso &lt;http://purl.uniprot.org/geneid/<span style="font-weight: bold;">18387</span>&gt; .
 13:    &lt;http://purl.uniprot.org/geneid/<span style="font-weight: bold;">18387</span>&gt; uniprot:database "GeneID" .
-14:    &lt;http://purl.uniprot.org/uniprot/P61981&gt; uniprot:encodedBy &lt;http://ldif.wbsg.de/graph/uniprotuniprot-organism-human-reviewed-complete.rdf#_503237333438003B&gt; .
+14:    &lt;http://purl.uniprot.org/uniprot/P61981&gt; uniprot:encodedBy
+           &lt;http://ldif.wbsg.de/graph/uniprotuniprot-organism-human-reviewed-complete.rdf#_503237333438003B&gt; .
 15:  }</pre>
 
   </li>
@@ -1537,7 +1161,8 @@ configuration. The configuration options are explained in the Section <a href="#
 08:
 09:  &lt;http://ldif.wbsg.de/graph/uniprot&gt; {
 10:    &lt;http://brain-map.org/mouse/brain/Oprk1.xml&gt; smwprop:EntrezGeneId "<span style="font-weight: bold;">18387</span>"^^xsd:int .
-11:    &lt;http://brain-map.org/mouse/brain/Oprk1.xml&gt; <span style="font-family: monospace;">owl:sameAs </span><span style="font-family: monospace;">&lt;file:///storage/datasets/uniprot-organism-human-reviewed-complete.rdf#_503237333438003B&gt; .</span>
+11:    &lt;http://brain-map.org/mouse/brain/Oprk1.xml&gt; owl:sameAs
+            &lt;file:///storage/datasets/uniprot-organism-human-reviewed-complete.rdf#_503237333438003B&gt; .
 12:  }</pre>
   </li>
 </ul>
@@ -1556,7 +1181,7 @@ configuration. The configuration options are explained in the Section <a href="#
       Both graphs contain data about the same entity:
       <ul>
         <li>
-            In the ABA data set the entity is identified using the URI <tt>&lt;http://brain-map.org/mouse/brain/Oprk1.xml&gt;</tt>(input: line 6)
+            In the ABA data set the entity is identified using the URI <tt>&lt;http://brain-map.org/mouse/brain/Oprk1.xml&gt;</tt> (input: line 6)
         </li>
         <li>
             In the Uniprot data set the entity is identified using the URI <tt>&lt;file:///storage/datasets/uniprot-organism-human-reviewed-complete.rdf#_503237333438003B&gt;</tt> (input: line 14)
@@ -1599,22 +1224,26 @@ configuration. The configuration options are explained in the Section <a href="#
       This means that only one of the quads in the output lines 5 and 10 would show up in the target data set, which in this case would result in the same value.
   </li>
 </ul>
-
+</div>
+</div>
 
 
 <h2 id="performance">6. Performance Evaluation</h2>
+<div>
 <p>We regularly carry out performance evaluations. For more details and the latest results please visit our <a href="benchmark.html">Benchmark results</a> page.</p>
-
+</div>
 
 
 <h2 id="development">7. Source Code and Development</h2>
-<p>The latest source code is available from the <a href="http://github.com/wbsg/ldif/">LDIF development page</a> on GitHub.</p>
-<p>The framework can be used under the terms of the <a href="http://www.apache.org/licenses/LICENSE-2.0">Apache Software License</a>. </p>
-
+<div>
+ <p>The latest source code is available from the <a href="http://github.com/wbsg/ldif/">LDIF development page</a> on GitHub.</p>
+ <p>The framework can be used under the terms of the <a href="http://www.apache.org/licenses/LICENSE-2.0">Apache Software License</a>. </p>
+</div>
 
 
 <h2 id="history">8. Version history </h2>
-<br/>
+<div>
+<br>
 <table>
   <tbody>
     <tr>
@@ -1675,19 +1304,24 @@ configuration. The configuration options are explained in the Section <a href="#
     </tr>
   </tbody>
 </table>
-
+</div>
 
 
 <h2 id="feedback">9. Support and Feedback </h2>
+<div>
 <p>For questions and feedback please use the <a href="http://groups.google.com/group/ldif?hl=en">LDIF Google Group</a>.
 Commercial support for LDIF is available through <a href="http://mes-semantics.com">mes|semantics</a>.</p>
+</div>
 
 <h2 id="references">10. References</h2>
+<div>
 <ol>
     <li>
         Christian Becker:
-        How to integrate Linked Data into your application ( <a href="http://mes-semantics.com/wp-content/uploads/2012/09/Becker-etal-LDIF-SemTechSanFrancisco.pdf">Slides</a> ).
+        How to integrate Linked Data into your application (<a href="http://mes-semantics.com/wp-content/uploads/2012/09/Becker-etal-LDIF-SemTechSanFrancisco.pdf">Slides</a>).
         Semantic Technology & Business Conference, San Francisco, June 2012.
+        <br/>
+        <iframe src="http://www.slideshare.net/slideshow/embed_code/17712518" width="427" height="356" frameborder="0" marginwidth="0" marginheight="0" scrolling="no" allowfullscreen webkitallowfullscreen mozallowfullscreen> </iframe>
     </li>
 
     <li>
@@ -1711,9 +1345,9 @@ Commercial support for LDIF is available through <a href="http://mes-semantics.c
         2nd International Workshop on Linked Web Data Management (LWDM 2012) at the 15th International Conference on Extending Database Technology (EDBT 2012), Berlin, March 2012.
     </li>
 
-	<li>
+    <li>
         Christian Becker, Andrea Matteini:
-        LDIF - Linked Data Integration Framework ( <a href="http://mes-semantics.com/wp-content/uploads/2012/09/BeckerMatteini-LDIF-SemTechBerlin2012-Talk.pdf">Slides</a> ).
+        LDIF - Linked Data Integration Framework (<a href="http://mes-semantics.com/wp-content/uploads/2012/09/BeckerMatteini-LDIF-SemTechBerlin2012-Talk.pdf">Slides</a>).
         SemTechBiz 2012, Berlin, February 2012.
     </li>
 
@@ -1725,39 +1359,55 @@ Commercial support for LDIF is available through <a href="http://mes-semantics.c
 
     <li>
         William Smith, Christian Becker and Andreas Schultz:
-        Neurowiki: How we integrated large datasets into SMW with R2R and Silk / LDIF ( Slides <a href="http://semantic-mediawiki.org/w/images/a/ac/SMWCon_2011_Neurowiki_Presentation.pdf">part 1</a>, <a href="http://semantic-mediawiki.org/w/images/b/b7/SMWCon_2011_Neurowiki_Becker_Schultz.pdf">part	2</a> ).
+        Neurowiki: How we integrated large datasets into SMW with R2R and Silk / LDIF (Slides <a href="http://semantic-mediawiki.org/w/images/a/ac/SMWCon_2011_Neurowiki_Presentation.pdf">part 1</a>, <a href="http://semantic-mediawiki.org/w/images/b/b7/SMWCon_2011_Neurowiki_Becker_Schultz.pdf">part 2</a>).
         SMWCon Fall 2011, Berlin, September 2011.
     </li>
 
     <li>
         Tom Heath, Christian Bizer:
         <a href="http://www.morganclaypool.com/doi/abs/10.2200/S00334ED1V01Y201102WBE001">Linked Data: Evolving the Web into a Global Data Space</a>.
-        Synthesis Lectures on the Semantic Web: Theory and Technology, Morgan &amp; Claypool Publishers, ISBN <a href="http://www.amazon.com/Linked-Data-Synthesis-Lectures-Engineering/dp/1608454304/ref=sr_1_1?ie=UTF8&amp;s=books&amp;qid=1297846088&amp;sr=8-1">978160845431</a>, 2011 ( <a href="http://linkeddatabook.com/">Free HTML version</a> ).
+        Synthesis Lectures on the Semantic Web: Theory and Technology, Morgan &amp; Claypool Publishers, ISBN <a href="http://www.amazon.com/Linked-Data-Synthesis-Lectures-Engineering/dp/1608454304/ref=sr_1_1?ie=UTF8&amp;s=books&amp;qid=1297846088&amp;sr=8-1">978160845431</a>, 2011 (<a href="http://linkeddatabook.com/">Free HTML version</a>).
     </li>
 
     <li>
         Christian Bizer, Andreas Schultz:
-        <a href="http://mes-semantics.com/wp-content/uploads/2012/09/BizerSchultz-COLD-R2R-Paper.pdf">The R2R Framework: Publishing and Discovering Mappings on the Web</a> ( <a href="http://mes-semantics.com/wp-content/uploads/2012/09/BizerSchultz-COLD-R2R-Talk.pdf">Slides</a>).
+        <a href="http://mes-semantics.com/wp-content/uploads/2012/09/BizerSchultz-COLD-R2R-Paper.pdf">The R2R Framework: Publishing and Discovering Mappings on the Web</a> (<a href="http://mes-semantics.com/wp-content/uploads/2012/09/BizerSchultz-COLD-R2R-Talk.pdf">Slides</a>).
         1st International Workshop on Consuming Linked Data (COLD 2010), Shanghai, November 2010.
     </li>
 
     <li>Robert Isele, Anja Jentzsch, Christian Bizer:
-        <a href="http://www.wiwiss.fu-berlin.de/en/institute/pwo/bizer/research/publications/IseleJentzschBizer-Silk-Cold2010.pdf">Silk Server - Adding missing Links while consuming Linked Data</a> ( <a href="http://www.wiwiss.fu-berlin.de/en/institute/pwo/bizer/research/publications/IseleJentzschBizer-Silk-Cold2010-Talk.pdf">Slides</a>).
+        <a href="http://www.wiwiss.fu-berlin.de/en/institute/pwo/bizer/research/publications/IseleJentzschBizer-Silk-Cold2010.pdf">Silk Server - Adding missing Links while consuming Linked Data</a> (<a href="http://www.wiwiss.fu-berlin.de/en/institute/pwo/bizer/research/publications/IseleJentzschBizer-Silk-Cold2010-Talk.pdf">Slides</a>).
         1st International Workshop on Consuming Linked Data (COLD 2010), Shanghai, November 2010.
     </li>
 
     <li>
         Julius Volz, Christian Bizer, Martin Gaedke, Georgi Kobilarov:
-        <a href="http://www.wiwiss.fu-berlin.de/en/institute/pwo/bizer/research/publications/VolzBizerGaedkeKobilarov-ISWC2009-Silk.pdf">Discovering and Maintaining Links on the Web of Data</a> ( <a href="http://www.wiwiss.fu-berlin.de/en/institute/pwo/bizer/research/publications/VolzBizerGaedkeKobilarov-ISWC2009-Silk-Talk.pdf">Slides</a>).
+        <a href="http://www.wiwiss.fu-berlin.de/en/institute/pwo/bizer/research/publications/VolzBizerGaedkeKobilarov-ISWC2009-Silk.pdf">Discovering and Maintaining Links on the Web of Data</a> (<a href="http://www.wiwiss.fu-berlin.de/en/institute/pwo/bizer/research/publications/VolzBizerGaedkeKobilarov-ISWC2009-Silk-Talk.pdf">Slides</a>).
         International Semantic Web Conference (ISWC2009), Westfields, USA, October 2009.
     </li>
 </ol>
-
+</div>
 
 <h2 id="acknowledgments">11. Acknowledgments </h2>
+<div>
 <p>This work was supported in part by Vulcan Inc. as part of its <a href="http://www.projecthalo.com">Project Halo</a> and by the EU FP7 project <a href="http://lod2.eu">LOD2 - Creating Knowledge out of Interlinked Data</a> (Grant No. 257943).</p>
 <p>We would like to thank Rutvik Sheth (UBS) and colleagues for their extensive feedback.</p>
 <p>WooFunction icon set licensed under <a href="http://www.gnu.org/licenses/gpl.html">GNU General Public License</a>. </p>
 </div>
+</div>
+</div>
+
+  <!--script  type="text/javascript">
+      # Enable accordion
+      $('#body-container h2, #body-container h3').next('div').hide();
+      $('#body-container h2, #body-container h3').click(function() {
+        if($(this).next('div').is(':visible')) {
+            $(this).next('div').slideUp();
+        } else {
+            $(this).next('div').slideToggle();
+        }
+      });
+   </script-->
+
 </body>
 </html>

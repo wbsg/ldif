@@ -1,69 +1,50 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
-<html><head><title>LDIF - Benchmark Results</title>
+<html>
+<head>
+  <title>LDIF - Benchmark Results</title>
+  
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">    
+  <link rel="stylesheet" href="stylesheets/style.css" type="text/css" />
     
-    <style>
-        body { background: white; color: black; font-family: sans-serif; line-height: 1.4em; padding: 3em 12em 3em 12em; margin: 0; }
-        :link { color: #00c; }
-        :visited { color: #609; }
-        a:link img { border: none; }
-        a:visited img { border: none; }
-        #content img {
-            margin: 2em 0 2em 4em;
-        }
-        h1, h2, h3 { background: white; color: #800; }
-        h1 { font: 170% sans-serif; margin: 0; }
-        h2 { clear: both; font: 140% sans-serif; margin: 2.5em 0 -0.5em 0; padding-top: 1.5em; border-top: 1px solid #ccc;}
-        h3 { font: 115% sans-serif; margin: 2em 0 -0.5em 0; }
-        h4 { font: bold 100% sans-serif; }
-        h5 { font: italic 100% sans-serif; }
-        h6 { font: small-caps 100% sans-serif; }
-        .hide { display: none; }
-        pre { background: #fff6bb; font-family: monospace; line-height: 1.2em; padding: 1em 2em; }
-        dt { font-weight: bold; margin-top: 0; margin-bottom: 0; }
-        dd { margin-top: 0; margin-bottom: 0; }
-        code, tt { font-family: monospace; }
-        ol.toclist li a { text-decoration: none; }
-        .note { color: red; }
-        #header { border-bottom: 1px solid #ccc; }
-        #logo { float: right; }
-        #authors { clear: right; float: right; font-size: 80%; text-align: right;}
-        #toc {  float: left; }
-        #content { clear: both; margin: 2em auto 0 0; text-align: justify }
-        #download h2, #demo h2 { font-size: 125%; margin: 1.5em 0 -0.2em 0; }
-        #download small, #demo small { color: #888; font-size: 80%; }
-        #footer { border-top: 1px solid #ccc; color: #aaa; margin: 2em 0 0; }
-        @media Print {
-            * { font-size: 92%; }
-            body { padding: 0; line-height: 1.2em; }
-            #content { margin: 0; width: 100%; }
-        }
-        @media Aural {
-            h1 { stress: 20; richness: 90; }
-            h2 { stress: 20; richness: 90; }
-            h3 { stress: 20; richness: 90; }
-            .hide { speak: none; }
-            dt { pause-before: 20%; }
-            pre { speak-punctuation: code; }
-        }
-        .Stil1 {color: #FF0000}
-        table {border-collapse: collapse; margin-bottom: .75em; border-top: 1px solid #D4DCE8; border-bottom: 1px solid #D4DCE8; margin-left: 10%;}
-        table th {text-align: right; background: #EAF3FA; padding: .5em .9em; height: 21px; font-weight: bold; font-size: 1em; color: #333}
-        table.results th {text-align: left; background: #EAF3FA; padding: .5em .9em; height: 21px; font-weight: bold; font-size: 1em; color: #333}
-        table th a {text-decoration: none !important}
-        table td {padding: .5em 1em; border-bottom: 1px solid #eee}
-        table.num td {vertical-align: top; text-align: right;}
-        table tr.even {background-color: #fff}
-        table tr.odd {background-color: #f6f6f6}
-    </style>
+  <script type="text/javascript">
+    // Google Analytics scripts
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-36110461-1']);
+    _gaq.push(['_trackPageview']);
 
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"></head>
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+</head>
 
 <body>
 
-<div id="logo" align="right"><a href="http://wbsg.de">
-    <img src="images/fu-logo.gif" alt="Freie Universität Berlin Logo" border="0"></a><br/>
-    <a href="http://mes-semantics.com">
-        <img src="images/mes-semantics.png" alt="mes|semantics"></a>
+<div id="wbsg_navbar">
+    <div id="wbsg_navbar_projects">
+        <a href="http://dbpedia.org" title="DBpedia is a community effort to extract structured information from Wikipedia and to make this information available on the Web" >DBpedia</a>
+        <a href="http://spotlight.dbpedia.org/" title="DBpedia Spotlight is a tool for annotating DBpedia entities in text.">DBpedia Spotlight</a>
+        <a href="http://d2rq.org/d2r-server" title="D2R Server is a tool for publishing the content of relational databases on the Semantic Web" >D2R Server</a>
+        <a href="http://wifo5-03.informatik.uni-mannheim.de/bizer/r2r/" title="R2R Framework &ndash; Translating RDF data from the Web to a target vocabulary" >R2R</a>
+        <a href="http://wifo5-03.informatik.uni-mannheim.de/bizer/silk/" title="The Silk framework is a tool for discovering relationships between data items within different Linked Data sources" >Silk</a>
+        <a href="http://sieve.wbsg.de/" title="Sieve is a tool for assessing data quality and performing data fusion." >Sieve</a>
+        <a href="http://ldif.wbsg.de/" title="LDIF &ndash; Linked Data Integration Framework translates heterogeneous Linked Data from the Web into a clean, local target representation while keeping track of data provenance" class="wbsg_navbar_active_project">LDIF</a>
+        <a href="http://wifo5-03.informatik.uni-mannheim.de/bizer/ng4j/" title="The Named Graphs API for Jena (NG4J) is an extension to the Jena Semantic Web framework for parsing, manipulating and serializing sets of Named Graphs" >NG4J</a>
+        <a href="http://mes.github.com/marbles/" title="Marbles is a server-side application that formats Semantic Web content for XHTML clients using Fresnel lenses and formats" >Marbles</a>
+        <a href="http://www4.wiwiss.fu-berlin.de/bizer/wiqa/" title="The WIQA - Information Quality Assessment Framework is a set of software components that empowers information consumers to employ a wide range of different information quality assessment policies to filter information from the Web" >WIQA</a>
+        <a href="http://wifo5-03.informatik.uni-mannheim.de/pubby/" title="Pubby &ndash; A Linked Data Frontend for SPARQL Endpoints can be used to add Linked Data interfaces to SPARQL endpoints" >Pubby</a>
+        <a href="http://wifo5-03.informatik.uni-mannheim.de/bizer/rdfapi/" title="RAP &ndash; RDF API for PHP is a software package for parsing, querying, manipulating, serializing and serving RDF models" >RAP</a>
+    </div>
+    <div id="wbsg_navbar_intro">Open Source projects by the <a href="http://wbsg.de">Web-based Systems Group</a>:&nbsp;&nbsp;</div>
+</div>
+<!-- End WBSG navbar -->
+
+<div id="logo" align="right">
+    <a href="http://wbsg.de"><img src="images/fu-logo.gif" alt="Freie Universität Berlin Logo"></a><br>
+    <a href="http://mes-semantics.com"><img src="images/mes-semantics.png" alt="mes|semantics"></a>
 </div>
 
 <div id="header">
@@ -80,9 +61,7 @@
 
 <div id="toc">
 <h2 id="contents">Contents</h2>
-<ul class="toclist">
-
-
+<ul class="toc">
     <li><a href="#intro">Introduction</a></li>
     <li><a href="#useCase">Use Case</a></li>
     <ul>
@@ -98,8 +77,10 @@
 </div>
 
 <div id="content">
+<div id="body-container">
 
 <h2 id="intro">Introduction</h2>
+<div>
 <p> This page presents a performance evaluation for <a href="http://ldif.wbsg.de">LDIF</a> using life science use cases.</p>
 
 <p>The following data sources have been used to evaluate the performance of LDIF:</p>
@@ -120,19 +101,20 @@
       <a href="http://www.uniprot.org/">Uniprot</a> - a dataset containing protein sequence, genes and function.
   </li>
 </ul>
-
+</div>
 
 
 
 
 <h2 id="useCase"> Use case</h2>
+<div>
 <p>
     In this use case, we evaluated the performance of LDIF integrating two larger life science datasets and translate those into a common <a href="resources/Wiki.owl">target vocabulary</a>.
 </p>
 
 
 <h3 id="datasets">Datasets</h3>
-
+<div>
 <p>
     For this use case we used only KEGG GENES and UniProt datasets.
     There is a huge difference in dataset size between the two datasets.
@@ -212,10 +194,10 @@
         </tr>
     </tbody>
 </table>
-
+</div>
 
 <h3 id="mappings">Mappings</h3>
-
+<div>
 <p>
     We defined <a href="resources/mappings.ttl"> R2R mappings</a> for translating genes, diseases and pathways from KEGG GENES and genes from UniProt into a proprietary target vocabulary.
     Some more sophisticated mappings from the use case translate complex structural patterns and perform value transformations (e.g. extracting an integer value from a URI).
@@ -231,11 +213,12 @@ Here are some examples of the mappings we used for:
         <pre><code> mp:GeneLinkUniProt<br>   a r2r:PropertyMapping;<br>   r2r:mappingRef mp:Gene;<br>   r2r:sourcePattern  "?SUBJ genes:externalLink ?x";<br>   r2r:transformation "?id = regexToList('UniProt:(.+)', ?x)";<br>   r2r:targetPattern  "?SUBJ property:UniprotId ?'id'^^xsd:string";<br>   . </code></pre>
     </li>
 </ul>
-
+</div>
 
 
 
 <h3 id="linkspecs">Link Specifications</h3>
+<div>
 <p>
     We defined the following <a href="resources/linkSpecs.xml">Link Specification</a> for the identity resolution phase:
 </p>
@@ -251,14 +234,17 @@ Here are some examples of the mappings we used for:
 	&lt;Interlinks&gt;
 		&lt;Interlink id="link"&gt;<br>			&lt;LinkType&gt;owl:sameAs&lt;/LinkType&gt;<br><br>			&lt;SourceDataset dataSource="Source" var="a"&gt;<br>				&lt;RestrictTo&gt;<br>					{ ?a rdf:type category:Gene }<br>					UNION { ?a rdf:type category:Disease }<br>					UNION { ?a rdf:type category:Pathway }<br>				&lt;/RestrictTo&gt;<br>			&lt;/SourceDataset&gt;<br><br>			&lt;TargetDataset dataSource="Target" var="b"&gt;<br>				&lt;RestrictTo&gt;<br>					{ ?b rdf:type category:Gene }<br>					UNION { ?b rdf:type category:Disease }<br>					UNION { ?b rdf:type category:Pathway }<br>				&lt;/RestrictTo&gt;<br>			&lt;/TargetDataset&gt;<br><br>			&lt;LinkageRule&gt;<br>			&lt;Aggregate type="max"&gt;<br>					&lt;Compare metric="equality"&gt;<br>						&lt;Input path="?a/property:UniprotId" /&gt;<br>						&lt;Input path="?b/property:UniprotId" /&gt;<br>					&lt;/Compare&gt;<br>					&lt;Compare metric="equality"&gt;<br>						&lt;Input path="?a/property:EntrezGeneId" /&gt;<br>						&lt;Input path="?b/property:EntrezGeneId" /&gt;<br>					&lt;/Compare&gt;<br>					&lt;Compare metric="equality"&gt;<br>						&lt;Input path="?a/property:MgiMarkerAccessionId" /&gt;<br>						&lt;Input path="?b/property:MgiMarkerAccessionId" /&gt;<br>					&lt;/Compare&gt;<br>					&lt;Compare metric="equality"&gt;<br>						&lt;Input path="?a/property:KeggDiseaseId" /&gt;<br>						&lt;Input path="?b/property:KeggDiseaseId" /&gt;<br>					&lt;/Compare&gt;<br>					&lt;Compare metric="equality"&gt;<br>						&lt;Input path="?a/property:KeggPathwayId" /&gt;<br>						&lt;Input path="?b/property:KeggPathwayId" /&gt;<br>					&lt;/Compare&gt;<br>			&lt;/Aggregate&gt;<br>			&lt;/LinkageRule&gt;<br><br>			&lt;Filter threshold="1.0" /&gt;<br><br>		&lt;/Interlink&gt;<br><br>	&lt;/Interlinks&gt;<br>&lt;/Silk&gt;</code>
 </pre>
-
-
+</div>
+</div>
 
 
 <h2 id="machine">Benchmark Machines</h2>
+<div>
+
 <p>We used a machine with the following specification for the benchmark experiments:</p>
 
 <h3>FUB machines</h3>
+<div>
 <p>
     These machines have been used for In-Memory, TDB and FUB Hadoop clusters.
 </p>
@@ -282,9 +268,10 @@ Here are some examples of the mappings we used for:
         </td>
     </tr>
 </table>
+</div>
 
 <h3>EC2 c1.medium instances</h3>
-
+<div>
 <p>
     There machines have been used for EC2 Hadoop clusters.
 </p>
@@ -307,10 +294,10 @@ Here are some examples of the mappings we used for:
         </td>
     </tr>
 </table>
-
+</div>
 
 <h3>Hadoop clusters</h3>
-
+<div>
 <p>In all cluster configurations, the master works as job tracker and name node, while the slaves work as data nodes and task trackers.</p>
 
 <p>FUB Hadoop 2-slaves cluster
@@ -325,15 +312,18 @@ Here are some examples of the mappings we used for:
     <li> 1 master,  X slaves (EC2 c1.medium instances)  </li>
 </ul>
 </p>
-
+</div>
+</div>
 
 <h2 id="procedure">Test Procedure</h2>
+<div>
 <p>
     We used LDIF version 0.5 both for the in-memory, TDB and Hadoop tests.
 </p>
 
 
 <h3>Single machine tests</h3>
+<div>
 <p>
     For each single machine test, we applied the following procedure:
 </p>
@@ -345,9 +335,10 @@ Here are some examples of the mappings we used for:
         <pre> java -server -Xmx20G -jar ldif-single-machine.jar </pre>
     </li>
 </ol>
-
+</div>
 
 <h3>Hadoop tests</h3>
+<div>
 <p>
     For each distributed test, we applied the following procedure:
 </p>
@@ -359,18 +350,19 @@ Here are some examples of the mappings we used for:
     <li>Run integration</li>
 </ol>
 Details about the Hadoop cluster configurations are available at <a href="https://github.com/wbsg/ldif/wiki/Hadoop-configuration">this page</a>.
-
+</div>
+</div>
 
 
 
 
 <h2 id="results">Results</h2>
-
+<div>
 <p>The following table summarizes the LDIF run times for the different dataset sizes.
     The overall run time is split according to the different processing steps of the integration process. </p>
 
 <h3>25M run times</h3>
-
+<div>
 <img src="images/charts/25M.png" />
 
 <table class="results">
@@ -417,13 +409,13 @@ Details about the Hadoop cluster configurations are available at <a href="https:
         <td> 27.4 min</td>
     </tr>
 </table>
-
+</div>
 
 
 
 
 <h3>100M run times</h3>
-
+<div>
 <img src="images/charts/100M.png" />
 
 <table class="results">
@@ -470,11 +462,11 @@ Details about the Hadoop cluster configurations are available at <a href="https:
         <td> 88 min</td>
     </tr>
 </table>
-
+</div>
 
 
 <h3>150M run times</h3>
-
+<div>
 
 <img src="images/charts/150M.png" />
 
@@ -522,12 +514,12 @@ Details about the Hadoop cluster configurations are available at <a href="https:
         <td>105 min </td>
     </tr>
 </table>
-
+</div>
 
 
 
 <h3>300M run times</h3>
-
+<div>
 
 <img src="images/charts/300M.png" />
 
@@ -623,14 +615,14 @@ Details about the Hadoop cluster configurations are available at <a href="https:
         <td>75 min </td>
     </tr>
 </table>
-
+</div>
 
 
 
 
 
 <h3>3690M run times</h3>
-
+<div>
 <img src="images/charts/3690M.png" />
 
 <table class="results">
@@ -667,9 +659,8 @@ Details about the Hadoop cluster configurations are available at <a href="https:
         <td style="text-align:right;">29:09:03</td>
     </tr>
 </table>
-
-
-
+</div>
+</div>
 
 </div>
 
@@ -680,20 +671,7 @@ Details about the Hadoop cluster configurations are available at <a href="https:
     c1.medium instances with 5 ECU are observed to run as 2 of 4 cores of an <a href="http://ark.intel.com/products/33080/Intel-Xeon-Processor-E5410-%2812M-Cache-2_33-GHz-1333-MHz-FSB%29">Intel E5410 processor</a> (4 cores, 2.33 GhZ).
 </p>
 
+</div>
 
-<script type="text/javascript">
-
-  var _gaq = _gaq || [];
-  _gaq.push(['_setAccount', 'UA-36110461-1']);
-  _gaq.push(['_trackPageview']);
-
-  (function() {
-    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-  })();
-
-</script>
 </body>
-
 </html>
