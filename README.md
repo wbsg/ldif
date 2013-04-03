@@ -7,7 +7,7 @@ LDIF translates heterogeneous Linked Data from the Web into a clean, local targe
 
 To see LDIF in action, please follow these steps:
 
-1. [Download](https://dl.mes-semantics.com/ldif/ldif-0.5.1.zip) the latest release
+1. [Download](http://dl.mes-semantics.com/ldif/ldif-0.5.1.zip) the latest release
 2. Unzip the archive and change into the extracted directory `ldif-0.5.1`
 3. Run LDIF on the Music example
 
