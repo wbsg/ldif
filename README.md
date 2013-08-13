@@ -20,3 +20,7 @@ To see LDIF in action, please follow these steps:
 #### Learn More
 
 Learn more about LDIF at [http://ldif.wbsg.de/](http://ldif.wbsg.de/).
+
+#### Feedback
+
+For questions and feedback please use the [LDIF Google Group](http://groups.google.com/group/ldif).
