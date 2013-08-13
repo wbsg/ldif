@@ -23,7 +23,6 @@ package ldif.local.runtime
  * User: andreas
  * Date: 26.05.11
  * Time: 12:58
- * To change this template use File | Settings | File Templates.
  */
 
 import impl._
@@ -31,7 +30,7 @@ import scala.collection.mutable.{Map, HashMap, HashSet, Set}
 import ldif.entity._
 import org.slf4j.LoggerFactory
 import java.util.Properties
-import java.io.{BufferedWriter, File}
+import java.io.BufferedWriter
 import ldif.entity.entityComparator.entityComparator
 import ldif.util.{TemporaryFileCreator, Consts, UriMintHelper}
 import ldif.runtime.{QuadReader, Quad, QuadWriter}
@@ -337,15 +336,15 @@ class EntityGraphChecker {
   val entityGraphMap = new HashMap[String, Set[String]]()
 
   /**
-   * add the graph to the entity.
-   * @returns true if the graph has not been added before, else false
+   * Add the graph to the entity.
+   * @return true if the graph has not been added before, else false
    */
   def addAndCheck(entity: String, graph: String): Boolean = {
     val entityGraphSet = entityGraphMap.getOrElseUpdate(entity, new HashSet[String])
     if(entityGraphSet.contains(graph))
       return false
     entityGraphSet.add(graph)
-    return true
+    true
   }
 }
 
