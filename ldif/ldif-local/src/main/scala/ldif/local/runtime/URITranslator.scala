@@ -198,7 +198,7 @@ object URITranslator {
   }
 
   private def writeSameAsLink(subj: NodeTrait, obj: String, graph: String, quadWriter: QuadWriter) {
-    val sameAsProperty = "http://www.w3.org/2002/07/owl#sameAs"
+    val sameAsProperty = Consts.SAMEAS_URI;
     val o = Node.createUriNode(obj, "")
     quadWriter.write(Quad(subj, sameAsProperty, o, graph))
   }
