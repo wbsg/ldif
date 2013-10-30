@@ -37,7 +37,7 @@ class VotingTest extends FlatSpec with ShouldMatchers {
 		Voting.fromXML(fusionXml)(Prefixes.empty) should equal(votingFusionObj)
 	}
 
-	val bestNode = Node.createTypedLiteral("pickMe!", Consts.xsdString, "graph3")
+	val bestNode = Node.createTypedLiteral("pickMe!", Consts.xsdString, "graph4")
 	val patterns = Traversable[IndexedSeq[NodeTrait]](
 		IndexedSeq(
 			bestNode,
