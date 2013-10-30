@@ -85,7 +85,7 @@ trait NodeTrait {
   }
 
   override def hashCode: Int = {
-    return value.hashCode
+    value.hashCode
   }
 
   override def equals(other: Any): Boolean = {
@@ -96,7 +96,7 @@ trait NodeTrait {
     else {
       var otherNode: NodeTrait = other.asInstanceOf[NodeTrait]
       var result = (otherNode.nodeType == nodeType) && compareDTorLang(this.datatypeOrLanguage, otherNode.datatypeOrLanguage) && (this.value.equals(otherNode.value))
-      if(nodeType== BlankNode)
+      if(nodeType != UriNode)
         result = result && (graph == otherNode.graph)
       result
     }
