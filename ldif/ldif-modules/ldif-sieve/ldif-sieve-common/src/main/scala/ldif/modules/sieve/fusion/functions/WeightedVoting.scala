@@ -19,7 +19,7 @@ package ldif.modules.sieve.fusion.functions
 import org.slf4j.LoggerFactory
 import ldif.entity.NodeTrait
 import ldif.modules.sieve.fusion.FusionFunction
-import ldif.modules.sieve.quality.{ScoringFunction, QualityAssessmentProvider}
+import ldif.modules.sieve.quality.QualityAssessmentProvider
 import ldif.util.Prefixes
 import collection.mutable.HashMap
 

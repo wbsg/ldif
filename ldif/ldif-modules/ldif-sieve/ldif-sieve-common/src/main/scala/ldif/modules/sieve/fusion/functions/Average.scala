@@ -69,10 +69,10 @@ class Average extends FusionFunction("") {
 					datatype == Consts.xsdNonNegativeInteger ||
 					datatype == Consts.xsdNonPositveInteger ) {
 					// Create int value node
-					IndexedSeq(Node.createTypedLiteral(math.rint(avgValue).toInt.toString, datatype))
+					IndexedSeq(Node.createTypedLiteral(math.rint(avgValue).toInt.toString, datatype, "average"))
 				} else {
 					// Create floating point value node
-					IndexedSeq(Node.createTypedLiteral(avgValue.toString, datatype))
+					IndexedSeq(Node.createTypedLiteral(avgValue.toString, datatype, "average"))
 				}
 		}
 		Traversable(fusedNodes)

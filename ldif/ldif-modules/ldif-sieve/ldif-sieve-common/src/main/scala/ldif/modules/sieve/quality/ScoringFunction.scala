@@ -52,6 +52,7 @@ object ScoringFunction {
     case "timecloseness" => TimeCloseness.fromXML(config)
     case "interval" => IntervalMembership.fromXML(config)
     case "threshold" => Threshold.fromXML(config)
+    case "normalizedcount" => NormalizedCount.fromXML(config)
 
     // NOTICE: add case statements for new scoring functions here
     case whatever => throw new IllegalArgumentException("Unable to construct scoring function for class name " + className)
