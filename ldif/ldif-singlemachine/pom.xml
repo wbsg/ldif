@@ -79,32 +79,33 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
                 <!-- version 2.0 requires maven 3-->
-                <version>1.6</version>
-                <executions>
-                    <execution>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>shade</goal>
-                        </goals>
-                        <configuration>
-                            <!--<minimizeJar>true</minimizeJar>-->
-                            <filters>
-                                <!-- Excludes -->
-                                <filter>
-                                    <artifact>org.scala-lang:scala-compiler</artifact>
-				    <includes>
-				        <include>scala/tools/nsc/util/**</include>
-			            </includes>
-                                </filter>
-                            </filters>
-                            <finalName>ldif-single-${version}-jar-with-dependencies</finalName>
-                            <transformers>
-                                <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-                                    <mainClass>ldif.local.Ldif</mainClass>
-                                </transformer>
-                            </transformers>
-                        </configuration>
-                    </execution>
+                 <version>1.6</version>
+                 <executions>
+                     <execution>
+                         <phase>package</phase>
+                         <goals>
+                             <goal>shade</goal>
+                         </goals>
+                         <configuration>
+                             <!--<minimizeJar>true</minimizeJar>-->
+                             <filters>
+                                 <!-- Excludes -->
+                                 <filter>
+                                     <artifact>org.scala-lang:scala-compiler</artifact>
+                                     <includes>
+                                         <include>scala/tools/nsc/util/**</include>
+                                     </includes>
+                                 </filter>
+                             </filters>
+                             <finalName>ldif-single-${version}-jar-with-dependencies</finalName>
+                             <transformers>
+                                 <transformer
+                                         implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                                     <mainClass>ldif.local.Ldif</mainClass>
+                                 </transformer>
+                             </transformers>
+                         </configuration>
+                     </execution>
                 </executions>
             </plugin>
         </plugins>

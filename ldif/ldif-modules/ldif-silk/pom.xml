@@ -1,30 +1,30 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-	<modelVersion>4.0.0</modelVersion>
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
 
-  <parent>
-    <groupId>ldif</groupId>
-    <artifactId>ldif-modules</artifactId>
+    <parent>
+        <groupId>ldif</groupId>
+        <artifactId>ldif-modules</artifactId>
+        <version>0.5.1</version>
+    </parent>
+
+    <artifactId>ldif-silk</artifactId>
+    <packaging>pom</packaging>
     <version>0.5.1</version>
-  </parent>
+    <name>LDIF Silk Module</name>
 
-	<artifactId>ldif-silk</artifactId>
-	<packaging>pom</packaging>
-	<version>0.5.1</version>
-	<name>LDIF Silk Module</name>
-  
-  <modules>
-    <module>ldif-silk-common</module>
-    <module>ldif-silk-local</module>
-    <module>ldif-silk-hadoop</module>
-  </modules>
+    <modules>
+        <module>ldif-silk-common</module>
+        <module>ldif-silk-local</module>
+        <module>ldif-silk-hadoop</module>
+    </modules>
 
-  <dependencies>
-    <dependency>
-      <groupId>ldif</groupId>
-      <artifactId>ldif-core</artifactId>
-      <version>0.5.1</version>
-    </dependency>
-  </dependencies>
+    <dependencies>
+        <dependency>
+            <groupId>ldif</groupId>
+            <artifactId>ldif-core</artifactId>
+            <version>0.5.1</version>
+        </dependency>
+    </dependencies>
 
 </project>

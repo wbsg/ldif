@@ -3,21 +3,17 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
-    <properties>
-        <silk.version>[2.5.3,)</silk.version>
-    </properties>
-
     <parent>
-        <artifactId>ldif-r2r</artifactId>
+        <artifactId>ldif-silk</artifactId>
         <groupId>ldif</groupId>
         <version>0.5.1</version>
     </parent>
-    <modelVersion>4.0.0</modelVersion>
 
+    <name>LDIF Silk Module - Hadoop</name>
+    <modelVersion>4.0.0</modelVersion>
     <artifactId>ldif-silk-hadoop</artifactId>
     <packaging>jar</packaging>
-	<version>0.5.1</version>
-	<name>LDIF Silk Module - Hadoop</name>
+    <version>0.5.1</version>
 
     <dependencies>
       <dependency>

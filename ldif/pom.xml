@@ -11,6 +11,7 @@
         <scalatest.version>1.6.1</scalatest.version>
         <scala.plugin.version>2.15.2</scala.plugin.version>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <silk.version>2.5.4</silk.version>
     </properties>
 
     <groupId>ldif</groupId>
