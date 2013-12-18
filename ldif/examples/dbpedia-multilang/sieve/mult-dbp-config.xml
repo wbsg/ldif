@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"  ?>
+<Sieve xmlns="http://www4.wiwiss.fu-berlin.de/ldif/">
+    <Prefixes>
+        <Prefix id="dbpedia-owl" namespace="http://dbpedia.org/ontology/"/>
+        <Prefix id="dbpedia" namespace="http://dbpedia.org/resource/"/>
+		<Prefix id="dbpedia-meta" namespace="http://dbpedia.org/metadata/"/>
+        <Prefix id="ldif" namespace="http://www4.wiwiss.fu-berlin.de/ldif/"/>
+        <Prefix id="xsd" namespace="http://www.w3.org/2001/XMLSchema#"/>
+        <Prefix id="rdf" namespace="http://www.w3.org/1999/02/22-rdf-syntax-ns#"/>
+        <Prefix id="rdfs" namespace="http://www.w3.org/2000/01/rdf-schema#"/>
+        <Prefix id="owl" namespace="http://www.w3.org/2002/07/owl#"/>
+		<Prefix id="sieve" namespace="http://sieve.wbsg.de/vocab/"/>
+    </Prefixes>
+
+    <QualityAssessment>				   
+        <AssessmentMetric id="sieve:recency">
+            <ScoringFunction class="TimeCloseness">
+                <Param name="timeSpan" value="2000"/>
+                <Input path="?GRAPH/dbpedia-meta:lastedit"/>
+            </ScoringFunction>
+        </AssessmentMetric>
+		<AssessmentMetric id="sieve:normcount">
+            <ScoringFunction class="NormalizedCount">
+                <Param name="maxCount" value="200000"/>
+                <Input path="?GRAPH/dbpedia-meta:autheditcnt"/>
+            </ScoringFunction>
+        </AssessmentMetric>
+    </QualityAssessment>
+
+    <Fusion name="Fusion strategy for DBpedia City Entities"
+            description="The idea is to use values from multiple DBpedia languages to improve the quality of data about cities.">
+        <Class name="dbpedia-owl:PopulatedPlace">
+            <Property name="dbpedia-owl:populationTotal">
+		        <FusionFunction class="Voting"/>
+            </Property>
+        </Class>
+    </Fusion>
+
+</Sieve>

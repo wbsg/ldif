@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<SieveFPL>
+	<Parameters>
+		<!--<SelectionMethod name="MinAbsError"/>-->
+		<SelectionMethod name="MaxCorrectValues" error="0.05"/>
+	</Parameters>
+	<Input>
+		<GoldStandard>gold\cities1000_gold_triples.nt</GoldStandard>
+		<dumpLocation>dumps-3cities</dumpLocation>	
+		<SieveExec>c:\ldif-0.5.1\bin\ldif.bat</SieveExec>
+	</Input>
+	<Output>
+		<SieveSpec>sieve-optimal\sieve_optimal.xml</SieveSpec>
+		<FPLReport valmatrix = "true">FPL_report.txt</FPLReport>
+	</Output>	
+
+	<Sieve xmlns="http://www4.wiwiss.fu-berlin.de/ldif/">
+		<Prefixes>
+			<Prefix id="dbpedia-owl" namespace="http://dbpedia.org/ontology/"/>
+			<Prefix id="dbpedia" namespace="http://dbpedia.org/resource/"/>
+			<Prefix id="dbpedia-meta" namespace="http://dbpedia.org/metadata/"/>
+			<Prefix id="ldif" namespace="http://www4.wiwiss.fu-berlin.de/ldif/"/>
+			<Prefix id="xsd" namespace="http://www.w3.org/2001/XMLSchema#"/>
+			<Prefix id="rdf" namespace="http://www.w3.org/1999/02/22-rdf-syntax-ns#"/>
+			<Prefix id="rdfs" namespace="http://www.w3.org/2000/01/rdf-schema#"/>
+			<Prefix id="owl" namespace="http://www.w3.org/2002/07/owl#"/>
+			<Prefix id="sieve" namespace="http://sieve.wbsg.de/vocab/"/>
+			<Prefix id="dbpedia-meta" namespace="http://dbpedia.org/metadata/"/>
+		</Prefixes>
+
+		<QualityAssessment name="Multilingual DBpedia quality assessment scores">
+			<AssessmentMetric id="sieve:english">
+				<ScoringFunction class="ScoredPrefixList">
+					<Param name="list" value="http://en.wikipedia.org"/>
+				</ScoringFunction>
+			</AssessmentMetric>
+			<AssessmentMetric id="sieve:recency">
+				<ScoringFunction class="TimeCloseness">
+					<Param name="timeSpan" value="500"/>
+					<Input path="?GRAPH/dbpedia-meta:lastedit"/>
+				</ScoringFunction>
+			</AssessmentMetric>
+			<AssessmentMetric id="sieve:authactivity">
+				<ScoringFunction class="NormalizedCount">
+					<Param name="maxCount" value="4250000"/>
+					<Input path="?GRAPH/dbpedia-meta:autheditcnt"/>
+				</ScoringFunction>
+			</AssessmentMetric>
+			<AssessmentMetric id="sieve:propactivity">
+				<ScoringFunction class="NormalizedCount">
+					<Param name="maxCount" value="100"/>
+					<Input path="?GRAPH/dbpedia-meta:propeditcnt"/>
+				</ScoringFunction>
+			</AssessmentMetric>
+			<AssessmentMetric id="sieve:authage">
+				<ScoringFunction class="TimeCloseness">
+					<Param name="timeSpan" value="3000"/>
+					<Input path="?GRAPH/dbpedia-meta:authregdate"/>
+				</ScoringFunction>
+			</AssessmentMetric>
+		</QualityAssessment>
+
+		<Fusion name="Multilingual DBpedia quality assessment scores">
+			<Class name="dbpedia-owl:PopulatedPlace">
+				<Property name="dbpedia-owl:country">
+					<FusionFunction class="Voting"/>
+					<FusionFunction class="KeepFirst" metric="sieve:recency"/>
+					<FusionFunction class="KeepFirst" metric="sieve:english"/>
+					<FusionFunction class="KeepFirst" metric="sieve:authactivity"/>
+					<FusionFunction class="KeepFirst" metric="sieve:propactivity"/>
+					<FusionFunction class="KeepLowest" metric="sieve:authage"/>
+				</Property>
+				<Property name="dbpedia-owl:populationTotal">
+					<FusionFunction class="Average"/>
+					<FusionFunction class="Maximum"/>
+					<FusionFunction class="Voting"/>
+					<FusionFunction class="KeepFirst" metric="sieve:recency"/>
+					<FusionFunction class="KeepFirst" metric="sieve:english"/>
+					<FusionFunction class="KeepFirst" metric="sieve:authactivity"/>
+					<FusionFunction class="KeepFirst" metric="sieve:propactivity"/>
+					<FusionFunction class="KeepLowest" metric="sieve:authage"/>
+				</Property>
+			</Class>
+		</Fusion>
+	</Sieve>
+</SieveFPL>
