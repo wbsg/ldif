@@ -15,7 +15,7 @@ bin\ldif examples\dbpedia-multilang\schedulerConfig.xml
 
 *** Sieve Fusion Policy Learner (FPL) ***
 SieveFPL.xml - specification file for the Fusion Policy Learner Sieve extension, to test it run
-java -jar lib\fusion-policy-learner-1.0.jar examples\dbpedia-multilang\SieveFPL.xml
+java -jar lib\ldif-sieve-fpl-0.1.1-jar-with-dependencies.jar examples\dbpedia-multilang\SieveFPL.xml
 
 FLP will generate 
 * the optimal Sieve specification,

@@ -21,7 +21,7 @@ package ldif.modules.silk.local
 import ldif.module.Executor
 import ldif.modules.silk.{CreateEntityDescriptions, SilkTask}
 import de.fuberlin.wiwiss.silk.datasource.Source
-import de.fuberlin.wiwiss.silk.{OutputTask, FilterTask, MatchTask, LoadTask}
+import de.fuberlin.wiwiss.silk.execution.{OutputTask, FilterTask, MatchTask, LoadTask}
 import de.fuberlin.wiwiss.silk.output.Output
 import ldif.local.runtime._
 import de.fuberlin.wiwiss.silk.entity.{Entity => SilkEntity}
@@ -77,8 +77,8 @@ class SilkLocalExecutor(useFileInstanceCache: Boolean = false, allowLinksForSame
       )
     } else
       DPair(
-        new MemoryEntityCache(entityDescs.source, linkSpec.rule.index(_)),
-        new MemoryEntityCache(entityDescs.target, linkSpec.rule.index(_))
+        new MemoryEntityCache(entityDescs.source, linkSpec.rule.index(_), config),
+        new MemoryEntityCache(entityDescs.target, linkSpec.rule.index(_), config)
       )
 
     reporter.setStatus("30%") // Loading instance into caches (2/5)
@@ -90,7 +90,8 @@ class SilkLocalExecutor(useFileInstanceCache: Boolean = false, allowLinksForSame
 
     reporter.setStatus("50%")  // Executing matching (3/5)
     //Execute matching
-    val matchTask = new MatchTask(linkSpec.rule, caches, config)
+    val matchTask = new MatchTask(linkSpec.rule, caches, config, false)
+
     val links = matchTask()
 
     reporter.setStatus("70%") //Filtering links (4/5)

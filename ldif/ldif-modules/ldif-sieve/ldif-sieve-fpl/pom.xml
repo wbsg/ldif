@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+    <parent>
+        <artifactId>ldif-sieve</artifactId>
+        <groupId>ldif</groupId>
+        <version>0.5.1</version>
+    </parent>
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <artifactId>ldif-sieve-fpl</artifactId>
+    <packaging>jar</packaging>
+    <version>0.1.1</version>
+    <name>Fusion Policy Learner</name>
+
+    <repositories>
+        <repository>
+            <id>nxparser-repo</id>
+            <url>
+                http://nxparser.googlecode.com/svn/repository
+            </url>
+        </repository>
+        <repository>
+            <id>nxparser-snapshots</id>
+            <url>
+                http://nxparser.googlecode.com/svn/snapshots
+            </url>
+        </repository>
+    </repositories>
+
+    <dependencies>
+        <!--dependency>
+            <groupId>nxparser</groupId>
+            <artifactId>nxparser</artifactId>
+            <version>1.2.2</version>
+        </dependency-->
+        <dependency>
+            <groupId>org.semanticweb.yars</groupId>
+            <artifactId>nxparser</artifactId>
+            <version>1.2.3</version>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <version>2.2.1</version>
+                <configuration>
+                    <archive>
+                        <manifest>
+                            <addClasspath>true</addClasspath>
+                            <mainClass>ldif.modules.sieve.fusion.policylearner.FPL</mainClass>
+                        </manifest>
+                    </archive>
+                    <descriptorRefs>
+                        <descriptorRef>jar-with-dependencies</descriptorRef>
+                    </descriptorRefs>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>make-all-in-one-jar</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>
