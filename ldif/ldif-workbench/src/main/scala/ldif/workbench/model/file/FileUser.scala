@@ -1,13 +1,7 @@
-package ldif.workbench.model.file
-
-import ldif.workbench.model.User
-import java.io.{IOException, File}
-import java.util.logging.{Level, Logger}
-
 /*
  * LDIF
  *
- * Copyright 2011-2013 Freie Universität Berlin, MediaEvent Services GmbH & Co. KG
+ * Copyright 2011-2014 Universität Mannheim, MediaEvent Services GmbH & Co. KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,6 +16,11 @@ import java.util.logging.{Level, Logger}
  * limitations under the License.
  */
 
+package ldif.workbench.model.file
+
+import ldif.workbench.model.User
+import java.io.{IOException, File}
+import java.util.logging.{Level, Logger}
 
 class FileUser extends User {
   override def workspace = FileUser.workspace

@@ -1,7 +1,7 @@
-package ldif.modules.sieve.fusion
-
 /*
- * Copyright 2011-2013 Freie Universität Berlin, MediaEvent Services GmbH & Co. KG
+ * LDIF
+ *
+ * Copyright 2011-2014 Universität Mannheim, MediaEvent Services GmbH & Co. KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,6 +15,8 @@ package ldif.modules.sieve.fusion
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
+package ldif.modules.sieve.fusion
 
 import ldif.module.ModuleTask
 import ldif.util.Identifier

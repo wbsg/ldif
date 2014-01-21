@@ -1,9 +1,7 @@
-package ldif.workbench.model.modules.dataSource
-
 /*
  * LDIF
  *
- * Copyright 2011-2013 Freie Universität Berlin, MediaEvent Services GmbH & Co. KG
+ * Copyright 2011-2014 Universität Mannheim, MediaEvent Services GmbH & Co. KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +15,8 @@ package ldif.workbench.model.modules.dataSource
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
+package ldif.workbench.model.modules.dataSource
 
 import ldif.workbench.model.modules._
 
