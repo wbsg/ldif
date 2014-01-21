@@ -8,7 +8,7 @@
   <parent>
     <groupId>ldif</groupId>
     <artifactId>ldif</artifactId>
-    <version>0.5.1</version>
+    <version>0.5.2</version>
   </parent>
 
   <artifactId>ldif-singlemachine</artifactId>
@@ -116,7 +116,7 @@
     <dependency>
         <groupId>ldif</groupId>
         <artifactId>ldif-local</artifactId>
-        <version>0.5.1</version>
+        <version>0.5.2</version>
         <exclusions>
             <!-- Required by apache-any23-office-scraper, used by XSLXImportJob
             <exclusion>
@@ -138,25 +138,25 @@
     <dependency>
       <groupId>ldif</groupId>
       <artifactId>ldif-entitybuilder-local</artifactId>
-      <version>0.5.1</version>
+      <version>0.5.2</version>
     </dependency>
 
     <dependency>
       <groupId>ldif</groupId>
       <artifactId>ldif-r2r-local</artifactId>
-      <version>0.5.1</version>
+      <version>0.5.2</version>
     </dependency>
 
     <dependency>
       <groupId>ldif</groupId>
       <artifactId>ldif-silk-local</artifactId>
-      <version>0.5.1</version>
+      <version>0.5.2</version>
     </dependency>
 
     <dependency>
       <groupId>ldif</groupId>
       <artifactId>ldif-sieve-local</artifactId>
-      <version>0.5.1</version>
+      <version>0.5.2</version>
     </dependency>
 
     <dependency>

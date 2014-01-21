@@ -5,12 +5,12 @@
     <parent>
         <groupId>ldif</groupId>
         <artifactId>ldif-sieve</artifactId>
-        <version>0.5.1</version>
+        <version>0.5.2</version>
     </parent>
 
     <artifactId>ldif-sieve-common</artifactId>
     <packaging>jar</packaging>
-    <version>0.5.1</version>
+    <version>0.5.2</version>
     <name>LDIF Sieve Module - Common</name>
 
     <dependencies>

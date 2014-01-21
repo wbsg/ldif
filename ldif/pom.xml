@@ -6,7 +6,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <properties>
-        <ldif.version>0.5.1</ldif.version>
+        <ldif.version>0.5.2</ldif.version>
         <scala.version>2.9.1</scala.version>
         <scalatest.version>1.6.1</scalatest.version>
         <scala.plugin.version>2.15.2</scala.plugin.version>
@@ -17,7 +17,7 @@
     <groupId>ldif</groupId>
     <artifactId>ldif</artifactId>
     <packaging>pom</packaging>
-    <version>0.5.1</version>
+    <version>0.5.2</version>
     <name>LDIF</name>
     <url>http://ldif.wbsg.de/</url>
 
