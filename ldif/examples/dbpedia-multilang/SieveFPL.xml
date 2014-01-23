@@ -68,7 +68,7 @@
 					<FusionFunction class="KeepFirst" metric="sieve:english"/>
 					<FusionFunction class="KeepFirst" metric="sieve:authactivity"/>
 					<FusionFunction class="KeepFirst" metric="sieve:propactivity"/>
-					<FusionFunction class="KeepLowest" metric="sieve:authage"/>
+					<FusionFunction class="KeepLast" metric="sieve:authage"/>
 				</Property>
 				<Property name="dbpedia-owl:populationTotal">
 					<FusionFunction class="Average"/>
@@ -78,7 +78,7 @@
 					<FusionFunction class="KeepFirst" metric="sieve:english"/>
 					<FusionFunction class="KeepFirst" metric="sieve:authactivity"/>
 					<FusionFunction class="KeepFirst" metric="sieve:propactivity"/>
-					<FusionFunction class="KeepLowest" metric="sieve:authage"/>
+					<FusionFunction class="KeepLast" metric="sieve:authage"/>
 				</Property>
 			</Class>
 		</Fusion>

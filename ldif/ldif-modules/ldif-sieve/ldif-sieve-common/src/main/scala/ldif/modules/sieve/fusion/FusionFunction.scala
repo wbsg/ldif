@@ -80,7 +80,7 @@ object FusionFunction {
     // val factory = companion[FusionFunction](className).fromXML
     className.toLowerCase match {
       case "keepfirst" => KeepFirst.fromXML(config)(prefixes)
-      case "keeplowest" => KeepLowest.fromXML(config)(prefixes)
+      case "keeplast" => KeepLast.fromXML(config)(prefixes)
       case "keepallvalueswithhighestscore" => KeepAllValuesWithHighestScore.fromXML(config)(prefixes)
       case "voting" => Voting.fromXML(config)(prefixes)
       case "weightedvoting" => WeightedVoting.fromXML(config)(prefixes)
