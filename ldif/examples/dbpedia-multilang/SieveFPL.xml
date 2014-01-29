@@ -7,7 +7,7 @@
 	<Input>
 		<GoldStandard>gold\cities1000_gold_triples.nt</GoldStandard>
 		<dumpLocation>dumps-3cities</dumpLocation>	
-		<SieveExec>c:\ldif-0.5.1\bin\ldif.bat</SieveExec>
+		<SieveExec>c:\ldif-0.5.2\bin\ldif.bat</SieveExec>
 	</Input>
 	<Output>
 		<SieveSpec>sieve-optimal\sieve_optimal.xml</SieveSpec>
