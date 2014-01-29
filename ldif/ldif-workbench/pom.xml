@@ -20,7 +20,7 @@
     </properties>
 
     <dependencies>
-         <dependency>
+        <dependency>
             <groupId>ldif</groupId>
             <artifactId>ldif-singlemachine</artifactId>
             <version>0.5.2</version>
@@ -28,24 +28,14 @@
 
         <dependency>
             <groupId>net.liftweb</groupId>
-            <artifactId>lift-webkit_2.9.1</artifactId>
+            <artifactId>lift-webkit_2.9.2</artifactId>
             <version>2.4</version>
         </dependency>
         <dependency>
             <groupId>net.liftweb</groupId>
-            <artifactId>lift-widgets_2.9.1</artifactId>
+            <artifactId>lift-widgets_2.9.2</artifactId>
             <version>2.4</version>
         </dependency>
-        <!--<dependency>-->
-            <!--<groupId>org.apache.derby</groupId>-->
-            <!--<artifactId>derby</artifactId>-->
-            <!--<version>10.2.2.0</version>-->
-        <!--</dependency>-->
-        <!--<dependency>-->
-            <!--<groupId>javax.servlet</groupId>-->
-            <!--<artifactId>servlet-api</artifactId>-->
-            <!--<version>2.5</version>-->
-        <!--</dependency>-->
         <dependency>
             <groupId>org.eclipse.jetty</groupId>
             <artifactId>jetty-server</artifactId>
@@ -114,7 +104,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-assembly-plugin</artifactId>
-                <version>2.2.1</version>
+                <version>3.0</version>
                 <configuration>
                     <descriptorRefs>
                         <descriptorRef>jar-with-dependencies</descriptorRef>
@@ -144,7 +134,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-resources-plugin</artifactId>
-                <version>2.5</version>
+                <version>3.0</version>
                 <executions>
                     <execution>
                         <id>default-copy-resources</id>

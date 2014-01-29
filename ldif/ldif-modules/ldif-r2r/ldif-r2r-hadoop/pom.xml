@@ -11,14 +11,14 @@
 
     <artifactId>ldif-r2r-hadoop</artifactId>
     <packaging>jar</packaging>
-	<version>0.5.2</version>
-	<name>LDIF R2R Module - Hadoop</name>
+    <version>0.5.2</version>
+    <name>LDIF R2R Module - Hadoop</name>
 
     <dependencies>
         <dependency>
-          <groupId>ldif</groupId>
-          <artifactId>ldif-hadoop</artifactId>
-          <version>0.5.2</version>
+            <groupId>ldif</groupId>
+            <artifactId>ldif-hadoop</artifactId>
+            <version>0.5.2</version>
         </dependency>
         <dependency>
             <groupId>ldif</groupId>

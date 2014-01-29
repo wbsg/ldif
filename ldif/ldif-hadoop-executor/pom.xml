@@ -16,16 +16,12 @@
     <packaging>jar</packaging>
     <name>LDIF Hadoop Executor</name>
 
-    <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    </properties>
-
     <build>
         <plugins>
             <plugin>
-                <groupId>org.scala-tools</groupId>
-                <artifactId>maven-scala-plugin</artifactId>
-                <version>${scala.plugin.version}</version>
+                <groupId>net.alchim31.maven</groupId>
+                <artifactId>scala-maven-plugin</artifactId>
+                <version>3.1.6</version>
                 <configuration>
                     <launchers>
                         <launcher>
@@ -44,7 +40,7 @@
                 <artifactId>maven-assembly-plugin</artifactId>
                 <version>2.2-beta-4</version>
                 <configuration>
-                    <finalName>ldif-hadoop-exe-${version}</finalName>
+                    <finalName>ldif-hadoop-exe-${project.version}</finalName>
                     <descriptorRefs>
                         <descriptorRef>jar-with-dependencies</descriptorRef>
                     </descriptorRefs>
@@ -56,8 +52,10 @@
                 </configuration>
                 <executions>
                     <execution>
-                        <id>make-assembly</id> <!-- this is used for inheritance merges -->
-                        <phase>package</phase> <!-- bind to the packaging phase -->
+                        <id>make-assembly</id>
+                        <!-- this is used for inheritance merges -->
+                        <phase>package</phase>
+                        <!-- bind to the packaging phase -->
                         <goals>
                             <goal>single</goal>
                         </goals>
@@ -74,7 +72,7 @@
                     <skipTests>true</skipTests>
                 </configuration>
             </plugin>
-			<plugin>
+            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
                 <!-- version 2.0 requires maven 3-->
@@ -91,21 +89,22 @@
                                 <!-- Excludes -->
                                 <filter>
                                     <artifact>org.scala-lang:scala-compiler</artifact>
-				    <includes>
+                                    <includes>
                                         <include>scala/tools/nsc/util/**</include>
                                     </includes>
                                 </filter>
                             </filters>
-                            <finalName>ldif-hadoop-exe-${version}-jar-with-dependencies</finalName>
+                            <finalName>ldif-hadoop-exe-${project.version}-jar-with-dependencies</finalName>
                             <transformers>
-                                <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                                <transformer
+                                        implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
                                     <mainClass>ldif.hadoop.MainClassDispatcher</mainClass>
                                 </transformer>
                             </transformers>
                         </configuration>
                     </execution>
                 </executions>
-            </plugin>            
+            </plugin>
         </plugins>
     </build>
 
@@ -160,18 +159,11 @@
             </exclusions>
         </dependency>
 
-      <dependency>
-          <groupId>ldif</groupId>
-          <artifactId>ldif-silk-hadoop</artifactId>
-          <version>0.5.2</version>
-      </dependency>
-
-        <!--<dependency>-->
-            <!--<groupId>org.apache.mrunit</groupId>-->
-            <!--<artifactId>mrunit</artifactId>-->
-            <!--<version>0.5.0-incubating</version>-->
-            <!--<scope>test</scope>-->
-        <!--</dependency>-->
+        <dependency>
+            <groupId>ldif</groupId>
+            <artifactId>ldif-silk-hadoop</artifactId>
+            <version>0.5.2</version>
+        </dependency>
 
     </dependencies>
 

@@ -2,65 +2,25 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-  
-  <modelVersion>4.0.0</modelVersion>
-  
-  <parent>
-    <groupId>ldif</groupId>
-    <artifactId>ldif</artifactId>
-    <version>0.5.2</version>
-  </parent>
 
-  <artifactId>ldif-core</artifactId>
-  <packaging>jar</packaging>
-  <name>LDIF Core</name>
+    <modelVersion>4.0.0</modelVersion>
 
-  <properties>
-    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-  </properties>
+    <parent>
+        <groupId>ldif</groupId>
+        <artifactId>ldif</artifactId>
+        <version>0.5.2</version>
+    </parent>
 
-
-  <dependencies>
-
-      <dependency>
-          <groupId>nxparser</groupId>
-          <artifactId>nxparser</artifactId>
-          <version>1.1</version>
-      </dependency>
-
-      <dependency>
-          <groupId>org.antlr</groupId>
-          <artifactId>antlr</artifactId>
-          <version>3.2</version>
-      </dependency>
-
-      <dependency>
-          <groupId>bzip2</groupId>
-          <artifactId>bzip2</artifactId>
-          <version>0.1</version>
-      </dependency>
-
-      <dependency>
-          <groupId>ldspider</groupId>
-          <artifactId>ldspider</artifactId>
-          <version>285+</version>
-      </dependency>
-
-      <dependency>
-          <groupId>com.hp.hpl.jena</groupId>
-          <artifactId>jena</artifactId>
-          <version>2.6.5-SNAPSHOT</version>
-      </dependency>
-
-  </dependencies>
-    
+    <artifactId>ldif-core</artifactId>
+    <packaging>jar</packaging>
+    <name>LDIF Core</name>
 
     <build>
         <plugins>
-             <plugin>
+            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-install-plugin</artifactId>
-                <version>2.3.1</version>
+                <version>2.5.1</version>
                 <executions>
                     <execution>
                         <id>install-nxparser-jar</id>
@@ -76,7 +36,7 @@
                             <file>${project.basedir}/lib/nxparser-1.1.jar</file>
                         </configuration>
                     </execution>
-                     <execution>
+                    <execution>
                         <id>install-bzip2-jar</id>
                         <phase>generate-resources</phase>
                         <goals>
@@ -90,7 +50,7 @@
                             <file>${project.basedir}/lib/bzip2-0.1.jar</file>
                         </configuration>
                     </execution>
-                     <execution>
+                    <execution>
                         <id>install-ldspider-jar</id>
                         <phase>generate-resources</phase>
                         <goals>
@@ -122,5 +82,39 @@
             </plugin>
         </plugins>
     </build>
-    
+
+    <dependencies>
+
+        <dependency>
+            <groupId>nxparser</groupId>
+            <artifactId>nxparser</artifactId>
+            <version>1.1</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.antlr</groupId>
+            <artifactId>antlr</artifactId>
+            <version>3.2</version>
+        </dependency>
+
+        <dependency>
+            <groupId>bzip2</groupId>
+            <artifactId>bzip2</artifactId>
+            <version>0.1</version>
+        </dependency>
+
+        <dependency>
+            <groupId>ldspider</groupId>
+            <artifactId>ldspider</artifactId>
+            <version>285+</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.hp.hpl.jena</groupId>
+            <artifactId>jena</artifactId>
+            <version>2.6.5-SNAPSHOT</version>
+        </dependency>
+
+    </dependencies>
+
 </project>
