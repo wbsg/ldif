@@ -92,6 +92,14 @@
                                          <include>scala/tools/nsc/util/**</include>
                                      </includes>
                                  </filter>
+                                 <filter>
+                                     <artifact>*:*</artifact>
+                                     <excludes>
+                                         <exclude>META-INF/*.SF</exclude>
+                                         <exclude>META-INF/*.DSA</exclude>
+                                         <exclude>META-INF/*.RSA</exclude>
+                                     </excludes>
+                                 </filter>
                              </filters>
                              <finalName>ldif-single-${project.version}-jar-with-dependencies</finalName>
                              <transformers>
