@@ -5,7 +5,9 @@
 		<SelectionMethod name="MaxCorrectValues" error="0.05"/>
 	</Parameters>
 	<Input>
-		<GoldStandard>gold\cities1000_gold_triples.nt</GoldStandard>
+		<!--GoldStandard>gold\cities1000-Netherlands.gold.nt</GoldStandard-->
+		<GoldStandard>gold\3-capitals.gold.nt</GoldStandard>
+		<!--dumpLocation>dumps-nl</dumpLocation-->			
 		<dumpLocation>dumps-3cities</dumpLocation>	
 		<SieveExec>c:\ldif-0.5.2\bin\ldif.bat</SieveExec>
 	</Input>
