@@ -33,7 +33,7 @@ cp resources/log4j.properties ${ldifhadoopdir}/resources
 mkdir ${ldifdir}/examples
 mkdir ${ldifhadoopdir}/examples
 
-cp -r examples/life-science/ examples/music/  examples/lwdm2012/ ${ldifdir}/examples/
+cp -r examples/life-science/ examples/music/  examples/lwdm2012/ examples/dbpedia-multilang/ ${ldifdir}/examples/
 cp -r examples/music/ ${ldifhadoopdir}/examples/
 
 mvn install
