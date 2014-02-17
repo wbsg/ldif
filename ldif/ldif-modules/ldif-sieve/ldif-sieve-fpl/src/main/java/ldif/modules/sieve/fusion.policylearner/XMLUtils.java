@@ -16,16 +16,11 @@ package ldif.modules.sieve.fusion.policylearner;
  * limitations under the License.
  */
 
-import org.w3c.dom.*;
-
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.*;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
-import javax.xml.xpath.*;
-import java.io.*;
 
 /* Collection of methods for working with xml */
 public class XMLUtils

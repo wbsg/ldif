@@ -16,18 +16,14 @@ package ldif.modules.sieve.fusion.policylearner;
  * limitations under the License.
  */
 
-import org.w3c.dom.*;
 import org.xml.sax.SAXException;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import java.io.*;
-import java.util.*;
 
-import static ldif.modules.sieve.fusion.policylearner.XMLUtils.*;
 import static ldif.modules.sieve.fusion.policylearner.FPLConfigStrings.*;
-
+import static ldif.modules.sieve.fusion.policylearner.XMLUtils.*;
 
 /* Loads and stores input FPL specification */
 public class FPLConfig

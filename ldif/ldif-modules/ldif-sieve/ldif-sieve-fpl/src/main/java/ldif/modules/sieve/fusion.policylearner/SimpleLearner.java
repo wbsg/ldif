@@ -20,15 +20,11 @@ import org.semanticweb.yars.nx.parser.NxParser;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import java.awt.*;
-import java.awt.event.KeyEvent;
-import java.io.*;
-import java.nio.file.Files;
 import java.util.HashMap;
 import java.util.Map;
 
-import static ldif.modules.sieve.fusion.policylearner.XMLUtils.*;
 import static ldif.modules.sieve.fusion.policylearner.FPLConfigStrings.*;
+import static ldif.modules.sieve.fusion.policylearner.XMLUtils.*;
 
 /* Learns the optimal fusion function per property from the lists in FLP input specification.
    Creates the final Sieve specifications with optimal functions and the FLP report with detailed information per each fusion function.

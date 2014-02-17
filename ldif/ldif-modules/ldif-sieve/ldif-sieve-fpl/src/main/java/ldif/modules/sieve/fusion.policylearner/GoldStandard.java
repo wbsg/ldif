@@ -18,7 +18,6 @@ package ldif.modules.sieve.fusion.policylearner;
 
 import org.semanticweb.yars.nx.parser.NxParser;
 
-import java.io.*;
 import java.util.Map;
 
 /* Loads gold standard values from "fnGold" into existing value matrix "data" given the "property", detects the data type (numeric or nominal) */
