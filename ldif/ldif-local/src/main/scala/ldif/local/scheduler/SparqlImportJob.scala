@@ -57,7 +57,7 @@ case class SparqlImportJob(conf : SparqlConfig, id :  Identifier, refreshSchedul
     } else {
       val query = conf.buildQuery
       log.info("Loading from " + conf.endpointLocation)
-      log.debug("Query: " + query)
+      log.info("Query: " + query)
       success = execQuery(query, writer)
     }
 
@@ -203,6 +203,7 @@ case class SparqlImportJob(conf : SparqlConfig, id :  Identifier, refreshSchedul
         <endpointLocation>{conf.endpointLocation}</endpointLocation>
         {if (conf.isTripleLimitDefined) <tripleLimit>{conf.tripleLimit}</tripleLimit>}
         {if (conf.isGraphDefined) <graphName>{conf.graphName}</graphName>}
+        {if (conf.isQueryFileDefined) <queryFile>{conf.queryFile}</queryFile>}
         {if (conf.isAnyPatternDefined){
             <sparqlPatterns>
               {for (pattern <- conf.sparqlPatterns) yield { <pattern>{pattern}</pattern> } }
@@ -227,39 +228,49 @@ object SparqlImportJob {
     }
 
     val sparqlPatterns = (node \ "sparqlPatterns" \ "pattern").map(x => x.text).toTraversable
+    val queryFile = (node \ "queryFile").map(x => x.text).toTraversable
 
-    val sparqlConfig = SparqlConfig(endpointLocation, graphName, sparqlPatterns, tripleLimit)
+    val sparqlConfig = SparqlConfig(endpointLocation, graphName, queryFile, sparqlPatterns, tripleLimit)
     val job = new SparqlImportJob(sparqlConfig, id, refreshSchedule, dataSource)
     job
   }
 }
 
-case class SparqlConfig(endpointLocation : URI,  graphName : URI, sparqlPatterns : Traversable[String], tripleLimit : Long = Consts.SparqlTripleLimitDefault) {
+case class SparqlConfig(endpointLocation : URI,  graphName : URI, queryFile :
+Traversable[String], sparqlPatterns : Traversable[String], tripleLimit : Long = Consts.SparqlTripleLimitDefault) {
 
   def isTripleLimitDefined = tripleLimit!=Consts.SparqlTripleLimitDefault
   def isGraphDefined = graphName.toString.trim != ""
+  def isQueryFileDefined = queryFile.size>0
   def isAnyPatternDefined = sparqlPatterns.size>0
 
   def buildQuery : String = {
-    var query = "SELECT ?s ?p ?o "
-    if(!isGraphDefined) {
-      query += "?g "
-    }
-
-    query += "\n" + "WHERE {\n"
-
-    if (isGraphDefined) {
-      query += " GRAPH <" + graphName + "> {\n"
+    if(isQueryFileDefined) {
+        val source = scala.io.Source.fromFile(queryFile.head)
+        val lines = source.mkString
+        source.close()
+        lines
     } else {
-      query += " GRAPH ?g {\n"
-    }
+        var query = "SELECT ?s ?p ?o "
+        if(!isGraphDefined) {
+          query += "?g "
+        }
 
-    for (pattern <- sparqlPatterns.filterNot(_.trim.equals(""))) {
-      query += " " + pattern + " .\n"
-    }
+        query += "\n" + "WHERE {\n"
 
-    query += " ?s ?p ?o \n}}\n"
-    query
+        if (isGraphDefined) {
+          query += " GRAPH <" + graphName + "> {\n"
+        } else {
+          query += " GRAPH ?g {\n"
+        }
+
+        for (pattern <- sparqlPatterns.filterNot(_.trim.equals(""))) {
+          query += " " + pattern + " .\n"
+        }
+
+        query += " ?s ?p ?o \n}}\n"
+        query
+    }
   }
 
 }

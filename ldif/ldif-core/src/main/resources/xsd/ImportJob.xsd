@@ -81,6 +81,8 @@
 
         <xs:element name="graphName" type="xs:anyURI" minOccurs="0" />
 
+        <xs:element name="queryFile" type="xs:string" minOccurs="0" />
+
         <xs:element name="tripleLimit" type="xs:unsignedInt" minOccurs="0" />
 
         <xs:element name="sparqlPatterns" minOccurs="0" >
