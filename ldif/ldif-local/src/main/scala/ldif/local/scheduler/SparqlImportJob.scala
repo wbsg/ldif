@@ -22,7 +22,8 @@ import java.net.URI
 import org.slf4j.LoggerFactory
 import ldif.local.runtime.LocalNode
 import java.io.{Writer, OutputStream}
-import com.hp.hpl.jena.query.{ResultSet, QueryExecutionFactory}
+import com.hp.hpl.jena.query.{ResultSet, QueryExecutionFactory, QueryExecution,
+Query, QueryFactory, QueryParseException}
 import javax.xml.ws.http.HTTPException
 import com.hp.hpl.jena.sparql.engine.http.QueryExceptionHTTP
 import ldif.util._
@@ -91,6 +92,7 @@ case class SparqlImportJob(conf : SparqlConfig, id :  Identifier, refreshSchedul
       } else {
         query +=  " LIMIT " + math.min(limit, conf.tripleLimit)
       }
+      //log.info("Final query: " + query)
 
       var retries = 1
       var retryPause = Consts.retryPause
@@ -99,11 +101,13 @@ case class SparqlImportJob(conf : SparqlConfig, id :  Identifier, refreshSchedul
       try{
         while (results == null) {
           try {
+            log.debug("Trying to execute query: " + QueryFactory.create(query).toString())
             results = QueryExecutionFactory.sparqlService(endpointUrl, query).execSelect()
           }
           catch {
             case e: HTTPException => {
               // stop on client side errors
+              log.debug("HTTPException thrown exiting now")
               if(e.getStatusCode < 500 && e.getStatusCode >= 400) {
                 statusMsg = "Error executing query: " + query + ". Error Code: " + e.getStatusCode + " (" + e.getMessage + ")"
                 return false
@@ -120,6 +124,7 @@ case class SparqlImportJob(conf : SparqlConfig, id :  Identifier, refreshSchedul
             }
             case e: QueryExceptionHTTP => {
               // stop on client side errors
+              log.debug("QueryExceptionHTTP thrown exiting now")
               if(e.getResponseCode < 500 && e.getResponseCode >= 400) {
                 statusMsg = "Error executing query: " + query + ". Error Code: " + e.getResponseCode + "(" + e.getResponseMessage + ")"
                 return false
@@ -133,6 +138,10 @@ case class SparqlImportJob(conf : SparqlConfig, id :  Identifier, refreshSchedul
               Thread.sleep(retryPause)
               retryPause *= 2
             }
+            case e: QueryParseException => {
+              statusMsg = "The passed SPARQL Query is invalid: " + e.toString();
+              return false
+            }
           }
         }
       } catch {
@@ -143,6 +152,8 @@ case class SparqlImportJob(conf : SparqlConfig, id :  Identifier, refreshSchedul
           }
         }
       }
+
+      log.debug("Query execution successful. Processing now")
 
       if(results!=null){
         val count = write(results, writer)
@@ -156,6 +167,9 @@ case class SparqlImportJob(conf : SparqlConfig, id :  Identifier, refreshSchedul
         if (count!=0 || limit == 0) {
           log.info(id +" - loaded "+offset+" quads")
         }
+      } else {
+        log.debug("Query execution did not give us any result.")
+        loop = false
       }
     }
 
@@ -166,6 +180,7 @@ case class SparqlImportJob(conf : SparqlConfig, id :  Identifier, refreshSchedul
   /* Write SPARQL results */
   private def write(results : ResultSet, writer : Writer): Int =  {
     //results.write(out, "N-QUAD", graph)
+    log.debug("Writing Quads")
     var counter = 0
     while(results.hasNext) {
       counter += 1
