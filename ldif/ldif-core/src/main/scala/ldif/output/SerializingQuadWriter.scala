@@ -46,6 +46,7 @@ case class SerializingQuadWriter(filepath: String, syntax: RDFSyntax) extends Qu
     if (writer!=null) {
       writer.flush()
       writer.close()
+      writer = null
     }
   }
 }
