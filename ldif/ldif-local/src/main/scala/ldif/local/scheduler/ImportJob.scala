@@ -145,6 +145,11 @@ object ImportJob {
     val dataSource = (node \ "dataSource" text)
     val refreshSchedule = (node \ "refreshSchedule" text)
 
+    (node \ "commandLineImportJob").headOption match {
+      case Some(job) => return CommandLineImportJob.fromXML(job, id, refreshSchedule, dataSource)
+      case None =>
+    }
+
     (node \ "quadImportJob").headOption match {
       case Some(job) => return QuadImportJob.fromXML(job, id, refreshSchedule, dataSource)
       case None =>

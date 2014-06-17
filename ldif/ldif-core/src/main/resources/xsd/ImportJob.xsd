@@ -34,6 +34,15 @@
     </xs:complexType>
   </xs:element>
 
+  <xs:element name="commandLineImportJob" substitutionGroup="ldif:job">
+    <xs:complexType>
+       <xs:sequence>
+        <xs:element name="dumpLocation" type="xs:string" />
+        <xs:element name="scriptLocation" type="xs:string" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
   <xs:element name="tripleImportJob" substitutionGroup="ldif:job">
     <xs:complexType>
        <xs:sequence>
