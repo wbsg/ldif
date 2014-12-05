@@ -345,7 +345,7 @@ tracking.</p>
     Parallelization is achieved by distributing the work (entities) to multiple threads.</p>
 
 <h5>Single machine / RDF Store</h5>
-<p> This implementation of the runtime environment uses an  <a href="http://openjena.org/TDB/">Jena TDB RDF store</a> to store intermediate results.
+<p> This implementation of the runtime environment uses an  <a href="http://jena.apache.org/documentation/tdb/">Jena TDB RDF store</a> to store intermediate results.
     The communication between the RDF store and the runtime environment is realized in the form of SPARQL queries.
     This runtime environment allows you to process data sets that don't fit into memory anymore.
     The downside is that the RDF Store implementation is slower as the In-memory implementation.</p>
@@ -353,7 +353,7 @@ tracking.</p>
 <h5>Cluster / Hadoop</h5>
 <p> This implementation of the runtime environment allows you to parallelize the work onto multiple machines using Hadoop.
     Each phase in the integration flow has been ported to be executable on a Hadoop cluster.
-    Some initial performance figures comparing the run times of the in-memory, quad store and Hadoop version against different data set sizes are provided in the <a href="benchmark.html">Benchmark Wiki</a>.</p>
+    Some initial performance figures comparing the run times of the in-memory, quad store and Hadoop version against different data set sizes are provided in the <a href="benchmark.html">Benchmark page</a>.</p>
 </div>
 
 <h3 id="nextSteps">Next steps for LDIF</h3>
